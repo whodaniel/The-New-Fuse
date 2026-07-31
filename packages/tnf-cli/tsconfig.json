@@ -12,10 +12,18 @@
   },
   "include": ["src/**/*"],
   "references": [
-    { "path": "../tnf-core" },
-    { "path": "../infrastructure" },
-    { "path": "../tnf-note-taking" },
-    { "path": "../shared" }
+    {
+      "path": "../tnf-core"
+    },
+    {
+      "path": "../infrastructure"
+    },
+    {
+      "path": "../tnf-note-taking"
+    },
+    {
+      "path": "../shared"
+    }
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
 }

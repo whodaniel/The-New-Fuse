@@ -406,6 +406,10 @@ class GeminiRedisAgent {
       promptText = msg.payload.data.customPrompt;
     }
 
+    // Authority gating is now handled centrally at the shared RedisAgentClient
+    // chokepoint (scripts/tnf-agent-cli.cjs → gateAndDispatch), so it covers
+    // every wrapper uniformly and a gated task never reaches this handler
+    // without an approved grant. Default-off via TNF_AUTHORITY_CONSUMER.
     const response = await this.gemini.prompt(promptText);
 
     if (isHardProviderFailure(response) || isHardProviderFailure(CIRCUIT.reason)) {

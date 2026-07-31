@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { gotoRoute } from './helpers/interactionAudit';
 
 test.describe('dual-mode harness (local vs SaaS endpoints)', () => {
@@ -27,7 +27,7 @@ test.describe('dual-mode harness (local vs SaaS endpoints)', () => {
 
   test('harness routes load in local mode after env switch', async ({ page }) => {
     await page.locator('.env-btn').filter({ hasText: 'Local' }).click();
-    for (const route of ['/a2a', '/workflows', '/oagi']) {
+    for (const route of ['/a2a', '/workflows', '/computer-use']) {
       await gotoRoute(page, route);
       await expect(page.locator('.page-container, main, .page-header').first()).toBeVisible();
     }

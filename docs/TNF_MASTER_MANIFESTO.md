@@ -55,7 +55,8 @@ system.
 4. **Federation**: Group browser tabs into channels for coordinated AI sessions
 5. **Agentic Orchestration**: Redis as "central nervous system" for timed,
    controlled multi-agent communication
-6. **SkIDEancer Reintegration**: Bring isolated SkIDEancer IDE back with functional links
+6. **SkIDEancer Reintegration**: Bring isolated SkIDEancer IDE back with
+   functional links
 7. **OAGI/Lux Protocol**: Native desktop automation (mouse, keyboard, screen)
 
 ---
@@ -374,8 +375,8 @@ async executeSmartClick(x: number, y: number) {
 #### Multi-Agent Orchestration Demo
 
 - **File**: `scripts/orchestration-demo.cjs` (270 lines)
-- **Agents**: Antigravity (Orchestrator), Claude (Broker), Gemini + Jules
-  (Workers)
+- **Agents**: Antigravity (platform worker + coordination caps), Claude (Broker
+  seat example), Gemini + Jules (Workers). Baton = master-clock, not a platform.
 - **Status**: ✅ Successfully demonstrated 4-agent conversation
 
 ### ✅ Frontend & UI (React/TypeScript)
@@ -555,7 +556,7 @@ Federation "My AI Team"
 | **Tauri Backend**       | ✅ Ready          | Now named "Fuse Desktop"               |
 | **Chrome Extension**    | ✅ Complete       | Now named "Fuse Connect", Redis bridge |
 | **VS Code Extension**   | 🔄 In Progress    | Compile and test embedded browser      |
-| **SkIDEancer IDE**           | ✅ Online         | SkIDEancer @ ide.thenewfuse.com        |
+| **SkIDEancer IDE**      | ✅ Online         | SkIDEancer @ ide.thenewfuse.com        |
 | **Federation**          | ✅ Implemented    | Multi-tab channel grouping             |
 | **Brand Consistency**   | ✅ Complete       | Neon Monogram applied everywhere       |
 | **Agent Network Start** | ✅ Script Ready   | `./scripts/start-agent-network.sh`     |
@@ -815,12 +816,16 @@ apps/tauri-desktop/
 ### Multi-Agent Conversation Example
 
 ```javascript
-// From orchestration-demo.cjs
+// From orchestration-demo.cjs — role ⊥ platform
+// Baton holder is master-clock (ORCHESTRATOR-{ts}), not listed here.
 const workflow = {
   goal: 'Code Review & Improvement',
-  orchestrator: 'antigravity',
-  broker: 'claude',
-  workers: ['gemini', 'jules'],
+  coordinator: { name: 'antigravity', role: 'worker', platform: 'antigravity' },
+  broker: { name: 'claude', role: 'broker', platform: 'claude' },
+  workers: [
+    { name: 'gemini', role: 'worker', platform: 'gemini' },
+    { name: 'jules', role: 'worker', platform: 'jules' },
+  ],
   steps: [
     { agent: 'gemini', task: 'Analyze codebase for issues' },
     { agent: 'jules', task: 'Implement suggested fixes' },

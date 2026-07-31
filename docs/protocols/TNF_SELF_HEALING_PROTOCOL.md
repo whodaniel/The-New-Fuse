@@ -34,7 +34,7 @@ node -e "require('ioredis')" 2>&1 | grep -q "MODULE_NOT_FOUND" && echo "MODULE_M
 **Remedy:**
 
 ```bash
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 # Re-run the failed command with NODE_PATH set
 ```
 
@@ -42,7 +42,7 @@ export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/no
 
 ```bash
 #!/bin/bash
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 exec node "$@"
 ```
 
@@ -52,7 +52,7 @@ exec node "$@"
 **Detection:** `pgrep -f "tnf-agent-daemon.py"` returns empty **Remedy:**
 
 ```bash
-cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd $TNF_ROOT
 nohup python3 scripts/agents/tnf-agent-daemon.py live > ~/.tnf/logs/daemon.log 2>&1 &
 sleep 2
 pgrep -f "tnf-agent-daemon.py" && echo "✅ Daemon restarted" || echo "❌ Restart failed"
@@ -75,7 +75,7 @@ fi
 
 ```bash
 pkill -f "terminal-heartbeat-pulse.cjs" 2>/dev/null
-export NODE_PATH="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules"
+export NODE_PATH="$TNF_ROOT/node_modules"
 nohup env NODE_PATH="$NODE_PATH" node ~/.tnf/bin/terminal-heartbeat-pulse.cjs > ~/.tnf/logs/heartbeat.log 2>&1 &
 ```
 
@@ -103,7 +103,7 @@ Check `~/.tnf/logs/daemon.log` for 410 errors **Remedy:**
 
 ```bash
 # Re-register the agent on the bus
-cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd $TNF_ROOT
 node scripts/agents/tnf-agent-daemon.py live --re-register
 ```
 
@@ -162,12 +162,12 @@ Install the self-healing cron job:
 
 ```bash
 # Every 5 minutes, run self-healing check
-(crontab -l 2>/dev/null | grep -v "tnf-self-healing"; echo "*/5 * * * * /Users/danielgoldberg/.tnf/bin/tnf-self-healing.cjs >> ~/.tnf/logs/self-healing.log 2>&1") | crontab -
+(crontab -l 2>/dev/null | grep -v "tnf-self-healing"; echo "*/5 * * * * $HOME/.tnf/bin/tnf-self-healing.cjs >> ~/.tnf/logs/self-healing.log 2>&1") | crontab -
 ```
 
 ## Self-Healing Script
 
-Create `/Users/danielgoldberg/.tnf/bin/tnf-self-healing.cjs`:
+Create `$HOME/.tnf/bin/tnf-self-healing.cjs`:
 
 ```javascript
 #!/usr/bin/env node
@@ -176,8 +176,7 @@ const fs = require('fs');
 const path = require('path');
 
 const TNF_ROOT = process.env.TNF_ROOT || path.join(process.env.HOME, '.tnf');
-const NODE_PATH =
-  '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules';
+const NODE_PATH = '$TNF_ROOT/node_modules';
 
 const log = (msg) => {
   const timestamp = new Date().toISOString();
@@ -208,7 +207,7 @@ if (!daemonRunning) {
   log('Daemon not running - restarting...');
   try {
     execSync(
-      'cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ' +
+      'cd $TNF_ROOT && ' +
         'nohup python3 scripts/agents/tnf-agent-daemon.py live > ~/.tnf/logs/daemon.log 2>&1 &',
       { stdio: 'ignore' }
     );

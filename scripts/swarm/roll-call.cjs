@@ -12,7 +12,7 @@ async function runRollCall() {
 
   const broker = new RedisAgentClient();
   await broker.initialize();
-  await broker.register('Master-Orchestrator', 'orchestrator', 'antigravity', ['roll-call']);
+  await broker.register('Master-Orchestrator', 'orchestrator', 'tnf-runtime', ['roll-call']);
 
   const taskId = `task_${Date.now()}`;
   const auctionDuration = 5000; // 5 seconds for bidding

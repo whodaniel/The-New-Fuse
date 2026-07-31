@@ -4,7 +4,7 @@
  * `tnf agents run --task "..."` — long-running autonomous agent loop.
  *
  * Wires LLMClient.chatCompleteWithTools to a default executor that
- * implements the 9 built-in tool definitions declared in
+ * implements the built-in tool definitions declared in
  * `utils/llm-tools.ts`. The agent can run indefinitely (no iteration
  * cap by default) and emits:
  *
@@ -25,12 +25,18 @@
  * arguments never go through a shell — no injection surface even when
  * the LLM emits untrusted input.
  */
-import { Command } from 'commander';
-import * as path from 'path';
-import * as fs from 'fs';
 import { execFile } from 'child_process';
+import { Command } from 'commander';
+import * as fs from 'fs';
+import * as path from 'path';
 import { promisify } from 'util';
 
+import {
+  AGENT_BROWSER_OPERATIONS,
+  type AgentBrowserOperation,
+  normalizeAgentBrowserOperation,
+  runAgentBrowser,
+} from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
 
 const execFileAsync = promisify(execFile);
@@ -78,7 +84,7 @@ interface JsonResult {
 }
 
 /**
- * Default executor — implements each of the 9 builtin tools against
+ * Default executor — implements each builtin tool against
  * real host facilities. Failures are caught and returned as a
  * structured string so the LLM can self-correct on the next iteration
  * instead of crashing the loop.
@@ -125,7 +131,8 @@ async function defaultExecutor(
         const offset = Math.max(Number(args.offset ?? 1) || 1, 1);
         const limit = Math.min(Math.max(Number(args.limit ?? 2000) || 2000, 1), 2000);
         if (!p) return { ok: false, error: 'read_file: empty path' };
-        if (!ctx.quiet) console.error(`[agents-run] read_file: ${p} offset=${offset} limit=${limit}`);
+        if (!ctx.quiet)
+          console.error(`[agents-run] read_file: ${p} offset=${offset} limit=${limit}`);
         const full = await fs.promises.readFile(p, 'utf8');
         const lines = full.split(/\r?\n/);
         const slice = lines.slice(offset - 1, offset - 1 + limit).join('\n');
@@ -164,7 +171,8 @@ async function defaultExecutor(
         const root = String(args.path ?? ctx.cwd);
         const limit = Math.min(Math.max(Number(args.limit ?? 50) || 50, 1), 500);
         if (!pattern) return { ok: false, error: 'search_files: empty pattern' };
-        if (!ctx.quiet) console.error(`[agents-run] search_files: ${target} ${pattern} (root=${root})`);
+        if (!ctx.quiet)
+          console.error(`[agents-run] search_files: ${target} ${pattern} (root=${root})`);
         // No search-adapter module dependency — the runSearch helper below
         // is portable across this and older builds (rg → grep → Node walk).
         result = await runSearch(pattern, target, root, limit);
@@ -172,11 +180,51 @@ async function defaultExecutor(
       }
       case 'web_search':
       case 'web_fetch': {
-        // The web tools have a webpilot bridge preference (Chrome extension
-        // + WebSocket relay) when available; until that bridge is wired
-        // here we default to the OAuth-free DuckDuckGo HTML paste fetch
-        // so the agent is never blocked in offline-shell mode.
+        // Public read-only retrieval belongs to Crawl4AI/direct HTTP. Stateful
+        // or authenticated interaction is handled by browser_interact below.
         result = await fallbackWeb(name, args, ctx);
+        break;
+      }
+      case 'browser_interact': {
+        let operation: AgentBrowserOperation;
+        try {
+          operation = normalizeAgentBrowserOperation(String(args.operation ?? ''));
+        } catch {
+          return {
+            ok: false,
+            error: `browser_interact: unsupported operation "${String(args.operation ?? '')}"`,
+            supportedOperations: AGENT_BROWSER_OPERATIONS,
+          };
+        }
+        if (!ctx.quiet) {
+          console.error(
+            `[agents-run] browser_interact: ${operation} ${truncate(String(args.target ?? ''), 180)}`
+          );
+        }
+        const browserResult = await runAgentBrowser(
+          ctx.cwd,
+          {
+            operation,
+            target: args.target ? String(args.target) : undefined,
+            value: args.value ? String(args.value) : undefined,
+            profile: args.profile
+              ? String(args.profile)
+              : process.env.TNF_BROWSER_PROFILE || process.env.AGENT_BROWSER_PROFILE,
+            stateFile: args.stateFile ? String(args.stateFile) : undefined,
+            session: args.session ? String(args.session) : undefined,
+            headed: args.headed === undefined ? operation === 'open' : Boolean(args.headed),
+            json: true,
+          },
+          { cwd: ctx.cwd }
+        );
+        result = {
+          ok: browserResult.code === 0,
+          engine: 'agent-browser',
+          operation,
+          exitCode: browserResult.code,
+          stdout: truncate(browserResult.stdout, 64_000),
+          stderr: truncate(browserResult.stderr, 16_000),
+        };
         break;
       }
       case 'list_skills': {
@@ -208,7 +256,8 @@ async function defaultExecutor(
     }
     return result ?? '';
   } catch (err: any) {
-    if (!ctx.quiet) console.error(`[agents-run] ${name} failed in ${Date.now() - t0}ms: ${err?.message ?? err}`);
+    if (!ctx.quiet)
+      console.error(`[agents-run] ${name} failed in ${Date.now() - t0}ms: ${err?.message ?? err}`);
     return {
       ok: false,
       error: err?.message ?? String(err),
@@ -251,14 +300,40 @@ async function runSearch(
     try {
       const { stdout } = await execFileAsync(
         'rg',
-        ['--no-heading', '--line-number', '-g', '!node_modules', '-g', '!.git', '-m', String(limit), pattern, root],
+        [
+          '--no-heading',
+          '--line-number',
+          '-g',
+          '!node_modules',
+          '-g',
+          '!.git',
+          '-m',
+          String(limit),
+          pattern,
+          root,
+        ],
         { maxBuffer: 4 * 1024 * 1024, timeout: 30_000 }
       );
-      return { ok: true, target: 'content', engine: 'rg', matches: stdout, count: stdout.split('\n').filter(Boolean).length };
+      return {
+        ok: true,
+        target: 'content',
+        engine: 'rg',
+        matches: stdout,
+        count: stdout.split('\n').filter(Boolean).length,
+      };
     } catch {
       const { stdout } = await execFileAsync(
         'grep',
-        ['-RIn', '--exclude-dir=node_modules', '--exclude-dir=.git', '-m', String(limit), '-E', pattern, root],
+        [
+          '-RIn',
+          '--exclude-dir=node_modules',
+          '--exclude-dir=.git',
+          '-m',
+          String(limit),
+          '-E',
+          pattern,
+          root,
+        ],
         { maxBuffer: 4 * 1024 * 1024, timeout: 30_000 }
       );
       return { ok: true, target: 'content', engine: 'grep', matches: stdout };
@@ -269,10 +344,9 @@ async function runSearch(
 }
 
 /**
- * Fallback web implementation — works without API keys. Production
- * agents will get better results via the webpilot bridge (existing
- * chrome extension + WebSocket relay), but this fallback ensures the
- * CLI is never stranded in a fully offline shell.
+ * Public-web implementation that requires no API keys. URL reads prefer the
+ * existing local Crawl4AI service and degrade to direct HTTP; search uses
+ * DuckDuckGo HTML. Interactive/authenticated work is intentionally separate.
  */
 async function fallbackWeb(
   name: string,
@@ -295,7 +369,8 @@ async function fallbackWeb(
       if (!resp.ok) return { ok: false, error: `search HTTP ${resp.status}` };
       const html = await resp.text();
       const results: Array<{ title: string; url: string; snippet: string }> = [];
-      const re = /<a class="result__a" href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
+      const re =
+        /<a class="result__a" href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
       let m: RegExpExecArray | null;
       while ((m = re.exec(html)) && results.length < maxResults) {
         results.push({
@@ -311,8 +386,51 @@ async function fallbackWeb(
   }
   if (name === 'web_fetch') {
     const u = String(args.url ?? '');
-    const maxBytes = Math.min(Math.max(Number(args.maxBytes ?? 200_000) || 200_000, 1024), 2_000_000);
+    const maxBytes = Math.min(
+      Math.max(Number(args.maxBytes ?? 200_000) || 200_000, 1024),
+      2_000_000
+    );
     if (!u) return { ok: false, error: 'empty url' };
+
+    const crawl4aiUrl = process.env.CRAWL4AI_SERVICE_URL || 'http://localhost:8000/scrape';
+    try {
+      const resp = await fetch(crawl4aiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: u,
+          max_chars: maxBytes,
+          timeout_ms: 20_000,
+          main_content_only: true,
+        }),
+        signal: AbortSignal.timeout(25_000),
+      });
+      if (resp.ok) {
+        const data = (await resp.json()) as {
+          success?: boolean;
+          url?: string;
+          title?: string;
+          text?: string;
+          markdown?: string;
+          error?: string;
+        };
+        if (data.success) {
+          const content = String(data.markdown || data.text || '');
+          return {
+            ok: true,
+            engine: 'crawl4ai',
+            url: data.url || u,
+            title: data.title || '',
+            content: truncate(content, maxBytes),
+            bytes: Buffer.byteLength(content, 'utf8'),
+            truncated: Buffer.byteLength(content, 'utf8') > maxBytes,
+          };
+        }
+      }
+    } catch {
+      // Crawl4AI is an optional local service; direct HTTP remains available.
+    }
+
     try {
       const resp = await fetch(u, {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; tnf-agent/1.0)' },
@@ -325,12 +443,14 @@ async function fallbackWeb(
         truncated ? buf.slice(0, maxBytes) : buf
       );
       // Strip tags crudely for legibility.
-      const stripped = text.replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+      const stripped = text
+        .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
         .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
       return {
         ok: true,
+        engine: 'direct-http',
         url: u,
         contentType: resp.headers.get('content-type') ?? 'unknown',
         truncated,
@@ -414,17 +534,23 @@ async function recallMemory(query: string, limit: number): Promise<Record<string
     // Lazy require so the CLI works without the redis package.
     let redis: any = null;
     try {
-      redis = (await import('ioredis' as string).catch(() => null) as any)?.default;
+      redis = ((await import('ioredis' as string).catch(() => null)) as any)?.default;
     } catch {}
     if (redis) {
-      const client = new redis({ host: process.env.REDIS_HOST || '127.0.0.1', port: Number(process.env.REDIS_PORT || 6379), lazyConnect: true });
+      const client = new redis({
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: Number(process.env.REDIS_PORT || 6379),
+        lazyConnect: true,
+      });
       try {
         await client.connect();
         const keys = await client.keys('hermes:memory:fact:*');
         const facts: Array<{ key: string; content: string }> = [];
         for (const key of keys.slice(0, 200)) {
           const data = await client.hgetall(key);
-          const text = Object.values(data || {}).join(' ').toLowerCase();
+          const text = Object.values(data || {})
+            .join(' ')
+            .toLowerCase();
           if (!query || text.includes(query.toLowerCase())) {
             facts.push({ key, content: Object.values(data || {}).join(' ') });
           }
@@ -467,9 +593,16 @@ async function recallMemory(query: string, limit: number): Promise<Record<string
 export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
   const t0 = Date.now();
   const cwd = opts.cwd ?? process.cwd();
-  const enabledTools = opts.enableTools
-    ? opts.enableTools.split(',').map((s) => s.trim()).filter(Boolean)
-    : undefined;
+  const enabledToolsRaw = opts.enableTools?.trim();
+  const enabledTools =
+    enabledToolsRaw === undefined || enabledToolsRaw === ''
+      ? undefined
+      : enabledToolsRaw.toLowerCase() === 'none'
+        ? ([] as string[])
+        : enabledToolsRaw
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
 
   // Lazy-import the LLM guts. cli.ts is heavy; don't eagerly load it here.
   const { LLMClient: LLMClientCtor } = (await import('../utils/llm-client.js')) as {
@@ -493,7 +626,12 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
       try {
-        response = await defaultExecutor(name, args, { cwd, quiet: !!opts.quiet });
+        // Plan/ask / --tools none: refuse tool execution even if the model asks.
+        if (Array.isArray(enabledTools) && enabledTools.length === 0) {
+          response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
+        } else {
+          response = await defaultExecutor(name, args, { cwd, quiet: !!opts.quiet });
+        }
       } catch (err: any) {
         response = { ok: false, error: err?.message ?? String(err), tool: name };
       }
@@ -504,9 +642,7 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         name,
         argsSummary: summarizeArgs(args),
         resultSummary:
-          typeof response === 'string'
-            ? truncate(response, 240)
-            : summarizeObject(response),
+          typeof response === 'string' ? truncate(response, 240) : summarizeObject(response),
         durationMs,
         ok,
       });
@@ -516,15 +652,15 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       maxIterations: opts.maxIterations, // undefined → unlimited (autonomy default)
       timeoutMs: opts.timeoutMs,
       systemPrompt: opts.systemPrompt,
-      // Drive the available tools via builtinTools.
-      builtinTools: enabledTools ? ['all'] : enabledTools === undefined ? undefined : 'none',
-      // We DO want the builtins — but the executor uses enabledTools list
-      // directly. Workaround: if enabledTools was passed as a list, we
-      // override it explicitly via the proxy input.
+      builtinTools:
+        enabledTools === undefined
+          ? undefined
+          : enabledTools.length === 0
+            ? 'none'
+            : enabledTools.includes('all')
+              ? 'all'
+              : enabledTools,
       stream: opts.stream,
-      // Streams only matter at chatCompleteWithTools wrapper level if we
-      // want to render tokens. For now, --stream is a hint we can wire
-      // to stdout printing if a future caller asks for it.
     } as any
   );
 
@@ -578,19 +714,38 @@ export function registerAgentsRunCommand(program: Command): void {
     .command('run')
     .description(
       'Run an autonomous agent loop with the canonical TNF built-in toolset. ' +
-      'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
-      'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, list_skills, load_skill, memory_recall.'
+        'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
+        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall.'
     )
-    .argument('[task...]', 'Task description. If omitted, --task / --task-file / stdin must supply it.')
+    .argument(
+      '[task...]',
+      'Task description. If omitted, --task / --task-file / stdin must supply it.'
+    )
     .option('-t, --task <text>', 'Task description (alternative to positional or stdin).')
     .option('--task-file <path>', 'Read the task from a file (UTF-8). Use "-" to read from stdin.')
     .option('--stream', 'Stream tokens to stdout as the model generates them.', false)
-    .option('--max-iterations <n>', 'Maximum inner agent loop iterations. Omit for unlimited (autonomy default).')
-    .option('--timeout-ms <n>', 'Per-call HTTP timeout in milliseconds. Default: env TNF_LLM_TIMEOUT_MS, else 600000 (10min).')
-    .option('--tools <list>', 'Comma-separated builtin tool names to enable. Default: all. Examples: "bash,read_file,write_file" or "none" to disable.')
+    .option(
+      '--max-iterations <n>',
+      'Maximum inner agent loop iterations. Omit for unlimited (autonomy default).'
+    )
+    .option(
+      '--timeout-ms <n>',
+      'Per-call HTTP timeout in milliseconds. Default: env TNF_LLM_TIMEOUT_MS, else 600000 (10min).'
+    )
+    .option(
+      '--tools <list>',
+      'Comma-separated builtin tool names to enable. Default: all. Examples: "bash,read_file,write_file" or "none" to disable.'
+    )
     .option('--system <text>', 'Custom system prompt override for the loop.')
-    .option('--cwd <path>', 'Working directory for the bash / file / search tools. Default: process.cwd().')
-    .option('--json', 'Emit a single JSON envelope on stdout (final result + tool call ledger).', false)
+    .option(
+      '--cwd <path>',
+      'Working directory for the bash / file / search tools. Default: process.cwd().'
+    )
+    .option(
+      '--json',
+      'Emit a single JSON envelope on stdout (final result + tool call ledger).',
+      false
+    )
     .option('--quiet', 'Suppress per-tool stderr log lines.', false)
     .action(
       async (
@@ -661,8 +816,12 @@ export function registerAgentsRunCommand(program: Command): void {
           if (runOpts.json) {
             process.stdout.write(JSON.stringify(result, null, 2) + '\n');
           } else {
-            process.stdout.write(`\n[tnf agents run] provider=${result.provider} model=${result.model} base=${result.baseUrl}\n`);
-            process.stdout.write(`[tnf agents run] iterations=${result.iterations} toolCalls=${result.toolCalls.length} durationMs=${result.durationMs} finish=${result.finishReason}\n\n`);
+            process.stdout.write(
+              `\n[tnf agents run] provider=${result.provider} model=${result.model} base=${result.baseUrl}\n`
+            );
+            process.stdout.write(
+              `[tnf agents run] iterations=${result.iterations} toolCalls=${result.toolCalls.length} durationMs=${result.durationMs} finish=${result.finishReason}\n\n`
+            );
             process.stdout.write(result.finalContent + '\n');
           }
           process.exit(0);

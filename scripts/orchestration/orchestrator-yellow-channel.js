@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
- * Antigravity Orchestrator - Yellow Channel
+ * AXIS NOTE (2026-07-25): This demo coordinates work on the antigravity
+ * *platform*. It is NOT the DACC baton (ORCHESTRATOR-{ts} / master-clock).
+ * role ⊥ platform — see .agent/ROLE_DEFINITIONS.md
+ */
+/**
+ * Antigravity Coordinator - Yellow Channel
  * Advanced Multi-Agent Coordination Protocol
  *
  * Features:
@@ -15,7 +20,7 @@
 const WebSocket = require('ws');
 
 const RELAY_URL = 'ws://localhost:3001/ws';
-const ORCHESTRATOR_ID = 'orchestrator-antigravity-yellow';
+const ORCHESTRATOR_ID = 'coordinator-antigravity-yellow';
 const CHANNEL_NAME = 'yellow';
 
 // Track discovered agents
@@ -305,7 +310,7 @@ ws.on('open', () => {
       payload: {
         agent: {
           id: ORCHESTRATOR_ID,
-          name: 'Antigravity Orchestrator (Yellow)',
+          name: 'Antigravity Coordinator (Yellow)',
           platform: 'cli-orchestrator',
           status: 'active',
           capabilities: [
@@ -325,7 +330,7 @@ ws.on('open', () => {
       },
     })
   );
-  console.log('[✓] Registered as Antigravity Orchestrator');
+  console.log('[✓] Registered as Antigravity Coordinator');
 
   // 2. Create/Join Yellow Channel
   setTimeout(() => {

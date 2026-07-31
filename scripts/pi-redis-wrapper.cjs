@@ -17,6 +17,7 @@ const readline = require('readline');
 
 const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 const { publishProviderFailureSignal } = require('./watchdog-signal-utils.cjs');
+const { isHeartbeatOrNoise } = require('./lib/tnf-heartbeat-filter.cjs');
 // Lazy-load pi-session-handoff to avoid pulling in monorepo deps at startup
 // const { publishPiSessionHandoff, buildGateDecisions } = require('./pi-session-handoff.cjs');
 
@@ -77,18 +78,6 @@ const PROVIDER_FAILURE_PATTERNS = [
     regex: /\b(402|insufficient credits|more credits|payment required|billing|quota exceeded)\b/i,
   },
 ];
-
-/** Heartbeats / stall pings should not burn Pi provider quota. */
-function isHeartbeatOrNoise(text) {
-  const raw = String(text || '').trim();
-  if (!raw) return true;
-  if (/^TNF heartbeat\b/i.test(raw)) return true;
-  if (/\bcron-heartbeat-/i.test(raw)) return true;
-  if (/please respond with a heartbeat or acknowledgment/i.test(raw)) return true;
-  if (/\bagent_stalled\b/i.test(raw)) return true;
-  if (/^\[SYSTEM\].*heartbeat/i.test(raw)) return true;
-  return false;
-}
 
 function parseList(value) {
   if (Array.isArray(value))
@@ -584,10 +573,39 @@ class PiRedisAgent {
     return signal;
   }
 
+  async resolveHandoffTarget(msg) {
+    const fromId = String(msg?.from?.agentId || '').trim();
+    // Prefer the upstream agent when it is not a rotated baton session.
+    if (fromId && !/^ORCHESTRATOR-\d+$/i.test(fromId)) {
+      return fromId;
+    }
+
+    // When upstream was a prior ORCHESTRATOR-{ts} session, retarget to the
+    // current baton holder so packets are not orphaned after master-clock
+    // restart. Platform wrappers are never assumed to own this seat.
+    try {
+      const redis = this.client.publisher || this.client.redis || this.client._redis;
+      if (redis && typeof redis.hget === 'function') {
+        const raw = await redis.hget('tnf:master:state', 'orchestrator');
+        if (raw) {
+          const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          const sessionId = String(parsed?.sessionId || '').trim();
+          if (/^ORCHESTRATOR-\d+$/i.test(sessionId)) {
+            return sessionId;
+          }
+        }
+      }
+    } catch {
+      // fall through
+    }
+
+    return fromId || 'Local-Director';
+  }
+
   async exportHandoff(msg, sessionKey, piRunResult, validation) {
     if (!CONFIG.handoffEnabled) return null;
     const fromAgentId = this.client.agentInfo?.id || CONFIG.agentName;
-    const toAgent = msg?.from?.agentId || 'agent_orchestrator';
+    const toAgent = await this.resolveHandoffTarget(msg);
     const summary = piRunResult.ok
       ? 'Pi executed the upstream task and returned a response for continuation.'
       : 'Pi execution failed and returned diagnostics for downstream recovery.';
@@ -816,6 +834,15 @@ class PiRedisAgent {
         await this.stop();
         resolve();
       });
+      process.on('SIGTERM', async () => {
+        await this.stop();
+        resolve();
+      });
+
+      if (!process.stdin.isTTY) {
+        console.log('[headless] no TTY — Pi stays up on Redis event loop');
+        return;
+      }
 
       const rl = readline.createInterface({
         input: process.stdin,
@@ -823,9 +850,20 @@ class PiRedisAgent {
       });
 
       rl.on('line', async (line) => {
-        if (!line.trim()) return;
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        // Same guard processMessage() applies to Redis-delivered messages.
+        // Without it, anything injected into this process's stdin (e.g.
+        // terminal-heartbeat-pulse.cjs's simulated typing, if this wrapper
+        // happens to own the pty it targets) reaches pi.prompt() unfiltered
+        // — bypassing the exact "prevents provider spam on cron broadcasts"
+        // protection this file already has for the Redis path, and burning
+        // a live LLM invocation (with full bash/write/edit tool access) on
+        // every heartbeat tick. Found 2026-07-23 after an agent reached via
+        // this path auto-committed without live operator confirmation.
+        if (isHeartbeatOrNoise(trimmed)) return;
         const sessionKey = `tnf-pi-local-${Date.now()}`;
-        const runResult = await this.pi.prompt(line.trim(), {
+        const runResult = await this.pi.prompt(trimmed, {
           provider: CONFIG.provider || undefined,
           model: CONFIG.model || undefined,
           skills: parseList(CONFIG.skills),

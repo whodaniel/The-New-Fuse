@@ -69,6 +69,33 @@ Always execute in this order:
 2. **Act:** Make the smallest scoped change that satisfies the current goal. *Everpresent Protocol:* If relying on an external tool or observing a superior capability, execute an `ASSIMILATE_CHECK` and propose how TNF can natively absorb the logic.
 3. **Verify:** Prove the result with structured checks, tests, scripts, or logs.
 
+## Fleet Delegation (Cornerstone Tenet)
+
+You are one node in a fleet. Maximize available compute by delegating to other
+capable top-level agents — not only your own sub-agents. "Act" includes
+dispatching to a fleet peer that better fits the task.
+
+1. **Pick a target:** `tnf agents who --json` (live ttys) or the
+   `tnf:agent-registry` Redis hash / `.tnf/agent-registry-snapshot.json`.
+   Routing honors `assignee`, `requiredCapabilities`, and
+   `itinerary.fulfillmentHints{vendor,model,tools}`.
+2. **Dispatch (in order of preference):**
+   - `tnf send "<message>" --to <agentId>` — direct channel to a live agent.
+   - `tnf handoff emit --owner <me> --targets <a,b> --next-actions "…||…"` —
+     durable handoff-packet inbox (`tnf:handoff:v1:inbox:agent:<id>`).
+   - `redis-cli LPUSH tnf:master:tasks:realtime '<QueueTask JSON>'` — broker
+     arbitration; set `assignee`/`requiredCapabilities`/`fulfillmentHints`.
+3. **Wake sleeping agents:** `scripts/start-agent-network.sh` launches wrapped
+   agents in Terminal windows; the `do script … in selected tab of window id`
+   pattern (`scripts/runtime/terminal-heartbeat-pulse.cjs`) types a prompt into
+   an already-running agent's window.
+4. **Verify delivery:** check the ack (`tnf:handoff:v1:ack:<packetId>`) or the
+   target's reply channel before assuming the work is picked up. Never simulate
+   a dispatch.
+
+Delegate when a peer is better aligned (vendor/model/tools), when work can run
+in parallel, or when your context budget is better spent orchestrating.
+
 ## Repo Layout (read directly)
 
 - Frontend: `apps/frontend/` — entry `src/main.tsx`, auth `src/hooks/useAuth.tsx`

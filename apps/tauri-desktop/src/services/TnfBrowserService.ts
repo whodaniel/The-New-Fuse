@@ -2,7 +2,13 @@ import { invoke } from '@tauri-apps/api/core';
 import { isTauriRuntime } from '../lib/isTauri';
 import { EventEmitter } from './EventEmitter';
 
-export type TnfBrowserEvent = 'connected' | 'disconnected' | 'status' | 'error' | 'runtime';
+export type TnfBrowserEvent =
+  | 'connected'
+  | 'disconnected'
+  | 'status'
+  | 'error'
+  | 'runtime'
+  | 'urlChanged';
 
 export interface TnfBrowserStatus {
   listening: boolean;
@@ -36,6 +42,13 @@ export interface TnfBrowserTab {
   index?: number;
 }
 
+export interface TnfBrowserBridgeEvent {
+  type?: string;
+  event?: string;
+  data?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 type TauriStatus = {
   listening: boolean;
   has_token: boolean;
@@ -46,7 +59,18 @@ type TauriStatus = {
   token_path: string;
 };
 
+export interface TnfBrowserStartResult {
+  ok: boolean;
+  message: string;
+  /** Exact command to run by hand when the runtime cannot be launched for us. */
+  command: string;
+  already_running?: boolean;
+}
+
+const FALLBACK_START_COMMAND = 'agent-browser open about:blank --headed';
+
 const DEV_BASE = '/__tnf-browser';
+const TAURI_EVENT = 'tnf-browser-event';
 
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${DEV_BASE}${path}`, {
@@ -83,13 +107,15 @@ function normalizeStatus(raw: Record<string, unknown> | TauriStatus): TnfBrowser
     connected: Boolean(d.connected),
     runtimeConnected: Boolean(d.runtimeConnected),
     lastError: (d.lastError as string | null) ?? null,
-    port: Number(d.port || 7331),
+    port: Number(d.port ?? 0),
     tokenPath: String(d.tokenPath || ''),
   };
 }
 
 class TnfBrowserServiceClass extends EventEmitter<TnfBrowserEvent> {
   private lastStatus: TnfBrowserStatus | null = null;
+  private eventCleanup: (() => void) | null = null;
+  private eventListeners = 0;
 
   getStatusSnapshot(): TnfBrowserStatus | null {
     return this.lastStatus;
@@ -120,6 +146,8 @@ class TnfBrowserServiceClass extends EventEmitter<TnfBrowserEvent> {
       } else {
         await fetchJson('/connect', { method: 'POST', body: '{}' });
       }
+      // Subscribers own the stream lifetime. Opening it here without a matching
+      // release would let an unmount tear down a stream connect() had opened.
       const status = await this.status();
       this.emit('connected', status);
       return true;
@@ -140,21 +168,94 @@ class TnfBrowserServiceClass extends EventEmitter<TnfBrowserEvent> {
     await this.status().catch(() => undefined);
   }
 
-  async startRuntime(): Promise<{ ok: boolean; message: string }> {
+  async startRuntime(): Promise<TnfBrowserStartResult> {
     if (isTauriRuntime()) {
-      // Spawn via shell through existing execute_command when Tauri is available.
-      const { open } = await import('@tauri-apps/plugin-shell');
-      // Prefer documenting CLI when shell-open of a node process is unsafe.
-      void open;
-      return {
-        ok: false,
-        message: 'Start TNF Browser from a terminal: node packages/tnf-browser/bin/cli.js start',
-      };
+      return invoke<TnfBrowserStartResult>('tnf_browser_start');
     }
-    return fetchJson<{ ok: boolean; message: string }>('/start', {
+    const result = await fetchJson<TnfBrowserStartResult>('/start', {
       method: 'POST',
       body: '{}',
     });
+    return {
+      ...result,
+      command: result.command || FALLBACK_START_COMMAND,
+    };
+  }
+
+  /**
+   * Subscribe to live protocol events (urlChanged, response, extension*).
+   * Reference-counted — call the returned disposer when the UI unmounts.
+   */
+  async subscribeEvents(): Promise<() => void> {
+    await this.ensureEventStream();
+    this.eventListeners += 1;
+    return () => {
+      this.eventListeners = Math.max(0, this.eventListeners - 1);
+      if (this.eventListeners === 0) {
+        this.teardownEventStream();
+      }
+    };
+  }
+
+  private async ensureEventStream(): Promise<void> {
+    if (this.eventCleanup) return;
+
+    if (isTauriRuntime()) {
+      const { listen } = await import('@tauri-apps/api/event');
+      const unlisten = await listen<TnfBrowserBridgeEvent>(TAURI_EVENT, (event) => {
+        this.handleBridgeEvent(event.payload);
+      });
+      this.eventCleanup = () => {
+        unlisten();
+      };
+      return;
+    }
+
+    const source = new EventSource(`${DEV_BASE}/events`);
+    source.onmessage = (message) => {
+      try {
+        this.handleBridgeEvent(JSON.parse(message.data) as TnfBrowserBridgeEvent);
+      } catch {
+        /* ignore malformed frames */
+      }
+    };
+    source.onerror = () => {
+      /* browser will retry EventSource automatically */
+    };
+    this.eventCleanup = () => {
+      source.close();
+    };
+  }
+
+  private teardownEventStream(): void {
+    if (!this.eventCleanup) return;
+    try {
+      this.eventCleanup();
+    } catch {
+      /* ignore */
+    }
+    this.eventCleanup = null;
+  }
+
+  private handleBridgeEvent(payload: TnfBrowserBridgeEvent): void {
+    if (!payload || payload.type !== 'event') return;
+    const name = String(payload.event || '');
+
+    if (name === 'extensionConnected' || name === 'extensionDisconnected') {
+      if (this.lastStatus) {
+        this.lastStatus = {
+          ...this.lastStatus,
+          runtimeConnected: name === 'extensionConnected',
+        };
+        this.emit('status', this.lastStatus);
+      }
+      this.emit('runtime', { connected: name === 'extensionConnected', event: payload });
+      return;
+    }
+
+    if (name === 'urlChanged') {
+      this.emit('urlChanged', payload.data || {});
+    }
   }
 
   async command<T = unknown>(
@@ -185,8 +286,28 @@ class TnfBrowserServiceClass extends EventEmitter<TnfBrowserEvent> {
     return Array.isArray(tabs) ? tabs : [];
   }
 
+  async createTab(url?: string) {
+    return this.command<TnfBrowserTab>('tabs.create', url ? { url } : {});
+  }
+
+  async closeTab(tabId: number) {
+    return this.command('tabs.close', {}, tabId);
+  }
+
+  async activateTab(tabId: number) {
+    return this.command('tabs.activate', {}, tabId);
+  }
+
   async reload(tabId?: number | null) {
     return this.command('tabs.reload', {}, tabId);
+  }
+
+  async goBack(tabId?: number | null) {
+    return this.command('tabs.goBack', {}, tabId);
+  }
+
+  async goForward(tabId?: number | null) {
+    return this.command('tabs.goForward', {}, tabId);
   }
 
   async screenshot(fullPage = false, tabId?: number | null) {
@@ -220,6 +341,10 @@ class TnfBrowserServiceClass extends EventEmitter<TnfBrowserEvent> {
       else params.selector = selectorOrHandle;
     }
     return this.command('dom.type', params, tabId);
+  }
+
+  async keyPress(key: string, tabId?: number | null) {
+    return this.command('dom.keyPress', { key }, tabId);
   }
 }
 

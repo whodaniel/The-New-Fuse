@@ -307,6 +307,15 @@ class ApiService {
     });
   }
 
+  // Local runtime (Mission Control) endpoints
+  async getLocalRuntimeSummary(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/summary');
+  }
+
+  async getLocalRuntimeTerminalMirror(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/terminal-mirror');
+  }
+
   // Health check
   async healthCheck(): Promise<boolean> {
     try {
@@ -317,6 +326,44 @@ class ApiService {
     } catch {
       return false;
     }
+  }
+
+  /** Dynamic LLM catalog for Create Agent (NVIDIA-first verified + optional live). */
+  async getAvailableModels(options?: { provider?: string; refresh?: boolean }): Promise<
+    ApiResponse<{
+      defaultProvider: string;
+      providers: Array<{
+        id: string;
+        name: string;
+        configured: boolean;
+        source: string;
+        priority: number;
+        models: Array<{ id: string; name: string; provider: string }>;
+      }>;
+    }>
+  > {
+    const params = new URLSearchParams();
+    if (options?.provider) params.set('provider', options.provider);
+    if (options?.refresh) params.set('refresh', '1');
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    const bases = [`/api/llm/models${qs}`, `/llm/models${qs}`];
+    let lastError = 'Models endpoint unavailable';
+    for (const path of bases) {
+      const result = await this.request<{
+        defaultProvider: string;
+        providers: Array<{
+          id: string;
+          name: string;
+          configured: boolean;
+          source: string;
+          priority: number;
+          models: Array<{ id: string; name: string; provider: string }>;
+        }>;
+      }>(path);
+      if (result.success) return result;
+      lastError = result.error || lastError;
+    }
+    return { success: false, error: lastError };
   }
 }
 

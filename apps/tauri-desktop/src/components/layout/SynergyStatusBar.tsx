@@ -1,33 +1,77 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { LIBRARY_KWS_BASE_URL, STORY_ARCHITECT_RELAY_URL } from '../../config/virtualLibrary';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
 import { useVoiceBridge } from '../../hooks/useVoiceBridge';
 import { useRoute } from '../route-context';
 
 const CHIP_ROUTES: Record<string, string> = {
   Voice: '/voice',
-  Relay: '/browser',
+  Library: '/library',
+  Relay: '/computer-use',
   Federation: '/a2a',
-  Extension: '/browser',
+  Extension: '/computer-use',
   API: '/settings',
 };
+
+async function probeLibraryAudioReady(): Promise<boolean> {
+  try {
+    const [relay, kws] = await Promise.all([
+      fetch(`${STORY_ARCHITECT_RELAY_URL}/v1/health`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(2000),
+      }),
+      fetch(`${LIBRARY_KWS_BASE_URL}/healthz`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(2000),
+      }),
+    ]);
+    return relay.ok && kws.ok;
+  } catch {
+    return false;
+  }
+}
 
 /** Compact synergy plane status — use at top of operator pages */
 export const SynergyStatusBar: React.FC = () => {
   const { state } = useOperatorSynergy();
   const { snapshot: voice } = useVoiceBridge();
   const { navigate } = useRoute();
+  const [libraryAudioReady, setLibraryAudioReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      const ready = await probeLibraryAudioReady();
+      if (!cancelled) setLibraryAudioReady(ready);
+    };
+    void tick();
+    const timer = window.setInterval(() => void tick(), 10000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   const chips = [
     {
       label: 'Voice',
-      ok: voice.online && !voice.micPaused,
-      hint: voice.online
-        ? voice.micPaused
-          ? 'Beam paused'
-          : voice.aiSpeaking
-            ? 'Speaking'
-            : 'Live'
-        : 'Offline',
+      ok: voice.online && !voice.micPaused && voice.listenRunning,
+      hint: !voice.online
+        ? 'Offline'
+        : !voice.listenRunning
+          ? 'No listen'
+          : voice.micPaused
+            ? 'Beam paused'
+            : voice.aiSpeaking
+              ? 'Speaking'
+              : 'Live',
+    },
+    {
+      label: 'Library',
+      ok: libraryAudioReady,
+      hint: libraryAudioReady
+        ? 'Story Architect + KWS ready'
+        : 'Start library voice stack on Virtual Library',
     },
     { label: 'Relay', ok: state.relayConnected },
     { label: 'Federation', ok: state.relayRegistered },

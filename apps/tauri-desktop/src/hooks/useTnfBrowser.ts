@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import TnfBrowserService, {
+  type TnfBrowserStartResult,
   type TnfBrowserStatus,
   type TnfBrowserTab,
   type TnfDiscoveredElement,
@@ -16,7 +17,11 @@ export interface TnfBrowserHookState {
   discovered: TnfDiscoveredElement[];
   lastScreenshot: string | null;
   htmlPreview: string | null;
+  /** True length of the last fetched HTML, which may exceed the preview. */
+  htmlLength: number;
   activityLog: string[];
+  starting: boolean;
+  startResult: TnfBrowserStartResult | null;
 }
 
 const INITIAL: TnfBrowserHookState = {
@@ -30,8 +35,17 @@ const INITIAL: TnfBrowserHookState = {
   discovered: [],
   lastScreenshot: null,
   htmlPreview: null,
+  htmlLength: 0,
   activityLog: [],
+  starting: false,
+  startResult: null,
 };
+
+/** Debounce window for coalescing navigation bursts before refreshing tabs + preview. */
+const SETTLE_MS = 400;
+
+/** Characters of page HTML kept for display. `htmlLength` reports the true size. */
+const HTML_PREVIEW_CHARS = 20000;
 
 function pushLog(prev: string[], line: string): string[] {
   return [`[${new Date().toLocaleTimeString()}] ${line}`, ...prev].slice(0, 80);
@@ -82,12 +96,12 @@ export function useTnfBrowser() {
 
   const connect = useCallback(async () => {
     setState((prev) => ({ ...prev, connecting: true, lastError: null }));
-    appendLog('Connecting to TNF Browser (:7331)...');
+    appendLog('Connecting to agent-browser runtime...');
     try {
       await TnfBrowserService.connect();
       const status = await refreshStatus();
       setState((prev) => ({ ...prev, connecting: false, status }));
-      appendLog('Connected to TNF Browser');
+      appendLog('Connected to agent-browser');
       await refreshTabs();
       return true;
     } catch (error) {
@@ -105,13 +119,30 @@ export function useTnfBrowser() {
   }, [appendLog, refreshStatus]);
 
   const startRuntime = useCallback(async () => {
-    appendLog('Requesting TNF Browser start...');
-    const result = await TnfBrowserService.startRuntime();
-    appendLog(result.message);
-    setTimeout(() => {
-      void refreshStatus();
-    }, 1500);
-    return result;
+    appendLog('Requesting agent-browser start...');
+    setState((prev) => ({ ...prev, starting: true, startResult: null }));
+    try {
+      const result = await TnfBrowserService.startRuntime();
+      appendLog(result.message);
+      setState((prev) => ({ ...prev, starting: false, startResult: result }));
+      // agent-browser may take a moment to open Chromium — poll past cold start.
+      [1500, 4000, 8000].forEach((delay) =>
+        setTimeout(() => {
+          void refreshStatus();
+        }, delay)
+      );
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const result = {
+        ok: false,
+        message,
+        command: 'agent-browser open about:blank --headed',
+      };
+      appendLog(`Start failed: ${message}`);
+      setState((prev) => ({ ...prev, starting: false, startResult: result }));
+      return result;
+    }
   }, [appendLog, refreshStatus]);
 
   const run = useCallback(
@@ -131,22 +162,119 @@ export function useTnfBrowser() {
     [appendLog]
   );
 
+  /** Quiet preview refresh — no busy lock, no activity spam, keeps prior shot on failure. */
+  const recapturePreview = useCallback(async () => {
+    if (!TnfBrowserService.getStatusSnapshot()?.connected) return;
+    try {
+      const result = await TnfBrowserService.screenshot(false);
+      if (result?.dataUrl) {
+        setState((prev) => ({ ...prev, lastScreenshot: result.dataUrl || null }));
+      }
+    } catch {
+      /* keep previous preview */
+    }
+  }, []);
+
+  /**
+   * Single settle debouncer shared by event-driven navigation (urlChanged) and
+   * commands that may not emit one (same-URL reload). Coalesces SPA bursts into
+   * one tabs.list + one quiet recapture, and is cleared on unmount.
+   */
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleSettle = useCallback(() => {
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(() => {
+      settleTimer.current = null;
+      void refreshTabs();
+      void recapturePreview();
+    }, SETTLE_MS);
+  }, [recapturePreview, refreshTabs]);
+
+  useEffect(
+    () => () => {
+      if (settleTimer.current) clearTimeout(settleTimer.current);
+      settleTimer.current = null;
+    },
+    []
+  );
+
   const navigate = useCallback(
-    async (url: string) => {
+    async (url: string, tabId?: number | null) => {
       appendLog(`Navigate → ${url}`);
-      const result = await run('navigate', () => TnfBrowserService.navigate(url));
-      setState((prev) => ({ ...prev, currentUrl: url }));
+      const result = await run('navigate', () => TnfBrowserService.navigate(url, tabId));
+      setState((prev) => ({
+        ...prev,
+        currentUrl: url,
+      }));
+      await refreshTabs();
+      // Preview refresh comes from debounced urlChanged settle.
+      return result;
+    },
+    [appendLog, refreshTabs, run]
+  );
+
+  const reload = useCallback(
+    async (tabId?: number | null) => {
+      appendLog('Reload');
+      await run('reload', () => TnfBrowserService.reload(tabId));
+      await refreshTabs();
+      // Same-URL reload may not emit urlChanged — settle covers it either way.
+      scheduleSettle();
+    },
+    [appendLog, refreshTabs, run, scheduleSettle]
+  );
+
+  const goBack = useCallback(
+    async (tabId?: number | null) => {
+      appendLog('Back');
+      await run('back', () => TnfBrowserService.goBack(tabId));
+      await refreshTabs();
+      // Hash-only history entries may not emit urlChanged.
+      scheduleSettle();
+    },
+    [appendLog, refreshTabs, run, scheduleSettle]
+  );
+
+  const goForward = useCallback(
+    async (tabId?: number | null) => {
+      appendLog('Forward');
+      await run('forward', () => TnfBrowserService.goForward(tabId));
+      await refreshTabs();
+      // Hash-only history entries may not emit urlChanged.
+      scheduleSettle();
+    },
+    [appendLog, refreshTabs, run, scheduleSettle]
+  );
+
+  const createTab = useCallback(
+    async (url?: string) => {
+      appendLog(url ? `Create tab → ${url}` : 'Create tab');
+      const result = await run('createTab', () => TnfBrowserService.createTab(url));
       await refreshTabs();
       return result;
     },
     [appendLog, refreshTabs, run]
   );
 
-  const reload = useCallback(async () => {
-    appendLog('Reload');
-    await run('reload', () => TnfBrowserService.reload());
-    await refreshTabs();
-  }, [appendLog, refreshTabs, run]);
+  const closeTab = useCallback(
+    async (tabId: number) => {
+      appendLog(`Close tab ${tabId}`);
+      await run('closeTab', () => TnfBrowserService.closeTab(tabId));
+      await refreshTabs();
+    },
+    [appendLog, refreshTabs, run]
+  );
+
+  const activateTab = useCallback(
+    async (tabId: number) => {
+      appendLog(`Activate tab ${tabId}`);
+      await run('activateTab', () => TnfBrowserService.activateTab(tabId));
+      await refreshTabs();
+      void recapturePreview();
+    },
+    [appendLog, recapturePreview, refreshTabs, run]
+  );
 
   const takeScreenshot = useCallback(async () => {
     appendLog('Screenshot');
@@ -171,20 +299,54 @@ export function useTnfBrowser() {
     appendLog('Read page HTML');
     const result = await run('html', () => TnfBrowserService.getHtml());
     if (result) {
+      const html = result.html || '';
       setState((prev) => ({
         ...prev,
-        htmlPreview: (result.html || '').slice(0, 4000),
+        htmlPreview: html.slice(0, HTML_PREVIEW_CHARS),
+        htmlLength: html.length,
         currentTitle: result.title || prev.currentTitle,
         currentUrl: result.url || prev.currentUrl,
       }));
+      appendLog(
+        html.length > HTML_PREVIEW_CHARS
+          ? `HTML ${html.length.toLocaleString()} chars (showing first ${HTML_PREVIEW_CHARS.toLocaleString()})`
+          : `HTML ${html.length.toLocaleString()} chars`
+      );
     }
     return result;
+  }, [appendLog, run]);
+
+  /**
+   * Fetch the full document without storing it in state — the display preview is
+   * capped, so "copy what you see" would silently hand back a truncated page.
+   */
+  const readFullHtml = useCallback(async () => {
+    const result = await run('html', () => TnfBrowserService.getHtml());
+    const html = result?.html || '';
+    appendLog(`Copied full HTML (${html.length.toLocaleString()} chars)`);
+    return html;
   }, [appendLog, run]);
 
   const click = useCallback(
     async (selectorOrHandle: string) => {
       appendLog(`Click ${selectorOrHandle}`);
       return run('click', () => TnfBrowserService.click(selectorOrHandle));
+    },
+    [appendLog, run]
+  );
+
+  const typeText = useCallback(
+    async (text: string, selectorOrHandle?: string) => {
+      appendLog(selectorOrHandle ? `Type into ${selectorOrHandle}` : `Type ${text.slice(0, 40)}`);
+      return run('type', () => TnfBrowserService.type(text, selectorOrHandle));
+    },
+    [appendLog, run]
+  );
+
+  const keyPress = useCallback(
+    async (key: string) => {
+      appendLog(`Key ${key}`);
+      return run('keyPress', () => TnfBrowserService.keyPress(key));
     },
     [appendLog, run]
   );
@@ -197,6 +359,48 @@ export function useTnfBrowser() {
     return () => clearInterval(timer);
   }, [refreshStatus]);
 
+  useEffect(() => {
+    let disposed = false;
+    let unsubscribeEvents: (() => void) | undefined;
+    let offUrl: (() => void) | undefined;
+    let offRuntime: (() => void) | undefined;
+
+    void (async () => {
+      unsubscribeEvents = await TnfBrowserService.subscribeEvents();
+      if (disposed) {
+        unsubscribeEvents();
+        return;
+      }
+
+      offUrl = TnfBrowserService.on<{ tabId?: number; url?: string }>('urlChanged', (data) => {
+        const nextUrl = data?.url ? String(data.url) : '';
+        setState((prev) => ({
+          ...prev,
+          currentUrl: nextUrl || prev.currentUrl,
+          // Keep prior screenshot until debounced recapture lands.
+          activityLog: pushLog(
+            prev.activityLog,
+            nextUrl ? `URL changed → ${nextUrl}` : 'URL changed'
+          ),
+        }));
+        scheduleSettle();
+      });
+
+      offRuntime = TnfBrowserService.on<{ connected?: boolean }>('runtime', (data) => {
+        appendLog(data?.connected ? 'Runtime connected' : 'Runtime disconnected');
+        void refreshStatus();
+        if (data?.connected) void refreshTabs();
+      });
+    })();
+
+    return () => {
+      disposed = true;
+      offUrl?.();
+      offRuntime?.();
+      unsubscribeEvents?.();
+    };
+  }, [appendLog, refreshStatus, refreshTabs, scheduleSettle]);
+
   return {
     state,
     connect,
@@ -206,9 +410,17 @@ export function useTnfBrowser() {
     refreshTabs,
     navigate,
     reload,
+    goBack,
+    goForward,
+    createTab,
+    closeTab,
+    activateTab,
     takeScreenshot,
     discover,
     readHtml,
+    readFullHtml,
     click,
+    typeText,
+    keyPress,
   };
 }

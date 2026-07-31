@@ -30,7 +30,8 @@ export interface AuthContextType {
     options?: { cfTurnstileToken?: string }
   ) => Promise<any>;
   signInWithGoogle: () => Promise<any>;
-  signInWithMagicLink: (email: string) => Promise<any>;
+  signInWithGitHub: () => Promise<any>;
+  signInWithMagicLink: (email: string, nextPath?: string) => Promise<any>;
   forgotPassword: (email: string) => Promise<any>;
   resetPassword: (token: string, password: string) => Promise<any>;
   handleSSOCallback: (provider: string, code: string, state?: string | null) => Promise<any>;

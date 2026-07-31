@@ -3,7 +3,9 @@ import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useTheme } from '../providers/ThemeProvider';
 
+import { getVoicePort } from '../config/voiceBridge';
 import { resolveWebAppBaseUrl } from '../config/webSurfaces';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
 import { useSettingsStore } from '../stores/settingsStore';
 
@@ -13,8 +15,10 @@ import { useSettingsStore } from '../stores/settingsStore';
 const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { environment, setEnvironment, customApiUrl, setCustomApiUrl, apiUrl } = useSettingsStore();
+  const { state: synergy, rediscover } = useOperatorSynergy();
   const webAppUrl = resolveWebAppBaseUrl(environment);
   const [apiKey, setApiKey] = useState('');
+  const voicePort = getVoicePort();
 
   const settingsSections = [
     { id: 'connection', title: 'Connection', icon: '🌐' },
@@ -97,6 +101,28 @@ const Settings: React.FC = () => {
                   onChange={(e) => setCustomApiUrl(e.target.value)}
                 />
               )}
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Discovered local endpoints</label>
+                <p>
+                  API: <code className="url-code">{synergy.apiUrl}</code>
+                  {' · '}
+                  {synergy.apiOnline ? 'online' : 'offline'}
+                </p>
+                <p>
+                  Relay: <code className="url-code">{synergy.relayUrl}</code>
+                  {' · '}
+                  {synergy.relayConnected ? 'connected' : 'offline'}
+                </p>
+                <p>
+                  Voice: <code className="url-code">http://127.0.0.1:{voicePort}</code>
+                </p>
+              </div>
+              <button type="button" className="secondary-button" onClick={() => void rediscover()}>
+                Rediscover
+              </button>
             </div>
 
             <div className="setting-item">
@@ -216,9 +242,13 @@ const Settings: React.FC = () => {
             <h2 className="section-title">ℹ️ About</h2>
             <div className="about-info">
               <div className="app-info">
-                <span className="app-icon">🔥</span>
+                <img
+                  src="https://thenewfuse.com/assets/brand/tnf-logo.png"
+                  alt="TNF Logo"
+                  className="brand-logo"
+                />
                 <div>
-                  <h3>TNF (The New Fuse) Desktop App</h3>
+                  <h3>The New Fuse Desktop</h3>
                   <p>Version 4.1.0</p>
                 </div>
               </div>
@@ -493,8 +523,12 @@ const Settings: React.FC = () => {
           margin-bottom: 16px;
         }
 
-        .app-icon {
-          font-size: 48px;
+        .brand-logo {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          object-fit: cover;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .app-info h3 {

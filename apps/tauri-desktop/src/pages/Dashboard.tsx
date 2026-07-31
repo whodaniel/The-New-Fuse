@@ -5,7 +5,6 @@ import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
-import BrowserControlService from '../services/BrowserControlService';
 import FederationNodeService from '../services/FederationNodeService';
 
 const NetworkGraph = lazy(() =>
@@ -24,7 +23,6 @@ const Dashboard: React.FC = () => {
 
   const handleEmergencyStop = () => {
     FederationNodeService.disconnect();
-    BrowserControlService.disconnect();
     setConfirmStopOpen(false);
   };
 

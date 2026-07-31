@@ -1,7 +1,5 @@
 
 > @the-new-fuse/jules-skill@0.1.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill
-> echo "No tests for this package" && exit 0 --passWithNoTests
+> echo "No tests for this package" && exit 0
 
 No tests for this package
-sh: line 0: exit: too many arguments
- ELIFECYCLE  Test failed. See above for more details.

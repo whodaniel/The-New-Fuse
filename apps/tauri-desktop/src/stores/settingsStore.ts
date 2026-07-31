@@ -7,7 +7,6 @@ import {
   type TnfDesktopEnvironment,
 } from '../config/endpoints';
 import { safeStorage } from '../lib/safeStorage';
-import BrowserControlService from '../services/BrowserControlService';
 import FederationNodeService from '../services/FederationNodeService';
 import apiService from '../services/api';
 import wsService from '../services/websocket';
@@ -65,7 +64,6 @@ export const useSettingsStore = create<SettingsState>()(
           wsService.setUrl(wsUrl);
         }
         if (relayUrl) {
-          BrowserControlService.setRelayUrl(relayUrl);
           FederationNodeService.setRelayUrl(relayUrl);
         }
       },
@@ -99,7 +97,6 @@ export const useSettingsStore = create<SettingsState>()(
         }
         if (state?.environment && state.environment !== 'custom') {
           const relayUrl = ENV_CONFIG[state.environment].relay;
-          BrowserControlService.setRelayUrl(relayUrl);
           FederationNodeService.setRelayUrl(relayUrl);
         }
       },

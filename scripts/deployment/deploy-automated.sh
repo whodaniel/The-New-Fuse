@@ -116,8 +116,8 @@ check_prerequisites() {
 
   # Check CloudRuntime CLI if deploying to CloudRuntime
   if [[ "$ENVIRONMENT" == "production" || "$ENVIRONMENT" == "staging" ]]; then
-    if ! command -v cloud_runtime &> /dev/null; then
-      log WARNING "CloudRuntime CLI not found. Install with: npm install -g @cloud_runtime/cli"
+    if true; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+      log WARNING "CloudRuntime CLI not found. Install with: gcloud components install (or install Google Cloud SDK)"
       log WARNING "CloudRuntime deployments will be skipped"
     else
       log SUCCESS "CloudRuntime CLI found"
@@ -467,11 +467,11 @@ deploy_service() {
   fi
 
   # Check if CloudRuntime CLI is available
-  if command -v cloud_runtime &> /dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
     log INFO "Deploying $service to CloudRuntime..."
 
     cd "$service_path"
-    cloud_runtime up --detach || {
+    scripts/deployment/gcp-deploy.sh || {
       log ERROR "CloudRuntime deployment failed for $service"
       cd "$PROJECT_ROOT"
       return 1
@@ -530,9 +530,9 @@ check_service_health() {
   # This is a placeholder - actual implementation would check CloudRuntime service health
   # via CloudRuntime API or health check endpoints
 
-  if command -v cloud_runtime &> /dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
     # Check CloudRuntime service status
-    cloud_runtime status --service "$service" &>/dev/null || {
+    gcloud run services list --service "$service" &>/dev/null || {
       log WARNING "$service health check failed (may not be deployed)"
       return 1
     }
@@ -739,9 +739,9 @@ main() {
   echo ""
 
   echo -e "${BOLD}Next Steps:${NC}"
-  echo "  - Monitor service health: cloud_runtime status"
-  echo "  - View logs: cloud_runtime logs"
-  echo "  - Check metrics: cloud_runtime metrics"
+  echo "  - Monitor service health: gcloud run services list"
+  echo "  - View logs: gcloud run services logs read"
+  echo "  - Check metrics: gcloud monitoring / Cloud Run metrics"
   echo ""
 }
 

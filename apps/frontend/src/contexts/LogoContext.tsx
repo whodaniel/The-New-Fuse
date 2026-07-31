@@ -1,10 +1,11 @@
 // @ts-nocheck
 import { createContext, useContext, useEffect, useState } from 'react';
+import { TNF_LOGO_SRC } from '../components/brand/TnfLogo';
 import DefaultLoginLogoLight from '../media/illustrations/login-logo.svg';
-const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
-const TNFLogo = TNF_LOGO_URL;
-import TNFLogoAbstract from '/assets/brand/logo-abstract-gradient.png';
 import System from '../models/system';
+import TNFLogoAbstract from '/assets/brand/logo-abstract-gradient.png';
+const TNF_LOGO_URL = TNF_LOGO_SRC;
+const TNFLogo = TNF_LOGO_URL;
 
 export const REFETCH_LOGO_EVENT = 'refetch-logo';
 const LogoContext = createContext(null);

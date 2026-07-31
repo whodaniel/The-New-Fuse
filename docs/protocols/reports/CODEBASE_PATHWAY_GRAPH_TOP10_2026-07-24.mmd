@@ -1,0 +1,237 @@
+%% TNF Top-10 Pathways — 2026-07-24 (post coherence audit 9c7e6bd7a1)
+%% Soft = open fail-open gaps; green stroke = fail-closed / closed gaps
+flowchart TB
+  classDef entry fill:#2563eb,color:#fff,stroke:#1e3a8a
+  classDef handler fill:#059669,color:#fff,stroke:#065f46
+  classDef gate fill:#d97706,color:#fff,stroke:#92400e
+  classDef store fill:#7c3aed,color:#fff,stroke:#5b21b6
+  classDef cli fill:#0891b2,color:#fff,stroke:#155e75
+  classDef bus fill:#dc2626,color:#fff,stroke:#991b1b
+  classDef soft stroke:#ef4444,stroke-width:3px
+  classDef failclosed stroke:#16a34a,stroke-width:3px
+
+  subgraph pw-a2a-inbound["1. Redis A2A inbound chokepoint"]
+    direction TB
+    entry-redis-agent-client__pw-a2a-inbound("RedisAgentClient")
+    handler-handle-incoming__pw-a2a-inbound["handleIncomingMessage"]
+    gate-message-auth__pw-a2a-inbound{"authenticateEnvelope / tnf-message-auth"}
+    handler-normalize-message__pw-a2a-inbound["normalizeIncomingMessage"]
+    gate-authority-consumer__pw-a2a-inbound{"TNF_AUTHORITY_CONSUMER"}
+    handler-gate-and-dispatch__pw-a2a-inbound["gateAndDispatch"]
+    handler-dispatch-handlers__pw-a2a-inbound["dispatchToHandlers"]
+    bus-tnf-agents__pw-a2a-inbound(("tnf:agents"))
+    entry-redis-agent-client__pw-a2a-inbound -->|"subscriber message/pmessage"| handler-handle-incoming__pw-a2a-inbound
+    handler-handle-incoming__pw-a2a-inbound -->|"authenticateEnvelope"| gate-message-auth__pw-a2a-inbound
+    gate-message-auth__pw-a2a-inbound -->|"if not reject"| handler-normalize-message__pw-a2a-inbound
+    handler-normalize-message__pw-a2a-inbound -->|"type===task"| gate-authority-consumer__pw-a2a-inbound
+    gate-authority-consumer__pw-a2a-inbound -->|"when enabled"| handler-gate-and-dispatch__pw-a2a-inbound
+    handler-gate-and-dispatch__pw-a2a-inbound -->|"if allowed"| handler-dispatch-handlers__pw-a2a-inbound
+    gate-authority-consumer__pw-a2a-inbound -->|"when disabled or non-gated"| handler-dispatch-handlers__pw-a2a-inbound
+  end
+
+  subgraph pw-authority-elevation["2. Authority elevation hold and approve"]
+    direction TB
+    handler-gate-and-dispatch__pw-authority-elevation["gateAndDispatch"]
+    handler-wrapper-gate-task__pw-authority-elevation["gateTask"]
+    handler-authority-client__pw-authority-elevation["tnf-authority-client"]
+    store-elevation-pending__pw-authority-elevation[("elevation pending/decided dirs")]
+    cli-tnf-authority__pw-authority-elevation{{"tnf-authority.cjs"}}
+    gate-elevation-decide__pw-authority-elevation{"elevation decide (operator only)"}
+    handler-capability-grant__pw-authority-elevation["tnf-capability-grant"]
+    store-elevation-audit__pw-authority-elevation[("elevation.jsonl")]
+    handler-gate-and-dispatch__pw-authority-elevation -->|"calls"| handler-wrapper-gate-task__pw-authority-elevation
+    handler-wrapper-gate-task__pw-authority-elevation -->|"withElevation"| handler-authority-client__pw-authority-elevation
+    handler-authority-client__pw-authority-elevation -->|"submit"| store-elevation-pending__pw-authority-elevation
+    cli-tnf-authority__pw-authority-elevation -->|"approve/deny"| gate-elevation-decide__pw-authority-elevation
+    gate-elevation-decide__pw-authority-elevation -->|"on approve"| handler-capability-grant__pw-authority-elevation
+    gate-elevation-decide__pw-authority-elevation -->|"writes"| store-elevation-audit__pw-authority-elevation
+  end
+
+  subgraph pw-relay-ws-redis["3. Relay WebSocket to Redis bridge"]
+    direction TB
+    entry-standalone-relay__pw-relay-ws-redis("TNFRelayServer / tnf-relay")
+    handler-redis-relay-bridge__pw-relay-ws-redis["RedisRelayBridge"]
+    handler-stringify-signed-bus__pw-relay-ws-redis["stringifySignedBusMessage"]
+    bus-tnf-ingress__pw-relay-ws-redis(("tnf:bus:ingress"))
+    bus-tnf-egress__pw-relay-ws-redis(("tnf:bus:egress: agentId"))
+    entry-redis-agent-client__pw-relay-ws-redis("RedisAgentClient")
+    entry-standalone-relay__pw-relay-ws-redis -->|"uses"| handler-redis-relay-bridge__pw-relay-ws-redis
+    handler-redis-relay-bridge__pw-relay-ws-redis -->|"ingress / publishToIngress"| handler-stringify-signed-bus__pw-relay-ws-redis
+    handler-redis-relay-bridge__pw-relay-ws-redis -->|"publishToAgent egress"| handler-stringify-signed-bus__pw-relay-ws-redis
+    handler-redis-relay-bridge__pw-relay-ws-redis -.->|"via stringifySignedBusMessage"| bus-tnf-ingress__pw-relay-ws-redis
+    bus-tnf-egress__pw-relay-ws-redis -->|"subscribes"| handler-redis-relay-bridge__pw-relay-ws-redis
+    bus-tnf-ingress__pw-relay-ws-redis -->|"feeds"| entry-redis-agent-client__pw-relay-ws-redis
+  end
+
+  subgraph pw-master-clock["4. Master Clock orchestration daemon"]
+    direction TB
+    entry-master-clock__pw-master-clock("MasterClock")
+    handler-mc-heartbeat__pw-master-clock["master-clock heartbeat loop"]
+    handler-mc-stall__pw-master-clock["stall detection"]
+    handler-mc-task-scheduler__pw-master-clock["TaskSchedulerService"]
+    store-redis-master-keys__pw-master-clock[("tnf:master:*")]
+    entry-standalone-relay__pw-master-clock("TNFRelayServer / tnf-relay")
+    entry-api-main__pw-master-clock("apps/api bootstrap")
+    entry-master-clock__pw-master-clock -->|"starts"| handler-mc-heartbeat__pw-master-clock
+    entry-master-clock__pw-master-clock -->|"starts"| handler-mc-stall__pw-master-clock
+    entry-master-clock__pw-master-clock -->|"uses"| handler-mc-task-scheduler__pw-master-clock
+    entry-master-clock__pw-master-clock -->|"writes"| store-redis-master-keys__pw-master-clock
+    entry-master-clock__pw-master-clock -->|"RELAY_URL"| entry-standalone-relay__pw-master-clock
+    entry-master-clock__pw-master-clock -->|"LEDGER_API_BASE"| entry-api-main__pw-master-clock
+  end
+
+  subgraph pw-api-http["5. apps/api Nest HTTP"]
+    direction TB
+    entry-api-main__pw-api-http("apps/api bootstrap")
+    gate-security-guard__pw-api-http{"SecurityGuard (APP_GUARD)"}
+    gate-secure-auth__pw-api-http{"SecureAuthGuard (APP_GUARD)"}
+    handler-api-controllers__pw-api-http["Nest API controllers"]
+    store-drizzle-db__pw-api-http[("Drizzle/DB")]
+    entry-api-main__pw-api-http -->|"applies"| gate-security-guard__pw-api-http
+    gate-security-guard__pw-api-http -->|"then"| gate-secure-auth__pw-api-http
+    gate-secure-auth__pw-api-http -->|"allows"| handler-api-controllers__pw-api-http
+    handler-api-controllers__pw-api-http -->|"reads_writes"| store-drizzle-db__pw-api-http
+  end
+
+  subgraph pw-a2a-outbound["6. Redis A2A signed outbound"]
+    direction TB
+    handler-send__pw-a2a-outbound["send/broadcast/command"]
+    gate-message-auth__pw-a2a-outbound{"authenticateEnvelope / tnf-message-auth"}
+    bus-tnf-agents__pw-a2a-outbound(("tnf:agents"))
+    bus-tnf-conversations__pw-a2a-outbound(("tnf:conversations"))
+    handler-send__pw-a2a-outbound -->|"signMessage"| gate-message-auth__pw-a2a-outbound
+    handler-send__pw-a2a-outbound -->|"publishes"| bus-tnf-agents__pw-a2a-outbound
+    handler-send__pw-a2a-outbound -->|"publishes"| bus-tnf-conversations__pw-a2a-outbound
+  end
+
+  subgraph pw-broker-agent["7. Broker agent dispatch"]
+    direction TB
+    entry-broker-agent__pw-broker-agent("BrokerAgent")
+    handler-broker-policy__pw-broker-agent["broker local policy gate"]
+    handler-stringify-signed-bus__pw-broker-agent["stringifySignedBusMessage"]
+    store-agent-registry__pw-broker-agent[("tnf:agent-registry")]
+    bus-tnf-egress__pw-broker-agent(("tnf:bus:egress: agentId"))
+    bus-tnf-ingress__pw-broker-agent(("tnf:bus:ingress"))
+    pub-broker-heartbeat-unsigned__pw-broker-agent(("BrokerAgent heartbeat (unsigned JSON)"))
+    entry-broker-agent__pw-broker-agent -->|"reads"| store-agent-registry__pw-broker-agent
+    entry-broker-agent__pw-broker-agent -->|"calls"| handler-broker-policy__pw-broker-agent
+    entry-broker-agent__pw-broker-agent -.->|"task envelope publish"| handler-stringify-signed-bus__pw-broker-agent
+    handler-broker-policy__pw-broker-agent -.->|"signed task envelope → egress/ingress"| handler-stringify-signed-bus__pw-broker-agent
+    handler-stringify-signed-bus__pw-broker-agent -->|"after stringifySignedBusMessage"| bus-tnf-egress__pw-broker-agent
+    entry-broker-agent__pw-broker-agent -.->|"publishes"| pub-broker-heartbeat-unsigned__pw-broker-agent
+  end
+
+  subgraph pw-frontend-spa["8. Frontend SPA routes and API clients"]
+    direction TB
+    entry-frontend-router__pw-frontend-spa("ComprehensiveRouter")
+    gate-require-auth__pw-frontend-spa{"RequireAuth"}
+    handler-frontend-api-client__pw-frontend-spa["frontend API clients"]
+    entry-api-gateway-main__pw-frontend-spa("apps/api-gateway bootstrap")
+    entry-api-main__pw-frontend-spa("apps/api bootstrap")
+    entry-frontend-router__pw-frontend-spa -->|"wraps"| gate-require-auth__pw-frontend-spa
+    entry-frontend-router__pw-frontend-spa -->|"uses"| handler-frontend-api-client__pw-frontend-spa
+    handler-frontend-api-client__pw-frontend-spa -->|"/api/v1"| entry-api-gateway-main__pw-frontend-spa
+    handler-frontend-api-client__pw-frontend-spa -->|"http"| entry-api-main__pw-frontend-spa
+  end
+
+  subgraph pw-api-gateway["9. API gateway edge"]
+    direction TB
+    entry-api-gateway-main__pw-api-gateway("apps/api-gateway bootstrap")
+    handler-gateway-controllers__pw-api-gateway["gateway controllers"]
+    gate-gateway-auth__pw-api-gateway{"gateway-auth.guard"}
+    entry-api-main__pw-api-gateway("apps/api bootstrap")
+    entry-backend__pw-api-gateway("apps/backend Nest app")
+    entry-api-gateway-main__pw-api-gateway -->|"routes"| handler-gateway-controllers__pw-api-gateway
+    handler-gateway-controllers__pw-api-gateway -->|"guards"| gate-gateway-auth__pw-api-gateway
+    handler-gateway-controllers__pw-api-gateway -->|"proxies"| entry-api-main__pw-api-gateway
+    handler-gateway-controllers__pw-api-gateway -->|"proxies"| entry-backend__pw-api-gateway
+  end
+
+  subgraph pw-cred-broker["10. Credential broker spend"]
+    direction TB
+    handler-authority-client__pw-cred-broker["tnf-authority-client"]
+    handler-cred-broker__pw-cred-broker["tnf-cred-broker.invoke"]
+    gate-cred-action-registry__pw-cred-broker{"broker action registry"}
+    gate-cred-grant-verify__pw-cred-broker{"grant must allow account:action"}
+    gate-cred-readonly__pw-cred-broker{"phase 4a mutating refuse"}
+    gate-cred-trust-root__pw-cred-broker{"trust-root-too-weak policy"}
+    store-os-keystore__pw-cred-broker[("OS keystore secret fetch")]
+    store-broker-audit__pw-cred-broker[("broker.jsonl")]
+    handler-authority-client__pw-cred-broker -->|"useCredential"| handler-cred-broker__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"checks"| gate-cred-action-registry__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"checks"| gate-cred-grant-verify__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"checks"| gate-cred-readonly__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"checks"| gate-cred-trust-root__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"reads"| store-os-keystore__pw-cred-broker
+    handler-cred-broker__pw-cred-broker -->|"writes"| store-broker-audit__pw-cred-broker
+  end
+
+  class entry-redis-agent-client__pw-a2a-inbound entry
+  class handler-handle-incoming__pw-a2a-inbound handler
+  class gate-message-auth__pw-a2a-inbound gate
+  class handler-normalize-message__pw-a2a-inbound handler
+  class gate-authority-consumer__pw-a2a-inbound gate
+  class handler-gate-and-dispatch__pw-a2a-inbound handler
+  class handler-gate-and-dispatch__pw-a2a-inbound failclosed
+  class handler-dispatch-handlers__pw-a2a-inbound handler
+  class bus-tnf-agents__pw-a2a-inbound bus
+  class handler-gate-and-dispatch__pw-authority-elevation handler
+  class handler-gate-and-dispatch__pw-authority-elevation failclosed
+  class handler-wrapper-gate-task__pw-authority-elevation handler
+  class handler-authority-client__pw-authority-elevation handler
+  class store-elevation-pending__pw-authority-elevation store
+  class cli-tnf-authority__pw-authority-elevation cli
+  class gate-elevation-decide__pw-authority-elevation gate
+  class handler-capability-grant__pw-authority-elevation handler
+  class store-elevation-audit__pw-authority-elevation store
+  class entry-standalone-relay__pw-relay-ws-redis entry
+  class handler-redis-relay-bridge__pw-relay-ws-redis handler
+  class handler-stringify-signed-bus__pw-relay-ws-redis handler
+  class bus-tnf-ingress__pw-relay-ws-redis bus
+  class bus-tnf-egress__pw-relay-ws-redis bus
+  class entry-redis-agent-client__pw-relay-ws-redis entry
+  class entry-master-clock__pw-master-clock entry
+  class handler-mc-heartbeat__pw-master-clock handler
+  class handler-mc-stall__pw-master-clock handler
+  class handler-mc-task-scheduler__pw-master-clock handler
+  class store-redis-master-keys__pw-master-clock store
+  class entry-standalone-relay__pw-master-clock entry
+  class entry-api-main__pw-master-clock entry
+  class entry-api-main__pw-api-http entry
+  class gate-security-guard__pw-api-http gate
+  class gate-secure-auth__pw-api-http gate
+  class gate-secure-auth__pw-api-http failclosed
+  class handler-api-controllers__pw-api-http handler
+  class store-drizzle-db__pw-api-http store
+  class handler-send__pw-a2a-outbound handler
+  class gate-message-auth__pw-a2a-outbound gate
+  class bus-tnf-agents__pw-a2a-outbound bus
+  class bus-tnf-conversations__pw-a2a-outbound bus
+  class entry-broker-agent__pw-broker-agent entry
+  class handler-broker-policy__pw-broker-agent handler
+  class handler-stringify-signed-bus__pw-broker-agent handler
+  class store-agent-registry__pw-broker-agent store
+  class bus-tnf-egress__pw-broker-agent bus
+  class bus-tnf-ingress__pw-broker-agent bus
+  class pub-broker-heartbeat-unsigned__pw-broker-agent bus
+  class pub-broker-heartbeat-unsigned__pw-broker-agent soft
+  class entry-frontend-router__pw-frontend-spa entry
+  class gate-require-auth__pw-frontend-spa gate
+  class handler-frontend-api-client__pw-frontend-spa handler
+  class entry-api-gateway-main__pw-frontend-spa entry
+  class entry-api-main__pw-frontend-spa entry
+  class entry-api-gateway-main__pw-api-gateway entry
+  class handler-gateway-controllers__pw-api-gateway handler
+  class gate-gateway-auth__pw-api-gateway gate
+  class entry-api-main__pw-api-gateway entry
+  class entry-backend__pw-api-gateway entry
+  class handler-authority-client__pw-cred-broker handler
+  class handler-cred-broker__pw-cred-broker handler
+  class gate-cred-action-registry__pw-cred-broker gate
+  class gate-cred-grant-verify__pw-cred-broker gate
+  class gate-cred-readonly__pw-cred-broker gate
+  class gate-cred-readonly__pw-cred-broker failclosed
+  class gate-cred-trust-root__pw-cred-broker gate
+  class gate-cred-trust-root__pw-cred-broker failclosed
+  class store-os-keystore__pw-cred-broker store
+  class store-broker-audit__pw-cred-broker store

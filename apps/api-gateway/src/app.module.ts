@@ -10,6 +10,7 @@ import { AgentGatewayModule } from './gateway/agent-gateway.module';
 import { AnalyticsGatewayModule } from './gateway/analytics-gateway.module';
 import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
+import { LocalRuntimeGatewayModule } from './gateway/local-runtime-gateway.module';
 import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
 import { PokerGatewayModule } from './gateway/poker-gateway.module';
@@ -44,6 +45,7 @@ import { ProxyModule } from './proxy/proxy.module';
     MarketplaceGatewayModule,
     ResourcesGatewayModule,
     IdeGatewayModule,
+    LocalRuntimeGatewayModule,
     PokerGatewayModule,
     SgpGatewayModule,
     SystemGatewayModule,

@@ -1,8 +1,10 @@
 // @ts-nocheck
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
+import { stashDeepLinkNext } from '@/services/authSession';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { TnfLogo } from '../../components/brand/TnfLogo';
 
 const isTruthy = (value: string | undefined): boolean => {
   if (!value) return false;
@@ -49,6 +51,7 @@ const Login: React.FC = () => {
     isLoading: isAuthLoading,
     login,
     signInWithGoogle,
+    signInWithGitHub,
     signInWithMagicLink,
   } = useAuth();
   const navigate = useNavigate();
@@ -65,6 +68,11 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const nextPath = searchParams.get('next') || searchParams.get('redirect') || '/dashboard';
+
+  useEffect(() => {
+    stashDeepLinkNext(nextPath);
+  }, [nextPath]);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
@@ -96,14 +104,16 @@ const Login: React.FC = () => {
 
     const redirectCount = parseInt(sessionStorage.getItem(LOGIN_REDIRECT_COUNT_KEY) || '0', 10);
     if (redirectCount > 2) {
-      console.warn('[Login] Redirect loop detected — clearing sessionStorage and staying on login.');
+      console.warn(
+        '[Login] Redirect loop detected — clearing sessionStorage and staying on login.'
+      );
       sessionStorage.removeItem(LOGIN_REDIRECT_COUNT_KEY);
       return;
     }
 
     sessionStorage.setItem(LOGIN_REDIRECT_COUNT_KEY, String(redirectCount + 1));
-    navigate('/dashboard', { replace: true });
-  }, [isAuthenticated, isAuthLoading, navigate]);
+    navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
+  }, [isAuthenticated, isAuthLoading, navigate, nextPath]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -116,9 +126,10 @@ const Login: React.FC = () => {
       }
 
       const result = await login(email, password, {
-        cfTurnstileToken: cfTurnstileToken && cfTurnstileToken !== ' bypass' ? cfTurnstileToken : undefined,
+        cfTurnstileToken:
+          cfTurnstileToken && cfTurnstileToken !== ' bypass' ? cfTurnstileToken : undefined,
       });
-      if (result) navigate('/dashboard', { replace: true });
+      if (result) navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid email or password';
       setError(message);
@@ -131,13 +142,29 @@ const Login: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
+      stashDeepLinkNext(nextPath);
       const result = await signInWithGoogle();
-      if (result?.method !== 'google_redirect') {
-        navigate('/dashboard', { replace: true });
-      }
+      // google_redirect leaves the page; keep the spinner until navigation happens.
+      if (result?.method === 'google_redirect') return;
+      navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
     } catch (err: unknown) {
-      setError(err?.message || 'Google sign-in failed');
-    } finally {
+      const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      setError(message || 'Google sign-in failed');
+      setIsLoading(false);
+    }
+  };
+
+  const handleGitHubSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      stashDeepLinkNext(nextPath);
+      const result = await signInWithGitHub();
+      if (result?.method === 'github_redirect') return;
+      navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      setError(message || 'GitHub sign-in failed');
       setIsLoading(false);
     }
   };
@@ -150,7 +177,7 @@ const Login: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      await signInWithMagicLink(email);
+      await signInWithMagicLink(email, nextPath.startsWith('/') ? nextPath : '/dashboard');
       setError('Magic link sent. Check your inbox to continue.');
     } catch (err: unknown) {
       setError(err?.message || 'Failed to send magic link');
@@ -162,6 +189,9 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
       <div className="w-full max-w-md rounded-md border border-slate-800 bg-slate-900 p-4">
+        <div className="mb-6 flex justify-center">
+          <TnfLogo size={48} showWordmark wordmarkClassName="text-lg text-white" />
+        </div>
         <h1 className="text-2xl font-semibold text-white">Sign in</h1>
         <p className="mt-2 text-sm text-slate-400">New Cloudflare-ready auth flow</p>
 
@@ -212,12 +242,25 @@ const Login: React.FC = () => {
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Signing in...
               </span>
-            ) : 'Sign in'}
+            ) : (
+              'Sign in'
+            )}
           </button>
 
           {requireTurnstile && turnstileSiteKey && (
@@ -231,14 +274,22 @@ const Login: React.FC = () => {
           )}
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
           <button
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
             className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
-            Continue with Google
+            Connect with Google
+          </button>
+          <button
+            type="button"
+            onClick={handleGitHubSignIn}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          >
+            Connect with GitHub
           </button>
         </div>
 

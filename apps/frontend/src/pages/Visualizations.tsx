@@ -1,3 +1,4 @@
+import { ZoneBadge } from '@/components/control-surface';
 import { authFetch } from '@/utils/authToken';
 import {
   Activity,
@@ -152,6 +153,7 @@ type VisualizationSection = {
   id: string;
   label: string;
   summary: string;
+  zone: 'system' | 'personal';
   items: VisualizationSurface[];
 };
 
@@ -262,9 +264,47 @@ const TIME_SCALES = [0.5, 1, 2, 4];
 
 const VISUALIZATION_SECTIONS: VisualizationSection[] = [
   {
+    id: 'personal-workspace',
+    label: 'Personal Workspace',
+    summary:
+      'Live surfaces reflecting your own machine and work: terminal windows as they are arranged on your desktop.',
+    zone: 'personal',
+    items: [
+      {
+        title: 'Terminal Mirror',
+        description:
+          'Miniature live replica of your local terminal windows in their real on-screen arrangement.',
+        href: '/terminals/mirror',
+        tags: ['Route', 'Terminal', 'Live'],
+        status: 'stable',
+        integration: 'native-route',
+      },
+    ],
+  },
+  {
+    id: 'protocol-axes',
+    label: 'Protocol Axes',
+    summary:
+      'Canonical DACC taxonomy surfaces: baton identity, daccRole, workerAction/capabilities, and platform are orthogonal.',
+    zone: 'system',
+    items: [
+      {
+        title: 'DACC Role × Platform Axes',
+        description:
+          'Corrected taxonomy viz: baton=master-clock only; any agent can hold any role; platforms are not seats.',
+        href: '/visualizations/graphs/dacc-role-platform-axes.html',
+        tags: ['DACC', 'Taxonomy', 'Protocol'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+    ],
+  },
+  {
     id: 'agent-graphs',
     label: 'Agent Relationship Graphs',
-    summary: 'Domain-level subgraphs generated from the relationship graph artifact pipeline.',
+    summary:
+      'Domain-level subgraphs from the relationship graph pipeline. Cluster labels are work domains, not baton seats — see Protocol Axes.',
+    zone: 'system',
     items: [
       {
         title: 'Content Domain Subgraph',
@@ -329,6 +369,7 @@ const VISUALIZATION_SECTIONS: VisualizationSection[] = [
     label: 'System Views',
     summary:
       'Runtime, architecture, and telemetry surfaces used for operational and workflow debugging.',
+    zone: 'system',
     items: [
       {
         title: 'Terminal Graph View',
@@ -402,12 +443,31 @@ const VISUALIZATION_SECTIONS: VisualizationSection[] = [
         status: 'needs-work',
         integration: 'static-html',
       },
+      {
+        title: 'Semantic Hub (Reports Index)',
+        description:
+          'Index of the distributed semantic reports — concordance, unified graph, and 19 discovered TNF visualizations.',
+        href: '/visualizations/semantic/index.html',
+        tags: ['Semantic', 'Hub'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Unified Semantic Graph Explorer',
+        description:
+          'Cross-system graph explorer joining wiki backlinks, concept KG, codebase map, agent graphs, knowledge tree, handoff lineage, and corpus terms into one searchable visualization.',
+        href: '/visualizations/semantic/unified_graph_explorer.html',
+        tags: ['Graph', 'Semantic'],
+        status: 'stable',
+        integration: 'static-html',
+      },
     ],
   },
   {
     id: 'docs-and-briefs',
     label: 'Docs And Briefs',
     summary: 'Supporting documentation linked to visualization systems and integration patterns.',
+    zone: 'system',
     items: [
       {
         title: 'AG-UI Integration Analysis',
@@ -1412,6 +1472,7 @@ const Visualizations: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Network className="h-4 w-4 text-cyan-300" />
                     <h3 className="text-lg font-semibold text-white">{section.label}</h3>
+                    <ZoneBadge zone={section.zone} />
                   </div>
                   <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
                     {section.items.length} surfaces

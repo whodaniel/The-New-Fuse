@@ -160,15 +160,16 @@ export function OAuthInstanceRotationControl() {
   ]);
 
   const verifyCommand = useMemo(() => {
-    const checks = [
-      '.OPENCLAW_MODEL_PRIMARY',
-      '.OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY',
-      '.OPENCLAW_MODEL_FALLBACKS',
+    const names = [
+      'OPENCLAW_MODEL_PRIMARY',
+      'OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY',
+      'OPENCLAW_MODEL_FALLBACKS',
     ];
     if (provider === 'openai-codex') {
-      checks.unshift('.OPENAI_CODEX_ACCOUNT_ID', '.OPENCLAW_USE_CODEX_OAUTH');
+      names.unshift('OPENAI_CODEX_ACCOUNT_ID', 'OPENCLAW_USE_CODEX_OAUTH');
     }
-    return `cloud_runtime variable list --service ${service} --json | jq -r '${checks.join(', ')}'`;
+    const nameTest = names.join('|');
+    return `gcloud run services describe ${service} --region=\${TNF_GCP_REGION:-us-central1} --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name|test("${nameTest}")) | "\\(.name)=\\(.value)"'`;
   }, [provider, service]);
 
   function applyProviderDefaults(nextProvider: ProviderKey) {

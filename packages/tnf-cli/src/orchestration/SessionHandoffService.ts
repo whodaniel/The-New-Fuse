@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { createHash } from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { writeFileAtomic } from '../utils/safe-fs.js';
 
 export type HandoffRecord = {
   handoffId: string;
@@ -117,13 +118,14 @@ export class SessionHandoffService {
     const mdPath = this.resolve(HANDOFF_MD_PATH);
     fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
 
-    // Write JSON
-    fs.writeFileSync(jsonPath, JSON.stringify(record, null, 2), 'utf8');
+    // Atomic: a torn write here would crash the next boot (ProtocolInterceptor
+    // treats null handoff as a hard fail). writeFileAtomic stages to tmp and
+    // rename(2)s into place so readers always see a complete record.
+    writeFileAtomic(jsonPath, JSON.stringify(record, null, 2));
     console.log(chalk.green(`[Handoff] Wrote ${HANDOFF_JSON_PATH}`));
 
-    // Write Markdown
     const md = this.toMarkdown(record);
-    fs.writeFileSync(mdPath, md, 'utf8');
+    writeFileAtomic(mdPath, md);
     console.log(chalk.green(`[Handoff] Wrote ${HANDOFF_MD_PATH}`));
   }
 

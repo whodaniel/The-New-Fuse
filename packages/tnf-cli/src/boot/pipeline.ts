@@ -355,6 +355,35 @@ export function createBootPipeline(
       },
     },
     {
+      id: 'voice-kws-always-on',
+      label: 'Voice beam + KWS always-on',
+      critical: false,
+      launches: [
+        'bash scripts/system/tnf-voice-kws-boot.sh',
+        'audio-trigger-kws-mvp (:43110)',
+        'voice-beam-watchdog (server/listen/stream_watch/reply-audio)',
+      ],
+      notes: [
+        'KWS + mic listen stay up by default for every TNF boot (VOICE_KWS_ALWAYS_ON=1).',
+        'Heal loop: scripts/system/voice-beam-watchdog.sh also restarts KWS when down.',
+        'Disable with VOICE_KWS_ALWAYS_ON=0 if needed.',
+      ],
+      action: async () => {
+        const bootScript = path.join(repoRoot, 'scripts/system/tnf-voice-kws-boot.sh');
+        if (!fs.existsSync(bootScript)) {
+          console.log(chalk.dim('   tnf-voice-kws-boot.sh missing; skipped'));
+          return;
+        }
+        await runCommand('bash', [bootScript], {
+          env: {
+            VOICE_KWS_ALWAYS_ON: process.env.VOICE_KWS_ALWAYS_ON || '1',
+            VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '1',
+            MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
+          },
+        });
+      },
+    },
+    {
       id: 'forefront',
       label: 'Browser control panel (forefront)',
       critical: false,

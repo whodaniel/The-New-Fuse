@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-
+# Sync TNF LLM routing env vars onto Cloud Run OpenClaw/ZeroClaw services.
 set -u
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
 
 BASE_URL="${TNF_LLM_ROUTING_API_BASE:-https://api-production-48f1.thenewfuse.com}"
 MAX_RETRIES="${MAX_RETRIES:-8}"
@@ -14,28 +18,11 @@ services=(
   "picoclaw-tester-v2:picoclaw-tester-v2"
 )
 
-if ! command -v cloud_runtime >/dev/null 2>&1; then
-  echo "ERROR: cloud_runtime CLI is not installed."
-  exit 1
-fi
+tnf_require_gcloud
 
-whoami_output="$(cloud_runtime whoami 2>&1 || true)"
-if [ -z "${whoami_output}" ]; then
-  echo "ERROR: unable to determine cloud_runtime auth state."
-  exit 1
-fi
-if echo "${whoami_output}" | grep -qi "Failed to fetch\|dns error\|lookup address"; then
-  echo "ERROR: CloudRuntime API is currently unreachable from this session."
-  echo "DETAIL: ${whoami_output}" | sed -n '1,2p'
-  exit 1
-fi
-if echo "${whoami_output}" | grep -qi "login\|not authenticated\|Unauthorized"; then
-  echo "ERROR: cloud_runtime CLI is not authenticated (run: cloud_runtime login)."
-  exit 1
-fi
-
-echo "Starting claw routing variable sync"
+echo "Starting claw routing variable sync (Cloud Run)"
 echo "TNF_LLM_ROUTING_API_BASE=${BASE_URL}"
+echo "Project/region: $(tnf_gcp_project) / $(tnf_gcp_region)"
 echo "MAX_RETRIES=${MAX_RETRIES}, SLEEP_SECONDS=${SLEEP_SECONDS}"
 echo
 
@@ -49,7 +36,7 @@ for pair in "${services[@]}"; do
 
   for attempt in $(seq 1 "${MAX_RETRIES}"); do
     echo "attempt ${attempt}/${MAX_RETRIES}"
-    if cloud_runtime variable set --service "${service}" \
+    if tnf_cloud_run_update_env "${service}" \
       "TNF_LLM_ROUTING_API_BASE=${BASE_URL}" \
       "TNF_LLM_TARGET=${target}"; then
       echo "OK: ${service}"
@@ -59,16 +46,16 @@ for pair in "${services[@]}"; do
     sleep "${SLEEP_SECONDS}"
   done
 
-  if [ "${ok}" -ne 1 ]; then
+  if [[ "${ok}" -ne 1 ]]; then
     echo "FAIL: ${service}"
     failed=$((failed + 1))
   fi
   echo
 done
 
-if [ "${failed}" -gt 0 ]; then
-  echo "Completed with failures: ${failed} service(s)"
-  exit 2
+if [[ "${failed}" -gt 0 ]]; then
+  echo "ERROR: ${failed} service(s) failed routing sync."
+  exit 1
 fi
 
-echo "Completed successfully for all claw services."
+echo "All routing vars synced."

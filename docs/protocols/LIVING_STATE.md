@@ -2,42 +2,183 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** C03/C04 verified green (contracts 23/23, core-monitoring
-PASS, api `tsc -b` exit 0) — next: optional gemini-bridge residual + full turbo
-C03/C04 rerun; await live Daniel handshake before master-clock cull; commit when
-requested **Project ID:** `TNF-SESSION` **Handoff:**
-`7b497037-01eb-48ac-9916-9b5177fc20fa` **Head:** `b9c1298e41e3` build) is clean
-apart from one environment-load-sensitive memory-threshold test, confirmed
-non-deterministic and not a real bug **Project ID:** `TNF-MONOREPO-HEALTH`
-**Handoff:** `c1b8b297-baba-482e-a0dd-9801a46e9616` **Head:** `13806d3f5980`
-`.verifier/whole-codebase/latest-rerun/SUMMARY.md` **Project ID:** `TNF-SESSION`
-**Handoff:** `e84e62c0-c3f8-469e-9c71-69855c7b9d01` **Head:** `fb12dac55ff7`
-tnf-cli, tnf-browser, .verifier) **Project ID:** `TNF-SESSION` **Handoff:**
-`8409363d-172d-49b8-9135-1bd612f879ac` **Head:** `1b83ed4c7e67`
-`tnf:agent-registry` (callableWorker). Continuity via
-`TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md`. Full-auto daemon restarted with
-`--skip-build` to avoid OOM stalls. Advance handoff targets `story-architect` +
-`librarian`. **Project ID:** `TNF-AUTONOMY` **Handoff:**
-`c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:** `4173f555ba25`
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`ed0bc749-f675-42d6-bcdd-4bd5adc5994c` **Head:** `16ffb646d646`
+handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).
+**Project ID:** `TNF-HANDOFF-LIFECYCLE` **Handoff:**
+`4d393466-34a4-4dc3-bbaa-af1680956fa1` **Head:** `9bdd3b6b147a` **Updated:**
+`2026-07-25T19:38:53Z`
 
-**Session note:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist when not on autonomy work. **Project ID:**
-`TNF-SESSION` **Handoff:** `c07ffb4a-6639-44a1-8fe3-5558a36c66dc` **Head:**
-`4173f555ba25`
+**Session note:** Cursor session closed logs for role⊥platform corrections,
+orphaned-inbox migration, graph regen/publish harden, and
+`HANDOFF_PACKET_LIFECYCLE` (verify→retire→archive). Live baton inbox residue
+must not be mass-deleted without verification evidence. Prior authority P0s
+remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
+`sudo tnf`). See `SESSION_HANDOFF_LATEST.json`.
 
-**Prior notes:** Continue priority queue from SESSION_HANDOFF when not on UI-IA
-work. (ghs.googlehosted.com). /about and /blog pages created with SPA routes.
-sync:repos verified. (gcp-deploy.sh / cloudbuild.yaml). **Project ID:**
-`LAUNCH-001` **Handoff:** `ef70c596-2124-40bd-952e-5239f3e042a0` **Head:**
-`baab5b2825e5` login at app.thenewfuse.com/auth/login. **Project ID:**
-`LAUNCH-001` **Handoff:** `30532802-3db1-429c-80f3-245a94a7cd75` **Head:**
-`199370ded064`
+**Prior notes:** Authority coherence audit mixed —
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`. Handoff
+`f82b041a-f2d2-4edd-9cc9-b546c74269ec` / head `9c7e6bd7a1`.
 
 ---
 
 ## ⚡ Active Steps
 
+- [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
+- [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
+- [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
+- [✅] 2026-07-28T10:44:05.760Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  voice-beam-watchdog.sh
+
+- [✅] 2026-07-26T16:49:21.106Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`
+  inbox migration; dual inbox keys; graph regen + safe publish; protocol
+  `docs/protocols/HANDOFF_PACKET_LIFECYCLE.md` + broker 15m sweep +
+  `pnpm run handoff:lifecycle:*`; tests 11/11. Handoff
+  `4d393466-34a4-4dc3-bbaa-af1680956fa1`. No commit (operator-gated).
+
+- [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
+- [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
+- [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
+- [✅] 2026-07-24T21:17:42.244Z System cron entries installed:
+- [✅] 2026-07-24T23:38:13.615Z System cron entries installed:
+- [✅] 2026-07-25T06:16:47.412Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T07:00:25.030Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T11:33:58.096Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-25T11:43:25.323Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [✅] 2026-07-24T05:34:57.132Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T16:26:08.521Z System cron entries installed:
+
+- [✅] 2026-07-24 **Qoder CLI agent assimilation complete (P9)** — Agent
+  registry class fixed: `agent-registry-bridge.ts` now propagates
+  `fulfillment` + `traits` upstream; `CLI_QODER` enum added;
+  `.agent/agents/qodercli.md` + `qoder-agent-onboarding` skill created;
+  `.tnf/agent-registry-snapshot.json` verified (327 agents, 0 errors). Broker
+  fulfillment-aware selection (`broker-agent.ts:980-1089`) now has data to route
+  on. Next: confirm broker dispatch with `--require-model qoder` and await
+  operator handshake for master-clock cull. tnf-frontend-tester (5m),
+  tnf-fleet-health-probe (15m)
+
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [✅] 2026-07-24T01:16:10.135Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:22:56.438Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-07-24T01:29:08.242Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [✅] **2026-07-24 RESOLVED: leaked credentials rotated (operator-reported).**
+  `apps/api/.env` + `.bak` copies + `CLOUD_MIGRATION_BLUEPRINT.md` history had
+  live Supabase/Upstash/JWT/encryption/sharedstate values. All rotated per
+  operator on 2026-07-24 (including Supabase DB password, reconfirmed 2026-07-24
+  afternoon), so the copies remaining in git history are now worthless — the
+  leak is closed whether or not history is ever rewritten. Follow-through still
+  useful: `ENCRYPTION_KEY` change reconciled with any data encrypted under the
+  old key via `tnf authority encrypt-rotate`; `JWT_SECRET` change invalidated
+  live sessions (re-login); `SHAREDSTATE_AUTH_TOKEN` change propagated to the
+  federation gate.
+- [✅] 2026-07-23 **Agent identity layer built (D23).** A2A signing was
+  decorative — an HMAC was attached and never verified, role was read off the
+  wire, `A2A_SECRET_KEY` was unset so `'default-secret'` was live, and the bus
+  was unauthenticated. Any local process could claim `local-director`. Fixed
+  across `14e59ae213` (verification + `patch.js` removal), Phase 1 identity /
+  operator-owned role registry, and `e09161b9e2` (per-agent Ed25519 binding —
+  symmetric keys were rejected as insufficient, since any peer able to verify an
+  agent could also forge as it). 51 tests / 4 suites; impersonation verified
+  closed end-to-end. Branch `fix/a2a-signature-verification`.
+- [✅] 2026-07-23 **Phase 2 built: capability grants + environment-adaptive
+  trust roots.** `tnf-capability-grant.cjs` — UCAN-shaped, 15m default / 60m
+  ceiling, task-bound, single-use, **attenuating** (a chain can only narrow,
+  enforced at issue AND verify, because issue-time checks are bypassable by
+  crafting a grant directly). `tnf-trust-root.cjs` — probes
+  `fido2 | secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid | os-keystore | file`
+  and picks the strongest that genuinely works, so one build adapts to any
+  environment. Contracts published to
+  `packages/control-plane-contracts/src/authority.ts` (public API boundary) so
+  the proprietary hosted root implements the same interface. 27 tests.
+- [✅] 2026-07-24 **`tnf-agent` OS account created (uid 442).** Operator ran
+  `scripts/setup/tnf-agent-account.sh`; operator key is 0600. Account alone is
+  not a boundary — see turn-up status below.
+- [⚠️] 2026-07-24 **Trust root NOT yet load-bearing despite isolation marker.**
+  A `launch-isolation-confirmed` marker was written under
+  `sudo tnf authority confirm-isolation`, but that was a **false pass**: under
+  sudo, `getuid()` is 0 so the straggler scan looked for root-owned workers and
+  missed jules/antigravity/pi still on uid 501. Marker is root-owned. Probe now
+  re-checks live workers and correctly reports weak guarantee when stragglers
+  exist. **Do not run `sudo tnf authority …`** — run as the normal user; sudo is
+  only for nested `sudo -u tnf-agent` drops.
+- [✅] 2026-07-24 **Authority consumer gate + TNF CLI surface.** Consumer gate
+  centralized at `RedisAgentClient.handleIncomingMessage` (`e01f85cc17`),
+  default-off via `TNF_AUTHORITY_CONSUMER`. `tnf authority` wired in
+  `packages/tnf-cli`
+  (`review|status|list|show|approve|deny|confirm-isolation| account|encrypt-rotate|workers|relaunch-workers`).
+  TNF launcher (`scripts/runtime/launch-agent-wrapper.sh`) drops to `tnf-agent`
+  when the account exists. Shared helpers in
+  `scripts/lib/tnf-authority-workers.cjs` (SUDO_UID-aware). Operator turn-up
+  runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`.
+- [🔑] 2026-07-24 **OPERATOR ACTION (turn-up remaining):** as normal user (not
+  `sudo tnf`): `tnf authority relaunch-workers` → `tnf authority workers`
+  (clean) → `tnf authority confirm-isolation` → `tnf authority status` (want
+  strong `separate-uid`). Then flip `TNF_AUTHORITY_CONSUMER=1` on one pilot. PR
+  #70 merge remains operator review. See runbook.
+- [✅] 2026-07-23 **Phase 3 built: elevation approval channel.**
+  `tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
+  (`status|list|show|approve|deny`). Agents may `submit()` (grants nothing);
+  `decide()` refuses from agent context — `TNF_AGENT_ID`/`AGENT_ID`, `CI`,
+  non-TTY stdin, or running as the agent account — and audits every refusal.
+  Approvals may narrow, never widen; the requester's role always comes from the
+  registry and a self-asserted role is recorded as a claim and ignored. 15
+  tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
+- [✅] 2026-07-23 **Interactive review console.** `tnf authority review` /
+  `node scripts/tnf-authority.cjs review` — requires a TTY, **no default
+  action** (bare Enter re-prompts, never approves), double confirmation
+  restating exactly what will be granted, warnings rendered above the decision
+  line, and the agent-written `justification` truncated + fenced as untrusted (a
+  prompt-injection attempt is in the fixtures). 14 tests.
+- [✅] 2026-07-24 **Phase 4a built: credential broker (read-only).**
+  `tnf-cred-broker.cjs` — an agent invokes a named operator-declared action; the
+  broker pulls the secret from the OS keystore, runs the action with it injected
+  out of band, scrubs the output, returns only the result. Four gates fail
+  closed (undeclared action / invalid grant / mutating / trust-root policy). A
+  degraded `file` root makes the broker MORE restrictive: read-only
+  non-sensitive only, mutating and `sensitive` refused. Output scrubbing covers
+  the error path. 16 tests. Verified live: balance returned with API key
+  scrubbed, payout refused. **Account mutation through TNF is not possible
+  today** — deferred until the trust root is a real boundary.
+- [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
+  every agent to hold an Ed25519 keypair and every node to have imported its
+  peers' public keys; flipping early silently drops traffic. See `.env.example`.
+
 1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
+
+- [✅] 2026-07-23T19:27:08.885Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [✅] 2026-07-23T18:46:20.014Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
+- [✅] 2026-07-23T05:37:54.740Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-07-22T22:21:12.398Z System cron entries installed:
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
@@ -758,4 +899,30 @@ and generated refactoring_consensus_report.md.
   hardened with \b boundaries to prevent false agent triggerings, and `pi` agent
   officially added to AGENT_COMMAND_HINTS. pi model settings updated to match
   hermes provider (nvidia) and model (minimaxai/minimax-m3) to resolve 410
-  errors.
+  errors. [CLASS:PRIME] [STATUS:RESOLVED] Handoff
+  1d37a0e4-6cb8-43c8-9f2d-216b4243689a (turn 11, 2026-07-24): commit executed
+  (HEAD b68d36d) with live Daniel Goldberg confirmation ("commit these 4
+  files"); AGENTS.md gate satisfied; SESSION_HANDOFF_LATEST.json updated;
+  next_actions cleared.
+- [✅] 2026-07-24T21:55:00.000Z Bulk-fix session initiated by Daniel Goldberg
+  ("fix all errors, bugs, omissions, and commit all"). Eight themed commits
+  produced, each cluster verified by tsc --noEmit and/or bash -n before commit:
+  (A) frontend link/landing dead-URL sweep, (B) audit-live-links allowlist +
+  crawler refresh, (C) CLI_QODER identity propagation across db schema,
+  classifier, snapshot, persona; fixed the agents-classify.ts unchanged-count
+  arithmetic which had produced stale unchanged=-114, (D) cron.ts rewritten
+  against the real relay-core redis keys (tnf:master:agents,
+  tnf:master:heartbeats) with fail-safe on no-redis, (E) relay-core bridge
+  preserves persona fulfillment+traits on AGENT_REGISTER; audio-trigger-ingest
+  tightens its missing-ingestApiKey fast-path and accepts x-edge-api-key, (F)
+  helper-script cleanups (build-doctor duplicate TS_RC=\$? artefact removed;
+  living-state-prober marker regex loosened so it captures the in-list "5. [⏳]"
+  form, not just the canonical "- [⏳]" checkbox)
+  - adds a token.json .gitignore rule to prevent future amplification of the
+    bearer credential, (G) marketplace SQL repointed at the live URLs
+    (servers-archived branches, multilingual-e5-large), (H) codebase_map.json +
+    tauri VirtualLibraryHub :not(style) selector fix + rolling-summary refresh,
+    (I) this session's docs / handoff / codepath graph artifacts committed. Each
+    commit cites the operator-confirmation lines explicitly. .gitignore
+    tightened to ignore packages/tnf-browser/extension/token.json going forward.
+    [CLASS:PRIME] [STATUS:RESOLVED]

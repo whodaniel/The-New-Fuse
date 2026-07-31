@@ -1,32 +1,32 @@
 {
   "summary": {
-    "startedAt": "2026-06-11T20:12:28.752Z",
-    "generatedAt": "2026-06-11T20:22:09.874Z",
-    "baseUrl": "https://thenewfuse.com",
+    "startedAt": "2026-07-27T06:10:06.471Z",
+    "generatedAt": "2026-07-27T06:18:37.464Z",
+    "baseUrl": "https://app.thenewfuse.com",
     "totalRoutes": 224,
     "hardBroken": 0,
-    "networkBroken": 4,
+    "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 13,
-    "rootHasAppRoot": false
+    "duplicateFingerprintGroups": 12,
+    "rootHasAppRoot": true
   },
   "rows": [
     {
       "route": "/",
-      "url": "https://thenewfuse.com/",
-      "finalUrl": "https://thenewfuse.com/",
-      "finalPath": "/",
+      "url": "https://app.thenewfuse.com/",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
-      "hasAppRoot": false,
-      "fingerprint": "31517bcc709ed07e0b6449f9440eb6d86c769804",
-      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
+      "h1": "Sign in",
+      "hasAppRoot": true,
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/3d-library",
-      "url": "https://thenewfuse.com/3d-library",
+      "url": "https://app.thenewfuse.com/3d-library",
       "finalUrl": "https://app.thenewfuse.com/3d-library",
       "finalPath": "/3d-library",
       "status": 200,
@@ -39,20 +39,20 @@
     },
     {
       "route": "/404",
-      "url": "https://thenewfuse.com/404",
+      "url": "https://app.thenewfuse.com/404",
       "finalUrl": "https://app.thenewfuse.com/404",
       "finalPath": "/404",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "404",
       "hasAppRoot": true,
-      "fingerprint": "d1e61a7e4f833adbf6399241b2253e601ccc2193",
+      "fingerprint": "a8dc45d05425d0db30039fb8608c81eba8e422ed",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/a2a-control",
-      "url": "https://thenewfuse.com/a2a-control",
+      "url": "https://app.thenewfuse.com/a2a-control",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -65,20 +65,20 @@
     },
     {
       "route": "/about",
-      "url": "https://thenewfuse.com/about",
-      "finalUrl": "https://app.thenewfuse.com/brand",
-      "finalPath": "/brand",
+      "url": "https://app.thenewfuse.com/about",
+      "finalUrl": "https://app.thenewfuse.com/about",
+      "finalPath": "/about",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "The New Fuse",
+      "h1": "The New FuseAutonomous Agent Control Plane",
       "hasAppRoot": true,
-      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
-      "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
+      "fingerprint": "47ff56181d767bcca7068a219e83723afd79feca",
+      "textPreview": "about the new fusethe new fuseautonomous agent control planea comprehensive platform for orchestrating autonomous ai agent swarms, managing relay communication, and scaling fleet operations — no babysitting required.why "
     },
     {
       "route": "/admin",
-      "url": "https://thenewfuse.com/admin",
+      "url": "https://app.thenewfuse.com/admin",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -91,7 +91,7 @@
     },
     {
       "route": "/admin/agent-management",
-      "url": "https://thenewfuse.com/admin/agent-management",
+      "url": "https://app.thenewfuse.com/admin/agent-management",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -104,7 +104,7 @@
     },
     {
       "route": "/admin/agents/skills",
-      "url": "https://thenewfuse.com/admin/agents/skills",
+      "url": "https://app.thenewfuse.com/admin/agents/skills",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -117,7 +117,7 @@
     },
     {
       "route": "/admin/agents/web-search",
-      "url": "https://thenewfuse.com/admin/agents/web-search",
+      "url": "https://app.thenewfuse.com/admin/agents/web-search",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -130,7 +130,7 @@
     },
     {
       "route": "/admin/api-analytics",
-      "url": "https://thenewfuse.com/admin/api-analytics",
+      "url": "https://app.thenewfuse.com/admin/api-analytics",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -143,7 +143,7 @@
     },
     {
       "route": "/admin/audit-logs",
-      "url": "https://thenewfuse.com/admin/audit-logs",
+      "url": "https://app.thenewfuse.com/admin/audit-logs",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -156,7 +156,7 @@
     },
     {
       "route": "/admin/backup-restore",
-      "url": "https://thenewfuse.com/admin/backup-restore",
+      "url": "https://app.thenewfuse.com/admin/backup-restore",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -169,7 +169,7 @@
     },
     {
       "route": "/admin/configuration",
-      "url": "https://thenewfuse.com/admin/configuration",
+      "url": "https://app.thenewfuse.com/admin/configuration",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -182,7 +182,7 @@
     },
     {
       "route": "/admin/control-panel",
-      "url": "https://thenewfuse.com/admin/control-panel",
+      "url": "https://app.thenewfuse.com/admin/control-panel",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -195,7 +195,7 @@
     },
     {
       "route": "/admin/dashboard",
-      "url": "https://thenewfuse.com/admin/dashboard",
+      "url": "https://app.thenewfuse.com/admin/dashboard",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -208,7 +208,7 @@
     },
     {
       "route": "/admin/database",
-      "url": "https://thenewfuse.com/admin/database",
+      "url": "https://app.thenewfuse.com/admin/database",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -221,7 +221,7 @@
     },
     {
       "route": "/admin/experimental-features",
-      "url": "https://thenewfuse.com/admin/experimental-features",
+      "url": "https://app.thenewfuse.com/admin/experimental-features",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -234,7 +234,7 @@
     },
     {
       "route": "/admin/feature-flags",
-      "url": "https://thenewfuse.com/admin/feature-flags",
+      "url": "https://app.thenewfuse.com/admin/feature-flags",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -247,7 +247,7 @@
     },
     {
       "route": "/admin/layout",
-      "url": "https://thenewfuse.com/admin/layout",
+      "url": "https://app.thenewfuse.com/admin/layout",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -260,7 +260,7 @@
     },
     {
       "route": "/admin/marketplace",
-      "url": "https://thenewfuse.com/admin/marketplace",
+      "url": "https://app.thenewfuse.com/admin/marketplace",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -273,20 +273,20 @@
     },
     {
       "route": "/admin/onboarding",
-      "url": "https://thenewfuse.com/admin/onboarding",
-      "finalUrl": "https://app.thenewfuse.com/admin",
-      "finalPath": "/admin",
+      "url": "https://app.thenewfuse.com/admin/onboarding",
+      "finalUrl": "https://app.thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "401",
       "hasAppRoot": true,
-      "fingerprint": "2da43ff271044cae613e9b21a3f3bde6ff612588",
-      "textPreview": ""
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/openclaw-security",
-      "url": "https://thenewfuse.com/admin/openclaw-security",
+      "url": "https://app.thenewfuse.com/admin/openclaw-security",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -299,7 +299,7 @@
     },
     {
       "route": "/admin/panel",
-      "url": "https://thenewfuse.com/admin/panel",
+      "url": "https://app.thenewfuse.com/admin/panel",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -312,7 +312,7 @@
     },
     {
       "route": "/admin/port-management",
-      "url": "https://thenewfuse.com/admin/port-management",
+      "url": "https://app.thenewfuse.com/admin/port-management",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -325,7 +325,7 @@
     },
     {
       "route": "/admin/settings",
-      "url": "https://thenewfuse.com/admin/settings",
+      "url": "https://app.thenewfuse.com/admin/settings",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -338,7 +338,7 @@
     },
     {
       "route": "/admin/system-health",
-      "url": "https://thenewfuse.com/admin/system-health",
+      "url": "https://app.thenewfuse.com/admin/system-health",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -351,7 +351,7 @@
     },
     {
       "route": "/admin/system-metrics",
-      "url": "https://thenewfuse.com/admin/system-metrics",
+      "url": "https://app.thenewfuse.com/admin/system-metrics",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -364,7 +364,7 @@
     },
     {
       "route": "/admin/user-management",
-      "url": "https://thenewfuse.com/admin/user-management",
+      "url": "https://app.thenewfuse.com/admin/user-management",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -377,7 +377,7 @@
     },
     {
       "route": "/admin/users",
-      "url": "https://thenewfuse.com/admin/users",
+      "url": "https://app.thenewfuse.com/admin/users",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -390,7 +390,7 @@
     },
     {
       "route": "/admin/workspaces",
-      "url": "https://thenewfuse.com/admin/workspaces",
+      "url": "https://app.thenewfuse.com/admin/workspaces",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -403,7 +403,7 @@
     },
     {
       "route": "/agency/dashboard",
-      "url": "https://thenewfuse.com/agency/dashboard",
+      "url": "https://app.thenewfuse.com/agency/dashboard",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -416,7 +416,7 @@
     },
     {
       "route": "/agency/onboard",
-      "url": "https://thenewfuse.com/agency/onboard",
+      "url": "https://app.thenewfuse.com/agency/onboard",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -429,7 +429,7 @@
     },
     {
       "route": "/agent-builder",
-      "url": "https://thenewfuse.com/agent-builder",
+      "url": "https://app.thenewfuse.com/agent-builder",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -442,7 +442,7 @@
     },
     {
       "route": "/agent-management",
-      "url": "https://thenewfuse.com/agent-management",
+      "url": "https://app.thenewfuse.com/agent-management",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -455,7 +455,7 @@
     },
     {
       "route": "/agents",
-      "url": "https://thenewfuse.com/agents",
+      "url": "https://app.thenewfuse.com/agents",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -468,7 +468,7 @@
     },
     {
       "route": "/agents/create",
-      "url": "https://thenewfuse.com/agents/create",
+      "url": "https://app.thenewfuse.com/agents/create",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -481,7 +481,7 @@
     },
     {
       "route": "/agents/new",
-      "url": "https://thenewfuse.com/agents/new",
+      "url": "https://app.thenewfuse.com/agents/new",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -494,7 +494,7 @@
     },
     {
       "route": "/agents/nft-marketplace",
-      "url": "https://thenewfuse.com/agents/nft-marketplace",
+      "url": "https://app.thenewfuse.com/agents/nft-marketplace",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -507,7 +507,7 @@
     },
     {
       "route": "/agents/onboard",
-      "url": "https://thenewfuse.com/agents/onboard",
+      "url": "https://app.thenewfuse.com/agents/onboard",
       "finalUrl": "https://app.thenewfuse.com/agents/onboard",
       "finalPath": "/agents/onboard",
       "status": 200,
@@ -520,7 +520,7 @@
     },
     {
       "route": "/agents/pfp-catalog",
-      "url": "https://thenewfuse.com/agents/pfp-catalog",
+      "url": "https://app.thenewfuse.com/agents/pfp-catalog",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -533,7 +533,7 @@
     },
     {
       "route": "/agents/pfp-prompts",
-      "url": "https://thenewfuse.com/agents/pfp-prompts",
+      "url": "https://app.thenewfuse.com/agents/pfp-prompts",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -546,7 +546,7 @@
     },
     {
       "route": "/agents/pfp-studio",
-      "url": "https://thenewfuse.com/agents/pfp-studio",
+      "url": "https://app.thenewfuse.com/agents/pfp-studio",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -559,7 +559,7 @@
     },
     {
       "route": "/agents/revenue-dashboard",
-      "url": "https://thenewfuse.com/agents/revenue-dashboard",
+      "url": "https://app.thenewfuse.com/agents/revenue-dashboard",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -572,7 +572,7 @@
     },
     {
       "route": "/agents/unified-creator",
-      "url": "https://thenewfuse.com/agents/unified-creator",
+      "url": "https://app.thenewfuse.com/agents/unified-creator",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -585,7 +585,7 @@
     },
     {
       "route": "/ai-agent-portal",
-      "url": "https://thenewfuse.com/ai-agent-portal",
+      "url": "https://app.thenewfuse.com/ai-agent-portal",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -598,7 +598,7 @@
     },
     {
       "route": "/ai-agents",
-      "url": "https://thenewfuse.com/ai-agents",
+      "url": "https://app.thenewfuse.com/ai-agents",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -611,7 +611,7 @@
     },
     {
       "route": "/ai-command-center",
-      "url": "https://thenewfuse.com/ai-command-center",
+      "url": "https://app.thenewfuse.com/ai-command-center",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -624,7 +624,7 @@
     },
     {
       "route": "/ai-portal",
-      "url": "https://thenewfuse.com/ai-portal",
+      "url": "https://app.thenewfuse.com/ai-portal",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -637,7 +637,7 @@
     },
     {
       "route": "/ai-portal/pfp-prompts",
-      "url": "https://thenewfuse.com/ai-portal/pfp-prompts",
+      "url": "https://app.thenewfuse.com/ai-portal/pfp-prompts",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -650,7 +650,7 @@
     },
     {
       "route": "/ai-portal/pfp-studio",
-      "url": "https://thenewfuse.com/ai-portal/pfp-studio",
+      "url": "https://app.thenewfuse.com/ai-portal/pfp-studio",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -663,7 +663,7 @@
     },
     {
       "route": "/all-pages",
-      "url": "https://thenewfuse.com/all-pages",
+      "url": "https://app.thenewfuse.com/all-pages",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -676,7 +676,7 @@
     },
     {
       "route": "/analytics",
-      "url": "https://thenewfuse.com/analytics",
+      "url": "https://app.thenewfuse.com/analytics",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -689,7 +689,7 @@
     },
     {
       "route": "/app",
-      "url": "https://thenewfuse.com/app",
+      "url": "https://app.thenewfuse.com/app",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -702,7 +702,7 @@
     },
     {
       "route": "/audit-logs",
-      "url": "https://thenewfuse.com/audit-logs",
+      "url": "https://app.thenewfuse.com/audit-logs",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -715,33 +715,33 @@
     },
     {
       "route": "/auth",
-      "url": "https://thenewfuse.com/auth",
-      "finalUrl": "https://app.thenewfuse.com/auth",
-      "finalPath": "/auth",
+      "url": "https://app.thenewfuse.com/auth",
+      "finalUrl": "https://app.thenewfuse.com/login",
+      "finalPath": "/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "4151dc07b4cd27bece8d65819c5aa8903420d239",
+      "fingerprint": "7fd77028db237ff68c6865499f02c024db16e699",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/auth/callback",
-      "url": "https://thenewfuse.com/auth/callback",
-      "finalUrl": "https://app.thenewfuse.com/auth/callback",
-      "finalPath": "/auth/callback",
+      "url": "https://app.thenewfuse.com/auth/callback",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "d4799639ceef7a770e1a56b186cf4ceb76dd690d",
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/auth/forgot-password",
-      "url": "https://thenewfuse.com/auth/forgot-password",
+      "url": "https://app.thenewfuse.com/auth/forgot-password",
       "finalUrl": "https://app.thenewfuse.com/auth/forgot-password",
       "finalPath": "/auth/forgot-password",
       "status": 200,
@@ -754,33 +754,33 @@
     },
     {
       "route": "/auth/google-callback",
-      "url": "https://thenewfuse.com/auth/google-callback",
-      "finalUrl": "https://app.thenewfuse.com/auth/google-callback",
-      "finalPath": "/auth/google-callback",
+      "url": "https://app.thenewfuse.com/auth/google-callback",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "fcfe9ca5cd0301b23ff1a5230c646182ee108248",
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/auth/google/callback",
-      "url": "https://thenewfuse.com/auth/google/callback",
-      "finalUrl": "https://app.thenewfuse.com/auth/google/callback",
-      "finalPath": "/auth/google/callback",
+      "url": "https://app.thenewfuse.com/auth/google/callback",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "659628fb6c3823ea46a04584992a00f0b3111b09",
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/auth/login",
-      "url": "https://thenewfuse.com/auth/login",
+      "url": "https://app.thenewfuse.com/auth/login",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -793,20 +793,20 @@
     },
     {
       "route": "/auth/oauth-callback",
-      "url": "https://thenewfuse.com/auth/oauth-callback",
-      "finalUrl": "https://app.thenewfuse.com/auth/oauth-callback",
-      "finalPath": "/auth/oauth-callback",
+      "url": "https://app.thenewfuse.com/auth/oauth-callback",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "a870ddd6eaa7e248076cc5f1eb79a6003dff065d",
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/auth/register",
-      "url": "https://thenewfuse.com/auth/register",
+      "url": "https://app.thenewfuse.com/auth/register",
       "finalUrl": "https://app.thenewfuse.com/auth/register",
       "finalPath": "/auth/register",
       "status": 200,
@@ -819,7 +819,7 @@
     },
     {
       "route": "/auth/reset-password",
-      "url": "https://thenewfuse.com/auth/reset-password",
+      "url": "https://app.thenewfuse.com/auth/reset-password",
       "finalUrl": "https://app.thenewfuse.com/auth/reset-password",
       "finalPath": "/auth/reset-password",
       "status": 200,
@@ -832,7 +832,7 @@
     },
     {
       "route": "/auth/sso",
-      "url": "https://thenewfuse.com/auth/sso",
+      "url": "https://app.thenewfuse.com/auth/sso",
       "finalUrl": "https://app.thenewfuse.com/auth/sso",
       "finalPath": "/auth/sso",
       "status": 200,
@@ -845,20 +845,20 @@
     },
     {
       "route": "/billing",
-      "url": "https://thenewfuse.com/billing",
-      "finalUrl": "https://app.thenewfuse.com/billing",
-      "finalPath": "/billing",
+      "url": "https://app.thenewfuse.com/billing",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/blog",
-      "url": "https://thenewfuse.com/blog",
+      "url": "https://app.thenewfuse.com/blog",
       "finalUrl": "https://app.thenewfuse.com/blog",
       "finalPath": "/blog",
       "status": 200,
@@ -866,12 +866,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "c42ff08bc9a350891040bda5213b0e41e3d7d081",
-      "textPreview": "latest insightsthe new fuse blognews, updates, and insights about ai collaboration and workflow automation.get startedlatest postsexplore our latest articles and insightsdecember 8, 2025daniel goldbergthe future of ai co"
+      "fingerprint": "b26cf48ce353661a5023187519b7e1621e7bf17c",
+      "textPreview": "the new fuse bloginsights &updatesdeep dives into autonomous agent orchestration, fleet management, and the future of ai-driven workflows.launch2026-06-015 min readthe new fuse autonomous agent platform is now liveafter "
     },
     {
       "route": "/brand",
-      "url": "https://thenewfuse.com/brand",
+      "url": "https://app.thenewfuse.com/brand",
       "finalUrl": "https://app.thenewfuse.com/brand",
       "finalPath": "/brand",
       "status": 200,
@@ -879,12 +879,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
+      "fingerprint": "ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a",
       "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
     },
     {
       "route": "/build-info",
-      "url": "https://thenewfuse.com/build-info",
+      "url": "https://app.thenewfuse.com/build-info",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -897,7 +897,7 @@
     },
     {
       "route": "/capabilities",
-      "url": "https://thenewfuse.com/capabilities",
+      "url": "https://app.thenewfuse.com/capabilities",
       "finalUrl": "https://app.thenewfuse.com/capabilities",
       "finalPath": "/capabilities",
       "status": 200,
@@ -905,12 +905,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e60a3d706b683adb25e0ad0dc7268635aafa2f54",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
       "route": "/chat",
-      "url": "https://thenewfuse.com/chat",
+      "url": "https://app.thenewfuse.com/chat",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -923,7 +923,7 @@
     },
     {
       "route": "/chat-page",
-      "url": "https://thenewfuse.com/chat-page",
+      "url": "https://app.thenewfuse.com/chat-page",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -936,7 +936,7 @@
     },
     {
       "route": "/codebase-map",
-      "url": "https://thenewfuse.com/codebase-map",
+      "url": "https://app.thenewfuse.com/codebase-map",
       "finalUrl": "https://app.thenewfuse.com/codebase-map",
       "finalPath": "/codebase-map",
       "status": 200,
@@ -944,12 +944,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "2c56b18fe86ced7fc4267a1258bdef1eef0bc34e",
+      "fingerprint": "e9e1cf14138e9f0d5bfe9211163aa14545b1eebe",
       "textPreview": "tnf ecosystem maprootthe new fuse ecosystemmove up architecturethe new fuse ecosystempkg113 units@the-new-fusepkga2a-corepkg9 unitsa2a-protocolpkg1 unitsa2a-reactpkgag-ui-corepkg5 unitsagentpkg42 unitsagent-coordinationp"
     },
     {
       "route": "/command-center",
-      "url": "https://thenewfuse.com/command-center",
+      "url": "https://app.thenewfuse.com/command-center",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -962,20 +962,20 @@
     },
     {
       "route": "/community",
-      "url": "https://thenewfuse.com/community",
+      "url": "https://app.thenewfuse.com/community",
       "finalUrl": "https://app.thenewfuse.com/community",
       "finalPath": "/community",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Community",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
+      "textPreview": "🚀 communitythis is the community page.path: /communitythis page is working and ready for content!"
     },
     {
       "route": "/components",
-      "url": "https://thenewfuse.com/components",
+      "url": "https://app.thenewfuse.com/components",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -988,7 +988,7 @@
     },
     {
       "route": "/components-nav",
-      "url": "https://thenewfuse.com/components-nav",
+      "url": "https://app.thenewfuse.com/components-nav",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1001,7 +1001,7 @@
     },
     {
       "route": "/components-showcase",
-      "url": "https://thenewfuse.com/components-showcase",
+      "url": "https://app.thenewfuse.com/components-showcase",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1014,7 +1014,7 @@
     },
     {
       "route": "/config",
-      "url": "https://thenewfuse.com/config",
+      "url": "https://app.thenewfuse.com/config",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1027,7 +1027,7 @@
     },
     {
       "route": "/connect",
-      "url": "https://thenewfuse.com/connect",
+      "url": "https://app.thenewfuse.com/connect",
       "finalUrl": "https://app.thenewfuse.com/connect",
       "finalPath": "/connect",
       "status": 200,
@@ -1040,7 +1040,7 @@
     },
     {
       "route": "/contact",
-      "url": "https://thenewfuse.com/contact",
+      "url": "https://app.thenewfuse.com/contact",
       "finalUrl": "https://app.thenewfuse.com/contact",
       "finalPath": "/contact",
       "status": 200,
@@ -1048,12 +1048,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "28f2be65d148088e4c459f5624c9ec74687b4f02",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "1c949c028d35eb7923534068d5cb30c2818cb7fb",
+      "textPreview": "🚀 contactthis is the contact page.path: /contactthis page is working and ready for content!"
     },
     {
       "route": "/cron-jobs",
-      "url": "https://thenewfuse.com/cron-jobs",
+      "url": "https://app.thenewfuse.com/cron-jobs",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1066,7 +1066,7 @@
     },
     {
       "route": "/dashboard",
-      "url": "https://thenewfuse.com/dashboard",
+      "url": "https://app.thenewfuse.com/dashboard",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1079,7 +1079,7 @@
     },
     {
       "route": "/dashboard/agents",
-      "url": "https://thenewfuse.com/dashboard/agents",
+      "url": "https://app.thenewfuse.com/dashboard/agents",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1092,7 +1092,7 @@
     },
     {
       "route": "/dashboard/agents/new",
-      "url": "https://thenewfuse.com/dashboard/agents/new",
+      "url": "https://app.thenewfuse.com/dashboard/agents/new",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1105,7 +1105,7 @@
     },
     {
       "route": "/dashboard/analytics",
-      "url": "https://thenewfuse.com/dashboard/analytics",
+      "url": "https://app.thenewfuse.com/dashboard/analytics",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1118,7 +1118,7 @@
     },
     {
       "route": "/dashboard/architecture",
-      "url": "https://thenewfuse.com/dashboard/architecture",
+      "url": "https://app.thenewfuse.com/dashboard/architecture",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1131,7 +1131,7 @@
     },
     {
       "route": "/dashboard/calendar",
-      "url": "https://thenewfuse.com/dashboard/calendar",
+      "url": "https://app.thenewfuse.com/dashboard/calendar",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1144,20 +1144,20 @@
     },
     {
       "route": "/dashboard/command-center",
-      "url": "https://thenewfuse.com/dashboard/command-center",
-      "finalUrl": "https://app.thenewfuse.com/auth/login",
-      "finalPath": "/auth/login",
+      "url": "https://app.thenewfuse.com/dashboard/command-center",
+      "finalUrl": "https://app.thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "Sign in",
+      "h1": "401",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
-      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/dashboard/datasets",
-      "url": "https://thenewfuse.com/dashboard/datasets",
+      "url": "https://app.thenewfuse.com/dashboard/datasets",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1170,7 +1170,7 @@
     },
     {
       "route": "/dashboard/fairtable",
-      "url": "https://thenewfuse.com/dashboard/fairtable",
+      "url": "https://app.thenewfuse.com/dashboard/fairtable",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1183,7 +1183,7 @@
     },
     {
       "route": "/dashboard/files",
-      "url": "https://thenewfuse.com/dashboard/files",
+      "url": "https://app.thenewfuse.com/dashboard/files",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1196,7 +1196,7 @@
     },
     {
       "route": "/dashboard/launchpad",
-      "url": "https://thenewfuse.com/dashboard/launchpad",
+      "url": "https://app.thenewfuse.com/dashboard/launchpad",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1209,7 +1209,7 @@
     },
     {
       "route": "/dashboard/logs",
-      "url": "https://thenewfuse.com/dashboard/logs",
+      "url": "https://app.thenewfuse.com/dashboard/logs",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1222,7 +1222,7 @@
     },
     {
       "route": "/dashboard/observability",
-      "url": "https://thenewfuse.com/dashboard/observability",
+      "url": "https://app.thenewfuse.com/dashboard/observability",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1235,7 +1235,7 @@
     },
     {
       "route": "/dashboard/settings",
-      "url": "https://thenewfuse.com/dashboard/settings",
+      "url": "https://app.thenewfuse.com/dashboard/settings",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1248,7 +1248,7 @@
     },
     {
       "route": "/debug",
-      "url": "https://thenewfuse.com/debug",
+      "url": "https://app.thenewfuse.com/debug",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1261,7 +1261,7 @@
     },
     {
       "route": "/debug-routing",
-      "url": "https://thenewfuse.com/debug-routing",
+      "url": "https://app.thenewfuse.com/debug-routing",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1274,7 +1274,7 @@
     },
     {
       "route": "/design-system",
-      "url": "https://thenewfuse.com/design-system",
+      "url": "https://app.thenewfuse.com/design-system",
       "finalUrl": "https://app.thenewfuse.com/design-system",
       "finalPath": "/design-system",
       "status": 200,
@@ -1282,25 +1282,25 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
+      "fingerprint": "ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a",
       "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
     },
     {
       "route": "/docs",
-      "url": "https://thenewfuse.com/docs",
-      "finalUrl": "https://thenewfuse.com/docs",
+      "url": "https://app.thenewfuse.com/docs",
+      "finalUrl": "https://app.thenewfuse.com/docs",
       "finalPath": "/docs",
       "status": 200,
       "error": null,
-      "title": "The New Fuse Documentation",
-      "h1": "The New Fuse Docs",
-      "hasAppRoot": false,
-      "fingerprint": "38e30d8d00ee22ff35606a83f321ffbb9abcaae2",
-      "textPreview": "the new fuse docs use the hosted saas at app.thenewfuse.com, or install the open runtime locally from the repository. local install clone the repository and install with pnpm install. copy .env.production.example or set "
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "hasAppRoot": true,
+      "fingerprint": "7010ea1eda456f60ca76fa9cd61df236deab8ff2",
+      "textPreview": "documentationour comprehensive documentation will help you get started.getting started guideapi referencetutorials"
     },
     {
       "route": "/fairtable",
-      "url": "https://thenewfuse.com/fairtable",
+      "url": "https://app.thenewfuse.com/fairtable",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1313,20 +1313,20 @@
     },
     {
       "route": "/features",
-      "url": "https://thenewfuse.com/features",
-      "finalUrl": "https://thenewfuse.com/#features",
-      "finalPath": "/",
+      "url": "https://app.thenewfuse.com/features",
+      "finalUrl": "https://app.thenewfuse.com/features",
+      "finalPath": "/features",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
-      "hasAppRoot": false,
-      "fingerprint": "31517bcc709ed07e0b6449f9440eb6d86c769804",
-      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
+      "h1": "The New Fuse",
+      "hasAppRoot": true,
+      "fingerprint": "bd55f1cc8ca71abf8d410e1ff9976eb96c468d0e",
+      "textPreview": "our featuresexplore the powerful features we offer.feature a: description of feature a.feature b: description of feature b.feature c: description of feature c."
     },
     {
       "route": "/forgot-password",
-      "url": "https://thenewfuse.com/forgot-password",
+      "url": "https://app.thenewfuse.com/forgot-password",
       "finalUrl": "https://app.thenewfuse.com/auth/forgot-password",
       "finalPath": "/auth/forgot-password",
       "status": 200,
@@ -1339,7 +1339,7 @@
     },
     {
       "route": "/frontend-showcase",
-      "url": "https://thenewfuse.com/frontend-showcase",
+      "url": "https://app.thenewfuse.com/frontend-showcase",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1352,7 +1352,7 @@
     },
     {
       "route": "/general-settings",
-      "url": "https://thenewfuse.com/general-settings",
+      "url": "https://app.thenewfuse.com/general-settings",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1365,7 +1365,7 @@
     },
     {
       "route": "/general-settings/community-hub",
-      "url": "https://thenewfuse.com/general-settings/community-hub",
+      "url": "https://app.thenewfuse.com/general-settings/community-hub",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1378,7 +1378,7 @@
     },
     {
       "route": "/general-settings/embedding",
-      "url": "https://thenewfuse.com/general-settings/embedding",
+      "url": "https://app.thenewfuse.com/general-settings/embedding",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1391,7 +1391,7 @@
     },
     {
       "route": "/goals",
-      "url": "https://thenewfuse.com/goals",
+      "url": "https://app.thenewfuse.com/goals",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1404,7 +1404,7 @@
     },
     {
       "route": "/graph-demo",
-      "url": "https://thenewfuse.com/graph-demo",
+      "url": "https://app.thenewfuse.com/graph-demo",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1417,20 +1417,20 @@
     },
     {
       "route": "/help/community",
-      "url": "https://thenewfuse.com/help/community",
+      "url": "https://app.thenewfuse.com/help/community",
       "finalUrl": "https://app.thenewfuse.com/community",
       "finalPath": "/community",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Community",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
+      "textPreview": "🚀 communitythis is the community page.path: /communitythis page is working and ready for content!"
     },
     {
       "route": "/help/documentation",
-      "url": "https://thenewfuse.com/help/documentation",
+      "url": "https://app.thenewfuse.com/help/documentation",
       "finalUrl": "https://app.thenewfuse.com/docs",
       "finalPath": "/docs",
       "status": 200,
@@ -1443,7 +1443,7 @@
     },
     {
       "route": "/help/faq",
-      "url": "https://thenewfuse.com/help/faq",
+      "url": "https://app.thenewfuse.com/help/faq",
       "finalUrl": "https://app.thenewfuse.com/docs",
       "finalPath": "/docs",
       "status": 200,
@@ -1456,20 +1456,20 @@
     },
     {
       "route": "/help/support",
-      "url": "https://thenewfuse.com/help/support",
+      "url": "https://app.thenewfuse.com/help/support",
       "finalUrl": "https://app.thenewfuse.com/support",
       "finalPath": "/support",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Support",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "59214064dd6c6e73bda58e2d641c0d3bbca1dc1e",
+      "textPreview": "🚀 supportthis is the support page.path: /supportthis page is working and ready for content!"
     },
     {
       "route": "/help/tutorials",
-      "url": "https://thenewfuse.com/help/tutorials",
+      "url": "https://app.thenewfuse.com/help/tutorials",
       "finalUrl": "https://app.thenewfuse.com/docs",
       "finalPath": "/docs",
       "status": 200,
@@ -1482,7 +1482,7 @@
     },
     {
       "route": "/home",
-      "url": "https://thenewfuse.com/home",
+      "url": "https://app.thenewfuse.com/home",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1495,7 +1495,7 @@
     },
     {
       "route": "/hosting",
-      "url": "https://thenewfuse.com/hosting",
+      "url": "https://app.thenewfuse.com/hosting",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1508,7 +1508,7 @@
     },
     {
       "route": "/html/admin",
-      "url": "https://thenewfuse.com/html/admin",
+      "url": "https://app.thenewfuse.com/html/admin",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1521,7 +1521,7 @@
     },
     {
       "route": "/html/agents",
-      "url": "https://thenewfuse.com/html/agents",
+      "url": "https://app.thenewfuse.com/html/agents",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1534,7 +1534,7 @@
     },
     {
       "route": "/html/chat",
-      "url": "https://thenewfuse.com/html/chat",
+      "url": "https://app.thenewfuse.com/html/chat",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1547,7 +1547,7 @@
     },
     {
       "route": "/html/dashboard",
-      "url": "https://thenewfuse.com/html/dashboard",
+      "url": "https://app.thenewfuse.com/html/dashboard",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1560,7 +1560,7 @@
     },
     {
       "route": "/html/tasks",
-      "url": "https://thenewfuse.com/html/tasks",
+      "url": "https://app.thenewfuse.com/html/tasks",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1573,7 +1573,7 @@
     },
     {
       "route": "/html/workflows",
-      "url": "https://thenewfuse.com/html/workflows",
+      "url": "https://app.thenewfuse.com/html/workflows",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1586,7 +1586,7 @@
     },
     {
       "route": "/hub",
-      "url": "https://thenewfuse.com/hub",
+      "url": "https://app.thenewfuse.com/hub",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1599,7 +1599,7 @@
     },
     {
       "route": "/ide",
-      "url": "https://thenewfuse.com/ide",
+      "url": "https://app.thenewfuse.com/ide",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1612,7 +1612,7 @@
     },
     {
       "route": "/instances",
-      "url": "https://thenewfuse.com/instances",
+      "url": "https://app.thenewfuse.com/instances",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1625,7 +1625,7 @@
     },
     {
       "route": "/integrations",
-      "url": "https://thenewfuse.com/integrations",
+      "url": "https://app.thenewfuse.com/integrations",
       "finalUrl": "https://app.thenewfuse.com/connect",
       "finalPath": "/connect",
       "status": 200,
@@ -1638,7 +1638,7 @@
     },
     {
       "route": "/knowledge-hub",
-      "url": "https://thenewfuse.com/knowledge-hub",
+      "url": "https://app.thenewfuse.com/knowledge-hub",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1651,7 +1651,7 @@
     },
     {
       "route": "/landing",
-      "url": "https://thenewfuse.com/landing",
+      "url": "https://app.thenewfuse.com/landing",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1664,7 +1664,7 @@
     },
     {
       "route": "/landing-page",
-      "url": "https://thenewfuse.com/landing-page",
+      "url": "https://app.thenewfuse.com/landing-page",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1677,7 +1677,7 @@
     },
     {
       "route": "/layout-example",
-      "url": "https://thenewfuse.com/layout-example",
+      "url": "https://app.thenewfuse.com/layout-example",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1690,7 +1690,7 @@
     },
     {
       "route": "/legal/privacy",
-      "url": "https://thenewfuse.com/legal/privacy",
+      "url": "https://app.thenewfuse.com/legal/privacy",
       "finalUrl": "https://app.thenewfuse.com/legal/privacy",
       "finalPath": "/legal/privacy",
       "status": 200,
@@ -1698,12 +1698,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "f4b55a22a461a5e4dcf5bedd6c4198026a47e350",
+      "fingerprint": "71e5bff5fc86dd4e76d04c524966ac39c3a9a464",
       "textPreview": "privacy policylast updated: january 17, 20251. introductionwelcome to the new fuse (\"we,\" \"our,\" or \"us\"). we respect your privacy and are committed to protecting your personal data. this privacy policy will inform you a"
     },
     {
       "route": "/legal/terms",
-      "url": "https://thenewfuse.com/legal/terms",
+      "url": "https://app.thenewfuse.com/legal/terms",
       "finalUrl": "https://app.thenewfuse.com/legal/terms",
       "finalPath": "/legal/terms",
       "status": 200,
@@ -1711,12 +1711,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "b1ff828ad2661b87de667c629fef055a4d209305",
+      "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
       "textPreview": "terms of servicelast updated: january 17, 20251. acceptance of termsby accessing and using the new fuse website (https://thenewfuse.com), you accept and agree to be bound by these terms of service. if you do not agree to"
     },
     {
       "route": "/live-view",
-      "url": "https://thenewfuse.com/live-view",
+      "url": "https://app.thenewfuse.com/live-view",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1729,7 +1729,7 @@
     },
     {
       "route": "/llm-rankings",
-      "url": "https://thenewfuse.com/llm-rankings",
+      "url": "https://app.thenewfuse.com/llm-rankings",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1742,7 +1742,7 @@
     },
     {
       "route": "/login",
-      "url": "https://thenewfuse.com/login",
+      "url": "https://app.thenewfuse.com/login",
       "finalUrl": "https://app.thenewfuse.com/login",
       "finalPath": "/login",
       "status": 200,
@@ -1755,7 +1755,7 @@
     },
     {
       "route": "/logs",
-      "url": "https://thenewfuse.com/logs",
+      "url": "https://app.thenewfuse.com/logs",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1768,7 +1768,7 @@
     },
     {
       "route": "/macro-timeline",
-      "url": "https://thenewfuse.com/macro-timeline",
+      "url": "https://app.thenewfuse.com/macro-timeline",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1781,7 +1781,7 @@
     },
     {
       "route": "/main",
-      "url": "https://thenewfuse.com/main",
+      "url": "https://app.thenewfuse.com/main",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1794,7 +1794,7 @@
     },
     {
       "route": "/marketplace",
-      "url": "https://thenewfuse.com/marketplace",
+      "url": "https://app.thenewfuse.com/marketplace",
       "finalUrl": "https://app.thenewfuse.com/marketplace",
       "finalPath": "/marketplace",
       "status": 200,
@@ -1802,12 +1802,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e60a3d706b683adb25e0ad0dc7268635aafa2f54",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
       "route": "/mcp-hub",
-      "url": "https://thenewfuse.com/mcp-hub",
+      "url": "https://app.thenewfuse.com/mcp-hub",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1820,20 +1820,20 @@
     },
     {
       "route": "/membership",
-      "url": "https://thenewfuse.com/membership",
+      "url": "https://app.thenewfuse.com/membership",
       "finalUrl": "https://app.thenewfuse.com/membership",
       "finalPath": "/membership",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Membership",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "b4dd52e25a1ef9d2364ea541662a90302fd60656",
+      "textPreview": "🚀 membershipthis is the membership page.path: /membershipthis page is working and ready for content!"
     },
     {
       "route": "/multi-agent-chat",
-      "url": "https://thenewfuse.com/multi-agent-chat",
+      "url": "https://app.thenewfuse.com/multi-agent-chat",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1846,20 +1846,20 @@
     },
     {
       "route": "/multi-agent-chat-demo",
-      "url": "https://thenewfuse.com/multi-agent-chat-demo",
-      "finalUrl": "https://app.thenewfuse.com/unauthorized",
-      "finalPath": "/unauthorized",
+      "url": "https://app.thenewfuse.com/multi-agent-chat-demo",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "401",
+      "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
-      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/nexus",
-      "url": "https://thenewfuse.com/nexus",
+      "url": "https://app.thenewfuse.com/nexus",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1872,7 +1872,7 @@
     },
     {
       "route": "/nodes",
-      "url": "https://thenewfuse.com/nodes",
+      "url": "https://app.thenewfuse.com/nodes",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1885,7 +1885,7 @@
     },
     {
       "route": "/not-found",
-      "url": "https://thenewfuse.com/not-found",
+      "url": "https://app.thenewfuse.com/not-found",
       "finalUrl": "https://app.thenewfuse.com/not-found",
       "finalPath": "/not-found",
       "status": 200,
@@ -1898,7 +1898,7 @@
     },
     {
       "route": "/observatory",
-      "url": "https://thenewfuse.com/observatory",
+      "url": "https://app.thenewfuse.com/observatory",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1911,20 +1911,20 @@
     },
     {
       "route": "/onboarding",
-      "url": "https://thenewfuse.com/onboarding",
+      "url": "https://app.thenewfuse.com/onboarding",
       "finalUrl": "https://app.thenewfuse.com/onboarding",
       "finalPath": "/onboarding",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Onboarding",
       "hasAppRoot": true,
-      "fingerprint": "747d896d6867df308c089c6ea00cc899732c65e4",
+      "fingerprint": "528c03ebdd6fcc38f3885408f55d6dab5a412842",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/onboarding/ai-agent",
-      "url": "https://thenewfuse.com/onboarding/ai-agent",
+      "url": "https://app.thenewfuse.com/onboarding/ai-agent",
       "finalUrl": "https://app.thenewfuse.com/onboarding/ai-agent",
       "finalPath": "/onboarding/ai-agent",
       "status": 200,
@@ -1937,7 +1937,7 @@
     },
     {
       "route": "/overview",
-      "url": "https://thenewfuse.com/overview",
+      "url": "https://app.thenewfuse.com/overview",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -1950,7 +1950,7 @@
     },
     {
       "route": "/package/agents",
-      "url": "https://thenewfuse.com/package/agents",
+      "url": "https://app.thenewfuse.com/package/agents",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1963,7 +1963,7 @@
     },
     {
       "route": "/package/dashboard",
-      "url": "https://thenewfuse.com/package/dashboard",
+      "url": "https://app.thenewfuse.com/package/dashboard",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1976,7 +1976,7 @@
     },
     {
       "route": "/package/login",
-      "url": "https://thenewfuse.com/package/login",
+      "url": "https://app.thenewfuse.com/package/login",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -1989,7 +1989,7 @@
     },
     {
       "route": "/package/workflows",
-      "url": "https://thenewfuse.com/package/workflows",
+      "url": "https://app.thenewfuse.com/package/workflows",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2002,7 +2002,7 @@
     },
     {
       "route": "/perpetual-status",
-      "url": "https://thenewfuse.com/perpetual-status",
+      "url": "https://app.thenewfuse.com/perpetual-status",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2015,7 +2015,7 @@
     },
     {
       "route": "/plans",
-      "url": "https://thenewfuse.com/plans",
+      "url": "https://app.thenewfuse.com/plans",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2028,7 +2028,7 @@
     },
     {
       "route": "/platform",
-      "url": "https://thenewfuse.com/platform",
+      "url": "https://app.thenewfuse.com/platform",
       "finalUrl": "https://app.thenewfuse.com/product-map",
       "finalPath": "/product-map",
       "status": 200,
@@ -2036,12 +2036,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e60a3d706b683adb25e0ad0dc7268635aafa2f54",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
       "route": "/platform-parity",
-      "url": "https://thenewfuse.com/platform-parity",
+      "url": "https://app.thenewfuse.com/platform-parity",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2054,7 +2054,7 @@
     },
     {
       "route": "/preview/onboarding",
-      "url": "https://thenewfuse.com/preview/onboarding",
+      "url": "https://app.thenewfuse.com/preview/onboarding",
       "finalUrl": "https://app.thenewfuse.com/preview/onboarding",
       "finalPath": "/preview/onboarding",
       "status": 200,
@@ -2067,20 +2067,20 @@
     },
     {
       "route": "/pricing",
-      "url": "https://thenewfuse.com/pricing",
-      "finalUrl": "https://thenewfuse.com/#pricing",
-      "finalPath": "/",
+      "url": "https://app.thenewfuse.com/pricing",
+      "finalUrl": "https://app.thenewfuse.com/pricing",
+      "finalPath": "/pricing",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
-      "hasAppRoot": false,
-      "fingerprint": "31517bcc709ed07e0b6449f9440eb6d86c769804",
-      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
+      "h1": "The New Fuse",
+      "hasAppRoot": true,
+      "fingerprint": "5474b2a20658c722d834ce4547f824fb4193c8ad",
+      "textPreview": "simple, transparent pricingchoose the perfect plan for your automation needs. whether you're a hobbyist or an enterprise, we've got you covered.starterperfect for individuals and hobbyists exploring ai workflows.$0/month"
     },
     {
       "route": "/privacy",
-      "url": "https://thenewfuse.com/privacy",
+      "url": "https://app.thenewfuse.com/privacy",
       "finalUrl": "https://app.thenewfuse.com/legal/privacy",
       "finalPath": "/legal/privacy",
       "status": 200,
@@ -2088,12 +2088,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "f4b55a22a461a5e4dcf5bedd6c4198026a47e350",
+      "fingerprint": "71e5bff5fc86dd4e76d04c524966ac39c3a9a464",
       "textPreview": "privacy policylast updated: january 17, 20251. introductionwelcome to the new fuse (\"we,\" \"our,\" or \"us\"). we respect your privacy and are committed to protecting your personal data. this privacy policy will inform you a"
     },
     {
       "route": "/product-map",
-      "url": "https://thenewfuse.com/product-map",
+      "url": "https://app.thenewfuse.com/product-map",
       "finalUrl": "https://app.thenewfuse.com/product-map",
       "finalPath": "/product-map",
       "status": 200,
@@ -2101,12 +2101,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e60a3d706b683adb25e0ad0dc7268635aafa2f54",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
       "route": "/profile",
-      "url": "https://thenewfuse.com/profile",
+      "url": "https://app.thenewfuse.com/profile",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2119,7 +2119,7 @@
     },
     {
       "route": "/register",
-      "url": "https://thenewfuse.com/register",
+      "url": "https://app.thenewfuse.com/register",
       "finalUrl": "https://app.thenewfuse.com/register",
       "finalPath": "/register",
       "status": 200,
@@ -2132,7 +2132,7 @@
     },
     {
       "route": "/resources",
-      "url": "https://thenewfuse.com/resources",
+      "url": "https://app.thenewfuse.com/resources",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2145,7 +2145,7 @@
     },
     {
       "route": "/resources/skills",
-      "url": "https://thenewfuse.com/resources/skills",
+      "url": "https://app.thenewfuse.com/resources/skills",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2158,7 +2158,7 @@
     },
     {
       "route": "/resources/templates",
-      "url": "https://thenewfuse.com/resources/templates",
+      "url": "https://app.thenewfuse.com/resources/templates",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2171,7 +2171,7 @@
     },
     {
       "route": "/resources/workflows",
-      "url": "https://thenewfuse.com/resources/workflows",
+      "url": "https://app.thenewfuse.com/resources/workflows",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2184,7 +2184,7 @@
     },
     {
       "route": "/sessions",
-      "url": "https://thenewfuse.com/sessions",
+      "url": "https://app.thenewfuse.com/sessions",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2197,7 +2197,7 @@
     },
     {
       "route": "/settings",
-      "url": "https://thenewfuse.com/settings",
+      "url": "https://app.thenewfuse.com/settings",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2210,7 +2210,7 @@
     },
     {
       "route": "/settings/api",
-      "url": "https://thenewfuse.com/settings/api",
+      "url": "https://app.thenewfuse.com/settings/api",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2223,7 +2223,7 @@
     },
     {
       "route": "/settings/appearance",
-      "url": "https://thenewfuse.com/settings/appearance",
+      "url": "https://app.thenewfuse.com/settings/appearance",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2236,7 +2236,7 @@
     },
     {
       "route": "/settings/general",
-      "url": "https://thenewfuse.com/settings/general",
+      "url": "https://app.thenewfuse.com/settings/general",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2249,7 +2249,7 @@
     },
     {
       "route": "/settings/notifications",
-      "url": "https://thenewfuse.com/settings/notifications",
+      "url": "https://app.thenewfuse.com/settings/notifications",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2262,7 +2262,7 @@
     },
     {
       "route": "/settings/security",
-      "url": "https://thenewfuse.com/settings/security",
+      "url": "https://app.thenewfuse.com/settings/security",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2275,7 +2275,7 @@
     },
     {
       "route": "/simple-landing",
-      "url": "https://thenewfuse.com/simple-landing",
+      "url": "https://app.thenewfuse.com/simple-landing",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2288,7 +2288,7 @@
     },
     {
       "route": "/simple-test",
-      "url": "https://thenewfuse.com/simple-test",
+      "url": "https://app.thenewfuse.com/simple-test",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2301,7 +2301,7 @@
     },
     {
       "route": "/space",
-      "url": "https://thenewfuse.com/space",
+      "url": "https://app.thenewfuse.com/space",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2314,7 +2314,7 @@
     },
     {
       "route": "/spaces",
-      "url": "https://thenewfuse.com/spaces",
+      "url": "https://app.thenewfuse.com/spaces",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2327,20 +2327,20 @@
     },
     {
       "route": "/status",
-      "url": "https://thenewfuse.com/status",
-      "finalUrl": "https://thenewfuse.com/status",
+      "url": "https://app.thenewfuse.com/status",
+      "finalUrl": "https://app.thenewfuse.com/status",
       "finalPath": "/status",
       "status": 200,
       "error": null,
       "title": "",
       "h1": "",
       "hasAppRoot": false,
-      "fingerprint": "0c6bd7c135c63cec7f8440d0e53a2a343787ee25",
-      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-06-11t20:19:59.144z\"}"
+      "fingerprint": "8133c5e8c70b8ef00fc2fa795916801a6bb29c6f",
+      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-07-27t06:16:37.297z\"}"
     },
     {
       "route": "/suggestions",
-      "url": "https://thenewfuse.com/suggestions",
+      "url": "https://app.thenewfuse.com/suggestions",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2353,7 +2353,7 @@
     },
     {
       "route": "/suggestions/new",
-      "url": "https://thenewfuse.com/suggestions/new",
+      "url": "https://app.thenewfuse.com/suggestions/new",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2366,20 +2366,20 @@
     },
     {
       "route": "/support",
-      "url": "https://thenewfuse.com/support",
+      "url": "https://app.thenewfuse.com/support",
       "finalUrl": "https://app.thenewfuse.com/support",
       "finalPath": "/support",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "404",
+      "h1": "🚀 Support",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "59214064dd6c6e73bda58e2d641c0d3bbca1dc1e",
+      "textPreview": "🚀 supportthis is the support page.path: /supportthis page is working and ready for content!"
     },
     {
       "route": "/system-status",
-      "url": "https://thenewfuse.com/system-status",
+      "url": "https://app.thenewfuse.com/system-status",
       "finalUrl": "https://app.thenewfuse.com/system-status",
       "finalPath": "/system-status",
       "status": 200,
@@ -2387,12 +2387,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "61dca603614905f458f76deda4893864de81f0aa",
-      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 04:20:10 pmpublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
+      "fingerprint": "2da20b00d5579cf30c25d8329e9527fa323838f5",
+      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 02:16:46 ampublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
     },
     {
       "route": "/tasks",
-      "url": "https://thenewfuse.com/tasks",
+      "url": "https://app.thenewfuse.com/tasks",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2405,7 +2405,7 @@
     },
     {
       "route": "/tasks-page",
-      "url": "https://thenewfuse.com/tasks-page",
+      "url": "https://app.thenewfuse.com/tasks-page",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2418,7 +2418,7 @@
     },
     {
       "route": "/tasks/new",
-      "url": "https://thenewfuse.com/tasks/new",
+      "url": "https://app.thenewfuse.com/tasks/new",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2431,7 +2431,7 @@
     },
     {
       "route": "/team",
-      "url": "https://thenewfuse.com/team",
+      "url": "https://app.thenewfuse.com/team",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2444,7 +2444,7 @@
     },
     {
       "route": "/terminals",
-      "url": "https://thenewfuse.com/terminals",
+      "url": "https://app.thenewfuse.com/terminals",
       "finalUrl": "https://app.thenewfuse.com/terminals",
       "finalPath": "/terminals",
       "status": 200,
@@ -2457,7 +2457,7 @@
     },
     {
       "route": "/terms",
-      "url": "https://thenewfuse.com/terms",
+      "url": "https://app.thenewfuse.com/terms",
       "finalUrl": "https://app.thenewfuse.com/legal/terms",
       "finalPath": "/legal/terms",
       "status": 200,
@@ -2465,12 +2465,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "b1ff828ad2661b87de667c629fef055a4d209305",
+      "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
       "textPreview": "terms of servicelast updated: january 17, 20251. acceptance of termsby accessing and using the new fuse website (https://thenewfuse.com), you accept and agree to be bound by these terms of service. if you do not agree to"
     },
     {
       "route": "/test",
-      "url": "https://thenewfuse.com/test",
+      "url": "https://app.thenewfuse.com/test",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2483,7 +2483,7 @@
     },
     {
       "route": "/timeline",
-      "url": "https://thenewfuse.com/timeline",
+      "url": "https://app.thenewfuse.com/timeline",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2496,7 +2496,7 @@
     },
     {
       "route": "/timeline-demo",
-      "url": "https://thenewfuse.com/timeline-demo",
+      "url": "https://app.thenewfuse.com/timeline-demo",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2509,7 +2509,7 @@
     },
     {
       "route": "/timeline/module",
-      "url": "https://thenewfuse.com/timeline/module",
+      "url": "https://app.thenewfuse.com/timeline/module",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2522,7 +2522,7 @@
     },
     {
       "route": "/tnf-hub",
-      "url": "https://thenewfuse.com/tnf-hub",
+      "url": "https://app.thenewfuse.com/tnf-hub",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2535,7 +2535,7 @@
     },
     {
       "route": "/unauthorized",
-      "url": "https://thenewfuse.com/unauthorized",
+      "url": "https://app.thenewfuse.com/unauthorized",
       "finalUrl": "https://app.thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
       "status": 200,
@@ -2548,7 +2548,7 @@
     },
     {
       "route": "/usage",
-      "url": "https://thenewfuse.com/usage",
+      "url": "https://app.thenewfuse.com/usage",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2561,7 +2561,7 @@
     },
     {
       "route": "/user/profile",
-      "url": "https://thenewfuse.com/user/profile",
+      "url": "https://app.thenewfuse.com/user/profile",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2574,7 +2574,7 @@
     },
     {
       "route": "/visualizations",
-      "url": "https://thenewfuse.com/visualizations",
+      "url": "https://app.thenewfuse.com/visualizations",
       "finalUrl": "https://app.thenewfuse.com/visualizations",
       "finalPath": "/visualizations",
       "status": 200,
@@ -2582,12 +2582,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "741d514ddd37986e9297687e2c20dcd7a10dab07",
+      "fingerprint": "e80bd13e16ebe4750f6ab18bc8bbab9b0c0e34f6",
       "textPreview": "back to tnf homemaster clock visualizationturn tnf chron jobs into a living watch movement.drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect exact producer intervals with last-run and nex"
     },
     {
       "route": "/visualizations/concordance",
-      "url": "https://thenewfuse.com/visualizations/concordance",
+      "url": "https://app.thenewfuse.com/visualizations/concordance",
       "finalUrl": "https://app.thenewfuse.com/visualizations/concordance",
       "finalPath": "/visualizations/concordance",
       "status": 200,
@@ -2600,7 +2600,7 @@
     },
     {
       "route": "/visualizations/surface",
-      "url": "https://thenewfuse.com/visualizations/surface",
+      "url": "https://app.thenewfuse.com/visualizations/surface",
       "finalUrl": "https://app.thenewfuse.com/visualizations/surface",
       "finalPath": "/visualizations/surface",
       "status": 200,
@@ -2613,7 +2613,7 @@
     },
     {
       "route": "/visualizations/terminals",
-      "url": "https://thenewfuse.com/visualizations/terminals",
+      "url": "https://app.thenewfuse.com/visualizations/terminals",
       "finalUrl": "https://app.thenewfuse.com/visualizations/terminals",
       "finalPath": "/visualizations/terminals",
       "status": 200,
@@ -2621,12 +2621,12 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
+      "fingerprint": "3276fd4141128703f65ec82a11ad20957c2831a5",
       "textPreview": "back to visualizationsterminal graphholistic twip projection of terminal identities, process topology, and runtime ownership hints for tnf agent orchestration.safety defaultcommands remain redacted unless explicitly requ"
     },
     {
       "route": "/workflows",
-      "url": "https://thenewfuse.com/workflows",
+      "url": "https://app.thenewfuse.com/workflows",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2639,7 +2639,7 @@
     },
     {
       "route": "/workflows-enhanced",
-      "url": "https://thenewfuse.com/workflows-enhanced",
+      "url": "https://app.thenewfuse.com/workflows-enhanced",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2652,7 +2652,7 @@
     },
     {
       "route": "/workflows/advanced-builder",
-      "url": "https://thenewfuse.com/workflows/advanced-builder",
+      "url": "https://app.thenewfuse.com/workflows/advanced-builder",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2665,7 +2665,7 @@
     },
     {
       "route": "/workflows/builder",
-      "url": "https://thenewfuse.com/workflows/builder",
+      "url": "https://app.thenewfuse.com/workflows/builder",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2678,7 +2678,7 @@
     },
     {
       "route": "/workflows/builder-enhanced",
-      "url": "https://thenewfuse.com/workflows/builder-enhanced",
+      "url": "https://app.thenewfuse.com/workflows/builder-enhanced",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2691,7 +2691,7 @@
     },
     {
       "route": "/workflows/builder-n8n",
-      "url": "https://thenewfuse.com/workflows/builder-n8n",
+      "url": "https://app.thenewfuse.com/workflows/builder-n8n",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2704,7 +2704,7 @@
     },
     {
       "route": "/workflows/console",
-      "url": "https://thenewfuse.com/workflows/console",
+      "url": "https://app.thenewfuse.com/workflows/console",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2717,7 +2717,7 @@
     },
     {
       "route": "/workflows/detail",
-      "url": "https://thenewfuse.com/workflows/detail",
+      "url": "https://app.thenewfuse.com/workflows/detail",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2730,7 +2730,7 @@
     },
     {
       "route": "/workflows/execution",
-      "url": "https://thenewfuse.com/workflows/execution",
+      "url": "https://app.thenewfuse.com/workflows/execution",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2743,7 +2743,7 @@
     },
     {
       "route": "/workflows/executions",
-      "url": "https://thenewfuse.com/workflows/executions",
+      "url": "https://app.thenewfuse.com/workflows/executions",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2756,7 +2756,7 @@
     },
     {
       "route": "/workflows/nexus",
-      "url": "https://thenewfuse.com/workflows/nexus",
+      "url": "https://app.thenewfuse.com/workflows/nexus",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2769,7 +2769,7 @@
     },
     {
       "route": "/workflows/templates",
-      "url": "https://thenewfuse.com/workflows/templates",
+      "url": "https://app.thenewfuse.com/workflows/templates",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2782,7 +2782,7 @@
     },
     {
       "route": "/workspace",
-      "url": "https://thenewfuse.com/workspace",
+      "url": "https://app.thenewfuse.com/workspace",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2795,7 +2795,7 @@
     },
     {
       "route": "/workspace-chat",
-      "url": "https://thenewfuse.com/workspace-chat",
+      "url": "https://app.thenewfuse.com/workspace-chat",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2808,7 +2808,7 @@
     },
     {
       "route": "/workspace-settings/agent-model",
-      "url": "https://thenewfuse.com/workspace-settings/agent-model",
+      "url": "https://app.thenewfuse.com/workspace-settings/agent-model",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2821,7 +2821,7 @@
     },
     {
       "route": "/workspace-settings/chat-model",
-      "url": "https://thenewfuse.com/workspace-settings/chat-model",
+      "url": "https://app.thenewfuse.com/workspace-settings/chat-model",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2834,7 +2834,7 @@
     },
     {
       "route": "/workspace-settings/llm-selection",
-      "url": "https://thenewfuse.com/workspace-settings/llm-selection",
+      "url": "https://app.thenewfuse.com/workspace-settings/llm-selection",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2847,7 +2847,7 @@
     },
     {
       "route": "/workspace/analytics",
-      "url": "https://thenewfuse.com/workspace/analytics",
+      "url": "https://app.thenewfuse.com/workspace/analytics",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2860,7 +2860,7 @@
     },
     {
       "route": "/workspace/chat",
-      "url": "https://thenewfuse.com/workspace/chat",
+      "url": "https://app.thenewfuse.com/workspace/chat",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
@@ -2873,121 +2873,65 @@
     },
     {
       "route": "/workspace/layout",
-      "url": "https://thenewfuse.com/workspace/layout",
+      "url": "https://app.thenewfuse.com/workspace/layout",
       "finalUrl": "https://app.thenewfuse.com/auth/login",
       "finalPath": "/auth/login",
       "status": 200,
-      "error": "page.evaluate: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Sign in",
+      "hasAppRoot": true,
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/workspace/members",
-      "url": "https://thenewfuse.com/workspace/members",
-      "finalUrl": "https://thenewfuse.com/workspace/members",
-      "finalPath": "/workspace/members",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "url": "https://app.thenewfuse.com/workspace/members",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Sign in",
+      "hasAppRoot": true,
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/workspace/overview",
-      "url": "https://thenewfuse.com/workspace/overview",
-      "finalUrl": "https://thenewfuse.com/workspace/overview",
-      "finalPath": "/workspace/overview",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "url": "https://app.thenewfuse.com/workspace/overview",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Sign in",
+      "hasAppRoot": true,
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
       "route": "/workspace/settings",
-      "url": "https://thenewfuse.com/workspace/settings",
-      "finalUrl": "https://thenewfuse.com/workspace/settings",
-      "finalPath": "/workspace/settings",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "url": "https://app.thenewfuse.com/workspace/settings",
+      "finalUrl": "https://app.thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Sign in",
+      "hasAppRoot": true,
+      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     }
   ],
   "hardBroken": [],
-  "networkBroken": [
-    {
-      "route": "/workspace/layout",
-      "url": "https://thenewfuse.com/workspace/layout",
-      "finalUrl": "https://app.thenewfuse.com/auth/login",
-      "finalPath": "/auth/login",
-      "status": 200,
-      "error": "page.evaluate: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    },
-    {
-      "route": "/workspace/members",
-      "url": "https://thenewfuse.com/workspace/members",
-      "finalUrl": "https://thenewfuse.com/workspace/members",
-      "finalPath": "/workspace/members",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    },
-    {
-      "route": "/workspace/overview",
-      "url": "https://thenewfuse.com/workspace/overview",
-      "finalUrl": "https://thenewfuse.com/workspace/overview",
-      "finalPath": "/workspace/overview",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    },
-    {
-      "route": "/workspace/settings",
-      "url": "https://thenewfuse.com/workspace/settings",
-      "finalUrl": "https://thenewfuse.com/workspace/settings",
-      "finalPath": "/workspace/settings",
-      "status": null,
-      "error": "page.goto: Target page, context or browser has been closed",
-      "title": "",
-      "h1": "",
-      "hasAppRoot": false,
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    }
-  ],
+  "networkBroken": [],
   "sameAsRoot": [],
   "duplicateFingerprintGroups": [
     {
-      "fingerprint": "31517bcc709ed07e0b6449f9440eb6d86c769804",
-      "routes": ["/", "/features", "/pricing"]
-    },
-    {
       "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
       "routes": [
+        "/",
         "/a2a-control",
         "/admin/marketplace",
         "/agency/dashboard",
@@ -3010,7 +2954,12 @@
         "/ai-portal/pfp-studio",
         "/analytics",
         "/app",
+        "/auth/callback",
+        "/auth/google-callback",
+        "/auth/google/callback",
         "/auth/login",
+        "/auth/oauth-callback",
+        "/billing",
         "/chat",
         "/chat-page",
         "/components",
@@ -3023,7 +2972,6 @@
         "/dashboard/analytics",
         "/dashboard/architecture",
         "/dashboard/calendar",
-        "/dashboard/command-center",
         "/dashboard/datasets",
         "/dashboard/fairtable",
         "/dashboard/files",
@@ -3048,6 +2996,7 @@
         "/main",
         "/mcp-hub",
         "/multi-agent-chat",
+        "/multi-agent-chat-demo",
         "/nodes",
         "/observatory",
         "/overview",
@@ -3097,12 +3046,12 @@
         "/workspace-settings/chat-model",
         "/workspace-settings/llm-selection",
         "/workspace/analytics",
-        "/workspace/chat"
+        "/workspace/chat",
+        "/workspace/layout",
+        "/workspace/members",
+        "/workspace/overview",
+        "/workspace/settings"
       ]
-    },
-    {
-      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
-      "routes": ["/about", "/brand", "/design-system"]
     },
     {
       "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
@@ -3121,6 +3070,7 @@
         "/admin/experimental-features",
         "/admin/feature-flags",
         "/admin/layout",
+        "/admin/onboarding",
         "/admin/openclaw-security",
         "/admin/panel",
         "/admin/port-management",
@@ -3136,6 +3086,7 @@
         "/build-info",
         "/command-center",
         "/components-showcase",
+        "/dashboard/command-center",
         "/debug",
         "/debug-routing",
         "/frontend-showcase",
@@ -3150,7 +3101,6 @@
         "/live-view",
         "/llm-rankings",
         "/logs",
-        "/multi-agent-chat-demo",
         "/nexus",
         "/package/agents",
         "/package/dashboard",
@@ -3164,24 +3114,24 @@
       ]
     },
     {
+      "fingerprint": "7fd77028db237ff68c6865499f02c024db16e699",
+      "routes": ["/auth", "/login"]
+    },
+    {
       "fingerprint": "0fdb296356f6da7940ac08348b6a34dd8ec6ef1a",
       "routes": ["/auth/forgot-password", "/forgot-password"]
     },
     {
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "routes": [
-        "/billing",
-        "/community",
-        "/help/community",
-        "/help/support",
-        "/membership",
-        "/not-found",
-        "/support"
-      ]
+      "fingerprint": "ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a",
+      "routes": ["/brand", "/design-system"]
     },
     {
-      "fingerprint": "e60a3d706b683adb25e0ad0dc7268635aafa2f54",
+      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
       "routes": ["/capabilities", "/marketplace", "/platform", "/product-map"]
+    },
+    {
+      "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
+      "routes": ["/community", "/help/community"]
     },
     {
       "fingerprint": "261b16762e5c4fa16a6d757ebfb8e3741ea8f5d8",
@@ -3189,28 +3139,19 @@
     },
     {
       "fingerprint": "7010ea1eda456f60ca76fa9cd61df236deab8ff2",
-      "routes": ["/help/documentation", "/help/faq", "/help/tutorials"]
+      "routes": ["/docs", "/help/documentation", "/help/faq", "/help/tutorials"]
     },
     {
-      "fingerprint": "f4b55a22a461a5e4dcf5bedd6c4198026a47e350",
+      "fingerprint": "59214064dd6c6e73bda58e2d641c0d3bbca1dc1e",
+      "routes": ["/help/support", "/support"]
+    },
+    {
+      "fingerprint": "71e5bff5fc86dd4e76d04c524966ac39c3a9a464",
       "routes": ["/legal/privacy", "/privacy"]
     },
     {
-      "fingerprint": "b1ff828ad2661b87de667c629fef055a4d209305",
+      "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
       "routes": ["/legal/terms", "/terms"]
-    },
-    {
-      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
-      "routes": ["/terminals", "/visualizations/terminals"]
-    },
-    {
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "routes": [
-        "/workspace/layout",
-        "/workspace/members",
-        "/workspace/overview",
-        "/workspace/settings"
-      ]
     }
   ]
 }

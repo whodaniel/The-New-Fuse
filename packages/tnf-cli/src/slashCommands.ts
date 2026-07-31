@@ -84,6 +84,31 @@ const STANDARD_SLASH_COMMANDS: SlashCommandDefinition[] = [
     mode: 'control',
   },
   {
+    name: 'window',
+    aliases: ['operator-window', 'ow'],
+    summary:
+      'Show or set the operator takeover window (seconds). Persists to ~/.tnf/tui-mode.json.',
+    usage: '/window [seconds|30s|8000ms]',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'hold',
+    aliases: ['pause-auto'],
+    summary: 'Pause autonomous continue so you can type freely. Use /continue to resume.',
+    usage: '/hold',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'continue',
+    aliases: ['resume-auto'],
+    summary: 'Resume autonomous continue after /hold (or after a stall auto-hold).',
+    usage: '/continue',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
     name: 'review',
     summary: 'Start a code review pass over the current workspace context.',
     usage: '/review [focus]',

@@ -1,0 +1,15 @@
+{
+  "root": "The-New-Fuse",
+  "generated": "2026-07-25T12:24:40Z",
+  "files_indexed": 64091,
+  "text_bytes": 700578399,
+  "unique_terms": 1410217,
+  "total_occurrences": 73158124,
+  "skipped_binary": 11522,
+  "skipped_large": 139,
+  "elapsed_seconds": 661.1,
+  "outputs": {
+    "full_tsv_gz": "wordcount_full.tsv.gz",
+    "summary": "wordcount_summary.txt"
+  }
+}

@@ -26,11 +26,24 @@ export interface VoiceBeamTarget {
   updated_at?: number;
 }
 
+/**
+ * Project root for the voice bridge.
+ *
+ * Resolved at runtime — never a baked-in absolute path. Order: the operator's
+ * stored setting, then VITE_TNF_PROJECT_ROOT for a build-time default, then
+ * empty. An empty result means "not configured yet"; callers should prompt
+ * rather than fall back to someone else's filesystem layout.
+ */
 export function getVoiceProjectRoot(): string {
-  return (
-    safeStorage.getItem(VOICE_PROJECT_ROOT_KEY)?.trim() ||
-    '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse'
-  );
+  const stored = safeStorage.getItem(VOICE_PROJECT_ROOT_KEY)?.trim();
+  if (stored) return stored;
+
+  const envRoot =
+    typeof import.meta !== 'undefined'
+      ? (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_TNF_PROJECT_ROOT
+      : undefined;
+
+  return envRoot?.trim() || '';
 }
 
 export function setVoiceProjectRoot(root: string): void {
@@ -102,6 +115,12 @@ export function parseU2ALine(line: string): ParsedU2AUtterance | null {
 }
 
 export function parseStreamTail(raw: string, limit = 24): ParsedU2AUtterance[] {
-  const lines = raw.split('\n').map((line) => line.trim()).filter(Boolean);
-  return lines.slice(-limit).map((line) => parseU2ALine(line)).filter(Boolean) as ParsedU2AUtterance[];
+  const lines = raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return lines
+    .slice(-limit)
+    .map((line) => parseU2ALine(line))
+    .filter(Boolean) as ParsedU2AUtterance[];
 }

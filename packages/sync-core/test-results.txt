@@ -1,6 +1,6 @@
 [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
 
-> @the-new-fuse/sync-core@0.1.1 test:unit /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core
+> @the-new-fuse/sync-core@0.1.1 test:unit $TNF_ROOT/packages/sync-core
 > jest --testPathIgnorePatterns=integration --passWithNoTests
 
 FAIL src/services/SyncOrchestrator.test.ts
@@ -28,7 +28,7 @@ FAIL src/services/SyncOrchestrator.test.ts
 
     Details:
 
-    /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/infrastructure/src/database/index.js:1
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
     export * from './standalone.js';
     ^^^^^^
 
@@ -78,7 +78,7 @@ FAIL src/tasks/TaskSynchronizationService.test.ts
 
     Details:
 
-    /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/infrastructure/src/database/index.js:1
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
     export * from './standalone.js';
     ^^^^^^
 
@@ -198,7 +198,7 @@ FAIL src/services/ConflictManager.test.ts
 
     [7m55[0m     drizzle = module.get(DrizzleClient);
     [7m  [0m [91m                         ~~~~~~~~~~~~~[0m
-    [96msrc/services/ConflictManager.test.ts[0m:[93m144[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m144[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m144[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -207,7 +207,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m167[0m:[93m22[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m167[0m:[93m22[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m167[0m       expect(drizzle.$transaction).toHaveBeenCalled();
     [7m   [0m [91m                     ~~~~~~~~~~~~[0m
@@ -216,7 +216,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m221[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m221[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m221[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -225,7 +225,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m272[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m272[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m272[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -234,7 +234,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m321[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m321[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m321[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -243,7 +243,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m352[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m352[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m352[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -252,7 +252,7 @@ FAIL src/services/ConflictManager.test.ts
         [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
         [7m   [0m [96m    ~~~~~~~~~~~[0m
         'transaction' is declared here.
-    [96msrc/services/ConflictManager.test.ts[0m:[93m540[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+    [96msrc/services/ConflictManager.test.ts[0m:[93m540[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
 
     [7m540[0m       drizzle.$transaction.mockRejectedValue(error);
     [7m   [0m [91m              ~~~~~~~~~~~~[0m
@@ -370,7 +370,7 @@ FAIL src/error/SyncErrorHandler.test.ts
 
     Details:
 
-    /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/infrastructure/src/database/index.js:1
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
     export * from './standalone.js';
     ^^^^^^
 
@@ -500,23 +500,23 @@ PASS src/services/MasterClockService.test.ts
 
     console.error
       Failed to initialize MasterClockService: Error: Redis connection failed
-          at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/services/MasterClockService.test.ts:121:56)
-          at Promise.finally.completed (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at Object.<anonymous> ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:121:56)
+          at Promise.finally.completed ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
           at new Promise (<anonymous>)
-          at callAsyncCircusFn (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
-          at _callCircusTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at callAsyncCircusFn ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
           at processTicksAndRejections (node:internal/process/task_queues:103:5)
-          at _runTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
-          at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:849:7
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
-          at run (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
-          at runAndTransformResultsToJestFormat (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
-          at jestAdapter (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/runner.js:101:19)
-          at runTestInternal (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:275:16)
-          at runTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:343:7)
-          at Object.worker (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:497:12)
+          at _runTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at $TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter ($TNF_ROOT/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:497:12)
 
       119 |       console.log(`MasterClockService initialized with instance ID: ${this.config.instanceId}`);
       120 |     } catch (error) {
@@ -1102,27 +1102,27 @@ PASS src/services/MasterClockService.test.ts
     console.error
       Error handling clock sync message: SyntaxError: Unexpected token 'i', "invalid-json" is not valid JSON
           at JSON.parse (<anonymous>)
-          at MasterClockService.handleClockSyncMessage (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/services/MasterClockService.ts:382:44)
-          at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/services/MasterClockService.ts:270:12
-          at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/services/MasterClockService.test.ts:467:20
-          at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/node_modules/expect/build/index.js:1824:9)
-          at Object.throwingMatcher [as toThrow] (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/node_modules/expect/build/index.js:2235:93)
-          at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/sync-core/src/services/MasterClockService.test.ts:467:58)
-          at Promise.finally.completed (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at MasterClockService.handleClockSyncMessage ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.ts:382:44)
+          at $TNF_ROOT/packages/sync-core/src/services/MasterClockService.ts:270:12
+          at $TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:467:20
+          at Object.<anonymous> ($TNF_ROOT/node_modules/jest-circus/node_modules/expect/build/index.js:1824:9)
+          at Object.throwingMatcher [as toThrow] ($TNF_ROOT/node_modules/jest-circus/node_modules/expect/build/index.js:2235:93)
+          at Object.<anonymous> ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:467:58)
+          at Promise.finally.completed ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
           at new Promise (<anonymous>)
-          at callAsyncCircusFn (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
-          at _callCircusTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
-          at _runTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
-          at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:849:7
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
-          at _runTestsForDescribeBlock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
-          at run (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
-          at runAndTransformResultsToJestFormat (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
-          at jestAdapter (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-circus/build/runner.js:101:19)
-          at runTestInternal (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:275:16)
-          at runTest (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:343:7)
-          at Object.worker (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/jest-runner/build/testWorker.js:497:12)
+          at callAsyncCircusFn ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at $TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter ($TNF_ROOT/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:497:12)
 
       394 |       this.emit('instance_sync_received', syncData);
       395 |     } catch (error) {

@@ -316,16 +316,25 @@ start_antigravity() {
         # macOS - open in new Terminal tab via adaptive launcher
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/antigravity-redis-wrapper.cjs")"
-        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\""
-        wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20
-    else
-        # Linux - run in background with logs
-        "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" > /tmp/antigravity.log 2>&1 &
-        AG_PID=$!
-        echo $AG_PID >> "$PID_FILE"
-        echo -e "  ${GREEN}✓${NC} Antigravity started (PID: $AG_PID)"
-        echo -e "  ${CYAN}ℹ${NC}  Logs: /tmp/antigravity.log"
+        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\"" || true
+        if wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20; then
+            return 0
+        fi
+        echo -e "  ${YELLOW}!${NC} Terminal tab launch did not stick — falling back to headless"
     fi
+
+    # Linux / headless fallback (wrappers stay up without a TTY).
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+      nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" \
+      >"$PROJECT_ROOT/.agent/runtime-logs/antigravity.log" 2>&1 &
+    AG_PID=$!
+    echo $AG_PID >> "$PID_FILE"
+    if wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 15; then
+        echo -e "  ${CYAN}ℹ${NC}  Logs: .agent/runtime-logs/antigravity.log"
+        return 0
+    fi
+    echo -e "  ${RED}✗${NC} Antigravity failed to start (see .agent/runtime-logs/antigravity.log)"
+    return 1
 }
 start_agent_wrapper() {
     local name=$1
@@ -342,16 +351,28 @@ start_agent_wrapper() {
     fi
 
     local agent_id="tnf-${script%.*}"
+    local log_file="$PROJECT_ROOT/.agent/runtime-logs/$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').log"
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id")"
-        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\""
-        wait_for_wrapper "$name" "$script" 25
-    else
-        "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" > "/tmp/$(echo "$name" | tr A-Z a-z).log" 2>&1 &
-        echo $! >> "$PID_FILE"
-        echo -e "  ${GREEN}✓${NC} $name started (headless fallback)"
+        osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\"" || true
+        if wait_for_wrapper "$name" "$script" 25; then
+            return 0
+        fi
+        echo -e "  ${YELLOW}!${NC} Terminal tab launch did not stick — falling back to headless"
     fi
+
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+      nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" \
+      >"$log_file" 2>&1 &
+    echo $! >> "$PID_FILE"
+    if wait_for_wrapper "$name" "$script" 15; then
+        echo -e "  ${CYAN}ℹ${NC}  Logs: $log_file"
+        return 0
+    fi
+    echo -e "  ${RED}✗${NC} $name failed to start (see $log_file)"
+    return 1
 }
 stop_all() {
     echo -e "${YELLOW}Stopping all agent network components...${NC}"

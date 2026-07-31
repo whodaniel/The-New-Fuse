@@ -4,7 +4,8 @@ import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
 import { openAIAssist } from '../utils/aiAssistEvents';
 
-const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+import { TNF_LOGO_SRC } from '../components/brand/TnfLogo';
+const TNF_LOGO_URL = TNF_LOGO_SRC;
 
 const MainLayout: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();

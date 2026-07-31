@@ -13,7 +13,10 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || '';
 
 const isValidSupabaseUrl = supabaseUrl.length > 12 && supabaseUrl.includes('.supabase.co');
-const isValidSupabaseKey = supabaseAnonKey.length > 50 && supabaseAnonKey.startsWith('eyJ');
+// Accept legacy JWT anon keys (eyJ…) and newer sb_publishable_ keys.
+const isValidSupabaseKey =
+  (supabaseAnonKey.length > 50 && supabaseAnonKey.startsWith('eyJ')) ||
+  (supabaseAnonKey.length > 20 && supabaseAnonKey.startsWith('sb_publishable_'));
 
 export const hasSupabaseConfig = isValidSupabaseUrl && isValidSupabaseKey;
 

@@ -67,7 +67,7 @@ python3 scripts/autonomy/ingest_ai5_and_new_may_notes.py --playlist-json data/ai
 
 - Preferred YouTube API path could not be completed due OAuth client credential
   file missing at:
-  - `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/tauri-desktop/src-tauri/credentials/client_secret.json`
+  - `$TNF_ROOT/apps/tauri-desktop/src-tauri/credentials/client_secret.json`
 - API probe with available token/client pair returned exact error:
   - `invalid_grant`
   - response: `{"error":"invalid_grant","error_description":"Bad Request"}`
@@ -77,22 +77,22 @@ python3 scripts/autonomy/ingest_ai5_and_new_may_notes.py --playlist-json data/ai
 
 ## Exact File Paths Touched
 
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.live-2026-05-19.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-delta-2026-05-19.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-scout-queue.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-delta-2026-05-19-after.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-25e80879e9d6360a.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-25e80879e9d6360a.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-3741b2651ad71de0.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-3741b2651ad71de0.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-77f34a86e160d2e2.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-77f34a86e160d2e2.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-873d57f0974106b9.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-873d57f0974106b9.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-adc99f01b8e8fe58.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-adc99f01b8e8fe58.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-da3737b6ae0238dd.json`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts/eia-da3737b6ae0238dd.md`
-- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/TNF_INGEST_STATUS_AI5_2026-05-19.md`
+- `$TNF_ROOT/data/ai-5-playlist.live-2026-05-19.json`
+- `$TNF_ROOT/data/ai-5-playlist.json`
+- `$TNF_ROOT/data/ingestion-runs/ai5-delta-2026-05-19.json`
+- `$TNF_ROOT/data/ingestion-runs/ai5-new-may-2026-manifest.json`
+- `$TNF_ROOT/data/ingestion-runs/ai5-new-may-2026-scout-queue.json`
+- `$TNF_ROOT/data/ingestion-runs/ai5-delta-2026-05-19-after.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-25e80879e9d6360a.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-25e80879e9d6360a.md`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-3741b2651ad71de0.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-3741b2651ad71de0.md`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-77f34a86e160d2e2.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-77f34a86e160d2e2.md`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-873d57f0974106b9.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-873d57f0974106b9.md`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-adc99f01b8e8fe58.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-adc99f01b8e8fe58.md`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-da3737b6ae0238dd.json`
+- `$TNF_ROOT/data/intelligence-artifacts/eia-da3737b6ae0238dd.md`
+- `$TNF_ROOT/docs/protocols/reports/TNF_INGEST_STATUS_AI5_2026-05-19.md`

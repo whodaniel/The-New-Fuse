@@ -106,7 +106,7 @@ The workspace was initialized without AI credentials configured.
 1. **Immediate** (unblock current batch):
 
    ```bash
-   cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.deepsec
+   cd $TNF_ROOT/.deepsec
    echo "AI_GATEWAY_API_KEY=vck_XXX" > .env.local
    # or
    echo "OPENAI_API_KEY=sk-XXX" > .env.local

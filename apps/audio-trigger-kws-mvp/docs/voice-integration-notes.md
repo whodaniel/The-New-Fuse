@@ -47,10 +47,18 @@ In `audio-trigger-kws-mvp`:
 - `MINI_OMNI_ENABLED` - Enable mini-omni backend
 - `MINI_OMNI_API_URL` - mini-omni server URL
 
-### Current Status
+## Multi-agent destinations (TNF feature)
 
-The voice system (`tnf voice`) is configured to forward transcriptions to the
-KWS gateway:
+Voice inject is **not** Cursor-specific. Destinations:
+
+1. **Cmd+Option+Click** — any app/tab (primary retarget).
+2. **`voice-target-agent --prefer any`** — auto-lock to a live agent tty
+   (`cursor-agent`, `claude`, `codex`, `gemini`, `tnf agent`, `aider`, …).
+3. **KWS AgentRouter** (`apps/audio-trigger-kws-mvp`) — keyword callsigns
+   (`echo`, `pulse`, …) for named agents once TTYs are registered.
+
+Echo suppression follows the KWS pattern: while TTS is speaking (and briefly
+after), mic/STT must not re-ingest speaker audio as a user utterance.
 
 ```
 User Speech → Whisper Transcription → voice_server.py → KWS Gateway → audio-trigger-kws-mvp

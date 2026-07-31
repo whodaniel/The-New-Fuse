@@ -3,7 +3,6 @@ import {
   exerciseVisibleButtons,
   fillVisibleFormFields,
   gotoRoute,
-  modKey,
   openCommandPalette,
   screenshotUx,
   stubTauriNative,
@@ -12,10 +11,8 @@ import {
 const DESKTOP_ROUTES = [
   { id: 'platform', path: '/platform', label: 'Platform' },
   { id: 'dashboard', path: '/dashboard', label: 'Dashboard' },
-  { id: 'browser', path: '/browser', label: 'Browser Control' },
+  { id: 'computer-use', path: '/computer-use', label: 'Computer Use' },
   { id: 'terminal', path: '/terminal', label: 'Swarm Terminal' },
-  { id: 'oagi', path: '/oagi', label: 'OAGI Hub' },
-  { id: 'antigravity', path: '/antigravity', label: 'Antigravity' },
   { id: 'voice', path: '/voice', label: 'Voice Bridge' },
   { id: 'library', path: '/library', label: 'Virtual Library' },
   { id: 'agents', path: '/agents', label: 'Agent Hub' },
@@ -35,10 +32,15 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('UX audit — global shell', () => {
-  test('sidebar navigates all registered routes', async ({ page }) => {
+  test('sidebar navigates all primary nav routes', async ({ page }) => {
     await gotoRoute(page, '/dashboard');
-    for (const route of DESKTOP_ROUTES) {
-      await page.locator('.sidebar-nav button.nav-item').filter({ hasText: route.label }).first().click();
+    const sidebarRoutes = DESKTOP_ROUTES.filter((route) => route.id !== 'computer-use');
+    for (const route of sidebarRoutes) {
+      await page
+        .locator('.sidebar-nav button.nav-item')
+        .filter({ hasText: route.label })
+        .first()
+        .click();
       await expect(page).toHaveURL(new RegExp(`#${route.path.replace('/', '\\/')}`));
       await screenshotUx(page, `sidebar-${route.id}`);
     }
@@ -67,7 +69,13 @@ test.describe('UX audit — Settings (forms + toggles)', () => {
     await gotoRoute(page, '/settings');
     await screenshotUx(page, 'settings-initial');
 
-    for (const section of ['Connection', 'Appearance', 'AI Configuration', 'Notifications', 'About']) {
+    for (const section of [
+      'Connection',
+      'Appearance',
+      'AI Configuration',
+      'Notifications',
+      'About',
+    ]) {
       await page.locator('.settings-nav button').filter({ hasText: section }).click();
     }
 
@@ -98,8 +106,8 @@ test.describe('UX audit — Dashboard & Forefront', () => {
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await page.getByRole('button', { name: 'Cancel' }).click();
 
-    await page.locator('.forefront-btn').filter({ hasText: 'Open Browser + Federation' }).click();
-    await expect(page).toHaveURL(/#\/browser/);
+    await page.locator('.forefront-btn').filter({ hasText: 'Open Computer Use' }).click();
+    await expect(page).toHaveURL(/#\/computer-use/);
     await gotoRoute(page, '/dashboard');
 
     await exerciseVisibleButtons(page, {
@@ -126,8 +134,10 @@ test.describe('UX audit — Agent Hub', () => {
     await expect(createBtn).toBeDisabled();
 
     await page.getByPlaceholder('e.g., Research Assistant').fill('UX Audit Agent');
-    await page.locator('.form-group select').selectOption('claude');
-    await page.getByPlaceholder('What does this agent do?').fill('Created during automated UX audit.');
+    await page.locator('.form-group select').first().selectOption({ index: 0 });
+    await page
+      .getByPlaceholder('What does this agent do?')
+      .fill('Created during automated UX audit.');
     await expect(createBtn).toBeEnabled();
 
     await page.getByRole('button', { name: 'Cancel' }).click();
@@ -199,7 +209,15 @@ test.describe('UX audit — MCP Store', () => {
     await gotoRoute(page, '/mcp');
 
     await page.getByPlaceholder(/search/i).fill('browser');
-    for (const cat of ['📊 Data', '🌐 Web', '💻 Code', '🤖 AI', '📁 Files', '🗄️ Database', '🧠 Skills']) {
+    for (const cat of [
+      '📊 Data',
+      '🌐 Web',
+      '💻 Code',
+      '🤖 AI',
+      '📁 Files',
+      '🗄️ Database',
+      '🧠 Skills',
+    ]) {
       await page.getByRole('button', { name: cat }).click();
     }
     await page.getByRole('button', { name: '📦 All' }).click();
@@ -246,43 +264,34 @@ test.describe('UX audit — Knowledge Hub', () => {
   });
 });
 
-test.describe('UX audit — OAGI Hub (native stubs)', () => {
-  test('capture, actions, and self-check', async ({ page }) => {
-    await gotoRoute(page, '/oagi');
-    await expect(page.getByRole('heading', { name: 'OAGI Hub' })).toBeVisible();
+test.describe('UX audit — Computer Use (screen automation)', () => {
+  test('screen tab: capture, actions, and self-check', async ({ page }) => {
+    await gotoRoute(page, '/computer-use');
+    await expect(page.getByRole('heading', { name: 'Computer Use' })).toBeVisible();
+    await page.getByRole('tab', { name: 'Screen automation' }).click();
     await page.getByRole('button', { name: 'Capture Now' }).click();
     await page.getByRole('button', { name: 'Move & Left Click' }).click();
     await page.getByRole('button', { name: 'Scroll Up' }).click();
     await page.getByRole('button', { name: 'Scroll Down' }).click();
     await page.getByRole('button', { name: 'Type Test Text' }).click();
     await page.getByRole('button', { name: 'Clear' }).click();
-    await page.locator('.script-item').filter({ hasText: 'Self-Check' }).getByRole('button', { name: 'Run' }).click();
+    await page
+      .locator('.script-item')
+      .filter({ hasText: 'Self-Check' })
+      .getByRole('button', { name: 'Run' })
+      .click();
 
-    await screenshotUx(page, 'oagi-hub');
+    await screenshotUx(page, 'computer-use-screen');
   });
 });
 
-test.describe('UX audit — Antigravity', () => {
-  test('connection modal and action cards', async ({ page }) => {
-    await gotoRoute(page, '/antigravity');
-    const connectBtn = page.getByRole('button', { name: /connect|connection/i }).first();
-    if (await connectBtn.isVisible().catch(() => false)) {
-      await connectBtn.click();
-      await page.getByPlaceholder('http://localhost:3000').fill('http://127.0.0.1:8080');
-      await page.getByPlaceholder('Enter CSRF token if required').fill('audit-token');
-      await page.getByRole('button', { name: 'Cancel' }).click();
-    }
-    await exerciseVisibleButtons(page, { skipLabels: [/disconnect/i] });
-    await screenshotUx(page, 'antigravity');
-  });
-});
-
-test.describe('UX audit — Browser Control', () => {
-  test('tabs, url bar, and panel buttons', async ({ page }) => {
-    await gotoRoute(page, '/browser');
+test.describe('UX audit — Computer Use (browser runtime)', () => {
+  test('browser tab: tabs, url bar, and panel buttons', async ({ page }) => {
+    await gotoRoute(page, '/computer-use');
+    await page.getByRole('tab', { name: 'Browser runtime' }).click();
     await fillVisibleFormFields(page);
     await exerciseVisibleButtons(page, { maxClicks: 30 });
-    await screenshotUx(page, 'browser-control');
+    await screenshotUx(page, 'computer-use-browser');
   });
 });
 
@@ -299,9 +308,12 @@ test.describe('UX audit — Web Parity Hub', () => {
   test('search, categories, and route jumps', async ({ page }) => {
     await gotoRoute(page, '/web-hub');
 
-    await page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'Browser Control' }) })
-      .getByRole('button', { name: 'Open Native' }).click();
-    await expect(page).toHaveURL(/#\/browser/);
+    await page
+      .getByRole('article')
+      .filter({ has: page.getByRole('heading', { name: /Computer Use|Browser/i }) })
+      .getByRole('button', { name: 'Open Native' })
+      .click();
+    await expect(page).toHaveURL(/#\/computer-use/);
 
     await gotoRoute(page, '/web-hub');
     await page.getByPlaceholder('Search surfaces...').fill('workflow');
@@ -329,16 +341,29 @@ test.describe('UX audit — exhaustive button sweep per route', () => {
     test(`${route.path} — exercise visible controls`, async ({ page }) => {
       await gotoRoute(page, route.path);
       await page.waitForTimeout(500);
-      if (route.path === '/browser') {
-        await page.getByPlaceholder(/search or enter website/i).fill('https://example.com');
-        await page.getByRole('button', { name: 'Refresh' }).click({ timeout: 5000 }).catch(() => undefined);
+      if (route.path === '/computer-use') {
+        await page
+          .getByRole('tab', { name: 'Browser runtime' })
+          .click()
+          .catch(() => undefined);
+        await page
+          .getByPlaceholder(/search or enter website/i)
+          .fill('https://example.com')
+          .catch(() => undefined);
+        await page
+          .getByRole('button', { name: 'Refresh' })
+          .click({ timeout: 5000 })
+          .catch(() => undefined);
         await screenshotUx(page, `sweep-${route.id}`);
         return;
       }
       await fillVisibleFormFields(page);
       const result = await exerciseVisibleButtons(page, {
-        maxClicks: route.path === '/browser' ? 15 : 80,
-        skipLabels: route.path === '/browser' ? [/connect|native|screenshot|analyze|session/i] : undefined,
+        maxClicks: route.path === '/computer-use' ? 15 : 80,
+        skipLabels:
+          route.path === '/computer-use'
+            ? [/connect|native|screenshot|analyze|session/i]
+            : undefined,
       });
       expect(result.clicked.length + result.skipped.length).toBeGreaterThan(0);
       await screenshotUx(page, `sweep-${route.id}`);

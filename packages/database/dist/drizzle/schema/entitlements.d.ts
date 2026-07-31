@@ -509,7 +509,7 @@ export declare const gameEntitlements: import("drizzle-orm/pg-core").PgTableWith
             tableName: "game_entitlements";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "override" | "nft" | "membership" | "purchase" | "admin";
+            data: "override" | "nft" | "admin" | "membership" | "purchase";
             driverParam: string;
             notNull: true;
             hasDefault: true;

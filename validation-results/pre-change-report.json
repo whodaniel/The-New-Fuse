@@ -1,10 +1,9 @@
 {
-  "timestamp": "2026-07-23T00:58:42.960Z",
+  "timestamp": "2026-07-23T22:04:10.460Z",
   "passed": 1,
-  "failed": 5,
-  "warnings": 1,
+  "failed": 4,
+  "warnings": 2,
   "errors": [
-    "Git status check failed: spawnSync /bin/sh ENOBUFS",
     "Tests failed: Command failed: pnpm test -- --passWithNoTests\nError: node exited with code 1\n",
     "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/external/gemini-cli-source/bundle/docs/CONTRIBUTING.md'",
     "Required tool not found: bun",

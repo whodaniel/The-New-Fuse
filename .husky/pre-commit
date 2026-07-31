@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
+# Runs first: if a merge/rebase/cherry-pick is open, this commit would conclude
+# it. Cheap check, and it should fail before anything slower runs.
+pnpm run merge:guard
+
 pnpm run privacy:guard:staged
 pnpm run secret:sweep:staged
 pnpm run docs:pii:guard:staged

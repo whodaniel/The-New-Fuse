@@ -371,7 +371,7 @@ export default function SuperAdminControlPanel() {
         id: 'tnf-master-clock',
         type: 'default',
         position: { x: 0, y: 0 },
-        data: { label: 'TNF Master Clock' },
+        data: { label: 'TNF Master Clock (baton · ORCHESTRATOR-{ts})' },
       },
     ];
     const baseEdges: Edge[] = [];

@@ -8,6 +8,9 @@ import { EventEmitter } from './EventEmitter';
 
 export type FederationNodeServiceEvent = FederationNodeEvent;
 
+/** `platform` the TNF Chrome extension registers under on the relay. */
+export const BROWSER_EXTENSION_PLATFORM = 'chrome-extension';
+
 class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent> {
   private client: FederationNodeClient;
   private relayUrl = 'ws://127.0.0.1:3000/ws';
@@ -63,6 +66,20 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
 
   isRegistered(): boolean {
     return this.client.isRegistered();
+  }
+
+  /**
+   * Whether the TNF Chrome extension is present on the relay.
+   *
+   * The extension registers itself with `AGENT_REGISTER` and
+   * `platform: 'chrome-extension'` (see apps/chrome-extension v6 background),
+   * so its presence is observable only through the federation agent list.
+   * Changes are announced by the `agents_updated` event.
+   */
+  isBrowserExtensionConnected(): boolean {
+    return this.getState().agents.some(
+      (agent) => String(agent.platform) === BROWSER_EXTENSION_PLATFORM
+    );
   }
 
   async connect(relayUrl?: string): Promise<boolean> {

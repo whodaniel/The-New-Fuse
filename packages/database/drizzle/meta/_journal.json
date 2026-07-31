@@ -78,6 +78,13 @@
       "when": 1780257600000,
       "tag": "0012_add_project_runtime_configuration",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782358200000,
+      "tag": "0013_add_cli_qoder",
+      "breakpoints": true
     }
   ]
 }

@@ -17,7 +17,7 @@
 
 ```bash
 # Navigate to TNF repository
-cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd $TNF_ROOT
 
 # Install dependencies
 pnpm install

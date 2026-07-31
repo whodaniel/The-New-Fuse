@@ -15,45 +15,6 @@ export class ProviderCatalogService {
 
   constructor(private readonly db: DatabaseService) {}
 
-  /**
-   * Providers that can actually serve a chat completion.
-   *
-   * `provider_api_keys` is a general-purpose encrypted credential store, not an LLM registry — real
-   * accounts hold rows like `google_client_secret`, `google_refresh_token` and `tnf_super_admin`
-   * alongside genuine providers. Offering those as AI sources would be both nonsense and a nudge
-   * toward exposing secret names in the UI, so the picker is restricted to this allowlist.
-   *
-   * Mirrors the ids in apps/frontend/src/data/llmProviders.ts.
-   */
-  private static readonly CHAT_PROVIDERS = new Set([
-    'anthropic',
-    'azure',
-    'bedrock',
-    'cohere',
-    'deepseek',
-    'fireworksai',
-    'gemini',
-    'generic-openai',
-    'google',
-    'groq',
-    'lmstudio',
-    'localai',
-    'mistral',
-    'novita',
-    'ollama',
-    'openai',
-    'openrouter',
-    'perplexity',
-    'qwen',
-    'textgenwebui',
-    'togetherai',
-    'xai',
-  ]);
-
-  isChatProvider(provider: string): boolean {
-    return ProviderCatalogService.CHAT_PROVIDERS.has(this.normalizeProvider(provider));
-  }
-
   normalizeProvider(value?: string): string {
     return typeof value === 'string' ? value.trim().toLowerCase() : '';
   }
@@ -117,7 +78,7 @@ export class ProviderCatalogService {
         const rows = await this.db.providerApiKeys.listByUser(userId);
         userProviders = rows
           .map((row: { provider: string }) => this.normalizeProvider(row.provider))
-          .filter((provider) => provider && this.isChatProvider(provider));
+          .filter(Boolean);
       } catch (error) {
         this.logger.warn(`Provider key lookup failed: ${(error as Error).message}`);
       }

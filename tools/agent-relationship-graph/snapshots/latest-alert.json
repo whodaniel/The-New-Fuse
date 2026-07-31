@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-04-07T13:44:08.838605+00:00",
+  "baseline_snapshot": "snapshot-20260326T092335Z.json",
+  "current_snapshot": "snapshot-20260407T134408Z.json",
+  "thresholds": {
+    "max_graphs_changed": 8,
+    "max_nodes_added": 3,
+    "max_nodes_removed": 1,
+    "max_edges_added": 60,
+    "max_edges_removed": 3
+  },
+  "values": {
+    "graphs_changed": 2,
+    "nodes_added_total": 0,
+    "nodes_removed_total": 0,
+    "edges_added_total": 9,
+    "edges_removed_total": 0
+  },
+  "breaches": [],
+  "status": "ok"
+}

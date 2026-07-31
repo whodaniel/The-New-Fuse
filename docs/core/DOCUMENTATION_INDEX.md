@@ -21,7 +21,7 @@ index snapshots are archived under
 - Development: [Build Guide](./docs/development/BUILD_GUIDE.md),
   [Build Status](./docs/development/BUILD_STATUS.md)
 - Deployment: [Deployment Guide](./docs/guides/deployment-guide.md),
-  [Cloud Migration Blueprint](./CLOUD_MIGRATION_BLUEPRINT.md)
+  [Cloud Migration Blueprint](/CLOUD_MIGRATION_BLUEPRINT.md)
 - Testing: [Testing README](./docs/testing/README.md),
   [Best Practices](./docs/testing/BEST_PRACTICES.md)
 - Performance: [Performance README](./docs/performance/README.md),
@@ -54,7 +54,7 @@ index snapshots are archived under
 
 1. [docs/project-management/PRODUCTION_READINESS](./docs/project-management/PRODUCTION_READINESS.md)
 2. [docs/guides/deployment-guide](./docs/guides/deployment-guide.md)
-3. [CLOUD_MIGRATION_BLUEPRINT](./CLOUD_MIGRATION_BLUEPRINT.md)
+3. [CLOUD_MIGRATION_BLUEPRINT](/CLOUD_MIGRATION_BLUEPRINT.md)
 4. [docs/performance/README](./docs/performance/README.md)
 5. [docs/security/README](./docs/security/README.md)
 

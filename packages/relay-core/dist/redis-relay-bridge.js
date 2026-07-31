@@ -20,6 +20,7 @@ const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const events_1 = require("events");
 const identity_js_1 = require("./contracts/identity.js");
 const native_envelope_validator_js_1 = require("./protocol/native-envelope-validator.js");
+const sign_bus_message_js_1 = require("./protocol/sign-bus-message.js");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 class RedisRelayBridge extends events_1.EventEmitter {
     constructor(config = {}) {
@@ -126,9 +127,12 @@ class RedisRelayBridge extends events_1.EventEmitter {
         // Now 'envelope' is guaranteed to be a valid and normalized TNFEnvelope
         // No need for a second validateTNFEnvelope call here.
         const normalizedEnvelope = envelope;
-        // Publish to ingress
+        // Publish to ingress (signed for RedisAgentClient consumers)
         try {
-            await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
+            const signerId = String(normalizedEnvelope?.from?.agentId || agentId || 'redis-relay-bridge').trim() ||
+                'redis-relay-bridge';
+            const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(signerId, this.config.ingressChannel, normalizedEnvelope, String(normalizedEnvelope.type || 'event'));
+            await this.redisClient.publish(this.config.ingressChannel, payload);
             console.log(`[Redis-Bridge] Published to ${this.config.ingressChannel}:`, normalizedEnvelope.id);
             this.emit('ingress', normalizedEnvelope);
         }
@@ -227,7 +231,10 @@ class RedisRelayBridge extends events_1.EventEmitter {
             return;
         }
         const normalizedEnvelope = (0, tnf_envelope_js_1.validateTNFEnvelope)(envelope);
-        await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
+        const signerId = String(normalizedEnvelope?.from?.agentId || 'redis-relay-bridge').trim() ||
+            'redis-relay-bridge';
+        const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(signerId, this.config.ingressChannel, normalizedEnvelope, String(normalizedEnvelope.type || 'event'));
+        await this.redisClient.publish(this.config.ingressChannel, payload);
         console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
     }
     /**
@@ -240,7 +247,10 @@ class RedisRelayBridge extends events_1.EventEmitter {
         }
         const channel = `${this.config.egressChannelPrefix}:${agentId}`;
         const normalizedEnvelope = (0, tnf_envelope_js_1.validateTNFEnvelope)(envelope);
-        await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
+        const signerId = String(normalizedEnvelope?.from?.agentId || 'redis-relay-bridge').trim() ||
+            'redis-relay-bridge';
+        const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(signerId, channel, normalizedEnvelope, String(normalizedEnvelope.type || 'event'));
+        await this.redisClient.publish(channel, payload);
         console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
     }
     /**

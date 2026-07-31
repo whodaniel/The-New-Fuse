@@ -43,7 +43,7 @@
 ### Strategic
 
 - protocol standards from some other Agentic plat form or LLM provider, that
-- @/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/
+- @$TNF_ROOT/.claude/agents/
 - audience-persona-architect-agent.md
 - business-model-architect-agent.md
 - contextual-model-implementation-architect.md
@@ -51,10 +51,10 @@
 - facebook-strategy-agent.md
 - instagram-strategy-agent.md
 - inter-agentic-workflow-definer.md
-- /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/l
+- $TNF_ROOT/.claude/agents/l
 - meta-agent-architect.md
 - monetization-strategy-agent.md
-- /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/o
+- $TNF_ROOT/.claude/agents/o
 - oto-sequence-architect-agent.md
 - personal-brand-architect-agent.md
 - platform-selection-agent.md

@@ -146,6 +146,11 @@ apps/external/cursor-watch-learn/output/
 scripts/cloud_runtime/openclaw-codex-tenants.json
 archive/junk/
 
+# Semantic pipeline: personal-data overlay + local build cache (system
+# artifacts in concordance_results/ stay tracked)
+concordance_results/user/
+concordance_results/.tnf-logo-96.png
+
 
 # OS
 .DS_Store
@@ -415,3 +420,44 @@ packages/ui-consolidated/src/**/*.js.map
 # Redis RDB snapshots and other runtime dumps
 temp-*.rdb
 *.rdb
+
+# Bearer token file for tnf-browser extension (rotate; pre-existing in history)
+packages/tnf-browser/extension/token.json
+
+
+# Build artifact exclusions (fix: dist/ negation pattern re-includes these)
+packages/contracts/cache/
+packages/mcp-concordance-server/dist/
+packages/types/.turbo/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/
+
+# Frontend Vite/Vitest cache (runtime artifacts)
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/*.json
+# Vite cache
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts)
+apps/api/logs/*.json
+
+# Vite cache
+apps/frontend/node_modules/.vite/
+
+# Playwright / agent-browser auth state exports (secrets)
+**/playwright_state_*.json
+.tnf/agent-chrome-profile/
+
+# ── Process atlas: generated runtime snapshots ───────────────────────────────
+# These are regenerated locally by .verifier/generate-process-atlas.py and
+# capture live `pgrep -fl` command lines. The generator redacts credentials,
+# but a process snapshot of the operator's machine is runtime state, not
+# source — it does not belong in the tree. (.verifier is already in
+# ALWAYS_EXCLUDE in scripts/sync-repos.sh; this closes the private-repo side.)
+.verifier/process-atlas.payload.json
+.verifier/process-atlas.digest.md
+.verifier/process-atlas.verify.json
+.verifier/tnf-process-atlas.html

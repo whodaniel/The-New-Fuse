@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import { writeFileAtomic } from '../utils/safe-fs.js';
 
 export type LivingStateUpdate = {
   stepNumber: number;
@@ -65,10 +66,11 @@ export class LivingStateService {
     if (!fs.existsSync(statePath)) {
       console.log(chalk.yellow(`[LivingState] ${LIVING_STATE_PATH} not found, creating...`));
       fs.mkdirSync(path.dirname(statePath), { recursive: true });
-      fs.writeFileSync(statePath, this.initialState(), 'utf8');
+      writeFileAtomic(statePath, this.initialState());
     }
 
-    const statusIcon = update.status === 'completed' ? '✅' : update.status === 'in_progress' ? '⚠️' : '✗';
+    const statusIcon =
+      update.status === 'completed' ? '✅' : update.status === 'in_progress' ? '⚠️' : '✗';
     const entry = `${update.stepNumber}. [${statusIcon}] ${update.description}`;
 
     let content = fs.readFileSync(statePath, 'utf8');
@@ -95,8 +97,10 @@ export class LivingStateService {
       );
     }
 
-    fs.writeFileSync(statePath, content, 'utf8');
-    console.log(chalk.green(`[LivingState] Updated step ${update.stepNumber}: ${update.description}`));
+    writeFileAtomic(statePath, content);
+    console.log(
+      chalk.green(`[LivingState] Updated step ${update.stepNumber}: ${update.description}`)
+    );
   }
 
   async markSynced(): Promise<void> {
@@ -105,11 +109,8 @@ export class LivingStateService {
 
     let content = fs.readFileSync(statePath, 'utf8');
     if (!content.includes(STATUS_SYNC_MARKER)) {
-      content = content.replace(
-        /^`?\[CLASS:PRIME\]/m,
-        `[CLASS:PRIME] ${STATUS_SYNC_MARKER}`
-      );
-      fs.writeFileSync(statePath, content, 'utf8');
+      content = content.replace(/^`?\[CLASS:PRIME\]/m, `[CLASS:PRIME] ${STATUS_SYNC_MARKER}`);
+      writeFileAtomic(statePath, content);
     }
   }
 
@@ -122,7 +123,7 @@ export class LivingStateService {
       /\*\*Current Directive:\*\*.*/,
       `**Current Directive:** ${directive}`
     );
-    fs.writeFileSync(statePath, content, 'utf8');
+    writeFileAtomic(statePath, content);
   }
 
   private initialState(): string {

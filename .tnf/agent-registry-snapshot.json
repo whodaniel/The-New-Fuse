@@ -1,14 +1,14 @@
 {
   "spec": "tnf/agent-registry-snapshot/0.1",
-  "generatedAt": "2026-06-15T11:56:34.559Z",
+  "generatedAt": "2026-07-24T21:54:09.966Z",
   "sourceAudit": "docs/protocols/reports/AGENT_CLASSIFICATION_AUDIT_2026-06-14.md",
   "counts": {
-    "filesScanned": 291,
-    "classified": 291,
+    "filesScanned": 327,
+    "classified": 327,
     "errors": 0,
     "inserted": 0,
-    "updated": 291,
-    "unchanged": -114
+    "updated": 2,
+    "unchanged": 325
   },
   "agents": [
     {
@@ -125,6 +125,38 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to register, store, and manage all agent metadata and system prompts in The New Fuse database. Handles both local .claude agents and external agents like Gemini CLI, creating comprehensive agent profiles with discoverable metadata.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/agent-registry-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "agent-registry-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/agent-registry-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -450,6 +482,43 @@
         "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/auth-blocker-sentinel.md",
         "tools": ["read", "grep", "glob", "bash", "write"],
         "raw": {}
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/auth-flow-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "auth-flow-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [
+        "auth_health",
+        "jwt_verify",
+        "session_lifecycle",
+        "rbac_check"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/auth-flow-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
       },
       "traits": {
         "observability": "mirrored",
@@ -1098,6 +1167,46 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/contextual-model-implementation-architect.md",
+      "sourceKind": ".agent/agents",
+      "name": "contextual-model-implementation-architect",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "unknown",
+      "role": "unknown",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "tnf-persona",
+      "fulfillment": {
+        "vendor": "tnf-persona",
+        "transport": "unknown",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/contextual-model-implementation-architect.md",
+        "tools": [
+          "read",
+          "grep",
+          "glob",
+          "edit",
+          "write",
+          "bash",
+          "websearch",
+          "webfetch"
+        ],
+        "raw": {
+          "color": "Blue"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/continuous-improver.md",
       "sourceKind": ".agent/agents",
       "name": "continuous-improver",
@@ -1662,6 +1771,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/e2e-workflow-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "e2e-workflow-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/e2e-workflow-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/ecom-platform-manager-agent.md",
       "sourceKind": ".agent/agents",
       "name": "ecom-platform-manager-agent",
@@ -1694,10 +1835,10 @@
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/email-custodian-agent.md",
       "sourceKind": ".agent/agents",
       "name": "email-custodian-agent",
-      "description": "",
+      "description": "Use proactively for managed credential lifecycle in TNF: create shared-hosting mailbox accounts, coordinate ChatGPT account onboarding jobs, store encrypted account credentials, and issue time-bound access grants to agents.",
       "daccRole": "worker",
-      "workerAction": "unknown",
-      "role": "unknown",
+      "workerAction": "orchestrator",
+      "role": "orchestrator",
       "type": "BASIC",
       "capabilities": ["security-best-practices"],
       "provider": "tnf-persona",
@@ -1712,10 +1853,10 @@
       "traits": {
         "observability": "mirrored",
         "subAgent_capable": false,
-        "orchestrates_agents": false,
+        "orchestrates_agents": true,
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
-        "description": "",
+        "description": "Use proactively for managed credential lifecycle in TNF: create shared-hosting mailbox accounts, coordinate ChatGPT account onboarding jobs, store encrypted account credentials, and issue time-bound access grants to agents.",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -2015,6 +2156,38 @@
         "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/frontend-specialist.md",
         "tools": [],
         "raw": {}
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/frontend-verification-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "frontend-verification-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/frontend-verification-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
       },
       "traits": {
         "observability": "mirrored",
@@ -2416,6 +2589,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/interop-protocol-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "interop-protocol-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/interop-protocol-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/interoperability-protocol-agent.md",
       "sourceKind": ".agent/agents",
       "name": "interoperability-protocol-agent",
@@ -2761,6 +2966,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/mcp-bridge-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "mcp-bridge-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/mcp-bridge-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/media-evidence-investigator.md",
       "sourceKind": ".agent/agents",
       "name": "media-evidence-investigator",
@@ -2936,6 +3173,42 @@
         "autonomy_level": "semiautonomous",
         "description": "",
         "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/nexus-orchestrator-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "nexus-orchestrator-qa-agent",
+      "description": "",
+      "daccRole": "orchestrator",
+      "workerAction": "orchestrator",
+      "role": "orchestrator",
+      "type": "BASIC",
+      "capabilities": [
+        "nexus_ui_health",
+        "tnf_bridge_sync",
+        "go_agent_bus_probe"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/nexus-orchestrator-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": true,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "orchestrator"
       },
       "qualities": {}
     },
@@ -3460,138 +3733,39 @@
       "qualities": {}
     },
     {
-      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-perplexity.md",
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/pi-coding-agent.md",
       "sourceKind": ".agent/agents",
-      "name": "picoclaw-perplexity",
+      "name": "pi-coding-agent",
       "description": "",
       "daccRole": "worker",
       "workerAction": "unknown",
       "role": "unknown",
       "type": "CLI_PI",
-      "capabilities": [],
+      "capabilities": [
+        "autonomous-code-editing",
+        "multi-provider-llm",
+        "skill-loading",
+        "extension-system",
+        "session-persistence",
+        "plan-mode",
+        "thinking-levels",
+        "model-cycling",
+        "non-interactive-mode",
+        "session-export",
+        "context-file-discovery",
+        "prompt-templates",
+        "theming"
+      ],
       "provider": "tnf-persona",
       "fulfillment": {
         "vendor": "tnf-persona",
         "transport": "cli",
-        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-perplexity.md",
-        "tools": [],
-        "raw": {}
-      },
-      "traits": {
-        "observability": "mirrored",
-        "subAgent_capable": false,
-        "orchestrates_agents": false,
-        "persona_source": "self",
-        "autonomy_level": "semiautonomous",
-        "description": "",
-        "daccRole": "worker"
-      },
-      "qualities": {}
-    },
-    {
-      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-subject.md",
-      "sourceKind": ".agent/agents",
-      "name": "picoclaw-subject",
-      "description": "",
-      "daccRole": "worker",
-      "workerAction": "unknown",
-      "role": "unknown",
-      "type": "CLI_PI",
-      "capabilities": [],
-      "provider": "tnf-persona",
-      "fulfillment": {
-        "vendor": "tnf-persona",
-        "transport": "cli",
-        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-subject.md",
-        "tools": [],
-        "raw": {}
-      },
-      "traits": {
-        "observability": "mirrored",
-        "subAgent_capable": false,
-        "orchestrates_agents": false,
-        "persona_source": "self",
-        "autonomy_level": "semiautonomous",
-        "description": "",
-        "daccRole": "worker"
-      },
-      "qualities": {}
-    },
-    {
-      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester-benchmark.md",
-      "sourceKind": ".agent/agents",
-      "name": "picoclaw-tester-benchmark",
-      "description": "",
-      "daccRole": "worker",
-      "workerAction": "unknown",
-      "role": "unknown",
-      "type": "CLI_PI",
-      "capabilities": [],
-      "provider": "tnf-persona",
-      "fulfillment": {
-        "vendor": "tnf-persona",
-        "transport": "cli",
-        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester-benchmark.md",
-        "tools": [],
-        "raw": {}
-      },
-      "traits": {
-        "observability": "mirrored",
-        "subAgent_capable": false,
-        "orchestrates_agents": false,
-        "persona_source": "self",
-        "autonomy_level": "semiautonomous",
-        "description": "",
-        "daccRole": "worker"
-      },
-      "qualities": {}
-    },
-    {
-      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester-viability.md",
-      "sourceKind": ".agent/agents",
-      "name": "picoclaw-tester-viability",
-      "description": "",
-      "daccRole": "worker",
-      "workerAction": "unknown",
-      "role": "unknown",
-      "type": "CLI_PI",
-      "capabilities": [],
-      "provider": "tnf-persona",
-      "fulfillment": {
-        "vendor": "tnf-persona",
-        "transport": "cli",
-        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester-viability.md",
-        "tools": [],
-        "raw": {}
-      },
-      "traits": {
-        "observability": "mirrored",
-        "subAgent_capable": false,
-        "orchestrates_agents": false,
-        "persona_source": "self",
-        "autonomy_level": "semiautonomous",
-        "description": "",
-        "daccRole": "worker"
-      },
-      "qualities": {}
-    },
-    {
-      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester.md",
-      "sourceKind": ".agent/agents",
-      "name": "picoclaw-tester",
-      "description": "",
-      "daccRole": "worker",
-      "workerAction": "unknown",
-      "role": "unknown",
-      "type": "CLI_PI",
-      "capabilities": [],
-      "provider": "tnf-persona",
-      "fulfillment": {
-        "vendor": "tnf-persona",
-        "transport": "cli",
-        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/picoclaw-tester.md",
-        "tools": [],
-        "raw": {}
+        "protocol_version": "0.74.1",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/pi-coding-agent.md",
+        "tools": ["read", "write", "edit", "bash", "grep", "find", "ls"],
+        "raw": {
+          "color": "Cyan"
+        }
       },
       "traits": {
         "observability": "mirrored",
@@ -4129,6 +4303,120 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/qa-orchestrator-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "qa-orchestrator-agent",
+      "description": "",
+      "daccRole": "orchestrator",
+      "workerAction": "orchestrator",
+      "role": "orchestrator",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "orchestrator",
+      "fulfillment": {
+        "vendor": "orchestrator",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/qa-orchestrator-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "orchestrator"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": true,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "orchestrator"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/qodercli.md",
+      "sourceKind": ".agent/agents",
+      "name": "qodercli",
+      "description": "|",
+      "daccRole": "worker",
+      "workerAction": "cli_coder",
+      "role": "cli_coder",
+      "type": "CLI_QODER",
+      "capabilities": [
+        "code_generation",
+        "code_review",
+        "code_refactoring",
+        "architecture_design",
+        "project_management",
+        "task_execution",
+        "research",
+        "file_management",
+        "debugging",
+        "code-generation",
+        "code-refactoring",
+        "code-review",
+        "project-architecture",
+        "task-execution"
+      ],
+      "provider": "external",
+      "fulfillment": {
+        "vendor": "external",
+        "transport": "cli",
+        "protocol_version": "1.0.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/qodercli.md",
+        "tools": ["bash", "read", "write", "edit", "grep", "glob", "find"],
+        "raw": {
+          "agentType": "external",
+          "domain": ["coding", "software-development", "agentic-platform"],
+          "category": "external-cli",
+          "color": "Blue"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "platform",
+        "autonomy_level": "semiautonomous",
+        "description": "|",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/relay-server-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "relay-server-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/relay-server-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/repo-lineage-investigator.md",
       "sourceKind": ".agent/agents",
       "name": "repo-lineage-investigator",
@@ -4453,6 +4741,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/shared-state-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "shared-state-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/shared-state-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/social-selling-agent.md",
       "sourceKind": ".agent/agents",
       "name": "social-selling-agent",
@@ -4511,6 +4831,102 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/staff-review-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "staff-review-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "code_review",
+      "role": "code_review",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "local",
+      "fulfillment": {
+        "vendor": "local",
+        "transport": "unknown",
+        "protocol_version": "1.0.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/staff-review-agent.md",
+        "tools": ["read", "write", "edit", "glob", "grep", "bash"],
+        "raw": {
+          "agentType": "local"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/staffing-director-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "staffing-director-agent",
+      "description": "",
+      "daccRole": "director",
+      "workerAction": "unknown",
+      "role": "unknown",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "local",
+      "fulfillment": {
+        "vendor": "local",
+        "transport": "unknown",
+        "protocol_version": "1.0.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/staffing-director-agent.md",
+        "tools": ["read", "write", "edit", "glob", "grep", "bash"],
+        "raw": {
+          "agentType": "local"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "director"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/state-governor-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "state-governor-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/state-governor-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/storyboard-artist-agent.md",
       "sourceKind": ".agent/agents",
       "name": "storyboard-artist-agent",
@@ -4535,6 +4951,109 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/sub-director.md",
+      "sourceKind": ".agent/agents",
+      "name": "sub-director",
+      "description": "",
+      "daccRole": "director",
+      "workerAction": "unknown",
+      "role": "unknown",
+      "type": "BASIC",
+      "capabilities": [
+        "lane_coordination",
+        "cloud_sync",
+        "authority_verification"
+      ],
+      "provider": "local",
+      "fulfillment": {
+        "vendor": "local",
+        "transport": "unknown",
+        "protocol_version": "1.0.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/sub-director.md",
+        "tools": [
+          "broadcast_super_director_prompt",
+          "verify_master_clock_signal"
+        ],
+        "raw": {
+          "agentType": "local"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "director"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/super-director.md",
+      "sourceKind": ".agent/agents",
+      "name": "super-director",
+      "description": "",
+      "daccRole": "director",
+      "workerAction": "unknown",
+      "role": "unknown",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "api",
+      "fulfillment": {
+        "vendor": "api",
+        "transport": "unknown",
+        "protocol_version": "1.0.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/super-director.md",
+        "tools": ["masterclockapi", "cloudredisbridge", "get_terminal_access"],
+        "raw": {
+          "agentType": "api"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "director"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/swarm-orchestration-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "swarm-orchestration-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/swarm-orchestration-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -4665,6 +5184,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/telegram-relay-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "telegram-relay-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/telegram-relay-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/temporal-agent-reclassifier.md",
       "sourceKind": ".agent/agents",
       "name": "temporal-agent-reclassifier",
@@ -4762,6 +5313,35 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/thenewfuse-frontend-tester.md",
+      "sourceKind": ".agent/agents",
+      "name": "thenewfuse-frontend-tester",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "tnf-persona",
+      "fulfillment": {
+        "vendor": "tnf-persona",
+        "transport": "unknown",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/thenewfuse-frontend-tester.md",
+        "tools": [],
+        "raw": {}
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tiktok-strategy-agent.md",
       "sourceKind": ".agent/agents",
       "name": "tiktok-strategy-agent",
@@ -4830,17 +5410,27 @@
       "role": "unknown",
       "type": "TNF_CORE",
       "capabilities": [
+        "session-persistence",
+        "plan-mode",
+        "thinking-levels",
+        "multi-provider-llm",
+        "model-cycling",
+        "extension-system",
+        "context-discovery",
+        "prompt-templates",
+        "non-interactive-mode",
+        "session-export",
         "framework-consciousness",
         "planning-with-files",
         "context-frontloader",
         "env-manager",
         "skill-builder",
-        "behavioral-modes",
-        "clean-code",
-        "ui-ux-pro-max",
-        "senior-architect",
-        "systematic-debugging",
-        "trait-antigravity"
+        "tnf-cli-agent-interoperability",
+        "tnf-full-auto-network-autopilot",
+        "tnf-health-check",
+        "webpilot",
+        "sspdf",
+        "sspdf-theme-generator"
       ],
       "provider": "tnf-persona",
       "fulfillment": {
@@ -4849,6 +5439,35 @@
         "transport": "websocket",
         "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tnf-cli.md",
         "tools": ["bash", "read", "write", "edit", "grep", "glob", "agent"],
+        "raw": {}
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tnf-fleet-health-probe.md",
+      "sourceKind": ".agent/agents",
+      "name": "tnf-fleet-health-probe",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "unknown",
+      "role": "unknown",
+      "type": "TNF_CORE",
+      "capabilities": [],
+      "provider": "tnf-persona",
+      "fulfillment": {
+        "vendor": "tnf",
+        "transport": "websocket",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tnf-fleet-health-probe.md",
+        "tools": [],
         "raw": {}
       },
       "traits": {
@@ -5008,6 +5627,70 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/voice-bridge-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "voice-bridge-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/voice-bridge-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/websocket-comms-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "websocket-comms-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/websocket-comms-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/worker-llm-validation.md",
       "sourceKind": ".agent/agents",
       "name": "LLM Validation Worker Agent",
@@ -5024,6 +5707,42 @@
         "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/worker-llm-validation.md",
         "tools": [],
         "raw": {}
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/workflow-engine-qa-agent.md",
+      "sourceKind": ".agent/agents",
+      "name": "workflow-engine-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [
+        "workflow_execution",
+        "dag_verification",
+        "step_retry_trace"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/workflow-engine-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
       },
       "traits": {
         "observability": "mirrored",
@@ -5295,6 +6014,38 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to register, store, and manage all agent metadata and system prompts in The New Fuse database. Handles both local .claude agents and external agents like Gemini CLI, creating comprehensive agent profiles with discoverable metadata.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/agent-registry-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "agent-registry-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/agent-registry-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -5598,6 +6349,43 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to oversee a recording session by ensuring best practices are followed. It checks for proper microphone positioning, correct audio levels (around -12dB), and a quiet recording environment.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/auth-flow-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "auth-flow-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [
+        "auth_health",
+        "jwt_verify",
+        "session_lifecycle",
+        "rbac_check"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/auth-flow-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -6413,6 +7201,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/e2e-workflow-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "e2e-workflow-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/e2e-workflow-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/ecom-platform-manager-agent.md",
       "sourceKind": ".claude/agents",
       "name": "ecom-platform-manager-agent",
@@ -6684,6 +7504,38 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "Specialized frontend diagnostics agent for React runtime errors, dependency conflicts, HMR/WebSocket faults, and browser-extension interference.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/frontend-verification-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "frontend-verification-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/frontend-verification-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -7007,6 +7859,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/interop-protocol-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "interop-protocol-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/interop-protocol-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/interoperability-protocol-agent.md",
       "sourceKind": ".claude/agents",
       "name": "interoperability-protocol-agent",
@@ -7289,6 +8173,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/mcp-bridge-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "mcp-bridge-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/mcp-bridge-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/meta-agent-architect.md",
       "sourceKind": ".claude/agents",
       "name": "meta-agent-architect",
@@ -7345,6 +8261,42 @@
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to design a diversified monetization plan for a blog. It selects and prioritizes a mix of strategies like ads, affiliate marketing, and digital products based on the niche and audience.",
         "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/nexus-orchestrator-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "nexus-orchestrator-qa-agent",
+      "description": "",
+      "daccRole": "orchestrator",
+      "workerAction": "orchestrator",
+      "role": "orchestrator",
+      "type": "BASIC",
+      "capabilities": [
+        "nexus_ui_health",
+        "tnf_bridge_sync",
+        "go_agent_bus_probe"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/nexus-orchestrator-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": true,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "orchestrator"
       },
       "qualities": {}
     },
@@ -8033,6 +8985,70 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/qa-orchestrator-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "qa-orchestrator-agent",
+      "description": "",
+      "daccRole": "orchestrator",
+      "workerAction": "orchestrator",
+      "role": "orchestrator",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "orchestrator",
+      "fulfillment": {
+        "vendor": "orchestrator",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/qa-orchestrator-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "orchestrator"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": true,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "orchestrator"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/relay-server-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "relay-server-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/relay-server-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/reputation-management-agent.md",
       "sourceKind": ".claude/agents",
       "name": "reputation-management-agent",
@@ -8144,6 +9160,38 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to perform on-page SEO on a blog post draft. It integrates keywords, crafts a meta description, and adds internal and external links without corrupting the core message.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/shared-state-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "shared-state-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/shared-state-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -8281,6 +9329,38 @@
       "qualities": {}
     },
     {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/state-governor-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "state-governor-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/state-governor-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
       "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/storyboard-artist-agent.md",
       "sourceKind": ".claude/agents",
       "name": "storyboard-artist-agent",
@@ -8381,6 +9461,38 @@
         "autonomy_level": "semiautonomous",
         "description": "The singular cloud-resident authority driving global swarm orchestration via Authoritative Chain of Command.",
         "daccRole": "director"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/swarm-orchestration-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "swarm-orchestration-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/swarm-orchestration-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
       },
       "qualities": {}
     },
@@ -8505,6 +9617,38 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to automate the entire technical deployment of a WordPress blog. This includes purchasing hosting, registering a domain, installing WordPress, and configuring essential themes and plugins.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/telegram-relay-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "telegram-relay-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/telegram-relay-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob", "tnf"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}
@@ -8717,6 +9861,106 @@
         "persona_source": "self",
         "autonomy_level": "semiautonomous",
         "description": "MUST BE USED to create or source relevant visual assets for blog posts. It finds or generates graphics, infographics, or stock photos, ensuring they are licensed and optimized.",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/voice-bridge-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "voice-bridge-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/voice-bridge-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/websocket-comms-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "websocket-comms-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/websocket-comms-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
+        "daccRole": "worker"
+      },
+      "qualities": {}
+    },
+    {
+      "sourcePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/workflow-engine-qa-agent.md",
+      "sourceKind": ".claude/agents",
+      "name": "workflow-engine-qa-agent",
+      "description": "",
+      "daccRole": "worker",
+      "workerAction": "cli_qa",
+      "role": "cli_qa",
+      "type": "BASIC",
+      "capabilities": [
+        "workflow_execution",
+        "dag_verification",
+        "step_retry_trace"
+      ],
+      "provider": "testing",
+      "fulfillment": {
+        "vendor": "testing",
+        "transport": "unknown",
+        "protocol_version": "1.1.0",
+        "prompt_doc_uri": "persona:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/workflow-engine-qa-agent.md",
+        "tools": ["bash", "read", "grep", "glob"],
+        "raw": {
+          "agentType": "testing"
+        }
+      },
+      "traits": {
+        "observability": "mirrored",
+        "subAgent_capable": false,
+        "orchestrates_agents": false,
+        "persona_source": "self",
+        "autonomy_level": "semiautonomous",
+        "description": "",
         "daccRole": "worker"
       },
       "qualities": {}

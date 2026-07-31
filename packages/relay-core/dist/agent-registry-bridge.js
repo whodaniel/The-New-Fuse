@@ -128,6 +128,20 @@ class AgentRegistryBridge {
                     name: AGENT_ID,
                     platform: 'tnf-core',
                     capabilities: ['launchpad', 'orchestrator', 'heartbeat'],
+                    // Phase 9 (audit 2026-06-14) FIX: preserve fulfillment + traits
+                    // from upstream persona payload so broker can route by model/tool.
+                    fulfillment: {
+                        vendor: 'tnf',
+                        model: process.env.TNF_MODEL || 'default',
+                        transport: 'cli',
+                        protocol_version: 'tnf/protocol/1.0',
+                    },
+                    traits: {
+                        daccRole: 'broker',
+                        autonomy_level: 'autonomous',
+                        subAgent_capable: true,
+                        observability: 'native',
+                    },
                 },
             },
             source: this.sessionId,

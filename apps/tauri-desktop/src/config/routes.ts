@@ -14,9 +14,18 @@ export interface DesktopRoute {
   group: NavGroupId;
   badge?: string;
   keywords?: string[];
+  /** Known route but omitted from primary sidebar (summoned / deep-link only). */
+  navHidden?: boolean;
 }
 
 export const ROUTE_STORAGE_KEY = 'tnf.desktop.lastRoute';
+
+/** Legacy hashes from older desktop IA — resolve before boot / navigate. */
+export const LEGACY_ROUTE_REDIRECTS: Record<string, string> = {
+  '/browser': '/computer-use',
+  '/oagi': '/computer-use',
+  '/antigravity': '/agents',
+};
 
 export const NAV_GROUPS: NavGroup[] = [
   { id: 'home', label: 'Home' },
@@ -30,26 +39,24 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'platform', path: '/platform', label: 'Platform', group: 'home', badge: 'TNF' },
-  { id: 'dashboard', path: '/dashboard', label: 'Dashboard', group: 'home' },
   {
-    id: 'browser',
-    path: '/browser',
-    label: 'Browser Control',
-    group: 'operate',
-    badge: 'FOREFRONT',
-    keywords: ['forefront', 'extension', 'webview'],
+    id: 'mission',
+    path: '/mission',
+    label: 'Mission Control',
+    group: 'home',
+    badge: 'LIVE',
+    keywords: ['goals', 'cron', 'schedule', 'terminal', 'mirror', 'windows'],
   },
-  { id: 'terminal', path: '/terminal', label: 'Swarm Terminal', group: 'operate' },
-  { id: 'oagi', path: '/oagi', label: 'OAGI Hub', group: 'operate' },
-  { id: 'antigravity', path: '/antigravity', label: 'Antigravity', group: 'operate' },
+  { id: 'dashboard', path: '/dashboard', label: 'Dashboard', group: 'home' },
   {
     id: 'voice',
     path: '/voice',
     label: 'Voice Bridge',
     group: 'operate',
     badge: 'LIVE',
-    keywords: ['mic', 'tts', 'speaker', 'beam', 'listen'],
+    keywords: ['mic', 'tts', 'speaker', 'beam', 'listen', 'stt'],
   },
+  { id: 'terminal', path: '/terminal', label: 'Swarm Terminal', group: 'operate' },
   {
     id: 'library',
     path: '/library',
@@ -62,6 +69,15 @@ export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'a2a', path: '/a2a', label: 'A2A Control', group: 'agents' },
   { id: 'chat', path: '/chat', label: 'Multi-Agent Chat', group: 'agents', keywords: ['chat'] },
   { id: 'knowledge', path: '/knowledge', label: 'Knowledge Hub', group: 'agents' },
+  {
+    id: 'computer-use',
+    path: '/computer-use',
+    label: 'Computer Use',
+    group: 'agents',
+    badge: 'TOOLS',
+    keywords: ['browser', 'oagi', 'screen', 'forefront', 'extension', 'webview'],
+    navHidden: true,
+  },
   { id: 'workflows', path: '/workflows', label: 'Workflows', group: 'build' },
   { id: 'mcp', path: '/mcp', label: 'MCP Store', group: 'build' },
   { id: 'analytics', path: '/analytics', label: 'Analytics', group: 'insights' },
@@ -73,16 +89,22 @@ export const KNOWN_ROUTE_PATHS = new Set(DESKTOP_ROUTES.map((route) => route.pat
 
 export const DEFAULT_ROUTE = '/dashboard';
 
+export function resolveLegacyRedirect(path: string): string {
+  return LEGACY_ROUTE_REDIRECTS[path] || path;
+}
+
 export function isKnownRoute(path: string): boolean {
-  return KNOWN_ROUTE_PATHS.has(path);
+  const resolved = resolveLegacyRedirect(path);
+  return KNOWN_ROUTE_PATHS.has(resolved) || KNOWN_ROUTE_PATHS.has(path);
 }
 
 export function getRouteByPath(path: string): DesktopRoute | undefined {
-  return DESKTOP_ROUTES.find((route) => route.path === path);
+  const resolved = resolveLegacyRedirect(path);
+  return DESKTOP_ROUTES.find((route) => route.path === resolved || route.path === path);
 }
 
 export function routesForGroup(groupId: NavGroupId): DesktopRoute[] {
-  return DESKTOP_ROUTES.filter((route) => route.group === groupId);
+  return DESKTOP_ROUTES.filter((route) => route.group === groupId && !route.navHidden);
 }
 
 function readBootRouteFromUrl(): string | null {
@@ -99,32 +121,40 @@ function readBootRouteFromUrl(): string | null {
 
 export function resolveBootRoute(initialRoute?: string): string {
   const fromUrl = readBootRouteFromUrl();
-  if (fromUrl && isKnownRoute(fromUrl)) {
-    return fromUrl;
+  if (fromUrl) {
+    const redirected = resolveLegacyRedirect(fromUrl);
+    if (KNOWN_ROUTE_PATHS.has(redirected)) {
+      return redirected;
+    }
   }
 
   const persisted = safeStorage.getItem(ROUTE_STORAGE_KEY);
-  if (persisted && isKnownRoute(persisted)) {
-    return persisted;
+  if (persisted) {
+    const redirected = resolveLegacyRedirect(persisted);
+    if (KNOWN_ROUTE_PATHS.has(redirected)) {
+      return redirected;
+    }
   }
 
-  if (initialRoute && isKnownRoute(initialRoute)) {
-    return initialRoute;
+  if (initialRoute) {
+    const redirected = resolveLegacyRedirect(initialRoute);
+    if (KNOWN_ROUTE_PATHS.has(redirected)) {
+      return redirected;
+    }
   }
 
   return DEFAULT_ROUTE;
 }
 
 export function persistRoute(path: string): void {
-  if (isKnownRoute(path)) {
-    safeStorage.setItem(ROUTE_STORAGE_KEY, path);
+  const redirected = resolveLegacyRedirect(path);
+  if (KNOWN_ROUTE_PATHS.has(redirected)) {
+    safeStorage.setItem(ROUTE_STORAGE_KEY, redirected);
   }
 }
 
 export function desktopNativeOnlyRoutes(): DesktopRoute[] {
   return DESKTOP_ROUTES.filter((route) =>
-    ['/browser', '/terminal', '/oagi', '/antigravity', '/voice', '/library', '/web-hub'].includes(
-      route.path
-    )
+    ['/computer-use', '/terminal', '/voice', '/library', '/web-hub'].includes(route.path)
   );
 }

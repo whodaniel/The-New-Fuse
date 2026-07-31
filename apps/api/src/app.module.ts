@@ -23,6 +23,7 @@ import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
+import { AvailableModelsController } from './controllers/available-models.controller';
 import { BridgesController } from './controllers/bridges.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
@@ -56,6 +57,7 @@ import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { DirectorModule } from './modules/director/director.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
+import { LocalRuntimeModule } from './modules/local-runtime/local-runtime.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { ResourcesModule } from './modules/resources/resources.module';
@@ -161,6 +163,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     MarketplaceModule,
     ResourcesModule,
     TerminalsModule,
+    LocalRuntimeModule,
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
@@ -183,6 +186,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     CompoundingMemoryController,
     LLMIntelController,
     ModelsController, // AI model provider selection
+    AvailableModelsController, // Dynamic available LLM catalog for Create Agent
     SystemController,
     UserManagementController, // User CRUD operations
     WebSocketController,

@@ -5,7 +5,7 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 - Generated: `2026-06-16T02:44:24.498679Z`
 - Source Queue:
-  `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json`
+  `$TNF_ROOT/data/ingestion-runs/ai5-new-may-2026-action-queue.json`
 - Total Directives: `689`
 - Ready: `0`
 - Claimed/Running: `15`

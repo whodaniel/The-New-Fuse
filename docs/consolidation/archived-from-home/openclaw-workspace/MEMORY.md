@@ -5,7 +5,7 @@
 - **IMPLEMENTED (code)**: 2026-03-26
 - **IMPLEMENTED (validated)**: 2026-03-26 (first successful run)
 - **Validator Cron**: Added
-  `0 2 * * * /Users/danielgoldberg/.openclaw/scripts/run-post-implementation-validator.sh`
+  `0 2 * * * $HOME/.openclaw/scripts/run-post-implementation-validator.sh`
 - **Validation Report**: `post-implementation-validation-report.json` generated
   successfully
 - **Registry**: Updated to match actual file locations (`handoff/matrix.json`,

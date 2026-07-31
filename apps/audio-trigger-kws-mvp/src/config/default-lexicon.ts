@@ -9,6 +9,9 @@ export const defaultLexicon: LexiconTerm[] = [
   { termId: 'term_self_harm', surface: 'self harm', groupId: 'self_harm', weight: 1 },
   { termId: 'term_joke', surface: 'just kidding', groupId: 'joke_context', weight: 1 },
 
+  { termId: 'agent_inky', surface: 'inky', groupId: 'agent_route', weight: 1 },
+  { termId: 'agent_inky_alt1', surface: 'hey inky', groupId: 'agent_route', weight: 1 },
+  { termId: 'agent_inky_alt2', surface: 'okay inky', groupId: 'agent_route', weight: 1 },
   { termId: 'agent_echo', surface: 'echo', groupId: 'agent_route', weight: 1 },
   { termId: 'agent_echo_alt1', surface: 'kilo one', groupId: 'agent_route', weight: 1 },
   { termId: 'agent_echo_alt2', surface: 'agent alpha', groupId: 'agent_route', weight: 1 },
@@ -84,9 +87,24 @@ export const defaultLexicon: LexiconTerm[] = [
   { termId: 'term_timer', surface: 'timer', groupId: 'time_setting', weight: 0.75 },
   { termId: 'term_schedule', surface: 'schedule', groupId: 'time_setting', weight: 0.75 },
   { termId: 'term_deadline', surface: 'deadline', groupId: 'time_setting', weight: 0.75 },
-  { termId: 'term_illustration', surface: 'illustration', groupId: 'digital_art_interest', weight: 0.9 },
-  { termId: 'term_concept_art', surface: 'concept art', groupId: 'digital_art_interest', weight: 0.9 },
+  {
+    termId: 'term_illustration',
+    surface: 'illustration',
+    groupId: 'digital_art_interest',
+    weight: 0.9,
+  },
+  {
+    termId: 'term_concept_art',
+    surface: 'concept art',
+    groupId: 'digital_art_interest',
+    weight: 0.9,
+  },
   { termId: 'term_photoshop', surface: 'Photoshop', groupId: 'art_software', weight: 0.95 },
   { termId: 'term_procreate', surface: 'Procreate', groupId: 'art_software', weight: 0.95 },
-  { termId: 'term_clip_studio', surface: 'Clip Studio Paint', groupId: 'art_software', weight: 0.95 },
+  {
+    termId: 'term_clip_studio',
+    surface: 'Clip Studio Paint',
+    groupId: 'art_software',
+    weight: 0.95,
+  },
 ];

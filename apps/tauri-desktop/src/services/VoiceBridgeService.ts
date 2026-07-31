@@ -4,14 +4,22 @@ import {
   getVoiceProfile,
   getVoiceProjectRoot,
   parseStreamTail,
-  type ParsedU2AUtterance,
-  type VoiceBeamTarget,
   voiceResponseAudioPath,
   voiceServerBaseUrl,
   voiceStreamPath,
   voiceTargetPath,
+  type ParsedU2AUtterance,
+  type VoiceBeamTarget,
 } from '../config/voiceBridge';
 import { isTauriRuntime } from '../lib/isTauri';
+
+export interface VoiceSttState {
+  ready: boolean;
+  engine?: string;
+  cmd?: string | null;
+  model?: string | null;
+  detail?: string;
+}
 
 export interface VoiceBridgeSnapshot {
   online: boolean;
@@ -27,8 +35,19 @@ export interface VoiceBridgeSnapshot {
   recentUtterances: ParsedU2AUtterance[];
   kwsEnabled: boolean;
   kwsStreamId: string;
+  stt: VoiceSttState;
+  /** Continuous mic→transcript sidecar (`tnf voice listen`). */
+  listenRunning: boolean;
   lastError: string | null;
   updatedAt: string;
+}
+
+export interface ServiceLifecycleResult {
+  ok: boolean;
+  message: string;
+  command: string;
+  already_running: boolean;
+  port?: number | null;
 }
 
 type Listener = (snapshot: VoiceBridgeSnapshot) => void;
@@ -68,8 +87,12 @@ async function writeLocalFlag(path: string, enabled: boolean): Promise<void> {
   }
   const exists = await invoke<boolean>('file_exists', { path });
   if (exists) {
-    await invoke('execute_command', { command: `rm -f "${path.replace(/"/g, '\\"')}"` });
+    await invoke('delete_file', { path });
   }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 class VoiceBridgeService {
@@ -95,6 +118,8 @@ class VoiceBridgeService {
       recentUtterances: [],
       kwsEnabled: false,
       kwsStreamId: '',
+      stt: { ready: false },
+      listenRunning: false,
       lastError: null,
       updatedAt: new Date().toISOString(),
     };
@@ -161,13 +186,36 @@ class VoiceBridgeService {
       stateDir: `${projectRoot.replace(/\/$/, '')}/.voicebridge`,
     });
 
+    let listenRunning = false;
+    if (isTauriRuntime()) {
+      try {
+        const listenStatus = await invoke<ServiceLifecycleResult>('voice_listen_status', {
+          profile,
+        });
+        listenRunning = Boolean(listenStatus.ok || listenStatus.already_running);
+      } catch {
+        listenRunning = false;
+      }
+    }
+
     try {
-      const [micState, aiState, kwsState] = await Promise.all([
+      const [micState, aiState, kwsState, sttState] = await Promise.all([
         fetchJson<{ paused: boolean }>(`${baseUrl}/mic_state`),
         fetchJson<{ speaking: boolean }>(`${baseUrl}/is_ai_speaking`),
         fetchJson<{ enabled: boolean; stream_id?: string }>(`${baseUrl}/kws_state`).catch(() => ({
           enabled: false,
           stream_id: '',
+        })),
+        fetchJson<{
+          ready?: boolean;
+          engine?: string;
+          cmd?: string | null;
+          model?: string | null;
+        }>(`${baseUrl}/stt_state`).catch(() => ({
+          ready: false as boolean,
+          engine: undefined as string | undefined,
+          cmd: null as string | null,
+          model: null as string | null,
         })),
       ]);
 
@@ -191,6 +239,17 @@ class VoiceBridgeService {
         }
       }
 
+      const sttReady = Boolean(sttState.ready);
+      let sttDetail = sttReady
+        ? 'Whisper STT ready'
+        : 'Whisper not configured — install whisper.cpp + model under ~/.whisper-models';
+      if (sttReady && !listenRunning) {
+        sttDetail =
+          'Whisper ready, but listen sidecar is off — Start / heal bridge (or `tnf voice listen`)';
+      } else if (sttReady && listenRunning) {
+        sttDetail = 'Whisper + listen sidecar live';
+      }
+
       this.patch({
         online: true,
         micPaused: Boolean(micState.paused),
@@ -198,6 +257,14 @@ class VoiceBridgeService {
         responseAudioEnabled: Boolean(responseAudioExists),
         kwsEnabled: Boolean(kwsState.enabled),
         kwsStreamId: kwsState.stream_id || '',
+        stt: {
+          ready: sttReady,
+          engine: sttState.engine,
+          cmd: sttState.cmd,
+          model: sttState.model,
+          detail: sttDetail,
+        },
+        listenRunning,
         speakerName,
         beamTarget,
         recentUtterances,
@@ -207,7 +274,9 @@ class VoiceBridgeService {
       const message = error instanceof Error ? error.message : String(error);
       this.patch({
         online: false,
+        listenRunning,
         lastError: message,
+        stt: { ready: false, detail: 'Voice server offline' },
       });
     }
 
@@ -230,6 +299,86 @@ class VoiceBridgeService {
       body: JSON.stringify({ reason: 'desktop voice hub' }),
     });
     await this.refresh();
+  }
+
+  /**
+   * Full operator stack — same intent as `tnf voice up --with-listen`:
+   * server + listen STT + /activate heal + beam resume.
+   */
+  async ensureStarted(): Promise<ServiceLifecycleResult | null> {
+    let startResult: ServiceLifecycleResult | null = null;
+    const port = getVoicePort();
+    const projectRoot = getVoiceProjectRoot();
+    const profile = getVoiceProfile();
+
+    await this.refresh();
+
+    if (!isTauriRuntime()) {
+      if (!this.snapshot.online) {
+        throw new Error(
+          'Voice server offline. In Terminal run: tnf voice up --with-listen (not bare `tnf listen`).'
+        );
+      }
+      await this.activateBridge();
+      await this.resumeBeam();
+      await this.refresh();
+      return {
+        ok: true,
+        message: 'Server online — start listen with: tnf voice listen',
+        command: 'tnf voice listen',
+        already_running: true,
+        port,
+      };
+    }
+
+    const needsStack = !this.snapshot.online || !this.snapshot.listenRunning;
+    if (needsStack) {
+      startResult = await invoke<ServiceLifecycleResult>('ensure_voice_stack', {
+        projectRoot: projectRoot || null,
+        port,
+        profile,
+      });
+      if (!startResult.ok && !startResult.already_running) {
+        this.patch({ lastError: startResult.message });
+        await this.refresh();
+        return startResult;
+      }
+      for (let i = 0; i < 15; i++) {
+        await sleep(400);
+        await this.refresh();
+        if (this.snapshot.online) break;
+      }
+    }
+
+    if (!this.snapshot.online) {
+      this.patch({
+        lastError: startResult?.message || 'Voice server did not come online',
+      });
+      return startResult;
+    }
+
+    await this.activateBridge();
+    await this.resumeBeam();
+
+    // If listen still missing after stack ensure, try once more.
+    if (!this.snapshot.listenRunning) {
+      const listenOnly = await invoke<ServiceLifecycleResult>('start_voice_listen', {
+        projectRoot: projectRoot || null,
+        profile,
+      });
+      if (!startResult) startResult = listenOnly;
+      else if (listenOnly.message) {
+        startResult = {
+          ...startResult,
+          message: `${startResult.message} · ${listenOnly.message}`,
+          ok: startResult.ok && listenOnly.ok,
+        };
+      }
+      await sleep(500);
+    }
+
+    await this.refresh();
+    return startResult;
   }
 
   async activateBridge(): Promise<void> {

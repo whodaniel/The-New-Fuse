@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
@@ -13,9 +13,9 @@ const FEATURES = [
   },
   {
     icon: '👁️',
-    title: 'Lux Bridge Intelligence',
-    body: 'DOM-exact browser control plus OAGI visual automation from the desktop native layer.',
-    route: '/browser',
+    title: 'Lux Bridge / Computer Use',
+    body: 'DOM-exact browser control plus screen automation for agent computer-use.',
+    route: '/computer-use',
   },
   {
     icon: '🧠',
@@ -43,19 +43,56 @@ const FEATURES = [
   },
 ];
 
-const PLANS = [
-  { name: 'Starter', price: 'Free', detail: 'Up to 5 agents · 1,000 messages/mo' },
-  {
-    name: 'Professional',
-    price: '$30/mo',
-    detail: '25 agents · API access · Priority support',
-    highlight: true,
-  },
-  { name: 'Enterprise', price: 'Custom', detail: 'Unlimited agents · SLA · Custom integrations' },
-];
+type HealthStatus = 'online' | 'offline' | 'checking';
 
 const PlatformOverview: React.FC = () => {
   const { navigate } = useRoute();
+
+  const [voiceHealth, setVoiceHealth] = useState<HealthStatus>('checking');
+  const [libraryHealth, setLibraryHealth] = useState<HealthStatus>('checking');
+  const [gatewayHealth, setGatewayHealth] = useState<HealthStatus>('checking');
+
+  useEffect(() => {
+    let active = true;
+    const probe = async () => {
+      if (!active) return;
+
+      // Check Voice Server
+      fetch('http://localhost:50005/mic_state', { mode: 'no-cors' })
+        .then(() => setVoiceHealth('online'))
+        .catch(() => setVoiceHealth('offline'));
+
+      // Check Virtual Library (Dev Server)
+      fetch('http://localhost:3000', { mode: 'no-cors' })
+        .then(() => setLibraryHealth('online'))
+        .catch(() => setLibraryHealth('offline'));
+
+      // Check API Gateway
+      fetch('http://localhost:3005/health', { mode: 'no-cors' })
+        .then(() => setGatewayHealth('online'))
+        .catch(() => setGatewayHealth('offline'));
+    };
+
+    void probe();
+    const timer = setInterval(() => void probe(), 5000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, []);
+
+  const healthCard = (name: string, status: HealthStatus, port: string, actionUrl: string) => (
+    <article className="tnf-card health-card">
+      <div className={`health-indicator ${status}`} />
+      <div className="health-details">
+        <h3>{name}</h3>
+        <span className="health-port">Port {port}</span>
+      </div>
+      <button type="button" className="ghost-button" onClick={() => navigate(actionUrl)}>
+        Manage
+      </button>
+    </article>
+  );
 
   return (
     <PageShell
@@ -79,6 +116,15 @@ const PlatformOverview: React.FC = () => {
       <SynergyStatusBar />
 
       <section className="tnf-section">
+        <h2 className="tnf-section-title">System Health Matrix</h2>
+        <div className="health-grid">
+          {healthCard('Voice Beam Engine', voiceHealth, '50005', '/voice')}
+          {healthCard('Virtual Library Node', libraryHealth, '3000', '/library')}
+          {healthCard('TNF API Gateway', gatewayHealth, '3005', '/knowledge')}
+        </div>
+      </section>
+
+      <section className="tnf-section">
         <h2 className="tnf-section-title">Platform capabilities (local + web)</h2>
         <div className="tnf-card-grid">
           {FEATURES.map((feature) => (
@@ -98,63 +144,57 @@ const PlatformOverview: React.FC = () => {
         </div>
       </section>
 
-      <section className="tnf-section">
-        <h2 className="tnf-section-title">Pricing (from thenewfuse.com)</h2>
-        <div className="pricing-grid">
-          {PLANS.map((plan) => (
-            <article
-              key={plan.name}
-              className={`tnf-card pricing-card ${plan.highlight ? 'highlight' : ''}`}
-            >
-              {plan.highlight ? <span className="plan-badge">Most Popular</span> : null}
-              <h3>{plan.name}</h3>
-              <p className="plan-price">{plan.price}</p>
-              <p className="plan-detail">{plan.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="pricing-note">
-          Full billing and signup live on the web app. Desktop connects to the same relay and API
-          planes.
-        </p>
-      </section>
-
       <style>{`
         .tnf-section { margin-bottom: 32px; }
         .feature-card h3 { margin: 8px 0; font-size: 1rem; }
         .feature-card p { margin: 0 0 14px; color: var(--tnf-text-muted); font-size: 13px; line-height: 1.5; }
         .feature-icon { font-size: 28px; }
-        .pricing-grid {
+        
+        .health-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
           gap: 16px;
         }
-        .pricing-card { position: relative; text-align: center; }
-        .pricing-card.highlight {
-          border-color: rgba(99, 102, 241, 0.45);
-          box-shadow: var(--tnf-shadow-glow);
+        .health-card {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 16px;
         }
-        .plan-badge {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          font-size: 10px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          color: #c4b5fd;
+        .health-details {
+          flex: 1;
         }
-        .plan-price {
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin: 8px 0;
-          color: var(--tnf-text-primary);
+        .health-details h3 {
+          margin: 0 0 4px 0;
+          font-size: 15px;
         }
-        .plan-detail { color: var(--tnf-text-muted); font-size: 13px; margin: 0; }
-        .pricing-note {
-          margin-top: 16px;
-          font-size: 13px;
+        .health-port {
+          font-size: 12px;
           color: var(--tnf-text-muted);
+          font-family: monospace;
+        }
+        .health-indicator {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: var(--tnf-text-muted);
+        }
+        .health-indicator.online {
+          background: #34d399;
+          box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
+        }
+        .health-indicator.offline {
+          background: #ef4444;
+          box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+        .health-indicator.checking {
+          background: #fbbf24;
+          animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+          0% { opacity: 0.5; }
+          50% { opacity: 1; }
+          100% { opacity: 0.5; }
         }
       `}</style>
     </PageShell>

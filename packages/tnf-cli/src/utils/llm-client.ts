@@ -23,8 +23,8 @@ export interface LLMOptions {
   /**
    * Autonomy-first default: when the caller does NOT supply `tools`,
    * attach the canonical TNF built-in tool set (bash, read_file,
-   * write_file, search_files, web_search, web_fetch, list_skills,
-   * load_skill, memory_recall). Pass:
+   * write_file, search_files, web_search, web_fetch, browser_interact,
+   * list_skills, load_skill, memory_recall). Pass:
    *   • 'none'             → strip every built-in
    *   • 'all'              → attach every default-enabled tool
    *   • undefined          → default ('all')

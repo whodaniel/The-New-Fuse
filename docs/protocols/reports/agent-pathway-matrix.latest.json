@@ -1,5 +1,10 @@
 {
-  "generatedAt": "2026-07-22T13:11:16.432Z",
+  "generatedAt": "2026-07-23T19:29:01.112Z",
+  "updatedAt": "2026-07-25T19:00:00.000Z",
+  "taxonomy": {
+    "note": "Pathway clusters (e.g. names containing orchestrator) are persona/skill domains, not master-clock baton ownership. Role ⊥ platform. Canonical viz: apps/frontend/public/visualizations/graphs/dacc-role-platform-axes.html",
+    "baton": "ORCHESTRATOR-{timestamp} from master-clock only"
+  },
   "canonicalSources": {
     "tnfBank": ".agent/agents/*.md",
     "claudeBank": ".claude/agents/*.md",

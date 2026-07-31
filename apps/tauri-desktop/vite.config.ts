@@ -11,20 +11,21 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
 
-  // Smart host detection for HMR
-  const getHMRConfig = () => {
-    // In development, try to detect the actual host
-    if (isDev) {
-      const host = env.VITE_HOST || env.HOST || 'localhost';
-      const port = parseInt(env.VITE_PORT || env.PORT || '3000');
+  // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420`).
+  // Do NOT default HMR to localhost:3000 — that opens a second WS listener on
+  // [::1]:3000 and collides with relay-core (supervisor then sees HTTP 426).
+  const defaultDevHost = '127.0.0.1';
+  const defaultDevPort = 1420;
+  const serverHost = env.VITE_HOST || env.HOST || defaultDevHost;
+  const serverPort = parseInt(env.VITE_PORT || env.PORT || String(defaultDevPort), 10);
 
-      return {
-        host,
-        port,
-        protocol: 'ws' as const,
-      };
-    }
-    return false; // Disable HMR in production
+  // Omit hmr.port so Vite shares the HTTP server socket (CLI --port still wins).
+  const getHMRConfig = () => {
+    if (!isDev) return false;
+    return {
+      host: serverHost,
+      protocol: 'ws' as const,
+    };
   };
 
   return {
@@ -337,8 +338,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      host: '0.0.0.0',
-      port: parseInt(env.VITE_PORT || env.PORT || '3000'),
+      host: serverHost,
+      port: serverPort,
       strictPort: false,
       hmr: getHMRConfig(),
       // Allow production domain for CloudRuntime deployment
@@ -346,12 +347,12 @@ export default defineConfig(({ mode }) => {
       proxy: isDev
         ? {
             '/api': {
-              target: env.VITE_API_URL || 'http://localhost:3001',
+              target: env.VITE_API_URL || 'http://127.0.0.1:3001',
               changeOrigin: true,
               secure: false,
             },
             '/ws': {
-              target: env.VITE_WS_URL || 'ws://localhost:3001',
+              target: env.VITE_WS_URL || 'ws://127.0.0.1:3001',
               ws: true,
               changeOrigin: true,
             },

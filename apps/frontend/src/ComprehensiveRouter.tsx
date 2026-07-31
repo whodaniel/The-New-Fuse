@@ -8,6 +8,7 @@ const SystemStatus = lazy(() => import('./pages/SystemStatus'));
 const LaunchpadDashboard = lazy(() => import('./pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
+const FullscreenBrandLayout = lazy(() => import('./layouts/FullscreenBrandLayout'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
@@ -162,6 +163,7 @@ const Features = lazy(() => import('./pages/Features'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
+const TerminalMirrorPage = lazy(() => import('./pages/TerminalMirrorPage'));
 const CodebaseMapPage = lazy(() => import('./pages/CodebaseMap'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
@@ -457,7 +459,12 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
     !['/404', '/login', '/register'].includes(location.pathname)
   ) {
     Layout = PublicLayout;
-  } else if (isPublicRoute || hasOwnLayout) {
+  } else if (hasOwnLayout) {
+    // Canvas surfaces keep their full viewport but still get a brand mark and a
+    // route home; previously they rendered bare, stranding the user.
+    Layout = FullscreenBrandLayout;
+  } else if (isPublicRoute) {
+    // Auth, onboarding and 404 carry their own brand mark inline.
     Layout = ({ children }) => <>{children}</>;
   }
 
@@ -530,6 +537,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <DatasetsWorkbenchPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/overview"
+                element={
+                  <RequireMemberAccess>
+                    <Dashboard />
                   </RequireMemberAccess>
                 }
               />
@@ -1520,6 +1535,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
+              <Route path="/terminals/mirror" element={<TerminalMirrorPage />} />
               <Route path="/status" element={<SystemStatus />} />
               <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />

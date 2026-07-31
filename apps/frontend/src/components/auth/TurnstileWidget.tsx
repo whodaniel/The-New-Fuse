@@ -43,63 +43,116 @@ export default function TurnstileWidget({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!siteKey || !containerRef.current) return;
+    if (!siteKey) return;
 
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let retryId: ReturnType<typeof setTimeout> | null = null;
+    let rendered = false;
 
-    const renderWidget = () => {
-      if (cancelled || !window.turnstile || !containerRef.current) return;
-
-      setIsLoading(false);
-      widgetIdRef.current = window.turnstile.render(containerRef.current, {
-        sitekey: siteKey,
-        action,
-        theme,
-        callback: (token: string) => onTokenChange(token),
-        'expired-callback': () => onTokenChange(null),
-        'error-callback': () => onTokenChange(null),
-      });
-    };
-
-    const handleScriptError = () => {
-      if (cancelled) return;
-      console.error('[TurnstileWidget] Failed to load Cloudflare Turnstile script');
+    const finishWithBypass = (reason: string) => {
+      if (cancelled || rendered) return;
+      console.warn(`[TurnstileWidget] ${reason} - allowing bypass`);
+      const existing = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
+      if (existing) existing.dataset.status = 'error';
       setLoadError(true);
       setIsLoading(false);
       onTokenChange(' bypass');
     };
 
+    const renderWidget = () => {
+      if (cancelled || rendered || !window.turnstile) return;
+
+      // Turnstile will not reliably mount into display:none / zero-size nodes.
+      // Retry briefly until the visible container is attached.
+      if (!containerRef.current) {
+        retryId = setTimeout(renderWidget, 50);
+        return;
+      }
+
+      try {
+        widgetIdRef.current = window.turnstile.render(containerRef.current, {
+          sitekey: siteKey,
+          action,
+          theme,
+          callback: (token: string) => {
+            setIsLoading(false);
+            onTokenChange(token);
+          },
+          'expired-callback': () => onTokenChange(null),
+          'error-callback': () => onTokenChange(null),
+        });
+        rendered = true;
+        setIsLoading(false);
+      } catch (err) {
+        console.error('[TurnstileWidget] Failed to render widget:', err);
+        finishWithBypass('Failed to render widget');
+      }
+    };
+
+    const handleScriptError = () => {
+      if (cancelled) return;
+      console.error('[TurnstileWidget] Failed to load Cloudflare Turnstile script');
+      finishWithBypass('Failed to load Cloudflare Turnstile script');
+    };
+
     const existingScript = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
+
     if (window.turnstile) {
       renderWidget();
     } else if (existingScript) {
-      existingScript.addEventListener('load', renderWidget, { once: true });
-      existingScript.addEventListener('error', handleScriptError, { once: true });
+      if (existingScript.dataset.status === 'error') {
+        handleScriptError();
+      } else if (existingScript.dataset.status === 'loaded' && window.turnstile) {
+        renderWidget();
+      } else {
+        existingScript.addEventListener('load', renderWidget, { once: true });
+        existingScript.addEventListener('error', handleScriptError, { once: true });
+        // Script may have finished before listeners attached.
+        if (window.turnstile) renderWidget();
+      }
     } else {
       const script = document.createElement('script');
       script.id = TURNSTILE_SCRIPT_ID;
       script.src = TURNSTILE_SCRIPT_SRC;
       script.async = true;
       script.defer = true;
-      script.addEventListener('load', renderWidget, { once: true });
-      script.addEventListener('error', handleScriptError, { once: true });
+      script.dataset.status = 'loading';
+      script.addEventListener(
+        'load',
+        () => {
+          script.dataset.status = 'loaded';
+          renderWidget();
+        },
+        { once: true }
+      );
+      script.addEventListener(
+        'error',
+        () => {
+          script.dataset.status = 'error';
+          handleScriptError();
+        },
+        { once: true }
+      );
       document.head.appendChild(script);
-
-      timeoutId = setTimeout(() => {
-        if (cancelled || window.turnstile) return;
-        console.warn('[TurnstileWidget] Turnstile load timeout - allowing bypass');
-        setLoadError(true);
-        setIsLoading(false);
-        onTokenChange(' bypass');
-      }, TURNSTILE_LOAD_TIMEOUT_MS);
     }
+
+    // Always clear the spinner — even if window.turnstile exists but never rendered.
+    timeoutId = setTimeout(() => {
+      if (cancelled || rendered) return;
+      finishWithBypass('Turnstile load timeout');
+    }, TURNSTILE_LOAD_TIMEOUT_MS);
 
     return () => {
       cancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
+      if (retryId) clearTimeout(retryId);
       if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.remove(widgetIdRef.current);
+        try {
+          window.turnstile.remove(widgetIdRef.current);
+        } catch {
+          // ignore removal errors
+        }
       }
       widgetIdRef.current = null;
     };
@@ -113,14 +166,17 @@ export default function TurnstileWidget({
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center rounded-md border border-slate-700 bg-slate-800 p-3">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
-        <span className="ml-2 text-sm text-slate-400">Loading verification...</span>
-      </div>
-    );
-  }
-
-  return <div ref={containerRef} />;
+  // Keep the Turnstile host visible while loading. Hiding it with display:none
+  // prevents Cloudflare from mounting the challenge iframe.
+  return (
+    <div className="relative min-h-[65px]">
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md border border-slate-700 bg-slate-800">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+          <span className="ml-2 text-sm text-slate-400">Loading verification...</span>
+        </div>
+      )}
+      <div ref={containerRef} className="flex justify-center" />
+    </div>
+  );
 }

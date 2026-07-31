@@ -17,7 +17,8 @@
 
 ### Multi-Agent Orchestration
 
-- ✅ **Antigravity** (Orchestrator): Registered and assigning tasks
+- ✅ **Antigravity** (platform worker + coordination caps): Registered; baton =
+  master-clock
 - ✅ **Claude** (Broker): Managing timing and turn-taking
 - ✅ **Gemini** (Worker): Registered for code analysis
 - ✅ **Jules** (Worker): Registered for implementation

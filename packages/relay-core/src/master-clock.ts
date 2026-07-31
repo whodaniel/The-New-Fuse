@@ -68,6 +68,7 @@ import {
   createOrchestratorIdentity,
 } from './services/agent-registry.service.js';
 import { ChannelManagerService } from './services/channel-manager.service.js';
+import { migrateOrphanedOrchestratorInboxes } from './services/orchestrator-inbox-migration.service.js';
 import { RedisClientManager } from './services/redis-client-manager.service.js';
 import { RelayConnectionManager } from './services/relay-connection.service.js';
 import { SelfPromptService } from './services/self-prompt.service.js';
@@ -313,6 +314,9 @@ class MasterClock {
       // Connect to WebSocket relay
       await this.relayConnectionManager.connectRelay();
 
+      // Claim prior-session handoff inboxes before advertising baton ownership.
+      await this.migrateOrphanedHandoffInboxes();
+
       // Start the eternal heartbeat
       this.startHeartbeat();
 
@@ -341,8 +345,38 @@ class MasterClock {
   }
 
   // --------------------------------------------------------------------------
-  // ORCHESTRATOR REGISTRATION
+  // ORCHESTRATOR SESSION INBOX MIGRATION
   // --------------------------------------------------------------------------
+
+  /**
+   * Move handoff packets addressed to prior `ORCHESTRATOR-{ts}` sessions onto
+   * this process's baton identity. Platform wrappers are not the baton holder;
+   * only this master-clock session identity is.
+   */
+  private async migrateOrphanedHandoffInboxes(): Promise<void> {
+    const redis = this.redisClient.rawRedisClient;
+    if (!redis) {
+      log('warn', 'MASTER', 'Skipping orphaned handoff migration: no Redis client');
+      return;
+    }
+
+    try {
+      const result = await migrateOrphanedOrchestratorInboxes(redis as any, this.sessionId, {
+        maxMove: parseInt(process.env.ORCHESTRATOR_INBOX_MIGRATE_MAX || '', 10) || 5000,
+      });
+      if (result.migrated > 0) {
+        log(
+          'info',
+          'MASTER',
+          `Migrated ${result.migrated} orphaned handoff packet(s) from ${result.sources.length} prior ORCHESTRATOR inbox(es) → ${this.sessionId}`
+        );
+      } else {
+        log('debug', 'MASTER', 'No orphaned ORCHESTRATOR handoff inboxes to migrate');
+      }
+    } catch (error: any) {
+      log('warn', 'MASTER', `Orphaned handoff migration failed: ${error?.message || error}`);
+    }
+  }
 
   // --------------------------------------------------------------------------
   // MEMORY MANAGEMENT

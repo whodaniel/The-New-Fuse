@@ -8,8 +8,7 @@ _Learn about the person you're helping. Update this as you go._
 - **Timezone:** America/New_York
 - **Role:** Creator of The New Fuse (TNF)
 - **Notes:**
-  - Local TNF codebase:
-    `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
+  - Local TNF codebase: `$TNF_ROOT`
   - Public runtime repo: `https://github.com/whodaniel/fuse-open-runtime`
   - SaaS: `https://thenewfuse.com`
   - High priority: pipeline to process, condense, and consolidate docs.

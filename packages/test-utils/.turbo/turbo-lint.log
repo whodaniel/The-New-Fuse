@@ -2,5 +2,24 @@
 > @the-new-fuse/test-utils@1.0.0 lint /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/test-utils
 > eslint . --ext .ts,.tsx,.js,.jsx
 
- ELIFECYCLE  Command failed.
+Warning: React version not specified in eslint-plugin-react settings. See https://github.com/jsx-eslint/eslint-plugin-react#configuration .
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/test-utils/dist/index.d.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): packages/test-utils/dist/index.d.ts
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/test-utils/dist/index.js
+  38:50  error  'setTimeout' is not defined                    no-undef
+  53:29  error  '_data' is assigned a value but never used     no-unused-vars
+  59:41  error  '_options' is assigned a value but never used  no-unused-vars
+
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/test-utils/src/index.ts
+  39:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 8 problems (4 errors, 4 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
  WARN   Local package.json exists, but node_modules missing, did you mean to install?

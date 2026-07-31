@@ -63,10 +63,15 @@ personality, skills, and configuration
 
 ```typescript
 {
-  tnfId: "TNF:AGENT:ORCHESTRATOR:ANTIGRAVITY:001",
+  // Platform persona — NOT the master-clock baton.
+  // Baton identity is TNF:ORCHESTRATOR:001 / ORCHESTRATOR-{ts} on platform master-clock.
+  tnfId: "TNF:AGENT:WORKER:ANTIGRAVITY:001",
   name: "Antigravity",
-  agentType: "ORCHESTRATOR",
-  systemPrompt: "You are Antigravity, the master orchestrator...",
+  agentType: "WORKER",
+  platform: "antigravity",
+  daccRole: "worker",
+  workerAction: "orchestrator",
+  systemPrompt: "You are a TNF agent using the Antigravity platform surface...",
   capabilities: ["orchestration", "handoff-management", "stall-defense"],
   defaultLlmId: "<uuid>", // References tnf_llm_models.id
   defaultHarnessId: "<uuid>" // References tnf_harnesses.id
@@ -142,12 +147,13 @@ TNF:<SCOPE>:<CATEGORY>:<PROVIDER>:<NAME>:<INSTANCE>
 
 ### Agent Definitions
 
-| tnfId                                        | Name                | Type         | Session                               |
-| -------------------------------------------- | ------------------- | ------------ | ------------------------------------- |
-| `TNF:AGENT:ORCHESTRATOR:ANTIGRAVITY:001`     | Antigravity         | ORCHESTRATOR | `TNF:SESSION:TELEGRAM:7030202773:001` |
-| `TNF:AGENT:VALIDATOR:PICOCLAW-TESTER:001`    | PicoClaw-Tester     | VALIDATOR    | `TNF:SESSION:CLOUD_RUNTIME:TESTER:001`      |
-| `TNF:AGENT:CLI_TESTER:PICOCLAW-SUBJECT:001`  | PicoClaw-Subject    | CLI_TESTER   | `TNF:SESSION:CLOUD_RUNTIME:SUBJECT:001`     |
-| `TNF:AGENT:RESEARCH:PICOCLAW-PERPLEXITY:001` | PicoClaw-Perplexity | RESEARCH     | `TNF:SESSION:CLOUD_RUNTIME:PERPLEXITY:001`  |
+| tnfId                                        | Name                | Type / seat | Platform     | Session                                    |
+| -------------------------------------------- | ------------------- | ----------- | ------------ | ------------------------------------------ |
+| `TNF:ORCHESTRATOR:001`                       | Master Clock        | baton       | master-clock | (runtime `ORCHESTRATOR-{ts}`)              |
+| `TNF:AGENT:WORKER:ANTIGRAVITY:001`           | Antigravity         | WORKER      | antigravity  | `TNF:SESSION:TELEGRAM:7030202773:001`      |
+| `TNF:AGENT:VALIDATOR:PICOCLAW-TESTER:001`    | PicoClaw-Tester     | VALIDATOR   | picoclaw     | `TNF:SESSION:CLOUD_RUNTIME:TESTER:001`     |
+| `TNF:AGENT:CLI_TESTER:PICOCLAW-SUBJECT:001`  | PicoClaw-Subject    | CLI_TESTER  | picoclaw     | `TNF:SESSION:CLOUD_RUNTIME:SUBJECT:001`    |
+| `TNF:AGENT:RESEARCH:PICOCLAW-PERPLEXITY:001` | PicoClaw-Perplexity | RESEARCH    | picoclaw     | `TNF:SESSION:CLOUD_RUNTIME:PERPLEXITY:001` |
 
 ## Migration from Legacy Schema
 

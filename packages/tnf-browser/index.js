@@ -263,12 +263,9 @@ function resolveBootCommand(line) {
     case 'reload':
       return { action: 'tabs.reload', params: {} };
     case 'back':
-      return { action: 'dom.evaluate', params: { fn: '() => { history.back(); return true; }' } };
+      return { action: 'tabs.goBack', params: {} };
     case 'forward':
-      return {
-        action: 'dom.evaluate',
-        params: { fn: '() => { history.forward(); return true; }' },
-      };
+      return { action: 'tabs.goForward', params: {} };
     case 'clear':
       if (!rest) return null;
       return { action: 'human.clearInput', params: { selector: rest } };

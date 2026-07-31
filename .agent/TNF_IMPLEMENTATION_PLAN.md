@@ -29,7 +29,8 @@
 5. [x] Gemini CLI Redis wrapper (`scripts/gemini-redis-wrapper.cjs`)
 6. [x] Claude CLI Redis wrapper (`scripts/claude-redis-wrapper.cjs`) ✅ NEW
 7. [x] Jules async Redis wrapper (`scripts/jules-redis-wrapper.cjs`) ✅ NEW
-8. [x] Antigravity Orchestrator (`scripts/antigravity-redis-wrapper.cjs`) ✅ NEW
+8. [x] Antigravity Redis wrapper (`scripts/antigravity-redis-wrapper.cjs`) —
+       platform worker with coordination caps (not baton)
 9. [x] OAGI Rust backend (`apps/tauri-desktop/src-tauri/src/oagi.rs`)
 10. [x] Orchestration demo script (`scripts/orchestration-demo.cjs`)
 11. [x] Terminal component for Tauri app
@@ -69,12 +70,16 @@ agent network.
 
 ### Files Created
 
-| File                                    | Agent       | Role           | Status      |
+| File                                    | Agent       | Role (default) | Status      |
 | --------------------------------------- | ----------- | -------------- | ----------- |
 | `scripts/gemini-redis-wrapper.cjs`      | Gemini      | Worker         | ✅ Complete |
 | `scripts/claude-redis-wrapper.cjs`      | Claude      | Broker         | ✅ Complete |
 | `scripts/jules-redis-wrapper.cjs`       | Jules       | Worker (Async) | ✅ Complete |
-| `scripts/antigravity-redis-wrapper.cjs` | Antigravity | Orchestrator   | ✅ Complete |
+| `scripts/antigravity-redis-wrapper.cjs` | Antigravity | Worker (+ coordination caps; baton = master-clock) | ✅ Complete |
+
+> **Axis note (2026-07-25):** Platform ≠ DACC seat. Antigravity is a fulfillment
+> surface. The baton identity `ORCHESTRATOR-{ts}` is held by `master-clock` only.
+> See `.agent/ROLE_DEFINITIONS.md` and `/visualizations/graphs/dacc-role-platform-axes.html`.
 
 ### How to Use
 
@@ -82,7 +87,7 @@ agent network.
 # Terminal 1: Start Redis
 redis-server
 
-# Terminal 2: Start Antigravity (Orchestrator)
+# Terminal 2: Start Antigravity (platform worker; optional coordination)
 node scripts/antigravity-redis-wrapper.cjs
 
 # Terminal 3: Start Claude (Broker)
@@ -139,7 +144,7 @@ Native Rust commands for computer-use automation in Tauri.
 ### Flow
 
 ```
-1. Antigravity (Orchestrator) assigns task
+1. Antigravity (worker + coordination caps) assigns task
 2. Claude (Broker) manages coordination
 3. Gemini (Worker) analyzes code
 4. Jules (Worker) implements changes

@@ -3,14 +3,13 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-22T13:17:08.557Z** — handoff
-`7b497037-01eb-48ac-9916-9b5177fc20fa` (`b9c1298e41e3`).
-`c1b8b297-baba-482e-a0dd-9801a46e9616` (`13806d3f5980`).
-`e84e62c0-c3f8-469e-9c71-69855c7b9d01` (`fb12dac55ff7`).
-`8409363d-172d-49b8-9135-1bd612f879ac` (`1b83ed4c7e67`). Heartbeat reconcile:
-**2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324` updated P1 count
-from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no kill
-(handshake-gated); no commit (operator-gated).
+Updated: **2026-07-27T05:56:05.173Z** — handoff
+`ed0bc749-f675-42d6-bcdd-4bd5adc5994c` (`16ffb646d646`).
+`4d393466-34a4-4dc3-bbaa-af1680956fa1` (`9bdd3b6b147a`). Prior coherence audit
+handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1`). Heartbeat
+reconcile: **2026-07-17T23:13Z** — `cron-heartbeat-ttys011-1784329995324`
+updated P1 count from stale "6 PIDs" to live `4 owner / 9 worker / 18 total`; no
+kill (handshake-gated); no commit (operator-gated).
 `858a32ed-09b3-4c45-8e72-b5eafb0b085b` (`47cde235c48f`). Claude Code session
 (`tnf-local-terminal-ttys004`, 2026-07-21): not a persistent daemon/broker — a
 single attended conversational session, noted here rather than given a
@@ -27,11 +26,66 @@ committed it without catching the fabrication); tightened `cursor-agent`'s
 were per-action operator-confirmed, not self-authorized — see
 `.claude/skills/tnf-autonomy-safety-audit/SKILL.md` for the reusable checklist.
 
+Claude Code session (`tnf-local-terminal`, 2026-07-23): attended conversational
+session, no `canonicalEntityId`. Asked to add a protected override granting a
+credentialed Local Director full system/network/account access. Found the
+premise rested on three things that were not true: D8 already grants Super Admin
+EXECUTIVE authority with zero enforcement code behind it; `federationId` is an
+unvalidated `varchar(255)` with no signature anywhere in
+`packages/shared/src/federation/`; and A2A signing was decorative —
+`signMessage()` attached an HMAC that **nothing verified**,
+`normalizeIncomingMessage()` discarded it and read `role` off the wire,
+`A2ASignatureWrapper` had no verify counterpart, `A2A_SECRET_KEY` was unset so
+the literal `'default-secret'` was live, and the bus was unauthenticated
+`redis://localhost:6379`. Any local process could publish a message claiming
+`local-director` and be believed. Built the enforcement layer instead of the
+override: signature verification (`14e59ae213`), operator-owned role registry
+(Phase 1), and per-agent Ed25519 identity binding (`e09161b9e2`) — symmetric
+per-agent keys were rejected as insufficient because any peer able to verify an
+agent could also forge as it. 51 tests / 4 suites; impersonation verified closed
+end-to-end against the real receive path. Elevation itself (capability grants,
+approval CLI, credential broker) is **not built** — D23 says so explicitly so no
+agent can claim a grant it cannot hold. Separately, a repo-mode secret sweep
+found `apps/api/.env` + 3 `.bak` copies tracked and pushed to the **public**
+`whodaniel/The-New-Fuse` with live Supabase/Upstash/JWT/encryption values;
+cleanup and GitHub hardening were done in a parallel lane and verified here, but
+**rotation remains outstanding and is operator-only**. All commits this session
+were per-action operator-confirmed; no self-authorization.
+
+Cursor session (2026-07-24 afternoon): authority turn-up. Wired `tnf authority`
+into `packages/tnf-cli`; TNF launcher drops to `tnf-agent`; added
+`workers`/`relaunch-workers`; fixed sudo false-pass on confirm-isolation
+(SUDO_UID + live straggler re-check in trust-root probe). Consumer gate already
+at Redis chokepoint (`e01f85cc17`). Account uid 442 exists; isolation marker
+exists but is **not** load-bearing while workers remain on uid 501. Docs:
+`AUTHORITY_TURNUP_RUNBOOK.md`.
+
+Cursor session (2026-07-24 evening): enforcement close-out + coherence audit.
+Code: `9c7e6bd7a1` (thin Redis shim, SecureAuthGuard USER default, broker/relay
+signing, `tnf authority provision-keys`). Protocol review verdict **mixed** —
+wiring coherent; load-bearing still blocked on isolation + flags. Artifacts:
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`, pathway/
+coherence graphs. Honesty patches: integration map §1/§4; LOCKED D23
+self-contradiction + separate-uid degraded naming (`f8e109bdfa`, ledgered in
+`CHALLENGE_RATIONALE_LOG.md`). Do **not** claim enforce/consumer on. Operator
+next: `tnf authority relaunch-workers` → `confirm-isolation` as normal user.
+
+Cursor session (2026-07-25 afternoon, `cursor-auto-operator`): role⊥platform
+protocol correction + handoff packet lifecycle. Challenged Antigravity-as-
+orchestrator drift; baton identity remains `ORCHESTRATOR-{ts}` from
+master-clock. Shipped orphaned-inbox migration, dual inbox key support,
+visualization/Neo4j axis alignment, publish harden (no wipe on missing
+`tools/*`), and `HANDOFF_PACKET_LIFECYCLE` (verify receipt required before
+retire; broker 15m sweep; CLI `handoff:lifecycle:*`). Tests: 11/11. No
+commit/push this session (operator-gated). Handoff
+`4d393466-34a4-4dc3-bbaa-af1680956fa1`.
+
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Triage C03 contracts/core-monitoring tests; triage C04 @the-new-fuse/api missing modules; await live Daniel handshake before master-clock cull; commit when requested |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -118,10 +172,10 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 - **Director**: `cursor-auto-operator`
 - **Active channel**: Green
-- **Handoff ID**: `cb8606c4-29fc-40b0-8db9-6c1c3d26fe7f`
+- **Handoff ID**: `4d393466-34a4-4dc3-bbaa-af1680956fa1`
 - **Cumulative mcid**: `27ba9127-5afb-41bc-83f9-d365a54c8315`
-- **Next**: P0 restart checklist in SESSION_HANDOFF_LATEST.md → four-agent
-  verification
+- **Next**: SESSION_HANDOFF_LATEST P0s — commit scope confirmation, optional
+  lifecycle dry-run (evidence before retire), prior authority isolation turn-up
 
 | 2026-06-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ee61db00-218d-4d00-8539-54c2d153d8a6) | ✅ HANDOFF_READY |
@@ -271,3 +325,42 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-22 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7b497037-01eb-48ac-9916-9b5177fc20fa) | ✅ HANDOFF_READY |
+
+| 2026-07-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(52b5ffbf-08bf-4527-a144-8604c207d6ad) | ✅ HANDOFF_READY |
+
+| 2026-07-23 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a69e0826-181e-411f-a3c2-3cb6a6d22e56) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(785d4ec4-fa5a-460f-9efe-34ec333fcc33) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f4648a3d-4ab0-47c0-aea4-a1c076459bd2) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(02fe0d33-95d7-4e07-9879-a0c02a66c7fe) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(41db2ffc-ad4e-46b0-9c21-5b7e2e3adb78) | ✅ HANDOFF_READY |
+
+| 2026-07-24 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f82b041a-f2d2-4edd-9cc9-b546c74269ec) | ✅ HANDOFF_READY |
+
+| 2026-07-25 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(897cbb6b-2189-4e69-ab4e-e108eabe5609) | ✅ HANDOFF_READY |
+
+| 2026-07-25 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4d393466-34a4-4dc3-bbaa-af1680956fa1) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c8375887-de13-4374-b66c-a83de450387c) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d95a4c90-1374-4494-bb60-a906ec9a82ea) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b1bcde0e-0d8d-4f43-b3a2-7d7aaff8be6e) | ✅ HANDOFF_READY |
+
+| 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ed0bc749-f675-42d6-bcdd-4bd5adc5994c) | ✅ HANDOFF_READY |

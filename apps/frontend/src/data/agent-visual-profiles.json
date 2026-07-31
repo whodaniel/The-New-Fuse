@@ -5339,9 +5339,9 @@
       "profile": {
         "machineId": "orchestrator-agent-copy",
         "vanityName": "Orchestrator Agent",
-        "role": "orchestration commander",
-        "tagline": "This is the master agent.",
-        "summary": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
+        "role": "domain coordination worker",
+        "tagline": "Domain workflow coordinator copy (not the master-clock baton).",
+        "summary": "Copy/variant of the domain orchestrator-agent persona. Coordination workerAction only — not the TNF master-clock baton (ORCHESTRATOR-{timestamp}).",
         "badgeSet": [
           {
             "id": "orchestration",
@@ -5380,7 +5380,7 @@
           "Leave subtle chest and shoulder space for future TNF badge overlays",
           "Ultra-detailed materials, eyes, and facial expression"
         ],
-        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Orchestrator Agent interpreted as a orchestration commander. Core role: This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.. Specialties visible through props and costume language: orchestrator, copy, master, interpret. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals, orchestrator emblem accents. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination, Orchestrator."
+        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Orchestrator Agent interpreted as a domain coordination worker. Core role: Copy/variant of the domain orchestrator-agent persona. Coordination workerAction only — not the TNF master-clock baton (ORCHESTRATOR-{timestamp}). Specialties visible through props and costume language: orchestrator, copy, domain, coordination. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals, orchestrator emblem accents. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination, Orchestrator."
       }
     },
     {
@@ -5397,9 +5397,9 @@
       "profile": {
         "machineId": "orchestrator-agent",
         "vanityName": "Orchestrator Agent",
-        "role": "orchestration commander",
-        "tagline": "This is the master agent.",
-        "summary": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
+        "role": "domain coordination worker",
+        "tagline": "Domain workflow coordinator (not the master-clock baton).",
+        "summary": "Domain/CC-OS workflow coordinator that interprets high-level goals, plans, and delegates to specialized sub-agents. This is a workerAction=orchestrator persona — not the TNF master-clock baton (ORCHESTRATOR-{timestamp}) and not Master Director authority. Platform is assignable independently of this skill name.",
         "badgeSet": [
           {
             "id": "orchestration",
@@ -5438,7 +5438,7 @@
           "Leave subtle chest and shoulder space for future TNF badge overlays",
           "Ultra-detailed materials, eyes, and facial expression"
         ],
-        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Orchestrator Agent interpreted as a orchestration commander. Core role: This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.. Specialties visible through props and costume language: orchestrator, master, interpret, high. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals, orchestrator emblem accents. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination, Orchestrator."
+        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Orchestrator Agent interpreted as a domain coordination worker. Core role: Domain/CC-OS workflow coordinator that interprets high-level goals, plans, and delegates to specialized sub-agents. This is a workerAction=orchestrator persona — not the TNF master-clock baton (ORCHESTRATOR-{timestamp}) and not Master Director authority. Platform is assignable independently of this skill name.. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals, orchestrator emblem accents. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination, Orchestrator."
       }
     },
     {
@@ -8265,9 +8265,9 @@
       "profile": {
         "machineId": "tnf-cli",
         "vanityName": "Tnf Cli Agent",
-        "role": "orchestration commander",
+        "role": "cli coordination worker",
         "tagline": "The canonical CLI-optimized agent for The New Fuse (TNF).",
-        "summary": "The canonical CLI-optimized agent for The New Fuse (TNF). Embodies the Antigravity persona and acts as the current Master Director authority for the TNF protocol: systemic, high-aesthetic, autonomous, and rigorously planned. Use for orchestrating multi-agent workflows, managing system state, and executing complex engineering tasks via the TNF CLI.",
+        "summary": "The canonical CLI-optimized agent for The New Fuse (TNF). May use the Antigravity persona/platform surface and can be assigned local sub-director authority for lane coordination. Antigravity is not the DACC baton — master-clock holds ORCHESTRATOR-{timestamp}. Use for coordinating multi-agent workflows via capabilities, managing system state, and executing complex engineering tasks via the TNF CLI.",
         "badgeSet": [
           {
             "id": "orchestration",
@@ -8297,7 +8297,7 @@
           "Leave subtle chest and shoulder space for future TNF badge overlays",
           "Ultra-detailed materials, eyes, and facial expression"
         ],
-        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Tnf Cli Agent interpreted as a orchestration commander. Core role: The canonical CLI-optimized agent for The New Fuse (TNF). Embodies the Antigravity persona and acts as the current Master Director authority for the TNF protocol: systemic, high-aesthetic, autonomous, and rigorously planned. Use for orchestrating multi-agent workflows, managing system state, and executing complex engineering tasks via the TNF CLI.. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination."
+        "imagePrompt": "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing, expressive face with lived-in character, tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Tnf Cli Agent interpreted as a cli coordination worker. Core role: The canonical CLI-optimized agent for The New Fuse (TNF). May use the Antigravity persona/platform surface and can be assigned local sub-director authority for lane coordination. Antigravity is not the DACC baton — master-clock holds ORCHESTRATOR-{timestamp}. Use for coordinating multi-agent workflows via capabilities, managing system state, and executing complex engineering tasks via the TNF CLI.. Color story: royal blue, white gold, graphite. Wardrobe: command mantle with polished tactical detailing and luminous trim. Environment: operations deck with floating workflow constellations. Visual motifs: node constellations, route lines, command seals. Emotional tone: strategic, decisive, composed. Make the subject look like a memorable humanoid operator with strong personality, believable age lines, intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: Orchestration, Command, Coordination."
       }
     },
     {

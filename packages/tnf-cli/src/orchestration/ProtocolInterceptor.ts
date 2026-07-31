@@ -104,12 +104,19 @@ export class ProtocolInterceptor {
 
     // 1. Turn Zero Mandate
     log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
-    const turnZeroResult = await this.turnZero.execute();
+    const turnZeroResult = await this.turnZero.execute({ silent: this.silent });
+    // Report how many steps actually ran. "Turn Zero passed" previously said
+    // nothing about whether integrity or repo-sync were verified or merely
+    // asserted; a skipped-step count keeps that visible to every consumer.
+    const skippedSteps = Object.values(turnZeroResult.checks).filter(
+      (c) => c.state === 'skipped'
+    ).length;
     checks.push({
       name: 'Turn Zero Mandate',
       passed: turnZeroResult.passed,
       details: turnZeroResult.passed
-        ? `${turnZeroResult.stateFiles.length} state files, ${turnZeroResult.handoffFiles.length} handoff artifacts`
+        ? `${turnZeroResult.stateFiles.length} state files, ${turnZeroResult.handoffFiles.length} handoff artifacts` +
+          (skippedSteps > 0 ? `, ${skippedSteps} step(s) skipped` : ', all steps verified')
         : `${turnZeroResult.errors.length} error(s): ${turnZeroResult.errors.join(', ')}`,
     });
 
@@ -135,7 +142,7 @@ export class ProtocolInterceptor {
 
     // 3. Procedural Disclosure
     log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
-    const disclosureResult = await this.disclosure.executeCheck();
+    const disclosureResult = await this.disclosure.executeCheck({ silent: this.silent });
     checks.push({
       name: 'Procedural Disclosure',
       passed: disclosureResult.ready,

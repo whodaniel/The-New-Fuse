@@ -9,7 +9,6 @@ import { resolveEnvironmentEndpoints, resolveRelayUrlForEnvironment } from '../c
 import { useAgentStore } from '../stores/agentStore';
 import type { Environment } from '../stores/settingsStore';
 import apiService from './api';
-import BrowserControlService from './BrowserControlService';
 import { EventEmitter } from './EventEmitter';
 import FederationNodeService from './FederationNodeService';
 import type {
@@ -110,13 +109,8 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
       this.emit('activity', entry);
     });
 
-    bind(BrowserControlService, 'connected', () => {
-      this.log('Browser control relay connected');
-      this.syncFromServices();
-    });
-    bind(BrowserControlService, 'disconnected', () => this.syncFromServices());
-    bind(BrowserControlService, 'extension_connected', () => this.syncFromServices());
-    bind(BrowserControlService, 'extension_disconnected', () => this.syncFromServices());
+    // Extension presence comes from the federation agent list (`agents_updated`),
+    // which is the only place the Chrome extension actually announces itself.
   }
 
   async bootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
@@ -144,7 +138,6 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
     apiService.setBaseUrl(endpoints.api);
     wsService.setUrl(endpoints.ws);
     wsService.connect();
-    BrowserControlService.setRelayUrl(relayUrl);
     FederationNodeService.setRelayUrl(relayUrl);
 
     this.setSnapshot({
@@ -160,10 +153,7 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
 
     this.log(`Synergy bootstrap (${environment})`);
 
-    await Promise.allSettled([
-      FederationNodeService.connect(relayUrl),
-      BrowserControlService.connect(relayUrl),
-    ]);
+    await FederationNodeService.connect(relayUrl);
 
     void useAgentStore.getState().fetchAgents();
     await this.refreshHealth();
@@ -175,6 +165,13 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
         this.syncFromServices();
       }, 5000);
     }
+  }
+
+  /** Re-probe local API/relay after Start API / Start Relay. */
+  async rediscoverLocal(): Promise<void> {
+    const environment = this.snapshot.environment;
+    const customApiUrl = environment === 'custom' ? this.snapshot.apiUrl : '';
+    await this.bootstrap(environment, customApiUrl);
   }
 
   async refreshHealth(): Promise<void> {
@@ -244,19 +241,19 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
     );
 
     const unifiedAgents = this.mergeAgents(federatedAgents, localAgents);
-    const extensionConnected = BrowserControlService.isExtensionConnected();
+    const extensionConnected = FederationNodeService.isBrowserExtensionConnected();
     const topology = this.buildTopology(unifiedAgents, {
-      relayConnected: federation.connected || BrowserControlService.isConnected(),
+      relayConnected: federation.connected,
       relayRegistered: federation.registered,
       apiOnline: this.snapshot.apiOnline,
       extensionConnected,
     });
 
     this.setSnapshot({
-      relayConnected: federation.connected || BrowserControlService.isConnected(),
+      relayConnected: federation.connected,
       relayRegistered: federation.registered,
       extensionConnected,
-      browserSessionActive: BrowserControlService.isConnected() && extensionConnected,
+      browserSessionActive: federation.registered && extensionConnected,
       federatedAgentCount: federation.agents.length,
       channelCount: federation.channels.length || this.snapshot.relayHealth?.channels || 0,
       unifiedAgents,

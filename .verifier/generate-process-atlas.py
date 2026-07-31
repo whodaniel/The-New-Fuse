@@ -38,6 +38,41 @@ def run(cmd):
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
+# ── Secret redaction ──────────────────────────────────────────────────────────
+# Process command lines routinely carry inline env assignments
+# (`REDIS_URL='rediss://default:<token>@host' node dist/broker-agent.js`).
+# This payload is a tracked file, so every captured cmdline MUST be scrubbed
+# before it reaches disk. Redact the value, keep the shape: the host and the
+# variable name are what make the atlas diagnostically useful.
+
+_SECRET_NAME = (
+    r"(?:TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIALS?|API[_-]?KEY|ACCESS[_-]?KEY"
+    r"|PRIVATE[_-]?KEY|AUTH|SESSION|COOKIE|SIGNING|WEBHOOK|PAT|BEARER)"
+)
+
+_REDACTIONS = (
+    # scheme://user:pass@host  ->  scheme://user:***@host   (keeps host visible)
+    (re.compile(r"(\b[a-zA-Z][a-zA-Z0-9+.-]*://[^\s:/@'\"]*:)[^\s@'\"]+(@)"), r"\1***\2"),
+    # SECRETISH_NAME='value' | "value" | value
+    (re.compile(rf"(\b\w*{_SECRET_NAME}\w*\s*=\s*)('[^']*'|\"[^\"]*\"|\S+)", re.I), r"\1***"),
+    # -----BEGIN ... KEY----- blocks that leaked onto an argv
+    (re.compile(r"-----BEGIN[^-]*-----[\s\S]*?-----END[^-]*-----"), "***"),
+    # Bearer / Authorization headers passed as args
+    (re.compile(r"((?:Bearer|Basic)\s+)[A-Za-z0-9._~+/=-]{12,}", re.I), r"\1***"),
+    # Bare long high-entropy blobs (JWTs, provider tokens) not caught above
+    (re.compile(r"\b(?=[A-Za-z0-9_-]*\d)(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9_-]{40,}\b"), "***"),
+)
+
+
+def redact(text):
+    """Strip credentials from a captured command line."""
+    if not text:
+        return text
+    for pattern, repl in _REDACTIONS:
+        text = pattern.sub(repl, text)
+    return text
+
+
 def collect_cron():
     cr = run(["crontab", "-l"]).stdout
     cron = []
@@ -71,7 +106,7 @@ def collect_live():
             if line in seen:
                 continue
             seen.add(line)
-            live.append({"role": role, "cmd": line})
+            live.append({"role": role, "cmd": redact(line)})
     return live
 
 

@@ -21,10 +21,11 @@ describe('boot pipeline plan', () => {
 
     assert.equal(
       plan.length,
-      18,
-      'expected 18 boot steps including harness-context + continuity + attach'
+      19,
+      'expected 19 boot steps including harness-context + voice-kws + continuity + attach'
     );
     assert.ok(byId['harness-context'], 'harness-context step required');
+    assert.ok(byId['voice-kws-always-on'], 'voice-kws-always-on step required');
 
     assert.match(
       byId['turn-zero-onboard'].launches[0],

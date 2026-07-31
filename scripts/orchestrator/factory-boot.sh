@@ -186,11 +186,14 @@ fi
 printf "%s\n" "${REDIS_URL}" > "${RUNTIME_STATE_DIR}/redis-url.txt"
 
 if [[ "${AUTO_DETECT_CLOUD_RUNTIME_API}" == "true" ]] && [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]]; then
-  if command -v cloud_runtime >/dev/null 2>&1; then
-    CLOUD_RUNTIME_DOMAIN_URL="$(cloud_runtime domain 2>/dev/null | rg -o 'https://[^[:space:]]+' -m 1 || true)"
+  if command -v gcloud >/dev/null 2>&1; then
+    CLOUD_RUNTIME_DOMAIN_URL="$(gcloud run services describe "${TNF_LEDGER_CLOUD_RUN_SERVICE:-api}" \
+      --project="${TNF_GCP_PROJECT_ID:-${GCP_PROJECT_ID:-the-new-fuse-2025}}" \
+      --region="${TNF_GCP_REGION:-${GCP_REGION:-us-central1}}" \
+      --format='value(status.url)' 2>/dev/null || true)"
     if [[ -n "${CLOUD_RUNTIME_DOMAIN_URL}" ]]; then
       LEDGER_API_BASE="${CLOUD_RUNTIME_DOMAIN_URL}"
-      echo "[factory-boot] auto-detected cloud_runtime api: ${LEDGER_API_BASE}"
+      echo "[factory-boot] auto-detected Cloud Run api: ${LEDGER_API_BASE}"
     fi
   fi
 fi

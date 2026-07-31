@@ -255,7 +255,7 @@ All LLM costs are per million tokens (M = 1,000,000 tokens).
 
 ## Setup & Funding
 
-**Wallet location:** `$HOME/.blockrun/.session` (e.g., `/Users/username/.blockrun/.session`)
+**Wallet location:** `$HOME/.blockrun/.session` (e.g., `$HOME/.blockrun/.session`)
 
 **First-time setup:**
 1. Wallet auto-creates when `setup_agent_wallet()` is called

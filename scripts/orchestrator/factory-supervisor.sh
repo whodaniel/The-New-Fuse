@@ -138,7 +138,9 @@ service_healthy() {
       redis_ping
       ;;
     relay)
-      curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1
+      # Prefer IPv4 loopback: on macOS, localhost often resolves to ::1, which can
+      # collide with unrelated listeners (e.g. Vite) and return HTTP 426.
+      curl -fsS --max-time 2 http://127.0.0.1:3000/health >/dev/null 2>&1
       ;;
     master-clock)
       process_running "dist/master-clock.js|ts-node src/master-clock.ts"

@@ -1,11 +1,12 @@
 import { invoke } from '@tauri-apps/api/core';
 
 /**
- * TNF Browser embedded WebView bridge.
+ * Auxiliary WebView helpers.
  *
- * These wrap the Rust `browser_webview` commands that host a REAL Tauri child
- * WebView window (a native webview, not a sandboxed iframe) rendering the live
- * browser surface driven by the TNF Browser tool.
+ * These wrap Rust `browser_webview` commands that open a separate Tauri
+ * WebviewWindow. That window is NOT the Chromium session controlled by TNF
+ * Browser on the agent-browser runtime — it has its own cookies and does not receive protocol
+ * actions. Prefer screenshots / Discover for the controlled session.
  */
 
 export function openTNFBrowserWebview(url: string): Promise<void> {

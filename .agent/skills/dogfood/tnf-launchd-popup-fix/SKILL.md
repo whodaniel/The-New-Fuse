@@ -58,7 +58,7 @@ Popups stop IMMEDIATELY after this step.
 ### 2. FIX THE UNDERLYING IMPORT ERROR
 
 ```bash
-cd /Users/danielgoldberg/.hermes/hermes-agent
+cd $HOME/.hermes/hermes-agent
 source venv/bin/activate
 pip install -e .
 ```
@@ -66,7 +66,7 @@ pip install -e .
 ### 3. VERIFY FIX
 
 ```bash
-cd /Users/danielgoldberg/.hermes/hermes-agent
+cd $HOME/.hermes/hermes-agent
 source venv/bin/activate
 python -c "from hermes_cli.auth import DEFAULT_QWEN_BASE_URL; print('✅ FIXED')"
 ```

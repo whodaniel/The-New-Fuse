@@ -70,3 +70,15 @@ After loading state, always verify:
 Read `references/troubleshooting.md` when cookie extraction returns zero
 cookies, browser profile selection fails, or Playwright still redirects to
 login.
+
+## Load into TNF agent-browser
+
+After exporting a state file:
+
+```bash
+tnf browser start --state /tmp/playwright_state_example.com.json --url https://example.com/app
+# equivalent:
+agent-browser --state /tmp/playwright_state_example.com.json open https://example.com/app --headed
+```
+
+Do not restart `h17-webpilot` / `webpilot start` for authenticated sessions.

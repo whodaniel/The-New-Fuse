@@ -5,29 +5,17 @@ import re
 import base58
 
 # -----------------------------------------------------------------------------
-# Phase 9 FOLLOWUP-1 (audit 2026-06-14): prefix collision policy.
+# Phase 9 FOLLOWUP-1 (audit 2026-06-14) — RESOLVED 2026-07-26.
 #
-# The `ID#:` prefix is currently shared between:
-#   - Federated reputation IDs (`idNumber`, sequential int -> Base58, see
-#     packages/a2a-core/src/federated-identity.service.ts).
-#   - Intelligence vector IDs (`vector_id`, hash bytes -> Base58, see below).
-# Operators reading logs must distinguish these. We DO NOT rename the wire
-# format at this time because:
-#   (a) KNOWLEDGE_TREE.json contains 645 existing vector_ids with the
-#       `ID#:` prefix; a rename requires a tree rebuild + downstream
-#       synchronization (wiki-inbox/*.json, vector_id consumers).
-#   (b) ai-assets search backends and existing consumers key off the prefix
-#       in locate/join style.
-#
-# The reconciliation path, on the next knowledge-tree rebuild, is to switch
-# the vector_id prefix to `VEC#:` while keeping `ID#:` for federated IDs.
-# Future-prefix variable below documents the convention.
-# Tracked as a deliberate decision; see
-# docs/protocols/reports/FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md (FOLLOWUP-1).
+# Intelligence vector IDs now use `VEC#:` (hash bytes -> Base58).
+# Federated reputation IDs keep `ID#:` (sequential int -> Base58).
+# Leaves also store `legacy_vector_id` (`ID#:…`) for dual-read joins during
+# downstream sync (wiki-inbox, older graph artifacts).
 # -----------------------------------------------------------------------------
-VECTOR_ID_LEGACY_PREFIX = 'ID#:'  # current wire format (kept for backward compat)
+VECTOR_ID_LEGACY_PREFIX = 'ID#:'  # retained for dual-read / old artifacts
 FEDERATED_ID_PREFIX = 'ID#:'       # canonical FederatedIdentityService output
-VECTOR_ID_TARGET_PREFIX = 'VEC#:'  # planned migration target on tree rebuild
+VECTOR_ID_TARGET_PREFIX = 'VEC#:'  # intelligence vector_id wire format (FOLLOWUP-1 done 2026-07-26)
+VECTOR_ID_PREFIX = VECTOR_ID_TARGET_PREFIX  # active producer prefix
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.getenv("TNF_ROOT_DIR", os.path.join(SCRIPT_DIR, "..", "..")))
@@ -42,9 +30,15 @@ def get_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 def generate_id(index):
-    # Protocol: ID#:<Base58 encoded sequence>
-    # We'll hash the index with a project salt for uniqueness.
-    # Prefix follows VECTOR_ID_LEGACY_PREFIX (Phase 9 FOLLOWUP-1).
+    # Protocol: VEC#:<Base58> for intelligence vectors (migrated from ID#: 2026-07-26).
+    # Federated reputation IDs keep ID#: via FederatedIdentityService.
+    salt = "tnf-intelligence-salt-2026"
+    raw_hash = hashlib.sha256(f"{salt}-{index}".encode()).digest()
+    encoded = base58.b58encode(raw_hash[:8]).decode()
+    return f"{VECTOR_ID_PREFIX}{encoded}"
+
+def legacy_id(index):
+    """Pre-migration ID#: form — kept for dual-read joins against old artifacts."""
     salt = "tnf-intelligence-salt-2026"
     raw_hash = hashlib.sha256(f"{salt}-{index}".encode()).digest()
     encoded = base58.b58encode(raw_hash[:8]).decode()
@@ -77,7 +71,8 @@ def build_intelligence_branch():
         classes[cl].append({
             "index": idx,
             "hash": h,
-            "vector_id": vector_id
+            "vector_id": vector_id,
+            "legacy_vector_id": legacy_id(idx),
         })
 
     # Sort and Hash classes
@@ -121,15 +116,18 @@ def main():
             "Library:Protocols": protocols
         },
         "metadata": {
-            "timestamp": "2026-04-30T01:30Z",
-            "status": "[STATUS:SYNCHRONIZED]"
+            "timestamp": __import__("time").strftime("%Y-%m-%dT%H:%MZ", __import__("time").gmtime()),
+            "status": "[STATUS:SYNCHRONIZED]",
+            "vector_id_prefix": VECTOR_ID_PREFIX,
+            "vector_id_legacy_prefix": VECTOR_ID_LEGACY_PREFIX,
+            "federated_id_prefix": FEDERATED_ID_PREFIX,
         }
     }
     
     with open(OUTPUT_JSON, "w") as f:
         json.dump(tree, f, indent=2)
     
-    print(f"FORGE: Merkle Knowledge Tree (with ID#) generated at {OUTPUT_JSON}")
+    print(f"FORGE: Merkle Knowledge Tree (with {VECTOR_ID_PREFIX}) generated at {OUTPUT_JSON}")
     print(f"ROOT_HASH: {root_hash}")
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "type-check": "tsc -p tsconfig.json --noEmit",
-    "test": "echo \"No tests for this package\" && exit 0"
+    "test": "tsx src/utils/run-command.test.ts && tsx src/utils/browser-routing.test.ts && tsx src/utils/llm-tools.browser.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
@@ -36,7 +36,8 @@
     "minimatch": "^10.0.1",
     "telegraf": "^4.16.3",
     "uuid": "^10.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "agent-browser": "~0.26.0"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",

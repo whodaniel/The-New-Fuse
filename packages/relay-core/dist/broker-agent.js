@@ -37,7 +37,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
+const sign_bus_message_js_1 = require("./protocol/sign-bus-message.js");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
+const orchestrator_inbox_migration_service_js_1 = require("./services/orchestrator-inbox-migration.service.js");
+const handoff_packet_lifecycle_service_js_1 = require("./services/handoff-packet-lifecycle.service.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.CLOUD_RUNTIME_REDIS_URL ||
@@ -74,6 +77,13 @@ const CONFIG = {
     MAX_TWIP_CONTEXT_AGE_MS: parseInt(process.env.BROKER_MAX_TWIP_CONTEXT_AGE_MS || '', 10) || 900000,
     REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND: (process.env.BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND || 'false') === 'true',
     CONTEXT_RISK_ESCALATION_LEVEL: String(process.env.BROKER_CONTEXT_RISK_ESCALATION_LEVEL || 'high').toLowerCase(),
+    MASTER_STATE_KEY: process.env.BROKER_MASTER_STATE_KEY || 'tnf:master:state',
+    ORPHAN_INBOX_MIGRATE_MS: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MS || '', 10) || 60000,
+    ORPHAN_INBOX_MIGRATE_MAX: parseInt(process.env.BROKER_ORPHAN_INBOX_MIGRATE_MAX || '', 10) || 2000,
+    /** Periodic handoff packet lifecycle sweep (verify/archive residue). Default 15m. */
+    HANDOFF_LIFECYCLE_MS: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MS || '', 10) || 15 * 60 * 1000,
+    HANDOFF_LIFECYCLE_MAX_INBOXES: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MAX_INBOXES || '', 10) || 200,
+    HANDOFF_LIFECYCLE_MAX_PACKETS: parseInt(process.env.BROKER_HANDOFF_LIFECYCLE_MAX_PACKETS || '', 10) || 2000,
 };
 const REQUIRED_FEDERATION_GATES = [
     'TENANT_SCOPE_GATE',
@@ -88,6 +98,8 @@ class BrokerAgent {
         this.redisBlocking = null;
         this.upstash = null;
         this.heartbeatInterval = null;
+        this.orphanMigrateInterval = null;
+        this.handoffLifecycleInterval = null;
         this.running = false;
         this.brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
         this.twipSnapshotCache = null;
@@ -106,6 +118,8 @@ class BrokerAgent {
         this.running = true;
         await this.registerBroker();
         this.startHeartbeat();
+        this.startOrphanInboxMigration();
+        this.startHandoffLifecycleSweep();
         console.log(`[Broker] Online as ${this.brokerId}`);
         console.log(`[Broker] Consuming queue: ${CONFIG.TASK_QUEUE_KEY}`);
         await this.consumeLoop();
@@ -178,6 +192,77 @@ class BrokerAgent {
         };
         this.heartbeatInterval = setInterval(sendHeartbeat, CONFIG.HEARTBEAT_INTERVAL_MS);
         void sendHeartbeat();
+    }
+    startOrphanInboxMigration() {
+        const run = async () => {
+            try {
+                await this.migrateOrphanedOrchestratorInboxes();
+            }
+            catch (error) {
+                console.warn('[Broker] Orphan inbox migration failed:', error.message);
+            }
+        };
+        this.orphanMigrateInterval = setInterval(run, CONFIG.ORPHAN_INBOX_MIGRATE_MS);
+        void run();
+    }
+    async getActiveOrchestratorSessionId() {
+        try {
+            let raw = null;
+            if (this.upstash) {
+                // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
+                raw = await this.upstash.hget(CONFIG.MASTER_STATE_KEY, 'orchestrator');
+            }
+            else if (this.redis) {
+                raw = await this.redis.hget(CONFIG.MASTER_STATE_KEY, 'orchestrator');
+            }
+            return (0, orchestrator_inbox_migration_service_js_1.parseActiveOrchestratorSessionId)(raw);
+        }
+        catch {
+            return null;
+        }
+    }
+    /**
+     * Safety net when master-clock is down or a prior baton left packets behind.
+     * Does not imply any platform (e.g. antigravity) owns the orchestrator seat.
+     */
+    async migrateOrphanedOrchestratorInboxes() {
+        const active = await this.getActiveOrchestratorSessionId();
+        if (!active || !this.redis)
+            return;
+        const result = await (0, orchestrator_inbox_migration_service_js_1.migrateOrphanedOrchestratorInboxes)(this.redis, active, {
+            maxMove: CONFIG.ORPHAN_INBOX_MIGRATE_MAX,
+        });
+        if (result.migrated > 0) {
+            console.log(`[Broker] Migrated ${result.migrated} orphaned handoff packet(s) → ${active} from ${result.sources.length} inbox(es)`);
+        }
+    }
+    startHandoffLifecycleSweep() {
+        const run = async () => {
+            try {
+                await this.sweepHandoffPacketLifecycle();
+            }
+            catch (error) {
+                console.warn('[Broker] Handoff lifecycle sweep failed:', error.message);
+            }
+        };
+        this.handoffLifecycleInterval = setInterval(run, CONFIG.HANDOFF_LIFECYCLE_MS);
+        void run();
+    }
+    /**
+     * Retire verified/expired/dangling handoff residue from live inboxes.
+     * See docs/protocols/HANDOFF_PACKET_LIFECYCLE.md.
+     */
+    async sweepHandoffPacketLifecycle() {
+        if (!this.redis)
+            return;
+        const result = await (0, handoff_packet_lifecycle_service_js_1.sweepHandoffPacketLifecycle)(this.redis, {
+            maxInboxes: CONFIG.HANDOFF_LIFECYCLE_MAX_INBOXES,
+            maxPackets: CONFIG.HANDOFF_LIFECYCLE_MAX_PACKETS,
+        });
+        const changed = result.danglingRemoved + result.expiredRemoved + result.softRetired + result.archived;
+        if (changed > 0) {
+            console.log(`[Broker] Handoff lifecycle sweep: dangling=${result.danglingRemoved} expired=${result.expiredRemoved} softRetired=${result.softRetired} archived=${result.archived} inspected=${result.packetsInspected}`);
+        }
     }
     async consumeLoop() {
         while (this.running) {
@@ -719,6 +804,11 @@ class BrokerAgent {
         // Project-Planner) and 'bridge' (e.g. hermes-bridge) were added
         // 2026-07-22 after being found live in the registry with role values the
         // CLI's AGENT_ROLE_TRAITS didn't yet recognize.
+        //
+        // Platform is orthogonal: a worker on any platform (antigravity, claude,
+        // pi, …) remains eligible. Infra exclusion is by DACC seat, not by
+        // fulfillment surface. Coordination work uses `workerAction` /
+        // capabilities (e.g. orchestration), not `daccRole: orchestrator`.
         // Fall back to inspecting both daccRole and the legacy `role` so existing
         // emitters continue to classify correctly.
         const INFRA_ROLES = ['director', 'orchestrator', 'broker', 'coordinator', 'bridge'];
@@ -835,7 +925,12 @@ class BrokerAgent {
             .filter((agent) => this.isWorkerAgent(agent));
         if (agents.length === 0)
             return null;
-        const requestedAssignee = String(task.assignee || '').trim();
+        let requestedAssignee = String(task.assignee || '').trim();
+        // Stale or live baton identities are not worker dispatch targets. Clear so
+        // capability / fulfillment selection can pick any eligible worker.
+        if ((0, orchestrator_inbox_migration_service_js_1.isOrchestratorSessionId)(requestedAssignee)) {
+            requestedAssignee = '';
+        }
         if (requestedAssignee) {
             const normalized = requestedAssignee.toLowerCase();
             const exact = agents.find((agent) => this.getAgentHandles(agent).some((handle) => handle.toLowerCase() === normalized));
@@ -927,18 +1022,28 @@ class BrokerAgent {
             console.warn(`[Broker] Escalated ${task.id} to Director: ${policy.reason}`);
             return;
         }
+        // Hoist authority-shaped `{ with, can }` caps onto the envelope payload so
+        // RedisAgentClient's authority consumer can gate them. Skill-string caps
+        // used for worker routing stay on `task.requiredCapabilities` only.
+        const authorityCaps = Array.isArray(task.requiredCapabilities)
+            ? task.requiredCapabilities.filter((c) => c &&
+                typeof c === 'object' &&
+                typeof c.with === 'string' &&
+                typeof c.can === 'string')
+            : [];
         const envelope = (0, tnf_envelope_js_1.createTNFEnvelope)('task', { agentId: this.brokerId, role: 'coordinator', platform: 'broker-agent' }, targetAgentId ? { agentId: targetAgentId, role: 'worker' } : { broadcast: true }, {
             action: 'execute_task',
             taskId: task.id,
             task,
             priority,
+            ...(authorityCaps.length > 0 ? { requiredCapabilities: authorityCaps } : {}),
         }, {
             channelId,
             sessionId: this.brokerId,
         });
         if (targetAgentId) {
             const channel = `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`;
-            const payload = JSON.stringify(envelope);
+            const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(this.brokerId, channel, envelope, 'task');
             if (this.upstash) {
                 await this.upstash.publish(channel, payload);
             }
@@ -947,7 +1052,7 @@ class BrokerAgent {
             }
         }
         else {
-            const payload = JSON.stringify(envelope);
+            const payload = (0, sign_bus_message_js_1.stringifySignedBusMessage)(this.brokerId, CONFIG.INGRESS_CHANNEL, envelope, 'task');
             if (this.upstash) {
                 await this.upstash.publish(CONFIG.INGRESS_CHANNEL, payload);
             }
@@ -1132,6 +1237,14 @@ class BrokerAgent {
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
             this.heartbeatInterval = null;
+        }
+        if (this.orphanMigrateInterval) {
+            clearInterval(this.orphanMigrateInterval);
+            this.orphanMigrateInterval = null;
+        }
+        if (this.handoffLifecycleInterval) {
+            clearInterval(this.handoffLifecycleInterval);
+            this.handoffLifecycleInterval = null;
         }
         try {
             // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression

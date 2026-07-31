@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 
 /**
  * Bridges Controller
@@ -17,6 +18,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
  */
 @ApiTags('bridges')
 @Controller('bridges')
+@RequireAuthLevel(AuthLevel.PUBLIC)
 export class BridgesController {
   @Get('telegram')
   @ApiOperation({ summary: 'Telegram bridge health status' })

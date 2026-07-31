@@ -10,7 +10,7 @@
  * - Act as Orchestrator, Broker, or Worker
  *
  * Usage:
- *   node tnf-agent-cli.js register --name "antigravity" --role orchestrator
+ *   node tnf-agent-cli.js register --name "antigravity" --role worker
  *   node tnf-agent-cli.js listen
  *   node tnf-agent-cli.js send "Hello from Antigravity!"
  *   node tnf-agent-cli.js convo start "code-review"
@@ -18,8 +18,69 @@
 
 const Redis = require('ioredis');
 const { v4: uuidv4 } = require('uuid');
+
+/**
+ * Redis connection errors repeat on every reconnect attempt. Logging each one
+ * verbatim turned the full-auto daemon log into thousands of identical
+ * `getaddrinfo ENOTFOUND` lines with nothing else visible in it.
+ *
+ * Log the first occurrence immediately, then at most once a minute with a
+ * count of what was suppressed — so a persistent outage stays visible without
+ * drowning the log, and a config error (a host that does not resolve) says so
+ * once, in words that point at the fix.
+ */
+const REDIS_ERROR_LOG_INTERVAL_MS = 60_000;
+
+function makeThrottledRedisErrorLogger(label) {
+  let lastLoggedAt = 0;
+  let suppressed = 0;
+  let hintShown = false;
+
+  return (error) => {
+    const now = Date.now();
+    const code = error?.code || '';
+
+    if (!hintShown && (code === 'ENOTFOUND' || code === 'EAI_AGAIN')) {
+      hintShown = true;
+      console.error(
+        `Redis ${label}: cannot resolve host "${CONFIG.redis.host}" (${code}, port ` +
+          `${CONFIG.redis.port}). Either the host is wrong — check REDIS_HOST/REDIS_URL — ` +
+          `or DNS is failing intermittently. Retries continue with backoff; ` +
+          `further identical errors are summarised, not repeated.`
+      );
+      lastLoggedAt = now;
+      return;
+    }
+
+    if (now - lastLoggedAt < REDIS_ERROR_LOG_INTERVAL_MS) {
+      suppressed += 1;
+      return;
+    }
+
+    const tail = suppressed > 0 ? ` (${suppressed} identical errors suppressed)` : '';
+    console.error(`Redis ${label} error: ${error?.message || error}${tail}`);
+    lastLoggedAt = now;
+    suppressed = 0;
+  };
+}
 const readline = require('readline');
 const crypto = require('crypto');
+const fs = require('node:fs');
+const path = require('node:path');
+const { findBestMatch } = require('./lib/tnf-agent-match.cjs');
+const { recommendModel } = require('./lib/tnf-model-match.cjs');
+const messageAuth = require('./lib/tnf-message-auth.cjs');
+const identity = require('./lib/tnf-identity.cjs');
+
+/**
+ * Cheap sync check for the authority-consumer flag. Kept here (not via the
+ * authority module) so the DEFAULT-OFF hot path never loads the authority stack
+ * — zero cost and zero behaviour change until an operator opts in.
+ */
+function messageAuthorityEnabled() {
+  const v = String(process.env.TNF_AUTHORITY_CONSUMER || '').toLowerCase();
+  return v === '1' || v === 'true' || v === 'on';
+}
 
 // ============================================================================
 // CONFIGURATION
@@ -92,12 +153,19 @@ class RedisAgentClient {
   /**
    * Initialize Redis connections
    */
+  /* eslint-disable-next-line no-use-before-define */
   async initialize() {
     const redisConfig = {
       host: CONFIG.redis.host,
       port: CONFIG.redis.port,
       password: CONFIG.redis.password,
-      retryStrategy: (times) => Math.min(times * 50, 2000),
+      // Was `times * 50` capped at 2s — a linear ramp that never backs off past
+      // two seconds and never gives up. Against a host that no longer resolves
+      // that is ~30 reconnects a minute, forever, and the resulting error spam
+      // made tnf-full-auto-daemon.log 100% Redis noise with the actual cycle
+      // output buried. Exponential with a 30s ceiling keeps transient blips
+      // recovering fast while a genuinely dead endpoint stays quiet.
+      retryStrategy: (times) => Math.min(1000 * 2 ** Math.min(times, 5), 30000),
       maxRetriesPerRequest: 3,
     };
 
@@ -111,13 +179,8 @@ class RedisAgentClient {
       this.handleIncomingMessage(channel, message);
     });
 
-    this.subscriber.on('error', (error) => {
-      console.error('Redis subscriber error:', error.message);
-    });
-
-    this.publisher.on('error', (error) => {
-      console.error('Redis publisher error:', error.message);
-    });
+    this.subscriber.on('error', makeThrottledRedisErrorLogger('subscriber'));
+    this.publisher.on('error', makeThrottledRedisErrorLogger('publisher'));
 
     console.log(`✅ Connected to Redis at ${CONFIG.redis.host}:${CONFIG.redis.port}`);
   }
@@ -125,23 +188,38 @@ class RedisAgentClient {
   /**
    * Register this agent on the network
    */
-  async register(name, role, platform, capabilities = []) {
-    const preferredId = String(process.env.AGENT_ID || '').trim();
+  async register(name, role, platform, capabilities = [], extra = {}) {
+    const preferredId = String(process.env.AGENT_ID || process.env.TNF_AGENT_ID || '').trim();
     const resolvedId = preferredId || `agent_${name}_${Date.now()}`;
+
+    // Authority role is operator-owned (Phase 1). Operational role (orchestrator /
+    // broker / worker / …) stays for Redis routing; privilege decisions must use
+    // authorityRole from the registry, never a self-asserted elevated title.
+    const requestedAuthority = identity.isValidRole(role) ? role : 'worker';
+    const bootstrapped = identity.bootstrapAgentIdentity(resolvedId, requestedAuthority);
+    if (bootstrapped.elevatedRequestIgnored) {
+      console.warn(
+        `[tnf-identity] elevated role ${JSON.stringify(role)} ignored for ${resolvedId}; ` +
+          'operator must grant via roles.json (tnf-identity setAgentRole)'
+      );
+    }
 
     this.agentInfo = {
       id: resolvedId,
       name,
       role,
+      authorityRole: bootstrapped.role,
+      authoritySource: bootstrapped.roleSource,
       platform,
       status: 'active',
-      capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
+      capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(role, platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
       routing: {
         callableWorker: String(role || '').toLowerCase() === 'worker',
         directorPoolEligible: String(role || '').toLowerCase() === 'worker',
       },
+      ...extra,
     };
 
     // Store in Redis
@@ -180,11 +258,28 @@ class RedisAgentClient {
   }
 
   /**
-   * Get default capabilities based on platform
+   * Defaults are role ∪ platform. Role and platform are orthogonal —
+   * orchestration capabilities come from role assignment (or explicit caps),
+   * not from any particular platform.
    */
-  getDefaultCapabilities(platform) {
-    const capabilityMap = {
-      antigravity: ['code_assistance', 'orchestration', 'planning', 'analysis'],
+  getDefaultCapabilities(role, platform) {
+    const roleCapabilities = {
+      director: ['strategy', 'escalation', 'override'],
+      orchestrator: [
+        'orchestration',
+        'workflow_management',
+        'task_routing',
+        'result_aggregation',
+        'agent_coordination',
+      ],
+      broker: ['routing', 'mediation', 'channel_management'],
+      coordinator: ['coordinate', 'plan', 'delegate'],
+      bridge: ['bridge', 'translate', 'relay'],
+      worker: ['task_execution', 'report', 'collaborate'],
+      participant: ['message', 'observe', 'respond'],
+    };
+    const platformCapabilities = {
+      antigravity: ['code_assistance', 'planning', 'analysis'],
       gemini: ['code_analysis', 'research', 'implementation', 'review'],
       claude: ['reasoning', 'review', 'synthesis', 'documentation'],
       jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
@@ -201,32 +296,71 @@ class RedisAgentClient {
       vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
       browser: ['web_scraping', 'research', 'automation'],
     };
-    return capabilityMap[platform] || ['general'];
+    const roleCaps = roleCapabilities[String(role || '').toLowerCase()] || [];
+    const platformCaps = platformCapabilities[String(platform || '').toLowerCase()] || ['general'];
+    return Array.from(new Set([...roleCaps, ...platformCaps]));
   }
 
   /**
    * Send a message to the network
    */
 
+  /**
+   * Sign an outgoing envelope.
+   *
+   * Delegates to lib/tnf-message-auth.cjs so signing and verification share one
+   * canonical serialization. The previous inline implementation used plain
+   * JSON.stringify (key-order dependent) and fell back to a literal
+   * 'default-secret' when A2A_SECRET_KEY was unset — both now refused at the
+   * library boundary.
+   */
   signMessage(data, type, channel) {
-    const secret = process.env.A2A_SECRET_KEY || 'default-secret';
-    const header = {
-      agent_id: this.agentInfo.id,
-      alg: 'HS256',
-      nonce: crypto.randomBytes(16).toString('hex'),
-      timestamp: Date.now(),
-    };
+    return messageAuth.signEnvelope(
+      { agent_id: this.agentInfo.id },
+      { type, channel, data }
+    );
+  }
 
-    const payload = {
-      type,
+  /**
+   * Verify an inbound envelope and decide whether to drop it.
+   *
+   * Unsigned traffic is reported as such rather than silently trusted: plenty
+   * of publishers on this bus (relay-core, external bridges) do not sign yet,
+   * which is exactly why TNF_MESSAGE_AUTH_MODE defaults to `warn`. Run in
+   * `warn` until the audit log is clean, then flip to `enforce`.
+   *
+   * @returns {{ verified: boolean, reject: boolean, agentId?: string }}
+   */
+  authenticateEnvelope(rawMessage, channel) {
+    if (!messageAuth.isSignedEnvelope(rawMessage)) {
+      const reject = messageAuth.getMode() === 'enforce';
+      messageAuth.audit({
+        event: 'message_auth_unsigned',
+        mode: messageAuth.getMode(),
+        action: reject ? 'rejected' : 'allowed_warn_mode',
+        reason: 'envelope carries no signature',
+        channel: channel ?? null,
+        claimed_agent_id: rawMessage?.from?.agentId ?? null,
+        claimed_role: rawMessage?.from?.role ?? null,
+      });
+      return { verified: false, reject };
+    }
+
+    const result = messageAuth.verifyAndAudit(rawMessage, {
       channel,
-      data,
+      messageId: rawMessage?.payload?.data?.id ?? null,
+      claimedRole: rawMessage?.payload?.data?.from?.role ?? null,
+    });
+    return {
+      verified: result.ok,
+      reject: result.reject,
+      agentId: result.agentId,
+      kid: result.kid ?? null,
+      // Only an Ed25519 envelope proves WHICH agent sent it. A shared-secret
+      // envelope proves bus membership, which every agent has — so it must
+      // never be allowed to resolve a privileged role.
+      identityBound: Boolean(result.ok && result.identityBound),
     };
-
-    const messageToSign = JSON.stringify({ header, payload });
-    const signature = crypto.createHmac('sha256', secret).update(messageToSign).digest('hex');
-
-    return { header, payload, signature };
   }
 
   async send(content, options = {}) {
@@ -328,7 +462,16 @@ class RedisAgentClient {
   handleIncomingMessage(channel, messageStr) {
     try {
       const rawMessage = JSON.parse(messageStr);
-      const message = this.normalizeIncomingMessage(rawMessage);
+
+      // Authenticate BEFORE anything reads the contents. Until 2026-07-23 the
+      // signature attached by signMessage() was never checked anywhere, so a
+      // sender's claimed identity and role were accepted verbatim from the
+      // wire on an unauthenticated Redis bus. Everything below this line
+      // treats the envelope as attacker-controlled until proven otherwise.
+      const authResult = this.authenticateEnvelope(rawMessage, channel);
+      if (authResult.reject) return;
+
+      const message = this.normalizeIncomingMessage(rawMessage, authResult);
       if (!message) return;
 
       // Don't process our own messages
@@ -339,26 +482,82 @@ class RedisAgentClient {
       // Log the message
       this.logIncomingMessage(message);
 
-      // Call registered handlers
-      const handlers = this.messageHandlers.get(message.type) || [];
-      handlers.forEach((handler) => handler(message, channel));
+      // DIRECTIVES.md D22 (Delegation-First Check): before dispatching a
+      // task-type message, see if a more specialized TNF agent is a
+      // stronger fit. Suggest and log only — never silently reroute (see
+      // D22/D8 in DIRECTIVES.md for why). Single chokepoint shared by every
+      // Redis-driven wrapper (pi/jules/gemini/...), so this applies to all
+      // of them from one place.
+      if (message.type === 'task') {
+        this.logDelegationSuggestion(message);
+      }
 
-      // Call catch-all handlers
-      const allHandlers = this.messageHandlers.get('*') || [];
-      allHandlers.forEach((handler) => handler(message, channel));
+      // Authority gate (DEFAULT-OFF). isEnabled() is a cheap sync env check;
+      // when TNF_AUTHORITY_CONSUMER is unset this branch is skipped entirely and
+      // dispatch is unchanged for every wrapper. When enabled, a task that
+      // declares `requiredCapabilities` is held for operator elevation before it
+      // reaches any handler; on denial/timeout it is refused, not dispatched.
+      // One chokepoint covers every Redis-driven wrapper (gemini/jules/pi/...).
+      if (message.type === 'task' && messageAuthorityEnabled()) {
+        this.gateAndDispatch(message, channel);
+        return;
+      }
+
+      this.dispatchToHandlers(message, channel);
     } catch (error) {
       console.error('Error parsing message:', error.message);
     }
   }
 
-  normalizeIncomingMessage(rawMessage) {
+  /** Dispatch a message to its registered handlers (and catch-all handlers). */
+  dispatchToHandlers(message, channel) {
+    const handlers = this.messageHandlers.get(message.type) || [];
+    handlers.forEach((handler) => handler(message, channel));
+    const allHandlers = this.messageHandlers.get('*') || [];
+    allHandlers.forEach((handler) => handler(message, channel));
+  }
+
+  /**
+   * Run the authority gate, then dispatch or refuse. Fails CLOSED: if the gate
+   * throws, the task is NOT dispatched — a task that reached the enabled gate
+   * must not slip through ungated on error.
+   */
+  async gateAndDispatch(message, channel) {
+    let gate;
+    try {
+      const wrapperAuthority = require('./lib/tnf-wrapper-authority.cjs');
+      gate = await wrapperAuthority.gateTask(message, { agentId: this.agentInfo?.id });
+    } catch (error) {
+      console.error(`[authority-gate] failed closed (task not dispatched): ${error.message}`);
+      return;
+    }
+    if (!gate.allowed) {
+      try {
+        await this.send(`task requires elevation that was not granted — ${gate.reason}`, {
+          replyTo: message.id,
+          type: 'response',
+          metadata: { elevationRefused: true, processedBy: this.agentInfo?.name },
+        });
+      } catch {
+        /* best-effort refusal notice */
+      }
+      return;
+    }
+    // Hand the approved grant to handlers so the task can spend it via the broker.
+    if (gate.grant) message.authorityGrant = gate.grant;
+    this.dispatchToHandlers(message, channel);
+  }
+
+  normalizeIncomingMessage(rawMessage, authResult = { verified: false }) {
     if (!rawMessage || typeof rawMessage !== 'object') {
       return null;
     }
 
-    // Unpack signed messages if present
+    // Unpack signed messages. The signature was checked in
+    // authenticateEnvelope() before we got here — this step is pure
+    // structural unwrapping and must never be the thing that decides trust.
     let msg = rawMessage;
-    if (rawMessage.header && rawMessage.payload && rawMessage.signature) {
+    if (messageAuth.isSignedEnvelope(rawMessage)) {
       if (rawMessage.payload.data && typeof rawMessage.payload.data === 'object') {
         msg = rawMessage.payload.data;
       }
@@ -400,6 +599,25 @@ class RedisAgentClient {
       content = JSON.stringify(payload);
     }
 
+    // Authoritative role comes from the operator-owned registry keyed by the
+    // verified agent_id (Phase 1). Wire claims are recorded only.
+    // See DIRECTIVES.md D8/D23.
+    // Only an identity-bound (Ed25519) envelope may resolve a registry role. A
+    // shared-secret envelope verifies, but proves only that the sender holds
+    // the bus-wide key — which every agent does. Treating it as an identity
+    // would let any bus member sign as the sub-director and inherit the
+    // grant, the exact hole this layer exists to close.
+    const claimedRole = msg.from.role || 'worker';
+    const identityBound = Boolean(authResult?.identityBound);
+    const verifiedId = identityBound
+      ? authResult?.agentId || msg.from.agentId || msg.from.id
+      : null;
+    const resolvedRole = identity.resolveRoleForMessage({
+      verified: identityBound,
+      agentId: verifiedId,
+      claimedRole,
+    });
+
     return {
       id: msg.id || uuidv4(),
       timestamp: msg.timestamp || new Date().toISOString(),
@@ -410,8 +628,18 @@ class RedisAgentClient {
           msg.from.operationalHandle ||
           msg.from.agentId ||
           'unknown',
-        role: msg.from.role || 'worker',
+        role: resolvedRole.role,
+        claimedRole,
+        roleVerified: Boolean(resolvedRole.roleVerified),
+        authoritySource: resolvedRole.source,
+        claimMismatch: Boolean(resolvedRole.claimMismatch),
         platform: msg.from.platform || 'relay-core',
+      },
+      auth: {
+        verified: Boolean(authResult?.verified),
+        identityBound,
+        kid: authResult?.kid ?? null,
+        agentId: authResult?.agentId ?? null,
       },
       to: msg.to,
       type: msg.type,
@@ -503,6 +731,54 @@ class RedisAgentClient {
 
     if (message.expectsResponse) {
       console.log(`   ⏳ Expects response`);
+    }
+  }
+
+  /**
+   * DIRECTIVES.md D22: check the local agent capability index for a
+   * stronger-fit specialized agent before this task gets processed here.
+   * Suggest and log only (see D22/D8) — never reroutes automatically.
+   */
+  logDelegationSuggestion(message) {
+    try {
+      const taskText = String(message.content || '').trim();
+      if (!taskText) return;
+
+      const matches = findBestMatch(taskText, { limit: 1 });
+      if (matches.length === 0) return;
+
+      const topMatch = matches[0];
+      const currentAgentName = this.agentInfo?.name;
+      if (topMatch.name === currentAgentName) return;
+
+      // Model-level recommendation alongside the agent-level one — "which
+      // agent persona" and "which underlying LLM model" are both part of
+      // routing a task optimally, raised together 2026-07-23. Currently
+      // general health/latency/priority ranking only (real NVIDIA NGC data,
+      // not simulated) — not yet task-category-aware; see
+      // scripts/lib/tnf-model-match.cjs for why, and the tracked follow-up
+      // to fix the underlying per-category benchmark scrapers.
+      const modelRecommendation = recommendModel({ limit: 1 });
+      const topModel = modelRecommendation.models[0] || null;
+
+      const logDir = path.join(process.cwd(), '.agent', 'runtime-logs');
+      fs.mkdirSync(logDir, { recursive: true });
+      const logPath = path.join(logDir, 'delegation-suggestions.jsonl');
+      const entry = {
+        timestamp: new Date().toISOString(),
+        currentAgent: currentAgentName || 'unknown',
+        currentAgentId: this.agentInfo?.id || null,
+        suggestedAgent: topMatch.name,
+        score: topMatch.score,
+        recommendedModel: topModel?.model || null,
+        recommendedModelStale: modelRecommendation.stale,
+        taskPreview: taskText.slice(0, 200),
+        messageId: message.id || null,
+      };
+      fs.appendFileSync(logPath, JSON.stringify(entry) + '\n', 'utf8');
+    } catch (error) {
+      // Never let a delegation-suggestion failure block real task processing.
+      console.error('D22 delegation check failed (non-fatal):', error.message);
     }
   }
 
@@ -790,8 +1066,11 @@ Environment Variables:
   AGENT_PLATFORM  Default agent platform
 
 Examples:
-  # Register as Antigravity orchestrator
-  node tnf-agent-cli.js register antigravity orchestrator antigravity
+  # Register Antigravity as a worker (any platform can hold any role)
+  node tnf-agent-cli.js register antigravity worker antigravity
+
+  # Register a worker that was assigned coordination capabilities explicitly
+  node tnf-agent-cli.js register planner coordinator claude
 
   # Register as Gemini worker
   node tnf-agent-cli.js register gemini worker gemini

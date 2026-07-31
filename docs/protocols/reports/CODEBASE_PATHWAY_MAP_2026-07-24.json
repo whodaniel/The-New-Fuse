@@ -1,0 +1,1693 @@
+{
+  "meta": {
+    "id": "CODEBASE_PATHWAY_MAP_2026-07-24",
+    "generatedAt": "2026-07-24",
+    "coherenceAuditAt": "2026-07-24",
+    "coherenceCommit": "9c7e6bd7a1",
+    "branch": "fix/a2a-signature-verification",
+    "repoRoot": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "method": "read-only verified tree analysis + post-close-out coherence audit",
+    "companionMarkdown": "docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md",
+    "verdict": "mixed",
+    "kinds": ["entry", "handler", "gate", "store", "cli", "bus"]
+  },
+  "summary": {
+    "top10PathwayIds": [
+      "pw-a2a-inbound",
+      "pw-authority-elevation",
+      "pw-relay-ws-redis",
+      "pw-master-clock",
+      "pw-api-http",
+      "pw-a2a-outbound",
+      "pw-broker-agent",
+      "pw-frontend-spa",
+      "pw-api-gateway",
+      "pw-cred-broker"
+    ],
+    "failClosedByDefault": [
+      "gate-secure-auth-user-default",
+      "gate-cred-broker-mutating",
+      "gate-elevation-decide-agent-context",
+      "handler-gate-and-dispatch"
+    ],
+    "failClosedOnlyWhenEnabled": ["gate-authority-consumer-off"],
+    "failOpenOrSoft": [
+      "gate-message-auth-warn",
+      "gate-sign-bus-message-fail-open",
+      "gate-gateway-auth-opt-in"
+    ],
+    "enforcementGapsClosed": [
+      "scripts/lib/redis-agent-client.cjs shim → full RedisAgentClient (sign outbound; inbound auth chokepoint)",
+      "SecureAuthGuard defaults AuthLevel.USER (PUBLIC is @RequireAuthLevel opt-in)",
+      "BrokerAgent task dispatch signed via stringifySignedBusMessage",
+      "RedisRelayBridge ingress/egress signed via stringifySignedBusMessage",
+      "Broker hoists authority-shaped {with,can} onto task envelope payload.requiredCapabilities"
+    ],
+    "enforcementGaps": [
+      "TNF_AUTHORITY_CONSUMER default off — authority not load-bearing until opted in + {with,can} caps",
+      "TNF_MESSAGE_AUTH_MODE=warn allows unsigned/forged dispatch (audit only)",
+      "GatewayAuthGuard opt-in only (no APP_GUARD) — dual HTTP surface auth drift",
+      "BrokerAgent local policy gates are not TNF authority grants",
+      "Unsigned publishers remain: broker/director heartbeats + decision pubs; master-clock REGISTRATION_*; RedisRelayBridge.publish raw",
+      "stringifySignedBusMessage fail-open on sign throw",
+      "Phase 4b credential-broker mutating actions deferred",
+      "AUTHORITY_INTEGRATION_MAP.md §1 stale vs wired gateAndDispatch consumer"
+    ],
+    "nodeEdgeDeltas": {
+      "upsertNodes": [
+        "node-redis-agent-client-shim",
+        "handler-stringify-signed-bus",
+        "gate-secure-auth-user-default",
+        "gate-sign-bus-message-fail-open",
+        "gate-gateway-auth-opt-in",
+        "pub-broker-heartbeat-unsigned",
+        "pub-director-heartbeat-unsigned"
+      ],
+      "retireOrRelabel": [
+        "node-thin-redis-client",
+        "gate-secure-auth-public-default"
+      ],
+      "upsertEdges": [
+        "e-shim-to-full-client",
+        "e-broker-sign-dispatch",
+        "e-bridge-sign-ingress",
+        "e-bridge-sign-egress",
+        "e-sign-bus-fail-open"
+      ]
+    }
+  },
+  "pathways": [
+    {
+      "id": "pw-a2a-inbound",
+      "name": "Redis A2A inbound chokepoint",
+      "rank": 1,
+      "type": "execution",
+      "complexity": "complex",
+      "confidenceScore": 0.95,
+      "entryNodeId": "entry-redis-agent-client",
+      "nodeIds": [
+        "entry-redis-agent-client",
+        "handler-handle-incoming",
+        "gate-message-auth",
+        "handler-normalize-message",
+        "gate-authority-consumer",
+        "handler-gate-and-dispatch",
+        "handler-dispatch-handlers",
+        "bus-tnf-agents"
+      ],
+      "edgeIds": [
+        "e-sub-to-handle",
+        "e-handle-to-auth",
+        "e-auth-to-normalize",
+        "e-normalize-to-authority-gate",
+        "e-authority-to-gate-dispatch",
+        "e-gate-to-handlers",
+        "e-normalize-to-handlers-bypass"
+      ]
+    },
+    {
+      "id": "pw-authority-elevation",
+      "name": "Authority elevation hold and approve",
+      "rank": 2,
+      "type": "execution",
+      "complexity": "complex",
+      "confidenceScore": 0.93,
+      "entryNodeId": "handler-gate-and-dispatch",
+      "nodeIds": [
+        "handler-gate-and-dispatch",
+        "handler-wrapper-gate-task",
+        "handler-authority-client",
+        "store-elevation-pending",
+        "cli-tnf-authority",
+        "gate-elevation-decide",
+        "handler-capability-grant",
+        "store-elevation-audit"
+      ],
+      "edgeIds": [
+        "e-gate-dispatch-to-wrapper",
+        "e-wrapper-to-client",
+        "e-client-to-pending",
+        "e-cli-to-decide",
+        "e-decide-to-grant",
+        "e-grant-to-dispatch",
+        "e-decide-to-audit"
+      ]
+    },
+    {
+      "id": "pw-relay-ws-redis",
+      "name": "Relay WebSocket to Redis bridge",
+      "rank": 3,
+      "type": "communication",
+      "complexity": "moderate",
+      "confidenceScore": 0.9,
+      "entryNodeId": "entry-standalone-relay",
+      "nodeIds": [
+        "entry-standalone-relay",
+        "handler-redis-relay-bridge",
+        "handler-stringify-signed-bus",
+        "bus-tnf-ingress",
+        "bus-tnf-egress",
+        "entry-redis-agent-client"
+      ],
+      "edgeIds": [
+        "e-relay-to-bridge",
+        "e-bridge-sign-ingress",
+        "e-bridge-sign-egress",
+        "e-bridge-to-ingress",
+        "e-egress-to-bridge",
+        "e-ingress-to-agent-client",
+        "e-sign-bus-fail-open"
+      ]
+    },
+    {
+      "id": "pw-master-clock",
+      "name": "Master Clock orchestration daemon",
+      "rank": 4,
+      "type": "execution",
+      "complexity": "complex",
+      "confidenceScore": 0.9,
+      "entryNodeId": "entry-master-clock",
+      "nodeIds": [
+        "entry-master-clock",
+        "handler-mc-heartbeat",
+        "handler-mc-stall",
+        "handler-mc-task-scheduler",
+        "store-redis-master-keys",
+        "entry-standalone-relay",
+        "entry-api-main"
+      ],
+      "edgeIds": [
+        "e-mc-start-heartbeat",
+        "e-mc-to-stall",
+        "e-mc-to-tasks",
+        "e-mc-to-redis",
+        "e-mc-to-relay",
+        "e-mc-to-ledger-api"
+      ]
+    },
+    {
+      "id": "pw-api-http",
+      "name": "apps/api Nest HTTP",
+      "rank": 5,
+      "type": "execution",
+      "complexity": "complex",
+      "confidenceScore": 0.88,
+      "entryNodeId": "entry-api-main",
+      "nodeIds": [
+        "entry-api-main",
+        "gate-security-guard",
+        "gate-secure-auth",
+        "handler-api-controllers",
+        "store-drizzle-db"
+      ],
+      "edgeIds": [
+        "e-api-to-security",
+        "e-security-to-secure-auth",
+        "e-secure-auth-to-controllers",
+        "e-controllers-to-db"
+      ]
+    },
+    {
+      "id": "pw-a2a-outbound",
+      "name": "Redis A2A signed outbound",
+      "rank": 6,
+      "type": "execution",
+      "complexity": "simple",
+      "confidenceScore": 0.92,
+      "entryNodeId": "handler-send",
+      "nodeIds": [
+        "handler-send",
+        "gate-message-auth",
+        "bus-tnf-agents",
+        "bus-tnf-conversations"
+      ],
+      "edgeIds": [
+        "e-send-sign",
+        "e-send-publish-agents",
+        "e-send-publish-convo"
+      ]
+    },
+    {
+      "id": "pw-broker-agent",
+      "name": "Broker agent dispatch",
+      "rank": 7,
+      "type": "execution",
+      "complexity": "moderate",
+      "confidenceScore": 0.85,
+      "entryNodeId": "entry-broker-agent",
+      "nodeIds": [
+        "entry-broker-agent",
+        "handler-broker-policy",
+        "handler-stringify-signed-bus",
+        "store-agent-registry",
+        "bus-tnf-egress",
+        "bus-tnf-ingress",
+        "pub-broker-heartbeat-unsigned"
+      ],
+      "edgeIds": [
+        "e-broker-start",
+        "e-broker-policy",
+        "e-broker-sign-dispatch",
+        "e-broker-dispatch",
+        "e-broker-dispatch-to-bus",
+        "e-broker-heartbeat-unsigned"
+      ]
+    },
+    {
+      "id": "pw-frontend-spa",
+      "name": "Frontend SPA routes and API clients",
+      "rank": 8,
+      "type": "execution",
+      "complexity": "moderate",
+      "confidenceScore": 0.87,
+      "entryNodeId": "entry-frontend-router",
+      "nodeIds": [
+        "entry-frontend-router",
+        "gate-require-auth",
+        "handler-frontend-api-client",
+        "entry-api-gateway-main",
+        "entry-api-main"
+      ],
+      "edgeIds": [
+        "e-fe-to-require-auth",
+        "e-fe-to-api-client",
+        "e-fe-client-to-gateway",
+        "e-fe-client-to-api"
+      ]
+    },
+    {
+      "id": "pw-api-gateway",
+      "name": "API gateway edge",
+      "rank": 9,
+      "type": "communication",
+      "complexity": "moderate",
+      "confidenceScore": 0.86,
+      "entryNodeId": "entry-api-gateway-main",
+      "nodeIds": [
+        "entry-api-gateway-main",
+        "handler-gateway-controllers",
+        "gate-gateway-auth",
+        "entry-api-main",
+        "entry-backend"
+      ],
+      "edgeIds": [
+        "e-gw-to-controllers",
+        "e-gw-auth",
+        "e-gw-to-api",
+        "e-gw-to-backend"
+      ]
+    },
+    {
+      "id": "pw-cred-broker",
+      "name": "Credential broker spend",
+      "rank": 10,
+      "type": "data-flow",
+      "complexity": "moderate",
+      "confidenceScore": 0.9,
+      "entryNodeId": "handler-cred-broker",
+      "nodeIds": [
+        "handler-authority-client",
+        "handler-cred-broker",
+        "gate-cred-action-registry",
+        "gate-cred-grant-verify",
+        "gate-cred-readonly",
+        "gate-cred-trust-root",
+        "store-os-keystore",
+        "store-broker-audit"
+      ],
+      "edgeIds": [
+        "e-client-to-cred",
+        "e-cred-action",
+        "e-cred-grant",
+        "e-cred-readonly",
+        "e-cred-trust",
+        "e-cred-keystore",
+        "e-cred-audit"
+      ]
+    },
+    {
+      "id": "pw-cli-authority",
+      "name": "TNF CLI authority surface",
+      "rank": 11,
+      "type": "execution",
+      "complexity": "simple",
+      "confidenceScore": 0.95,
+      "entryNodeId": "cli-tnf-cli",
+      "nodeIds": [
+        "cli-tnf-cli",
+        "cli-tnf-authority",
+        "gate-elevation-decide",
+        "store-trust-root"
+      ],
+      "edgeIds": [
+        "e-cli-to-authority-script",
+        "e-authority-script-to-decide",
+        "e-authority-to-trust"
+      ]
+    },
+    {
+      "id": "pw-wrappers",
+      "name": "Worker redis wrappers",
+      "rank": 12,
+      "type": "execution",
+      "complexity": "moderate",
+      "confidenceScore": 0.92,
+      "entryNodeId": "entry-gemini-wrapper",
+      "nodeIds": [
+        "entry-gemini-wrapper",
+        "entry-jules-wrapper",
+        "entry-pi-wrapper",
+        "entry-claude-wrapper",
+        "entry-antigravity-wrapper",
+        "entry-redis-agent-client"
+      ],
+      "edgeIds": [
+        "e-gemini-to-client",
+        "e-jules-to-client",
+        "e-pi-to-client",
+        "e-claude-to-client",
+        "e-agy-to-client"
+      ]
+    },
+    {
+      "id": "pw-mcp",
+      "name": "MCP and extension bridges",
+      "rank": 13,
+      "type": "communication",
+      "complexity": "moderate",
+      "confidenceScore": 0.8,
+      "entryNodeId": "entry-mcp-packages",
+      "nodeIds": [
+        "entry-mcp-packages",
+        "entry-mcp-apps",
+        "handler-mcp-gateway",
+        "entry-chrome-extension",
+        "entry-vscode-extension",
+        "handler-mcp-transport"
+      ],
+      "edgeIds": [
+        "e-mcp-pkg",
+        "e-mcp-apps",
+        "e-mcp-gw",
+        "e-ext-chrome",
+        "e-ext-vscode",
+        "e-mcp-transport"
+      ]
+    },
+    {
+      "id": "pw-deploy",
+      "name": "Cloud deploy entrypoints",
+      "rank": 14,
+      "type": "dependency",
+      "complexity": "simple",
+      "confidenceScore": 0.85,
+      "entryNodeId": "entry-cloudbuild-api",
+      "nodeIds": [
+        "entry-cloudbuild-api",
+        "entry-dockerfile-api",
+        "entry-gh-deploy",
+        "entry-k8s-deployment"
+      ],
+      "edgeIds": ["e-cb-docker", "e-gh-deploy", "e-deploy-k8s"]
+    },
+    {
+      "id": "pw-backend-http",
+      "name": "apps/backend Nest HTTP",
+      "rank": 15,
+      "type": "execution",
+      "complexity": "moderate",
+      "confidenceScore": 0.82,
+      "entryNodeId": "entry-backend",
+      "nodeIds": [
+        "entry-backend",
+        "handler-backend-controllers",
+        "store-redis-backend"
+      ],
+      "edgeIds": ["e-backend-to-controllers", "e-backend-to-redis"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "entry-redis-agent-client",
+      "kind": "entry",
+      "label": "RedisAgentClient",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient",
+      "properties": {
+        "exports": ["RedisAgentClient", "CONFIG"],
+        "channels": [
+          "tnf:agents",
+          "tnf:conversations",
+          "tnf:orchestrator",
+          "tnf:broker",
+          "tnf:heartbeat",
+          "tnf:bus:ingress",
+          "tnf:bus:egress:*",
+          "tnf:direct:*"
+        ]
+      }
+    },
+    {
+      "id": "handler-handle-incoming",
+      "kind": "handler",
+      "label": "handleIncomingMessage",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient.handleIncomingMessage"
+    },
+    {
+      "id": "handler-gate-and-dispatch",
+      "kind": "handler",
+      "label": "gateAndDispatch",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient.gateAndDispatch",
+      "properties": { "failClosedOnError": true }
+    },
+    {
+      "id": "handler-dispatch-handlers",
+      "kind": "handler",
+      "label": "dispatchToHandlers",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient.dispatchToHandlers"
+    },
+    {
+      "id": "handler-normalize-message",
+      "kind": "handler",
+      "label": "normalizeIncomingMessage",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient.normalizeIncomingMessage"
+    },
+    {
+      "id": "handler-send",
+      "kind": "handler",
+      "label": "send/broadcast/command",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "RedisAgentClient.send"
+    },
+    {
+      "id": "gate-message-auth",
+      "kind": "gate",
+      "label": "authenticateEnvelope / tnf-message-auth",
+      "filePath": "scripts/lib/tnf-message-auth.cjs",
+      "symbol": "verifyAndAudit",
+      "properties": {
+        "env": "TNF_MESSAGE_AUTH_MODE",
+        "default": "warn",
+        "enforceRejects": true,
+        "warnAllows": true
+      }
+    },
+    {
+      "id": "gate-authority-consumer",
+      "kind": "gate",
+      "label": "TNF_AUTHORITY_CONSUMER",
+      "filePath": "scripts/tnf-agent-cli.cjs",
+      "symbol": "messageAuthorityEnabled",
+      "properties": {
+        "env": "TNF_AUTHORITY_CONSUMER",
+        "default": "off",
+        "enabledValues": ["1", "true", "on"],
+        "scopes": "task + requiredCapabilities only"
+      }
+    },
+    {
+      "id": "handler-wrapper-gate-task",
+      "kind": "handler",
+      "label": "gateTask",
+      "filePath": "scripts/lib/tnf-wrapper-authority.cjs",
+      "symbol": "gateTask"
+    },
+    {
+      "id": "handler-authority-client",
+      "kind": "handler",
+      "label": "tnf-authority-client",
+      "filePath": "scripts/lib/tnf-authority-client.cjs",
+      "symbol": "withElevation"
+    },
+    {
+      "id": "handler-capability-grant",
+      "kind": "handler",
+      "label": "tnf-capability-grant",
+      "filePath": "scripts/lib/tnf-capability-grant.cjs",
+      "symbol": "issueGrant/verifyGrant"
+    },
+    {
+      "id": "gate-elevation-decide",
+      "kind": "gate",
+      "label": "elevation decide (operator only)",
+      "filePath": "scripts/lib/tnf-elevation-broker.cjs",
+      "symbol": "decide",
+      "properties": { "blocksAgentContext": true, "weakUnderFileRoot": true }
+    },
+    {
+      "id": "store-elevation-pending",
+      "kind": "store",
+      "label": "elevation pending/decided dirs",
+      "filePath": "scripts/lib/tnf-elevation-broker.cjs",
+      "properties": {
+        "pathEnv": "TNF_PENDING_DIR",
+        "defaultUnder": "~/.tnf/authority"
+      }
+    },
+    {
+      "id": "store-elevation-audit",
+      "kind": "store",
+      "label": "elevation.jsonl",
+      "filePath": "scripts/lib/tnf-elevation-broker.cjs",
+      "properties": { "pathEnv": "TNF_ELEVATION_AUDIT_PATH" }
+    },
+    {
+      "id": "store-trust-root",
+      "kind": "store",
+      "label": "trust root / operator keys",
+      "filePath": "scripts/lib/tnf-trust-root.cjs",
+      "symbol": "selectTrustRoot",
+      "properties": {
+        "preference": [
+          "fido2",
+          "secure-enclave",
+          "tpm2",
+          "pkcs11",
+          "remote-attestation",
+          "separate-uid",
+          "os-keystore",
+          "file"
+        ],
+        "fileIsDegraded": true
+      }
+    },
+    {
+      "id": "handler-cred-broker",
+      "kind": "handler",
+      "label": "tnf-cred-broker.invoke",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "symbol": "invoke"
+    },
+    {
+      "id": "gate-cred-action-registry",
+      "kind": "gate",
+      "label": "broker action registry",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "symbol": "findAction",
+      "properties": { "emptyRegistryDoesNothing": true }
+    },
+    {
+      "id": "gate-cred-grant-verify",
+      "kind": "gate",
+      "label": "grant must allow account:action",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs"
+    },
+    {
+      "id": "gate-cred-readonly",
+      "kind": "gate",
+      "label": "phase 4a mutating refuse",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "properties": { "failClosed": true }
+    },
+    {
+      "id": "gate-cred-trust-root",
+      "kind": "gate",
+      "label": "trust-root-too-weak policy",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "symbol": "rootPolicy",
+      "properties": { "failClosed": true }
+    },
+    {
+      "id": "store-os-keystore",
+      "kind": "store",
+      "label": "OS keystore secret fetch",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "properties": { "darwin": "security", "linux": "secret-tool" }
+    },
+    {
+      "id": "store-broker-audit",
+      "kind": "store",
+      "label": "broker.jsonl",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs"
+    },
+    {
+      "id": "cli-tnf-authority",
+      "kind": "cli",
+      "label": "tnf-authority.cjs",
+      "filePath": "scripts/tnf-authority.cjs",
+      "symbol": "main argv",
+      "properties": {
+        "commands": [
+          "review",
+          "status",
+          "list",
+          "show",
+          "approve",
+          "deny",
+          "confirm-isolation",
+          "workers",
+          "relaunch-workers"
+        ]
+      }
+    },
+    {
+      "id": "cli-tnf-cli",
+      "kind": "cli",
+      "label": "tnf CLI",
+      "filePath": "packages/tnf-cli/src/cli.ts",
+      "symbol": "program",
+      "properties": {
+        "notableCommands": [
+          "authority",
+          "agents",
+          "boot",
+          "onboard",
+          "relay",
+          "master-clock",
+          "mcp",
+          "doctor"
+        ]
+      }
+    },
+    {
+      "id": "bus-tnf-agents",
+      "kind": "bus",
+      "label": "tnf:agents",
+      "properties": { "transport": "redis-pubsub" }
+    },
+    {
+      "id": "bus-tnf-conversations",
+      "kind": "bus",
+      "label": "tnf:conversations",
+      "properties": { "transport": "redis-pubsub" }
+    },
+    {
+      "id": "bus-tnf-ingress",
+      "kind": "bus",
+      "label": "tnf:bus:ingress",
+      "properties": { "transport": "redis-pubsub" }
+    },
+    {
+      "id": "bus-tnf-egress",
+      "kind": "bus",
+      "label": "tnf:bus:egress:{agentId}",
+      "properties": { "transport": "redis-pubsub" }
+    },
+    {
+      "id": "store-agent-registry",
+      "kind": "store",
+      "label": "tnf:agent-registry",
+      "properties": { "type": "redis-hash" }
+    },
+    {
+      "id": "entry-gemini-wrapper",
+      "kind": "entry",
+      "label": "gemini-redis-wrapper",
+      "filePath": "scripts/gemini-redis-wrapper.cjs"
+    },
+    {
+      "id": "entry-jules-wrapper",
+      "kind": "entry",
+      "label": "jules-redis-wrapper",
+      "filePath": "scripts/jules-redis-wrapper.cjs"
+    },
+    {
+      "id": "entry-pi-wrapper",
+      "kind": "entry",
+      "label": "pi-redis-wrapper",
+      "filePath": "scripts/pi-redis-wrapper.cjs"
+    },
+    {
+      "id": "entry-claude-wrapper",
+      "kind": "entry",
+      "label": "claude-redis-wrapper",
+      "filePath": "scripts/claude-redis-wrapper.cjs"
+    },
+    {
+      "id": "entry-antigravity-wrapper",
+      "kind": "entry",
+      "label": "antigravity-redis-wrapper",
+      "filePath": "scripts/antigravity-redis-wrapper.cjs"
+    },
+    {
+      "id": "node-thin-redis-client",
+      "kind": "entry",
+      "label": "redis-agent-client shim (delegates to full client)",
+      "filePath": "scripts/lib/redis-agent-client.cjs",
+      "symbol": "RedisAgentClient",
+      "properties": {
+        "status": "closed-2026-07-24",
+        "replacedBy": "node-redis-agent-client-shim",
+        "bypassesMessageAuth": false,
+        "bypassesAuthorityConsumer": false,
+        "note": "kept id for graph continuity; use node-redis-agent-client-shim"
+      }
+    },
+    {
+      "id": "node-redis-agent-client-shim",
+      "kind": "entry",
+      "label": "redis-agent-client shim → full RedisAgentClient",
+      "filePath": "scripts/lib/redis-agent-client.cjs",
+      "symbol": "RedisAgentClient.initialize/_wrapPublisherForSigning/onMessage",
+      "properties": {
+        "failClosed": false,
+        "failOpen": false,
+        "signsOutboundA2A": true,
+        "inboundViaFullClientAuth": true,
+        "edgeCases": [
+          "publisher wrap only after initialize()",
+          "non-A2A/non-JSON pass unsigned",
+          "already-signed skipped",
+          "parse errors publish as-is"
+        ]
+      }
+    },
+    {
+      "id": "handler-stringify-signed-bus",
+      "kind": "handler",
+      "label": "stringifySignedBusMessage",
+      "filePath": "packages/relay-core/src/protocol/sign-bus-message.ts",
+      "symbol": "stringifySignedBusMessage",
+      "properties": {
+        "failOpenOnSignThrow": true,
+        "uses": "scripts/lib/tnf-message-auth.cjs"
+      }
+    },
+    {
+      "id": "gate-sign-bus-message-fail-open",
+      "kind": "gate",
+      "label": "sign-bus-message catch → unsigned JSON",
+      "filePath": "packages/relay-core/src/protocol/sign-bus-message.ts",
+      "symbol": "stringifySignedBusMessage",
+      "properties": { "failOpen": true, "status": "soft-on-error" }
+    },
+    {
+      "id": "gate-gateway-auth-opt-in",
+      "kind": "gate",
+      "label": "GatewayAuthGuard opt-in (no APP_GUARD)",
+      "filePath": "apps/api-gateway/src/auth/gateway-auth.guard.ts",
+      "symbol": "GatewayAuthGuard",
+      "properties": {
+        "failClosed": false,
+        "failOpen": true,
+        "status": "opt-in-only",
+        "verifiedUses": ["apps/api-gateway/src/auth/auth.controller.ts"]
+      }
+    },
+    {
+      "id": "pub-broker-heartbeat-unsigned",
+      "kind": "bus",
+      "label": "BrokerAgent heartbeat (unsigned JSON)",
+      "filePath": "packages/relay-core/src/broker-agent.ts",
+      "symbol": "BrokerAgent.startHeartbeat",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "pub-director-heartbeat-unsigned",
+      "kind": "bus",
+      "label": "DirectorAgent heartbeat (unsigned JSON)",
+      "filePath": "packages/relay-core/src/director-agent.ts",
+      "symbol": "DirectorAgent.startHeartbeat",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "gate-secure-auth-user-default",
+      "kind": "gate",
+      "label": "SecureAuthGuard USER default",
+      "filePath": "apps/api/src/guards/secure-auth.guard.ts",
+      "symbol": "SecureAuthGuard.canActivate",
+      "properties": {
+        "defaultAuthLevel": "USER",
+        "failClosed": true,
+        "emergencyRollbackEnv": "TNF_SECURE_AUTH_DEFAULT=public",
+        "status": "closed-2026-07-24"
+      }
+    },
+    {
+      "id": "entry-standalone-relay",
+      "kind": "entry",
+      "label": "TNFRelayServer / tnf-relay",
+      "filePath": "packages/relay-core/src/standalone-relay.ts",
+      "symbol": "TNFRelayServer",
+      "properties": {
+        "ws": "/ws",
+        "http": ["/health", "/agents", "/channels"],
+        "defaultPort": 3000
+      }
+    },
+    {
+      "id": "handler-redis-relay-bridge",
+      "kind": "handler",
+      "label": "RedisRelayBridge",
+      "filePath": "packages/relay-core/src/redis-relay-bridge.ts",
+      "symbol": "RedisRelayBridge"
+    },
+    {
+      "id": "entry-master-clock",
+      "kind": "entry",
+      "label": "MasterClock",
+      "filePath": "packages/relay-core/src/master-clock.ts",
+      "symbol": "MasterClock.start"
+    },
+    {
+      "id": "handler-mc-heartbeat",
+      "kind": "handler",
+      "label": "master-clock heartbeat loop",
+      "filePath": "packages/relay-core/src/master-clock.ts",
+      "properties": { "intervalMsDefault": 3000 }
+    },
+    {
+      "id": "handler-mc-stall",
+      "kind": "handler",
+      "label": "stall detection",
+      "filePath": "packages/relay-core/src/master-clock.ts",
+      "properties": { "thresholdMsDefault": 5000 }
+    },
+    {
+      "id": "handler-mc-task-scheduler",
+      "kind": "handler",
+      "label": "TaskSchedulerService",
+      "filePath": "packages/relay-core/src/services/task-scheduler.service.ts"
+    },
+    {
+      "id": "store-redis-master-keys",
+      "kind": "store",
+      "label": "tnf:master:*",
+      "properties": {
+        "keys": [
+          "tnf:master:agents",
+          "tnf:master:heartbeats",
+          "tnf:master:channels",
+          "tnf:master:tasks:pending"
+        ]
+      }
+    },
+    {
+      "id": "entry-broker-agent",
+      "kind": "entry",
+      "label": "BrokerAgent",
+      "filePath": "packages/relay-core/src/broker-agent.ts",
+      "symbol": "BrokerAgent.start"
+    },
+    {
+      "id": "handler-broker-policy",
+      "kind": "handler",
+      "label": "broker local policy gate",
+      "filePath": "packages/relay-core/src/broker-agent.ts",
+      "properties": {
+        "decisions": ["allow", "deny", "quarantine", "escalate"],
+        "notTnfAuthorityGrants": true
+      }
+    },
+    {
+      "id": "entry-api-main",
+      "kind": "entry",
+      "label": "apps/api bootstrap",
+      "filePath": "apps/api/src/main.ts",
+      "symbol": "bootstrap",
+      "properties": { "globalPrefix": "api", "defaultPort": 3001 }
+    },
+    {
+      "id": "gate-security-guard",
+      "kind": "gate",
+      "label": "SecurityGuard (APP_GUARD)",
+      "filePath": "apps/api/src/guards/security.guard.ts"
+    },
+    {
+      "id": "gate-secure-auth",
+      "kind": "gate",
+      "label": "SecureAuthGuard (APP_GUARD)",
+      "filePath": "apps/api/src/guards/secure-auth.guard.ts",
+      "symbol": "SecureAuthGuard.canActivate",
+      "properties": {
+        "defaultAuthLevel": "USER",
+        "failClosed": true,
+        "publicOptIn": "@RequireAuthLevel(PUBLIC)",
+        "emergencyRollbackEnv": "TNF_SECURE_AUTH_DEFAULT=public"
+      }
+    },
+    {
+      "id": "handler-api-controllers",
+      "kind": "handler",
+      "label": "Nest API controllers",
+      "filePath": "apps/api/src/app.module.ts",
+      "properties": {
+        "examples": [
+          "auth",
+          "workspaces",
+          "resources",
+          "marketplace",
+          "unified-ledger",
+          "chat",
+          "tasks",
+          "webhooks",
+          "orchestration",
+          "mcp",
+          "admin/*"
+        ]
+      }
+    },
+    {
+      "id": "store-drizzle-db",
+      "kind": "store",
+      "label": "Drizzle/DB",
+      "filePath": "apps/api/src/app.module.ts"
+    },
+    {
+      "id": "entry-api-gateway-main",
+      "kind": "entry",
+      "label": "apps/api-gateway bootstrap",
+      "filePath": "apps/api-gateway/src/main.ts",
+      "properties": { "globalPrefix": "api" }
+    },
+    {
+      "id": "handler-gateway-controllers",
+      "kind": "handler",
+      "label": "gateway controllers",
+      "filePath": "apps/api-gateway/src/gateway",
+      "properties": {
+        "examples": [
+          "agents",
+          "workspaces",
+          "resources",
+          "marketplace",
+          "chat",
+          "mcp",
+          "webhooks",
+          "timeline",
+          "terminals",
+          "system",
+          "sgp",
+          "ide"
+        ]
+      }
+    },
+    {
+      "id": "gate-gateway-auth",
+      "kind": "gate",
+      "label": "gateway-auth.guard",
+      "filePath": "apps/api-gateway/src/auth/gateway-auth.guard.ts"
+    },
+    {
+      "id": "entry-backend",
+      "kind": "entry",
+      "label": "apps/backend Nest app",
+      "filePath": "apps/backend/src",
+      "properties": {
+        "controllersInclude": [
+          "auth",
+          "agents",
+          "relay",
+          "mcp",
+          "orchestrator",
+          "admin/*"
+        ]
+      }
+    },
+    {
+      "id": "handler-backend-controllers",
+      "kind": "handler",
+      "label": "backend controllers",
+      "filePath": "apps/backend/src"
+    },
+    {
+      "id": "store-redis-backend",
+      "kind": "store",
+      "label": "backend Redis services",
+      "filePath": "apps/backend/src/services/redis.service.ts"
+    },
+    {
+      "id": "entry-frontend-router",
+      "kind": "entry",
+      "label": "ComprehensiveRouter",
+      "filePath": "apps/frontend/src/ComprehensiveRouter.tsx",
+      "symbol": "ComprehensiveRouter"
+    },
+    {
+      "id": "gate-require-auth",
+      "kind": "gate",
+      "label": "RequireAuth",
+      "filePath": "apps/frontend/src/components/RequireAuth.tsx",
+      "symbol": "RequireAuth"
+    },
+    {
+      "id": "handler-frontend-api-client",
+      "kind": "handler",
+      "label": "frontend API clients",
+      "filePath": "apps/frontend/src/services/apiGateway.ts",
+      "properties": {
+        "baseUrl": "/api/v1",
+        "also": [
+          "services/api.ts",
+          "services/unifiedLedgerApi.ts",
+          "services/resources.service.ts",
+          "services/aiSource.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "entry-mcp-packages",
+      "kind": "entry",
+      "label": "MCP packages",
+      "filePath": "packages/mcp-core",
+      "properties": {
+        "related": [
+          "mcp-cloud-redis-bridge",
+          "mcp-concordance-server",
+          "mcp-skills-server",
+          "mcp-tar-bridge",
+          "google-sheets-mcp-server"
+        ]
+      }
+    },
+    {
+      "id": "entry-mcp-apps",
+      "kind": "entry",
+      "label": "apps/mcp-servers",
+      "filePath": "apps/mcp-servers",
+      "properties": {
+        "includes": [
+          "tnf-network-mcp",
+          "vision-bridge-mcp",
+          "gemini-mcp-server.js",
+          "claude-mcp-server.js"
+        ]
+      }
+    },
+    {
+      "id": "handler-mcp-gateway",
+      "kind": "handler",
+      "label": "mcp-gateway.controller",
+      "filePath": "apps/api-gateway/src/gateway/mcp-gateway.controller.ts"
+    },
+    {
+      "id": "handler-mcp-transport",
+      "kind": "handler",
+      "label": "MCPTransport",
+      "filePath": "packages/relay-core/src/transports/MCPTransport.ts"
+    },
+    {
+      "id": "entry-chrome-extension",
+      "kind": "entry",
+      "label": "chrome/gemini bridge extension",
+      "filePath": "apps/chrome-extension",
+      "properties": {
+        "nativeHost": "apps/chrome-extension/src/v6/native-host/tnf-native-host.cjs",
+        "also": "apps/gemini-bridge-extension"
+      }
+    },
+    {
+      "id": "entry-vscode-extension",
+      "kind": "entry",
+      "label": "vscode-extension",
+      "filePath": "apps/vscode-extension"
+    },
+    {
+      "id": "entry-cloudbuild-api",
+      "kind": "entry",
+      "label": "cloudbuild-api.yaml",
+      "filePath": "cloudbuild-api.yaml"
+    },
+    {
+      "id": "entry-dockerfile-api",
+      "kind": "entry",
+      "label": "Dockerfile.api",
+      "filePath": "Dockerfile.api"
+    },
+    {
+      "id": "entry-gh-deploy",
+      "kind": "entry",
+      "label": "GitHub deploy workflows",
+      "filePath": ".github/workflows/deploy.yml",
+      "properties": { "also": [".github/workflows/gcp-rollout.yml"] }
+    },
+    {
+      "id": "entry-k8s-deployment",
+      "kind": "entry",
+      "label": "deployment/ k8s manifests",
+      "filePath": "deployment",
+      "properties": {
+        "includes": ["a2a-services.yaml", "kubernetes", "network-policy.yaml"]
+      }
+    },
+    {
+      "id": "gate-authority-consumer-off",
+      "kind": "gate",
+      "label": "authority consumer default-off sentinel",
+      "filePath": "scripts/lib/tnf-wrapper-authority.cjs",
+      "symbol": "isEnabled",
+      "properties": { "status": "fail-closed-only-when-enabled" }
+    },
+    {
+      "id": "gate-cred-broker-mutating",
+      "kind": "gate",
+      "label": "cred broker mutating fail-closed",
+      "filePath": "scripts/lib/tnf-cred-broker.cjs",
+      "properties": { "status": "fail-closed-by-default" }
+    },
+    {
+      "id": "gate-elevation-decide-agent-context",
+      "kind": "gate",
+      "label": "decide() agent-context refuse",
+      "filePath": "scripts/lib/tnf-elevation-broker.cjs",
+      "symbol": "detectAgentContext",
+      "properties": { "status": "fail-closed-by-default" }
+    },
+    {
+      "id": "gate-message-auth-warn",
+      "kind": "gate",
+      "label": "message auth warn mode (soft)",
+      "filePath": "scripts/lib/tnf-message-auth.cjs",
+      "properties": { "status": "fail-open-default" }
+    },
+    {
+      "id": "gate-secure-auth-public-default",
+      "kind": "gate",
+      "label": "SecureAuthGuard PUBLIC default (retired)",
+      "filePath": "apps/api/src/guards/secure-auth.guard.ts",
+      "properties": {
+        "status": "closed-2026-07-24",
+        "replacedBy": "gate-secure-auth-user-default"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-shim-to-full-client",
+      "source": "node-redis-agent-client-shim",
+      "target": "entry-redis-agent-client",
+      "type": "delegates",
+      "label": "loadFullClient + initialize",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-broker-sign-dispatch",
+      "source": "entry-broker-agent",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "task envelope publish",
+      "properties": { "failClosed": false, "failOpenOnSignThrow": true }
+    },
+    {
+      "id": "e-bridge-sign-ingress",
+      "source": "handler-redis-relay-bridge",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "ingress / publishToIngress",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-bridge-sign-egress",
+      "source": "handler-redis-relay-bridge",
+      "target": "handler-stringify-signed-bus",
+      "type": "calls",
+      "label": "publishToAgent egress",
+      "properties": { "failClosed": false }
+    },
+    {
+      "id": "e-sign-bus-fail-open",
+      "source": "handler-stringify-signed-bus",
+      "target": "gate-sign-bus-message-fail-open",
+      "type": "on_error",
+      "label": "publish unsigned JSON",
+      "properties": { "failOpen": true }
+    },
+    {
+      "id": "e-broker-heartbeat-unsigned",
+      "source": "entry-broker-agent",
+      "target": "pub-broker-heartbeat-unsigned",
+      "type": "publishes",
+      "properties": { "signed": false, "failOpen": true }
+    },
+    {
+      "id": "e-director-heartbeat-unsigned",
+      "source": "pub-director-heartbeat-unsigned",
+      "target": "bus-tnf-agents",
+      "type": "publishes",
+      "label": "DirectorAgent.startHeartbeat → HEARTBEAT_CHANNEL",
+      "properties": {
+        "signed": false,
+        "failOpen": true,
+        "filePath": "packages/relay-core/src/director-agent.ts"
+      }
+    },
+    {
+      "id": "e-stringify-to-agents-bus",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-agents",
+      "type": "may_publish",
+      "label": "signed task/event envelopes"
+    },
+    {
+      "id": "e-stringify-to-ingress",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-ingress",
+      "type": "publishes"
+    },
+    {
+      "id": "e-stringify-to-egress",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-egress",
+      "type": "publishes"
+    },
+    {
+      "id": "e-gw-auth-opt-in-flag",
+      "source": "gate-gateway-auth",
+      "target": "gate-gateway-auth-opt-in",
+      "type": "characterized_as",
+      "properties": { "failOpen": true }
+    },
+    {
+      "id": "e-sub-to-handle",
+      "source": "entry-redis-agent-client",
+      "target": "handler-handle-incoming",
+      "type": "calls",
+      "label": "subscriber message/pmessage"
+    },
+    {
+      "id": "e-handle-to-auth",
+      "source": "handler-handle-incoming",
+      "target": "gate-message-auth",
+      "type": "calls",
+      "label": "authenticateEnvelope"
+    },
+    {
+      "id": "e-auth-to-normalize",
+      "source": "gate-message-auth",
+      "target": "handler-normalize-message",
+      "type": "flows_to",
+      "label": "if not reject"
+    },
+    {
+      "id": "e-normalize-to-authority-gate",
+      "source": "handler-normalize-message",
+      "target": "gate-authority-consumer",
+      "type": "flows_to",
+      "label": "type===task"
+    },
+    {
+      "id": "e-authority-to-gate-dispatch",
+      "source": "gate-authority-consumer",
+      "target": "handler-gate-and-dispatch",
+      "type": "calls",
+      "label": "when enabled"
+    },
+    {
+      "id": "e-normalize-to-handlers-bypass",
+      "source": "gate-authority-consumer",
+      "target": "handler-dispatch-handlers",
+      "type": "flows_to",
+      "label": "when disabled or non-gated"
+    },
+    {
+      "id": "e-gate-to-handlers",
+      "source": "handler-gate-and-dispatch",
+      "target": "handler-dispatch-handlers",
+      "type": "calls",
+      "label": "if allowed"
+    },
+    {
+      "id": "e-gate-dispatch-to-wrapper",
+      "source": "handler-gate-and-dispatch",
+      "target": "handler-wrapper-gate-task",
+      "type": "calls"
+    },
+    {
+      "id": "e-wrapper-to-client",
+      "source": "handler-wrapper-gate-task",
+      "target": "handler-authority-client",
+      "type": "calls",
+      "label": "withElevation"
+    },
+    {
+      "id": "e-client-to-pending",
+      "source": "handler-authority-client",
+      "target": "store-elevation-pending",
+      "type": "writes",
+      "label": "submit"
+    },
+    {
+      "id": "e-cli-to-decide",
+      "source": "cli-tnf-authority",
+      "target": "gate-elevation-decide",
+      "type": "calls",
+      "label": "approve/deny"
+    },
+    {
+      "id": "e-decide-to-grant",
+      "source": "gate-elevation-decide",
+      "target": "handler-capability-grant",
+      "type": "calls",
+      "label": "on approve"
+    },
+    {
+      "id": "e-grant-to-dispatch",
+      "source": "handler-capability-grant",
+      "target": "handler-dispatch-handlers",
+      "type": "flows_to",
+      "label": "awaitGrant resumes"
+    },
+    {
+      "id": "e-decide-to-audit",
+      "source": "gate-elevation-decide",
+      "target": "store-elevation-audit",
+      "type": "writes"
+    },
+    {
+      "id": "e-send-sign",
+      "source": "handler-send",
+      "target": "gate-message-auth",
+      "type": "calls",
+      "label": "signMessage"
+    },
+    {
+      "id": "e-send-publish-agents",
+      "source": "handler-send",
+      "target": "bus-tnf-agents",
+      "type": "publishes"
+    },
+    {
+      "id": "e-send-publish-convo",
+      "source": "handler-send",
+      "target": "bus-tnf-conversations",
+      "type": "publishes"
+    },
+    {
+      "id": "e-gemini-to-client",
+      "source": "entry-gemini-wrapper",
+      "target": "entry-redis-agent-client",
+      "type": "depends_on"
+    },
+    {
+      "id": "e-jules-to-client",
+      "source": "entry-jules-wrapper",
+      "target": "entry-redis-agent-client",
+      "type": "depends_on"
+    },
+    {
+      "id": "e-pi-to-client",
+      "source": "entry-pi-wrapper",
+      "target": "entry-redis-agent-client",
+      "type": "depends_on"
+    },
+    {
+      "id": "e-claude-to-client",
+      "source": "entry-claude-wrapper",
+      "target": "entry-redis-agent-client",
+      "type": "depends_on"
+    },
+    {
+      "id": "e-agy-to-client",
+      "source": "entry-antigravity-wrapper",
+      "target": "entry-redis-agent-client",
+      "type": "depends_on"
+    },
+    {
+      "id": "e-relay-to-bridge",
+      "source": "entry-standalone-relay",
+      "target": "handler-redis-relay-bridge",
+      "type": "uses"
+    },
+    {
+      "id": "e-bridge-to-ingress",
+      "source": "handler-redis-relay-bridge",
+      "target": "bus-tnf-ingress",
+      "type": "publishes",
+      "label": "via stringifySignedBusMessage",
+      "properties": { "signed": true, "failOpenOnSignThrow": true }
+    },
+    {
+      "id": "e-egress-to-bridge",
+      "source": "bus-tnf-egress",
+      "target": "handler-redis-relay-bridge",
+      "type": "subscribes"
+    },
+    {
+      "id": "e-ingress-to-agent-client",
+      "source": "bus-tnf-ingress",
+      "target": "entry-redis-agent-client",
+      "type": "feeds"
+    },
+    {
+      "id": "e-mc-start-heartbeat",
+      "source": "entry-master-clock",
+      "target": "handler-mc-heartbeat",
+      "type": "starts"
+    },
+    {
+      "id": "e-mc-to-stall",
+      "source": "entry-master-clock",
+      "target": "handler-mc-stall",
+      "type": "starts"
+    },
+    {
+      "id": "e-mc-to-tasks",
+      "source": "entry-master-clock",
+      "target": "handler-mc-task-scheduler",
+      "type": "uses"
+    },
+    {
+      "id": "e-mc-to-redis",
+      "source": "entry-master-clock",
+      "target": "store-redis-master-keys",
+      "type": "writes"
+    },
+    {
+      "id": "e-mc-to-relay",
+      "source": "entry-master-clock",
+      "target": "entry-standalone-relay",
+      "type": "connects",
+      "label": "RELAY_URL"
+    },
+    {
+      "id": "e-mc-to-ledger-api",
+      "source": "entry-master-clock",
+      "target": "entry-api-main",
+      "type": "http",
+      "label": "LEDGER_API_BASE"
+    },
+    {
+      "id": "e-broker-start",
+      "source": "entry-broker-agent",
+      "target": "store-agent-registry",
+      "type": "reads"
+    },
+    {
+      "id": "e-broker-policy",
+      "source": "entry-broker-agent",
+      "target": "handler-broker-policy",
+      "type": "calls"
+    },
+    {
+      "id": "e-broker-dispatch",
+      "source": "handler-broker-policy",
+      "target": "handler-stringify-signed-bus",
+      "type": "publishes",
+      "label": "signed task envelope → egress/ingress",
+      "properties": { "signed": true, "failOpenOnSignThrow": true }
+    },
+    {
+      "id": "e-broker-dispatch-to-bus",
+      "source": "handler-stringify-signed-bus",
+      "target": "bus-tnf-egress",
+      "type": "publishes",
+      "label": "after stringifySignedBusMessage"
+    },
+    {
+      "id": "e-api-to-security",
+      "source": "entry-api-main",
+      "target": "gate-security-guard",
+      "type": "applies"
+    },
+    {
+      "id": "e-security-to-secure-auth",
+      "source": "gate-security-guard",
+      "target": "gate-secure-auth",
+      "type": "then"
+    },
+    {
+      "id": "e-secure-auth-to-controllers",
+      "source": "gate-secure-auth",
+      "target": "handler-api-controllers",
+      "type": "allows"
+    },
+    {
+      "id": "e-controllers-to-db",
+      "source": "handler-api-controllers",
+      "target": "store-drizzle-db",
+      "type": "reads_writes"
+    },
+    {
+      "id": "e-gw-to-controllers",
+      "source": "entry-api-gateway-main",
+      "target": "handler-gateway-controllers",
+      "type": "routes"
+    },
+    {
+      "id": "e-gw-auth",
+      "source": "handler-gateway-controllers",
+      "target": "gate-gateway-auth",
+      "type": "guards"
+    },
+    {
+      "id": "e-gw-to-api",
+      "source": "handler-gateway-controllers",
+      "target": "entry-api-main",
+      "type": "proxies"
+    },
+    {
+      "id": "e-gw-to-backend",
+      "source": "handler-gateway-controllers",
+      "target": "entry-backend",
+      "type": "proxies"
+    },
+    {
+      "id": "e-backend-to-controllers",
+      "source": "entry-backend",
+      "target": "handler-backend-controllers",
+      "type": "routes"
+    },
+    {
+      "id": "e-backend-to-redis",
+      "source": "handler-backend-controllers",
+      "target": "store-redis-backend",
+      "type": "uses"
+    },
+    {
+      "id": "e-fe-to-require-auth",
+      "source": "entry-frontend-router",
+      "target": "gate-require-auth",
+      "type": "wraps"
+    },
+    {
+      "id": "e-fe-to-api-client",
+      "source": "entry-frontend-router",
+      "target": "handler-frontend-api-client",
+      "type": "uses"
+    },
+    {
+      "id": "e-fe-client-to-gateway",
+      "source": "handler-frontend-api-client",
+      "target": "entry-api-gateway-main",
+      "type": "http",
+      "label": "/api/v1"
+    },
+    {
+      "id": "e-fe-client-to-api",
+      "source": "handler-frontend-api-client",
+      "target": "entry-api-main",
+      "type": "http"
+    },
+    {
+      "id": "e-cli-to-authority-script",
+      "source": "cli-tnf-cli",
+      "target": "cli-tnf-authority",
+      "type": "spawns",
+      "label": "tnf authority *"
+    },
+    {
+      "id": "e-authority-script-to-decide",
+      "source": "cli-tnf-authority",
+      "target": "gate-elevation-decide",
+      "type": "calls"
+    },
+    {
+      "id": "e-authority-to-trust",
+      "source": "cli-tnf-authority",
+      "target": "store-trust-root",
+      "type": "reads",
+      "label": "status/confirm-isolation"
+    },
+    {
+      "id": "e-client-to-cred",
+      "source": "handler-authority-client",
+      "target": "handler-cred-broker",
+      "type": "calls",
+      "label": "useCredential"
+    },
+    {
+      "id": "e-cred-action",
+      "source": "handler-cred-broker",
+      "target": "gate-cred-action-registry",
+      "type": "checks"
+    },
+    {
+      "id": "e-cred-grant",
+      "source": "handler-cred-broker",
+      "target": "gate-cred-grant-verify",
+      "type": "checks"
+    },
+    {
+      "id": "e-cred-readonly",
+      "source": "handler-cred-broker",
+      "target": "gate-cred-readonly",
+      "type": "checks"
+    },
+    {
+      "id": "e-cred-trust",
+      "source": "handler-cred-broker",
+      "target": "gate-cred-trust-root",
+      "type": "checks"
+    },
+    {
+      "id": "e-cred-keystore",
+      "source": "handler-cred-broker",
+      "target": "store-os-keystore",
+      "type": "reads"
+    },
+    {
+      "id": "e-cred-audit",
+      "source": "handler-cred-broker",
+      "target": "store-broker-audit",
+      "type": "writes"
+    },
+    {
+      "id": "e-mcp-pkg",
+      "source": "entry-mcp-packages",
+      "target": "handler-mcp-transport",
+      "type": "related"
+    },
+    {
+      "id": "e-mcp-apps",
+      "source": "entry-mcp-apps",
+      "target": "entry-mcp-packages",
+      "type": "related"
+    },
+    {
+      "id": "e-mcp-gw",
+      "source": "handler-mcp-gateway",
+      "target": "entry-mcp-packages",
+      "type": "manages"
+    },
+    {
+      "id": "e-ext-chrome",
+      "source": "entry-chrome-extension",
+      "target": "entry-standalone-relay",
+      "type": "may_connect"
+    },
+    {
+      "id": "e-ext-vscode",
+      "source": "entry-vscode-extension",
+      "target": "entry-standalone-relay",
+      "type": "may_connect"
+    },
+    {
+      "id": "e-mcp-transport",
+      "source": "handler-mcp-transport",
+      "target": "entry-standalone-relay",
+      "type": "adapts"
+    },
+    {
+      "id": "e-cb-docker",
+      "source": "entry-cloudbuild-api",
+      "target": "entry-dockerfile-api",
+      "type": "builds"
+    },
+    {
+      "id": "e-gh-deploy",
+      "source": "entry-gh-deploy",
+      "target": "entry-cloudbuild-api",
+      "type": "triggers"
+    },
+    {
+      "id": "e-deploy-k8s",
+      "source": "entry-k8s-deployment",
+      "target": "entry-api-main",
+      "type": "deploys"
+    }
+  ]
+}

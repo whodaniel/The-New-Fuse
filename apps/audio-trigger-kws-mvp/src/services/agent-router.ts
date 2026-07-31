@@ -22,6 +22,12 @@ export class AgentRouter extends EventEmitter {
   constructor() {
     super();
 
+    this.agents.set('inky', {
+      name: 'inky',
+      tty: process.env.INKY_TTY,
+      keywords: ['inky', 'hey inky', 'okay inky'],
+    });
+
     this.agents.set('echo', {
       name: 'echo',
       tty: process.env.ECHO_TTY || 'ttys095',
@@ -82,6 +88,7 @@ export class AgentRouter extends EventEmitter {
   }
 
   private detectAgent(termId: string): string | null {
+    if (termId.startsWith('agent_inky')) return 'inky';
     if (termId.startsWith('agent_echo')) return 'echo';
     if (termId.startsWith('agent_pulse')) return 'pulse';
     if (termId === 'agent_all') return 'all';
@@ -93,7 +100,11 @@ export class AgentRouter extends EventEmitter {
     return this.routeToAgent(agent, message, 'auto_prompt');
   }
 
-  private routeToAgent(agent: string, message: string, source: 'voice' | 'auto_prompt' = 'voice'): boolean {
+  private routeToAgent(
+    agent: string,
+    message: string,
+    source: 'voice' | 'auto_prompt' = 'voice'
+  ): boolean {
     const config = this.agents.get(agent);
     if (!config) {
       this.log(`Unknown agent: ${agent}`);

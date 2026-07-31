@@ -63,9 +63,13 @@ need_cmd() {
 }
 
 need_cmd jq
-need_cmd cloud_runtime
 need_cmd bash
 need_cmd mktemp
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+tnf_require_gcloud
 
 if [ ! -x "$SYNC_ONE_SCRIPT" ]; then
   echo "ERROR: missing sync script: $SYNC_ONE_SCRIPT"
@@ -99,7 +103,7 @@ cloud_runtime_var_list_json() {
   out=""
 
   for attempt in $(seq 1 "$CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES"); do
-    if out="$(cloud_runtime variable list --service "$service" --json 2>"$err_file")"; then
+    if out="$(tnf_cloud_run_env_json "$service" 2>"$err_file")"; then
       if printf '%s' "$out" | jq -e 'type == "object"' >/dev/null 2>&1; then
         printf -v "$__json_var" '%s' "$out"
         printf -v "$__err_var" ''
@@ -109,7 +113,7 @@ cloud_runtime_var_list_json() {
     fi
 
     if [ "$attempt" -lt "$CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES" ]; then
-      echo "WARN: cloud_runtime variable list failed for $service (attempt $attempt/$CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES); retrying..."
+      echo "WARN: Cloud Run env list failed for $service (attempt $attempt/$CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES); retrying..."
       sleep "$CLOUD_RUNTIME_VAR_LIST_SLEEP_SECONDS"
     fi
   done

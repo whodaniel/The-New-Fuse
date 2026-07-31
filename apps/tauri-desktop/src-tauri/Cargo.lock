@@ -4772,6 +4772,7 @@ dependencies = [
  "enigo",
  "futures-util",
  "image",
+ "libc",
  "reqwest 0.12.28",
  "screenshots",
  "serde",

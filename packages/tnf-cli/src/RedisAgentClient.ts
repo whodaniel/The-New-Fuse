@@ -191,7 +191,8 @@ export class RedisAgentClient {
       role,
       platform,
       status: 'active',
-      capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
+      capabilities:
+        capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(role, platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
       ...extra,
@@ -284,17 +285,45 @@ export class RedisAgentClient {
     console.log(`[Agent] Submitted bid for task ${taskId} (Suitability: ${suitability})`);
   }
 
-  private getDefaultCapabilities(platform: string): string[] {
-    const capabilityMap: Record<string, string[]> = {
-      antigravity: ['code_assistance', 'orchestration', 'planning', 'analysis'],
+  /**
+   * Defaults are role ∪ platform. Role and platform are orthogonal axes —
+   * orchestration capabilities come from an orchestrator/coordinator *role*
+   * assignment (or explicit capabilities), never from platform alone.
+   */
+  private getDefaultCapabilities(role: string, platform: string): string[] {
+    const roleCapabilities: Record<string, string[]> = {
+      director: ['strategy', 'escalation', 'override'],
+      orchestrator: [
+        'orchestration',
+        'workflow_management',
+        'task_routing',
+        'result_aggregation',
+        'agent_coordination',
+      ],
+      broker: ['routing', 'mediation', 'channel_management'],
+      coordinator: ['coordinate', 'plan', 'delegate'],
+      bridge: ['bridge', 'translate', 'relay'],
+      worker: ['task_execution', 'report', 'collaborate'],
+      participant: ['message', 'observe', 'respond'],
+    };
+    const platformCapabilities: Record<string, string[]> = {
+      antigravity: ['code_assistance', 'planning', 'analysis'],
       gemini: ['code_analysis', 'research', 'implementation', 'review'],
       claude: ['reasoning', 'review', 'synthesis', 'documentation'],
       grok: ['agent_client_protocol', 'external_cli', 'reasoning', 'coding'],
       jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
       vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
       browser: ['web_scraping', 'research', 'automation'],
+      pi: [
+        'autonomous_code_editing',
+        'multi_provider_inference',
+        'validation_pipeline',
+        'handoff_export',
+      ],
     };
-    return capabilityMap[platform] || ['general'];
+    const roleCaps = roleCapabilities[String(role || '').toLowerCase()] || [];
+    const platformCaps = platformCapabilities[String(platform || '').toLowerCase()] || ['general'];
+    return Array.from(new Set([...roleCaps, ...platformCaps]));
   }
 
   async send(content: string, options: any = {}) {
