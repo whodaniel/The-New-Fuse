@@ -23,3 +23,9 @@
 ## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
 **Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
 **Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+## 2026-05-24 - React element recreation in list rendering
+**Learning:** Returning inline map evaluations directly within the JSX return block of a React functional component causes React to recreate the element array on *every* render cycle, even when the underlying data () hasn't changed (e.g., when a user types in a sibling input field and triggers a state update). This can cause O(n) re-evaluation and lead to rendering lag.
+**Action:** When working with high-frequency updates in parent components, extract array maps into a `useMemo` block (e.g., `const renderedMessages = React.useMemo(() => messages.map(...), [messages])`) to prevent element recreation and ensure the list only updates when its dependencies actually change.
+## 2026-05-24 - React element recreation in list rendering
+**Learning:** Returning inline map evaluations directly within the JSX return block of a React functional component causes React to recreate the element array on *every* render cycle, even when the underlying data (`messages`) hasn't changed (e.g., when a user types in a sibling input field and triggers a state update). This can cause O(n) re-evaluation and lead to rendering lag.
+**Action:** When working with high-frequency updates in parent components, extract array maps into a `useMemo` block (e.g., `const renderedMessages = React.useMemo(() => messages.map(...), [messages])`) to prevent element recreation and ensure the list only updates when its dependencies actually change.
