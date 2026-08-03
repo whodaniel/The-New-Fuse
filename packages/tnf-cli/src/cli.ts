@@ -23,10 +23,13 @@ import {
 } from './boot/pipeline.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsRunCommand } from './commands/agents-run.js';
+import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
+import { registerLogsCommand } from './commands/logs.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerStatusCommand } from './commands/health.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
@@ -3251,21 +3254,32 @@ const safeStdoutHandler = (error: NodeJS.ErrnoException) => {
 };
 process.stdout.on('error', safeStdoutHandler);
 
+// Redis is an optional dependency for several TNF surfaces: a connection
+// failure degrades functionality but must not fail the process. Everything
+// else is a real crash and MUST exit non-zero — unattended supervisors
+// (`tnf full-auto start`, cron, CI) read the exit code to decide whether a
+// cycle succeeded. Swallowing these silently makes every crash look green.
+function isOptionalRedisFault(err: any): boolean {
+  const message: string = err?.message ?? String(err ?? '');
+  return message.includes('Redis') || message.includes('ECONNREFUSED');
+}
+
 process.on('uncaughtException', (error: Error) => {
-  if (error?.message?.includes('Redis') || error?.message?.includes('ECONNREFUSED')) {
+  if (isOptionalRedisFault(error)) {
     console.error(chalk.yellow(`\n  ⚠️  Redis connection error: ${error.message}`));
     console.error(chalk.dim('  Redis is required for some TNF features. Running without Redis.'));
     return;
   }
   console.error(chalk.red(`\n  Uncaught exception: ${error.message}`));
-  if (process.env.DEBUG) console.error(error.stack);
+  console.error(error.stack ?? '(no stack available)');
+  process.exit(1);
 });
 
 process.on('unhandledRejection', (reason: any) => {
-  if (reason?.message?.includes('Redis') || reason?.message?.includes('ECONNREFUSED')) {
-    return;
-  }
-  console.error(chalk.yellow(`\n  ⚠️  Unhandled rejection: ${reason?.message || reason}`));
+  if (isOptionalRedisFault(reason)) return;
+  console.error(chalk.red(`\n  Unhandled rejection: ${reason?.message || reason}`));
+  if (reason?.stack) console.error(reason.stack);
+  process.exit(1);
 });
 
 function coerceSplashTheme(value?: string): SplashTheme {
@@ -10336,6 +10350,13 @@ fullAutoDaemon
     String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
   )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
+  // The detached path is where a hang is least visible, so the cycle bound has
+  // to be configurable here too — not just on the foreground `full-auto start`.
+  .option(
+    '--cycle-timeout-minutes <n>',
+    'Kill a cycle that runs longer than this and record it as a failure',
+    String(DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES)
+  )
   .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
   .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
@@ -17339,6 +17360,12 @@ registerBrowserCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
+registerAgentsSpecsCommand(program, repoRoot);
+registerStatusCommand(program, repoRoot);
+// doctor is registered earlier via program.command('doctor') (full tnf-doctor.cjs path).
+// config is registered earlier via program.command('config') (kilo parity configCmd).
+// Do not re-register those — Commander throws on duplicate command names.
+registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
 

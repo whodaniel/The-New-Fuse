@@ -336,7 +336,7 @@ node scripts/check-progress.js
 ./scripts/create-phase2-issues.sh  # (to be created)
 
 # Check GitHub project board
-open "https://github.com/whodaniel/fuse/projects"
+open "https://github.com/whodaniel/The-New-Fuse/projects"
 ```
 
 ### **For Developers**

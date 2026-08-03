@@ -311,9 +311,9 @@ RESPONSE_AUDIO_AUTO_HEAL = os.environ.get(
     "no",
     "off",
 }
-# Beam activate turns LLM→audio on by default (mic-pause/echo guards still apply).
+# Beam is OFF by default. Set VOICE_RESPONSE_AUDIO_DEFAULT_ON=1 to enable audio on activate.
 RESPONSE_AUDIO_DEFAULT_ON = os.environ.get(
-    "VOICE_RESPONSE_AUDIO_DEFAULT_ON", "1"
+    "VOICE_RESPONSE_AUDIO_DEFAULT_ON", "0"
 ).strip().lower() not in {
     "0",
     "false",
@@ -1889,15 +1889,9 @@ def kws_state():
 
 @app.route("/activate", methods=["POST"])
 def activate():
-    # Beam ON ⇒ LLM reply audio ON by default (standard voice loop).
-    if RESPONSE_AUDIO_DEFAULT_ON:
-        try:
-            enable_path = os.path.join(
-                STATE_DIR, state_file_name("voice_response_audio_enabled")
-            )
-            open(enable_path, "a", encoding="utf-8").close()
-        except Exception:
-            pass
+    # Beam activation does NOT auto-enable response audio by default.
+    # Set RESPONSE_AUDIO_DEFAULT_ON=1 to auto-enable on activate, or the operator
+    # can toggle it via voice-response-audio-toggle.py.
     started = ensure_background_bridge()
     if started:
         log_event("ACTIVATE", f"Started: {', '.join(started)}")

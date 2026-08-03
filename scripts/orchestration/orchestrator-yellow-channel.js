@@ -230,7 +230,7 @@ Respond with: "JSON received correctly" or describe any issues.`,
 Testing URL and link transfer capabilities. Please confirm these links are visible:
 
 1. YouTube Video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-2. GitHub Repo: https://github.com/whodaniel/fuse
+2. GitHub Repo: https://github.com/whodaniel/The-New-Fuse
 3. Documentation: https://docs.example.com/api/v1/endpoints
 
 Respond with which links you can see and if they are formatted correctly.`,

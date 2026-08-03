@@ -79,7 +79,7 @@ tnf full-auto status
 
 | Stream              | Agent / Command              | Deliverable                                                      |
 | ------------------- | ---------------------------- | ---------------------------------------------------------------- |
-| **A: Open Runtime** | `forge-agent` + `sync:repos` | Public `fuse-open-runtime`, working install script               |
+| **A: Open Runtime** | `forge-agent` + `sync:repos` | Public `The-New-Fuse`, working install script               |
 | **B: Release Gate** | `local-subdirector`          | `release:gate:strict` pass, TelegramService env paths            |
 | **C: API Health**   | API team agent               | `/health` timestamp, `/api/v1/health` 200 JSON                   |
 | **D: Legal/SEO**    | `content-writer-agent`       | Static privacy/terms/about (not SPA dupes)                       |
@@ -106,7 +106,7 @@ tnf registry list         # agent inventory
 
 ## Launch Blockers (P0 — Swarm Must Close)
 
-1. Publish `whodaniel/fuse-open-runtime` (currently private)
+1. Publish `whodaniel/The-New-Fuse` (currently private)
 2. Fix CLI install: `curl … install-tnf-cli.sh | bash` on clean machine
 3. `pnpm run release:gate` — no personal paths in production tree
 4. Static legal pages on thenewfuse.com
@@ -141,6 +141,6 @@ Operator confirmation: proceed with full swarm delegation.
 - [ ] `pnpm run release:gate:strict` PASS
 - [ ] `tnf protocol gate` PASS
 - [ ] CLI install works on clean machine
-- [ ] `fuse-open-runtime` public with tagged release
+- [ ] `The-New-Fuse` public with tagged release
 - [ ] Checklist M01–M05 all green
 - [ ] Marketing Phase 0 complete → soft launch ready

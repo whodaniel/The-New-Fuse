@@ -1,4 +1,4 @@
-# Repo Parity Audit: `whodaniel/fuse-control-plane`
+# Repo Parity Audit: `whodaniel/The-New-Fuse-control-plane`
 
 > Generated: 2026-06-22T17:42:11Z  
 > Monorepo HEAD: `e888d0c0b7`  
@@ -10,7 +10,7 @@
 | Field | Value |
 | ----- | ----- |
 | Slug | `fuse-control-plane` |
-| Remote | `https://github.com/whodaniel/fuse-control-plane.git` |
+| Remote | `https://github.com/whodaniel/The-New-Fuse-control-plane.git` |
 | Classification | `live-distribution` |
 | Tracked paths (monorepo) | 98282 |
 | Tracked paths (target) | 201 |

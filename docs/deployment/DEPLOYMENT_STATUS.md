@@ -157,7 +157,7 @@ The current branch needs to be merged to main for CloudRuntime to deploy:
 
 ```bash
 # Go to GitHub and create PR:
-https://github.com/whodaniel/fuse/pull/new/claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8
+https://github.com/whodaniel/The-New-Fuse/pull/new/claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8
 
 # Merge PR to main
 # CloudRuntime will auto-detect and deploy

@@ -765,7 +765,7 @@
     },
     {
       "source": "src/pages/ConnectExtension.tsx",
-      "link": "https://github.com/whodaniel/fuse",
+      "link": "https://github.com/whodaniel/The-New-Fuse",
       "status": "external",
       "reason": "external"
     },
@@ -1731,7 +1731,7 @@
     },
     {
       "source": "public/index.html",
-      "link": "https://github.com/whodaniel/fuse",
+      "link": "https://github.com/whodaniel/The-New-Fuse",
       "status": "external",
       "reason": "external"
     },

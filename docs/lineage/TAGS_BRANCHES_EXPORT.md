@@ -8,7 +8,7 @@
 
 <!-- BEGIN EXPORT -->
 
-## whodaniel/fuse
+## whodaniel/The-New-Fuse
 
 ### tags
 
@@ -24,9 +24,9 @@ release-2025-10-24-06-46-36 v8.2.2 v8.2.3
 
 See GitHub API export — fuse has 50+ feature branches (bolt/_, claude/_,
 codex/\*). Full list captured 2026-06-22 in consolidation session. Query:
-`gh api repos/whodaniel/fuse/branches?per_page=100 --paginate`.
+`gh api repos/whodaniel/The-New-Fuse/branches?per_page=100 --paginate`.
 
-## whodaniel/fuse-master
+## whodaniel/The-New-Fuse-master
 
 ### tags
 
@@ -59,7 +59,7 @@ cursor/package-tauri-dmg-d516 cursor/setup-dev-environment-4083
 cursor/surface-local-handoff-divergence-cfa4 cursor/tauri-dmg-packaging-7043
 main tnf-cli-harness-implementation
 
-## whodaniel/fuse-open-runtime
+## whodaniel/The-New-Fuse
 
 ### tags
 
@@ -69,7 +69,7 @@ v2.0.0-rc.1 v2.0.0-rc.2 v2.0.0-rc.3
 
 main (+ dependabot/\* — live distribution, do not archive)
 
-## whodaniel/fuse-control-plane
+## whodaniel/The-New-Fuse-control-plane
 
 ### tags
 
@@ -79,7 +79,7 @@ main (+ dependabot/\* — live distribution, do not archive)
 
 main
 
-## whodaniel/fuse-mirror
+## whodaniel/The-New-Fuse-mirror
 
 ### tags
 
@@ -90,7 +90,7 @@ release-2025-10-24-06-46-36 v8.2.2 v8.2.3
 ### branches
 
 50+ branches — mirror of legacy fuse; see
-`gh api repos/whodaniel/fuse-mirror/branches?per_page=100 --paginate`
+`gh api repos/whodaniel/The-New-Fuse-mirror/branches?per_page=100 --paginate`
 
 ## whodaniel/SkIDEancer
 

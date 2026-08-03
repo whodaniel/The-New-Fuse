@@ -1,4 +1,4 @@
-# Repo Parity Audit: `whodaniel/fuse-mirror`
+# Repo Parity Audit: `whodaniel/The-New-Fuse-mirror`
 
 > Generated: 2026-06-22T17:59:03Z  
 > Monorepo HEAD: `e888d0c0b7`  
@@ -10,7 +10,7 @@
 | Field | Value |
 | ----- | ----- |
 | Slug | `fuse-mirror` |
-| Remote | `https://github.com/whodaniel/fuse-mirror.git` |
+| Remote | `https://github.com/whodaniel/The-New-Fuse-mirror.git` |
 | Classification | `lineage-archive-candidate` |
 | Tracked paths (monorepo) | 98282 |
 | Tracked paths (target) | 61195 |

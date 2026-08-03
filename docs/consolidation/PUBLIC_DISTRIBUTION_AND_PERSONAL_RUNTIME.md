@@ -1,13 +1,13 @@
 # Public Distribution vs Personal Runtime
 
-> **Goal:** Ship a clean `fuse-open-runtime` for the public, while keeping your
+> **Goal:** Ship a clean `The-New-Fuse` for the public, while keeping your
 > Mac free of duplicate emergency copies and confusing legacy trees.
 
 ## Two audiences, two surfaces
 
 | Audience           | What they get                                   | Where it lives                                |
 | ------------------ | ----------------------------------------------- | --------------------------------------------- |
-| **Public**         | Open runtime (~90%), stubs at proprietary paths | `fuse-open-runtime` via `pnpm run sync:repos` |
+| **Public**         | Open runtime (~90%), stubs at proprietary paths | `The-New-Fuse` via `pnpm run sync:repos` |
 | **You (operator)** | Full monorepo + local voice + `~/.tnf` runtime  | `The-New-Fuse` on disk                        |
 
 Public users do **not** need voice bridge, `~/bin` copies, or emergency `~/apps`

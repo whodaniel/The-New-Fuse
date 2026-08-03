@@ -66,7 +66,7 @@ Commands:
 node scripts/jules-pipeline.cjs status
 node scripts/jules-pr-orchestrator.cjs approve-plans --sessions-file .agent/jules-logs/jules-followup-sessions-<stamp>.txt
 node scripts/jules-pr-orchestrator.cjs advance --sessions-file .agent/jules-logs/jules-followup-sessions-<stamp>.txt
-node scripts/jules-publish-prs.cjs --sessions-file .agent/jules-logs/jules-followup-publish-<stamp>.txt --mode publish --limit <n> --repo whodaniel/fuse --base main
+node scripts/jules-publish-prs.cjs --sessions-file .agent/jules-logs/jules-followup-publish-<stamp>.txt --mode publish --limit <n> --repo whodaniel/The-New-Fuse --base main
 node scripts/jules-pipeline.cjs pr
 bash scripts/jules-merge-open-prs.sh
 ```

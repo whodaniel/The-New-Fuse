@@ -145,7 +145,7 @@ I attempted several approaches:
 - **Backend Settings**: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/8c7ca8b3-b637-4658-a8ca-153ea1bb000c/settings?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
 - **API Settings**: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/6268e6bc-057a-40fc-97a4-3b7bff6d4251/settings?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
 - **API Gateway Settings**: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1/service/02d097a9-dde5-4fea-84c0-c36ccdc2619e/settings?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
-- **GitHub Repo**: https://github.com/whodaniel/fuse
+- **GitHub Repo**: https://github.com/whodaniel/The-New-Fuse
 
 ---
 

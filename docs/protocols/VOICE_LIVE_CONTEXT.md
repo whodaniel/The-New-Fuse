@@ -54,3 +54,12 @@ contextual understanding.
 - `docs/protocols/AGENT_WHO_IS_WHO.md` — identity + live roster
 - `.voicebridge/voice_target.json` — beam destination
 - `scripts/system/tnf-agent-who-is-who.py` — refresh live agents
+- `scripts/system/voice-beam-watchdog.sh` — beam lifecycle management
+- `scripts/system/voice_server.py` — voice server REST API
+
+## Configuration
+
+The voice beam is **OFF by default**. To enable audio response:
+- Set `VOICE_RESPONSE_AUDIO_DEFAULT_ON=1` in the environment
+- Or activate via the browser UI with the "ACTIVATE BEAM" button
+- Or run `voice-response-audio-toggle --profile <profile>`

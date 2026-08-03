@@ -222,4 +222,4 @@ For TNF-specific issues, check:
 
 - `./docs/DOCUMENTATION_MAP.md`
 - `./docs/AGENT_COMMUNICATION_PROTOCOL.md`
-- GitHub Issues: https://github.com/whodaniel/fuse/issues
+- GitHub Issues: https://github.com/whodaniel/The-New-Fuse/issues

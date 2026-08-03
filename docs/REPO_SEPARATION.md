@@ -16,7 +16,7 @@ downstream publication repos.**
 whodaniel/tnf-monorepo  (COMBINED MONOREPO, PRIVATE — you develop here)
     │
     ├──► whodaniel/The-New-Fuse        (PUBLIC,  ~90% open-source runtime)
-    └──► whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
+    └──► whodaniel/The-New-Fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
 ```
 
 - **NEVER commit directly to `The-New-Fuse` or `fuse-control-plane`.**
@@ -34,13 +34,13 @@ monorepo is `whodaniel/tnf-monorepo`.
 | Name                          | Before 2026-07-25         | After                         |
 | ----------------------------- | ------------------------- | ----------------------------- |
 | `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime       |
-| `whodaniel/fuse-open-runtime` | public open runtime       | _(name retired)_              |
+| `whodaniel/The-New-Fuse` | public open runtime       | _(name retired)_              |
 | `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo |
 
 **Any remote still pointing at `whodaniel/The-New-Fuse` for monorepo work is now
 aimed at the PUBLIC repo.** Pushing the monorepo there publishes proprietary
 code. Check with `git remote -v` and repoint to `tnf-monorepo`. Historical slugs
-`fuse-open-runtime` and `the-new-fuse-next-gen` refer to the pre-swap layout.
+`The-New-Fuse` and `the-new-fuse-next-gen` refer to the pre-swap layout.
 
 ---
 
@@ -118,7 +118,7 @@ was removed, contract stubs are placed that:
 - Provide no-op stub classes with console warnings
 - Reference the control-plane repo in comments
 
-### `whodaniel/fuse-control-plane` — Proprietary (Read-Only)
+### `whodaniel/The-New-Fuse-control-plane` — Proprietary (Read-Only)
 
 Published automatically by `sync-repos.sh`. Contains:
 
@@ -230,7 +230,7 @@ pnpm run sync:repos -- --dry-run
 1. **Control-plane**: Clones `fuse-control-plane`, copies latest proprietary
    content from monorepo HEAD, commits, pushes.
 2. **Open-runtime**: Clones monorepo, removes all proprietary paths, creates
-   stub files, pushes clean tree to `fuse-open-runtime`.
+   stub files, pushes clean tree to `The-New-Fuse`.
 
 ### When to Sync
 
@@ -244,7 +244,7 @@ Recommended cadence:
 2. `pnpm run sync:repos:dry-run`
 3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push
    to `main`)
-4. Tag release on monorepo and on `fuse-open-runtime` after sync
+4. Tag release on monorepo and on `The-New-Fuse` after sync
 
 ---
 
@@ -261,7 +261,7 @@ these arrays:
 ### Rules
 
 1. **Every proprietary file must leave a stub** in the **open-runtime publish
-   tree** (`fuse-open-runtime`)
+   tree** (`The-New-Fuse`)
 2. **Public code must never import private source** — only contracts
 3. **`packages/control-plane-contracts/` is always public** — it defines the API
    boundary between open and closed source; stubs import
@@ -304,7 +304,7 @@ now.
 monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run sync.
 
 **Q: Is the monorepo public?** A: `whodaniel/The-New-Fuse` is the canonical
-public development workspace. Legacy `whodaniel/fuse` remains public for
+public development workspace. Legacy `whodaniel/The-New-Fuse` remains public for
 historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status. The
 separation exists so `The-New-Fuse` is a clean public release without
 proprietary internals.

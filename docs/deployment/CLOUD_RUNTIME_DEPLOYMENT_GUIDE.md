@@ -15,7 +15,7 @@ minutes.
 ## Prerequisites
 
 1. **CloudRuntime Account**: Sign up at https://cloud_runtime.app
-2. **GitHub Access**: Repository at https://github.com/whodaniel/fuse
+2. **GitHub Access**: Repository at https://github.com/whodaniel/The-New-Fuse
 3. **API Keys**: OpenAI, Anthropic, and/or Gemini API keys
 4. **Database**: CloudRuntime PostgreSQL plugin
 5. **Redis**: CloudRuntime Redis plugin
@@ -93,7 +93,7 @@ Navigate to: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 ### 3.1 Deploy Frontend Service
 
 1. Click **"+ New"** → **"GitHub Repo"**
-2. Select `whodaniel/fuse` repository
+2. Select `whodaniel/The-New-Fuse` repository
 3. Select branch: `main`
 4. Configure service:
    - **Name**: `Frontend`
@@ -114,7 +114,7 @@ BACKEND_URL=${{Backend.CLOUD_RUNTIME_PRIVATE_DOMAIN}}
 
 ### 3.2 Deploy API Gateway Service
 
-1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/fuse`
+1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/The-New-Fuse`
 2. Configure service:
    - **Name**: `ApiGateway`
    - **Root Directory**: `.`
@@ -134,7 +134,7 @@ JWT_SECRET=<GENERATE_32_CHAR_RANDOM_STRING>
 
 ### 3.3 Deploy Backend Service
 
-1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/fuse`
+1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/The-New-Fuse`
 2. Configure service:
    - **Name**: `Backend`
    - **Root Directory**: `.`
@@ -333,7 +333,7 @@ CloudRuntime auto-scales based on traffic. To configure:
 
 - **CloudRuntime Dashboard**:
   https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
-- **GitHub Repository**: https://github.com/whodaniel/fuse
+- **GitHub Repository**: https://github.com/whodaniel/The-New-Fuse
 - **CloudRuntime Docs**: https://docs.thenewfuse.com
 
 ---

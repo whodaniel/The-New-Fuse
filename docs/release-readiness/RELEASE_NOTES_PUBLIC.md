@@ -3,7 +3,7 @@
 **Release date:** 2026-06-21 (Release-Candidate)  
 **Image:** `api-server:launch-health-20260621`  
 **Open runtime:**
-[github.com/whodaniel/fuse-open-runtime](https://github.com/whodaniel/fuse-open-runtime)
+[github.com/whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)
 
 ---
 
@@ -26,10 +26,10 @@
 
 ### Open Source
 
-- **90% open runtime** published at `whodaniel/fuse-open-runtime` (public)
+- **90% open runtime** published at `whodaniel/The-New-Fuse` (public)
 - One-line CLI install:
   ```bash
-  curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
   ```
 
 ### Frontend
@@ -42,15 +42,15 @@
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
 tnf onboard
 ```
 
 Or clone:
 
 ```bash
-git clone https://github.com/whodaniel/fuse-open-runtime.git
-cd fuse-open-runtime
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 pnpm run dev
 ```
@@ -72,5 +72,5 @@ pnpm run dev
 - App: https://app.thenewfuse.com
 - API: https://api.thenewfuse.com
 - Docs: https://thenewfuse.com/docs
-- GitHub: https://github.com/whodaniel/fuse-open-runtime
+- GitHub: https://github.com/whodaniel/The-New-Fuse
 - Security: security@thenewfuse.com

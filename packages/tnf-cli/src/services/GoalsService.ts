@@ -10,6 +10,20 @@ interface GoalTask {
   completedAt?: string;
 }
 
+/**
+ * Which external agent capability a goal closes parity against.
+ *
+ * Replaces the original `hermesFeature?: string`, whose shape could only ever
+ * express Hermes parity. TNF tracks parity against every agent CLI in
+ * `ParityService.REFERENCE_AGENTS`, so the agent must be part of the record.
+ */
+export interface ParityRef {
+  /** Agent id from the ParityService roster, e.g. 'codex', 'hermes'. */
+  agent: string;
+  /** The command or flag on that agent this goal maps to. */
+  feature: string;
+}
+
 interface Goal {
   id: string;
   slug: string;
@@ -21,7 +35,10 @@ interface Goal {
   progress: number; // 0-100
   tasks: GoalTask[];
   tags: string[];
-  hermesFeature?: string; // Which Hermes feature this maps to
+  /** Cross-agent parity mapping. Supersedes `hermesFeature`. */
+  parity?: ParityRef;
+  /** @deprecated Migrated to `parity` on load. Retained so older goals.json files and external readers keep working. */
+  hermesFeature?: string;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
@@ -40,9 +57,13 @@ export interface GoalCreateInput {
   priority?: Goal['priority'];
   category?: string;
   dueDate?: string;
+  parity?: ParityRef;
+  /** @deprecated Pass `parity: { agent: 'hermes', feature }` instead. */
   hermesFeature?: string;
   tags?: string[];
 }
+
+export type { Goal };
 
 export class GoalsService {
   private goalsDir: string;
@@ -84,10 +105,22 @@ export class GoalsService {
     if (fs.existsSync(file)) {
       try {
         const raw = fs.readFileSync(file, 'utf8');
-        return JSON.parse(raw);
+        return (JSON.parse(raw) as Goal[]).map(g => this.migrateGoal(g));
       } catch { /* ignore */ }
     }
     return [];
+  }
+
+  /**
+   * Forward-migrate a persisted goal.
+   *
+   * Goals written before cross-agent parity carry `hermesFeature: string`.
+   * Lift those into the `parity` shape so every consumer can assume it, while
+   * leaving the legacy key in place for anything still reading it.
+   */
+  private migrateGoal(goal: Goal): Goal {
+    if (goal.parity || !goal.hermesFeature) return goal;
+    return { ...goal, parity: { agent: 'hermes', feature: goal.hermesFeature } };
   }
 
   private saveGoals(goals: Goal[]): void {
@@ -116,7 +149,7 @@ export class GoalsService {
         description: 'Map and implement all 38+ Hermes commands/features in TNF CLI',
         priority: 'critical',
         category: 'Feature Parity',
-        hermesFeature: 'all-commands',
+        parity: { agent: 'hermes', feature: 'all-commands' },
         tags: ['hermes', 'parity', 'roadmap']
       },
       {
@@ -124,7 +157,7 @@ export class GoalsService {
         description: 'Add `tnf model` command for model/provider switching and fallback chain',
         priority: 'high',
         category: 'Core',
-        hermesFeature: 'model/fallback',
+        parity: { agent: 'hermes', feature: 'model/fallback' },
         tags: ['model', 'provider', 'fallback']
       },
       {
@@ -132,7 +165,7 @@ export class GoalsService {
         description: 'Create `tnf setup` for first-time user onboarding',
         priority: 'high',
         category: 'UX',
-        hermesFeature: 'setup',
+        parity: { agent: 'hermes', feature: 'setup' },
         tags: ['setup', 'wizard', 'onboarding']
       },
       {
@@ -140,7 +173,7 @@ export class GoalsService {
         description: 'Implement skill browse, install, inspect, update, audit like `hermes skills`',
         priority: 'high',
         category: 'Features',
-        hermesFeature: 'skills',
+        parity: { agent: 'hermes', feature: 'skills' },
         tags: ['skills', 'hub', 'procedural-memory']
       },
       {
@@ -148,7 +181,7 @@ export class GoalsService {
         description: 'Full gateway for Telegram, Discord, Slack, WhatsApp, Signal like `hermes gateway`',
         priority: 'high',
         category: 'Integration',
-        hermesFeature: 'gateway',
+        parity: { agent: 'hermes', feature: 'gateway' },
         tags: ['gateway', 'telegram', 'discord', 'slack', 'whatsapp']
       },
       {
@@ -156,7 +189,7 @@ export class GoalsService {
         description: 'Full session list, rename, export, prune, delete like `hermes sessions`',
         priority: 'medium',
         category: 'Core',
-        hermesFeature: 'sessions',
+        parity: { agent: 'hermes', feature: 'sessions' },
         tags: ['sessions', 'history', 'management']
       },
       {
@@ -164,7 +197,7 @@ export class GoalsService {
         description: 'Build `tnf insights` for usage analytics, cost tracking, and reporting',
         priority: 'medium',
         category: 'Analytics',
-        hermesFeature: 'insights',
+        parity: { agent: 'hermes', feature: 'insights' },
         tags: ['insights', 'analytics', 'reporting']
       },
       {
@@ -172,7 +205,7 @@ export class GoalsService {
         description: 'Implement `tnf doctor` for configuration and dependency health checks',
         priority: 'medium',
         category: 'DevOps',
-        hermesFeature: 'doctor',
+        parity: { agent: 'hermes', feature: 'doctor' },
         tags: ['doctor', 'diagnostics', 'health']
       },
       {
@@ -180,7 +213,7 @@ export class GoalsService {
         description: 'Add `tnf backup` and `tnf import` for portable agent state',
         priority: 'medium',
         category: 'Data',
-        hermesFeature: 'backup/import',
+        parity: { agent: 'hermes', feature: 'backup/import' },
         tags: ['backup', 'import', 'restore']
       },
       {
@@ -188,7 +221,7 @@ export class GoalsService {
         description: 'Isolated TNF profiles like `hermes profile create/list/switch`',
         priority: 'medium',
         category: 'Core',
-        hermesFeature: 'profile',
+        parity: { agent: 'hermes', feature: 'profile' },
         tags: ['profile', 'isolation', 'multi-tenant']
       },
       {
@@ -196,7 +229,7 @@ export class GoalsService {
         description: 'Build `tnf dashboard` web interface for agent monitoring and control',
         priority: 'medium',
         category: 'UI',
-        hermesFeature: 'dashboard',
+        parity: { agent: 'hermes', feature: 'dashboard' },
         tags: ['dashboard', 'web-ui', 'monitoring']
       },
       {
@@ -204,7 +237,7 @@ export class GoalsService {
         description: 'Implement `tnf logs` for viewing, filtering, and tailing agent logs',
         priority: 'low',
         category: 'DevOps',
-        hermesFeature: 'logs',
+        parity: { agent: 'hermes', feature: 'logs' },
         tags: ['logs', 'monitoring', 'debugging']
       },
     ];
@@ -227,6 +260,9 @@ export class GoalsService {
       progress: 0,
       tasks: [],
       tags: input.tags || [],
+      parity:
+        input.parity ??
+        (input.hermesFeature ? { agent: 'hermes', feature: input.hermesFeature } : undefined),
       hermesFeature: input.hermesFeature,
       createdAt: now,
       updatedAt: now,
@@ -353,12 +389,72 @@ export class GoalsService {
       g.title.toLowerCase().includes(q) ||
       g.description.toLowerCase().includes(q) ||
       g.tags.some(t => t.toLowerCase().includes(q)) ||
-      (g.hermesFeature && g.hermesFeature.toLowerCase().includes(q))
+      (g.parity?.agent.toLowerCase().includes(q) ?? false) ||
+      (g.parity?.feature.toLowerCase().includes(q) ?? false)
     );
   }
 
-  async getByHermesFeature(feature: string): Promise<Goal | undefined> {
+  /** All goals tracking parity against a given agent. */
+  async listByAgent(agent: string): Promise<Goal[]> {
     const goals = await this.list();
-    return goals.find(g => g.hermesFeature === feature);
+    const needle = agent.toLowerCase();
+    return goals.filter(g => g.parity?.agent.toLowerCase() === needle);
+  }
+
+  /** Look up the goal covering a specific agent capability. */
+  async getByParityFeature(agent: string, feature: string): Promise<Goal | undefined> {
+    const goals = await this.list();
+    return goals.find(
+      g => g.parity?.agent.toLowerCase() === agent.toLowerCase() && g.parity?.feature === feature
+    );
+  }
+
+  /** @deprecated Use `getByParityFeature('hermes', feature)`. */
+  async getByHermesFeature(feature: string): Promise<Goal | undefined> {
+    return this.getByParityFeature('hermes', feature);
+  }
+
+  /**
+   * Reconcile the goals backlog against a parity audit.
+   *
+   * Creates one goal per missing capability that has no goal yet, and returns
+   * what it did. Existing goals are never mutated — the audit is evidence, not
+   * an authority over human-set priority or status.
+   */
+  async syncFromParityGaps(
+    gaps: Array<{ agent: string; feature: string; kind: 'command' | 'option'; note?: string }>,
+    options: { priority?: Goal['priority']; dryRun?: boolean } = {}
+  ): Promise<{ created: Goal[]; skipped: Array<{ agent: string; feature: string }> }> {
+    const created: Goal[] = [];
+    const skipped: Array<{ agent: string; feature: string }> = [];
+
+    for (const gap of gaps) {
+      const existing = await this.getByParityFeature(gap.agent, gap.feature);
+      if (existing) {
+        skipped.push({ agent: gap.agent, feature: gap.feature });
+        continue;
+      }
+
+      const subject = gap.kind === 'option' ? `root option \`${gap.feature}\`` : `\`${gap.feature}\``;
+      const input: GoalCreateInput = {
+        title: `Parity: ${gap.agent} ${gap.feature}`,
+        description:
+          `TNF has no counterpart for ${subject} exposed by \`${gap.agent}\`` +
+          (gap.note ? ` (${gap.note})` : '') +
+          '. Detected by `tnf parity audit`.',
+        priority: options.priority ?? 'medium',
+        category: 'Feature Parity',
+        parity: { agent: gap.agent, feature: gap.feature },
+        tags: ['parity', gap.agent, gap.kind],
+      };
+
+      if (options.dryRun) {
+        created.push(this.createGoalFromInput(input));
+      } else {
+        created.push(await this.create(input));
+      }
+    }
+
+    return { created, skipped };
   }
 }

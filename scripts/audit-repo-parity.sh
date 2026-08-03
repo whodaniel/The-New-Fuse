@@ -7,7 +7,7 @@
 #
 # Usage:
 #   ./scripts/audit-repo-parity.sh fuse
-#   ./scripts/audit-repo-parity.sh fuse-open-runtime --remote-url https://github.com/whodaniel/fuse-open-runtime.git
+#   ./scripts/audit-repo-parity.sh The-New-Fuse --remote-url https://github.com/whodaniel/The-New-Fuse.git
 #   ./scripts/audit-repo-parity.sh all
 # =============================================================================
 set -euo pipefail
@@ -36,12 +36,12 @@ slugify() {
 
 remote_for_slug() {
   case "$1" in
-    fuse|old-fuse) echo "https://github.com/whodaniel/fuse.git" ;;
-    fuse-master|private-origin) echo "https://github.com/whodaniel/fuse-master.git" ;;
+    fuse|old-fuse) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
+    fuse-master|private-origin) echo "https://github.com/whodaniel/The-New-Fuse-master.git" ;;
     the-new-fuse-next-gen) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
-    fuse-open-runtime|open-runtime) echo "https://github.com/whodaniel/fuse-open-runtime.git" ;;
-    fuse-control-plane|control-plane) echo "https://github.com/whodaniel/fuse-control-plane.git" ;;
-    fuse-mirror|mirror) echo "https://github.com/whodaniel/fuse-mirror.git" ;;
+    The-New-Fuse|open-runtime) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
+    fuse-control-plane|control-plane) echo "https://github.com/whodaniel/The-New-Fuse-control-plane.git" ;;
+    fuse-mirror|mirror) echo "https://github.com/whodaniel/The-New-Fuse-mirror.git" ;;
     NexusOrchestrator|nexus-orchestrator) echo "https://github.com/whodaniel/NexusOrchestrator.git" ;;
     SkIDEancer|skideancer) echo "https://github.com/whodaniel/SkIDEancer.git" ;;
     MyPhone-Remote|myphone-remote) echo "https://github.com/whodaniel/MyPhone-Remote.git" ;;
@@ -52,7 +52,7 @@ remote_for_slug() {
 classify_repo() {
   case "$1" in
     fuse|fuse-master|fuse-mirror|NexusOrchestrator) echo "lineage-archive-candidate" ;;
-    fuse-open-runtime|fuse-control-plane) echo "live-distribution" ;;
+    The-New-Fuse|fuse-control-plane) echo "live-distribution" ;;
     the-new-fuse-next-gen) echo "live-dev" ;;
     SkIDEancer|MyPhone-Remote) echo "product-satellite" ;;
     *) echo "unknown" ;;
@@ -139,7 +139,7 @@ audit_one() {
   verdict="PASS"
   notes=""
 
-  if [ "$role" = "live-distribution" ] && [ "$slug" = "fuse-open-runtime" ] && [ -n "$leaks" ]; then
+  if [ "$role" = "live-distribution" ] && [ "$slug" = "The-New-Fuse" ] && [ -n "$leaks" ]; then
     verdict="FAIL"
     notes="Proprietary paths present in open-runtime distribution."
   fi
@@ -212,7 +212,7 @@ $(if [ -n "$leaks" ]; then echo "$leaks"; else echo "(none detected in shallow c
 
 | Criterion | Result |
 | --------- | ------ |
-| No proprietary paths in open-runtime | $([ "$slug" = "fuse-open-runtime" ] && { [ -z "$leaks" ] && echo "PASS" || echo "FAIL"; } || echo "N/A") |
+| No proprietary paths in open-runtime | $([ "$slug" = "The-New-Fuse" ] && { [ -z "$leaks" ] && echo "PASS" || echo "FAIL"; } || echo "N/A") |
 | Legacy runtime captured in monorepo | $([ "$role" = "lineage-archive-candidate" ] && echo "REVIEW" || echo "N/A") |
 | Distribution sync path documented | $([ "$role" = "live-distribution" ] && echo "PASS" || echo "N/A") |
 
@@ -224,7 +224,7 @@ EOF
 source_arrays
 
 if [ "${1:-}" = "all" ]; then
-  for slug in the-new-fuse-next-gen fuse-open-runtime fuse-control-plane fuse fuse-master fuse-mirror NexusOrchestrator SkIDEancer MyPhone-Remote; do
+  for slug in the-new-fuse-next-gen The-New-Fuse fuse-control-plane fuse fuse-master fuse-mirror NexusOrchestrator SkIDEancer MyPhone-Remote; do
     audit_one "$slug" || true
   done
 else

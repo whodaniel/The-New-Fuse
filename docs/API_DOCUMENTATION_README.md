@@ -293,7 +293,7 @@ curl -X GET http://localhost:3001/api/agents \
 
 - **Email**: support@thenewfuse.com
 - **Discord**: https://discord.gg/thenewfuse
-- **GitHub Issues**: https://github.com/whodaniel/fuse/issues
+- **GitHub Issues**: https://github.com/whodaniel/The-New-Fuse/issues
 - **Documentation**: https://docs.thenewfuse.com
 
 ## Contributing

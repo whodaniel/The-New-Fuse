@@ -16,7 +16,7 @@
 | TypeScript            | Badge **5.4**                        | root `devDependencies.typescript` **^6.0.2**        | **FAIL**                                            |
 | License               | README defers; GITHUB badges MIT     | Root `LICENSE` = MIT                                | **POLICY** — pick narrative                         |
 | Monorepo slug         | `the-new-fuse-next-gen` (many docs)  | origin `The-New-Fuse`                               | **FAIL — systemic**                                 |
-| Self-host clone       | `fuse-open-runtime` in GITHUB_README | remote `split-open-runtime` exists                  | **OK contingent** on sync script health             |
+| Self-host clone       | `The-New-Fuse` in GITHUB_README | remote `split-open-runtime` exists                  | **OK contingent** on sync script health             |
 | package name          | `@the-new-fuse/core` in demos        | `packages/core` name matches                        | **OK name / FAIL API surface**                      |
 | Directives canonicity | Two files with PROTOCOL ID           | See §2                                              | **Resolved structurally**                           |
 
@@ -68,7 +68,7 @@ Confirmed hits beyond Tier A:
   returns **HTTP 301 → The-New-Fuse** (GitHub rename redirect). API resolves
   `full_name: whodaniel/The-New-Fuse`. Document next-gen as **historical slug /
   redirect alias** in lineage — never as current canonical name.
-- `fuse-open-runtime` confirmed public and live.
+- `The-New-Fuse` confirmed public and live.
 
 ---
 
@@ -77,7 +77,7 @@ Confirmed hits beyond Tier A:
 | Doc                | Audience                                             | Tension                                                                      |
 | ------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `README.md`        | GitHub default render                                | Honest local-dev + monorepo + license caution                                |
-| `GITHUB_README.md` | Agent/marketing mirror (NOT auto-rendered by GitHub) | MIT badge, Node 22, TS 5.4, npm install fantasy API, clone fuse-open-runtime |
+| `GITHUB_README.md` | Agent/marketing mirror (NOT auto-rendered by GitHub) | MIT badge, Node 22, TS 5.4, npm install fantasy API, clone The-New-Fuse |
 
 **Policy options (need Go):**
 

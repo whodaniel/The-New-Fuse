@@ -150,7 +150,7 @@ const GITHUB_REPOS = [
   {
     owner: 'whodaniel',
     repo: 'fuse',
-    label: 'whodaniel/fuse',
+    label: 'whodaniel/The-New-Fuse',
     category: 'repo_created',
   },
   {

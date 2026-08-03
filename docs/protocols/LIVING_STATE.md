@@ -29,6 +29,8 @@ remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
 - [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
 - [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
 - [✅] 2026-07-28T10:44:05.760Z System cron entries installed:
+- [✅] 2026-08-03T20:47:39.852Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   voice-beam-watchdog.sh

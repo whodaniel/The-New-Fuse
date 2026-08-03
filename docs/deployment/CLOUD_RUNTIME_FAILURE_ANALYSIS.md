@@ -92,7 +92,7 @@ git push origin main
 
 **Step 1: Add Dockerfile**
 
-1. Go to: https://github.com/whodaniel/fuse
+1. Go to: https://github.com/whodaniel/The-New-Fuse
 2. Click "Add file" → "Create new file"
 3. Filename: `Dockerfile`
 4. Copy content from local file:
@@ -107,7 +107,7 @@ cat ./Dockerfile
 
 **Step 2: Update cloud_runtime.toml**
 
-1. Go to: https://github.com/whodaniel/fuse/blob/main/cloud_runtime.toml
+1. Go to: https://github.com/whodaniel/The-New-Fuse/blob/main/cloud_runtime.toml
 2. Click pencil icon (Edit)
 3. Line 42: Change `dockerfilePath = "apps/frontend/Dockerfile"` To:
    `dockerfilePath = "Dockerfile"`
@@ -121,7 +121,7 @@ cat ./Dockerfile
 gh auth status
 
 # If authenticated, create commits via API
-gh api repos/whodaniel/fuse/contents/Dockerfile \
+gh api repos/whodaniel/The-New-Fuse/contents/Dockerfile \
   -X PUT \
   -f message="Add root Dockerfile" \
   -f content="$(cat Dockerfile | base64)" \
@@ -161,8 +161,8 @@ Possible causes:
 
 After pushing to GitHub, verify:
 
-- [ ] https://github.com/whodaniel/fuse - `Dockerfile` exists at root
-- [ ] https://github.com/whodaniel/fuse/blob/main/cloud_runtime.toml - Line 42 says
+- [ ] https://github.com/whodaniel/The-New-Fuse - `Dockerfile` exists at root
+- [ ] https://github.com/whodaniel/The-New-Fuse/blob/main/cloud_runtime.toml - Line 42 says
       `dockerfilePath = "Dockerfile"`
 - [ ] CloudRuntime dashboard shows "Building" status
 - [ ] CloudRuntime build logs show successful Docker build

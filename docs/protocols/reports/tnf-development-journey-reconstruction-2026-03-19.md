@@ -18,9 +18,9 @@ surfaces.
 
 ## Verified Anchor Dates
 
-1. `whodaniel/fuse` GitHub repository created: `2025-04-11T20:44:10Z`
-   - Source: GitHub repository metadata for `whodaniel/fuse`
-   - URL: `https://github.com/whodaniel/fuse`
+1. `whodaniel/The-New-Fuse` GitHub repository created: `2025-04-11T20:44:10Z`
+   - Source: GitHub repository metadata for `whodaniel/The-New-Fuse`
+   - URL: `https://github.com/whodaniel/The-New-Fuse`
 2. Original `clawdbot/clawdbot` GitHub path permanently redirects to
    `openclaw/openclaw`
    - Interpretation: the original ClawdBot repo path was renamed rather than
@@ -31,7 +31,7 @@ surfaces.
    - Source: GitHub repository metadata for `openclaw/openclaw`
    - URL: `https://github.com/openclaw/openclaw`
 4. Verified precedence:
-   - `whodaniel/fuse` predates the original ClawdBot/OpenClaw repository by
+   - `whodaniel/The-New-Fuse` predates the original ClawdBot/OpenClaw repository by
      `226 days, 13 hours, 32 minutes, 37 seconds`
 5. Earliest currently visible commit dates in the local TNF git history:
    - `2025-05-20T14:11:42-04:00` `fddd7556409bc64501cd70769810f80f7f519330`
@@ -145,7 +145,7 @@ Proposed event categories:
 
 ## Conclusion
 
-The evidence already supports a defensible claim that TNF and `whodaniel/fuse`
+The evidence already supports a defensible claim that TNF and `whodaniel/The-New-Fuse`
 were in active development well before the original ClawdBot/OpenClaw repository
 appeared on GitHub. The next stage is to convert that proof into a
 machine-readable TNF-native timeline rather than leaving it scattered across git

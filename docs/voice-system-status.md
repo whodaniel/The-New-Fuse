@@ -108,6 +108,14 @@ Restart the bridge after changes: `./tnf voice down && ./tnf voice up --with-lis
 
 ## Pause / resume the beam
 
+**Default state: OFF** — The beam must be activated via the "ACTIVATE BEAM" button in the browser UI or via the CLI before audio response is enabled.
+
+To enable responses immediately on activate (instead of requiring explicit click):
+
+```bash
+export VOICE_RESPONSE_AUDIO_DEFAULT_ON=1
+```
+
 Stop mic capture and injection without tearing down the voice server:
 
 ```bash

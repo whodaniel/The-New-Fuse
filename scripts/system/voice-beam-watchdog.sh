@@ -22,14 +22,14 @@ INTERVAL="${VOICE_BEAM_WATCHDOG_INTERVAL_SECONDS:-8}"
 export VOICEBRIDGE_PROFILE="$PROFILE"
 export VOICEBRIDGE_PROJECT_ROOT="$ROOT"
 export VOICEBRIDGE_STATE_DIR="$STATE_DIR"
-export VOICE_RESPONSE_AUDIO_DEFAULT_ON="${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-1}"
+export VOICE_RESPONSE_AUDIO_DEFAULT_ON="${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-0}"
 export VOICE_RESPONSE_AUDIO_AUTO_HEAL="${VOICE_RESPONSE_AUDIO_AUTO_HEAL:-1}"
 export VOICE_INKY_VOICE="${VOICE_INKY_VOICE:-Daniel}"
 export VOICE_RESPONSE_AUDIO_VOICE="${VOICE_RESPONSE_AUDIO_VOICE:-$VOICE_INKY_VOICE}"
 export VOICE_INKY_FRONT_DOOR_TTS="${VOICE_INKY_FRONT_DOOR_TTS:-1}"
 export LISTEN_SILENCE_END_SECONDS="${LISTEN_SILENCE_END_SECONDS:-1.4}"
 export VOICE_AGENT_IDLE_FLUSH_SECONDS="${VOICE_AGENT_IDLE_FLUSH_SECONDS:-8.0}"
-export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-1}"
+export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-0}"
 
 # Load local + cloud KWS ingest so healed voice_server keeps forwarding ON.
 if command -v voicebridge_use_profile >/dev/null 2>&1; then
@@ -45,9 +45,9 @@ if [[ -z "${VOICE_KWS_INGEST_URL:-}" && "${VOICE_KWS_ALWAYS_ON}" == "1" ]]; then
 fi
 
 mkdir -p "$STATE_DIR"
-# Beam always-on implies reply audio on.
-touch "$STATE_DIR/voice_response_audio_enabled"
-rm -f "$STATE_DIR/voice_mic_paused" 2>/dev/null || true
+# Beam is OFF by default. Do NOT create the response-audio enabled flag automatically.
+# The operator activates the beam explicitly (e.g., via the browser /activate endpoint
+# or by setting VOICE_RESPONSE_AUDIO_DEFAULT_ON=1), which creates the file then.
 
 log() {
   echo "[$(date '+%H:%M:%S')] [beam-watchdog/$PROFILE] $*" | tee -a "$LOG"

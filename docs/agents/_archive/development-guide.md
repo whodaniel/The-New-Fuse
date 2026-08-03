@@ -116,7 +116,7 @@ Before starting development, clearly define:
 1. Install prerequisites:
    ```bash
    # Clone The New Fuse repository
-   git clone https://github.com/whodaniel/fuse.git
+   git clone https://github.com/whodaniel/The-New-Fuse.git
    cd fuse
    
    # Install dependencies

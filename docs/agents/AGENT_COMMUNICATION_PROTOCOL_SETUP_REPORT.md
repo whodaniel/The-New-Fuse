@@ -686,7 +686,7 @@ documentation.
 - **Documentation**: `<repo-root>/docs/`
 - **Examples**: `<repo-root>/examples/`
 - **Tests**: `<repo-root>/test-suite/`
-- **GitHub Issues**: https://github.com/whodaniel/fuse/issues
+- **GitHub Issues**: https://github.com/whodaniel/The-New-Fuse/issues
 
 ---
 

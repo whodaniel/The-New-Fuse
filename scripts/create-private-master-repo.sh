@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 <owner/repo>"
-  echo "Example: $0 whodaniel/fuse-master"
+  echo "Example: $0 whodaniel/The-New-Fuse-master"
   exit 1
 fi
 

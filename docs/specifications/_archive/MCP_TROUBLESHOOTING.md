@@ -148,6 +148,6 @@ If the above steps don't resolve the issue:
 
 If you're still experiencing issues after trying these steps:
 
-1. Check the [GitHub Issues](https://github.com/whodaniel/fuse/issues) for similar problems
+1. Check the [GitHub Issues](https://github.com/whodaniel/The-New-Fuse/issues) for similar problems
 2. Join the [Discord community](https://discord.gg/thenewfuse) for real-time support
 3. Create a new issue with detailed information about your environment and the steps you've taken

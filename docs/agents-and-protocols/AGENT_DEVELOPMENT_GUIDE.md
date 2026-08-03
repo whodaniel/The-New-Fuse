@@ -915,7 +915,7 @@ See the `<repo-root>/examples/` directory for complete example implementations:
 
 For questions and support:
 
-- GitHub Issues: https://github.com/whodaniel/fuse/issues
+- GitHub Issues: https://github.com/whodaniel/The-New-Fuse/issues
 - Documentation: <repo-root>/docs/
 - Community: Join our Discord/Slack
 

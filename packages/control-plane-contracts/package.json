@@ -1,7 +1,7 @@
 {
   "name": "@the-new-fuse/control-plane-contracts",
   "version": "1.0.0",
-  "description": "Public TypeScript contracts for TNF proprietary control-plane components (Master Clock, Broker Agent). Safe to ship in fuse-open-runtime.",
+  "description": "Public TypeScript contracts for TNF proprietary control-plane components (Master Clock, Broker Agent). Safe to ship in The-New-Fuse.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

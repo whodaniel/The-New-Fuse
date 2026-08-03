@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO_URL="https://github.com/whodaniel/fuse-open-runtime.git"
+DEFAULT_REPO_URL="https://github.com/whodaniel/The-New-Fuse.git"
 DEFAULT_REF="main"
 DEFAULT_INSTALL_ROOT="${HOME}/.tnf-cli"
 DEFAULT_BIN_DIR="${HOME}/.local/bin"
@@ -26,7 +26,7 @@ Usage:
 
 Options:
   --from-local           Install from the current repository directory.
-  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/fuse-open-runtime.git)
+  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/The-New-Fuse.git)
   --ref <git-ref>        Git branch/tag/sha to install (default: main)
   --install-root <dir>   Clone/update root for remote install (default: ~/.tnf-cli)
   --bin-dir <dir>        Target bin directory for wrappers (default: ~/.local/bin)
