@@ -1,9 +1,9 @@
 /**
  * Hermes-parity gap closers that map onto existing TNF capability.
  *
- * These are thin, read-mostly top-level verbs so `hermes <name>` users land on
- * a real TNF path instead of a "command not found" brick wall. Heavy Hermes
- * surfaces (channels, UI skins, etc.) stay out — they need real product work.
+ * Thin / honest top-level verbs so `hermes <name>` users land on a real TNF
+ * path instead of "command not found". Channel verbs are entrypoints that
+ * point at live TNF surfaces (telegram today) rather than fake integrations.
  */
 
 import chalk from 'chalk';
@@ -24,6 +24,29 @@ export const HERMES_PARITY_GAP_COMMANDS = [
   'update',
   'logout',
   'approvals',
+  // Round 2 — remaining honest wrappers
+  'backup',
+  'checkpoints',
+  'console',
+  'dashboard',
+  'lsp',
+  'migrate',
+  'secrets',
+  'profile',
+  'portal',
+  'proxy',
+  'slack',
+  'whatsapp',
+  'whatsapp-cloud',
+  'bundles',
+  'curator',
+  'pairing',
+  'pets',
+  'skin',
+  'egress',
+  'fallback',
+  'import-agent',
+  'moa',
 ] as const;
 
 /** Commander aliases attached onto existing TNF top-level verbs. */
@@ -32,6 +55,9 @@ export const HERMES_PARITY_GAP_ALIASES: Record<string, string> = {
   insights: 'growth-audit',
   'computer-use': 'browser-control',
   setup: 'onboard',
+  console: 'tui',
+  dashboard: 'local-ui',
+  backup: 'export',
 };
 
 function attachAlias(program: Command, existingName: string, alias: string): boolean {
@@ -44,8 +70,19 @@ function attachAlias(program: Command, existingName: string, alias: string): boo
   return true;
 }
 
+function registerGuide(program: Command, name: string, description: string, lines: string[]): void {
+  if (findCommand(program, name)) return;
+  program
+    .command(name)
+    .description(description)
+    .action(() => {
+      console.log(chalk.bold(`\nTNF ${name}\n`));
+      for (const line of lines) console.log(`  ${line}`);
+      console.log('');
+    });
+}
+
 export function registerHermesParityGapCommands(program: Command, repoRoot: string): void {
-  // 1:1 rename aliases onto incumbents (Commander .alias).
   for (const [alias, existing] of Object.entries(HERMES_PARITY_GAP_ALIASES)) {
     attachAlias(program, existing, alias);
   }
@@ -57,7 +94,6 @@ export function registerHermesParityGapCommands(program: Command, repoRoot: stri
       .command('model')
       .description('List / inspect models (Hermes parity; delegates to `tnf ai models`)')
       .action(async () => {
-        // Prefer re-entering the existing AI models path without nesting CLI.
         const { LLMClient } = await import('../utils/llm-client.js');
         const client = await LLMClient.create();
         console.log(chalk.blue('\nFetching available models...'));
@@ -283,4 +319,168 @@ export function registerHermesParityGapCommands(program: Command, repoRoot: stri
         console.log('');
       });
   }
+
+  // --- Round 2: remaining gaps ---
+
+  if (!findCommand(program, 'checkpoints')) {
+    program
+      .command('checkpoints')
+      .description('Session checkpoints (Hermes parity; lists TNF sessions)')
+      .option('--json', 'Emit machine-readable JSON')
+      .action(async (opts: { json?: boolean } = {}) => {
+        const { SessionManagerService } = await import('../services/SessionManagerService.js');
+        const mgr = new SessionManagerService();
+        const sessions = mgr.list();
+        if (opts.json) {
+          console.log(JSON.stringify({ sessions }, null, 2));
+          return;
+        }
+        console.log(chalk.bold('\nTNF Checkpoints (sessions)\n'));
+        if (sessions.length === 0) {
+          console.log(chalk.dim('  No sessions found. Use `tnf session` / `tnf tui`.'));
+        } else {
+          for (const s of sessions) {
+            console.log(
+              `  ${chalk.cyan(s.name || s.id)} (${s.provider}/${s.model}): ${s.messageCount} msgs`
+            );
+          }
+        }
+        console.log(chalk.dim('\n  Export: tnf export [sessionId] --output <path>\n'));
+      });
+  }
+
+  if (!findCommand(program, 'lsp')) {
+    program
+      .command('lsp')
+      .description('LSP status (Hermes parity; same as `tnf debug lsp`)')
+      .option('--json', 'Emit machine-readable JSON')
+      .action(async (opts: { json?: boolean } = {}) => {
+        const { DebugService } = await import('../services/DebugService.js');
+        const debugService = new DebugService();
+        const lsp = debugService.debugLSP();
+        if (opts.json) {
+          console.log(JSON.stringify(lsp, null, 2));
+          return;
+        }
+        console.log(chalk.bold('\nLSP Status\n'));
+        console.log(`  Available: ${lsp.available ? chalk.green('yes') : chalk.red('no')}`);
+        if (lsp.path) console.log(`  Path: ${chalk.dim(lsp.path)}`);
+        if (lsp.version) console.log(`  Version: ${chalk.dim(lsp.version)}`);
+        if (lsp.error) console.log(`  Error: ${chalk.red(lsp.error)}`);
+        console.log('');
+      });
+  }
+
+  if (!findCommand(program, 'migrate')) {
+    program
+      .command('migrate')
+      .description('Data migrate entrypoint (Hermes parity; runs `tnf db migrate`)')
+      .action(async () => {
+        const { DatabaseService } = await import('../services/DatabaseService.js');
+        const db = new DatabaseService();
+        const result = await db.migrate();
+        console.log(chalk.green(`✅ Migrated ${result.migrated} files`));
+        for (const err of result.errors) console.log(chalk.yellow(err));
+      });
+  }
+
+  if (!findCommand(program, 'secrets')) {
+    program
+      .command('secrets')
+      .description('Secrets guidance (Hermes parity; no silent secret mutation)')
+      .action(() => {
+        console.log(chalk.bold('\nTNF Secrets\n'));
+        console.log('  Inspect / rotate with live operator confirmation:');
+        console.log('    tnf authority status');
+        console.log('    tnf security --sweep');
+        console.log('    tnf config resolved');
+        console.log('  OS keystore / env files are never rewritten by this verb.');
+        console.log('');
+      });
+  }
+
+  if (!findCommand(program, 'profile')) {
+    program
+      .command('profile')
+      .description('Operator profile / config view (Hermes parity)')
+      .action(() => {
+        console.log(chalk.bold('\nTNF Profile\n'));
+        console.log('  Config:   tnf config resolved');
+        console.log('  Browser:  tnf browser profiles   (if browser stack enabled)');
+        console.log('  Session:  tnf session list');
+        console.log('');
+      });
+  }
+
+  // Channels — honest entrypoints (telegram is live; others route guidance)
+  registerGuide(program, 'portal', 'Portal / gateway entry (Hermes parity)', [
+    'TNF gateway:  tnf gateway',
+    'Relay:        tnf relay start | tnf relay monitor',
+    'Local UI:     tnf local-ui',
+  ]);
+  registerGuide(program, 'proxy', 'Proxy / relay entry (Hermes parity)', [
+    'Relay core:   tnf relay start',
+    'Monitor:      tnf relay monitor',
+    'Gateway:      tnf gateway',
+  ]);
+  registerGuide(program, 'slack', 'Slack channel status (Hermes parity)', [
+    'Native Slack bot is not shipped as a first-party TNF service yet.',
+    'Live messaging channel today: tnf telegram status|start|send',
+    'OpenClaw route (if installed): tnf openclaw / tnf claw',
+  ]);
+  registerGuide(program, 'whatsapp', 'WhatsApp channel status (Hermes parity)', [
+    'Native WhatsApp bot is not a first-party TNF service yet.',
+    'Live messaging channel today: tnf telegram status|start|send',
+    'OpenClaw route (if installed): tnf openclaw / tnf claw',
+  ]);
+  registerGuide(program, 'whatsapp-cloud', 'WhatsApp Cloud API status (Hermes parity)', [
+    'WhatsApp Cloud API is not a first-party TNF service yet.',
+    'Live messaging channel today: tnf telegram status|start|send',
+    'OpenClaw route (if installed): tnf openclaw / tnf claw',
+  ]);
+
+  // Extension / niche Hermes verbs — honest roadmap stubs
+  registerGuide(program, 'bundles', 'Skill / plugin bundles (Hermes parity)', [
+    'Skills:   tnf skill list',
+    'Plugins:  tnf plugins --help',
+    'Skill-bank: tnf skill-bank --help',
+  ]);
+  registerGuide(program, 'curator', 'Curator entry (Hermes parity)', [
+    'No separate curator daemon yet. Closest surfaces:',
+    '  tnf assimilate',
+    '  tnf growth-audit',
+    '  tnf parity audit',
+  ]);
+  registerGuide(program, 'pairing', 'Device / agent pairing (Hermes parity)', [
+    'Authority / identity: tnf authority status',
+    'Agent register:       tnf register --help',
+  ]);
+  registerGuide(program, 'pets', 'Pets / companion agents (Hermes parity)', [
+    'TNF does not ship Hermes-style pets. Use agent roster:',
+    '  tnf agents-specs --search <name>',
+    '  tnf agents --help',
+  ]);
+  registerGuide(program, 'skin', 'UI skin / theme (Hermes parity)', [
+    'Themes:  tnf theme --help',
+    'TUI:     tnf tui',
+    'Splash:  tnf splash --theme <name>',
+  ]);
+  registerGuide(program, 'egress', 'Egress / outbound policy (Hermes parity)', [
+    'Security sweeps: tnf security --sweep',
+    'Authority:       tnf authority status',
+  ]);
+  registerGuide(program, 'fallback', 'Model fallback guidance (Hermes parity)', [
+    'Models:   tnf model   /  tnf ai models',
+    'Config:   tnf config resolved',
+  ]);
+  registerGuide(program, 'import-agent', 'Import agent specs (Hermes parity)', [
+    'List specs:  tnf agents-specs',
+    'Classify:    tnf agents-classify --help',
+    'Register:    tnf register --help',
+  ]);
+  registerGuide(program, 'moa', 'Mixture-of-agents entry (Hermes parity)', [
+    'TNF multi-agent: tnf agents-run --help',
+    'Orchestrate:     tnf mapreduce --help',
+    'Parity:          tnf parity audit',
+  ]);
 }

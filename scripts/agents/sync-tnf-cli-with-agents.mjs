@@ -128,6 +128,9 @@ function getTnfCliCommands() {
     insights: 'growth-audit',
     'computer-use': 'browser-control',
     setup: 'onboard',
+    console: 'tui',
+    dashboard: 'local-ui',
+    backup: 'export',
   };
   for (const [alias, existing] of Object.entries(ALIASES)) {
     if (commands.has(existing)) commands.add(alias);
