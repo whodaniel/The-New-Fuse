@@ -29,6 +29,9 @@ must not be mass-deleted without verification evidence. See
 ## ⚡ Active Steps
 
 - [✅] **2026-08-03 Turn Zero reconcile — commit-gate starvation fixed** —
+- [✅] 2026-08-03T21:54:46.816Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+
   `turn-end.cjs` + `sync-handoff-cache.cjs` demote operator commit notices out
   of `IMMEDIATE_TASKS`. PR #70 marked merged/cleared above.
 

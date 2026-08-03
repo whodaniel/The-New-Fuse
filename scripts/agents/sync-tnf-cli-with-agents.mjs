@@ -124,9 +124,27 @@ function getTnfCliCommands() {
   // Known Hermes aliases that TNF implements under a near-name / Commander alias.
   const ALIASES = {
     skills: 'skill', // tnf skill (.alias('skills'))
+    sessions: 'session',
+    insights: 'growth-audit',
+    'computer-use': 'browser-control',
+    setup: 'onboard',
   };
   for (const [alias, existing] of Object.entries(ALIASES)) {
     if (commands.has(existing)) commands.add(alias);
+  }
+
+  // Commands registered inside registerHermesParityGapCommands (not via program.command in cli.ts).
+  if (src.includes('registerHermesParityGapCommands')) {
+    const gapFile = join(repoRoot, 'packages', 'tnf-cli', 'src', 'commands', 'hermes-parity-gaps.ts');
+    if (existsSync(gapFile)) {
+      const gapSrc = readFileSync(gapFile, 'utf8');
+      const m = gapSrc.match(/HERMES_PARITY_GAP_COMMANDS\s*=\s*\[([\s\S]*?)\]\s*as\s*const/);
+      if (m) {
+        for (const name of m[1].matchAll(/['"]([a-z][a-z0-9-]*)['"]/g)) {
+          commands.add(name[1]);
+        }
+      }
+    }
   }
 
   return [...commands].sort();

@@ -30,6 +30,7 @@ import { registerBrowserCommand } from './commands/browser.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
+import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
@@ -19098,6 +19099,10 @@ async function main(): Promise<void> {
     await runPassthrough(implicitArgs.cliName, implicitArgs.args);
     return;
   }
+  // Hermes-parity gap closers (aliases + thin wrappers) must run after every
+  // incumbent top-level command is registered so attachAlias can find them.
+  registerHermesParityGapCommands(program, repoRoot);
+
   // Fail fast and precisely on a duplicate registration. Commander's own
   // duplicate error is raised at module load with no context, which is how a
   // stray `doctor` silently disabled every unattended cycle for five days.
