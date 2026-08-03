@@ -13,7 +13,7 @@
 ## **🚀 WHAT WE DELIVERED:**
 
 ### **1. Pull Request Ready for Immediate Merge:**
-**URL**: https://github.com/whodaniel/fuse/pull/new/feature/safe-changes-extraction
+**URL**: https://github.com/whodaniel/The-New-Fuse/pull/new/feature/safe-changes-extraction
 
 **Contains 22 verified safe improvements:**
 - ✅ 17 comprehensive documentation files (guides, reports, analysis)
@@ -70,7 +70,7 @@
 ## **🎉 IMMEDIATE NEXT STEPS:**
 
 1. **CREATE THE PULL REQUEST** (5 minutes)
-   - Visit: https://github.com/whodaniel/fuse/pull/new/feature/safe-changes-extraction
+   - Visit: https://github.com/whodaniel/The-New-Fuse/pull/new/feature/safe-changes-extraction
    - Title: "Safe changes extraction: docs + critical fixes"
    - Merge immediately - contains only verified improvements
 

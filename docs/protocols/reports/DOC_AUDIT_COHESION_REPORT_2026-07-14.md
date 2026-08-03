@@ -63,7 +63,7 @@ on policy FAIL items)
 | A2  | FAIL     | `GITHUB_README.md` vs `.nvmrc`                     | Badge claims **Node.js 22+**; `.nvmrc` is **v20.20.2**.                                                                                                                                                                                       |
 | A3  | FAIL     | `GITHUB_README.md` vs `packages/core`              | Markets `import { Agent, Harness, MCPClient } from '@the-new-fuse/core'` as installable API. Package name `@the-new-fuse/core` exists, but `packages/core/src/index.ts` does **not** export the marketed `Harness` / quick-start API surface. |
 | A4  | FAIL     | `docs/REPO_SEPARATION.md`, `scripts/sync-repos.sh` | TL;DR / comments still name combined monorepo `whodaniel/the-new-fuse-next-gen`; actual origin is `whodaniel/The-New-Fuse`.                                                                                                                   |
-| A5  | FAIL     | `docs/REPO_SEPARATION.md`                          | Two `###` headings both titled `whodaniel/The-New-Fuse` (combined monorepo **and** open-runtime minus proprietary) — identity collision with `fuse-open-runtime`.                                                                             |
+| A5  | FAIL     | `docs/REPO_SEPARATION.md`                          | Two `###` headings both titled `whodaniel/The-New-Fuse` (combined monorepo **and** open-runtime minus proprietary) — identity collision with `The-New-Fuse`.                                                                             |
 
 ### WARN
 
@@ -131,7 +131,7 @@ dist, submodule noise). Split work:
 1. Replace `the-new-fuse-next-gen` → `The-New-Fuse` in `docs/REPO_SEPARATION.md`
    TL;DR and `scripts/sync-repos.sh` header comments.
 2. Disambiguate REPO_SEPARATION headings: combined = `The-New-Fuse`; published
-   open artifact = `fuse-open-runtime`.
+   open artifact = `The-New-Fuse`.
 3. Align Node engine story: either bump `.nvmrc` to 22+ **or** change
    `GITHUB_README.md` badge to 20+ (verify engines fields in root `package.json`
    first).

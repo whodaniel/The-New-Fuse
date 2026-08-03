@@ -7,9 +7,9 @@ Use this reference when the task is not only "coordinate sessions" but
 
 Primary protocol artifact:
 
-1. `/Users/<owner>/worktrees/fuse-structural-reconstruction/fuse-open-runtime/docs/protocols/bridges/tnf-skill-sequence-orchestration-fiber.yml`
+1. `/Users/<owner>/worktrees/fuse-structural-reconstruction/The-New-Fuse/docs/protocols/bridges/tnf-skill-sequence-orchestration-fiber.yml`
 2. companion report:
-   `/Users/<owner>/worktrees/fuse-structural-reconstruction/fuse-open-runtime/docs/protocols/bridges/reports/tnf-skill-sequence-orchestration-fiber.md`
+   `/Users/<owner>/worktrees/fuse-structural-reconstruction/The-New-Fuse/docs/protocols/bridges/reports/tnf-skill-sequence-orchestration-fiber.md`
 
 ## What The Fiber Connects
 

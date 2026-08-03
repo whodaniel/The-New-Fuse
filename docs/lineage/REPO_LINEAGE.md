@@ -11,7 +11,7 @@
 | Layer                      | Repos                                                     | Purpose                                      |
 | -------------------------- | --------------------------------------------------------- | -------------------------------------------- |
 | **L1 — Live dev**          | `The-New-Fuse`                                            | Combined monorepo; all development           |
-| **L2 — Live distribution** | `fuse-open-runtime`, `fuse-control-plane`                 | Published via `pnpm sync:repos`              |
+| **L2 — Live distribution** | `The-New-Fuse`, `fuse-control-plane`                 | Published via `pnpm sync:repos`              |
 | **L3 — Lineage archives**  | `fuse`, `fuse-master`, `fuse-mirror`, `NexusOrchestrator` | Read-only history; archive after parity PASS |
 | **L4 — Cold backup**       | `docs/lineage/bundles/*.bundle`                           | Offline git bundles before GitHub archive    |
 
@@ -20,11 +20,11 @@
 | Remote                | GitHub                       | Role                                                                    |
 | --------------------- | ---------------------------- | ----------------------------------------------------------------------- |
 | `origin`              | whodaniel/The-New-Fuse       | **Canonical development** (slug `the-new-fuse-next-gen` redirects here) |
-| `split-open-runtime`  | whodaniel/fuse-open-runtime  | Open distribution (~90%)                                                |
-| `split-control-plane` | whodaniel/fuse-control-plane | Proprietary distribution (~10%)                                         |
-| `old-fuse`            | whodaniel/fuse               | Legacy public monorepo                                                  |
-| `private-origin`      | whodaniel/fuse-master        | Legacy private snapshot                                                 |
-| `split-mirror`        | whodaniel/fuse-mirror        | Structural mirror                                                       |
+| `split-open-runtime`  | whodaniel/The-New-Fuse  | Open distribution (~90%)                                                |
+| `split-control-plane` | whodaniel/The-New-Fuse-control-plane | Proprietary distribution (~10%)                                         |
+| `old-fuse`            | whodaniel/The-New-Fuse               | Legacy public monorepo                                                  |
+| `private-origin`      | whodaniel/The-New-Fuse-master        | Legacy private snapshot                                                 |
+| `split-mirror`        | whodaniel/The-New-Fuse-mirror        | Structural mirror                                                       |
 | `nexus-orchestrator`  | whodaniel/NexusOrchestrator  | Legacy 3D viz (superseded by monorepo)                                  |
 
 ## Parity audit status
@@ -32,7 +32,7 @@
 | Repo                       | Verdict                                                              | Report                                                                                               |
 | -------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | The-New-Fuse (ex next-gen) | PASS                                                                 | [REPO_PARITY_the-new-fuse-next-gen.md](./REPO_PARITY_the-new-fuse-next-gen.md) (historical filename) |
-| fuse-open-runtime          | PASS\*                                                               | [REPO_PARITY_fuse-open-runtime.md](./REPO_PARITY_fuse-open-runtime.md)                               |
+| The-New-Fuse          | PASS\*                                                               | [REPO_PARITY_The-New-Fuse.md](./REPO_PARITY_The-New-Fuse.md)                               |
 | fuse-control-plane         | PASS                                                                 | [REPO_PARITY_fuse-control-plane.md](./REPO_PARITY_fuse-control-plane.md)                             |
 | fuse                       | PASS (archived 2026-06-22; cold backup via fuse-mirror.bundle alias) | [REPO_PARITY_fuse.md](./REPO_PARITY_fuse.md)                                                         |
 | fuse-master                | PASS (archived 2026-06-22)                                           | [REPO_PARITY_fuse-master.md](./REPO_PARITY_fuse-master.md)                                           |

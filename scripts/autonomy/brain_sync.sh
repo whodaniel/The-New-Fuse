@@ -66,7 +66,7 @@ gh release create "$RELEASE_TAG" "$TMP_DIR/$SNAPSHOT_NAME" \
     --title "TNF Brain Snapshot: $TIMESTAMP" \
     --notes "Automated archival backup. Merkle Root: $ROOT_HASH"
 
-echo "✅ Remote backup complete: https://github.com/whodaniel/fuse/releases/tag/$RELEASE_TAG"
+echo "✅ Remote backup complete: https://github.com/whodaniel/The-New-Fuse/releases/tag/$RELEASE_TAG"
 
 # 5. Local Cleanup
 echo "🧹 Cleaning up temporary files..."

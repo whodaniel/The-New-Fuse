@@ -1,4 +1,0 @@
-
-> @the-new-fuse/resource-registry@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/resource-registry
-> NODE_OPTIONS='--max-old-space-size=4096' tsc
-

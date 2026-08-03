@@ -33,6 +33,17 @@ function generateUuid() {
   });
 }
 
+function parsePorcelainLine(line) {
+  // XY + space + path. Some environments emit a single-space form (`M path`);
+  // naive slice(3) then truncates the first path character (`ata/...`).
+  if (!line || line.length < 3) return null;
+  const status = line.slice(0, 2);
+  const filePath = line.charAt(2) === ' ' ? line.slice(3) : line.slice(2).trimStart();
+  if (!filePath) return null;
+  const normalizedPath = filePath.includes(' -> ') ? filePath.split(' -> ').pop() : filePath;
+  return { status, filePath: normalizedPath };
+}
+
 function getGitStatus() {
   const output = runGit('git status --short', TNF_ROOT_DIR);
   if (!output) return { changed: [], added: [], deleted: [] };
@@ -43,13 +54,25 @@ function getGitStatus() {
   const deleted = [];
 
   for (const line of lines) {
-    const status = line.slice(0, 2);
-    const filePath = line.slice(3);
-    if (status.includes('D')) {
+    const parsed = parsePorcelainLine(line);
+    if (!parsed) continue;
+    const { status, filePath } = parsed;
+    // Ignore build artifacts in handoff inventories — they blow up changed_paths
+    // counts and create phantom "Deleted: N" floods when dist/ is cleaned.
+    if (
+      filePath.includes('node_modules/') ||
+      filePath.includes('/dist/') ||
+      filePath.endsWith('/dist') ||
+      filePath.startsWith('dist/')
+    ) {
+      continue;
+    }
+    if (status.includes('D') && !status.includes('A') && !status.includes('?')) {
       deleted.push(filePath);
-    } else if (status.includes('A')) {
+    } else if (status.includes('A') || status.includes('?')) {
+      // Untracked (`??`) must count as added — previously fell into `changed`.
       added.push(filePath);
-    } else {
+    } else if (status.trim()) {
       changed.push(filePath);
     }
   }
@@ -272,7 +295,13 @@ function detectCompletedSteps(gitStatus, newAgents, deletedAgents, TNF_ROOT_DIR)
 
   const crontabContent = execSync('crontab -l 2>/dev/null || echo ""', { encoding: 'utf8' });
   if (crontabContent.includes('tnf-frontend-tester-cycle') || crontabContent.includes('tnf-fleet-health-probe-cycle')) {
-    NF('System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)');
+    // Only record once — crontab presence is steady-state, not a per-turn event.
+    // Without this guard, every turn-end spams Active Steps with the same line.
+    const livingStatePath = path.join(TNF_ROOT_DIR, 'docs/protocols/LIVING_STATE.md');
+    const living = fs.existsSync(livingStatePath) ? fs.readFileSync(livingStatePath, 'utf8') : '';
+    if (!living.includes('System cron entries installed: tnf-frontend-tester')) {
+      NF('System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)');
+    }
   }
 
   const archiveCreated = gitStatus.added.some(
@@ -336,8 +365,31 @@ function buildWorkSummary(gitStatus, newAgents, deletedAgents, gitLog) {
   return summary.length > 0 ? summary : ['Session completed - see git log for details'];
 }
 
+function isOperatorNotice(action) {
+  const text = String(action || '');
+  return (
+    text.includes('NEEDS LIVE OPERATOR CONFIRMATION') ||
+    text.startsWith('NOTICE:') ||
+    text.startsWith('⚠️ NEEDS LIVE OPERATOR')
+  );
+}
+
+function readPriorNextActions() {
+  try {
+    const raw = JSON.parse(fs.readFileSync(SESSION_HANDOFF_JSON_PATH, 'utf8'));
+    return Array.isArray(raw?.next_actions) ? raw.next_actions.map(String).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+}
+
 function buildNextActions(gitStatus) {
+  // Actionable queue first; operator notices always last. A dirty tree used to
+  // emit ONLY the commit-gate notice, which agents treated as the entire
+  // mission and stalled autonomous work even though AGENTS.md says the line is
+  // a notice, not a standing command.
   const actions = [];
+  const notices = [];
 
   if (gitStatus.changed.some((f) => f.includes('docs/protocols/LIVING_STATE.md'))) {
     actions.push('Review updated LIVING_STATE.md for new active steps');
@@ -347,6 +399,18 @@ function buildNextActions(gitStatus) {
     actions.push('Run check-agent-registration.cjs to verify agent ledger is current');
   }
 
+  for (const prior of readPriorNextActions()) {
+    if (isOperatorNotice(prior)) continue;
+    if (prior === 'Begin Turn Zero for next session') continue;
+    if (prior.startsWith('Review updated LIVING_STATE.md') && actions.some((a) => a.startsWith('Review updated LIVING_STATE.md'))) {
+      continue;
+    }
+    // Deduplicate near-identical carry-forwards (same stem before an em-dash detail).
+    const stem = prior.split(' — ')[0].split(' - ')[0].trim();
+    if (actions.some((a) => a === prior || a.startsWith(stem))) continue;
+    actions.push(prior);
+  }
+
   const uncommitted = gitStatus.changed.concat(gitStatus.added).filter((f) =>
     !f.includes('.git') && !f.includes('node_modules') && !f.includes('dist/')
   );
@@ -354,19 +418,19 @@ function buildNextActions(gitStatus) {
     // Worded deliberately as a non-actionable notice, not an instruction: per
     // docs/core/AGENTS.md ("Commits and Pushes Require Live Operator
     // Confirmation") and DIRECTIVES.md D1, no automation or agent may treat
-    // this line as authorization to run `git commit` on its own. An agent
-    // reading this next_action must stop and get a live, current-session
-    // confirmation from the operator before committing anything.
-    actions.push(
+    // this line as authorization to run `git commit` on its own.
+    notices.push(
       `⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): ${uncommitted.length} file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation`
     );
   }
 
   if (actions.length === 0) {
-    actions.push('Begin Turn Zero for next session');
+    actions.push(
+      'Follow LIVING_STATE.md Current Directive and resume_checklist — do not treat operator notices as the whole mission'
+    );
   }
 
-  return actions;
+  return [...actions, ...notices];
 }
 
 function writeSessionHandoffJson(handoffData) {

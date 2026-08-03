@@ -2,7 +2,7 @@
 
 **Date**: December 10, 2024, 04:20 UTC  
 **Branch**: `fix/register-orphaned-controllers-and-modules`  
-**PR**: #279 - https://github.com/whodaniel/fuse/pull/279  
+**PR**: #279 - https://github.com/whodaniel/The-New-Fuse/pull/279  
 **Status**: ✅ ALL PRODUCTION BLOCKERS RESOLVED
 
 ---
@@ -284,7 +284,7 @@ verified
 
 ## 🔗 Related Resources
 
-- **PR #279**: https://github.com/whodaniel/fuse/pull/279
+- **PR #279**: https://github.com/whodaniel/The-New-Fuse/pull/279
 - **Branch**: fix/register-orphaned-controllers-and-modules
 - **CloudRuntime Dashboard**: Monitor deployment status post-merge
 - **Previous Work**: Health controller registration, Agency Hub + Webhooks

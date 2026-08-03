@@ -17,7 +17,7 @@ cloud services.
 ### Install TNF CLI (Direct Command Line)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse/main/scripts/install-tnf-cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
 tnf
 ```
 
@@ -491,6 +491,6 @@ This project uses **pnpm** exclusively. Do not use npm or yarn.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/whodaniel/fuse/issues)
+- **Issues**: [GitHub Issues](https://github.com/whodaniel/The-New-Fuse/issues)
 - **Discussions**:
-  [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
+  [GitHub Discussions](https://github.com/whodaniel/The-New-Fuse/discussions)

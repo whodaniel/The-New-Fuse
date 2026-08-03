@@ -1073,7 +1073,7 @@ pnpm run start
 
 ### Key Repositories
 
-- **Main Monorepo**: `whodaniel/fuse`
+- **Main Monorepo**: `whodaniel/The-New-Fuse`
 - **SkIDEancer IDE**: `whodaniel/skideancer-ide` (isolated)
 
 ---

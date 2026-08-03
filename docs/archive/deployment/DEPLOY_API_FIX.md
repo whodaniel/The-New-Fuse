@@ -72,7 +72,7 @@ git push origin fix-pr-421
 
 ### Step 4: Option A - Create Pull Request (Recommended)
 
-1. Go to GitHub: https://github.com/whodaniel/fuse (or your repo)
+1. Go to GitHub: https://github.com/whodaniel/The-New-Fuse (or your repo)
 2. Click "Compare & pull request" for `fix-pr-421`
 3. Title: "fix(api): Fix CascadeService import causing CloudRuntime crash"
 4. Body:

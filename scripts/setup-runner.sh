@@ -3,7 +3,7 @@ set -e
 
 RUNNER_DIR="${RUNNER_DIR:-$HOME/tnf-runner}"
 RUNNER_VERSION="2.330.0"
-REPO_URL="${RUNNER_REPO_URL:-https://github.com/whodaniel/fuse}"
+REPO_URL="${RUNNER_REPO_URL:-https://github.com/whodaniel/The-New-Fuse}"
 TOKEN="${RUNNER_TOKEN:-}"
 
 if [[ -z "$TOKEN" ]]; then

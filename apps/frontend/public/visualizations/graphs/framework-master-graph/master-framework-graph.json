@@ -4261,8 +4261,8 @@
       "group": "external-links"
     },
     {
-      "id": "url:https-//github.com/whodaniel/fuse",
-      "label": "https://github.com/whodaniel/fuse",
+      "id": "url:https-//github.com/whodaniel/The-New-Fuse",
+      "label": "https://github.com/whodaniel/The-New-Fuse",
       "kind": "url",
       "group": "external-links",
       "metadata": {}
@@ -9451,7 +9451,7 @@
     },
     {
       "source": "file:public/index.html",
-      "target": "url:https-//github.com/whodaniel/fuse",
+      "target": "url:https-//github.com/whodaniel/The-New-Fuse",
       "type": "references_external",
       "weight": 1
     },
@@ -10945,7 +10945,7 @@
     },
     {
       "source": "file:src/pages/ConnectExtension.tsx",
-      "target": "url:https-//github.com/whodaniel/fuse",
+      "target": "url:https-//github.com/whodaniel/The-New-Fuse",
       "type": "references_external",
       "weight": 1
     },

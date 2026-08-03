@@ -95,7 +95,7 @@ If you want CloudRuntime to auto-detect and deploy all services at once:
    - Go to CloudRuntime Dashboard
    - Click "+ New"
    - Select "GitHub Repo"
-   - Choose the `whodaniel/fuse` repository
+   - Choose the `whodaniel/The-New-Fuse` repository
 
 2. **Configure Service Detection**
    - CloudRuntime will scan for Dockerfiles
@@ -306,7 +306,7 @@ cloud_runtime service restart api
   https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - CloudRuntime Docs: https://docs.thenewfuse.com
 - CloudRuntime Discord: https://discord.gg/cloud_runtime
-- GitHub Repo: https://github.com/whodaniel/fuse
+- GitHub Repo: https://github.com/whodaniel/The-New-Fuse
 
 ## Success Criteria
 

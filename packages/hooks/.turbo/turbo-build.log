@@ -1,4 +1,0 @@
-
-> @the-new-fuse/hooks@1.0.0 build /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/hooks
-> tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'
-

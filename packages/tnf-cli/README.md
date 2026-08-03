@@ -7,7 +7,7 @@ Unified command surface for TNF operations and agent orchestration.
 ### One-line install (remote)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
 ```
 
 ### Install from a local clone

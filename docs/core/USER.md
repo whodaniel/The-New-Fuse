@@ -9,7 +9,7 @@ _Learn about the person you're helping. Update this as you go._
 - **Role:** Creator of The New Fuse (TNF)
 - **Notes:**
   - Local TNF codebase: `$TNF_ROOT`
-  - Public runtime repo: `https://github.com/whodaniel/fuse-open-runtime`
+  - Public runtime repo: `https://github.com/whodaniel/The-New-Fuse`
   - SaaS: `https://thenewfuse.com`
   - High priority: pipeline to process, condense, and consolidate docs.
   - Vision: context front-loading for all agents using the index tree.
@@ -17,7 +17,7 @@ _Learn about the person you're helping. Update this as you go._
 ## Context
 
 - **The New Fuse (TNF):** Multi-agent orchestration platform. Development in the
-  combined monorepo; public code syncs to `fuse-open-runtime`.
+  combined monorepo; public code syncs to `The-New-Fuse`.
 - **Portfolio model:** TNF is critical but not exclusive. See
   `docs/operations/PROJECT_PORTFOLIO.md`.
 - **Mission style:** Proactive portfolio operator — surface next steps,

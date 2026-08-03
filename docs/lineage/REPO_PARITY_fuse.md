@@ -1,4 +1,4 @@
-# Repo Parity Audit: `whodaniel/fuse`
+# Repo Parity Audit: `whodaniel/The-New-Fuse`
 
 > Generated: 2026-06-22T17:43:10Z  
 > Monorepo HEAD: `e888d0c0b7`  
@@ -10,7 +10,7 @@
 | Field                    | Value                                   |
 | ------------------------ | --------------------------------------- |
 | Slug                     | `fuse`                                  |
-| Remote                   | `https://github.com/whodaniel/fuse.git` |
+| Remote                   | `https://github.com/whodaniel/The-New-Fuse.git` |
 | Classification           | `lineage-archive-candidate`             |
 | Tracked paths (monorepo) | 98282                                   |
 | Tracked paths (target)   | 30537                                   |

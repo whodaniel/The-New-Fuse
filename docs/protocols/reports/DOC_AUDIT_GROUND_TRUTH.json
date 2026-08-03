@@ -8,28 +8,28 @@
       "push": "https://github.com/whodaniel/NexusOrchestrator.git"
     },
     "old-fuse": {
-      "fetch": "https://github.com/whodaniel/fuse.git",
-      "push": "https://github.com/whodaniel/fuse.git"
+      "fetch": "https://github.com/whodaniel/The-New-Fuse.git",
+      "push": "https://github.com/whodaniel/The-New-Fuse.git"
     },
     "origin": {
       "fetch": "https://github.com/whodaniel/The-New-Fuse.git",
       "push": "https://github.com/whodaniel/The-New-Fuse.git"
     },
     "private-origin": {
-      "fetch": "https://github.com/whodaniel/fuse-master.git",
-      "push": "https://github.com/whodaniel/fuse-master.git"
+      "fetch": "https://github.com/whodaniel/The-New-Fuse-master.git",
+      "push": "https://github.com/whodaniel/The-New-Fuse-master.git"
     },
     "split-control-plane": {
-      "fetch": "https://github.com/whodaniel/fuse-control-plane.git",
-      "push": "https://github.com/whodaniel/fuse-control-plane.git"
+      "fetch": "https://github.com/whodaniel/The-New-Fuse-control-plane.git",
+      "push": "https://github.com/whodaniel/The-New-Fuse-control-plane.git"
     },
     "split-mirror": {
-      "fetch": "https://github.com/whodaniel/fuse-mirror.git",
-      "push": "https://github.com/whodaniel/fuse-mirror.git"
+      "fetch": "https://github.com/whodaniel/The-New-Fuse-mirror.git",
+      "push": "https://github.com/whodaniel/The-New-Fuse-mirror.git"
     },
     "split-open-runtime": {
-      "fetch": "https://github.com/whodaniel/fuse-open-runtime.git",
-      "push": "https://github.com/whodaniel/fuse-open-runtime.git"
+      "fetch": "https://github.com/whodaniel/The-New-Fuse.git",
+      "push": "https://github.com/whodaniel/The-New-Fuse.git"
     }
   },
   "top_level_dirs": [

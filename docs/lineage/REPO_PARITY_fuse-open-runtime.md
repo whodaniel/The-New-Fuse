@@ -1,4 +1,4 @@
-# Repo Parity Audit: `whodaniel/fuse-open-runtime`
+# Repo Parity Audit: `whodaniel/The-New-Fuse`
 
 > Generated: 2026-06-22T17:42:04Z  
 > Monorepo HEAD: `e888d0c0b7`  
@@ -9,8 +9,8 @@
 
 | Field | Value |
 | ----- | ----- |
-| Slug | `fuse-open-runtime` |
-| Remote | `https://github.com/whodaniel/fuse-open-runtime.git` |
+| Slug | `The-New-Fuse` |
+| Remote | `https://github.com/whodaniel/The-New-Fuse.git` |
 | Classification | `live-distribution` |
 | Tracked paths (monorepo) | 98282 |
 | Tracked paths (target) | 23851 |

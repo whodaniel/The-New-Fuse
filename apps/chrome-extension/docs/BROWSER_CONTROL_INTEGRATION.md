@@ -177,7 +177,7 @@ The extension auto-detects and can interact with:
 const BrowserControl = BrowserControlService;
 
 await BrowserControl.connect();
-await BrowserControl.navigate('https://github.com/whodaniel/fuse');
+await BrowserControl.navigate('https://github.com/whodaniel/The-New-Fuse');
 const screenshot = await BrowserControl.takeScreenshot({
   format: 'png',
   fullPage: true,
@@ -213,7 +213,7 @@ await BrowserControl.startCascade({
     {
       id: 'navigate',
       action: 'NAVIGATE',
-      payload: { url: 'https://github.com/whodaniel/fuse', waitForLoad: true },
+      payload: { url: 'https://github.com/whodaniel/The-New-Fuse', waitForLoad: true },
     },
     {
       id: 'find-star',

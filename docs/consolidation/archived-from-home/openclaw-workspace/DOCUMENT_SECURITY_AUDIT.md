@@ -9,7 +9,7 @@ Goldberg (Super Admin)
 
 ### Current State
 
-- **Repository**: https://github.com/whodaniel/fuse
+- **Repository**: https://github.com/whodaniel/The-New-Fuse
 - **Visibility**: PUBLIC ❌
 - **Exposed Documents**: 217+ files in docs/
 - **Agent Configs**: 111+ files in .claude/agents/

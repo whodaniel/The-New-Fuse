@@ -31,4 +31,4 @@ rm -rf ~/.openclaw/workspace/apps ~/.openclaw/workspace/SkIDEancer
 `~/.tnf/`, `~/.tnf-master-clock/`, `~/h17-webpilot/profile/`
 
 See [PUBLIC_DISTRIBUTION_AND_PERSONAL_RUNTIME.md](./PUBLIC_DISTRIBUTION_AND_PERSONAL_RUNTIME.md) for
-what to keep vs remove on your Mac while preparing `fuse-open-runtime`.
+what to keep vs remove on your Mac while preparing `The-New-Fuse`.

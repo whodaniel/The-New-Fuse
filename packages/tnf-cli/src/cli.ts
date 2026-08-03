@@ -21,11 +21,18 @@ import {
   type BootReceipt,
   type BootStepResult,
 } from './boot/pipeline.js';
+import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsRunCommand } from './commands/agents-run.js';
+import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
+import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
+import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
+import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
+import { registerLogsCommand } from './commands/logs.js';
+import { registerParityCommand } from './commands/parity.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { Orchestrator } from './orchestration.js';
@@ -34,6 +41,7 @@ import { CronService } from './services/CronService.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
+import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
 import { StoryService } from './services/StoryService.js';
 import { ToolsService } from './services/ToolsService.js';
@@ -1025,6 +1033,7 @@ type SelfImprovementRunCliOptions = {
   skipAuth?: boolean;
   skipScorecard?: boolean;
   skipMermaid?: boolean;
+  skipParity?: boolean;
   note?: string;
   superAdminToken?: string;
 };
@@ -1358,6 +1367,7 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
   if (options.skipAuth) args.push('--skip-auth');
   if (options.skipScorecard) args.push('--skip-scorecard');
   if (options.skipMermaid) args.push('--skip-mermaid');
+  if (options.skipParity) args.push('--skip-parity');
   if (options.note) args.push('--note', options.note);
   if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
   return args;
@@ -3251,21 +3261,32 @@ const safeStdoutHandler = (error: NodeJS.ErrnoException) => {
 };
 process.stdout.on('error', safeStdoutHandler);
 
+// Redis is an optional dependency for several TNF surfaces: a connection
+// failure degrades functionality but must not fail the process. Everything
+// else is a real crash and MUST exit non-zero — unattended supervisors
+// (`tnf full-auto start`, cron, CI) read the exit code to decide whether a
+// cycle succeeded. Swallowing these silently makes every crash look green.
+function isOptionalRedisFault(err: any): boolean {
+  const message: string = err?.message ?? String(err ?? '');
+  return message.includes('Redis') || message.includes('ECONNREFUSED');
+}
+
 process.on('uncaughtException', (error: Error) => {
-  if (error?.message?.includes('Redis') || error?.message?.includes('ECONNREFUSED')) {
+  if (isOptionalRedisFault(error)) {
     console.error(chalk.yellow(`\n  ⚠️  Redis connection error: ${error.message}`));
     console.error(chalk.dim('  Redis is required for some TNF features. Running without Redis.'));
     return;
   }
   console.error(chalk.red(`\n  Uncaught exception: ${error.message}`));
-  if (process.env.DEBUG) console.error(error.stack);
+  console.error(error.stack ?? '(no stack available)');
+  process.exit(1);
 });
 
 process.on('unhandledRejection', (reason: any) => {
-  if (reason?.message?.includes('Redis') || reason?.message?.includes('ECONNREFUSED')) {
-    return;
-  }
-  console.error(chalk.yellow(`\n  ⚠️  Unhandled rejection: ${reason?.message || reason}`));
+  if (isOptionalRedisFault(reason)) return;
+  console.error(chalk.red(`\n  Unhandled rejection: ${reason?.message || reason}`));
+  if (reason?.stack) console.error(reason.stack);
+  process.exit(1);
 });
 
 function coerceSplashTheme(value?: string): SplashTheme {
@@ -5097,8 +5118,9 @@ program
 // existing scripts; remove when Phase-2 lands the .pi-package installer.
 const skillCommand = program
   .command('skill')
+  .alias('skills')
   .description(
-    'Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias).'
+    'Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias; Hermes-parity alias: `tnf skills`).'
   );
 
 skillCommand
@@ -9725,6 +9747,7 @@ selfImprovement
   .option('--skip-auth', 'Skip auth path audit stage')
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--note <text>', 'Override protocol run-log note')
   .option('--json', 'Output machine-readable JSON summary')
   .option(
@@ -9746,6 +9769,7 @@ selfImprovement
         skipAuth?: boolean;
         skipScorecard?: boolean;
         skipMermaid?: boolean;
+        skipParity?: boolean;
         note?: string;
         json?: boolean;
         superAdminToken?: string;
@@ -9823,6 +9847,21 @@ selfImprovement
             SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
           ]);
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+        }
+        if (!options.skipParity) {
+          // Cross-agent parity: measure TNF against every reachable agent CLI
+          // and refresh the gap ledger. Runs in-process (no subprocess) so the
+          // audit sees the exact live command tree.
+          const parityService = new ParityService(repoRoot);
+          const ledger = await parityService.audit(program);
+          const written = parityService.write(ledger);
+          console.log(
+            chalk.dim(
+              `[parity] ${ledger.totals.agentsAvailable}/${ledger.totals.agentsTracked} agents reachable, ` +
+                `${ledger.totals.totalGaps} gaps, ${ledger.totals.meanCoverage}% mean coverage`
+            )
+          );
+          expectedArtifacts.push(written.json, written.markdown);
         }
 
         const runNote =
@@ -10049,6 +10088,7 @@ fullAuto
   .option('--skip-auth', 'Skip auth path audit stage')
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail the full-auto cycle on self-improvement status')
   .option('--note <text>', 'Override protocol run-log note')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after loop completion')
@@ -10140,6 +10180,7 @@ fullAuto
   .option('--skip-auth', 'Skip auth path audit stage')
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail cycles on self-improvement status')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
   .option('--strict', 'Stop loop on first cycle failure')
@@ -10336,6 +10377,13 @@ fullAutoDaemon
     String(DEFAULT_FULL_AUTO_INTERVAL_MINUTES)
   )
   .option('--max-cycles <n>', 'Number of cycles before stop (0 = run forever)', '0')
+  // The detached path is where a hang is least visible, so the cycle bound has
+  // to be configurable here too — not just on the foreground `full-auto start`.
+  .option(
+    '--cycle-timeout-minutes <n>',
+    'Kill a cycle that runs longer than this and record it as a failure',
+    String(DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES)
+  )
   .option('--base-url <url>', 'Public base URL used by live-link/auth audits')
   .option('--api-url <url>', 'API base URL used by auth audit')
   .option('--app-url <url>', 'App (SPA) base URL used by the semantic route audit')
@@ -10348,6 +10396,7 @@ fullAutoDaemon
   .option('--skip-auth', 'Skip auth path audit stage')
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
+  .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail cycles on self-improvement status')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
   .option('--strict', 'Stop loop on first cycle failure')
@@ -17339,8 +17388,51 @@ registerBrowserCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
+registerAgentsSpecsCommand(program, repoRoot);
+registerStatusCommand(program, repoRoot);
+// `doctor` and `config` are already owned by cli.ts above. These modules nest
+// under the incumbent (`doctor health`, `config resolved`) via registerOrNest
+// rather than colliding with it — see commands/_registry.ts.
+registerDoctorCommand(program, repoRoot);
+registerConfigCommand(program, repoRoot);
+registerParityCommand(program, repoRoot);
+registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
+
+// Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
+// Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
+if (!program.commands.some((c) => c.name() === 'sync')) {
+  program
+    .command('sync')
+    .description(
+      'Audit TNF CLI ↔ Hermes top-level surface parity (writes ~/.tnf/cli-sync/latest-report.json)'
+    )
+    .option('--auto-fix', 'Reserved stub forwarded to the sync script')
+    .action(async (options: { autoFix?: boolean } = {}) => {
+      const args = ['scripts/agents/sync-tnf-cli-with-agents.mjs'];
+      if (options.autoFix) args.push('--auto-fix');
+      await runCommand('node', args);
+    });
+}
+
+// Hermes parity: `hermes version` is a top-level verb. Commander already
+// exposes `-V/--version` from package.json; this adds an explicit subcommand
+// so the sync auditor and Hermes users find the same noun.
+if (!program.commands.some((c) => c.name() === 'version')) {
+  program
+    .command('version')
+    .description('Print TNF CLI version (Hermes parity; same as --version)')
+    .action(() => {
+      try {
+        const pkgPath = path.join(repoRoot, 'packages', 'tnf-cli', 'package.json');
+        const ver = JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version ?? 'unknown';
+        console.log(ver);
+      } catch {
+        console.log(program.version() ?? 'unknown');
+      }
+    });
+}
 
 const webhookCommand = program.command('webhook').description('Webhook management');
 webhookCommand
@@ -19007,6 +19099,15 @@ async function main(): Promise<void> {
     await runPassthrough(implicitArgs.cliName, implicitArgs.args);
     return;
   }
+  // Hermes-parity gap closers (aliases + thin wrappers) must run after every
+  // incumbent top-level command is registered so attachAlias can find them.
+  registerHermesParityGapCommands(program, repoRoot);
+
+  // Fail fast and precisely on a duplicate registration. Commander's own
+  // duplicate error is raised at module load with no context, which is how a
+  // stray `doctor` silently disabled every unattended cycle for five days.
+  assertNoDuplicateCommands(program);
+
   await program.parseAsync(argv);
 }
 

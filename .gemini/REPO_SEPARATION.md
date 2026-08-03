@@ -12,17 +12,17 @@ TNF uses a **single combined monorepo for development** with two downstream
 
 ```
 whodaniel/The-New-Fuse      ← DEVELOPMENT HAPPENS HERE (PRIVATE)
-    ├──► fuse-open-runtime  ← 90% open-source (auto-synced, read-only, PUBLIC)
+    ├──► The-New-Fuse  ← 90% open-source (auto-synced, read-only, PUBLIC)
     └──► fuse-control-plane ← 10% proprietary (auto-synced, read-only, PRIVATE)
 ```
 
-> **Corrected 2026-07-23.** This diagram previously named `whodaniel/fuse` as the
+> **Corrected 2026-07-23.** This diagram previously named `whodaniel/The-New-Fuse` as the
 > development repo. Development had moved to `whodaniel/The-New-Fuse`
 > (`scripts/sync-repos.sh:9` is authoritative), and that repo was **public** —
 > publishing the full combined tree, including every path on the proprietary
 > list below, under the root MIT LICENSE, from 2026-04-25. It is now private.
 >
-> `fuse-open-runtime` was never affected: the sync removes each proprietary path
+> `The-New-Fuse` was never affected: the sync removes each proprietary path
 > and writes a stub in its place, verified — `master-clock.ts` is 801 bytes there
 > against 33,882 locally, `broker-agent.ts` 761 vs 50,253,
 > `modules/orchestrator/index.ts` 520 vs 35,265. When auditing this boundary,
@@ -35,8 +35,8 @@ whodaniel/The-New-Fuse      ← DEVELOPMENT HAPPENS HERE (PRIVATE)
 
 ## Rules
 
-1. **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-2. **ALL development happens in `whodaniel/fuse`.**
+1. **NEVER commit directly to `The-New-Fuse` or `fuse-control-plane`.**
+2. **ALL development happens in `whodaniel/The-New-Fuse`.**
 3. Proprietary boundary is defined in `scripts/sync-repos.sh` (`PROPRIETARY_*`
    arrays).
 4. Run `pnpm run sync:repos` to push changes to both downstream repos.

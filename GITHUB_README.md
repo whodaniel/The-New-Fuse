@@ -21,9 +21,9 @@ Historical slug `the-new-fuse-next-gen` GitHub-redirects (301) to this repo.
 
 Published distribute targets (do not commit there directly):
 
-- [`fuse-open-runtime`](https://github.com/whodaniel/fuse-open-runtime) — ~90%
+- [`The-New-Fuse`](https://github.com/whodaniel/The-New-Fuse) — ~90%
   open runtime
-- [`fuse-control-plane`](https://github.com/whodaniel/fuse-control-plane) —
+- [`fuse-control-plane`](https://github.com/whodaniel/The-New-Fuse-control-plane) —
   proprietary slice
 
 See [`docs/REPO_SEPARATION.md`](./docs/REPO_SEPARATION.md).
@@ -65,8 +65,8 @@ Package workspace name for core types/services: `@the-new-fuse/core`
 ## Self-hosting (open runtime)
 
 ```bash
-git clone https://github.com/whodaniel/fuse-open-runtime.git
-cd fuse-open-runtime
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 pnpm run dev
 ```

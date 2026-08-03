@@ -38,7 +38,7 @@ coding agent. Follow this protocol:
 - Review the provided task descriptions
 - Determine optimal number of parallel sessions
 - Identify task dependencies and ordering
-- Validate repository context (current repo: whodaniel/fuse)
+- Validate repository context (current repo: whodaniel/The-New-Fuse)
 
 ### Step 2: Prepare Effective Task Descriptions
 
@@ -56,8 +56,8 @@ For each task, create a detailed description including:
 Execute Jules CLI commands to create sessions:
 
 ```bash
-jules new --repo whodaniel/fuse "[detailed task description 1]"
-jules new --repo whodaniel/fuse "[detailed task description 2]"
+jules new --repo whodaniel/The-New-Fuse "[detailed task description 1]"
+jules new --repo whodaniel/The-New-Fuse "[detailed task description 2]"
 ...
 ```
 

@@ -35,6 +35,15 @@ function readJson(filePath) {
   }
 }
 
+function isOperatorNotice(action) {
+  const text = String(action || '');
+  return (
+    text.includes('NEEDS LIVE OPERATOR CONFIRMATION') ||
+    text.startsWith('NOTICE:') ||
+    text.startsWith('⚠️ NEEDS LIVE OPERATOR')
+  );
+}
+
 function buildCacheSummary(handoff, sourcePath) {
   const continuation =
     handoff.continuation && typeof handoff.continuation === 'object' ? handoff.continuation : {};
@@ -43,6 +52,11 @@ function buildCacheSummary(handoff, sourcePath) {
   const resumeChecklist = Array.isArray(continuation.resume_checklist)
     ? continuation.resume_checklist
     : [];
+  // Commit/push gates are notices, not the mission. Surfacing them alone in
+  // IMMEDIATE_TASKS made agents stall on dirty-tree hygiene instead of doing
+  // autonomous work.
+  const operatorNotices = nextActions.filter((action) => isOperatorNotice(action));
+  const actionableTasks = nextActions.filter((action) => !isOperatorNotice(action));
 
   return {
     sessionKey: handoff.handoff_id || handoff.sessionKey || null,
@@ -50,7 +64,10 @@ function buildCacheSummary(handoff, sourcePath) {
     generatedAt: handoff.created_at || handoff.generatedAt || null,
     MISSION: workSummary.length ? [workSummary[0]] : ['TNF handoff loaded from canonical SESSION_HANDOFF_LATEST.json'],
     STATE: workSummary,
-    IMMEDIATE_TASKS: nextActions,
+    IMMEDIATE_TASKS: actionableTasks.length
+      ? actionableTasks
+      : ['No actionable next_actions — follow LIVING_STATE.md Current Directive'],
+    OPERATOR_NOTICES: operatorNotices,
     POINTERS: resumeChecklist,
     HANDOFF_HISTORY: [
       [

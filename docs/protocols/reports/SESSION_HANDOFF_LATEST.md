@@ -1,41 +1,46 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-07-28T10:44:05.765Z` Handoff
-ID: `4f92a401-ca4b-4533-b834-4b1ec754cc46`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-08-03T21:54:46.820Z` Handoff
+ID: `68a3f7f3-bae4-4301-b25a-28b6ee4c4d11`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/a2a-signature-verification`
-- Head SHA: `b5938a72b3f389ead146b96261660d233f36c90a`
+- Branch: `feat/cross-agent-cli-parity`
+- Head SHA: `083afbc8bea96ce235ce0eeceebad9258b503734`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Modified 19 file(s)
+- Hermes parity gap bucket: aliases+thin wrappers; coverage 45.2%→64.5%
 
 ## Changed Paths
 
-- .verifier/process-atlas.digest.md
-- .verifier/process-atlas.payload.json
-- .verifier/process-atlas.verify.json
-- .verifier/tnf-process-atlas.html
-- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
-- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
-- apps/frontend/docs/audits/all-routes-semantic-audit.json
-- apps/frontend/docs/audits/all-routes-semantic-audit.md
-- apps/frontend/docs/audits/auth-path-audit.json
-- apps/frontend/docs/audits/auth-path-audit.md
+- .agent/test-reports/\_rolling-summary.json
+- apps/api/src/controllers/available-models.controller.ts
 - apps/frontend/docs/audits/live-link-crawl.json
 - apps/frontend/docs/audits/live-link-crawl.md
-- apps/frontend/docs/audits/self-improvement-scorecard.json
-- apps/frontend/docs/audits/self-improvement-scorecard.md
-- apps/frontend/src/data/codebase_map.json
+- apps/frontend/nginx.conf
+- apps/frontend/public/\_redirects
 - data/llm-provider-status.json
+- docs/marketing/PUBLIC_LAUNCH_MARKETING_PLAN.md
 - docs/operations/tnf-full-auto-runs.jsonl
 - docs/operations/tnf-full-auto-state.json
-- docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/reports/SESSION_VERIFIED_2026-07-26_STATIC_HANDLER.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- packages/ag-ui-core/.turbo/turbo-lint.log
+- packages/proto-definitions/.turbo/turbo-lint.log
+- packages/resource-registry/.turbo/turbo-lint.log
+- packages/testing/.turbo/turbo-lint.log
+- packages/tnf-cli/src/cli.ts
+- scripts/agents/sync-tnf-cli-with-agents.mjs
+- scripts/check-frontend-bundle-size.cjs
+- scripts/install-tnf-cli.sh
+- scripts/sync-repos.sh
+- apps/frontend/public/about.html
+- apps/frontend/public/blog.html
+- apps/frontend/public/legal/
+- bulk_replace_url.py
+- packages/tnf-cli/src/commands/hermes-parity-gaps.ts
 
 ## Continuation
 
@@ -57,7 +62,12 @@ ID: `4f92a401-ca4b-4533-b834-4b1ec754cc46`
 
 ## Next Actions
 
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 20 file(s)
+- Parity gap bucket closed to 64.5% Hermes overlap — remaining 22 are heavy
+  product surfaces (channels/UI/extension pets/lsp)
+- Optional: open PR for feat/cross-agent-cli-parity
+  (https://github.com/whodaniel/tnf-monorepo/pull/new/feat/cross-agent-cli-parity)
+- Authority residual remains operator-gated — PR #70 MERGED
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 25 file(s)
   uncommitted — see
   docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
 
@@ -65,4 +75,4 @@ ID: `4f92a401-ca4b-4533-b834-4b1ec754cc46`
 
 **Commits:**
 
-- b5938a72b3f389ead146b96261660d233f36c90a
+- 083afbc8bea96ce235ce0eeceebad9258b503734

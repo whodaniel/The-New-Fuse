@@ -1,4 +1,4 @@
-# Repo Parity Audit: `whodaniel/fuse-master`
+# Repo Parity Audit: `whodaniel/The-New-Fuse-master`
 
 > Generated: 2026-06-22T17:57:44Z  
 > Monorepo HEAD: `e888d0c0b7`  
@@ -10,7 +10,7 @@
 | Field                    | Value                                          |
 | ------------------------ | ---------------------------------------------- |
 | Slug                     | `fuse-master`                                  |
-| Remote                   | `https://github.com/whodaniel/fuse-master.git` |
+| Remote                   | `https://github.com/whodaniel/The-New-Fuse-master.git` |
 | Classification           | `lineage-archive-candidate`                    |
 | Tracked paths (monorepo) | 98282                                          |
 | Tracked paths (target)   | 18726                                          |

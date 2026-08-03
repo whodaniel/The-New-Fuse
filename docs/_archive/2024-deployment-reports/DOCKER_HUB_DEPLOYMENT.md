@@ -552,12 +552,12 @@ cloud_runtime run --service api npx drizzle db pull
 
 ### Community
 - CloudRuntime Discord: https://discord.gg/cloud_runtime
-- GitHub Issues: https://github.com/whodaniel/fuse/issues
+- GitHub Issues: https://github.com/whodaniel/The-New-Fuse/issues
 
 ### Monitoring
 - CloudRuntime Dashboard: https://cloud_runtime.app/dashboard
 - Docker Hub: https://hub.docker.com/u/bizsynth
-- GitHub Actions: https://github.com/whodaniel/fuse/actions
+- GitHub Actions: https://github.com/whodaniel/The-New-Fuse/actions
 
 ---
 

@@ -19,7 +19,7 @@ by alias bundle._
 ## Never archive (live)
 
 - `The-New-Fuse` (ex `The-New-Fuse`) — canonical dev
-- `fuse-open-runtime` — open distribution
+- `The-New-Fuse` — open distribution
 - `fuse-control-plane` — proprietary distribution
 
 ## Product satellites (Phase 4 — keep active)

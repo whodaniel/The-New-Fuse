@@ -85,5 +85,5 @@ plane details in public issues.
 This repository is licensed under the **MIT License** — see [LICENSE](LICENSE).
 
 Proprietary control-plane paths are filtered when publishing
-[`fuse-open-runtime`](https://github.com/whodaniel/fuse-open-runtime); see
+[`The-New-Fuse`](https://github.com/whodaniel/The-New-Fuse); see
 `docs/REPO_SEPARATION.md`.

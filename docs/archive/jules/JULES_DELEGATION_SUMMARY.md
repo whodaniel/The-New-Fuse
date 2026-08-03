@@ -73,7 +73,7 @@ to the Jules CLI for parallel autonomous execution.
 - Status: Failed due to API rate limit (429)
 - Action: Retry later when quota resets
 - Command to retry:
-  `jules new --repo whodaniel/fuse "$(cat .jules/tasks/JULES_TASK_16_dependency_audit.md)"`
+  `jules new --repo whodaniel/The-New-Fuse "$(cat .jules/tasks/JULES_TASK_16_dependency_audit.md)"`
 
 ## Monitoring & Next Steps
 
@@ -133,5 +133,5 @@ Once Jules completes these tasks, the codebase will have:
 - All tasks include detailed context and success criteria
 - Tasks are designed to be autonomous and self-contained
 - Each task includes git status/diff analysis for context awareness
-- Repository: whodaniel/fuse
+- Repository: whodaniel/The-New-Fuse
 - Branch: Current WIP branch (Jules will detect automatically)

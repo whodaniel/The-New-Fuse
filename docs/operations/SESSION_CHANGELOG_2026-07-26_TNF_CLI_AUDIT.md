@@ -2,7 +2,7 @@
 
 **Branch:** `fix/a2a-signature-verification` **Operator:** Daniel Goldberg
 **Repo:** The New Fuse
-(`/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse`) **TTY:**
+(`<TNF_WORKSPACE_ROOT>`) **TTY:**
 `/dev/ttys005` (`tnf-local-terminal`) **Heartbeat:**
 `cron-heartbeat-ttys005-1785103683404` **Prior commit:** `2b9cad51cd` (handoff
 39d02552 — "commit all 87 uncommitted files", operator-confirmed live).

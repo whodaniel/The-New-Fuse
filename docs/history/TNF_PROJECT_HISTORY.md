@@ -40,7 +40,7 @@
 timeline
     title The New Fuse — Major Epochs
     section Pre-Genesis
-        Unknown–May 2025 : Predecessor repo whodaniel/fuse (canonical), fuse-master (snapshot)
+        Unknown–May 2025 : Predecessor repo whodaniel/The-New-Fuse (canonical), fuse-master (snapshot)
                          : Product already named "The New Fuse"
                          : Mature codebase developed outside current git history
     section Genesis & Early Life
@@ -97,7 +97,7 @@ first commit, not authored fresh for it.
 | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | Three undated files in the first commit describe a mature "The New Fuse" product                                                    | Git blob analysis of the initial commit                                                                                                                                                                                                                                                                     | **Confirmed**           |
 | This repo's historical slug was `the-new-fuse-next-gen` — i.e. an explicit rebuild/rewrite, not the original                        | `docs/lineage/REPO_LINEAGE.md`, `REPO_PARITY_the-new-fuse-next-gen.md`                                                                                                                                                                                                                                      | **Confirmed**           |
-| The true predecessor is `whodaniel/fuse` (canonical, tags up to `v8.2.3`) with `fuse-master` as a private snapshot                  | `docs/lineage/ARCHIVE_STATUS.md`, `TAGS_BRANCHES_EXPORT.md`, git remote config (7 configured remotes)                                                                                                                                                                                                       | **Confirmed**           |
+| The true predecessor is `whodaniel/The-New-Fuse` (canonical, tags up to `v8.2.3`) with `fuse-master` as a private snapshot                  | `docs/lineage/ARCHIVE_STATUS.md`, `TAGS_BRANCHES_EXPORT.md`, git remote config (7 configured remotes)                                                                                                                                                                                                       | **Confirmed**           |
 | A `fuse-master.bundle` (165MB) cold-backup exists but is corrupted/truncated                                                        | `git bundle verify` reports valid; `git clone`/`fetch` from it fails with "did not send all necessary objects"                                                                                                                                                                                              | **Confirmed corrupted** |
 | Files bearing "2024" directory names (`2024-deployment-reports/`, `2024-migration/`) are a labeling artifact, not real 2024 content | Every dated document inside is internally dated **July–November 2025**; the "2024-" bucket names were invented during an **October 2025** documentation-consolidation pass (`docs/_archive/2024-consolidation-phase/CONSOLIDATION_PLAN.md` literally proposes the "2024-pre-restructure" naming convention) | **Confirmed**           |
 
@@ -112,7 +112,7 @@ first commit, not authored fresh for it.
 ### What Is Unverifiable
 
 - The exact start date of the real predecessor project (`fuse`/`fuse-master`).
-  Recoverable in principle via `gh api repos/whodaniel/fuse/commits` against the
+  Recoverable in principle via `gh api repos/whodaniel/The-New-Fuse/commits` against the
   now-archived GitHub repos, or by re-exporting a fresh, uncorrupted
   `fuse-master.bundle`.
 - Whether "The New Fuse" as a _creative concept_ (as opposed to a codebase)
@@ -232,12 +232,12 @@ gitgraph
 
 ### The Fuse Era
 
-`whodaniel/fuse` was the **genuine, actively-used canonical GitHub repository**
+`whodaniel/The-New-Fuse` was the **genuine, actively-used canonical GitHub repository**
 for roughly a year (confirmed by dozens of `docs/archive/` documents from Aug
-2025–Jan 2026 referencing `whodaniel/fuse` or
-`git@github.com:whodaniel/fuse.git` as the live push/PR target, e.g.
+2025–Jan 2026 referencing `whodaniel/The-New-Fuse` or
+`git@github.com:whodaniel/The-New-Fuse.git` as the live push/PR target, e.g.
 `comprehensive_improvement_report.md`, 2025-11-05: _"This report provides a
-comprehensive analysis of The New Fuse repository (`whodaniel/fuse`)..."_). The
+comprehensive analysis of The New Fuse repository (`whodaniel/The-New-Fuse`)..."_). The
 `The-New-Fuse`/`the-new-fuse-next-gen` repo existed in parallel as the rebuild
 effort, not as the primary working tree, until it eventually became canonical.
 
@@ -754,20 +754,20 @@ lineage docs exactly).
 
 | Repository                        | Role                                                                                   | Status                       | Scale                                                         | Notes                                                                                                                                                                          |
 | --------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `whodaniel/fuse`                  | **Primary predecessor** — canonical working repo, Aug 2025–Jan 2026                    | Archived 2026-06-22          | 30,537 tracked paths, 15 tags, 364 branches                   | Tags include `brain-v1.0-20260501`, `brain-vault-2026-05-*` snapshots, `v8.2.2`/`v8.2.3` releases                                                                              |
-| `whodaniel/fuse-master`           | Private snapshot / cold-backup source                                                  | Archived 2026-06-22          | 18,726 tracked paths, 0 tags, 1 branch                        | `fuse-master.bundle` (165MB) is corrupted/truncated — see §1                                                                                                                   |
-| `whodaniel/fuse-mirror`           | Structural mirror of `fuse`                                                            | Archived 2026-06-22          | 61,195 tracked paths, **7 tags, 232 branches**                | Longest proprietary-leakage list of any lineage repo — dozens of ad-hoc orchestrator scripts accumulated as a mirror over time                                                 |
+| `whodaniel/The-New-Fuse`                  | **Primary predecessor** — canonical working repo, Aug 2025–Jan 2026                    | Archived 2026-06-22          | 30,537 tracked paths, 15 tags, 364 branches                   | Tags include `brain-v1.0-20260501`, `brain-vault-2026-05-*` snapshots, `v8.2.2`/`v8.2.3` releases                                                                              |
+| `whodaniel/The-New-Fuse-master`           | Private snapshot / cold-backup source                                                  | Archived 2026-06-22          | 18,726 tracked paths, 0 tags, 1 branch                        | `fuse-master.bundle` (165MB) is corrupted/truncated — see §1                                                                                                                   |
+| `whodaniel/The-New-Fuse-mirror`           | Structural mirror of `fuse`                                                            | Archived 2026-06-22          | 61,195 tracked paths, **7 tags, 232 branches**                | Longest proprietary-leakage list of any lineage repo — dozens of ad-hoc orchestrator scripts accumulated as a mirror over time                                                 |
 | `whodaniel/NexusOrchestrator`     | Standalone 3D-visualization tool, later folded into `apps/nexus-orchestrator`          | Archived 2026-06-22          | Only 26 tracked paths vs. 98,282 in the monorepo              | Its own independent git history only starts 2026-03-08 — not a source of pre-2025 content                                                                                      |
 | `whodaniel/the-new-fuse-next-gen` | This repo's own historical slug                                                        | Renamed 2026-07-14           | —                                                             | Became `whodaniel/The-New-Fuse` via GitHub 301 redirect                                                                                                                        |
 | `whodaniel/The-New-Fuse`          | **Current canonical repo**                                                             | Active                       | 3,207 mainline commits (20,220 across all branches)           | —                                                                                                                                                                              |
-| `whodaniel/fuse-open-runtime`     | Live open-source distribution (~90% of monorepo, proprietary paths stubbed)            | Live, never archived         | 23,851 tracked paths, 3 tags (`v2.0.0-rc.1/2/3`), 54 branches | Created 2026-03-23, finalized 2026-03-24 per `docs/REPO_SEPARATION.md`                                                                                                         |
-| `whodaniel/fuse-control-plane`    | Live proprietary distribution (~10%: master-clock, broker-agent, backend-orchestrator) | Live, never archived         | Only 201 tracked paths                                        | Bootstrapped 2026-03-21                                                                                                                                                        |
+| `whodaniel/The-New-Fuse`     | Live open-source distribution (~90% of monorepo, proprietary paths stubbed)            | Live, never archived         | 23,851 tracked paths, 3 tags (`v2.0.0-rc.1/2/3`), 54 branches | Created 2026-03-23, finalized 2026-03-24 per `docs/REPO_SEPARATION.md`                                                                                                         |
+| `whodaniel/The-New-Fuse-control-plane`    | Live proprietary distribution (~10%: master-clock, broker-agent, backend-orchestrator) | Live, never archived         | Only 201 tracked paths                                        | Bootstrapped 2026-03-21                                                                                                                                                        |
 | `whodaniel/SkIDEancer`            | Cloud IDE product, originally embedded (`apps/skideancer-ide`, Dec 2024)               | Standalone product satellite | 257 tracked paths                                             | Verdict `DEFER` — not a TNF distribution target as of the lineage audit; see §4 for its embed→merge→spinout arc                                                                |
 | `whodaniel/MyPhone-Remote`        | iPhone remote-control app                                                              | Standalone product satellite | Only 28 tracked paths                                         | Verdict `DEFER`. Unlike every other repo above, **zero references** found anywhere in `docs/archive/`'s 100 files — always genuinely independent, no monorepo-embedded history |
 
 **How "parity" and archival actually work**: `scripts/audit-repo-parity.sh`
 counts tracked paths/tags/branches and checks a hardcoded proprietary-file
-boundary (a hard FAIL gate only for `fuse-open-runtime`); for the four
+boundary (a hard FAIL gate only for `The-New-Fuse`); for the four
 now-archived repos the PASS verdict is essentially asserted per-slug in the
 script rather than computed from an exhaustive content diff.
 `scripts/archive-lineage-repo.sh` then refuses to run unless a parity report
@@ -786,7 +786,7 @@ of `docs/archive/`.
 
 | Question                                                                                                                                                                | Recovery Path                                                                                                                                             | Priority   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| What is the full pre-2025-05-20 development history of `fuse`/`fuse-master`?                                                                                            | Re-export a fresh, uncorrupted bundle, or query `gh api repos/whodaniel/fuse/commits`\|`/tags` against the archived repos directly                        | **High**   |
+| What is the full pre-2025-05-20 development history of `fuse`/`fuse-master`?                                                                                            | Re-export a fresh, uncorrupted bundle, or query `gh api repos/whodaniel/The-New-Fuse/commits`\|`/tags` against the archived repos directly                        | **High**   |
 | Why was `main` originally abandoned/rewound to an Aug 18, 2025 checkpoint (as opposed to _how_ the reconciliation was later decided, which **is** documented — see §3)? | Examine the orphaned `feature/infrastructure-hardening` / `feature/agent-system-integration` branch commit messages in more detail; interview if possible | **High**   |
 | Does the Apple Notes corpus actually corroborate "The New Fuse" as a pre-codebase creative concept?                                                                     | Direct excerpt review of the `Creative_Literary_Archive` category referenced in `docs/incidents/APPLE_NOTES_IMPORT_2026-05-04.md`                         | **Medium** |
 | What happened to the Web3/crypto code specifically (deleted, or never built past docs)?                                                                                 | `git log --diff-filter=D` / `-S"ERC-3525"` / `-S"Unstoppable Domains"` for deletion commits                                                               | **Medium** |

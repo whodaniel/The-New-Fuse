@@ -450,7 +450,7 @@ export class SubTaskLifecycleManager {
   async delegateToJules(
     parentTaskId: string,
     taskDescription: string,
-    repo: string = 'whodaniel/fuse'
+    repo: string = 'whodaniel/The-New-Fuse'
   ): Promise<SubTask> {
     // 1. Execute Jules CLI
     const sessionId = await this.executeJulesCLI(taskDescription, repo);
@@ -1077,7 +1077,7 @@ async planTaskWithContext(task: AgentTask): Promise<ExecutionPlan> {
 **Delegate to Jules:**
 
 ```bash
-jules new --repo whodaniel/fuse --parallel 3 "
+jules new --repo whodaniel/The-New-Fuse --parallel 3 "
 Session 1: Implement SemanticSkillDiscovery service in packages/core/src/skills/. Use VectorDatabaseService to index all skills with embeddings. Support findSimilarSkills() and findSkillsByExample() methods.
 
 Session 2: Create SubTaskLifecycleManager in packages/core/src/delegation/. Implement Jules session monitoring with 30s polling. Handle completion/failure events. Integrate with EventEmitter2.

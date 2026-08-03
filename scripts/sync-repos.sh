@@ -9,12 +9,12 @@ set -euo pipefail
 #   Syncs the combined private monorepo (whodaniel/tnf-monorepo) to the two
 #   downstream publication repos:
 #     1. whodaniel/The-New-Fuse        (PUBLIC, ~90% open-source runtime)
-#     2. whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
+#     2. whodaniel/The-New-Fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
 #
 #   NAMING (swapped 2026-07-25): the flagship name The-New-Fuse now belongs to the
 #   PUBLIC publication repo. The private development monorepo — this one — is
 #   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as monorepo,
-#   fuse-open-runtime, the-new-fuse-next-gen) refer to the pre-swap layout.
+#   The-New-Fuse, the-new-fuse-next-gen) refer to the pre-swap layout.
 #   Anything still pointing a monorepo remote at whodaniel/The-New-Fuse is now
 #   aimed at the PUBLIC repo — repoint it at tnf-monorepo.
 #
@@ -256,9 +256,9 @@ if [ "$SYNC_CONTROL" = true ]; then
 
   CTRL_DIR="$WORK_DIR/fuse-control-plane"
   if [ -n "${GITHUB_PAT:-}" ]; then
-    git clone "https://${GITHUB_PAT}@github.com/whodaniel/fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
+    git clone "https://${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
   else
-    git clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
+    git clone https://github.com/whodaniel/The-New-Fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
   fi
 
   cd "$CTRL_DIR"
@@ -349,7 +349,7 @@ if [ "$SYNC_OPEN" = true ]; then
   echo "━━━ Phase 2: The-New-Fuse (public) ━━━"
   echo ""
 
-  OPEN_DIR="$WORK_DIR/fuse-open-runtime"
+  OPEN_DIR="$WORK_DIR/The-New-Fuse"
   mkdir -p "$OPEN_DIR"
   echo "  Exporting monorepo HEAD via git archive (skips node_modules, dist, .turbo)..."
   (cd "$MONO_ROOT" && git archive HEAD) | tar -x -C "$OPEN_DIR"
@@ -398,7 +398,7 @@ if [ "$SYNC_OPEN" = true ]; then
  *
  * This module provides the Master Clock synchronization service for TNF.
  * The implementation is part of the proprietary control-plane
- * (https://github.com/whodaniel/fuse-control-plane).
+ * (https://github.com/whodaniel/The-New-Fuse-control-plane).
  *
  * Public contracts are available in @the-new-fuse/control-plane-contracts.
  *
@@ -422,7 +422,7 @@ STUB
  *
  * This module provides the Broker Agent service for TNF.
  * The implementation is part of the proprietary control-plane
- * (https://github.com/whodaniel/fuse-control-plane).
+ * (https://github.com/whodaniel/The-New-Fuse-control-plane).
  *
  * Public contracts are available in @the-new-fuse/control-plane-contracts.
  *
@@ -448,7 +448,7 @@ STUB
  * The orchestration engine is part of the proprietary control-plane.
  * This stub module provides a no-op implementation for the open-source runtime.
  *
- * @see https://github.com/whodaniel/fuse-control-plane
+ * @see https://github.com/whodaniel/The-New-Fuse-control-plane
  */
 
 import { Module } from '@nestjs/common';
@@ -521,5 +521,5 @@ echo "  Removed temp directory"
 echo ""
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Sync complete ✅                            ║"
-echo "║  Source: whodaniel/fuse @ $MONO_HEAD              ║"
+echo "║  Source: whodaniel/The-New-Fuse @ $MONO_HEAD              ║"
 echo "╚══════════════════════════════════════════════╝"

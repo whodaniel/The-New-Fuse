@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # tnf-voice-kws-boot.sh
-# Always-on Voice Beam + local KWS for TNF boot / watchdog heal.
+# Voice Beam boot + local KWS for TNF boot / watchdog heal.
+# By default, the beam is OFF (no auto-activation of audio response).
 # Idempotent: safe to run repeatedly.
 set -u
 
@@ -22,11 +23,13 @@ KWS_DIR="$ROOT/apps/audio-trigger-kws-mvp"
 export VOICEBRIDGE_PROFILE="$PROFILE"
 export VOICEBRIDGE_PROJECT_ROOT="$ROOT"
 export VOICEBRIDGE_STATE_DIR="$STATE_DIR"
-export VOICE_RESPONSE_AUDIO_DEFAULT_ON="${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-1}"
-export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-1}"
+export VOICE_RESPONSE_AUDIO_DEFAULT_ON="${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-0}"
+export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-0}"
 
 mkdir -p "$STATE_DIR" "$(dirname "$LOG")"
-touch "$STATE_DIR/voice_response_audio_enabled"
+# Beam OFF by default. The enabled file is created only when the operator
+# explicitly enables it (via /activate with RESPONSE_AUDIO_DEFAULT_ON=1 or
+# via voice-response-audio-toggle).
 
 log() {
   echo "[$(date '+%H:%M:%S')] [voice-kws-boot/$PROFILE] $*" | tee -a "$LOG"

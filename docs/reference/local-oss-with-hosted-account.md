@@ -7,7 +7,7 @@
 
 | Layer                     | What it is                                     | Where it lives                                                                              |
 | ------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Open runtime (OSS)**    | Code you clone, build, and run on your machine | `fuse-open-runtime` or combined monorepo `The-New-Fuse`                                     |
+| **Open runtime (OSS)**    | Code you clone, build, and run on your machine | `The-New-Fuse` or combined monorepo `The-New-Fuse`                                     |
 | **Hosted account (SaaS)** | Login, agents, cloud relay, production API     | [thenewfuse.com](https://thenewfuse.com) · [app.thenewfuse.com](https://app.thenewfuse.com) |
 
 These are **complementary**, not either/or. Most contributors run **local
@@ -34,10 +34,10 @@ tooling + a hosted account**.
 
 | Audience                     | Clone                                                                                    | Notes                                                                         |
 | ---------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **OSS users / contributors** | [github.com/whodaniel/fuse-open-runtime](https://github.com/whodaniel/fuse-open-runtime) | Public ~90%; no proprietary control-plane code                                |
+| **OSS users / contributors** | [github.com/whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse) | Public ~90%; no proprietary control-plane code                                |
 | **Core TNF development**     | [github.com/whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)           | Full combined monorepo (public workspace; proprietary paths filtered on sync) |
 
-Do **not** commit to `fuse-open-runtime` directly — changes flow from the
+Do **not** commit to `The-New-Fuse` directly — changes flow from the
 monorepo via `pnpm run sync:repos` (see
 [REPO_SEPARATION.md](../REPO_SEPARATION.md)).
 
@@ -55,8 +55,8 @@ monorepo via `pnpm run sync:repos` (see
 For hacking on the platform offline or in a clean room:
 
 ```bash
-git clone https://github.com/whodaniel/fuse-open-runtime.git
-cd fuse-open-runtime
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
@@ -77,7 +77,7 @@ account** for production identity and cloud edges.
 
 ```bash
 # .tnf.local.env (gitignored)
-TNF_ROOT=/path/to/fuse-open-runtime
+TNF_ROOT=/path/to/The-New-Fuse
 TNF_RELAY_URL=ws://127.0.0.1:3000/ws
 ```
 
@@ -181,7 +181,7 @@ curl -s https://api.thenewfuse.com/health
 
 ## Related docs
 
-- [REPO_SEPARATION.md](../REPO_SEPARATION.md) — monorepo vs fuse-open-runtime
+- [REPO_SEPARATION.md](../REPO_SEPARATION.md) — monorepo vs The-New-Fuse
 - [local-runtime-profile.md](./local-runtime-profile.md) — `TNF_ROOT`, ports,
   relay
 - [voice-system-status.md](../voice-system-status.md) — voice stack checklist

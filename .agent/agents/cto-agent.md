@@ -43,7 +43,7 @@ Map every Zo + MiniMax 2.7 capability → TNF equivalent:
 - **Local Relay**: TNF-RELAY-CLOUD-001 on port 3000 (Sub-Director's relay)
 - **Central Hub**: thenewfuse.com (Super-Director at thenewfuse.com)
 - **Local Sub-Director**: https://www.zo.computer/chats/pub_YxtXVCp9zMRnadSF
-- **GitHub**: github.com/whodaniel/fuse (cloned at /home/workspace/fuse)
+- **GitHub**: github.com/whodaniel/The-New-Fuse (cloned at /home/workspace/fuse)
 
 ## Zo Stack Details
 
