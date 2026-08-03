@@ -1,5 +1,0 @@
-
-> @the-new-fuse/tnf-core@1.0.0 test /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-core
-> echo "No tests for this package" && exit 0
-
-No tests for this package

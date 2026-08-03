@@ -1,7 +1,0 @@
-
-> @the-new-fuse/api-server@0.0.3  dev /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api
-> nest start --watch
-
-[2J[3J[H[[90m7:44:56 PM[0m] Starting compilation in watch mode...
-
- ELIFECYCLE  Command failed.
