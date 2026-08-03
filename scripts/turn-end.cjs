@@ -293,16 +293,11 @@ function detectCompletedSteps(gitStatus, newAgents, deletedAgents, TNF_ROOT_DIR)
     NF('Fleet health endpoint config created at ~/.tnf/config/fleet-endpoints.json');
   }
 
-  const crontabContent = execSync('crontab -l 2>/dev/null || echo ""', { encoding: 'utf8' });
-  if (crontabContent.includes('tnf-frontend-tester-cycle') || crontabContent.includes('tnf-fleet-health-probe-cycle')) {
-    // Only record once — crontab presence is steady-state, not a per-turn event.
-    // Without this guard, every turn-end spams Active Steps with the same line.
-    const livingStatePath = path.join(TNF_ROOT_DIR, 'docs/protocols/LIVING_STATE.md');
-    const living = fs.existsSync(livingStatePath) ? fs.readFileSync(livingStatePath, 'utf8') : '';
-    if (!living.includes('System cron entries installed: tnf-frontend-tester')) {
-      NF('System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)');
-    }
-  }
+  // Crontab presence is steady-state infrastructure, not a completed work step.
+  // Logging it on every turn filled Active Steps with dozens of duplicate
+  // "System cron entries installed…" bullets and starved the real work queue.
+  // Do not append cron presence to LIVING_STATE Active Steps (see Living State
+  // steady-state infra note instead).
 
   const archiveCreated = gitStatus.added.some(
     (f) => f.includes('archive/picoclaw-deprecated') || f.includes('archive/disabled-launch-agents')
@@ -678,7 +673,11 @@ async function main() {
   console.log('Turn End complete. Run `git status` to review staged changes.');
 }
 
-main().catch((error) => {
-  console.error(`Turn End failed: ${error?.message || 'unknown error'}`);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(`Turn End failed: ${error?.message || 'unknown error'}`);
+    process.exit(1);
+  });
+}
+
+module.exports = {};

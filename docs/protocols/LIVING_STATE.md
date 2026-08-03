@@ -2,17 +2,23 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Reconcile stale protocol blockers so agents execute a
-real work queue (CLI↔Hermes parity WIP), not a commit-gate-only handoff. Keep
-commits/pushes operator-gated. **Project ID:** `TNF-SESSION` **Handoff:**
-`08f3e101-9fe6-4e4f-a88d-4432de26ddd8` **Head:** `2a3e939b82be` on
-`fix/a2a-signature-verification` **Updated:** `2026-08-03T21:10:00Z`
+**Current Directive:** Execute the actionable work queue — Hermes CLI
+surface/noun parity is complete (PR #77 MERGED); prefer product work (optional
+real Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
+`TNF-SESSION` **Handoff:** `169cd0cf-4cf8-4947-ae0a-f373a62bb236` **Head:**
+`e3db3e5816f9`
 
-**Cleared / no longer P0:** PR #70 authority layer is **MERGED**
-(https://github.com/whodaniel/tnf-monorepo/pull/70). Do not reopen it as an
-active blocker. Residual authority ops (`tnf authority relaunch-workers` →
-`confirm-isolation`) remain **operator-gated** and are not standing autonomous
-commands.
+**Cleared / no longer P0:**
+
+- PR #70 authority layer — **MERGED**
+  (https://github.com/whodaniel/tnf-monorepo/pull/70). Residual authority ops
+  remain operator-gated.
+- PR #77 Hermes/CLI noun parity — **MERGED**
+  (https://github.com/whodaniel/tnf-monorepo/pull/77). Surface coverage 62/62;
+  product-level Slack/WhatsApp/etc. is optional follow-on, not a standing
+  blocker.
+- Living State Active Steps cron spam peeled (steady-state crontab must not be
+  re-logged each turn).
 
 **Session note:** Prior Cursor notes on role⊥platform corrections,
 orphaned-inbox migration, graph regen/publish harden, and
@@ -21,35 +27,30 @@ must not be mass-deleted without verification evidence. See
 `SESSION_HANDOFF_LATEST.json`.
 
 **Prior notes:** Authority coherence audit mixed —
-`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`. Handoff
-`f82b041a-f2d2-4edd-9cc9-b546c74269ec` / head `9c7e6bd7a1`.
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`.
 
 ---
 
 ## ⚡ Active Steps
 
+- [✅] **2026-08-03 Living State / handoff noise peel on main** — Removed ~82
+  duplicate "System cron entries installed…" Active Steps (+ orphans).
+  `turn-end.cjs` no longer logs crontab presence as completed work. PR #77 noted
+  MERGED; directive points at actionable queue not commit-gate notices.
+
+- [✅] **Steady-state infra (do not re-log):** system cron hosts
+  `tnf-frontend-tester` (5m) and `tnf-fleet-health-probe` (15m). Presence is not
+  a per-turn completed step.
+
 - [✅] **2026-08-03 Turn Zero reconcile — commit-gate starvation fixed** —
-- [✅] 2026-08-03T21:54:46.816Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   `turn-end.cjs` + `sync-handoff-cache.cjs` demote operator commit notices out
   of `IMMEDIATE_TASKS`. PR #70 marked merged/cleared above.
 
 - [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
-- [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
 - [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
-- [✅] 2026-07-28T10:44:05.760Z System cron entries installed:
-- [✅] 2026-08-03T20:47:39.852Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   voice-beam-watchdog.sh
-
-- [✅] 2026-07-26T16:49:21.106Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`
   inbox migration; dual inbox keys; graph regen + safe publish; protocol
@@ -57,29 +58,7 @@ must not be mass-deleted without verification evidence. See
   `pnpm run handoff:lifecycle:*`; tests 11/11. Handoff
   `4d393466-34a4-4dc3-bbaa-af1680956fa1`. No commit (operator-gated).
 
-- [✅] 2026-07-24T00:30:13.658Z System cron entries installed:
-- [✅] 2026-07-24T04:21:15.352Z System cron entries installed:
 - [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
-- [✅] 2026-07-24T21:17:42.244Z System cron entries installed:
-- [✅] 2026-07-24T23:38:13.615Z System cron entries installed:
-- [✅] 2026-07-25T06:16:47.412Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-25T07:00:25.030Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-25T11:33:58.096Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-25T11:43:25.323Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-24T05:34:57.132Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T16:26:08.521Z System cron entries installed:
 
 - [✅] 2026-07-24 **Qoder CLI agent assimilation complete (P9)** — Agent
   registry class fixed: `agent-registry-bridge.ts` now propagates
@@ -88,17 +67,7 @@ must not be mass-deleted without verification evidence. See
   `.tnf/agent-registry-snapshot.json` verified (327 agents, 0 errors). Broker
   fulfillment-aware selection (`broker-agent.ts:980-1089`) now has data to route
   on. Next: confirm broker dispatch with `--require-model qoder` and await
-  operator handshake for master-clock cull. tnf-frontend-tester (5m),
-  tnf-fleet-health-probe (15m)
-
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-24T01:16:10.135Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T01:22:56.438Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-24T01:29:08.242Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+  operator handshake for master-clock cull.
 
 - [✅] **2026-07-24 RESOLVED: leaked credentials rotated (operator-reported).**
   `apps/api/.env` + `.bak` copies + `CLOUD_MIGRATION_BLUEPRINT.md` history had
@@ -149,11 +118,12 @@ must not be mass-deleted without verification evidence. See
   when the account exists. Shared helpers in
   `scripts/lib/tnf-authority-workers.cjs` (SUDO_UID-aware). Operator turn-up
   runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`.
-- [🔑] 2026-07-24 **OPERATOR ACTION (turn-up remaining):** as normal user (not
-  `sudo tnf`): `tnf authority relaunch-workers` → `tnf authority workers`
+- [🔑] 2026-07-24 **OPERATOR ACTION (turn-up remaining, gated):** as normal user
+  (not `sudo tnf`): `tnf authority relaunch-workers` → `tnf authority workers`
   (clean) → `tnf authority confirm-isolation` → `tnf authority status` (want
   strong `separate-uid`). Then flip `TNF_AUTHORITY_CONSUMER=1` on one pilot. PR
-  #70 merge remains operator review. See runbook.
+  #70 is **MERGED** — this residual turn-up is optional operator work, not a
+  standing autonomous P0. See runbook.
 - [✅] 2026-07-23 **Phase 3 built: elevation approval channel.**
   `tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
   (`status|list|show|approve|deny`). Agents may `submit()` (grants nothing);
@@ -184,53 +154,20 @@ must not be mass-deleted without verification evidence. See
 
 1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
 
-- [✅] 2026-07-23T19:27:08.885Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-23T18:46:20.014Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-23T05:37:54.740Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-22T22:21:12.398Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
 - [✅] 2026-07-22T13:09:55.447Z New script(s) created: quick-start-mcp.sh
-- [✅] 2026-07-22T13:09:55.447Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-22T17:29:55.147Z New script(s) created: quick-start-mcp.sh
-- [✅] 2026-07-22T17:29:55.147Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-07-22T12:21:40.795Z New script(s) created: quick-start-mcp.sh
-- [✅] 2026-07-22T12:21:40.795Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-22T12:26:15.345Z New script(s) created: quick-start-mcp.sh
-- [✅] 2026-07-22T12:26:15.345Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-- [✅] 2026-07-21T02:08:29.177Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-21T05:07:43.774Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-21T05:21:20.576Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-21T09:43:25.102Z New script(s) created:
   tnf-interactive-safe-mode.cjs, tnf-terminal-attention.cjs,
   validate-locked-doc-ledger.cjs, quick-start-mcp.sh
-- [✅] 2026-07-21T09:43:25.102Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-- [✅] 2026-07-21T00:56:58.911Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-21T00:56:58.911Z Agent registration gate created: auto-verify all
   agents registered in AGENT_STATUS_LEDGER
 
   to
-
-- [✅] 2026-07-18T05:11:59.404Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   continuity stack; boot pipeline gains `--require-core` + `--autonomous`.
 
@@ -250,66 +187,17 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-07-17T19:34:23.381Z New script(s) created:
   validate-local-runtime-boundary.test.cjs, validate-sgp-schemas.test.cjs,
   verify-terminal-visualizer-readiness.test.cjs
-- [✅] 2026-07-17T19:34:23.381Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-- [✅] 2026-07-09T06:39:01.091Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-14T12:50:52.702Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-14T18:32:26.570Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-14T23:31:55.823Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
-- [✅] 2026-07-04T14:00:23.115Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T14:59:33.267Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T16:18:19.109Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T16:21:50.216Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:09:29.264Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:13:48.076Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T21:17:56.449Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:05:22.991Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:06:54.209Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:44:07.290Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T03:45:04.907Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T14:21:55.123Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T14:36:39.576Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-05T18:54:16.554Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-07T22:27:24.425Z New script(s) created:
   federation-sequence-checker.cjs
-- [✅] 2026-07-07T22:27:24.425Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-08T16:20:29.989Z New script(s) created:
   federation-sequence-checker.cjs
-- [✅] 2026-07-08T16:20:29.989Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-08T16:34:56.748Z New script(s) created:
   federation-sequence-checker.cjs
-- [✅] 2026-07-08T16:34:56.748Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T02:21:39.936Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T02:21:39.936Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T02:21:58.625Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T02:21:58.625Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T02:55:00.000Z Curator question filed: Rate Limit Gateway has
   no source counterpart in TNF_GOVERNANCE_TENETS.md §2-6 (verified via delegated
   validator subagent deleg_138473bd, 5-pass Prometheus scan Pass 2). File:
@@ -327,8 +215,6 @@ must not be mass-deleted without verification evidence. See
   type-check passes).
 - [✅] 2026-07-09T03:22:22.903Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T03:22:22.903Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T04:30:00.000Z Rate Limit Gateway drift resolved: anchored in
   TNF_GOVERNANCE_TENETS.md §3.B; curator question
   CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md marked RESOLVED (option a).
@@ -341,8 +227,6 @@ must not be mass-deleted without verification evidence. See
   false-positive on empty jsonl — outputs are .md not .jsonl).
 - [✅] 2026-07-09T04:23:46.260Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T04:23:46.260Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T04:35:00.000Z Hermes web UI build fixed
   (`npm install --workspace web` + build); dist at hermes_cli/web_dist/.
 - [✅] 2026-07-09T04:35:00.000Z Heartbeat cron class-fix: jobs.json script →
@@ -357,44 +241,14 @@ must not be mass-deleted without verification evidence. See
   session gap (PID detached).
 - [✅] 2026-07-09T04:27:54.588Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T04:27:54.588Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-09T04:42:19.276Z New script(s) created: tnf-growth-audit.cjs,
   federation-sequence-checker.cjs
-- [✅] 2026-07-09T04:42:19.276Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
-- [✅] 2026-06-29T08:29:15.434Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T10:09:07.749Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T10:11:53.553Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-01T04:23:31.232Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-01T13:53:47.713Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-01T18:45:09.017Z New script(s) created:
   cost-simulation-corrected.cjs, cost-simulation.cjs
-- [✅] 2026-07-01T18:45:09.017Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-02T11:34:50.115Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-03T15:43:48.191Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-03T20:27:39.110Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-04T04:24:29.000Z TNF Framework Evolution Protocol implemented:
-- [✅] 2026-07-04T04:58:47.939Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T05:02:09.226Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-07-04T10:14:47.010Z New script(s) created:
   cost-simulation-corrected.cjs, cost-simulation.cjs
-- [✅] 2026-07-04T10:14:47.010Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-07-04T10:22:16.222Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
   - Created TNF_FLEET_HEALTH_PROBE_PROTOCOL.md (v2.0 - adds NODE_PATH awareness)
   - Created TNF_SELF_HEALING_PROTOCOL.md (v2.0 - module dependency awareness)
   - Created TNF_MODULE_DEPENDENCY_AWARENESS.md (ioredis module resolution fix)
@@ -406,20 +260,9 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-07-04T04:24:29.000Z TNF Agent Daemon started successfully (was not
   running - caused 410 errors)
 
-- [✅] 2026-06-28T19:06:44.275Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T01:54:26.410Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T03:45:21.925Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-- [✅] 2026-06-29T03:47:05.919Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
-
 - [✅] 2026-06-23T23:43:27.174Z New agent(s) created:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
 - [✅] 2026-06-23T23:43:27.174Z Agent definition change: 0 added, 5 removed
-- [✅] 2026-06-23T23:43:27.174Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-06-24T00:59:44.014Z New agent(s) created:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
 - [✅] 2026-06-24T00:59:44.014Z Agent(s) archived: picoclaw-perplexity,
@@ -443,12 +286,8 @@ must not be mass-deleted without verification evidence. See
   tnf-boot-environment.sh, tnf-environment.sh, tnf-redis-audit.cjs,
   tnf-self-sufficiency-gate.sh, verify-open-runtime-export.sh
 - [✅] 2026-06-24T00:59:44.014Z Agent definition change: 2 added, 0 removed
-- [✅] 2026-06-24T00:59:44.014Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-06-24T00:59:44.014Z OpenClaw migration: 7 launchd agents replaced by
   3 native system-cron entries
-- [✅] 2026-06-26T15:43:04.319Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
 - [✅] 2026-06-23T22:51:24.112Z New agent registered:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
@@ -457,15 +296,11 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-06-23T22:56:05.654Z New agent(s) created:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
 - [✅] 2026-06-23T22:56:05.654Z Agent definition change: 0 added, 5 removed
-- [✅] 2026-06-23T22:56:05.654Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-06-23T23:23:57.161Z New agent(s) created:
   thenewfuse-frontend-tester, tnf-fleet-health-probe
 - [✅] 2026-06-23T23:23:57.161Z New script(s) created:
   check-agent-registration.cjs, turn-end.cjs
 - [✅] 2026-06-23T23:23:57.161Z Agent definition change: 0 added, 5 removed
-- [✅] 2026-06-23T23:23:57.161Z System cron entries installed:
-  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 - [✅] 2026-06-23T23:23:57.161Z Turn End protocol implemented: auto-update
   LIVING_STATE + SESSION_HANDOFF at session close
 - [✅] 2026-06-23T23:23:57.161Z Agent registration gate created: auto-verify all

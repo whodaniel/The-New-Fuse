@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-07-27T05:56:05.173Z** — handoff
+Updated: **2026-08-03T22:48:19.924Z** — handoff
+`169cd0cf-4cf8-4947-ae0a-f373a62bb236` (`e3db3e5816f9`).
 `ed0bc749-f675-42d6-bcdd-4bd5adc5994c` (`16ffb646d646`).
 `4d393466-34a4-4dc3-bbaa-af1680956fa1` (`9bdd3b6b147a`). Prior coherence audit
 handoff `f82b041a-f2d2-4edd-9cc9-b546c74269ec` (`9c7e6bd7a1`). Heartbeat
@@ -82,10 +83,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                                                                                                                  |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Execute the actionable work queue — Hermes CLI surface/noun parity is complete (PR #77 MERGED); prefer product work (optional real Slack/WhatsApp channels) over protocol notice churn. |
+| **P0**   | Authority residual (relaunch-workers → confirm-isolation) remains operator-gated — PR #70 MERGED; not a standing autonomous P0.                                                         |
+| **P0**   | Keep commits/pushes operator-gated; items marked NEEDS LIVE OPERATOR CONFIRMATION are notices only (OPERATOR_NOTICES in handoff cache), never the sole IMMEDIATE_TASKS.                 |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -364,3 +366,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-07-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ed0bc749-f675-42d6-bcdd-4bd5adc5994c) | ✅ HANDOFF_READY |
+
+| 2026-08-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3b331590-8964-4257-8de7-ef56f7c72f22) | ✅ HANDOFF_READY |
+
+| 2026-08-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(169cd0cf-4cf8-4947-ae0a-f373a62bb236) | ✅ HANDOFF_READY |

@@ -1,78 +1,58 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-08-03T21:54:46.820Z` Handoff
-ID: `68a3f7f3-bae4-4301-b25a-28b6ee4c4d11`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-08-03T22:48:19.924Z`  
+Handoff ID: `169cd0cf-4cf8-4947-ae0a-f373a62bb236`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `feat/cross-agent-cli-parity`
-- Head SHA: `083afbc8bea96ce235ce0eeceebad9258b503734`
+- Branch: `main`
+- Head SHA: `e3db3e5816f9c9dee943711d99cd92dad3ee6d49`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Hermes parity gap bucket: aliases+thin wrappers; coverage 45.2%→64.5%
+- Peeled Living State Active Steps cron spam (~82 duplicates) on main after PR
+  #77 merge.
+- Hardened turn-end.cjs to never log steady-state crontab as completed Active
+  Steps; require.main guard prevents accidental require() re-runs.
+- Refreshed handoff so IMMEDIATE_TASKS are actionable work, not commit-gate
+  notices or stale parity-PR open actions.
 
 ## Changed Paths
 
-- .agent/test-reports/\_rolling-summary.json
-- apps/api/src/controllers/available-models.controller.ts
-- apps/frontend/docs/audits/live-link-crawl.json
-- apps/frontend/docs/audits/live-link-crawl.md
-- apps/frontend/nginx.conf
-- apps/frontend/public/\_redirects
-- data/llm-provider-status.json
-- docs/marketing/PUBLIC_LAUNCH_MARKETING_PLAN.md
-- docs/operations/tnf-full-auto-runs.jsonl
-- docs/operations/tnf-full-auto-state.json
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- packages/ag-ui-core/.turbo/turbo-lint.log
-- packages/proto-definitions/.turbo/turbo-lint.log
-- packages/resource-registry/.turbo/turbo-lint.log
-- packages/testing/.turbo/turbo-lint.log
-- packages/tnf-cli/src/cli.ts
-- scripts/agents/sync-tnf-cli-with-agents.mjs
-- scripts/check-frontend-bundle-size.cjs
-- scripts/install-tnf-cli.sh
-- scripts/sync-repos.sh
-- apps/frontend/public/about.html
-- apps/frontend/public/blog.html
-- apps/frontend/public/legal/
-- bulk_replace_url.py
-- packages/tnf-cli/src/commands/hermes-parity-gaps.ts
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `operator`
+- Targets: `orchestrator`
+- Priority: `medium`
 
-**Targets:**
+### Resume Checklist
 
-- orchestrator
-
-**Resume Checklist:**
-
+- Read docs/protocols/LIVING_STATE.md Current Directive + Cleared block
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+- Work through next_actions — NEEDS LIVE OPERATOR CONFIRMATION items are
+  notices, not standing commands
 
 ## Next Actions
 
-- Parity gap bucket closed to 64.5% Hermes overlap — remaining 22 are heavy
-  product surfaces (channels/UI/extension pets/lsp)
-- Optional: open PR for feat/cross-agent-cli-parity
-  (https://github.com/whodaniel/tnf-monorepo/pull/new/feat/cross-agent-cli-parity)
-- Authority residual remains operator-gated — PR #70 MERGED
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 25 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
-## Artifacts
-
-**Commits:**
-
-- 083afbc8bea96ce235ce0eeceebad9258b503734
+- Execute the actionable work queue — Hermes CLI surface/noun parity is complete
+  (PR #77 MERGED); prefer product work (optional real Slack/WhatsApp channels)
+  over protocol notice churn.
+- Authority residual (relaunch-workers → confirm-isolation) remains
+  operator-gated — PR #70 MERGED; not a standing autonomous P0.
+- Keep commits/pushes operator-gated; items marked NEEDS LIVE OPERATOR
+  CONFIRMATION are notices only (OPERATOR_NOTICES in handoff cache), never the
+  sole IMMEDIATE_TASKS.
