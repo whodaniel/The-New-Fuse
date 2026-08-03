@@ -1,6 +1,19 @@
 #!/usr/bin/env sh
 set -e
 
+# Authority first. Push is the only action here that leaves this machine and
+# cannot be quietly undone, so it is gated ahead of every content check.
+#
+# This hook previously had no authority check at all — which is how, on
+# 2026-08-03, four commits reached origin/main via an unattended push and
+# merge with nothing recorded about who did it. Commits were gated; the
+# irreversible, outward-facing action was not.
+#
+# Reads no stdin: git feeds the ref list to the loop below, and consuming it
+# here would silently empty the content checks.
+. "$(git rev-parse --show-toplevel)/.husky/tnf-authority.sh"
+tnf_require_operator push "remote=${1:-unknown} url=${2:-unknown}"
+
 tmp_file="$(mktemp)"
 trap 'rm -f "$tmp_file"' EXIT
 

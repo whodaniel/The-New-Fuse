@@ -1,58 +1,11 @@
 #!/usr/bin/env sh
 set -e
 
-# --- Commit authority gate ------------------------------------------------
-#
-# docs/core/AGENTS.md:72 requires a live, current-session operator confirmation
-# for every commit. Until now that rule existed only as prose, and prose is not
-# a control: on 2026-08-03 two commits (083afbc, f54affd) were made by an
-# unattended agent, and both passed all seven content gates below untouched,
-# because not one of them asks *who is acting*.
-#
-# This gate deliberately does NOT key on git identity. `user.email` in this
-# repo is the shared `agent@thenewfuse.local` for operator and agents alike, so
-# every commit here is anonymous and no author check can separate them. The
-# only thing that distinguishes an operator is an assertion an agent has no way
-# to fabricate on its own behalf — an explicit environment confirmation.
-#
-# Every attempt is recorded with its calling process, so an unattributed commit
-# leaves evidence behind. This log is the seed of the action-receipt layer.
-
-TNF_AUDIT_LOG="${TNF_COMMIT_AUDIT_LOG:-${HOME}/.tnf/audit/commit-attempts.jsonl}"
-mkdir -p "$(dirname "$TNF_AUDIT_LOG")" 2>/dev/null || true
-
-# $PPID here is git itself; its parent is what actually invoked the commit.
-_tnf_scrub() { tr -d '"\\' | tr '\n' ' ' | cut -c1-200; }
-_tnf_parent=$(ps -o command= -p "$PPID" 2>/dev/null | _tnf_scrub)
-_tnf_gp_pid=$(ps -o ppid= -p "$PPID" 2>/dev/null | tr -d ' ')
-_tnf_gp=$(ps -o command= -p "${_tnf_gp_pid:-0}" 2>/dev/null | _tnf_scrub)
-_tnf_tty=$(ps -o tty= -p $$ 2>/dev/null | tr -d ' ')
-_tnf_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)
-_tnf_staged=$(git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' ')
-
-_tnf_record() {
-  printf '{"ts":"%s","decision":"%s","pid":%s,"git_pid":%s,"tty":"%s","branch":"%s","staged":%s,"invoker":"%s","invoker_parent":"%s"}\n' \
-    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" "$$" "$PPID" "${_tnf_tty:-none}" \
-    "$_tnf_branch" "${_tnf_staged:-0}" "$_tnf_parent" "$_tnf_gp" \
-    >> "$TNF_AUDIT_LOG" 2>/dev/null || true
-}
-
-if [ -z "$TNF_OPERATOR_CONFIRM" ]; then
-  _tnf_record blocked
-  echo "" >&2
-  echo "  BLOCKED — commit requires live operator confirmation." >&2
-  echo "  docs/core/AGENTS.md:72" >&2
-  echo "" >&2
-  echo "  This repo's git identity is shared, so authority cannot be" >&2
-  echo "  inferred from the commit author. It must be asserted." >&2
-  echo "" >&2
-  echo "  Operator:  TNF_OPERATOR_CONFIRM=1 git commit ..." >&2
-  echo "  Attempt logged: $TNF_AUDIT_LOG" >&2
-  echo "" >&2
-  exit 1
-fi
-_tnf_record allowed
-# --- end commit authority gate --------------------------------------------
+# Authority first: cheapest check, and the one that decides whether this
+# commit should exist at all. See .husky/tnf-authority.sh for what this does
+# and does not guarantee.
+. "$(git rev-parse --show-toplevel)/.husky/tnf-authority.sh"
+tnf_require_operator commit "staged=$(git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' ')"
 
 # Runs first: if a merge/rebase/cherry-pick is open, this commit would conclude
 # it. Cheap check, and it should fail before anything slower runs.
