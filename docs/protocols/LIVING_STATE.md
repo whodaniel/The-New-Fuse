@@ -2,20 +2,23 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`ed0bc749-f675-42d6-bcdd-4bd5adc5994c` **Head:** `16ffb646d646`
-handoff-lifecycle + role/platform + graph artifacts (do not auto-commit).
-**Project ID:** `TNF-HANDOFF-LIFECYCLE` **Handoff:**
-`4d393466-34a4-4dc3-bbaa-af1680956fa1` **Head:** `9bdd3b6b147a` **Updated:**
-`2026-07-25T19:38:53Z`
+**Current Directive:** Reconcile stale protocol blockers so agents execute a
+real work queue (CLI↔Hermes parity WIP), not a commit-gate-only handoff. Keep
+commits/pushes operator-gated. **Project ID:** `TNF-SESSION` **Handoff:**
+`08f3e101-9fe6-4e4f-a88d-4432de26ddd8` **Head:** `2a3e939b82be` on
+`fix/a2a-signature-verification` **Updated:** `2026-08-03T21:10:00Z`
 
-**Session note:** Cursor session closed logs for role⊥platform corrections,
+**Cleared / no longer P0:** PR #70 authority layer is **MERGED**
+(https://github.com/whodaniel/tnf-monorepo/pull/70). Do not reopen it as an
+active blocker. Residual authority ops (`tnf authority relaunch-workers` →
+`confirm-isolation`) remain **operator-gated** and are not standing autonomous
+commands.
+
+**Session note:** Prior Cursor notes on role⊥platform corrections,
 orphaned-inbox migration, graph regen/publish harden, and
-`HANDOFF_PACKET_LIFECYCLE` (verify→retire→archive). Live baton inbox residue
-must not be mass-deleted without verification evidence. Prior authority P0s
-remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
-`sudo tnf`). See `SESSION_HANDOFF_LATEST.json`.
+`HANDOFF_PACKET_LIFECYCLE` remain historical context. Live baton inbox residue
+must not be mass-deleted without verification evidence. See
+`SESSION_HANDOFF_LATEST.json`.
 
 **Prior notes:** Authority coherence audit mixed —
 `docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`. Handoff
@@ -25,11 +28,16 @@ remain: PR #70; `tnf authority relaunch-workers` → `confirm-isolation` (not
 
 ## ⚡ Active Steps
 
+- [✅] **2026-08-03 Turn Zero reconcile — commit-gate starvation fixed** —
+  `turn-end.cjs` + `sync-handoff-cache.cjs` demote operator commit notices out
+  of `IMMEDIATE_TASKS`. PR #70 marked merged/cleared above.
+
 - [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
 - [✅] 2026-07-25T20:05:30.080Z System cron entries installed:
 - [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
 - [✅] 2026-07-28T10:44:05.760Z System cron entries installed:
-- [✅] 2026-08-03T20:47:39.852Z System cron entries installed: tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
+- [✅] 2026-08-03T20:47:39.852Z System cron entries installed:
+  tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 
   tnf-frontend-tester (5m), tnf-fleet-health-probe (15m)
 

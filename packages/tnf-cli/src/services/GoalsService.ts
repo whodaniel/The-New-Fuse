@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
 interface GoalTask {
   id: string;
@@ -84,7 +84,9 @@ export class GoalsService {
       try {
         const raw = fs.readFileSync(this.configPath, 'utf8');
         return JSON.parse(raw);
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     return { priorities: {} };
   }
@@ -105,8 +107,15 @@ export class GoalsService {
     if (fs.existsSync(file)) {
       try {
         const raw = fs.readFileSync(file, 'utf8');
-        return (JSON.parse(raw) as Goal[]).map(g => this.migrateGoal(g));
-      } catch { /* ignore */ }
+        const stored = JSON.parse(raw) as Goal[];
+        const migrated = stored.map((g) => this.migrateGoal(g));
+        // Persist the migration once so other readers (dashboard, exports)
+        // see the cross-agent shape rather than re-deriving it every load.
+        if (migrated.some((g, i) => g !== stored[i])) this.saveGoals(migrated);
+        return migrated;
+      } catch {
+        /* ignore */
+      }
     }
     return [];
   }
@@ -131,7 +140,11 @@ export class GoalsService {
   }
 
   private generateSlug(title: string): string {
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 50);
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 50);
   }
 
   private generateId(): string {
@@ -150,7 +163,7 @@ export class GoalsService {
         priority: 'critical',
         category: 'Feature Parity',
         parity: { agent: 'hermes', feature: 'all-commands' },
-        tags: ['hermes', 'parity', 'roadmap']
+        tags: ['hermes', 'parity', 'roadmap'],
       },
       {
         title: 'Implement Model Selection & Provider Fallback',
@@ -158,7 +171,7 @@ export class GoalsService {
         priority: 'high',
         category: 'Core',
         parity: { agent: 'hermes', feature: 'model/fallback' },
-        tags: ['model', 'provider', 'fallback']
+        tags: ['model', 'provider', 'fallback'],
       },
       {
         title: 'Build Interactive Setup Wizard',
@@ -166,7 +179,7 @@ export class GoalsService {
         priority: 'high',
         category: 'UX',
         parity: { agent: 'hermes', feature: 'setup' },
-        tags: ['setup', 'wizard', 'onboarding']
+        tags: ['setup', 'wizard', 'onboarding'],
       },
       {
         title: 'Complete Skills Hub Integration',
@@ -174,15 +187,16 @@ export class GoalsService {
         priority: 'high',
         category: 'Features',
         parity: { agent: 'hermes', feature: 'skills' },
-        tags: ['skills', 'hub', 'procedural-memory']
+        tags: ['skills', 'hub', 'procedural-memory'],
       },
       {
         title: 'Expand Messaging Gateway',
-        description: 'Full gateway for Telegram, Discord, Slack, WhatsApp, Signal like `hermes gateway`',
+        description:
+          'Full gateway for Telegram, Discord, Slack, WhatsApp, Signal like `hermes gateway`',
         priority: 'high',
         category: 'Integration',
         parity: { agent: 'hermes', feature: 'gateway' },
-        tags: ['gateway', 'telegram', 'discord', 'slack', 'whatsapp']
+        tags: ['gateway', 'telegram', 'discord', 'slack', 'whatsapp'],
       },
       {
         title: 'Session Management Suite',
@@ -190,7 +204,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'Core',
         parity: { agent: 'hermes', feature: 'sessions' },
-        tags: ['sessions', 'history', 'management']
+        tags: ['sessions', 'history', 'management'],
       },
       {
         title: 'Usage Insights & Analytics',
@@ -198,7 +212,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'Analytics',
         parity: { agent: 'hermes', feature: 'insights' },
-        tags: ['insights', 'analytics', 'reporting']
+        tags: ['insights', 'analytics', 'reporting'],
       },
       {
         title: 'Diagnostic System',
@@ -206,7 +220,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'DevOps',
         parity: { agent: 'hermes', feature: 'doctor' },
-        tags: ['doctor', 'diagnostics', 'health']
+        tags: ['doctor', 'diagnostics', 'health'],
       },
       {
         title: 'Backup & Restore System',
@@ -214,7 +228,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'Data',
         parity: { agent: 'hermes', feature: 'backup/import' },
-        tags: ['backup', 'import', 'restore']
+        tags: ['backup', 'import', 'restore'],
       },
       {
         title: 'Multi-Profile Support',
@@ -222,7 +236,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'Core',
         parity: { agent: 'hermes', feature: 'profile' },
-        tags: ['profile', 'isolation', 'multi-tenant']
+        tags: ['profile', 'isolation', 'multi-tenant'],
       },
       {
         title: 'Web UI Dashboard',
@@ -230,7 +244,7 @@ export class GoalsService {
         priority: 'medium',
         category: 'UI',
         parity: { agent: 'hermes', feature: 'dashboard' },
-        tags: ['dashboard', 'web-ui', 'monitoring']
+        tags: ['dashboard', 'web-ui', 'monitoring'],
       },
       {
         title: 'Log Management',
@@ -238,11 +252,11 @@ export class GoalsService {
         priority: 'low',
         category: 'DevOps',
         parity: { agent: 'hermes', feature: 'logs' },
-        tags: ['logs', 'monitoring', 'debugging']
+        tags: ['logs', 'monitoring', 'debugging'],
       },
     ];
 
-    const goals = defaults.map(input => this.createGoalFromInput(input));
+    const goals = defaults.map((input) => this.createGoalFromInput(input));
     this.saveGoals(goals);
     return goals;
   }
@@ -280,7 +294,7 @@ export class GoalsService {
 
   async get(idOrSlug: string): Promise<Goal | undefined> {
     const goals = await this.list();
-    return goals.find(g => g.id === idOrSlug || g.slug === idOrSlug);
+    return goals.find((g) => g.id === idOrSlug || g.slug === idOrSlug);
   }
 
   async create(input: GoalCreateInput): Promise<Goal> {
@@ -291,11 +305,14 @@ export class GoalsService {
     return goal;
   }
 
-  async update(id: string, updates: Partial<Omit<Goal, 'id' | 'createdAt' | 'tasks'>>): Promise<Goal | null> {
+  async update(
+    id: string,
+    updates: Partial<Omit<Goal, 'id' | 'createdAt' | 'tasks'>>
+  ): Promise<Goal | null> {
     const goals = await this.list();
-    const idx = goals.findIndex(g => g.id === id);
+    const idx = goals.findIndex((g) => g.id === id);
     if (idx === -1) return null;
-    
+
     goals[idx] = { ...goals[idx], ...updates, updatedAt: new Date().toISOString() };
     this.saveGoals(goals);
     return goals[idx];
@@ -303,7 +320,7 @@ export class GoalsService {
 
   async delete(id: string): Promise<boolean> {
     const goals = await this.list();
-    const filtered = goals.filter(g => g.id !== id);
+    const filtered = goals.filter((g) => g.id !== id);
     if (filtered.length === goals.length) return false;
     this.saveGoals(filtered);
     return true;
@@ -325,7 +342,7 @@ export class GoalsService {
 
   async addTask(goalId: string, description: string): Promise<GoalTask | null> {
     const goals = await this.list();
-    const goal = goals.find(g => g.id === goalId);
+    const goal = goals.find((g) => g.id === goalId);
     if (!goal) return null;
 
     const task: GoalTask = {
@@ -343,10 +360,10 @@ export class GoalsService {
 
   async completeTask(goalId: string, taskId: string): Promise<Goal | null> {
     const goals = await this.list();
-    const goal = goals.find(g => g.id === goalId);
+    const goal = goals.find((g) => g.id === goalId);
     if (!goal) return null;
 
-    const task = goal.tasks.find(t => t.id === taskId);
+    const task = goal.tasks.find((t) => t.id === taskId);
     if (!task) return null;
 
     task.completed = true;
@@ -358,7 +375,7 @@ export class GoalsService {
 
   private recalculateProgress(goal: Goal): void {
     if (goal.tasks.length === 0) return;
-    const completed = goal.tasks.filter(t => t.completed).length;
+    const completed = goal.tasks.filter((t) => t.completed).length;
     goal.progress = Math.round((completed / goal.tasks.length) * 100);
     if (goal.progress === 100 && goal.status !== 'completed') {
       goal.status = 'completed';
@@ -367,30 +384,36 @@ export class GoalsService {
     goal.updatedAt = new Date().toISOString();
   }
 
-  async getStats(): Promise<{ total: number; active: number; completed: number; byPriority: Record<string, number> }> {
+  async getStats(): Promise<{
+    total: number;
+    active: number;
+    completed: number;
+    byPriority: Record<string, number>;
+  }> {
     const goals = await this.list();
     return {
       total: goals.length,
-      active: goals.filter(g => g.status === 'active').length,
-      completed: goals.filter(g => g.status === 'completed').length,
+      active: goals.filter((g) => g.status === 'active').length,
+      completed: goals.filter((g) => g.status === 'completed').length,
       byPriority: {
-        critical: goals.filter(g => g.priority === 'critical').length,
-        high: goals.filter(g => g.priority === 'high').length,
-        medium: goals.filter(g => g.priority === 'medium').length,
-        low: goals.filter(g => g.priority === 'low').length,
-      }
+        critical: goals.filter((g) => g.priority === 'critical').length,
+        high: goals.filter((g) => g.priority === 'high').length,
+        medium: goals.filter((g) => g.priority === 'medium').length,
+        low: goals.filter((g) => g.priority === 'low').length,
+      },
     };
   }
 
   async search(query: string): Promise<Goal[]> {
     const goals = await this.list();
     const q = query.toLowerCase();
-    return goals.filter(g => 
-      g.title.toLowerCase().includes(q) ||
-      g.description.toLowerCase().includes(q) ||
-      g.tags.some(t => t.toLowerCase().includes(q)) ||
-      (g.parity?.agent.toLowerCase().includes(q) ?? false) ||
-      (g.parity?.feature.toLowerCase().includes(q) ?? false)
+    return goals.filter(
+      (g) =>
+        g.title.toLowerCase().includes(q) ||
+        g.description.toLowerCase().includes(q) ||
+        g.tags.some((t) => t.toLowerCase().includes(q)) ||
+        (g.parity?.agent.toLowerCase().includes(q) ?? false) ||
+        (g.parity?.feature.toLowerCase().includes(q) ?? false)
     );
   }
 
@@ -398,14 +421,14 @@ export class GoalsService {
   async listByAgent(agent: string): Promise<Goal[]> {
     const goals = await this.list();
     const needle = agent.toLowerCase();
-    return goals.filter(g => g.parity?.agent.toLowerCase() === needle);
+    return goals.filter((g) => g.parity?.agent.toLowerCase() === needle);
   }
 
   /** Look up the goal covering a specific agent capability. */
   async getByParityFeature(agent: string, feature: string): Promise<Goal | undefined> {
     const goals = await this.list();
     return goals.find(
-      g => g.parity?.agent.toLowerCase() === agent.toLowerCase() && g.parity?.feature === feature
+      (g) => g.parity?.agent.toLowerCase() === agent.toLowerCase() && g.parity?.feature === feature
     );
   }
 
@@ -435,7 +458,8 @@ export class GoalsService {
         continue;
       }
 
-      const subject = gap.kind === 'option' ? `root option \`${gap.feature}\`` : `\`${gap.feature}\``;
+      const subject =
+        gap.kind === 'option' ? `root option \`${gap.feature}\`` : `\`${gap.feature}\``;
       const input: GoalCreateInput = {
         title: `Parity: ${gap.agent} ${gap.feature}`,
         description:
