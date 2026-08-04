@@ -155,6 +155,12 @@ export const MultiAgentChat: React.FC = () => {
     }
   };
 
+  // ⚡ Bolt: Memoized the rendered message list to prevent O(n) re-evaluations
+  // of the entire message array on every keystroke in the chat input.
+  const renderedMessages = React.useMemo(() => {
+    return messages.map((msg) => <MessageItem key={msg.id} msg={msg} />);
+  }, [messages]);
+
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -323,9 +329,7 @@ export const MultiAgentChat: React.FC = () => {
               </div>
             )}
 
-            {messages.map((msg) => (
-              <MessageItem key={msg.id} msg={msg} />
-            ))}
+            {renderedMessages}
 
             {isTyping && (
               <div className="flex justify-start animate-in fade-in duration-300">
