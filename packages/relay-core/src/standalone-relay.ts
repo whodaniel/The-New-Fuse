@@ -18,6 +18,7 @@
 
 import { EventEmitter } from 'events';
 import http from 'http';
+import crypto from 'crypto';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
 import type { Cluster, Redis } from 'ioredis';
@@ -1084,7 +1085,7 @@ export class TNFRelayServer extends EventEmitter {
         const metadata = rawPayload.metadata as Record<string, unknown> | undefined;
 
         const msg: Message & { metadata?: Record<string, unknown> } = {
-          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `msg-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
           type: messageType || 'text',
           from: agentId || 'unknown',
           to,
@@ -1494,7 +1495,7 @@ export class TNFRelayServer extends EventEmitter {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
         JSON.stringify({
-          id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: message.id || `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
           timestamp: Date.now(),
           ...message,
         })
@@ -1845,7 +1846,7 @@ export class TNFRelayServer extends EventEmitter {
 
   private broadcast(message: Partial<ProtocolMessage>, excludeAgentId?: string): void {
     const data = JSON.stringify({
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
       timestamp: Date.now(),
       ...message,
     });
@@ -2074,7 +2075,7 @@ export class TNFRelayServer extends EventEmitter {
     );
 
     const msg: Message & { metadata?: Record<string, unknown> } = {
-      id: `relay-activity-${timestamp}-${Math.random().toString(36).slice(2, 11)}`,
+      id: `relay-activity-${timestamp}-${crypto.randomBytes(4).toString('hex')}`,
       type: 'event',
       from: 'relay-system',
       to: 'broadcast',
@@ -2353,7 +2354,7 @@ export class TNFRelayServer extends EventEmitter {
     }
 
     const recoveryMsg = {
-      id: `recovery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `recovery-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
       type: 'system',
       from: 'stall-detector',
       to: 'broadcast',

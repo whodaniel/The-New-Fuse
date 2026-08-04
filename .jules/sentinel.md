@@ -18,3 +18,8 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
+## $(date +%Y-%m-%d) - Predictable ID Generation in Message Relays
+
+**Vulnerability:** Weak random number generation using `Math.random().toString(36)` in `packages/relay-core` to generate message IDs, task IDs, and client IDs for real-time WebSocket communication and inter-agent event broadcasting.
+**Learning:** `Math.random()` is pseudo-random, highly predictable, and completely unsuited for distributed message brokers where attackers could theoretically guess connection IDs or message IDs to spoof system events or disrupt relay communication.
+**Prevention:** Always use Node's built-in `crypto.randomBytes(4).toString('hex')` or UUID libraries to ensure identifiers in message brokers are cryptographically secure and unguessable.
