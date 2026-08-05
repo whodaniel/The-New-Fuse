@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+
+# --- tnf dependency preflight ------------------------------------------
+# cron's minimal PATH omits where this machine keeps its tooling. With no
+# 'set -e', a missing binary yields 'command not found', exit 0, and a
+# cycle cron records as successful while doing nothing. Fail loudly.
+for _tnf_bin in python3 redis-cli; do
+  command -v "$_tnf_bin" >/dev/null 2>&1 || {
+    echo "FATAL: required binary '$_tnf_bin' not found. PATH=$PATH" >&2
+    exit 127
+  }
+done
+# --- end tnf dependency preflight -----------------------------------
+
 # Auto-generated 2026-06-25 by Sub-Director.
 # Cron-bound wrapper: hermes-infra-worker
 # Same shape as the codegen wrapper; 15-min cadence x ~850s dwell.

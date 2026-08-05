@@ -219,6 +219,64 @@ function terminates(body, src) {
   return false;
 }
 
+/**
+ * Check 3: cron-driven shell scripts that can no-op and still exit 0.
+ *
+ * cron runs with a minimal PATH (/usr/bin:/bin). A script that calls an
+ * external binary living anywhere else gets 'command not found' -- and if it
+ * has neither `set -e` nor a dependency preflight, it keeps going and exits 0.
+ * cron records a successful cycle for an agent that did nothing.
+ *
+ * This is not hypothetical: six agent cycles ran this way, and
+ * tnf-continuous-improver-watchdog logged 3053 lines of `jq: command not
+ * found` while reporting success every 15 minutes.
+ *
+ * A script is compliant if it does EITHER of:
+ *   - `set -e` (any non-zero exit aborts), or
+ *   - `command -v <bin>` preflight for the binaries it uses
+ */
+const EXTERNAL_BINS = ['jq', 'node', 'pnpm', 'redis-cli', 'python3', 'curl', 'gh', 'tmux'];
+
+function checkAutomatedShellScripts() {
+  const dirs = ['scripts/agents', 'scripts/orchestrator', 'scripts/runtime'];
+  for (const rel of dirs) {
+    const dir = path.join(ROOT, rel);
+    if (!fs.existsSync(dir)) continue;
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.endsWith('.sh')) continue;
+      const file = path.join(dir, name);
+      let src;
+      try {
+        src = fs.readFileSync(file, 'utf8');
+      } catch {
+        continue;
+      }
+
+      // `set -e` anywhere in the preamble makes any failure fatal.
+      if (/^\s*set\s+-[a-zA-Z]*e/m.test(src)) continue;
+
+      const used = EXTERNAL_BINS.filter((b) =>
+        new RegExp(`(?<![\\w-])${b.replace('-', '\\-')}(?![\\w-])`).test(src)
+      );
+      if (used.length === 0) continue;
+
+      const unguarded = used.filter(
+        (b) => !new RegExp(`command\\s+-v\\s+["'$]*[^\\n]*${b.replace('-', '\\-')}`).test(src)
+                && !new RegExp(`command\\s+-v\\s+"\\$_tnf_bin"`).test(src)
+      );
+      if (unguarded.length === 0) continue;
+
+      record(
+        'unguarded-cron-dependency',
+        file,
+        `uses ${unguarded.join(', ')} with neither \`set -e\` nor a \`command -v\` preflight — ` +
+          `under cron's minimal PATH this no-ops and still exits 0`,
+        `add a preflight guard, or \`set -e\` if the script is written for it`
+      );
+    }
+  }
+}
+
 /** Return the text inside the outermost parens of a `foo(...)` starting at 0. */
 function extractCallBody(text) {
   const open = text.indexOf('(');
@@ -239,6 +297,7 @@ function main() {
   try {
     checkPackageScripts();
     checkExceptionHandlers();
+    checkAutomatedShellScripts();
   } catch (err) {
     console.error(`[honest-failure] internal error: ${err && err.message}`);
     process.exit(2);
