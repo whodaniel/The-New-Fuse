@@ -30,13 +30,22 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
 
       # Deliberately dependency-free: the checker is plain Node with no imports
       # beyond fs/path, so this gate keeps working even when the install or the
       # build is broken — which is exactly when it matters most.
       - name: Verify no component can report false success
         run: node scripts/protocols/verify-honest-failure.cjs
+
+      # Complementary class: declarations that resolve nowhere. verify-honest-failure
+      # catches success-masking patterns in source; this catches catalogs naming
+      # scripts that do not exist, PROPRIETARY_* entries protecting nothing, and
+      # node versions that disagree across .nvmrc, workflows and Dockerfiles.
+      # Exit 2 (missing inputs) is distinct from exit 1 (drift) and neither is 0.
+      # Also dependency-free — plain Node, no install required.
+      - name: Verify declarations resolve to real paths
+        run: node scripts/protocols/verify-declarations.cjs
 
       - name: Report violations as JSON
         if: failure()

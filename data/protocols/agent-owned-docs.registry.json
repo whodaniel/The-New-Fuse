@@ -1,0 +1,129 @@
+{
+  "spec": "tnf/agent-owned-docs-registry/0.1",
+  "generated_at": "2026-08-05T00:00:00Z",
+  "notes": [
+    "Authorization registry for scripts/protocols/agent-self-edit-gate.cjs.",
+    "Absent since at least the 2026-06 privacy untracking, which is why the gate",
+    "had zero call sites: it could not run without this file. See",
+    "docs/protocols/reports/silent-failure-audit-2026-08-05.md.",
+    "",
+    "POLICY, NOT RUNTIME STATE. Tracked in git on purpose (.gitignore carries an",
+    "explicit exception) so it cannot silently vanish the way the chronological",
+    "control plane did.",
+    "",
+    "Default deny: an agent with no profile here can self-edit nothing.",
+    "allowed_paths grants write scope; approval_required_paths intersects it and",
+    "additionally demands request.approval.required && request.approval.approved.",
+    "Rule syntax: exact path, or prefix ending in '/**'."
+  ],
+
+  "policy": {
+    "default_decision": "deny",
+    "rationale": "An agent that can edit its own authority can grant itself authority. TURN_ZERO_MANDATE.md records exactly that: 'an earlier, uncommitted edit to this file made the same claim without a real operator confirmation behind it.' Authority documents are therefore approval-gated for every agent, with no exceptions and no self-approval path."
+  },
+
+  "globally_approval_required": [
+    "docs/protocols/TURN_ZERO_MANDATE.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
+    "docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md",
+    "docs/protocols/schemas/**",
+    "docs/core/AGENTS.md",
+    "AGENTS.md",
+    "scripts/sync-repos.sh",
+    ".github/workflows/**",
+    ".gitignore"
+  ],
+
+  "owners": [
+    {
+      "owner_agent_id": "tnf-agent-director",
+      "description": "Director-authority planning surfaces and the living state it maintains.",
+      "allowed_paths": [
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/reports/**",
+        ".agent/context/**"
+      ],
+      "approval_required_paths": [
+        "docs/protocols/TURN_ZERO_MANDATE.md",
+        "docs/protocols/DIRECTIVES.md",
+        "docs/core/AGENTS.md"
+      ]
+    },
+    {
+      "owner_agent_id": "master-clock",
+      "description": "Scheduling and federation-gate surfaces.",
+      "allowed_paths": [
+        "docs/protocols/reports/**",
+        "reports/chronological-dispatch/**"
+      ],
+      "approval_required_paths": ["docs/protocols/schemas/**"]
+    },
+    {
+      "owner_agent_id": "tnf-stack-self-improvement-loop",
+      "description": "Self-improvement scorecards and conformance reports.",
+      "allowed_paths": [
+        "docs/protocols/reports/**",
+        "docs/operations/tnf-self-improvement-cycle.md"
+      ],
+      "approval_required_paths": ["docs/protocols/DIRECTIVES.md"]
+    },
+    {
+      "owner_agent_id": "twip-orchestration-bridge",
+      "description": "Terminal macro-board and TWIP visualization artifacts.",
+      "allowed_paths": [
+        "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+        "apps/frontend/public/visualizations/terminals/**"
+      ],
+      "approval_required_paths": ["docs/protocols/schemas/**"]
+    },
+    {
+      "owner_agent_id": "tnf-growth-blocker-auditor",
+      "description": "Growth-blocker audit output.",
+      "allowed_paths": [
+        "docs/protocols/reports/**",
+        ".skills/tnf-growth-blocker-auditor/references/**"
+      ],
+      "approval_required_paths": []
+    },
+    {
+      "owner_agent_id": "tnf-staff-review-agent",
+      "description": "Staff review cycle output.",
+      "allowed_paths": [
+        "docs/protocols/reports/**",
+        "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
+      ],
+      "approval_required_paths": []
+    },
+    {
+      "owner_agent_id": "tnf-staffing-director-agent",
+      "description": "Staffing architecture proposals.",
+      "allowed_paths": ["docs/protocols/reports/**"],
+      "approval_required_paths": [
+        "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
+      ]
+    },
+    {
+      "owner_agent_id": "personal-archaeology-master-orchestrator",
+      "description": "Personal archaeology fleet supervision output.",
+      "allowed_paths": [
+        "docs/operations/tnf-personal-archaeology-runbook.md",
+        "docs/protocols/reports/**"
+      ],
+      "approval_required_paths": []
+    },
+    {
+      "owner_agent_id": "analytics-and-reporting-agent",
+      "description": "Attribution and analytics audit output.",
+      "allowed_paths": ["docs/protocols/reports/**"],
+      "approval_required_paths": []
+    },
+    {
+      "owner_agent_id": "tenant-agent-default",
+      "description": "Default tenant agent. Deliberately minimal: tenant scope is not system scope.",
+      "allowed_paths": ["docs/protocols/reports/**"],
+      "approval_required_paths": []
+    }
+  ]
+}

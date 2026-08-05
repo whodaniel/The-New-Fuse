@@ -31,7 +31,13 @@ const blockedPathPatterns = [
   // Block only private/runtime slices of `.agent`.
   /^\.agent\/(?:runtime-logs|runtime-state|private|secrets?|state-snapshots)\//i,
   /^data\/private\//i,
-  /^data\/protocols\/.*\.(json|jsonl)$/i,
+  // Runtime state under `data/protocols` is private, but the agent-self-edit
+  // authorization registry is POLICY: agent ids, repo-relative path allowlists
+  // and policy text, with no credentials, emails, home paths or personal names
+  // (verified 2026-08-05). It must be versioned — the gate that reads it sat at
+  // zero call sites precisely because the blanket ignore meant the file never
+  // existed on any checkout. Narrowed the same way the `.agent/` rule above is.
+  /^data\/protocols\/(?!agent-owned-docs\.registry\.json$).*\.(json|jsonl)$/i,
   /^data\/unified-task-ledger\.json$/i,
   /^data\/unified-task-ledger\.json\.bak-/i,
   /^data\/protocols\/email-.*\.json$/i,

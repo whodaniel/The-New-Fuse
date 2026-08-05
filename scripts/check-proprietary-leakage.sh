@@ -6,7 +6,27 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 MONO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-TARGET="${1:-$MONO_ROOT}"
+
+# No-arg runs previously defaulted to MONO_ROOT — the one target line 3 forbids —
+# so `./scripts/check-proprietary-leakage.sh` always reported a full-tree FAIL.
+# A guard whose default invocation cries wolf trains its operators to ignore it,
+# which is how the 2026-07-25 boundary leak went unnoticed. Require the target.
+if [ $# -lt 1 ]; then
+  echo "usage: $0 <open-runtime-export-dir>" >&2
+  echo "refusing to default to the monorepo root: it is EXPECTED to contain proprietary paths." >&2
+  exit 2
+fi
+TARGET="$1"
+
+if [ ! -d "$TARGET" ]; then
+  echo "FAIL: export dir not found: $TARGET" >&2
+  exit 2
+fi
+
+if [ "$(cd "$TARGET" && pwd)" = "$MONO_ROOT" ]; then
+  echo "FAIL: target is the combined monorepo root; scan an open-runtime export instead." >&2
+  exit 2
+fi
 
 source_arrays() {
   eval "$(awk '
@@ -52,13 +72,34 @@ check_path() {
 # published: all 20 entries were bare filenames, so every consumer resolved them
 # against the repo root, matched nothing, removed nothing, and reported PASS.
 # Treat an unresolvable declaration as a boundary failure, not a silent no-op.
+#
+# Build outputs are the one legitimate exception. Declarations under a dist/
+# directory describe generated artifacts, so their presence depends on whether
+# the package has been built — on an unbuilt checkout all 8 relay-core dist
+# entries report stale, which is a false alarm. They still must be checked for
+# leakage in the export (that is the whole point of declaring them); only the
+# existence check is build-state dependent. A declaration whose *source*
+# counterpart is missing is still a real failure and is caught below.
+#
+# Crying wolf on every unbuilt checkout is the same defect as the no-arg default
+# fixed above: it trains operators to skip the output of the guard that matters.
 STALE=0
+is_build_output() {
+  case "$1" in
+    */dist/*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 check_declared() {
   local p="$1"
-  [ -e "$MONO_ROOT/$p" ] || {
-    echo "STALE DECLARATION: $p (declared proprietary but not present in monorepo)"
-    STALE=$((STALE + 1))
-  }
+  [ -e "$MONO_ROOT/$p" ] && return 0
+  if is_build_output "$p"; then
+    echo "NOTE: $p not present (build output; package unbuilt) — leak check still applies"
+    return 0
+  fi
+  echo "STALE DECLARATION: $p (declared proprietary but not present in monorepo)"
+  STALE=$((STALE + 1))
 }
 
 for f in "${PROPRIETARY_FILES[@]}"; do check_declared "$f"; done

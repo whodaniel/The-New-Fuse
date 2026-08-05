@@ -479,3 +479,13 @@ apps/frontend/node_modules/.vite/
 # `tnf self-improvement run` cycle. Output, not source: tracking it would dirty
 # the working tree on every hourly full-auto cycle.
 docs/operations/parity/
+
+# Generated extension icons. Both extensions build these in `prebuild` via
+# generate-icons.cjs + scripts/generate-notification-icons.cjs, and their
+# `clean` scripts delete them by design. They were committed anyway, so the
+# hourly `pnpm run clean` cron destroyed 36 tracked files every hour and git
+# reported them as deletions — noise that twice made a genuine asset question
+# indistinguishable from routine churn. Verified 2026-08-05: deleting icons/
+# and running both generators reproduces every file byte-identical to HEAD.
+apps/chrome-extension/icons/
+apps/gemini-bridge-extension/icons/

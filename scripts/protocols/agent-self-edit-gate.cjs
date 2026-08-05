@@ -131,6 +131,26 @@ function evaluate(request, registry) {
     reasons.push(`target.path is not path-safe: ${request.target.path}`);
   }
 
+  // Registry-wide approval gate, applied to every agent regardless of profile.
+  //
+  // An agent that can edit its own authority can grant itself authority.
+  // TURN_ZERO_MANDATE.md records precisely that failure: "an earlier,
+  // uncommitted edit to this file made the same claim without a real operator
+  // confirmation behind it". Authority documents, protocol schemas, the
+  // proprietary boundary, CI workflows and .gitignore are therefore
+  // approval-gated for everyone, and no per-owner allowlist can widen past it.
+  const globalApproval = (registry.globally_approval_required || []).some((rule) =>
+    matchRule(normalizedPath, rule)
+  );
+  if (globalApproval) {
+    const approved = Boolean(request.approval?.required && request.approval?.approved);
+    if (!approved) {
+      reasons.push(
+        `target.path ${normalizedPath} is registry-wide approval-required (authority surface) and carries no approved approval block`
+      );
+    }
+  }
+
   if (ownerProfile) {
     const allowed = (ownerProfile.allowed_paths || []).some((rule) => matchRule(normalizedPath, rule));
     if (!allowed) {
@@ -166,8 +186,14 @@ function main() {
   validateRequestShape(schema, request);
   const result = evaluate(request, registry);
 
+  // Exit code must reflect the decision in BOTH output modes. Until 2026-08-05
+  // `--json` printed decision:"deny" and exited 0, because exitCode was set only
+  // in the human branch below — so the machine-readable mode, the one any
+  // wiring would actually use, reported a denial as success. That is the exact
+  // defect class this gate exists to prevent, sitting inside the gate.
   if (args.json) {
     console.log(JSON.stringify(result, null, 2));
+    if (!result.ok) process.exitCode = 2;
   } else if (result.ok) {
     console.log(
       [

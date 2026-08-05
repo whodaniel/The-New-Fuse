@@ -1,5 +1,5 @@
 import { PackageReconnectHub, type PackageProbeResult } from '@the-new-fuse/tnf-core';
-import { NoteService } from '@the-new-fuse/tnf-note-taking';
+import type { NoteService } from '@the-new-fuse/tnf-note-taking';
 import chalk from 'chalk';
 import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
@@ -27,6 +27,7 @@ import { registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
+import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
@@ -34,7 +35,9 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerSlackCommands } from './commands/slack/index.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
+import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import { CronService } from './services/CronService.js';
@@ -17111,8 +17114,12 @@ workspaceCommand
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 
-function createNotesService(options: { vaultPath?: string; userId?: string }): NoteService {
-  return new NoteService({
+async function createNotesService(options: {
+  vaultPath?: string;
+  userId?: string;
+}): Promise<NoteService> {
+  const { NoteService: NoteServiceImpl } = await import('@the-new-fuse/tnf-note-taking');
+  return new NoteServiceImpl({
     vaultPath: options.vaultPath,
     userId: options.userId,
   });
@@ -17143,7 +17150,7 @@ notesCommand
   .option('--json', 'Output JSON')
   .action(async (options: { vaultPath?: string; userId?: string; json?: boolean }) => {
     try {
-      const service = createNotesService(options);
+      const service = await createNotesService(options);
       const status = await service.getStatus();
       if (options.json) {
         console.log(JSON.stringify(status, null, 2));
@@ -17170,7 +17177,7 @@ notesCommand
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
   .action(
-    (options: {
+    async (options: {
       tag?: string;
       limit?: string;
       vaultPath?: string;
@@ -17178,7 +17185,7 @@ notesCommand
       json?: boolean;
     }) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const limit = parsePositiveIntOption(options.limit, 50, '--limit');
         const notes = options.tag ? service.getNotesByTag(options.tag) : service.getAllNotes();
         const sorted = [...notes]
@@ -17210,32 +17217,34 @@ notesCommand
   .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
-  .action((idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
-    try {
-      const service = createNotesService(options);
-      const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
-      if (!note) {
-        throw new Error(`Note not found: ${idOrTitle}`);
-      }
+  .action(
+    async (idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
+      try {
+        const service = await createNotesService(options);
+        const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
+        if (!note) {
+          throw new Error(`Note not found: ${idOrTitle}`);
+        }
 
-      if (options.json) {
-        console.log(JSON.stringify(note, null, 2));
-        return;
-      }
+        if (options.json) {
+          console.log(JSON.stringify(note, null, 2));
+          return;
+        }
 
-      console.log(chalk.bold(`\n${note.title}\n`));
-      console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
-      if (note.tags?.length) {
-        console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+        console.log(chalk.bold(`\n${note.title}\n`));
+        console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
+        if (note.tags?.length) {
+          console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+        }
+        console.log('');
+        console.log(note.content);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      console.log('');
-      console.log(note.content);
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 notesCommand
   .command('search')
@@ -17246,12 +17255,12 @@ notesCommand
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
   .action(
-    (
+    async (
       query: string,
       options: { limit?: string; vaultPath?: string; userId?: string; json?: boolean }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const limit = parsePositiveIntOption(options.limit, 20, '--limit');
         const results = service.searchNotes(query, limit);
 
@@ -17298,7 +17307,7 @@ notesCommand
       }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const result = await service.createNote({
           id: options.id,
           title,
@@ -17335,7 +17344,7 @@ notesCommand
       options: { vaultPath?: string; userId?: string; json?: boolean }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const result = await service.createDailyNote(templateName);
         if (!result.success) {
           throw new Error(result.error || 'Failed to create daily note');
@@ -17400,6 +17409,9 @@ cronCommand
 registerAssimilateCommand(program, repoRoot);
 registerBrowserCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
+registerSlackCommands(program, repoRoot);
+registerWhatsappCommands(program, repoRoot);
+registerChannelCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
 registerAgentsSpecsCommand(program, repoRoot);
