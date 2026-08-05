@@ -58,6 +58,9 @@ if (require.main === module) {
         error: error.message,
       })
     );
+    // Installing a handler overrides Node's default non-zero exit. Without
+    // this, a crashed coordinator reports a clean exit to its supervisor.
+    process.exit(1);
   });
   process.on('unhandledRejection', (error) => {
     console.error(
@@ -69,6 +72,7 @@ if (require.main === module) {
         error: error instanceof Error ? error.message : String(error),
       })
     );
+    process.exit(1);
   });
 
   const coordinator = new GreenChannelCoordinator();
