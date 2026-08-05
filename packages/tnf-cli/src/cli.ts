@@ -10,8 +10,7 @@ import os from 'os';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import type { AgentMessage } from './RedisAgentClient.js';
-import { RedisAgentClient } from './RedisAgentClient.js';
+import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
 import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
 import {
   createBootPipeline,
@@ -30,6 +29,7 @@ import { registerBrowserCommand } from './commands/browser.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
+import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
@@ -4092,6 +4092,18 @@ function resolveImplicitPassthroughArgs(
   const tnfCommands = getTnfTopLevelCommands();
   const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor', 'claude', 'pi'];
 
+  // A leading flag is never another CLI's subcommand, so there is nothing to
+  // resolve. Without this guard `tnf --help` fell through to the loop below and
+  // probed all six passthrough targets by running each one's `--help` through
+  // spawnSync — six full external CLI startups to ask whether any of them has a
+  // subcommand literally named "--help".
+  //
+  // Measured 2026-08-05 with --cpu-prof: spawnSync was 35.4s of the 46.5s
+  // `tnf --help` runtime (76%), entirely under this call path. Discovering what
+  // the CLI can do cost more than any command it can run, and every agent
+  // calling `tnf capabilities` to discover TNF paid the same toll.
+  if (subcommand?.startsWith('-')) return null;
+
   if (!subcommand || subcommand === 'help') {
     const helpTarget = argv[3];
     if (!helpTarget) return null;
@@ -6014,7 +6026,7 @@ program
   )
   .option('--dacc-role-from-config', 'Read dacc_role from ~/.tnf/agent.yaml', false)
   .action(async (name, role, platform, options) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       // Phase 8: validate role and platform are in canonical taxonomy.
@@ -13094,7 +13106,7 @@ program
   .command('list')
   .description('List all registered agents')
   .action(async () => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       const agents = await client.listAgents();
@@ -13587,7 +13599,7 @@ program
   .option('-t, --to <agentId>', 'Recipient agent ID')
   .option('-n, --name <name>', 'Sender name', process.env.AGENT_NAME || 'cli-sender')
   .action(async (message, options) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       await client.register(options.name, 'participant', 'vscode');
@@ -13630,7 +13642,7 @@ program
       workflow: string | undefined,
       options: { path?: string; goal?: boolean; status?: boolean; suggest?: boolean } = {}
     ) => {
-      const client = new RedisAgentClient();
+      const client = new (await loadRedisAgentClient())();
       try {
         await client.initialize();
         await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
@@ -13709,7 +13721,7 @@ program
   .argument('<action>', 'Action (start, join)')
   .argument('[param]', 'Topic for start, ID for join')
   .action(async (action, param) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       await client.register('convo-cli', 'participant', 'vscode');
@@ -14290,7 +14302,7 @@ async function runAcpExternalAgent(
 
   try {
     if (plan.register) {
-      client = new RedisAgentClient();
+      client = new (await loadRedisAgentClient())();
       await client.initialize();
       const agentInfo = await client.register(`${plan.agent}-acp`, 'worker', plan.agent, [
         'agent_client_protocol',
@@ -17501,6 +17513,7 @@ memoryCommand
         `- ${provider.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(provider.name)} [${provider.type}]`
       );
     }
+    registerFleetCommands(program);
   });
 
 async function loadTnfSystemPrompt(): Promise<string> {
@@ -19055,6 +19068,25 @@ function normalizeEntrypointArgv(argv: string[]): string[] {
 const HELP_OR_VERSION_ARGS = new Set(['--help', '-h', 'help', '--version', '-v']);
 
 /**
+ * Load RedisAgentClient on first use rather than at module load.
+ *
+ * It is the single heaviest import in this CLI: it pulls
+ * `@the-new-fuse/infrastructure` (including its NestJS console logger) and
+ * `ioredis`, measured at ~3.3s of the ~3.9s total import cost. Only six command
+ * handlers construct one, all of them async, so nothing that runs `tnf --help`
+ * or any non-Redis command needs it resolved, parsed, or evaluated.
+ */
+let redisAgentClientCtor: typeof import('./RedisAgentClient.js').RedisAgentClient | null = null;
+async function loadRedisAgentClient(): Promise<
+  typeof import('./RedisAgentClient.js').RedisAgentClient
+> {
+  if (!redisAgentClientCtor) {
+    ({ RedisAgentClient: redisAgentClientCtor } = await import('./RedisAgentClient.js'));
+  }
+  return redisAgentClientCtor;
+}
+
+/**
  * Decide whether ProtocolInterceptor cosmetic output should be suppressed.
  * Checks still RUN; failures route to stderr via ProtocolInterceptor.
  *
@@ -19110,9 +19142,18 @@ async function main(): Promise<void> {
   //      preflight without touching the interactive onboarding surface.
   // Explicit user-invoked gates (`tnf protocol gate`, `runFastHarnessProtocolGate`)
   // always run preflight regardless of env vars.
+  //   3. Help and version are read-only. The rationale above is explicitly
+  //      "before a command mutates state" — `--help` mutates nothing, yet it
+  //      paid the full preflight on every invocation. Measured 2026-08-05:
+  //      `--help` took 47.1s, of which 16.4s was this gate. Discovering what a
+  //      CLI can do must not cost more than doing it, and an agent calling
+  //      `tnf capabilities` to discover TNF pays this same toll. `firstArgIsHelp`
+  //      is already computed above for the splash; it simply was not applied here.
+  //      Explicit user-invoked gates (`tnf protocol gate`,
+  //      runFastHarnessProtocolGate) are unaffected — they call preflight directly.
   const skipOnboard = isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD);
   const skipPreflight = isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT);
-  if (!skipOnboard && !skipPreflight) {
+  if (!skipOnboard && !skipPreflight && !firstArgIsHelp) {
     const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
     await interceptor.runPreFlightChecks();
   }
