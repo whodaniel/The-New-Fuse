@@ -70,6 +70,12 @@ This protocol closes the gap that produced the 2026-07-28 incident:
    heartbeat record on `agent:activity` (and now `tnf:bus:heartbeat`); the
    agent's own polling loop picks it up. UI typing is a last resort, not the
    default.
+7. **Permanent Window ID & Hardware Key Code Mandate (TWIP §6).** When
+   operator-approved UI automation or prompt submission IS performed, scripts
+   and agents MUST target windows exclusively by permanent AppleScript `id`
+   (never ordinal array indices), submit prompts using physical hardware
+   `key code 36` (Return/Enter), and execute a post-submission verification
+   sweep to confirm text ingestion and state transition.
 
 ### 3.1 Opt-in escape hatch
 

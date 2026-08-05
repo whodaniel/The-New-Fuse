@@ -8,7 +8,10 @@
     "moduleResolution": "Bundler",
     "composite": true,
     "declaration": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@the-new-fuse/*": ["../*/src"]
+    }
   },
   "include": ["src/**/*"],
   "references": [

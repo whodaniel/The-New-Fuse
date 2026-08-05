@@ -42,6 +42,7 @@ out/
 .env.*
 !.env.example
 !**/.env.example
+!.env*.example
 .env*.bak
 .env.full-auto
 .env.local
@@ -126,6 +127,14 @@ apps/api/data/unified-task-ledger.json
 data/protocols/*.json
 data/protocols/*.jsonl
 data/protocols/*.md
+# Exception: this one is POLICY, not runtime state. It is the authorization
+# registry for scripts/protocols/agent-self-edit-gate.cjs, and the gate cannot
+# run without it — which is exactly why that gate sat at zero call sites. The
+# chronological control plane vanished the same way (gitignored, unrecoverable
+# from git, every cron job exiting 0 for ~11 weeks). Policy that gates authority
+# must be reviewable in history. See
+# docs/protocols/reports/silent-failure-audit-2026-08-05.md.
+!data/protocols/agent-owned-docs.registry.json
 docs/library/README.md
 docs/library/REGISTRY.md
 data/wiki-inbox/
@@ -366,7 +375,11 @@ build/
 *.br
 *.gz
 *.map
-!packages/*/dist/*.map
+# `!packages/*/dist/*.map` was removed 2026-08-05. It re-included sourcemaps that
+# `dist/` above already ignores, so those files stayed tracked while the hourly
+# `pnpm run clean` deleted them — producing a permanently dirty tree and 17,862
+# tracked build artifacts that git kept resurrecting. Build output is generated;
+# it is not source. Rebuild with `pnpm run build`.
 
 # Bundler cache
 .apps/

@@ -3,6 +3,23 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+Updated: **2026-08-05T20:48:44.816Z** — handoff
+`da1afd4e-136e-43de-a2d6-72b4c6ef11aa`
+(`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Hermes session
+(`tnf-local-terminal-ttys005`, 2026-08-05): attended operator-driven session to
+repair the relay-core build pipeline. Root cause was a stale
+`tsconfig.tsbuildinfo` in `packages/protocol-contracts` that made `tsc -b` a
+no-op, leaving `dist/` missing while the build reported success. Cleared the
+stale buildinfo, rebuilt 5 missing package dist trees (`protocol-contracts`,
+`database`, `infrastructure`, `fairtable-adapters`, `tnf-cli`), and confirmed
+`relay-core/dist/standalone-relay.js` boots successfully and accepts WebSocket
+connections on :3000. Also converted `~/.openclaw/workspace/handoff/LATEST.md`
+from a regular file to a symlink pointing at the canonical
+`docs/protocols/reports/SESSION_HANDOFF_LATEST.md` to satisfy
+`validate-handoff-source-drift`. No autonomous commits; all changes staged for
+live operator confirmation per `docs/core/AGENTS.md` section "Commits and Pushes
+Require Live Operator Confirmation".
+
 Updated: **2026-08-03T22:48:19.924Z** — handoff
 `169cd0cf-4cf8-4947-ae0a-f373a62bb236` (`e3db3e5816f9`).
 `ed0bc749-f675-42d6-bcdd-4bd5adc5994c` (`16ffb646d646`).

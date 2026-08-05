@@ -79,3 +79,5 @@ Define module boundaries first, then implement. The user designs the boundaries;
 - **webpilot** — CDP-free browser automation via Chrome extension + WebSocket relay. Use for navigating, scraping, form-filling, any real browser task.
 - **sspdf** — Declarative PDF generation engine. JSON source + theme = PDF. Use for invoices, reports, articles, any printable document.
 - **sspdf-theme-generator** — Generate sspdf theme files from brand specs. Use when styling PDFs or creating visual identity for documents.
+- **tnf-fleet-delegation-governor** — Enforces Core Tenet 1 (Fleet Delegation). Target discovery (`tnf agents who`), multi-agent work partitioning, 3-pass terminal sweeps with AppleScript permanent window IDs and hardware Return (`key code 36`).
+- **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for harness framework compliance (Turn Zero mandate, local environment boundary, package exports, TS path mappings).

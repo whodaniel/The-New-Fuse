@@ -1235,9 +1235,30 @@ async function main() {
     }
   }
 
-  printHeader('Turn Zero Authority');
+  printHeader('Turn Zero Authority & Central Tenets');
   console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
   console.log('- external mirrors (for example ~/GEMINI.md) are non-authoritative');
+  console.log('- Core Tenet 1 (Fleet Delegation): Maximize compute by delegating to specialized fleet peers (tnf agents who / tnf send).');
+  console.log('- Core Tenet 2 (Assimilation): Parody & assimilate best patterns from external agents into native TNF skills.');
+  console.log('- Core Tenet 3 (Attribution Cornerstone): Human & scientific source attribution overrules AI distillation.');
+  console.log('- Core Tenet 4 (Operating Loop): Inspect -> Act -> Verify. Never assume action succeeded without empirical proof.');
+  console.log('- Core Tenet 5 (Anti-Lobotomy): Never delete or prune .agent/, .gemini/, .claude/, .tnf/ state trees.');
+
+  printHeader('Fleet Delegation & Peer Target Discovery');
+  try {
+    const regSnapshotPath = path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json');
+    if (fs.existsSync(regSnapshotPath)) {
+      const snapshot = JSON.parse(fs.readFileSync(regSnapshotPath, 'utf8'));
+      const activeCount = Array.isArray(snapshot) ? snapshot.length : Object.keys(snapshot || {}).length;
+      console.log(`- registered fleet targets: ${activeCount} agents`);
+    } else {
+      console.log('- registered fleet targets: active (discover via: tnf agents who --json)');
+    }
+    console.log('- dispatch routes: tnf send "<msg>" --to <agentId> | tnf handoff emit | Redis LPUSH tnf:master:tasks:realtime');
+    console.log('- available channels: Slack (tnf slack), WhatsApp (tnf whatsapp), Telegram (tnf telegram), Relay (ws://127.0.0.1:3000/ws)');
+  } catch {
+    console.log('- fleet dispatch ready: discover targets via tnf agents who');
+  }
 
   printHeader('Canonical Session Handoff');
   const handoff = resolveCanonicalSessionHandoff();

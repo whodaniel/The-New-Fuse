@@ -450,3 +450,16 @@ with no dependency on the commit landing first. Existing entries with
   and reverted rather than silently overwritten.
 - attributed_to: Daniel Goldberg (operator), confirmed via AskUserQuestion in a
   live Claude Code session, 2026-07-21.
+
+## 2026-08-05 — docs/protocols/TURN_ZERO_MANDATE.md
+
+- file: docs/protocols/TURN_ZERO_MANDATE.md
+- doc_hash:
+  sha256:81a44a42c57a58f5c305f40198d6dc119f4ab33ba521b247078b68236b1d8fbf
+- rationale: Explicitly embedded Core Tenet 1 (Fleet Delegation) and Core Tenets
+  1-5 into the Turn Zero Operating Loop. Mandates target discovery (tnf agents
+  who) and peer dispatch prior to executing multi-stage work.
+- attributed_to: Daniel Goldberg (operator), explicit user request to include
+  central tenets and fleet delegation standards in frontloading and Turn Zero
+  protocols (2026-08-05).
+- ledger_event_id: e8a914c6-4b2e-4e31-8f55-7d885a069f91

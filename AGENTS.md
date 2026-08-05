@@ -192,6 +192,13 @@ implementation — determines whether the system becomes brittle.
   occurrences across 8,904 source files. Query identifier frequencies, power
   phrases, communication patterns. MCP server at
   `packages/mcp-concordance-server/`.
+- **tnf-fleet-delegation-governor** — Enforces Core Tenet 1 (Fleet Delegation).
+  Target discovery (`tnf agents who`), multi-agent work partitioning, 3-pass
+  terminal sweeps with AppleScript permanent window IDs and hardware Return
+  (`key code 36`).
+- **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for
+  harness framework compliance (Turn Zero mandate, local environment boundary,
+  package exports, TS path mappings).
 
 ## Concordance System
 
