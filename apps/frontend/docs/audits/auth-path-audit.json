@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-07-27T06:18:39.475Z",
+    "generatedAt": "2026-08-05T03:30:35.721Z",
     "total": 4,
     "passed": 4,
     "failed": 0,
@@ -19,7 +19,7 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 653,
+      "elapsedMs": 963,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
@@ -33,7 +33,7 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 316,
+      "elapsedMs": 312,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
@@ -47,7 +47,7 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 224,
+      "elapsedMs": 253,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
@@ -57,8 +57,8 @@
       "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 44,
-      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-07-27T06:18:39.491Z\"}"
+      "elapsedMs": 64,
+      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-08-05T03:30:36.037Z\"}"
     }
   ]
 }

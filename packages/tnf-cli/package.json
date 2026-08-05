@@ -19,7 +19,7 @@
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "type-check": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx src/utils/run-command.test.ts && tsx src/utils/browser-routing.test.ts && tsx src/utils/llm-tools.browser.test.ts"
+    "test": "tsx src/utils/run-command.test.ts && tsx src/utils/browser-routing.test.ts && tsx src/utils/llm-tools.browser.test.ts && tsx src/utils/preflight-skip.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",

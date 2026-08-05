@@ -39,8 +39,8 @@ const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
 const sign_bus_message_js_1 = require("./protocol/sign-bus-message.js");
 const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
-const orchestrator_inbox_migration_service_js_1 = require("./services/orchestrator-inbox-migration.service.js");
 const handoff_packet_lifecycle_service_js_1 = require("./services/handoff-packet-lifecycle.service.js");
+const orchestrator_inbox_migration_service_js_1 = require("./services/orchestrator-inbox-migration.service.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.CLOUD_RUNTIME_REDIS_URL ||

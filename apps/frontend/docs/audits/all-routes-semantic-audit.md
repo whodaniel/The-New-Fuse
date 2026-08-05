@@ -1,6 +1,6 @@
 # All Routes Semantic Audit
 
-Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
+Generated: 2026-08-05T03:30:31.844Z Base URL: https://app.thenewfuse.com
 
 ## Summary
 
@@ -8,7 +8,7 @@ Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
 - hard broken (HTTP >= 400): 0
 - network broken: 0
 - routes with same fingerprint as / (excluding SPA-shell duplicates): 0
-- duplicate fingerprint groups: 12
+- duplicate fingerprint groups: 13
 
 ## Hard Broken
 
@@ -24,7 +24,7 @@ Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
 
 ## Duplicate Fingerprint Groups
 
-- 823ebb2a91b2a320032c7881ebf8000ea4510a07: /, /a2a-control, /admin/marketplace,
+- e8549d331ee41904a04fc19c5bc938227f32c365: /, /a2a-control, /admin/marketplace,
   /agency/dashboard, /agency/onboard, /agent-builder, /agent-management,
   /agents, /agents/create, /agents/new, /agents/nft-marketplace,
   /agents/pfp-catalog, /agents/pfp-prompts, /agents/pfp-studio,
@@ -69,7 +69,7 @@ Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
   /live-view, /llm-rankings, /logs, /nexus, /package/agents, /package/dashboard,
   /package/login, /package/workflows, /perpetual-status, /platform-parity,
   /simple-test, /test, /unauthorized
-- 7fd77028db237ff68c6865499f02c024db16e699: /auth, /login
+- af90db84746289e131a6ca218ed692841d1f971e: /auth, /login
 - 0fdb296356f6da7940ac08348b6a34dd8ec6ef1a: /auth/forgot-password,
   /forgot-password
 - ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a: /brand, /design-system
@@ -80,5 +80,7 @@ Generated: 2026-07-27T06:18:37.464Z Base URL: https://app.thenewfuse.com
 - 7010ea1eda456f60ca76fa9cd61df236deab8ff2: /docs, /help/documentation,
   /help/faq, /help/tutorials
 - 59214064dd6c6e73bda58e2d641c0d3bbca1dc1e: /help/support, /support
-- 71e5bff5fc86dd4e76d04c524966ac39c3a9a464: /legal/privacy, /privacy
-- b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1: /legal/terms, /terms
+- ddafee66ed4d222c3b8b28bd0fb6146c5ea228db: /legal/privacy, /privacy
+- b7daf86cb986982adf1f250e20bb4739e9c62d82: /legal/terms, /terms
+- 992997b562b1f5024e5d7b029a61037ce97ed14c: /terminals,
+  /visualizations/terminals

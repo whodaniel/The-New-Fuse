@@ -1189,6 +1189,20 @@ async function runFileScript(file: FileScriptEntry, args: string[]): Promise<voi
 }
 
 async function runFastHarnessProtocolGate(label: string): Promise<void> {
+  // `runFastHarnessProtocolGate` is invoked by explicit commands like
+  // `tnf doctor`. It is *not* a user-invoked protocol gate (those go through
+  // `tnf protocol gate` further down). Honour the TNF_SKIP_TURN_ZERO_ONBOARD /
+  // TNF_SKIP_PREFLIGHT env vars here too — otherwise scripts that export the
+  // env var (scripts/agents/*.sh) still pay the Turn Zero cost on every
+  // `tnf doctor` call, defeating the onboard-skip contract. Verified live
+  // 2026-08-04: `TNF_SKIP_TURN_ZERO_ONBOARD=1 tnf doctor` still emits the full
+  // Turn Zero Mandate output here because this path was un-gated.
+  if (
+    isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD) ||
+    isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT)
+  ) {
+    return;
+  }
   console.log(chalk.dim(`[TNF Harness] Protocol gate before ${label}`));
   new ProtocolInterceptor(repoRoot).runPreFlightChecks();
   await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
@@ -19058,8 +19072,26 @@ async function main(): Promise<void> {
     }
   }
 
-  const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
-  await interceptor.runPreFlightChecks();
+  // Preflight runs on every normal CLI invocation so protocol drift surfaces
+  // before a command mutates state. Two gates exist:
+  //   1. `TNF_SKIP_TURN_ZERO_ONBOARD=1` — operator/CI opt-out documented in
+  //      packages/tnf-cli/README.md and used by scripts/agents/*.sh. Honoured
+  //      by `ensureTurnZeroForAgentEntrypoint()` for the interactive path, but
+  //      historically NOT for this preflight — causing scripts that export the
+  //      env var to still emit Turn Zero noise on every `tnf` call (verified
+  //      live 2026-08-04 with `TNF_SKIP_TURN_ZERO_ONBOARD=1 tnf doctor`). Skip
+  //      the unconditional preflight here too so the env var's contract holds
+  //      for non-interactive invocations as well.
+  //   2. `TNF_SKIP_PREFLIGHT=1` — narrower opt-out that skips the whole
+  //      preflight without touching the interactive onboarding surface.
+  // Explicit user-invoked gates (`tnf protocol gate`, `runFastHarnessProtocolGate`)
+  // always run preflight regardless of env vars.
+  const skipOnboard = isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD);
+  const skipPreflight = isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT);
+  if (!skipOnboard && !skipPreflight) {
+    const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
+    await interceptor.runPreFlightChecks();
+  }
 
   if (argv.length <= 2) {
     await ensureTurnZeroForAgentEntrypoint();

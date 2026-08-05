@@ -159,6 +159,7 @@ flowchart LR
     wf_agent_registry_ubiquity_gate_yml[agent-registry-ubiquity-gate.yml]
     wf_build_electron_yml[build-electron.yml]
     wf_build_yml[build.yml]
+    wf_ci_build_yml[ci-build.yml]
     wf_claude_code_review_yml[claude-code-review.yml]
     wf_claude_yml[claude.yml]
     wf_deploy_yml[deploy.yml]
@@ -168,6 +169,7 @@ flowchart LR
     wf_gcp_rollout_yml[gcp-rollout.yml]
     wf_github_history_timeline_sync_yml[github-history-timeline-sync.yml]
     wf_gitlink_integrity_yml[gitlink-integrity.yml]
+    wf_honest_failure_gate_yml[honest-failure-gate.yml]
     wf_integration_train_gate_yml[integration-train-gate.yml]
     wf_keyword_mentions_monitor_yml[keyword-mentions-monitor.yml]
     wf_live_link_monitor_yml[live-link-monitor.yml]
@@ -315,6 +317,7 @@ flowchart LR
   wf_agent_registry_ubiquity_gate_yml --> Audits
   wf_build_electron_yml --> Audits
   wf_build_yml --> Audits
+  wf_ci_build_yml --> Audits
   wf_claude_code_review_yml --> Audits
   wf_claude_yml --> Audits
   wf_deploy_yml --> Audits
@@ -324,6 +327,7 @@ flowchart LR
   wf_gcp_rollout_yml --> Audits
   wf_github_history_timeline_sync_yml --> Audits
   wf_gitlink_integrity_yml --> Audits
+  wf_honest_failure_gate_yml --> Audits
   wf_integration_train_gate_yml --> Audits
   wf_keyword_mentions_monitor_yml --> Audits
   wf_live_link_monitor_yml --> Audits
