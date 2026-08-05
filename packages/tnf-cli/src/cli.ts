@@ -17574,11 +17574,23 @@ function getHandoffDivergence(repoHandoff: any, homeHandoff: any): string | null
 
 function summarizeHandoffPacket(handoff: any, source: string): string {
   if (!handoff) return `- ${source}: unavailable`;
-  const nextActions = Array.isArray(handoff.next_actions)
-    ? handoff.next_actions.length
+
+  const tasksArray: any[] = Array.isArray(handoff.next_actions)
+    ? handoff.next_actions
     : Array.isArray(handoff.immediate_tasks)
-      ? handoff.immediate_tasks.length
-      : 0;
+      ? handoff.immediate_tasks
+      : [];
+
+  const nextActionsCount = tasksArray.length;
+
+  // Format the actual tasks to inject into context (up to 5)
+  const taskDetails = tasksArray.slice(0, 5).map((t: any, i: number) => {
+    const text = typeof t === 'string' ? t : t.description || t.task || JSON.stringify(t);
+    return `    ${i + 1}. ${text}`;
+  });
+
+  const tasksContext = taskDetails.length > 0 ? `\n  - Tasks:\n${taskDetails.join('\n')}` : '';
+
   const batch = handoff.batch || handoff.phase7?.batch || handoff.current_batch;
   const batchSummary = batch
     ? `\n- ${source} batch: ${batch.batchId || batch.id || 'unknown'} state=${batch.state || 'unknown'} size=${batch.size ?? batch.records?.length ?? 'unknown'}`
@@ -17588,7 +17600,7 @@ function summarizeHandoffPacket(handoff: any, source: string): string {
       `- ${source}: ${handoff.handoff_id || handoff.session || handoff.session_id || 'unknown'}`,
       `- ${source} created_at: ${handoff.created_at || handoff.generatedAt || handoff.updated || 'unknown'}`,
       `- ${source} priority: ${handoff?.continuation?.priority || handoff.priority || 'unknown'}`,
-      `- ${source} next actions: ${nextActions}`,
+      `- ${source} next actions count: ${nextActionsCount}${tasksContext}`,
     ].join('\n') + batchSummary
   );
 }
@@ -17596,8 +17608,8 @@ function summarizeHandoffPacket(handoff: any, source: string): string {
 function loadTnfInteractiveContextPack(): string {
   const handoff = readJsonFileIfPresent('docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
   const homeHandoff = readAbsoluteJsonFileIfPresent(getHomeHandoffPath());
-  const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 1200);
-  const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 900);
+  const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 3000);
+  const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 2000);
   const runtimeState = readJsonFileIfPresent('.agent/runtime-state.json');
   const repoMemory = readTextFileIfPresent('MEMORY.md', 900);
   const homeMemory = readAbsoluteTextFileIfPresent(
