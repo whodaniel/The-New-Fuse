@@ -1,4 +1,5 @@
 import { authFetch } from '@/utils/authToken';
+import { rateLimitAwareInterval } from '@/utils/rateLimitCoordinator';
 import { useQuery } from '@tanstack/react-query';
 
 export type LocalGoalTask = {
@@ -136,6 +137,9 @@ export type SystemProcessesResult = {
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await authFetch(url);
+  if (response.status === 429) {
+    throw new Error(`${url} rate-limited (429)`);
+  }
   if (!response.ok) {
     throw new Error(`${url} failed with ${response.status}`);
   }
@@ -146,19 +150,26 @@ export function useLocalRuntimeSummary() {
   return useQuery<LocalRuntimeSummary>({
     queryKey: ['local-runtime', 'summary'],
     queryFn: () => fetchJson<LocalRuntimeSummary>('/api/local-runtime/summary'),
-    refetchInterval: 15000,
-    staleTime: 10000,
-    retry: 1,
+    refetchInterval: () => rateLimitAwareInterval(30_000),
+    staleTime: 20_000,
+    retry: (failureCount, error) => {
+      if (String((error as Error)?.message || '').includes('429')) return false;
+      return failureCount < 1;
+    },
   });
 }
 
 export function useTerminalMirror(options: { enabled?: boolean; refetchInterval?: number } = {}) {
+  const baseInterval = options.refetchInterval ?? 15_000;
   return useQuery<TerminalMirrorResult>({
     queryKey: ['local-runtime', 'terminal-mirror'],
     queryFn: () => fetchJson<TerminalMirrorResult>('/api/local-runtime/terminal-mirror'),
-    refetchInterval: options.refetchInterval ?? 5000,
+    refetchInterval: () => rateLimitAwareInterval(baseInterval),
     enabled: options.enabled ?? true,
-    retry: 1,
+    retry: (failureCount, error) => {
+      if (String((error as Error)?.message || '').includes('429')) return false;
+      return failureCount < 1;
+    },
   });
 }
 
@@ -166,9 +177,12 @@ export function useSystemProcesses(options: { enabled?: boolean } = {}) {
   return useQuery<SystemProcessesResult>({
     queryKey: ['admin', 'chronological-processes'],
     queryFn: () => fetchJson<SystemProcessesResult>('/api/admin/metrics/chronological-processes'),
-    refetchInterval: 60000,
+    refetchInterval: () => rateLimitAwareInterval(60_000),
     enabled: options.enabled ?? true,
-    retry: 1,
+    retry: (failureCount, error) => {
+      if (String((error as Error)?.message || '').includes('429')) return false;
+      return failureCount < 1;
+    },
   });
 }
 

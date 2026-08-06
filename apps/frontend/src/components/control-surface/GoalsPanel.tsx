@@ -1,5 +1,6 @@
 import { GlassCard } from '@/components/ui';
 import { listGoals, type GoalRecord } from '@/services/unifiedLedgerApi';
+import { rateLimitAwareInterval } from '@/utils/rateLimitCoordinator';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Cloud, HardDrive, Target } from 'lucide-react';
 import React, { useMemo } from 'react';
@@ -49,8 +50,11 @@ export const GoalsPanel: React.FC<{ limit?: number }> = ({ limit = 6 }) => {
   const cloud = useQuery<GoalRecord[]>({
     queryKey: ['cloud-goals'],
     queryFn: () => listGoals(),
-    refetchInterval: 60000,
-    retry: 1,
+    refetchInterval: () => rateLimitAwareInterval(60_000),
+    retry: (failureCount, error) => {
+      if (String((error as Error)?.message || '').includes('429')) return false;
+      return failureCount < 1;
+    },
   });
 
   const localGoals: LocalGoal[] =

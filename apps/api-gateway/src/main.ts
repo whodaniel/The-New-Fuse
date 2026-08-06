@@ -69,6 +69,8 @@ function shouldSkipHttpRateLimit(req: any): boolean {
     path === '/health' ||
     path === '/api/health' ||
     path === '/api/v1/health' ||
+    path === '/api/system/health' ||
+    path === '/system/health' ||
     path.startsWith('/docs')
   );
 }
@@ -98,7 +100,7 @@ function attachHttpRateLimit(app: any): void {
   );
   const maxRequests = parsePositiveInteger(
     process.env.API_GATEWAY_RATE_LIMIT_REQUESTS,
-    600,
+    2_000,
     1,
     1_000_000
   );

@@ -75,7 +75,12 @@ export const TNFConsoleDashboard: React.FC = () => {
 
   useEffect(() => {
     loadConsoleData();
-    const interval = setInterval(loadConsoleData, 30000);
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+        return;
+      }
+      void loadConsoleData();
+    }, 45000);
     return () => clearInterval(interval);
   }, [loadConsoleData]);
 
