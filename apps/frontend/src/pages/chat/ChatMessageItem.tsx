@@ -31,26 +31,30 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(({ message })
           </div>
         )}
         {message.sender === 'system' && (
-          <div className="text-xs font-medium opacity-75 mb-1">System Message</div>
+          <div className="text-xs font-medium opacity-75 mb-1">
+            <span>System Message</span>
+          </div>
         )}
         <div className="whitespace-pre-wrap text-sm leading-relaxed">
           {message.content.includes('```') ? (
             <div className="space-y-2">
               {message.content.split('```').map((part, index) =>
                 index % 2 === 0 ? (
-                  <div key={index}>{part}</div>
+                  <div key={index}>
+                    <span>{part}</span>
+                  </div>
                 ) : (
                   <div
                     key={index}
                     className="bg-black/80 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto my-1"
                   >
-                    {part}
+                    <span>{part}</span>
                   </div>
                 )
               )}
             </div>
           ) : (
-            message.content
+            <span>{message.content}</span>
           )}
         </div>
         <div
@@ -58,7 +62,7 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(({ message })
             message.sender === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
           }`}
         >
-          {formatTimestamp(message.timestamp)}
+          <span>{formatTimestamp(message.timestamp)}</span>
         </div>
       </div>
     </div>

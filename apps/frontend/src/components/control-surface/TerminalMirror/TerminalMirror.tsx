@@ -60,7 +60,7 @@ export const TerminalMirror: React.FC<Props> = ({
   width = 640,
   height = 360,
   onWindowSelect,
-  refetchInterval = 5000,
+  refetchInterval = 15000,
   className = '',
 }) => {
   const { data, isLoading } = useTerminalMirror({ refetchInterval });

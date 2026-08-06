@@ -66,7 +66,8 @@ export class SecurityGuard implements CanActivate {
       roles: this.reflector.get<string[]>('roles', context.getHandler()) || [],
       permissions: this.reflector.get<string[]>('permissions', context.getHandler()) || [],
       rateLimit: this.reflector.get<RateLimitOptions>('rateLimit', context.getHandler()) || {
-        requests: 100,
+        // SPA shells (dashboard polls + chat) routinely exceed 100/min.
+        requests: 1200,
         window: 60000,
       },
       sanitizeInput: this.reflector.get<boolean>('sanitizeInput', context.getHandler()) || true,
@@ -80,22 +81,47 @@ export class SecurityGuard implements CanActivate {
     response: Response,
     options: RateLimitOptions
   ): Promise<void> {
+    if (request.method === 'OPTIONS') {
+      return;
+    }
+
     const path = this.normalizeRequestPath(request);
     if (this.isAuthBootstrapPath(path)) {
       await this.checkAuthBootstrapRateLimit(request, response);
       return;
     }
 
-    const clientIP = this.getClientIP(request);
-    const userAgent = request.headers['user-agent'] || 'unknown';
-    const key = `${clientIP}:${userAgent}`;
+    if (this.isRateLimitExemptPath(path)) {
+      return;
+    }
+
     const now = Date.now();
-    const maxRequests = this.resolvePositiveInteger(
-      process.env.API_RATE_LIMIT_REQUESTS,
-      options.requests,
-      1,
-      1_000_000
-    );
+    const bucket = this.resolveRateLimitBucket(request.method, path);
+    const subject = this.getRateLimitSubject(request);
+    const key = `${bucket}:${subject}`;
+
+    const defaultMax =
+      bucket === 'poll'
+        ? this.resolvePositiveInteger(
+            process.env.API_POLL_RATE_LIMIT_REQUESTS,
+            Math.max(options.requests, 1800),
+            1,
+            1_000_000
+          )
+        : bucket === 'ai'
+          ? this.resolvePositiveInteger(
+              process.env.API_AI_RATE_LIMIT_REQUESTS,
+              120,
+              1,
+              1_000_000
+            )
+          : this.resolvePositiveInteger(
+              process.env.API_RATE_LIMIT_REQUESTS,
+              options.requests,
+              1,
+              1_000_000
+            );
+
     const windowMs = this.resolvePositiveInteger(
       process.env.API_RATE_LIMIT_WINDOW_MS,
       options.window,
@@ -127,19 +153,99 @@ export class SecurityGuard implements CanActivate {
     userData.count++;
     rateLimitData.set(key, userData);
 
-    const remaining = Math.max(0, maxRequests - userData.count);
+    const remaining = Math.max(0, defaultMax - userData.count);
     const retryAfterSeconds = Math.max(1, Math.ceil((userData.resetTime - now) / 1000));
-    response.setHeader('X-RateLimit-Limit', String(maxRequests));
+    response.setHeader('X-RateLimit-Limit', String(defaultMax));
     response.setHeader('X-RateLimit-Remaining', String(remaining));
     response.setHeader('X-RateLimit-Reset', String(Math.ceil(userData.resetTime / 1000)));
+    response.setHeader('X-RateLimit-Bucket', bucket);
 
-    if (userData.count > maxRequests) {
+    if (userData.count > defaultMax) {
       response.setHeader('Retry-After', String(retryAfterSeconds));
       throw new HttpException(
         'Rate limit exceeded. Please try again later.',
         HttpStatus.TOO_MANY_REQUESTS
       );
     }
+  }
+
+  private getRateLimitSubject(request: Request): string {
+    const user = (request as Request & { user?: { id?: string | number; sub?: string | number } })
+      .user;
+    const userId = user?.id ?? user?.sub;
+    if (userId !== undefined && userId !== null && String(userId).trim()) {
+      return `user:${String(userId)}`;
+    }
+
+    const fromToken = this.readBearerSubject(request);
+    if (fromToken) {
+      return `user:${fromToken}`;
+    }
+
+    const clientIP = this.getClientIP(request);
+    return `ip:${clientIP}`;
+  }
+
+  private readBearerSubject(request: Request): string | null {
+    const authorization = request.headers.authorization;
+    if (!authorization || typeof authorization !== 'string') return null;
+    const [scheme, token] = authorization.split(' ');
+    if (!scheme || scheme.toLowerCase() !== 'bearer' || !token) return null;
+
+    try {
+      const payloadPart = token.split('.')[1];
+      if (!payloadPart) return null;
+      const json = Buffer.from(payloadPart, 'base64url').toString('utf8');
+      const payload = JSON.parse(json) as { sub?: unknown; id?: unknown; userId?: unknown };
+      const subject = payload.sub ?? payload.id ?? payload.userId;
+      if (subject === undefined || subject === null) return null;
+      const normalized = String(subject).trim();
+      return normalized || null;
+    } catch {
+      return null;
+    }
+  }
+
+  private resolveRateLimitBucket(method: string, path: string): 'poll' | 'ai' | 'default' {
+    if (this.isAiPath(path)) {
+      return 'ai';
+    }
+    if (method === 'GET' && this.isPollPath(path)) {
+      return 'poll';
+    }
+    return 'default';
+  }
+
+  private isRateLimitExemptPath(path: string): boolean {
+    return (
+      path === '/' ||
+      path === '/health' ||
+      path === '/api/health' ||
+      path === '/api/v1/health' ||
+      path === '/api/system/health' ||
+      path === '/system/health' ||
+      path.startsWith('/docs')
+    );
+  }
+
+  private isPollPath(path: string): boolean {
+    return (
+      path.includes('/local-runtime/') ||
+      path.includes('/admin/metrics/') ||
+      path.includes('/admin/audit-logs') ||
+      path.includes('/unified-ledger/goals') ||
+      /\/api(?:\/v1)?\/(agents|workflows|goals)(?:\/|$)/i.test(path) ||
+      /\/api(?:\/v1)?\/chat(?:\/|$)/i.test(path)
+    );
+  }
+
+  private isAiPath(path: string): boolean {
+    return (
+      /\/api(?:\/v1)?\/ai\//i.test(path) ||
+      path.includes('/text-completion') ||
+      path.includes('/image-generation') ||
+      path.includes('/orchestration/chat')
+    );
   }
 
   private normalizeRequestPath(request: Request): string {
@@ -240,6 +346,10 @@ export class SecurityGuard implements CanActivate {
   }
 
   private validateAndSanitizeInput(request: Request, options: any): void {
+    const path = this.normalizeRequestPath(request);
+    // Auth bootstrap bodies carry JWTs / passwords — do not mutate them.
+    const skipBodySanitize = this.isAuthBootstrapPath(path);
+
     // Sanitize all input data
     if (options.sanitizeInput) {
       // Sanitize query parameters
@@ -253,8 +363,8 @@ export class SecurityGuard implements CanActivate {
         });
       }
 
-      // Sanitize body
-      if (request.body && typeof request.body === 'object') {
+      // Sanitize body (except auth routes that post JWTs / credentials)
+      if (!skipBodySanitize && request.body && typeof request.body === 'object') {
         request.body = this.sanitizationService.sanitizeObject(request.body);
       }
 
