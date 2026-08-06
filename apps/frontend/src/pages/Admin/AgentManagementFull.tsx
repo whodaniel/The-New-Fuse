@@ -341,37 +341,42 @@ export default function AgentManagementFull() {
                         {agent.status === 'running' ? (
                           <button
                             onClick={() => handleAgentAction(agent.id, 'stop')}
-                            className="text-yellow-600 hover:text-yellow-900"
+                            className="text-yellow-600 hover:text-yellow-900 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-1"
                             title="Stop"
+                            aria-label={`Stop agent ${agent.name}`}
                           >
                             <Pause className="h-4 w-4" />
                           </button>
                         ) : (
                           <button
                             onClick={() => handleAgentAction(agent.id, 'start')}
-                            className="text-green-600 hover:text-green-900"
+                            className="text-green-600 hover:text-green-900 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-1"
                             title="Start"
+                            aria-label={`Start agent ${agent.name}`}
                           >
                             <Play className="h-4 w-4" />
                           </button>
                         )}
                         <button
                           onClick={() => handleAgentAction(agent.id, 'restart')}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-600 hover:text-blue-900 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
                           title="Restart"
+                          aria-label={`Restart agent ${agent.name}`}
                         >
                           <RefreshCw className="h-4 w-4" />
                         </button>
                         <button
-                          className="text-muted-foreground hover:text-gray-900"
+                          className="text-muted-foreground hover:text-gray-900 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-1"
                           title="Settings"
+                          aria-label={`Agent settings for ${agent.name}`}
                         >
                           <Settings className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleAgentAction(agent.id, 'delete')}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
                           title="Delete"
+                          aria-label={`Delete agent ${agent.name}`}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
