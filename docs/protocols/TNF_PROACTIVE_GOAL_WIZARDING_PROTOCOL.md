@@ -21,6 +21,43 @@ schedule background executions, and provide continuous status updates.
 
 ---
 
+## Multi-Tenant Architecture & Domain Scoping
+
+TNF operates as a **strictly isolated Multi-Tenant Architecture**. The Proactive
+Goal-Achievement Engine automatically binds every goal, wizarding session,
+contextual asset, and fleet dispatch to the active tenant context:
+
+- **Tenant Isolation:** Every goal record (`Goal`), telemetry event, and
+  database entry strictly carries `tenantId`, `orgId`, and `userId` metadata,
+  enforced via Supabase RLS policies and API Gateway middleware
+  (`apps/api-gateway/src/guards/security.guard.ts`).
+- **Tri-Fold Domain Adaptability:**
+  1. **Corporate Dev Domain:** Focuses on framework compliance, system
+     architecture, core performance, and strict protocol adherence.
+  2. **Agency / Client Domain:** Focuses on client-specific SLAs, isolated
+     tenant workspaces, custom branding, ROI/KPI metrics, and tenant-scoped
+     credentials.
+  3. **Personal Domain:** Focuses on user-centric goal extraction, proactive
+     guidance, asset mapping, and personal productivity.
+
+---
+
+## The 5W1H Adaptive Context Matrix
+
+The Wizarding Engine dynamically adjusts its dialogue, recommendations, and
+execution plans based on the **5W1H Context Matrix**:
+
+| Dimension | Question                         | Adaptive System Behavior                                                                       |
+| :-------- | :------------------------------- | :--------------------------------------------------------------------------------------------- |
+| **WHO**   | _Who is the tenant/user?_        | Scopes role permissions, tenant tier (`tenantId`), organization bounds, and target persona.    |
+| **WHAT**  | _What is the objective & stack?_ | Discovers codebases, framework choices, required APIs, and technical dependencies.             |
+| **WHY**   | _Why does this goal exist?_      | Extracts core business/personal motivation, success metrics, KPIs, and ROI requirements.       |
+| **WHEN**  | _When is the deadline/cadence?_  | Configures milestone pacing, cron schedules (`CronExpression`), and urgency priorities.        |
+| **WHERE** | _Where is the target surface?_   | Identifies deployment targets (Cloudflare Wasm, Railway, Supabase, local desktop, mobile).     |
+| **HOW**   | _How will the work execute?_     | Maps subagent dispatching (`Kilo`, `DevOpsAgent`), verification gates, and D1/D9 safety rails. |
+
+---
+
 ## The 5-Stage Wizarding Framework
 
 When a user initiates a goal or when an agent detects an unfulfilled user

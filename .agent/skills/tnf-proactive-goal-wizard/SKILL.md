@@ -16,6 +16,29 @@ personal and system goals** through structured, multi-step interactive
 
 ---
 
+## Multi-Tenant Scoping & 5W1H Context Adaptation
+
+Every agent utilizing this skill MUST adapt its dialogue and execution based on
+the tenant context and the **5W1H Matrix**:
+
+- **Multi-Tenant Boundary:** Ensure all created goals, tasks, and telemetry
+  belong exclusively to the active `tenantId`, `orgId`, and `userId`. Never
+  cross-contaminate data between client environments.
+- **5W1H Context Evaluation:**
+  - **WHO:** Identify tenant role, organization tier, and user preferences.
+  - **WHAT:** Identify specific technical stack, codebases, and APIs required.
+  - **WHY:** Determine business/personal motivation, success metrics, and KPIs.
+  - **WHEN:** Establish target deadlines, milestone pacing, and recurring crons.
+  - **WHERE:** Identify deployment targets (Cloudflare Wasm, Railway, Supabase,
+    local environment).
+  - **HOW:** Map execution pipelines, subagent dispatching, and D1/D9 operator
+    safety gates.
+- **Tri-Fold Domain Adaptation:** Automatically adapt tone and rules for
+  **Corporate Dev** (high rigour/protocol), **Agency / Client** (SLA/ROI
+  focused), or **Personal** (proactive guidance/productivity).
+
+---
+
 ## Operating Mandate
 
 Agents utilizing this skill must **NEVER** remain passive. When a user states a
