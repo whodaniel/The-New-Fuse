@@ -16,12 +16,10 @@
     "additionally demands request.approval.required && request.approval.approved.",
     "Rule syntax: exact path, or prefix ending in '/**'."
   ],
-
   "policy": {
     "default_decision": "deny",
     "rationale": "An agent that can edit its own authority can grant itself authority. TURN_ZERO_MANDATE.md records exactly that: 'an earlier, uncommitted edit to this file made the same claim without a real operator confirmation behind it.' Authority documents are therefore approval-gated for every agent, with no exceptions and no self-approval path."
   },
-
   "globally_approval_required": [
     "docs/protocols/TURN_ZERO_MANDATE.md",
     "docs/protocols/DIRECTIVES.md",
@@ -32,9 +30,9 @@
     "AGENTS.md",
     "scripts/sync-repos.sh",
     ".github/workflows/**",
-    ".gitignore"
+    ".gitignore",
+    "data/protocols/system-processes.json"
   ],
-
   "owners": [
     {
       "owner_agent_id": "tnf-agent-director",

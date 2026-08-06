@@ -135,6 +135,20 @@ data/protocols/*.md
 # must be reviewable in history. See
 # docs/protocols/reports/silent-failure-audit-2026-08-05.md.
 !data/protocols/agent-owned-docs.registry.json
+# Exception: the SYSTEM half of the process schedule. scope=system_framework
+# only — the platform's own cron, SUPER_ADMIN-owned, containing no operator
+# data (verified: no emails, home paths, credentials or names). It ships with
+# TNF and must be recoverable by any clone; when the merged registry was
+# gitignored and vanished, every job threw "not registered" and exited 0 for
+# ~11 weeks with nothing to restore from.
+#
+# The TENANT half deliberately lives OUTSIDE this repo, at
+# ~/.config/tnf/processes.json, so an operator's private automation is never
+# published. cron-jobs.registry.json and chronological-process-catalog.json
+# remain ignored: they are GENERATED from both stores by
+# scripts/protocols/build-process-registry.cjs and are reconstructible, not
+# authoritative.
+!data/protocols/system-processes.json
 docs/library/README.md
 docs/library/REGISTRY.md
 data/wiki-inbox/

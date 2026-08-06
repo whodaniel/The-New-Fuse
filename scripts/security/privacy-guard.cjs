@@ -37,7 +37,11 @@ const blockedPathPatterns = [
   // (verified 2026-08-05). It must be versioned — the gate that reads it sat at
   // zero call sites precisely because the blanket ignore meant the file never
   // existed on any checkout. Narrowed the same way the `.agent/` rule above is.
-  /^data\/protocols\/(?!agent-owned-docs\.registry\.json$).*\.(json|jsonl)$/i,
+  // Also exempts system-processes.json: the scope=system_framework half of the
+  // schedule, SUPER_ADMIN-owned platform cron with no operator data (verified
+  // 2026-08-06). The tenant half is not exempted because it is not in this repo
+  // at all — it lives at ~/.config/tnf/processes.json by design.
+  /^data\/protocols\/(?!agent-owned-docs\.registry\.json$)(?!system-processes\.json$).*\.(json|jsonl)$/i,
   /^data\/unified-task-ledger\.json$/i,
   /^data\/unified-task-ledger\.json\.bak-/i,
   /^data\/protocols\/email-.*\.json$/i,
