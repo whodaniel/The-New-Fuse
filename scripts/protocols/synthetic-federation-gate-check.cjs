@@ -163,6 +163,23 @@ function assertResult(name, result, expectOk) {
   const bodyOk = body.ok === true;
   
   if (expectOk && decision !== 'allow') {
+    // A 401 is a configuration fault, not a policy verdict, and saying
+    // "expected decision='allow'" invites the reader to debug policy logic that
+    // was never consulted. This gate ran every 15 minutes from at least
+    // 2026-08-05 to 2026-08-06 reporting that mismatch, while the real cause
+    // was that TNF_GATE_POLICY_TOKEN is not set anywhere on this host — not in
+    // the shell, not in any .env file, and not documented in .env.example. The
+    // credential was never configured, so the request was never authorized, so
+    // no decision was ever made.
+    if (result.status === 401 || result.status === 403) {
+      const hasToken = Boolean(process.env.TNF_GATE_POLICY_TOKEN);
+      throw new Error(
+        `${name}: policy endpoint rejected the request (HTTP ${result.status}) — ` +
+          `${hasToken ? 'TNF_GATE_POLICY_TOKEN is set but was rejected (expired or wrong tenant?)' : 'TNF_GATE_POLICY_TOKEN is NOT SET'}. ` +
+          `No policy decision was reached; this is an auth/config fault, not a deny. ` +
+          `Endpoint: ${result.endpoint || 'policy endpoint'}. See .env.example.`
+      );
+    }
     throw new Error(
       `${name} expected allow decision='allow' but got status=${result.status} decision=${decision} body=${JSON.stringify(body)}`
     );
