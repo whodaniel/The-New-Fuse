@@ -3,6 +3,38 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+Updated: **2026-08-06T20:54:00.000Z** — handoff
+`035a7a42-a552-40ee-b25e-0c661c4ba092` (`d0cb2a4a0f`). Antigravity (Gemini 3.6
+Flash) session: Codified and deployed the Proactive Goal-Achievement & Personal
+Wizarding Framework (`docs/protocols/TNF_PROACTIVE_GOAL_WIZARDING_PROTOCOL.md`),
+the 5W1H Adaptive Context Matrix, Multi-Tenant Boundary Isolation
+(`tenantId`/`orgId` RLS), Contextual Grounding Markers & Pathways
+(`docs/protocols/TNF_CONTEXTUAL_GROUNDING_MARKERS_SPEC.md`), the Unified Master
+Reconciliation Engine
+(`scripts/protocols/tnf-master-reconciliation-runner.cjs`), and the Unified
+Federated Tagged Entity (UFTE) spec
+(`docs/protocols/TNF_FEDERATED_TAG_SYNERGY_SPEC.md`). Integrated `federatedId`
+Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
+verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
+
+Updated: **2026-08-06T18:04:19.622Z** — handoff
+`612fce9e-5ca0-4714-8135-2a35b2e3b7e3`
+(`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Continued Hermes session
+(`tnf-local-terminal-ttys005`, 2026-08-06): operator-directed continuation of
+the build pipeline repair session. Added channel integration test coverage
+(`packages/tnf-cli/src/slack/slack.test.ts` 8/8 pass;
+`packages/tnf-cli/src/whatsapp/whatsapp.test.ts` 21/21 pass) for the existing
+Slack and WhatsApp services — env validation, double-start guard,
+getStatus/sendMessage contracts on Slack; HMAC signature verification (including
+constant-time compare via `crypto.timingSafeEqual`), `extractMessages`
+resilience against malformed payloads, and dry-run mode on WhatsApp. Both test
+files wired into `packages/tnf-cli` test script. Added
+`.env.tnf-whatsapp.example` (matching the existing `.env.tnf-slack.example`) so
+both channels have discoverable per-service config templates. No autonomous
+commits; all changes staged for live operator confirmation per
+`docs/core/AGENTS.md` section "Commits and Pushes Require Live Operator
+Confirmation".
+
 Updated: **2026-08-05T20:48:44.816Z** — handoff
 `da1afd4e-136e-43de-a2d6-72b4c6ef11aa`
 (`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Hermes session
