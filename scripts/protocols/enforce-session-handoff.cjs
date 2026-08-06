@@ -133,8 +133,29 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+/**
+ * Report a failing verdict at the enforcement level the CALLER declared.
+ *
+ * This gate always exits 1 — that is its verdict, and callers rely on it. But
+ * whether that verdict stops anything is the caller's decision, and this gate
+ * cannot see it. `.husky/pre-push` wraps this invocation in `run_warn`, which
+ * catches the non-zero exit and continues, while the privacy, secret and PII
+ * guards beside it are unwrapped and genuinely block.
+ *
+ * So every push printed "BLOCKED (pre-push)" and then pushed. The hook does
+ * disclose the override on the following line, but "BLOCKED" leads, and it is
+ * the word anyone greping logs or skimming CI output will find. A verdict that
+ * names an outcome it did not produce is the same defect this repo keeps
+ * finding, just pointed at the operator instead of at a machine.
+ *
+ * `--advisory` lets the caller state that it will not enforce, so the wording
+ * matches reality. The exit code is unchanged either way.
+ */
+const ADVISORY = args.includes('--advisory');
+
 function fail(message) {
-  console.error(`[session-handoff-gate] BLOCKED (${mode}): ${message}`);
+  const verdict = ADVISORY ? 'ADVISORY (not enforced by caller)' : 'BLOCKED';
+  console.error(`[session-handoff-gate] ${verdict} (${mode}): ${message}`);
   process.exit(1);
 }
 

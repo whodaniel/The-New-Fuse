@@ -47,5 +47,8 @@ PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run docs:pii:guard:pre-push
 # Local hook stays lightweight; strict governance executes in CI.
 run_warn pnpm run ownership:ledger:emit -- --file-list="$tmp_file" --output=data/protocols/CHANGE_OWNERSHIP.jsonl
 run_warn pnpm run conflict:tier -- --file-list="$tmp_file"
-run_warn env TNF_HANDOFF_FILE_LIST="$tmp_file" pnpm run handoff:pre-push
+# Declared advisory: run_warn swallows the non-zero exit, so the gate is told
+# not to word its verdict as "BLOCKED" — it never blocked anything here. The
+# privacy/secret/PII guards above are deliberately unwrapped and do block.
+run_warn env TNF_HANDOFF_FILE_LIST="$tmp_file" pnpm run handoff:pre-push -- --advisory
 run_warn pnpm run supabase:rls:audit:strict
