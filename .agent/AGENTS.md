@@ -86,6 +86,7 @@ Define module boundaries first, then implement. The user designs the boundaries;
 - **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for harness framework compliance (Turn Zero mandate, local environment boundary, package exports, TS path mappings).
 - **tnf-autonomous-loop-topology** — Identifies, maps, and unrolls 4-tiered nested loops (Micro-Loop -> Cognitive Loop -> Swarm Director Loop -> Meta Flywheel) to enumerate all potential autonomous action paths while enforcing safety gates.
 - **tnf-proactive-goal-wizard** — Multi-step interactive wizarding framework to proactively engage users, extract goals, discover workspace context/assets, deconstruct milestones, and track autonomous task progress.
+- **tnf-ufte-federated-tag-governor** — Enforces cryptographic entity hashing (`federatedId`), mandatory document headers (`[CLASS] [STATUS] [DOC_TYPE] [DOMAIN_SCOPE]`), 5W1H context adaptation, and semantic graph indexing across all agent operations.
 
 --- [MUTATION 2026-08-06 FULL-TOP] ---
 Agent: audit-runner (autonomous full-feature/custom audit agent)

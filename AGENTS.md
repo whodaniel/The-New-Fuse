@@ -212,6 +212,10 @@ implementation — determines whether the system becomes brittle.
 - **tnf-proactive-goal-wizard** — Multi-step interactive wizarding framework to
   proactively engage users, extract goals, discover workspace context/assets,
   deconstruct milestones, and track autonomous task progress.
+- **tnf-ufte-federated-tag-governor** — Enforces cryptographic entity hashing
+  (`federatedId`), mandatory document headers
+  (`[CLASS] [STATUS] [DOC_TYPE] [DOMAIN_SCOPE]`), 5W1H context adaptation, and
+  semantic graph indexing across all agent operations.
 
 ## Concordance System
 
