@@ -1,7 +1,7 @@
 {
   "spec": "tnf/system-processes/0.1",
   "scope": "system_framework",
-  "authority": "SUPER_ADMIN — platform schedule, approval-gated, versioned in git",
+  "authority": "SUPER_ADMIN \u2014 platform schedule, approval-gated, versioned in git",
   "jobs": [
     {
       "schedule_id": "tnf-auto-git-push",
@@ -327,15 +327,15 @@
       "title": "TNF LLM Verified Fleet Cycle",
       "cadence": "0 */6 * * *",
       "timezone": "UTC",
-      "description": "TNF-first scout → capability tester → subject agent validation → apply verified winners to ~/.tnf model-providers + provider-config. Live /v1/models only; no hardcoded preference authority.",
+      "description": "TNF-first scout \u2192 capability tester \u2192 subject agent validation \u2192 apply verified winners to ~/.tnf model-providers + provider-config. Live /v1/models only; no hardcoded preference authority.",
       "runNow": {
         "command": "node",
         "args": ["scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs"],
         "timeoutMs": 900000,
         "env": {
           "TNF_LLM_VERIFY_APPLY": "1",
-          "TNF_LLM_VERIFY_LIMIT": "16",
-          "TNF_LLM_SUBJECT_LIMIT": "8"
+          "TNF_LLM_VERIFY_LIMIT": "24",
+          "TNF_LLM_SUBJECT_LIMIT": "10"
         }
       },
       "provenance": "restored-2026-08-05"
