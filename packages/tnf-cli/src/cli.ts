@@ -19107,8 +19107,44 @@ function wantsSilentPreflight(argv: string[]): boolean {
   return false;
 }
 
+/**
+ * Serialize the fully-registered commander tree: every command, alias, option
+ * and description, at every depth.
+ *
+ * This is the oracle for the cli.ts restructure (see
+ * docs/operations/tnf-cli-restructure-scope.md). Moving 296 action handlers out
+ * of a 19k-line file needs something that can prove the surface did not change,
+ * and 141 separate `--help` invocations would cost minutes. Walking the tree
+ * in-process costs one startup.
+ *
+ * Deterministic ordering so an unrelated registration order change never looks
+ * like a surface change.
+ */
+function dumpCommandSurface(root: Command): unknown {
+  const walk = (cmd: Command): unknown => ({
+    name: cmd.name(),
+    aliases: [...cmd.aliases()].sort(),
+    description: cmd.description() || '',
+    options: cmd.options
+      .map((o) => ({ flags: o.flags, description: o.description || '' }))
+      .sort((a, b) => a.flags.localeCompare(b.flags)),
+    commands: cmd.commands
+      .map((c) => walk(c as Command))
+      .sort((a, b) => (a as { name: string }).name.localeCompare((b as { name: string }).name)),
+  });
+  return walk(root);
+}
+
 async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
+
+  // Emit the command surface and exit, before the splash, preflight, or any
+  // command resolution. Must stay first: the point is to observe registration,
+  // not to execute anything.
+  if (argv.includes('--dump-command-surface')) {
+    console.log(JSON.stringify(dumpCommandSurface(program), null, 2));
+    return;
+  }
 
   // Render the TNF wordmark at the very top of every CLI invocation so the
   // brand is the first thing an operator sees — before the protocol pre-flight.
