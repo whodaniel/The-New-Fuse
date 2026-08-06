@@ -62,6 +62,25 @@ _tnf_record() {
 }
 
 # $1 = action ("commit"|"push"), $2 = free-form detail for the log
+# Manifest of exactly what the operator is authorizing, recorded at check time
+# so a post-commit comparison can prove the commit matches it.
+#
+# WHY (proven 2026-08-06): git runs pre-commit, then re-reads the index to build
+# the tree. Anything that stages in that window is committed unaudited. The
+# audit log recorded `allowed staged=4` at 18:22:39; the resulting commit
+# carried ~150 files, including a legal document with the operator's full name.
+# The gate said yes to four things and git committed a hundred and fifty.
+#
+# Git offers no way to lock the index across that boundary, so this cannot be
+# prevented here — only made visible. A count alone could never have surfaced
+# it; the file list can.
+TNF_COMMIT_MANIFEST="${TNF_COMMIT_MANIFEST:-${HOME}/.tnf/audit/pending-commit-manifest.txt}"
+
+_tnf_snapshot_index() {
+  mkdir -p "$(dirname "$TNF_COMMIT_MANIFEST")" 2>/dev/null || true
+  git diff --cached --name-only 2>/dev/null | sort > "$TNF_COMMIT_MANIFEST" 2>/dev/null || true
+}
+
 tnf_require_operator() {
   if [ -z "$TNF_OPERATOR_CONFIRM" ]; then
     _tnf_record "$1" blocked "$2"
@@ -81,4 +100,6 @@ tnf_require_operator() {
     exit 1
   fi
   _tnf_record "$1" allowed "$2"
+  [ "$1" = "commit" ] && _tnf_snapshot_index
+  return 0
 }
