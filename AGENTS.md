@@ -15,6 +15,12 @@ without verifying. This applies to browser automation, API calls, database
 writes, and deployments. Read the DOM/query the state before acting. Confirm the
 result after.
 
+**The State-Freshness Axiom Suite
+(`docs/protocols/STATE_FRESHNESS_AXIOM_SUITE.md`):** No claim or cached state
+retains authority without empirical re-verification. All knowledge must be
+continuously validated for freshness against live runtime evidence and canonical
+ground truth.
+
 ## DOM Over Screenshots
 
 When programmatic access to structured data is available, use it. Screenshots
@@ -199,6 +205,13 @@ implementation — determines whether the system becomes brittle.
 - **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for
   harness framework compliance (Turn Zero mandate, local environment boundary,
   package exports, TS path mappings).
+- **tnf-autonomous-loop-topology** — Identifies, maps, and unrolls 4-tiered
+  nested loops (Micro-Loop -> Cognitive Loop -> Swarm Director Loop -> Meta
+  Flywheel) to enumerate all potential autonomous action paths while enforcing
+  safety gates.
+- **tnf-proactive-goal-wizard** — Multi-step interactive wizarding framework to
+  proactively engage users, extract goals, discover workspace context/assets,
+  deconstruct milestones, and track autonomous task progress.
 
 ## Concordance System
 
