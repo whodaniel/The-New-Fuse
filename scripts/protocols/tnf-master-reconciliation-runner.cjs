@@ -22,16 +22,57 @@ const { execSync } = require('child_process');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const START_TIME = Date.now();
 
+/**
+ * Run one audit step and classify its OUTCOME, not merely whether it threw.
+ *
+ * WHY (measured 2026-08-06, first run of this engine)
+ *   The original wrapper returned `{ ok: true }` whenever `fn()` did not throw.
+ *   That made three very different things indistinguishable:
+ *
+ *     - the step ran and found nothing wrong        → genuinely ok
+ *     - the step ran and found problems             → NOT ok
+ *     - the step did not run at all (skipped)       → unknown, not ok
+ *
+ *   So the engine printed "✓ Process Health & Service Watchdog completed" and
+ *   "Overall Status: ✓ PASSED" at the same moment verify-process-health
+ *   reported 8 findings — including tnf-master-clock-super-cycle failing the
+ *   federation gate with 401 UNAUTHORIZED. "Goal Ledger Reconciliation" took
+ *   0ms because it returned {status:'skipped'}, and that counted as a pass.
+ *
+ *   An aggregator that reports green over a red substrate is worse than no
+ *   aggregator: it manufactures confidence at the top of the stack, which is
+ *   exactly where people stop looking.
+ *
+ * CLASSIFICATION
+ *   A step may return { status, findings } to declare its own verdict:
+ *     status 'skipped' | 'unknown'     → ok:false, counted as UNRESOLVED
+ *     findings > 0                     → ok:false, counted as FINDINGS
+ *     otherwise                        → ok:true
+ *   A thrown error remains ok:false. Silence is never success.
+ */
 function runStep(name, fn) {
   const stepStart = Date.now();
   console.log(`\n[RECONCILE] === Step: ${name} ===`);
   try {
     const result = fn();
-    console.log(`[RECONCILE] ✓ ${name} completed (${Date.now() - stepStart}ms)`);
-    return { ok: true, durationMs: Date.now() - stepStart, data: result };
+    const durationMs = Date.now() - stepStart;
+    const status = result && typeof result === 'object' ? result.status : undefined;
+    const findings =
+      result && typeof result === 'object' && Number.isFinite(result.findings) ? result.findings : 0;
+
+    if (status === 'skipped' || status === 'unknown' || status === 'healthy_default') {
+      console.log(`[RECONCILE] ? ${name} DID NOT RUN (status=${status}) (${durationMs}ms)`);
+      return { ok: false, verdict: 'unresolved', durationMs, data: result };
+    }
+    if (findings > 0) {
+      console.log(`[RECONCILE] ✗ ${name} found ${findings} issue(s) (${durationMs}ms)`);
+      return { ok: false, verdict: 'findings', findings, durationMs, data: result };
+    }
+    console.log(`[RECONCILE] ✓ ${name} clean (${durationMs}ms)`);
+    return { ok: true, verdict: 'clean', durationMs, data: result };
   } catch (error) {
     console.error(`[RECONCILE] ✗ ${name} failed: ${error.message}`);
-    return { ok: false, durationMs: Date.now() - stepStart, error: error.message };
+    return { ok: false, verdict: 'error', durationMs: Date.now() - stepStart, error: error.message };
   }
 }
 
@@ -90,11 +131,28 @@ function main() {
   // Step 5: Process Health Watchdog
   report.steps.processHealth = runStep('Process Health & Service Watchdog', () => {
     const scriptPath = path.join(REPO_ROOT, 'scripts/protocols/verify-process-health.cjs');
-    if (fs.existsSync(scriptPath)) {
-      const output = execSync(`node "${scriptPath}"`, { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
-      return { output };
+    // Absence of the watchdog is unknown health, never healthy. The previous
+    // `{ status: 'healthy_default' }` asserted the system was fine on the
+    // strength of not having looked.
+    if (!fs.existsSync(scriptPath)) return { status: 'unknown', reason: 'verify-process-health.cjs not present' };
+
+    // --json so findings are read, not merely captured. The watchdog exits 0
+    // even when it finds problems (by design — a monitor that fails when it
+    // detects something is one nobody can trust), so execSync never throws and
+    // the caller MUST inspect the payload.
+    const raw = execSync(`node "${scriptPath}" --json --no-alert`, { cwd: REPO_ROOT, encoding: 'utf8' });
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return { status: 'unknown', reason: 'watchdog output was not parseable JSON' };
     }
-    return { status: 'healthy_default' };
+    const findings = Array.isArray(parsed.findings) ? parsed.findings.length : 0;
+    return {
+      findings,
+      healthy: parsed.healthy,
+      detail: (parsed.findings || []).map((f) => `${f.kind}: ${f.id}`),
+    };
   });
 
   // Step 6: Goal Ledger Reconciliation
@@ -105,7 +163,18 @@ function main() {
   });
 
   report.totalDurationMs = Date.now() - START_TIME;
-  report.passed = Object.values(report.steps).every(s => s.ok);
+  // Break the summary out by verdict so "nothing ran" cannot hide inside
+  // "nothing failed". A single PASSED/FAILED bit was what let 8 broken
+  // processes sit under a green banner.
+  const verdicts = Object.values(report.steps);
+  report.summary = {
+    clean: verdicts.filter((s) => s.verdict === 'clean').length,
+    findings: verdicts.filter((s) => s.verdict === 'findings').length,
+    unresolved: verdicts.filter((s) => s.verdict === 'unresolved').length,
+    errored: verdicts.filter((s) => s.verdict === 'error').length,
+    totalFindings: verdicts.reduce((n, s) => n + (s.findings || 0), 0),
+  };
+  report.passed = verdicts.every((s) => s.ok);
 
   // Write Master Report Artifacts
   const jsonReportPath = path.join(REPO_ROOT, 'docs/operations/tnf-master-reconciliation-report-latest.json');
@@ -131,7 +200,12 @@ ${Object.entries(report.steps)
   fs.writeFileSync(mdReportPath, mdContent);
 
   console.log(`\n=== Master Reconciliation Procedure Finished (${report.totalDurationMs}ms) ===`);
-  console.log(`Overall Status: ${report.passed ? '✓ PASSED' : '✗ ISSUES FOUND'}`);
+  console.log(
+    `Overall: ${report.passed ? '✓ ALL CLEAN' : '✗ NOT CLEAN'}  ` +
+      `[clean ${report.summary.clean} | findings ${report.summary.findings} ` +
+      `(${report.summary.totalFindings} issue(s)) | did-not-run ${report.summary.unresolved} | ` +
+      `errored ${report.summary.errored}]`
+  );
   console.log(`Master Report: docs/operations/tnf-master-reconciliation-report-latest.md`);
 
   if (!report.passed) {
