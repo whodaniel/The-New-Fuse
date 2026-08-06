@@ -16,6 +16,7 @@
  * Run: pnpm --filter @the-new-fuse/tnf-cli test
  */
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -39,6 +40,9 @@ function check(name: string, cond: boolean, detail = ''): void {
  * Run the built CLI with a given env overlay and capture combined output.
  * Mirrors how scripts/agents/*.sh invoke `tnf` — non-TTY stdin, inherited env.
  */
+/** Set when the last runCli call was killed by the timeout rather than finishing. */
+let lastRunTimedOut = false;
+
 function runCli(args: string[], envOverlay: Record<string, string>): string {
   const result = spawnSync('node', [CLI, ...args], {
     cwd: path.resolve(here, '..', '..', '..'),
@@ -47,6 +51,15 @@ function runCli(args: string[], envOverlay: Record<string, string>): string {
     stdio: ['ignore', 'pipe', 'pipe'],
     timeout: 30_000,
   });
+  // A killed process produces no further output, which silently satisfies every
+  // "output absent" assertion and fails every "output present" one — so a
+  // timeout masquerades as a behavioural regression. `tnf doctor` measured ~41
+  // minutes on 2026-08-06, so this fires routinely. Record it so the assertions
+  // can say what actually happened instead of guessing.
+  lastRunTimedOut = Boolean(
+    (result as { error?: NodeJS.ErrnoException }).error?.code === 'ETIMEDOUT' ||
+    result.signal === 'SIGTERM'
+  );
   return `${result.stdout ?? ''}${result.stderr ?? ''}`;
 }
 
@@ -62,6 +75,22 @@ function preflightOutputCount(output: string): number {
 
 function main(): void {
   console.log('\npreflight-skip: TNF_SKIP_TURN_ZERO_ONBOARD / TNF_SKIP_PREFLIGHT contract\n');
+
+  // This suite asserts on the OUTPUT of a spawned binary. If that binary is
+  // absent, every "output present" assertion fails and every "output absent"
+  // assertion passes — reporting "default behaviour regressed" when nothing
+  // regressed at all and the build simply is not there.
+  //
+  // That is not hypothetical: `pnpm run clean` (hourly, via cron) removes
+  // dist/, and on 2026-08-06 this suite reported two behavioural regressions
+  // that were entirely a missing build. A missing precondition must be
+  // distinguishable from a failed assertion.
+  if (!fs.existsSync(CLI)) {
+    console.error(`  CANNOT RUN  ${CLI} does not exist.`);
+    console.error('              Build first: pnpm --filter @the-new-fuse/tnf-cli build');
+    console.error('              (dist/ is removed by `pnpm run clean`, which cron runs hourly.)');
+    process.exit(2);
+  }
 
   // 1. The fix: with the env var set, neither the unconditional preflight in
   //    main() nor runFastHarnessProtocolGate (triggered by `tnf doctor`) emits
@@ -87,11 +116,16 @@ function main(): void {
   //    runs when the operator has not opted out. Without this assertion it
   //    would be trivial to "fix" the bug by deleting the preflight entirely.
   const defaultOut = runCli(['doctor'], {});
+  const defaultTimedOut = lastRunTimedOut;
   const defaultHits = preflightOutputCount(defaultOut);
   check(
     'default (no env) still runs preflight',
     defaultHits > 0,
-    'preflight output missing — default behaviour regressed'
+    defaultTimedOut
+      ? '`tnf doctor` exceeded the 30s budget and was killed before preflight printed — ' +
+          'this is a CLI latency problem, NOT a preflight regression. See ' +
+          'docs/operations/tnf-cli-restructure-scope.md'
+      : 'preflight output missing — default behaviour regressed'
   );
 
   // 4. Explicit user-invoked `tnf protocol gate` is NOT suppressed — it is the
