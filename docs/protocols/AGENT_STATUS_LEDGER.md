@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-07T21:51:54.095Z** — handoff
+Updated: **2026-08-07T22:02:19.626Z** — handoff
+`45e36991-4e07-4103-ae62-bd99f1bb1dc8` (`44a281faf71d`).
 `94e8746b-e4fd-4a04-8677-1618437912a5` (`2422616d77a8`).
 `d387c30c-be30-4fdc-84ad-1e4e1f2ac763` (`1032bba9db31`).
 `035a7a42-a552-40ee-b25e-0c661c4ba092` (`d0cb2a4a0f`). Antigravity (Gemini 3.6
@@ -134,10 +135,12 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                                                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | On resume: export TNF_AGENT_ID=tnf-cli-agent for commit/push; run pnpm run validate:session-handoff and node scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new work. |
+| **P0**   | Do not commit docs/legal/ or Section13 drafts until PII redacted; leave receipts/twip noise local unless intentionally curated.                                                                |
+| **P0**   | If scripts/tnf-onboard.cjs or packages/tnf-cli fleet/slack surfaces are stubbed/missing, restore from known-good commits before full-auto.                                                     |
+| **P0**   | Optional: set TNF_GATE_POLICY_TOKEN and enable TNF_REQUIRE_SUBSTRATE=1; coalesce registry cohesion gap only with operator handshake.                                                           |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -434,3 +437,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-07 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (94e8746b-e4fd-4a04-8677-1618437912a5) | ✅ HANDOFF_READY |
+
+| 2026-08-07 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(449a461c-7f14-47af-8146-0838f06510f7) | ✅ HANDOFF_READY |
+
+| 2026-08-07 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(45e36991-4e07-4103-ae62-bd99f1bb1dc8) | ✅ HANDOFF_READY |

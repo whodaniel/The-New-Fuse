@@ -2,7 +2,11 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+**Current Directive:** On resume: export TNF_AGENT_ID=tnf-cli-agent for
+commit/push; run pnpm run validate:session-handoff and node
+scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new
+work. **Project ID:** `TNF-SESSION` **Handoff:**
+`45e36991-4e07-4103-ae62-bd99f1bb1dc8` **Head:** `44a281faf71d`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `94e8746b-e4fd-4a04-8677-1618437912a5` **Head:** `2422616d77a8`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
@@ -18,6 +22,13 @@ Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
   (https://github.com/whodaniel/tnf-monorepo/pull/70). Residual authority ops
   remain operator-gated.
 - PR #77 Hermes/CLI noun parity — **MERGED**
+- **2026-08-07 Autonomous commit authorization granted (operator-confirmed).**
+  `TNF_AGENT_ID=tnf-cli-agent` authorized for autonomous commits/pushes per
+  `docs/core/AGENTS.md` (§Autonomous Commits and Pushes — 6 constraints). Commit
+  `1032bba9db` (`feat(protocols): authorize TNF CLI agent...`). Audit trail:
+  `.tnf/audit/commit-attempts.jsonl`. Authority surfaces remain gated
+  (`.husky/tnf-authority.sh` line 85+ exemption only for agent-auto). Registry
+  reconciliation remains operator-gated.
   (https://github.com/whodaniel/tnf-monorepo/pull/77). Surface coverage 62/62;
   product-level Slack/WhatsApp/etc. is optional follow-on, not a standing
   blocker.

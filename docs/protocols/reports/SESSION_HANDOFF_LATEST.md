@@ -1,79 +1,79 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-07T21:51:54.095Z`  
-Handoff ID: `94e8746b-e4fd-4a04-8677-1618437912a5`
+Created At: `2026-08-07T22:02:19.626Z`  
+Handoff ID: `45e36991-4e07-4103-ae62-bd99f1bb1dc8`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `2422616d77a84e9b8a15d778e064685ba78bb64a`
+- Head SHA: `44a281faf71d5cd7fbb69d94697e0ab68d550d29`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Origin tip 44a281faf7 on fix/honest-failure-reporting: substrate attestation
+  harness + collision provision (C1-C12) + build-lock PID/timestamp/dist boot
+  pre-check + TNF CLI agent autonomous commit/push path.
+- TNF_AGENT_ID=tnf-cli-agent bypasses live operator confirm in
+  .husky/tnf-authority.sh; content gates
+  (privacy/secret/PII/build/locked-doc/merge) and audit trail still run;
+  authority-surface edits still need explicit approval; other agents remain
+  fully gated.
+- Left uncommitted on purpose: docs/legal/ + Section13 draft (docs-pii-guard
+  blocked personal name), docs/operations/tnf-action-receipts.jsonl, twip
+  terminal public data churn, virtual-library-blueprints submodule dirty.
 
 ## Changed Paths
 
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/data/codebase_map.json
-- data/llm-provider-status.json
-- data/marketplace/catalog-items.json
-- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
-- docs/operations/tnf-autonomy-level.json
+- AGENTS.md
+- .husky/tnf-authority.sh
 - docs/operations/tnf-substrate-seal.json
+- docs/operations/tnf-autonomy-level.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/CLI_AGENT_SURFACE_COHESION_GAP_2026-08-07.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/fairtable-components/package.json
-- packages/fairtable-core/package.json
-- packages/fairtable-utils/package.json
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/commands/fleet/index.ts
-- packages/tnf-cli/src/commands/slack/index.ts
-- packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts
-- packages/tnf-cli/src/slack/SlackService.ts
-- packages/tnf-cli/src/slack/slack.test.ts
-- packages/tnf-cli/src/utils/action-receipt.test.ts
-- packages/tnf-cli/src/utils/action-receipt.ts
 - packages/tnf-cli/src/utils/preflight.ts
+- packages/tnf-cli/src/utils/action-receipt.ts
 - scripts/protocols/tnf-golden-smoke.cjs
 - scripts/protocols/validate-progressive-autonomy.cjs
 - scripts/protocols/validate-substrate-attestation.cjs
-- scripts/protocols/validate-substrate-attestation.test.cjs
 - scripts/tnf-onboard.cjs
 
 ## Verification
 
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
-- supabase_rls_audit: `na`
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
+- supabase_rls_audit: `pass`
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
+- Owner: `tnf-cli-agent`
+- Targets: `tnf-cli-agent`, `tnf-orchestrator`
 - Priority: `high`
 
 ### Resume Checklist
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md and Living State.
+- Confirm HEAD is 44a281faf7 (or successor) on
+  origin/fix/honest-failure-reporting.
+- Use TNF_AGENT_ID=tnf-cli-agent for gated commit/push; keep authority-surface
+  edits operator-approved.
+- Verify onboard + fleet present and CLI-critical dists before full-auto once.
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- On resume: export TNF_AGENT_ID=tnf-cli-agent for commit/push; run pnpm run
+  validate:session-handoff and node
+  scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new
+  work.
+- Do not commit docs/legal/ or Section13 drafts until PII redacted; leave
+  receipts/twip noise local unless intentionally curated.
+- If scripts/tnf-onboard.cjs or packages/tnf-cli fleet/slack surfaces are
+  stubbed/missing, restore from known-good commits before full-auto.
+- Optional: set TNF_GATE_POLICY_TOKEN and enable TNF_REQUIRE_SUBSTRATE=1;
+  coalesce registry cohesion gap only with operator handshake.
