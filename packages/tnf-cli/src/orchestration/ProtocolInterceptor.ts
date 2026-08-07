@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { AssimilationEngine } from './AssimilationEngine.js';
@@ -20,7 +21,14 @@ export type ProtocolSummary = {
   allPassed: boolean;
   activeDirective: string | null;
   turnZero: TurnZeroResult | null;
+  substrateBlocked: boolean;
 };
+
+function isTruthyEnv(value: string | undefined): boolean {
+  if (value == null) return false;
+  const v = String(value).trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes' || v === 'on';
+}
 
 export class ProtocolInterceptor {
   private repoRoot: string;
@@ -184,6 +192,15 @@ export class ProtocolInterceptor {
         : 'Missing',
     });
 
+    // 7. Substrate attestation (warn by default; fail-closed with TNF_REQUIRE_SUBSTRATE=1)
+    log(chalk.bold('\n▶ Protocol: Substrate Attestation'));
+    const substrate = this.runSubstrateAttestation();
+    checks.push({
+      name: 'Substrate Attestation',
+      passed: substrate.passed,
+      details: substrate.details,
+    });
+
     // Summary — silent mode skips this entirely so the consumer gets a
     // clean stdout (the JSON envelope) on the caller side.
     if (!this.silent) {
@@ -227,7 +244,56 @@ export class ProtocolInterceptor {
       allPassed: checks.every((c) => c.passed),
       activeDirective,
       turnZero: turnZeroResult,
+      substrateBlocked: substrate.blocked,
     };
+  }
+
+  runSubstrateAttestation(): { passed: boolean; details: string; blocked: boolean } {
+    if (isTruthyEnv(process.env.TNF_SKIP_SUBSTRATE)) {
+      return { passed: true, details: 'skipped (TNF_SKIP_SUBSTRATE=1)', blocked: false };
+    }
+    const requireMode = isTruthyEnv(process.env.TNF_REQUIRE_SUBSTRATE);
+    const script = this.resolve('scripts/protocols/validate-substrate-attestation.cjs');
+    if (!fs.existsSync(script)) {
+      const details = 'validator missing: scripts/protocols/validate-substrate-attestation.cjs';
+      return { passed: !requireMode, details, blocked: requireMode };
+    }
+    const mode = requireMode ? 'require' : 'warn';
+    const result = spawnSync(process.execPath, [script, `--mode=${mode}`, '--json'], {
+      cwd: this.repoRoot,
+      encoding: 'utf8',
+      env: process.env,
+      timeout: 15_000,
+    });
+    let summary: any = null;
+    try {
+      const stdout = (result.stdout || '').trim();
+      const jsonStart = stdout.indexOf('{');
+      summary = jsonStart >= 0 ? JSON.parse(stdout.slice(jsonStart)) : null;
+    } catch {
+      summary = null;
+    }
+    if (!summary) {
+      const err = (result.stderr || result.stdout || 'substrate probe failed').trim().slice(0, 240);
+      return {
+        passed: !requireMode,
+        details: `substrate probe error: ${err}`,
+        blocked: requireMode,
+      };
+    }
+    const hard = summary.hardFailures ?? (summary.ok ? 0 : 1);
+    const soft = summary.softFailures ?? 0;
+    const failedIds = (summary.checks || [])
+      .filter((c: any) => !c.ok)
+      .map((c: any) => c.id)
+      .slice(0, 6)
+      .join(',');
+    const details =
+      hard === 0 && soft === 0
+        ? 'install + runtime probes clean'
+        : `hard=${hard} soft=${soft}${failedIds ? ` (${failedIds})` : ''} — set TNF_REQUIRE_SUBSTRATE=1 to fail closed`;
+    if (requireMode && hard > 0) return { passed: false, details, blocked: true };
+    return { passed: true, details, blocked: false };
   }
 
   /**

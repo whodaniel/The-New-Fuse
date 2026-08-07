@@ -209,9 +209,38 @@ async function runCommand(
     /** Kill the child and reject with CommandTimeoutError after this long.
      *  Omit for the historical unbounded behaviour. */
     timeoutMs?: number;
+    intent?: string;
   } = {}
 ): Promise<void> {
-  await spawnWithTimeout(cmd, args, { ...options, cwd: options.cwd || repoRoot });
+  const { assertNotEscalationHalted, recordCommandOutcome } =
+    await import('./utils/action-receipt.js');
+  if (!options.isBackground) {
+    assertNotEscalationHalted(repoRoot);
+  }
+  const started = Date.now();
+  const cwd = options.cwd || repoRoot;
+  try {
+    await spawnWithTimeout(cmd, args, { ...options, cwd });
+    recordCommandOutcome(repoRoot, {
+      intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
+      cmd,
+      args,
+      cwd,
+      ok: true,
+      durationMs: Date.now() - started,
+    });
+  } catch (err: any) {
+    recordCommandOutcome(repoRoot, {
+      intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
+      cmd,
+      args,
+      cwd,
+      ok: false,
+      durationMs: Date.now() - started,
+      error: err?.message || String(err),
+    });
+    throw err;
+  }
 }
 
 async function runTnfCliEntrypoint(args: string[]): Promise<void> {
@@ -10119,6 +10148,7 @@ fullAuto
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail the full-auto cycle on self-improvement status')
+  .option('--skip-preflight', 'Skip structural and process health checks before execution')
   .option('--note <text>', 'Override protocol run-log note')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after loop completion')
   .option('--json', 'Output machine-readable JSON summary')
@@ -10132,10 +10162,17 @@ fullAuto
         broadcast?: boolean;
         json?: boolean;
         skipStrictStatus?: boolean;
+        skipPreflight?: boolean;
       }
     ) => {
       try {
         requireSuperAdmin(options, 'full-auto once');
+        const { runFullAutoPreflight } = await import('./utils/preflight.js');
+        await runFullAutoPreflight({
+          repoRoot,
+          skipPreflight: options.skipPreflight,
+          requireDoctor: true,
+        });
 
         const startedAt = new Date();
         const cycleArgs = buildSelfImprovementRunCliArgs(options);
@@ -10211,6 +10248,7 @@ fullAuto
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail cycles on self-improvement status')
+  .option('--skip-preflight', 'Skip structural and process health checks before execution')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
   .option('--strict', 'Stop loop on first cycle failure')
   .option(
@@ -10226,10 +10264,17 @@ fullAuto
         broadcast?: boolean;
         strict?: boolean;
         skipStrictStatus?: boolean;
+        skipPreflight?: boolean;
       }
     ) => {
       try {
         requireSuperAdmin(options, 'full-auto start');
+        const { runFullAutoPreflight } = await import('./utils/preflight.js');
+        await runFullAutoPreflight({
+          repoRoot,
+          skipPreflight: options.skipPreflight,
+          requireDoctor: true,
+        });
 
         const intervalMinutes = parsePositiveIntegerOption(
           options.intervalMinutes,
@@ -19191,7 +19236,15 @@ async function main(): Promise<void> {
   const skipPreflight = isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT);
   if (!skipOnboard && !skipPreflight && !firstArgIsHelp) {
     const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
-    await interceptor.runPreFlightChecks();
+    const summary = await interceptor.runPreFlightChecks();
+    if (summary.substrateBlocked) {
+      console.error(
+        chalk.red(
+          '[TNF] Substrate attestation blocked this command (TNF_REQUIRE_SUBSTRATE=1). Remediations: rebuild CLI package dists, start Redis, set TNF_GATE_POLICY_TOKEN, or TNF_SKIP_SUBSTRATE=1 for an explicit HITL override.'
+        )
+      );
+      process.exit(1);
+    }
   }
 
   if (argv.length <= 2) {

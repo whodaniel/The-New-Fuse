@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-12T02:40:02.787Z",
+  "generatedAt": "2026-08-07T21:40:29.870Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,34 +12,46 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-05-12T02:40:01.477Z",
-    "totalTerminals": 6,
-    "returned": 6,
+    "lastScanAt": "2026-08-07T21:40:17.083Z",
+    "totalTerminals": 11,
+    "returned": 11,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 6,
-    "content_excerpts_captured": 6
+    "terminal_history_tabs": 11,
+    "content_excerpts_captured": 11
   },
   "summary": {
-    "totalTerminals": 6,
-    "activeTerminals": 4,
-    "idleTerminals": 2,
-    "activeRatio": 0.667,
+    "totalTerminals": 11,
+    "activeTerminals": 10,
+    "idleTerminals": 1,
+    "activeRatio": 0.909,
     "topWorkExecutables": [
       {
         "name": "node",
+        "count": 5
+      },
+      {
+        "name": "sudo",
+        "count": 3
+      },
+      {
+        "name": "python3",
         "count": 2
       },
       {
-        "name": "npm",
-        "count": 2
+        "name": "agy",
+        "count": 1
       },
       {
-        "name": "codex",
+        "name": "cursor-agent",
+        "count": 1
+      },
+      {
+        "name": "git",
         "count": 1
       },
       {
@@ -47,25 +59,40 @@
         "count": 1
       },
       {
-        "name": "python3",
+        "name": "pi",
         "count": 1
       }
     ],
     "activeSessions": [
       {
+        "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
+        "tty": "/dev/ttys000",
+        "paneId": "tty:ttys000",
+        "shellPid": 58470,
+        "processCount": 10,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "➜  Local:   http://127.0.0.1:1420/ | ➜  press h + enter to show help",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
         "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
         "tty": "/dev/ttys001",
         "paneId": "tty:ttys001",
-        "shellPid": 45119,
-        "processCount": 18,
+        "shellPid": 3847,
+        "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
-          "node",
-          "npm"
+          "cursor-agent"
         ],
         "bypassApproval": false,
-        "usesRemoteMcp": true,
-        "contextPreview": "│   3. No, suggest changes (esc)                                               │ | ╰──────────────────────────────────────────────────────────────────────────────╯",
+        "usesRemoteMcp": false,
+        "contextPreview": "Auto · 83.2% · 12 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -73,41 +100,7 @@
         "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
         "tty": "/dev/ttys002",
         "paneId": "tty:ttys002",
-        "shellPid": 511,
-        "processCount": 3,
-        "multiplexer": "none",
-        "workExecutables": [
-          "opencode"
-        ],
-        "bypassApproval": false,
-        "usesRemoteMcp": false,
-        "contextPreview": "● Tip Press Ctrl+Alt+G or End to jump to the most recent message | ~                                                                    1.14.41",
-        "contextRedactions": 0,
-        "hasContext": true
-      },
-      {
-        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
-        "tty": "/dev/ttys007",
-        "paneId": "tty:ttys007",
-        "shellPid": 56470,
-        "processCount": 15,
-        "multiplexer": "none",
-        "workExecutables": [
-          "node",
-          "codex",
-          "npm"
-        ],
-        "bypassApproval": true,
-        "usesRemoteMcp": false,
-        "contextPreview": "› Improve documentation in @filename | gpt-5.3-codex xhigh · ~",
-        "contextRedactions": 0,
-        "hasContext": true
-      },
-      {
-        "twid": "fa5c5912-b359-5546-953b-08858c4d0e18",
-        "tty": "/dev/ttys133",
-        "paneId": "tty:ttys133",
-        "shellPid": 20086,
+        "shellPid": 2641,
         "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
@@ -115,23 +108,164 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "❯ | ────────────────────────────────────────────────────────────────────────────────",
+        "contextPreview": "⚕ ❯ msg=interrupt · /queue · /bg · /steer · Ctrl+C cancel | ────────────────────────────────────────────────────────────────────────────────",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "9c58a452-a486-59e1-902a-ae658f7c1ceb",
+        "tty": "/dev/ttys003",
+        "paneId": "tty:ttys003",
+        "shellPid": 3462,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "pi"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "~ | ↑826k ↓7.6k R216k CH0.7% 5.7%/1.0M (auto)            minimaxai/minimax-m3 • high",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
+        "tty": "/dev/ttys004",
+        "paneId": "tty:ttys004",
+        "shellPid": 5948,
+        "processCount": 5,
+        "multiplexer": "none",
+        "workExecutables": [
+          "agy",
+          "node",
+          "git"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "──────────────────────────────────────────────────────────────────────────────── | ? for shortcuts        accept-edits · Gemini 3.1 Pro · high · AI: Out of credits",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "paneId": "tty:ttys005",
+        "shellPid": 61875,
+        "processCount": 4,
+        "multiplexer": "none",
+        "workExecutables": [
+          "sudo",
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Agent tnf-thin-client is going offline | Event: agent_offline",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "paneId": "tty:ttys006",
+        "shellPid": 62261,
+        "processCount": 4,
+        "multiplexer": "none",
+        "workExecutables": [
+          "sudo",
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Agent tnf-thin-client is going offline | Event: agent_offline",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "52ddb7d8-03c5-54f4-a936-6b66a9d0dcb3",
+        "tty": "/dev/ttys008",
+        "paneId": "tty:ttys008",
+        "shellPid": 63175,
+        "processCount": 4,
+        "multiplexer": "none",
+        "workExecutables": [
+          "sudo",
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Agent tnf-thin-client is going offline | Event: agent_offline",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "0809d2e8-b4c2-591d-aa53-594a134ff88f",
+        "tty": "/dev/ttys012",
+        "paneId": "tty:ttys012",
+        "shellPid": 31262,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "python3"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "tnf hermes is what is causing | ────────────────────────────────────────────────────────────────────────────────",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "7ef48260-e761-52be-8bcb-5167b07ae908",
+        "tty": "/dev/ttys013",
+        "paneId": "tty:ttys013",
+        "shellPid": 41402,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "opencode"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ | 85.1K (8%)  ctrl+p commands",
         "contextRedactions": 0,
         "hasContext": true
       }
     ],
     "safetySignals": {
-      "approvalsBypassTerminals": 1,
-      "remoteMcpTerminals": 1,
-      "contextCapturedTerminals": 4,
+      "approvalsBypassTerminals": 0,
+      "remoteMcpTerminals": 0,
+      "contextCapturedTerminals": 10,
       "contextRedactions": 0
     }
   },
   "delta": {
     "hasBaseline": true,
-    "terminalDelta": 0,
-    "activeDelta": 0,
-    "activeGained": [],
+    "terminalDelta": 4,
+    "activeDelta": 3,
+    "activeGained": [
+      {
+        "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
+        "tty": "/dev/ttys000",
+        "workExecutables": [
+          "node"
+        ]
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "workExecutables": [
+          "sudo",
+          "node"
+        ]
+      },
+      {
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "workExecutables": [
+          "sudo",
+          "node"
+        ]
+      }
+    ],
     "activeLost": []
   }
 }

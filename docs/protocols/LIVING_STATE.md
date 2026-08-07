@@ -2,9 +2,11 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Execute the actionable work queue — Hermes CLI
-surface/noun parity is complete (PR #77 MERGED); prefer product work (optional
-real Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`d387c30c-be30-4fdc-84ad-1e4e1f2ac763` **Head:** `1032bba9db31` surface/noun
+parity is complete (PR #77 MERGED); prefer product work (optional real
+Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
 `TNF-SESSION` **Handoff:** `169cd0cf-4cf8-4947-ae0a-f373a62bb236` **Head:**
 `62f7a36ab59a`
 
@@ -34,6 +36,10 @@ must not be mass-deleted without verification evidence. See
 ## ⚡ Active Steps
 
 - [✅] **2026-08-03 Living State / handoff noise peel on main** — Removed ~82
+- [✅] 2026-08-07T21:35:20.886Z New script(s) created: tnf-golden-smoke.cjs,
+  validate-progressive-autonomy.cjs, validate-substrate-attestation.cjs,
+  validate-substrate-attestation.test.cjs
+
   duplicate "System cron entries installed…" Active Steps (+ orphans).
   `turn-end.cjs` no longer logs crontab presence as completed work. PR #77 noted
   MERGED; directive points at actionable queue not commit-gate notices.

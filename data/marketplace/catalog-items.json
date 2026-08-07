@@ -7,11 +7,7 @@
       "description": "High-performance performance monitoring model optimized for low-latency inference on edge hardware",
       "kind": "model",
       "category": "intelligence",
-      "tags": [
-        "backbone",
-        "inference",
-        "neural"
-      ],
+      "tags": ["backbone", "inference", "neural"],
       "capabilities": [
         "state-management",
         "configuration",
@@ -35,12 +31,7 @@
       "description": "Complete multi-agent system for threat detection with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "education",
-      "tags": [
-        "production",
-        "orchestration",
-        "agent",
-        "autonomous"
-      ],
+      "tags": ["production", "orchestration", "agent", "autonomous"],
       "capabilities": [
         "task-routing",
         "chain-of-thought",
@@ -64,16 +55,8 @@
       "description": "Interactive workshop series for code review with real-time feedback and community support",
       "kind": "experience",
       "category": "intelligence",
-      "tags": [
-        "course",
-        "workshop",
-        "experience",
-        "education"
-      ],
-      "capabilities": [
-        "agent-handoff",
-        "labs"
-      ],
+      "tags": ["course", "workshop", "experience", "education"],
+      "capabilities": ["agent-handoff", "labs"],
       "rating": 3.8,
       "totalRuns": 22883,
       "successRate": 98.9,
@@ -91,11 +74,7 @@
       "description": "Self-orchestrating agent swarm specializing in code review with Redis-backed state management",
       "kind": "agent",
       "category": "operations",
-      "tags": [
-        "production",
-        "autonomous",
-        "agent"
-      ],
+      "tags": ["production", "autonomous", "agent"],
       "capabilities": [
         "testing-harness",
         "few-shot-learning",
@@ -119,16 +98,8 @@
       "description": "Automated pipeline handling document processing with parallel execution and state checkpointing",
       "kind": "workflow",
       "category": "development",
-      "tags": [
-        "pipeline",
-        "automation",
-        "workflow",
-        "process"
-      ],
-      "capabilities": [
-        "agent-handoff",
-        "benchmark"
-      ],
+      "tags": ["pipeline", "automation", "workflow", "process"],
+      "capabilities": ["agent-handoff", "benchmark"],
       "rating": 3.8,
       "totalRuns": 20851,
       "successRate": 91.7,
@@ -146,11 +117,7 @@
       "description": "Foundation model for performance monitoring with fine-tuning API and benchmark results",
       "kind": "model",
       "category": "nexus",
-      "tags": [
-        "backbone",
-        "neural",
-        "inference"
-      ],
+      "tags": ["backbone", "neural", "inference"],
       "capabilities": [
         "testing-harness",
         "rapid-deployment",
@@ -174,15 +141,8 @@
       "description": "Production-grade MCP interface for content generation with health monitoring and auto-reconnect",
       "kind": "mcp_server",
       "category": "nft",
-      "tags": [
-        "protocol",
-        "server",
-        "mcp"
-      ],
-      "capabilities": [
-        "testing-harness",
-        "notification-hooks"
-      ],
+      "tags": ["protocol", "server", "mcp"],
+      "capabilities": ["testing-harness", "notification-hooks"],
       "rating": 3.7,
       "totalRuns": 28815,
       "successRate": 94.6,
@@ -200,10 +160,7 @@
       "description": "Production-ready autonomous agent for knowledge retrieval with human-in-the-loop approval",
       "kind": "agent",
       "category": "automation",
-      "tags": [
-        "orchestration",
-        "production"
-      ],
+      "tags": ["orchestration", "production"],
       "capabilities": [
         "pipeline-orchestration",
         "certification",
@@ -226,16 +183,8 @@
       "description": "Complete multi-agent system for lead scoring with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "development",
-      "tags": [
-        "agent",
-        "autonomous",
-        "orchestration",
-        "production"
-      ],
-      "capabilities": [
-        "rapid-deployment",
-        "certification"
-      ],
+      "tags": ["agent", "autonomous", "orchestration", "production"],
+      "capabilities": ["rapid-deployment", "certification"],
       "rating": 4.4,
       "totalRuns": 33217,
       "successRate": 91.7,
@@ -253,15 +202,8 @@
       "description": "Production-grade MCP interface for document processing with health monitoring and auto-reconnect",
       "kind": "mcp_server",
       "category": "development",
-      "tags": [
-        "integration",
-        "mcp",
-        "server"
-      ],
-      "capabilities": [
-        "ws-transport",
-        "mcp-compliance"
-      ],
+      "tags": ["integration", "mcp", "server"],
+      "capabilities": ["ws-transport", "mcp-compliance"],
       "rating": 4.3,
       "totalRuns": 6147,
       "successRate": 94.3,
@@ -279,14 +221,8 @@
       "description": "MCP-compliant server for compliance checking with WebSocket transport and Redis pub-sub",
       "kind": "mcp_server",
       "category": "automation",
-      "tags": [
-        "mcp",
-        "integration"
-      ],
-      "capabilities": [
-        "testing-harness",
-        "prompt-engineering"
-      ],
+      "tags": ["mcp", "integration"],
+      "capabilities": ["testing-harness", "prompt-engineering"],
       "rating": 4.1,
       "totalRuns": 18980,
       "successRate": 90.7,
@@ -304,10 +240,7 @@
       "description": "High-performance MCP server connecting code review via standardized Model Context Protocol",
       "kind": "mcp_server",
       "category": "development",
-      "tags": [
-        "protocol",
-        "mcp"
-      ],
+      "tags": ["protocol", "mcp"],
       "capabilities": [
         "chain-of-thought",
         "ws-transport",
@@ -331,16 +264,8 @@
       "description": "Production workflow for report generation with SLA monitoring and escalation paths",
       "kind": "workflow",
       "category": "analytics",
-      "tags": [
-        "pipeline",
-        "automation",
-        "workflow",
-        "process"
-      ],
-      "capabilities": [
-        "retry-logic",
-        "certification"
-      ],
+      "tags": ["pipeline", "automation", "workflow", "process"],
+      "capabilities": ["retry-logic", "certification"],
       "rating": 4.5,
       "totalRuns": 37116,
       "successRate": 91.0,
@@ -358,15 +283,8 @@
       "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
       "kind": "skill",
       "category": "sensory",
-      "tags": [
-        "reusable",
-        "module"
-      ],
-      "capabilities": [
-        "state-management",
-        "error-handling",
-        "error-recovery"
-      ],
+      "tags": ["reusable", "module"],
+      "capabilities": ["state-management", "error-handling", "error-recovery"],
       "rating": 4.0,
       "totalRuns": 2374,
       "successRate": 94.6,
@@ -384,14 +302,8 @@
       "description": "Reusable skill module for compliance checking with declarative interface and MCP tool bindings",
       "kind": "skill",
       "category": "development",
-      "tags": [
-        "reusable",
-        "skill"
-      ],
-      "capabilities": [
-        "inference",
-        "notification-hooks"
-      ],
+      "tags": ["reusable", "skill"],
+      "capabilities": ["inference", "notification-hooks"],
       "rating": 4.4,
       "totalRuns": 42049,
       "successRate": 96.9,
@@ -409,10 +321,7 @@
       "description": "High-performance threat detection model optimized for low-latency inference",
       "kind": "model",
       "category": "developer-tools",
-      "tags": [
-        "inference",
-        "backbone"
-      ],
+      "tags": ["inference", "backbone"],
       "capabilities": [
         "prompt-engineering",
         "rapid-deployment",
@@ -435,15 +344,8 @@
       "description": "Complete multi-agent system for document processing with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "nexus",
-      "tags": [
-        "production",
-        "autonomous"
-      ],
-      "capabilities": [
-        "error-handling",
-        "labs",
-        "state-management"
-      ],
+      "tags": ["production", "autonomous"],
+      "capabilities": ["error-handling", "labs", "state-management"],
       "rating": 3.8,
       "totalRuns": 7311,
       "successRate": 95.0,
@@ -461,15 +363,8 @@
       "description": "Structured learning experience for data extraction with hands-on labs",
       "kind": "experience",
       "category": "nexus",
-      "tags": [
-        "course",
-        "workshop",
-        "experience"
-      ],
-      "capabilities": [
-        "few-shot-learning",
-        "retry-logic"
-      ],
+      "tags": ["course", "workshop", "experience"],
+      "capabilities": ["few-shot-learning", "retry-logic"],
       "rating": 3.5,
       "totalRuns": 12747,
       "successRate": 94.9,
@@ -487,10 +382,7 @@
       "description": "Structured learning experience for lead scoring with hands-on labs",
       "kind": "experience",
       "category": "nexus",
-      "tags": [
-        "education",
-        "course"
-      ],
+      "tags": ["education", "course"],
       "capabilities": [
         "state-checkpointing",
         "run-tracking",
@@ -514,14 +406,8 @@
       "description": "MCP-compliant server for data extraction with WebSocket transport and Redis pub-sub",
       "kind": "mcp_server",
       "category": "education",
-      "tags": [
-        "mcp",
-        "protocol"
-      ],
-      "capabilities": [
-        "few-shot-learning",
-        "output-validation"
-      ],
+      "tags": ["mcp", "protocol"],
+      "capabilities": ["few-shot-learning", "output-validation"],
       "rating": 4.7,
       "totalRuns": 28867,
       "successRate": 96.9,
@@ -539,11 +425,7 @@
       "description": "High-performance code review model optimized for low-latency inference",
       "kind": "model",
       "category": "analytics",
-      "tags": [
-        "neural",
-        "model",
-        "backbone"
-      ],
+      "tags": ["neural", "model", "backbone"],
       "capabilities": [
         "prompt-engineering",
         "error-recovery",
@@ -567,15 +449,8 @@
       "description": "Ready-to-deploy agent template for customer support with configuration and example flows",
       "kind": "agent_template",
       "category": "forge",
-      "tags": [
-        "blueprint",
-        "starter"
-      ],
-      "capabilities": [
-        "mcp-integration",
-        "few-shot-learning",
-        "configuration"
-      ],
+      "tags": ["blueprint", "starter"],
+      "capabilities": ["mcp-integration", "few-shot-learning", "configuration"],
       "rating": 4.7,
       "totalRuns": 36237,
       "successRate": 98.0,
@@ -593,15 +468,8 @@
       "description": "Structured learning experience for code review with hands-on labs",
       "kind": "experience",
       "category": "productivity",
-      "tags": [
-        "course",
-        "education",
-        "workshop"
-      ],
-      "capabilities": [
-        "few-shot-learning",
-        "fine-tuning"
-      ],
+      "tags": ["course", "education", "workshop"],
+      "capabilities": ["few-shot-learning", "fine-tuning"],
       "rating": 4.3,
       "totalRuns": 36034,
       "successRate": 92.5,
@@ -619,10 +487,7 @@
       "description": "Ready-to-deploy agent template for knowledge retrieval with configuration and example flows",
       "kind": "agent_template",
       "category": "education",
-      "tags": [
-        "blueprint",
-        "starter"
-      ],
+      "tags": ["blueprint", "starter"],
       "capabilities": [
         "rapid-deployment",
         "agent-handoff",
@@ -646,16 +511,8 @@
       "description": "Production-tested instruction templates for consistent data extraction outputs",
       "kind": "prompt",
       "category": "sensory",
-      "tags": [
-        "template",
-        "instruction",
-        "prompt",
-        "llm"
-      ],
-      "capabilities": [
-        "state-management",
-        "testing-harness"
-      ],
+      "tags": ["template", "instruction", "prompt", "llm"],
+      "capabilities": ["state-management", "testing-harness"],
       "rating": 4.7,
       "totalRuns": 28072,
       "successRate": 95.1,
@@ -673,15 +530,8 @@
       "description": "Full workflow for report generation with step tracking, retry logic, and notification hooks",
       "kind": "workflow",
       "category": "developer-tools",
-      "tags": [
-        "automation",
-        "process",
-        "workflow"
-      ],
-      "capabilities": [
-        "state-persistence",
-        "task-routing"
-      ],
+      "tags": ["automation", "process", "workflow"],
+      "capabilities": ["state-persistence", "task-routing"],
       "rating": 3.6,
       "totalRuns": 38832,
       "successRate": 95.4,
@@ -699,16 +549,8 @@
       "description": "Production-tested instruction templates for consistent threat detection outputs",
       "kind": "prompt",
       "category": "developer-tools",
-      "tags": [
-        "llm",
-        "template",
-        "instruction"
-      ],
-      "capabilities": [
-        "task-routing",
-        "skill-composition",
-        "error-recovery"
-      ],
+      "tags": ["llm", "template", "instruction"],
+      "capabilities": ["task-routing", "skill-composition", "error-recovery"],
       "rating": 3.9,
       "totalRuns": 40968,
       "successRate": 91.1,
@@ -726,10 +568,7 @@
       "description": "Production-tested instruction templates for consistent document processing outputs",
       "kind": "prompt",
       "category": "operations",
-      "tags": [
-        "prompt",
-        "llm"
-      ],
+      "tags": ["prompt", "llm"],
       "capabilities": [
         "skill-composition",
         "output-validation",
@@ -752,16 +591,8 @@
       "description": "Structured learning experience for customer support with hands-on labs",
       "kind": "experience",
       "category": "nft",
-      "tags": [
-        "workshop",
-        "course",
-        "experience",
-        "education"
-      ],
-      "capabilities": [
-        "run-tracking",
-        "state-checkpointing"
-      ],
+      "tags": ["workshop", "course", "experience", "education"],
+      "capabilities": ["run-tracking", "state-checkpointing"],
       "rating": 4.9,
       "totalRuns": 45484,
       "successRate": 94.9,
@@ -779,10 +610,7 @@
       "description": "Full workflow for threat detection with step tracking, retry logic, and notification hooks",
       "kind": "workflow",
       "category": "nexus",
-      "tags": [
-        "automation",
-        "workflow"
-      ],
+      "tags": ["automation", "workflow"],
       "capabilities": [
         "state-persistence",
         "rapid-deployment",
@@ -806,16 +634,8 @@
       "description": "Ready-to-deploy agent template for report generation with configuration and example flows",
       "kind": "agent_template",
       "category": "productivity",
-      "tags": [
-        "starter",
-        "blueprint",
-        "scaffold"
-      ],
-      "capabilities": [
-        "quantization",
-        "error-recovery",
-        "agent-handoff"
-      ],
+      "tags": ["starter", "blueprint", "scaffold"],
+      "capabilities": ["quantization", "error-recovery", "agent-handoff"],
       "rating": 4.2,
       "totalRuns": 47009,
       "successRate": 94.6,
@@ -833,16 +653,8 @@
       "description": "Complete multi-agent system for lead scoring with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "automation",
-      "tags": [
-        "production",
-        "agent",
-        "autonomous"
-      ],
-      "capabilities": [
-        "pipeline-orchestration",
-        "ci-cd",
-        "state-management"
-      ],
+      "tags": ["production", "agent", "autonomous"],
+      "capabilities": ["pipeline-orchestration", "ci-cd", "state-management"],
       "rating": 4.8,
       "totalRuns": 20333,
       "successRate": 90.3,
@@ -860,15 +672,8 @@
       "description": "Reusable skill module for compliance checking with declarative interface and MCP tool bindings",
       "kind": "skill",
       "category": "development",
-      "tags": [
-        "module",
-        "reusable",
-        "skill"
-      ],
-      "capabilities": [
-        "chain-of-thought",
-        "quantization"
-      ],
+      "tags": ["module", "reusable", "skill"],
+      "capabilities": ["chain-of-thought", "quantization"],
       "rating": 4.0,
       "totalRuns": 15587,
       "successRate": 96.3,
@@ -886,12 +691,7 @@
       "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
       "kind": "skill",
       "category": "productivity",
-      "tags": [
-        "reusable",
-        "skill",
-        "capability",
-        "module"
-      ],
+      "tags": ["reusable", "skill", "capability", "module"],
       "capabilities": [
         "rapid-deployment",
         "state-checkpointing",
@@ -914,11 +714,7 @@
       "description": "Ready-to-deploy agent template for report generation with configuration and example flows",
       "kind": "agent_template",
       "category": "analytics",
-      "tags": [
-        "starter",
-        "scaffold",
-        "blueprint"
-      ],
+      "tags": ["starter", "scaffold", "blueprint"],
       "capabilities": [
         "configuration",
         "state-persistence",
@@ -942,17 +738,8 @@
       "description": "Complete multi-agent system for compliance checking with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "security",
-      "tags": [
-        "autonomous",
-        "production",
-        "agent",
-        "orchestration"
-      ],
-      "capabilities": [
-        "agent-handoff",
-        "error-handling",
-        "testing-harness"
-      ],
+      "tags": ["autonomous", "production", "agent", "orchestration"],
+      "capabilities": ["agent-handoff", "error-handling", "testing-harness"],
       "rating": 4.8,
       "totalRuns": 42789,
       "successRate": 90.4,
@@ -970,11 +757,7 @@
       "description": "Structured learning experience for workflow automation with hands-on labs",
       "kind": "experience",
       "category": "intelligence",
-      "tags": [
-        "course",
-        "workshop",
-        "education"
-      ],
+      "tags": ["course", "workshop", "education"],
       "capabilities": [
         "few-shot-learning",
         "ci-cd",
@@ -998,11 +781,7 @@
       "description": "Reusable skill module for resource scheduling with declarative interface and MCP tool bindings",
       "kind": "skill",
       "category": "productivity",
-      "tags": [
-        "reusable",
-        "module",
-        "capability"
-      ],
+      "tags": ["reusable", "module", "capability"],
       "capabilities": [
         "rapid-deployment",
         "ci-cd",
@@ -1026,15 +805,8 @@
       "description": "MCP-compliant server for threat detection with WebSocket transport and Redis pub-sub",
       "kind": "mcp_server",
       "category": "automation",
-      "tags": [
-        "server",
-        "mcp",
-        "protocol"
-      ],
-      "capabilities": [
-        "retry-logic",
-        "configuration"
-      ],
+      "tags": ["server", "mcp", "protocol"],
+      "capabilities": ["retry-logic", "configuration"],
       "rating": 4.9,
       "totalRuns": 23948,
       "successRate": 98.8,
@@ -1052,16 +824,8 @@
       "description": "MCP-compliant server for anomaly detection with WebSocket transport and Redis pub-sub",
       "kind": "mcp_server",
       "category": "education",
-      "tags": [
-        "protocol",
-        "integration",
-        "mcp"
-      ],
-      "capabilities": [
-        "prompt-engineering",
-        "configuration",
-        "benchmark"
-      ],
+      "tags": ["protocol", "integration", "mcp"],
+      "capabilities": ["prompt-engineering", "configuration", "benchmark"],
       "rating": 5.0,
       "totalRuns": 33660,
       "successRate": 98.4,
@@ -1079,15 +843,8 @@
       "description": "Production-tested instruction templates for consistent compliance checking outputs",
       "kind": "prompt",
       "category": "developer-tools",
-      "tags": [
-        "template",
-        "llm"
-      ],
-      "capabilities": [
-        "ci-cd",
-        "labs",
-        "state-persistence"
-      ],
+      "tags": ["template", "llm"],
+      "capabilities": ["ci-cd", "labs", "state-persistence"],
       "rating": 3.8,
       "totalRuns": 26524,
       "successRate": 93.6,
@@ -1105,10 +862,7 @@
       "description": "MCP-compliant server for sentiment analysis with WebSocket transport and Redis pub-sub",
       "kind": "mcp_server",
       "category": "automation",
-      "tags": [
-        "server",
-        "protocol"
-      ],
+      "tags": ["server", "protocol"],
       "capabilities": [
         "curriculum",
         "rapid-deployment",
@@ -1132,16 +886,8 @@
       "description": "Complete multi-agent system for document processing with built-in monitoring and self-healing",
       "kind": "agent",
       "category": "productivity",
-      "tags": [
-        "agent",
-        "autonomous",
-        "orchestration"
-      ],
-      "capabilities": [
-        "quantization",
-        "rapid-deployment",
-        "benchmark"
-      ],
+      "tags": ["agent", "autonomous", "orchestration"],
+      "capabilities": ["quantization", "rapid-deployment", "benchmark"],
       "rating": 4.1,
       "totalRuns": 14629,
       "successRate": 94.0,
@@ -1159,10 +905,7 @@
       "description": "Full workflow for content generation with step tracking, retry logic, and notification hooks",
       "kind": "workflow",
       "category": "nft",
-      "tags": [
-        "automation",
-        "process"
-      ],
+      "tags": ["automation", "process"],
       "capabilities": [
         "skill-composition",
         "prompt-engineering",
@@ -1185,11 +928,7 @@
       "description": "High-performance content generation model optimized for low-latency inference",
       "kind": "model",
       "category": "intelligence",
-      "tags": [
-        "model",
-        "inference",
-        "neural"
-      ],
+      "tags": ["model", "inference", "neural"],
       "capabilities": [
         "output-validation",
         "run-tracking",
@@ -1205,8 +944,316 @@
       "createdBy": "tnf-marketplace",
       "createdAt": "2026-05-14T18:58:34Z",
       "updatedAt": "2026-05-14T18:58:34Z"
+    },
+    {
+      "id": "marketplace-prompt-expert-prompt-pack-126",
+      "slug": "expert-prompt-pack-126",
+      "name": "Expert Prompt Pack",
+      "description": "Production-tested instruction templates for consistent content generation outputs",
+      "kind": "prompt",
+      "category": "education",
+      "tags": ["template", "llm", "instruction"],
+      "capabilities": ["error-recovery", "inference", "quantization"],
+      "rating": 4.1,
+      "totalRuns": 16791,
+      "successRate": 95.8,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-mcp_server-relay-connector-975",
+      "slug": "relay-connector-975",
+      "name": "Relay Connector",
+      "description": "MCP-compliant server for lead scoring with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "forge",
+      "tags": ["integration", "protocol", "server"],
+      "capabilities": ["configuration", "task-routing", "notification-hooks"],
+      "rating": 4.3,
+      "totalRuns": 42057,
+      "successRate": 97.7,
+      "pricePerRun": 0.45,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-skill-composable-capability-569",
+      "slug": "composable-capability-569",
+      "name": "Composable Capability",
+      "description": "Reusable skill module for sentiment analysis with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "analytics",
+      "tags": ["skill", "reusable", "capability"],
+      "capabilities": ["ci-cd", "pipeline-orchestration"],
+      "rating": 3.6,
+      "totalRuns": 46857,
+      "successRate": 99.4,
+      "pricePerRun": 0.25,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-skill-modular-module-800",
+      "slug": "modular-module-800",
+      "name": "Modular Module",
+      "description": "Reusable skill module for report generation with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "developer-tools",
+      "tags": ["reusable", "skill", "capability", "module"],
+      "capabilities": ["state-management", "error-recovery"],
+      "rating": 4.4,
+      "totalRuns": 44910,
+      "successRate": 94.9,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-agent-autonomous-orchestrator-440",
+      "slug": "autonomous-orchestrator-440",
+      "name": "Autonomous Orchestrator",
+      "description": "Complete multi-agent system for lead scoring with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "security",
+      "tags": ["production", "agent", "orchestration"],
+      "capabilities": ["agent-handoff", "benchmark"],
+      "rating": 4.2,
+      "totalRuns": 17649,
+      "successRate": 94.2,
+      "pricePerRun": 0.17,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-agent_template-scaffold-blueprint-220",
+      "slug": "scaffold-blueprint-220",
+      "name": "Scaffold Blueprint",
+      "description": "Ready-to-deploy agent template for threat detection with configuration and example flows",
+      "kind": "agent_template",
+      "category": "sensory",
+      "tags": ["starter", "blueprint"],
+      "capabilities": [
+        "prompt-engineering",
+        "notification-hooks",
+        "state-management"
+      ],
+      "rating": 4.1,
+      "totalRuns": 31569,
+      "successRate": 96.1,
+      "pricePerRun": 0.32,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-model-enterprise-model-926",
+      "slug": "enterprise-model-926",
+      "name": "Enterprise Model",
+      "description": "High-performance sentiment analysis model optimized for low-latency inference",
+      "kind": "model",
+      "category": "security",
+      "tags": ["inference", "backbone", "model", "neural"],
+      "capabilities": ["prompt-engineering", "output-validation"],
+      "rating": 3.5,
+      "totalRuns": 7216,
+      "successRate": 99.3,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-agent_template-quick-start-template-697",
+      "slug": "quick-start-template-697",
+      "name": "Quick-Start Template",
+      "description": "Ready-to-deploy agent template for sentiment analysis with configuration and example flows",
+      "kind": "agent_template",
+      "category": "forge",
+      "tags": ["starter", "template", "scaffold", "blueprint"],
+      "capabilities": [
+        "few-shot-learning",
+        "chain-of-thought",
+        "benchmark",
+        "state-persistence"
+      ],
+      "rating": 4.4,
+      "totalRuns": 4450,
+      "successRate": 95.0,
+      "pricePerRun": 0.31,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-prompt-precision-instruction-set-580",
+      "slug": "precision-instruction-set-580",
+      "name": "Precision Instruction Set",
+      "description": "Production-tested instruction templates for consistent knowledge retrieval outputs",
+      "kind": "prompt",
+      "category": "security",
+      "tags": ["llm", "template", "prompt", "instruction"],
+      "capabilities": [
+        "ci-cd",
+        "mcp-integration",
+        "chain-of-thought",
+        "error-recovery"
+      ],
+      "rating": 4.6,
+      "totalRuns": 14862,
+      "successRate": 91.7,
+      "pricePerRun": 0.39,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-model-enterprise-inference-unit-224",
+      "slug": "enterprise-inference-unit-224",
+      "name": "Enterprise Inference Unit",
+      "description": "High-performance sentiment analysis model optimized for low-latency inference",
+      "kind": "model",
+      "category": "nft",
+      "tags": ["inference", "backbone"],
+      "capabilities": ["certification", "ci-cd"],
+      "rating": 3.7,
+      "totalRuns": 45371,
+      "successRate": 91.1,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-model-foundation-backbone-333",
+      "slug": "foundation-backbone-333",
+      "name": "Foundation Backbone",
+      "description": "High-performance sentiment analysis model optimized for low-latency inference",
+      "kind": "model",
+      "category": "education",
+      "tags": ["neural", "backbone", "model", "inference"],
+      "capabilities": ["skill-composition", "few-shot-learning", "curriculum"],
+      "rating": 4.9,
+      "totalRuns": 27129,
+      "successRate": 94.1,
+      "pricePerRun": 0.13,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-workflow-end-to-end-process-325",
+      "slug": "end-to-end-process-325",
+      "name": "End-to-End Process",
+      "description": "Full workflow for code review with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "productivity",
+      "tags": ["process", "pipeline"],
+      "capabilities": [
+        "agent-handoff",
+        "state-checkpointing",
+        "pipeline-orchestration"
+      ],
+      "rating": 4.1,
+      "totalRuns": 7970,
+      "successRate": 92.2,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-prompt-precision-framework-415",
+      "slug": "precision-framework-415",
+      "name": "Precision Framework",
+      "description": "Production-tested instruction templates for consistent lead scoring outputs",
+      "kind": "prompt",
+      "category": "education",
+      "tags": ["instruction", "prompt"],
+      "capabilities": [
+        "retry-logic",
+        "quantization",
+        "ci-cd",
+        "mcp-integration"
+      ],
+      "rating": 4.8,
+      "totalRuns": 41792,
+      "successRate": 98.2,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-experience-premium-workshop-800",
+      "slug": "premium-workshop-800",
+      "name": "Premium Workshop",
+      "description": "Structured learning experience for resource scheduling with hands-on labs",
+      "kind": "experience",
+      "category": "productivity",
+      "tags": ["course", "workshop"],
+      "capabilities": ["task-routing", "state-checkpointing"],
+      "rating": 3.9,
+      "totalRuns": 13980,
+      "successRate": 93.5,
+      "pricePerRun": 0.32,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
+    },
+    {
+      "id": "marketplace-agent-distributed-controller-240",
+      "slug": "distributed-controller-240",
+      "name": "Distributed Controller",
+      "description": "Complete multi-agent system for compliance checking with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "intelligence",
+      "tags": ["production", "orchestration", "agent"],
+      "capabilities": ["curriculum", "rapid-deployment", "task-routing"],
+      "rating": 4.4,
+      "totalRuns": 41881,
+      "successRate": 98.0,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-08-07T21:30:03Z",
+      "updatedAt": "2026-08-07T21:30:03Z"
     }
   ],
-  "total": 45,
-  "generated_at": "2026-05-14T18:58:34Z"
+  "total": 60,
+  "generated_at": "2026-08-07T21:30:03Z"
 }
