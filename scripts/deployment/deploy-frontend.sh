@@ -80,6 +80,16 @@ pnpm turbo run build --filter=@the-new-fuse/frontend-app...
 test -f apps/frontend/dist/app.html \
   || { echo "ERROR: build produced no dist/app.html" >&2; exit 1; }
 
+# A Pages upload without functions silently falls through to marketing index.html
+# for every SPA route (including /auth/login). Refuse to ship that failure mode.
+test -f "apps/frontend/dist/functions/[[path]].js" \
+  || { echo "ERROR: build produced no dist/functions/[[path]].js — refusing to deploy a shell-less app" >&2; exit 1; }
+
+if ! grep -q "X-TNF-Routing" "apps/frontend/dist/functions/[[path]].js"; then
+  echo "ERROR: dist/functions/[[path]].js is missing SPA routing markers" >&2
+  exit 1
+fi
+
 if [[ "$DRY_RUN" == "1" ]]; then
   echo "DRY RUN: built successfully, not uploading."
   exit 0
