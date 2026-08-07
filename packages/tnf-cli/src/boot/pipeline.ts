@@ -104,7 +104,63 @@ export function createBootPipeline(
   const agentNetworkArgs = ['scripts/start-agent-network.sh', '--all'];
   if (withClaude) agentNetworkArgs.push('--claude');
 
+  // Per TNF_COLLISION_PROVISION.md C1 — verify workspace build artifacts exist
+  // before boot tries to spawn processes that import from dist/.
+  const REQUIRED_DIST_PACKAGES = [
+    'infrastructure',
+    'shared',
+    'tnf-core',
+    'tnf-note-taking',
+    'tnf-cli',
+  ];
+
   const steps: BootExecutableStep[] = [
+    {
+      id: 'build-artifact-check',
+      label: 'Build artifact integrity check (dist/ existence)',
+      critical: true,
+      launches: ['fs.existsSync check on required dist/ dirs'],
+      notes: [
+        'Per TNF_COLLISION_PROVISION.md C1 — prevents ERR_MODULE_NOT_FOUND from a missing build.',
+        'If this fails, run: pnpm --filter @the-new-fuse/infrastructure run build, then shared, tnf-core, tnf-note-taking, tnf-cli (in dependency order).',
+        'Or run the root build: pnpm run build',
+      ],
+      action: async () => {
+        const missing: { pkg: string; distPath: string }[] = [];
+        for (const pkg of REQUIRED_DIST_PACKAGES) {
+          const distPath = path.join(repoRoot, 'packages', pkg, 'dist');
+          if (!fs.existsSync(distPath) || !fs.existsSync(path.join(distPath, 'index.js'))) {
+            missing.push({ pkg, distPath });
+          }
+        }
+        if (missing.length > 0) {
+          const pkgList = missing
+            .map((m) => `  - @the-new-fuse/${m.pkg}  (missing ${m.distPath}/index.js)`)
+            .join('\n');
+          console.error(
+            chalk.red(
+              `\n   [build-artifact-check] Build artifacts missing for ${missing.length} package(s):\n${pkgList}\n`
+            )
+          );
+          console.error(
+            chalk.yellow(
+              '   Run `pnpm run build` from the repo root, or build individually in dependency order:'
+            )
+          );
+          console.error(chalk.dim('     pnpm --filter @the-new-fuse/infrastructure run build'));
+          console.error(chalk.dim('     pnpm --filter @the-new-fuse/shared run build'));
+          console.error(chalk.dim('     pnpm --filter @the-new-fuse/tnf-core run build'));
+          console.error(chalk.dim('     pnpm --filter @the-new-fuse/tnf-note-taking run build'));
+          console.error(chalk.dim('     pnpm --filter @the-new-fuse/tnf-cli run build\n'));
+          throw new Error(
+            `Build artifacts missing for: ${missing.map((m) => m.pkg).join(', ')}. ` +
+              'Run `pnpm run build` from the repo root before booting. ' +
+              '(TNF_COLLISION_PROVISION.md C1 — do not boot against a half-built workspace.)'
+          );
+        }
+        console.log(chalk.green('   All required dist/ artifacts present.'));
+      },
+    },
     {
       id: 'turn-zero-onboard',
       label: 'Turn Zero onboarding surface',
