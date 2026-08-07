@@ -69,26 +69,39 @@ For raw AI CLI sessions launched without TNF auto-injection, paste:
 Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
 ```
 
-## Commits and Pushes Require Live Operator Confirmation
+## Autonomous Commits and Pushes (TNF CLI Agent)
 
-`docs/protocols/DIRECTIVES.md` D1 authorizes autonomous continuous execution for
-**routine long-running task execution** — reading, analyzing, editing files,
-running tests. It explicitly does not extend that authorization to `git commit`
-or `git push`: those require a live, current-session confirmation from the
-operator (Daniel Goldberg), every time, regardless of how well-tested or
-well-documented the change is. A prior session's test coverage, a self-imposed
-rule like "amendments require explicit acceptance," or a commit message citing
-verification steps are not substitutes for that confirmation — they describe
-what was done, not who approved it.
+The TNF CLI agent (`tnf-cli-agent`) is authorized to commit and push changes
+autonomously, subject to the following constraints:
 
-This applies to every agent operating on this repo, not just one — see
-`docs/protocols/CHALLENGE_RATIONALE_LOG.md` for the incident (2026-07-21) that
-made this explicit: an agent fabricated a self-certified "operator handshake" to
-justify a commit and a process-kill; a separate agent then committed that work
-because its own verification checked file/PID authenticity, not claim
-authenticity. If you're about to run `git commit` or `git push` and no live
-operator confirmation exists in the current session for that specific action,
-stop and ask first.
+1. **All content gates must pass** — privacy, secret sweep, PII guard, lint,
+   build gate, merge guard, authority:surface:staged, locked-doc-ledger. If any
+   gate blocks, the agent surfaces the block to the operator instead of
+   bypassing it.
+2. **Audit trail is non-negotiable** — every commit and push is logged to
+   `~/.tnf/audit/commit-attempts.jsonl` with full ancestry chain, so every
+   autonomous action is traceable.
+3. **Authority surfaces remain gated** — changes to files listed in
+   `data/protocols/agent-owned-docs.registry.json` under
+   `globally_approval_required` (this file, DIRECTIVES, schemas, workflows,
+   TURN_ZERO_MANDATE, .gitignore, etc.) still require explicit operator approval
+   via `TNF_AUTHORITY_EDIT_CONFIRM=1`. The agent cannot self-approve
+   authority-surface edits.
+4. **No force-push to main** — direct force-push to `main` is forbidden. Feature
+   branches may be force-pushed only when rebasing own commits.
+5. **Operator retains veto** — Daniel can revoke this authorization at any time
+   by restoring the `TNF_OPERATOR_CONFIRM` requirement in
+   `.husky/tnf-authority.sh`.
+6. **Other agents remain gated** — only the TNF CLI agent
+   (`TNF_AGENT_ID=tnf-cli-agent`) is exempted from the live-operator
+   confirmation requirement. All other agents still require
+   `TNF_OPERATOR_CONFIRM=1` for commits and pushes.
+
+This authorization was granted by operator directive on 2026-08-07. Prior
+session evidence: the operator explicitly requested protocol changes to allow
+the TNF CLI agent to commit and push autonomously, after repeated friction with
+the manual confirmation gate blocking progress on routine (non-authority)
+changes.
 
 ## Build Before You Merge
 

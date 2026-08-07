@@ -82,6 +82,17 @@ _tnf_snapshot_index() {
 }
 
 tnf_require_operator() {
+  # TNF CLI agent (TNF_AGENT_ID=tnf-cli-agent) is authorized to commit and push
+  # autonomously per docs/core/AGENTS.md "Autonomous Commits and Pushes (TNF CLI
+  # Agent)".  All other agents and interactive shells still require
+  # TNF_OPERATOR_CONFIRM=1.  This gate was a speed bump, not a security boundary
+  # (see header comment) — the agent exemption keeps the audit trail while
+  # removing the manual confirmation friction.
+  if [ -n "$TNF_AGENT_ID" ] && [ "$TNF_AGENT_ID" = "tnf-cli-agent" ]; then
+    _tnf_record "$1" "agent-auto($TNF_AGENT_ID)" "$2"
+    [ "$1" = "commit" ] && _tnf_snapshot_index
+    return 0
+  fi
   if [ -z "$TNF_OPERATOR_CONFIRM" ]; then
     _tnf_record "$1" blocked "$2"
     echo "" >&2
