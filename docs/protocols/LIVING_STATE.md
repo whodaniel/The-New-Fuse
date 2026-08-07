@@ -4,6 +4,8 @@
 
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`94e8746b-e4fd-4a04-8677-1618437912a5` **Head:** `2422616d77a8`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `d387c30c-be30-4fdc-84ad-1e4e1f2ac763` **Head:** `1032bba9db31` surface/noun
 parity is complete (PR #77 MERGED); prefer product work (optional real
 Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
