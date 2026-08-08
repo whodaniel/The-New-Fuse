@@ -466,7 +466,7 @@ jobs:
         run: |
           PROBLEMATIC_FILES=""
           # Get only added or modified .js files
-          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js$')
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js$' || true)
 
           for file in $CHANGED_FILES; do
             if [ ! -f "$file" ]; then continue; fi
