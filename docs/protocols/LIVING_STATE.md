@@ -4,6 +4,8 @@
 
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`7143d541-9ab2-4494-b0e0-3f99abf1e96c` **Head:** `3a0ac08be935`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `d9215a23-ced7-4966-945e-37949a6d28a8` **Head:** `9912fad1e93a`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `589e924f-5f55-492b-81db-db17e4236a8f` **Head:** `f19c57e1cf0f` commit/push; run
@@ -52,10 +54,25 @@ must not be mass-deleted without verification evidence. See
 
 ## ⚡ Active Steps
 
+- [✅] **2026-08-08 Local runtime stability and audit documentation** —
+  Documented the slow-boot investigation in
+  `docs/protocols/reports/TNF_LOCAL_RUNTIME_STABILITY_LOG_2026-08-08.md`, added
+  reusable skill `.agent/skills/tnf-local-runtime-stability/`, and opened
+  consistency/app-split/full-auto reports under `docs/protocols/reports/`.
+  Verified RAM OK; remaining full-auto work is gated by stale daemon state,
+  lockfile seal drift, and missing input/policy tokens.
+
 - [✅] **2026-08-03 Living State / handoff noise peel on main** — Removed ~82
 - [✅] 2026-08-07T21:35:20.886Z New script(s) created: tnf-golden-smoke.cjs,
 - [✅] 2026-08-08T14:47:57.434Z New agent(s) created: codex-cli-agent,
+- [✅] 2026-08-08T20:41:00.754Z New agent(s) created: codex-cli-agent,
   gemini-cli-agent, opencode-cli-agent
+- [✅] 2026-08-08T20:41:00.754Z New script(s) created:
+  tnf-launchd-smart-start.sh, tnf-local-launchd-services.sh
+- [✅] 2026-08-08T20:41:00.754Z Agent definition change: 3 added, 0 removed
+
+  gemini-cli-agent, opencode-cli-agent
+
 - [✅] 2026-08-08T14:47:57.434Z Agent definition change: 3 added, 0 removed
 
   validate-progressive-autonomy.cjs, validate-substrate-attestation.cjs,

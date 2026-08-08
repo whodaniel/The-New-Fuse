@@ -383,7 +383,8 @@ function ensureRedis() {
     return;
   }
   try {
-    run('bash', [script, 'start'], { step: 'redis', allowFail: true });
+    const redisAction = process.platform === 'darwin' ? 'launchd-start' : 'start';
+    run('bash', [script, redisAction], { step: 'redis', allowFail: true });
     const ping = spawnSync('redis-cli', ['ping'], { encoding: 'utf8' });
     if ((ping.stdout || '').trim() === 'PONG') {
       record('redis', 'ok', 'PONG');

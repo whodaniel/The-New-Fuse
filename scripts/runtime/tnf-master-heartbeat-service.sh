@@ -71,10 +71,8 @@ create_plist() {
   </dict>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
-  <key>ThrottleInterval</key>
-  <integer>10</integer>
+  <key>StartInterval</key>
+  <integer>300</integer>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -112,7 +110,7 @@ start() {
   launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
   # Do not use kickstart -k here: forced SIGTERM makes launchctl last-exit=-15
-  # even when KeepAlive immediately respawns a healthy process.
+  # even when launchd later schedules a healthy interval run.
   launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }

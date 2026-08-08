@@ -18,6 +18,8 @@ fi
 STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$ROOT/.voicebridge}"
 LOG="${VOICE_BEAM_WATCHDOG_LOG:-/tmp/voice_beam_watchdog.log}"
 INTERVAL="${VOICE_BEAM_WATCHDOG_INTERVAL_SECONDS:-8}"
+LISTEN_DEP_CHECK_COOLDOWN_SECONDS="${LISTEN_DEP_CHECK_COOLDOWN_SECONDS:-300}"
+KWS_HEAL_COOLDOWN_SECONDS="${KWS_HEAL_COOLDOWN_SECONDS:-30}"
 
 export VOICEBRIDGE_PROFILE="$PROFILE"
 export VOICEBRIDGE_PROJECT_ROOT="$ROOT"
@@ -29,7 +31,7 @@ export VOICE_RESPONSE_AUDIO_VOICE="${VOICE_RESPONSE_AUDIO_VOICE:-$VOICE_INKY_VOI
 export VOICE_INKY_FRONT_DOOR_TTS="${VOICE_INKY_FRONT_DOOR_TTS:-1}"
 export LISTEN_SILENCE_END_SECONDS="${LISTEN_SILENCE_END_SECONDS:-1.4}"
 export VOICE_AGENT_IDLE_FLUSH_SECONDS="${VOICE_AGENT_IDLE_FLUSH_SECONDS:-8.0}"
-export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-0}"
+export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-1}"
 
 # Load local + cloud KWS ingest so healed voice_server keeps forwarding ON.
 if command -v voicebridge_use_profile >/dev/null 2>&1; then
@@ -52,6 +54,42 @@ mkdir -p "$STATE_DIR"
 log() {
   echo "[$(date '+%H:%M:%S')] [beam-watchdog/$PROFILE] $*" | tee -a "$LOG"
 }
+
+compact_line() {
+  printf '%s' "$*" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//'
+}
+
+cooldown_allows() {
+  local stamp_file="$1"
+  local cooldown="$2"
+  local now last
+  now="$(date +%s)"
+  last="$(cat "$stamp_file" 2>/dev/null || echo 0)"
+  if [[ ! "$last" =~ ^[0-9]+$ ]]; then
+    last=0
+  fi
+  if (( now - last >= cooldown )); then
+    printf '%s\n' "$now" >"$stamp_file"
+    return 0
+  fi
+  return 1
+}
+
+LOCK_DIR="$STATE_DIR/voice-beam-watchdog.${PROFILE}.lock"
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  existing_pid="$(cat "$LOCK_DIR/pid" 2>/dev/null || true)"
+  if [[ -n "$existing_pid" ]] && kill -0 "$existing_pid" 2>/dev/null; then
+    log "already running as pid $existing_pid"
+    exit 0
+  fi
+  rm -rf "$LOCK_DIR"
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    log "lock busy at $LOCK_DIR"
+    exit 0
+  fi
+fi
+echo "$$" >"$LOCK_DIR/pid"
+trap 'rm -rf "$LOCK_DIR"' EXIT INT TERM
 
 beam_up() {
   curl -fsS -m 1 "http://127.0.0.1:${PORT}/mic_state" >/dev/null 2>&1
@@ -91,14 +129,41 @@ ensure_pid_pattern() {
   eval "$start_cmd"
 }
 
+ensure_listen() {
+  local dep_output
+  if pgrep -f "listen --profile ${PROFILE}" >/dev/null 2>&1; then
+    return 0
+  fi
+  if ! dep_output="$(bash "$_SCRIPT_DIR/listen" --profile "$PROFILE" --check-deps 2>&1)"; then
+    if cooldown_allows "$STATE_DIR/listen-deps.${PROFILE}.lastwarn" "$LISTEN_DEP_CHECK_COOLDOWN_SECONDS"; then
+      log "listen unavailable — $(compact_line "$dep_output")"
+    fi
+    return 0
+  fi
+  log "listen down — restarting"
+  nohup bash "$_SCRIPT_DIR/listen" --profile "$PROFILE" >>/tmp/listen_main.log 2>&1 &
+}
+
+ensure_kws() {
+  [[ "${VOICE_KWS_ALWAYS_ON:-1}" == "1" ]] || return 0
+  if curl -fsS -m 1 "http://127.0.0.1:${TNF_KWS_PORT:-43110}/healthz" >/dev/null 2>&1 \
+    || curl -fsS -m 1 "http://127.0.0.1:${TNF_KWS_PORT:-43110}/v1/events/packages" >/dev/null 2>&1; then
+    return 0
+  fi
+  if pgrep -f "tnf-voice-kws-boot.sh" >/dev/null 2>&1; then
+    return 0
+  fi
+  if cooldown_allows "$STATE_DIR/kws-heal.${PROFILE}.laststart" "$KWS_HEAL_COOLDOWN_SECONDS"; then
+    log "KWS down — healing via tnf-voice-kws-boot"
+    nohup bash "$_SCRIPT_DIR/tnf-voice-kws-boot.sh" >>/tmp/tnf_voice_kws_boot.log 2>&1 &
+  fi
+}
+
 log "started (interval=${INTERVAL}s) root=$ROOT state=$STATE_DIR port=$PORT"
 
 while true; do
   ensure_server
-  ensure_pid_pattern \
-    "listen --profile ${PROFILE}" \
-    "nohup bash \"$_SCRIPT_DIR/listen\" --profile \"$PROFILE\" >>/tmp/listen_main.log 2>&1 &" \
-    "listen"
+  ensure_listen
   ensure_pid_pattern \
     "stream_watch.py" \
     "nohup python3 -u \"$_SCRIPT_DIR/stream_watch.py\" --profile \"$PROFILE\" >>/tmp/stream_watch.log 2>&1 &" \
@@ -110,12 +175,6 @@ while true; do
       "response_audio"
   fi
   # Keep local KWS MVP alive (TNF always-on keyword spotting).
-  if [[ "${VOICE_KWS_ALWAYS_ON:-1}" == "1" ]]; then
-    if ! curl -fsS -m 1 "http://127.0.0.1:${TNF_KWS_PORT:-43110}/healthz" >/dev/null 2>&1 \
-      && ! curl -fsS -m 1 "http://127.0.0.1:${TNF_KWS_PORT:-43110}/v1/events/packages" >/dev/null 2>&1; then
-      log "KWS down — healing via tnf-voice-kws-boot"
-      nohup bash "$_SCRIPT_DIR/tnf-voice-kws-boot.sh" >>/tmp/tnf_voice_kws_boot.log 2>&1 &
-    fi
-  fi
+  ensure_kws
   sleep "$INTERVAL"
 done

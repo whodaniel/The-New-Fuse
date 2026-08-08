@@ -56,8 +56,8 @@ write_plist() {
   <string>${ROOT_DIR}</string>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
+  <key>StartInterval</key>
+  <integer>300</integer>
   <key>StandardOutPath</key>
   <string>${service_log_dir}/stdout.log</string>
   <key>StandardErrorPath</key>
@@ -76,7 +76,7 @@ reload_service() {
   launchctl bootout "gui/${UID_VALUE}" "$plist_path" 2>/dev/null || true
   launchctl bootstrap "gui/${UID_VALUE}" "$plist_path"
   launchctl enable "gui/${UID_VALUE}/${label}" 2>/dev/null || true
-  launchctl kickstart -kp "gui/${UID_VALUE}/${label}" || true
+  launchctl kickstart "gui/${UID_VALUE}/${label}" || true
 }
 
 write_plist "com.thenewfuse.factory-supercycle" \

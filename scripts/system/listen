@@ -8,10 +8,11 @@ _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=voicebridge-paths.sh
 source "$_SCRIPT_DIR/voicebridge-paths.sh"
 usage() {
-    echo "Usage: listen [--profile A|B|...]"
+    echo "Usage: listen [--profile A|B|...] [--check-deps]"
 }
 
 profile="${VOICEBRIDGE_PROFILE:-main}"
+check_deps_only=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --profile)
@@ -28,6 +29,10 @@ while [[ $# -gt 0 ]]; do
                 echo "Missing value for --profile" >&2
                 exit 1
             fi
+            shift
+            ;;
+        --check-deps)
+            check_deps_only=1
             shift
             ;;
         --help|-h)
@@ -460,6 +465,11 @@ run_once() {
 }
 
 require_deps
+
+if [[ "$check_deps_only" == "1" ]]; then
+    echo "listen dependencies ok"
+    exit 0
+fi
 
 echo "🏔️  Voice Bridge Sidecar Active."
 echo "Profile: $VOICEBRIDGE_PROFILE"

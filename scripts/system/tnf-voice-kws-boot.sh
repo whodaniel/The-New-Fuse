@@ -19,12 +19,15 @@ fi
 STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$ROOT/.voicebridge}"
 LOG="${TNF_VOICE_KWS_BOOT_LOG:-/tmp/tnf_voice_kws_boot.log}"
 KWS_DIR="$ROOT/apps/audio-trigger-kws-mvp"
+NODE_BIN="${TNF_NODE_BIN:-$(command -v node || true)}"
+PNPM_BIN="${TNF_PNPM_BIN:-$(command -v pnpm || true)}"
+TSX_BIN="${TNF_TSX_BIN:-$ROOT/node_modules/.bin/tsx}"
 
 export VOICEBRIDGE_PROFILE="$PROFILE"
 export VOICEBRIDGE_PROJECT_ROOT="$ROOT"
 export VOICEBRIDGE_STATE_DIR="$STATE_DIR"
 export VOICE_RESPONSE_AUDIO_DEFAULT_ON="${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-0}"
-export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-0}"
+export VOICE_KWS_ALWAYS_ON="${VOICE_KWS_ALWAYS_ON:-1}"
 
 mkdir -p "$STATE_DIR" "$(dirname "$LOG")"
 # Beam OFF by default. The enabled file is created only when the operator
@@ -47,7 +50,7 @@ beam_up() {
 
 ensure_kws() {
   if [[ "${VOICE_KWS_ALWAYS_ON}" != "1" ]]; then
-    log "KWS always-on disabled (VOICE_KWS_ALWAYS_ON=0)"
+    log "KWS always-on disabled (VOICE_KWS_ALWAYS_ON=${VOICE_KWS_ALWAYS_ON})"
     return 0
   fi
   if kws_up; then
@@ -58,17 +61,36 @@ ensure_kws() {
     log "KWS app missing at $KWS_DIR — skip"
     return 0
   fi
+  if [[ -z "$NODE_BIN" || ! -x "$NODE_BIN" ]]; then
+    log "node not found — skip KWS start"
+    return 0
+  fi
   log "starting local KWS on :${KWS_PORT}"
   (
     cd "$KWS_DIR"
     # Start the server process directly so it survives after boot returns.
-    nohup env \
-      APP_PORT="$KWS_PORT" \
-      PORT="$KWS_PORT" \
-      REQUIRE_INGEST_AUTH="${REQUIRE_INGEST_AUTH:-false}" \
-      MINI_OMNI_ENABLED="${MINI_OMNI_ENABLED:-false}" \
-      pnpm exec tsx src/server.ts \
-      >>/tmp/tnf_kws_mvp.log 2>&1 &
+    if [[ -f "$TSX_BIN" ]]; then
+      nohup env \
+        APP_PORT="$KWS_PORT" \
+        PORT="$KWS_PORT" \
+        RELAY_URL="${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3000/ws}}}" \
+        REQUIRE_INGEST_AUTH="${REQUIRE_INGEST_AUTH:-false}" \
+        MINI_OMNI_ENABLED="${MINI_OMNI_ENABLED:-false}" \
+        "$NODE_BIN" "$TSX_BIN" src/server.ts \
+        >>/tmp/tnf_kws_mvp.log 2>&1 &
+    elif [[ -n "$PNPM_BIN" && -x "$PNPM_BIN" ]]; then
+      nohup env \
+        APP_PORT="$KWS_PORT" \
+        PORT="$KWS_PORT" \
+        RELAY_URL="${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3000/ws}}}" \
+        REQUIRE_INGEST_AUTH="${REQUIRE_INGEST_AUTH:-false}" \
+        MINI_OMNI_ENABLED="${MINI_OMNI_ENABLED:-false}" \
+        "$PNPM_BIN" exec tsx src/server.ts \
+        >>/tmp/tnf_kws_mvp.log 2>&1 &
+    else
+      echo "KWS start skipped: repo-local tsx and pnpm are both unavailable" >>/tmp/tnf_kws_mvp.log
+      exit 0
+    fi
     echo $! >/tmp/tnf_kws_mvp.pid
   )
   for _ in 1 2 3 4 5 6 7 8; do

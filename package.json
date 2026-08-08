@@ -47,6 +47,11 @@
     "tnf:onboard": "node scripts/tnf-onboard-twip.cjs",
     "tnf:fleet:establish": "node scripts/runtime/establish-core-federated-fleet.cjs",
     "tnf:fleet:establish:dry": "node scripts/runtime/establish-core-federated-fleet.cjs --dry-run",
+    "tnf:local:services:install": "bash scripts/runtime/tnf-local-launchd-services.sh install",
+    "tnf:local:services:start": "bash scripts/runtime/tnf-local-launchd-services.sh start",
+    "tnf:local:services:status": "bash scripts/runtime/tnf-local-launchd-services.sh status",
+    "tnf:local:services:restart": "bash scripts/runtime/tnf-local-launchd-services.sh restart",
+    "tnf:local:services:stop": "bash scripts/runtime/tnf-local-launchd-services.sh stop",
     "tnf:harness:boot": "bash scripts/runtime/harness-boot.sh",
     "tnf:harness:status": "bash scripts/runtime/relay-monitor-service.sh status && crontab -l | grep tnf",
     "tnf:harness:uninstall": "bash scripts/runtime/relay-monitor-service.sh uninstall && bash scripts/runtime/terminal-heartbeat-cron.sh uninstall && bash scripts/runtime/tnf-director-cron.sh uninstall",
@@ -400,7 +405,8 @@
     "scout:planning:drain": "TNF_LOCAL_REDIS_URL=redis://127.0.0.1:6379 node scripts/swarm/planning-queue-drain.cjs",
     "searxng:up": "docker compose -f docker-compose.searxng.yml up -d",
     "searxng:down": "docker compose -f docker-compose.searxng.yml down",
-    "authority:surface:staged": "node scripts/protocols/agent-self-edit-gate.cjs --staged"
+    "authority:surface:staged": "node scripts/protocols/agent-self-edit-gate.cjs --staged",
+    "handoff:gate:staged": "node scripts/protocols/enforce-session-handoff.cjs --mode=staged"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",

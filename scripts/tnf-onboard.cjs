@@ -1131,7 +1131,7 @@ function ensureVoiceKwsAlwaysOnFromOnboard() {
       env: {
         ...process.env,
         VOICE_KWS_ALWAYS_ON: process.env.VOICE_KWS_ALWAYS_ON || '1',
-        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '1',
+        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '0',
         MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
         REQUIRE_INGEST_AUTH: process.env.REQUIRE_INGEST_AUTH || 'false',
       },

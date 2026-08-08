@@ -108,6 +108,12 @@ function loadLocalEnv(rootDir) {
 
 loadLocalEnv(repoRoot);
 
+function debugLog(...args) {
+  if (process.env.TNF_PORTS_DEBUG === '1') {
+    console.log(...args);
+  }
+}
+
 function parsePortEnv() {
   const raw = process.env.TNF_PORTS || '';
   if (!raw.trim()) return [];
@@ -154,7 +160,7 @@ async function discoverWorkspacePorts() {
           for (const scriptName of ['dev', 'start', 'serve']) {
             const script = packageJson.scripts[scriptName];
             if (script) {
-              console.log(`Checking script: ${packageName}:${scriptName} -> ${script}`); // Debug log
+              debugLog(`Checking script: ${packageName}:${scriptName} -> ${script}`);
               let portsFound = [];
 
               // 1. Regex to find explicit port definitions
@@ -184,7 +190,7 @@ async function discoverWorkspacePorts() {
                 discoveredPorts.push({ port, service: `${packageName}/${scriptName}`, protected: false });
               }
               if (portsFound.length > 0) {
-                console.log(`Discovered ports for ${packageName}:${scriptName}:`, portsFound); // Debug log
+                debugLog(`Discovered ports for ${packageName}:${scriptName}:`, portsFound);
               }
             }
           }
@@ -203,7 +209,7 @@ function getWorkspacePaths() {
   if (fs.existsSync(pnpmWorkspacePath)) {
     const workspaceConfig = yaml.load(fs.readFileSync(pnpmWorkspacePath, 'utf8'));
     const patterns = workspaceConfig.packages || [];
-    console.log('Workspace patterns:', patterns); // Debug log
+    debugLog('Workspace patterns:', patterns);
     let workspacePaths = [];
 
     for (const pattern of patterns) {
@@ -215,13 +221,13 @@ function getWorkspacePaths() {
       } else {
         // Include pattern
         const matchedPaths = glob.sync(pattern, { cwd: repoRoot, absolute: false });
-        console.log(`Glob pattern: ${pattern}, matched: ${matchedPaths.length} paths`); // Debug log
+        debugLog(`Glob pattern: ${pattern}, matched: ${matchedPaths.length} paths`);
         workspacePaths.push(...matchedPaths);
       }
     }
     // Filter out duplicate paths and return unique ones
     const uniqueWorkspacePaths = Array.from(new Set(workspacePaths));
-    console.log('Discovered unique workspace paths:', uniqueWorkspacePaths); // Debug log
+    debugLog('Discovered unique workspace paths:', uniqueWorkspacePaths);
     return uniqueWorkspacePaths;
   }
 
@@ -301,9 +307,16 @@ function getRuntimeHealth(entry) {
     if (entry.port === 3005 && body.status === 'ok') {
       return { ok: true, service: 'api-gateway/ws-bridge', status: body.status };
     }
+    if (entry.port === 3001 && String(body.status || '').toLowerCase() === 'healthy') {
+      return { ok: true, service: body.service || entry.service, status: body.status };
+    }
 
     // Generic health check for services returning { status: "ok" } or similar
-    if (body.status === 'ok' || body.health === 'ok' || body.healthy === true) {
+    if (
+      ['ok', 'healthy', 'running'].includes(String(body.status || '').toLowerCase()) ||
+      body.health === 'ok' ||
+      body.healthy === true
+    ) {
       return { ok: true, service: entry.service, status: body.status || 'ok' };
     }
   } catch {
