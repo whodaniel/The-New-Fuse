@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-08T16:24:17.532Z`  
-Handoff ID: `589e924f-5f55-492b-81db-db17e4236a8f`
+Created At: `2026-08-08T16:45:31.596Z`  
+Handoff ID: `d9215a23-ced7-4966-945e-37949a6d28a8`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `f19c57e1cf0f48e4ca3dd4c1d8170979ee25cf53`
+- Head SHA: `9912fad1e93ab8bf8dab7c7292d17ba59ae00be6`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -16,16 +16,16 @@ Handoff ID: `589e924f-5f55-492b-81db-db17e4236a8f`
 - Protocol enforcement layer implemented for mandatory session handoff
   continuity.
 - CI/hook gates now block critical changes without fresh handoff artifacts.
-- PI agent web browsing/search capabilities restored and documented. Added
-  symlinks for agent-browser, crawl4ai, browser-session-auth-bridge, and
-  brave-search skills to `~/.pi/agent/skills/`.
-- Updated pi-coding-agent.md documentation with web browsing/search capabilities
-  and correct integration point references.
 
 ## Changed Paths
 
-- apps/api/src/controllers/available-models.controller.ts
 - .agent/agents/pi-coding-agent.md
+- .agent/agents/tnf-cli.md
+- .agent/fleet/users/agents/tnf-cli.md
+- README.md
+- apps/api/src/controllers/available-models.controller.ts
+- docs/getting-started/README.md
+- docs/guides/installation.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md
 - docs/protocols/LIVING_STATE.md
@@ -33,12 +33,26 @@ Handoff ID: `589e924f-5f55-492b-81db-db17e4236a8f`
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
+- package.json
 - packages/core/src/entities/agent-prompt.entity.ts
 - packages/protocol-contracts/package.json
+- packages/tnf-cli/src/boot/pipeline.ts
+- packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/fleet/index.ts
+- scripts/agents/subdirector-codegen-worker-cycle.sh
+- scripts/agents/subdirector-infra-worker-cycle.sh
+- scripts/install-tnf-cli.sh
 - scripts/protocols/chronological-dispatch.cjs
+- scripts/protocols/tnf-master-reconciliation-runner.cjs
 - scripts/protocols/validate-substrate-attestation.cjs
 - scripts/protocols/validate-substrate-attestation.test.cjs
+- scripts/runtime/establish-core-federated-fleet.cjs
+- scripts/runtime/local-subdirector-runtime.cjs
+- scripts/runtime/local-subdirector-service.sh
+- scripts/runtime/tnf-master-heartbeat-loop.cjs
+- scripts/runtime/tnf-master-heartbeat-service.sh
+- scripts/tnf-onboard.cjs
 
 ## Verification
 
@@ -46,7 +60,6 @@ Handoff ID: `589e924f-5f55-492b-81db-db17e4236a8f`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
-- pi-browsing-capabilities: `operational`
 
 ## Continuation
 

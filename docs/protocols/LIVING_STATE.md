@@ -4,6 +4,8 @@
 
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`d9215a23-ced7-4966-945e-37949a6d28a8` **Head:** `9912fad1e93a`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `589e924f-5f55-492b-81db-db17e4236a8f` **Head:** `f19c57e1cf0f` commit/push; run
 pnpm run validate:session-handoff and node
 scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new
