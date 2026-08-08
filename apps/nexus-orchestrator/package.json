@@ -7,7 +7,7 @@
     "dev": "PORT=$(node ../../packages/port-management/scripts/find-available-port.cjs nexus-orchestrator) vite --host=0.0.0.0 --port=\"$PORT\"",
     "build": "vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && rm -f tsconfig.tsbuildinfo",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

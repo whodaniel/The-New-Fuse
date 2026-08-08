@@ -21,7 +21,12 @@ app.use(express.json());
 const runtime = new AudioTriggerRuntime();
 runtime.start();
 
-const wsService = new WebSocketService(process.env.RELAY_URL || 'ws://localhost:3000');
+const relayUrl =
+  process.env.TNF_RELAY_URL ||
+  process.env.RELAY_WS_URL ||
+  process.env.RELAY_URL ||
+  'ws://127.0.0.1:3000/ws';
+const wsService = new WebSocketService(relayUrl);
 wsService.connect();
 
 // Broadcast rule fires to TNF Relay

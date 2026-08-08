@@ -13,6 +13,11 @@ const CHIP_ROUTES: Record<string, string> = {
   API: '/settings',
 };
 
+// Simulated sparkline data generator
+const generateSparklineData = () => {
+  return Array.from({ length: 12 }, () => Math.max(20, Math.random() * 100));
+};
+
 async function probeLibraryAudioReady(): Promise<boolean> {
   try {
     const [relay, kws] = await Promise.all([
@@ -37,6 +42,7 @@ export const SynergyStatusBar: React.FC = () => {
   const { snapshot: voice } = useVoiceBridge();
   const { navigate } = useRoute();
   const [libraryAudioReady, setLibraryAudioReady] = useState(false);
+  const [sparklineData, setSparklineData] = useState(generateSparklineData());
 
   useEffect(() => {
     let cancelled = false;
@@ -46,9 +52,15 @@ export const SynergyStatusBar: React.FC = () => {
     };
     void tick();
     const timer = window.setInterval(() => void tick(), 10000);
+    
+    const sparkTimer = window.setInterval(() => {
+      if (!cancelled) setSparklineData(generateSparklineData());
+    }, 2000);
+    
     return () => {
       cancelled = true;
       window.clearInterval(timer);
+      window.clearInterval(sparkTimer);
     };
   }, []);
 
@@ -86,6 +98,7 @@ export const SynergyStatusBar: React.FC = () => {
           key={chip.label}
           type="button"
           className={`synergy-chip ${chip.ok ? 'ok' : 'off'}`}
+          data-route={CHIP_ROUTES[chip.label] || '/dashboard'}
           onClick={() => navigate(CHIP_ROUTES[chip.label] || '/dashboard')}
           title={
             'hint' in chip && chip.hint
@@ -98,9 +111,16 @@ export const SynergyStatusBar: React.FC = () => {
           {chip.label}
         </button>
       ))}
-      <span className="synergy-meta">
-        {state.unifiedAgents.length} agents · {state.channelCount} channels
-      </span>
+      <div className="synergy-meta">
+        <span style={{ marginRight: '12px' }}>
+          {state.unifiedAgents.length} agents · {state.channelCount} channels
+        </span>
+        <div className="sparkline" title="Telemetry Pulse">
+          {sparklineData.map((val, i) => (
+            <div key={i} className="sparkline-bar" style={{ height: `${val}%` }} />
+          ))}
+        </div>
+      </div>
       <style>{`
         .synergy-status-bar {
           display: flex;
@@ -142,11 +162,40 @@ export const SynergyStatusBar: React.FC = () => {
           border-radius: 50%;
           background: currentColor;
         }
+        .synergy-chip[data-route^="/computer-use"] {
+          border-radius: 4px;
+        }
+        .synergy-chip[data-route^="/a2a"] {
+          border-style: dashed;
+        }
+        .synergy-chip[data-route^="/voice"] {
+          box-shadow: 0 0 8px rgba(16, 185, 129, 0.1);
+        }
         .synergy-meta {
           margin-left: auto;
+          display: flex;
+          align-items: center;
           font-size: 12px;
           color: var(--tnf-text-secondary, #cbd5e1);
           font-weight: 500;
+        }
+        .sparkline {
+          display: flex;
+          align-items: flex-end;
+          gap: 2px;
+          height: 14px;
+          padding-left: 12px;
+          border-left: 1px solid var(--tnf-border);
+        }
+        .sparkline-bar {
+          width: 3px;
+          background: var(--tnf-text-muted, #94a3b8);
+          border-radius: 1px;
+          opacity: 0.6;
+          transition: height 0.3s ease;
+        }
+        .synergy-chip.ok ~ .synergy-meta .sparkline-bar {
+          background: var(--tnf-success, #10b981);
         }
       `}</style>
     </div>

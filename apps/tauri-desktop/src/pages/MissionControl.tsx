@@ -251,7 +251,13 @@ end tell`;
       <div className="mission-control">
         {error ? (
           <div className="mc-offline">
-            <strong>Local runtime offline.</strong> {error}
+            <div className="mc-offline-text">
+              <strong>Local runtime offline.</strong> {error}
+            </div>
+            <div className="mc-offline-actions">
+              <button type="button" className="mc-offline-btn" onClick={() => navigate('/settings')}>Settings &rarr; environment</button>
+              <button type="button" className="mc-offline-btn mc-offline-primary" onClick={() => { refreshSummary(); refreshMirror(); }}>Retry Connection</button>
+            </div>
           </div>
         ) : null}
 
@@ -261,6 +267,7 @@ end tell`;
             <header className="mc-card-header">
               <h2>Goals</h2>
               <span className="mc-zone mc-zone-personal">PERSONAL</span>
+              <button type="button" className="mc-add-btn" onClick={() => console.log('Add Goal')} title="Add new goal">+ New</button>
             </header>
             {goals.length === 0 ? (
               <p className="mc-empty">
@@ -301,6 +308,7 @@ end tell`;
             <header className="mc-card-header">
               <h2>Scheduled Jobs</h2>
               <span className="mc-zone mc-zone-personal">PERSONAL</span>
+              <button type="button" className="mc-add-btn" onClick={() => console.log('Add Scheduled Job')} title="Schedule new job">+ New</button>
             </header>
             {cronJobs.length === 0 ? (
               <p className="mc-empty">
@@ -431,12 +439,41 @@ end tell`;
         }
 
         .mc-offline {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           padding: 10px 14px;
           border-radius: 10px;
           border: 1px solid rgba(239, 68, 68, 0.35);
           background: rgba(239, 68, 68, 0.08);
           color: #fca5a5;
           font-size: 13px;
+        }
+
+        .mc-offline-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .mc-offline-btn {
+          background: transparent;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          color: #fca5a5;
+          border-radius: 6px;
+          padding: 4px 10px;
+          font-size: 11px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .mc-offline-btn:hover {
+          background: rgba(239, 68, 68, 0.15);
+        }
+
+        .mc-offline-primary {
+          background: rgba(239, 68, 68, 0.2);
+          border-color: rgba(239, 68, 68, 0.5);
+          color: #fee2e2;
         }
 
         .mc-grid {
@@ -487,9 +524,27 @@ end tell`;
         }
 
         .mc-zone-personal {
-          color: #fcd34d;
+          color: #fde68a;
           background: rgba(245, 158, 11, 0.15);
           border: 1px solid rgba(251, 191, 36, 0.35);
+        }
+
+        .mc-add-btn {
+          margin-left: auto;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--tnf-border, rgba(255, 255, 255, 0.1));
+          color: var(--tnf-text-secondary, #cbd5e1);
+          border-radius: 6px;
+          padding: 3px 8px;
+          font-size: 10px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .mc-add-btn:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--tnf-text-primary, #f8fafc);
         }
 
         .mc-empty {
@@ -621,7 +676,7 @@ end tell`;
 
         .mc-mirror-meta {
           font-size: 11px;
-          color: var(--tnf-text-muted, #64748b);
+          color: var(--tnf-text-muted, #94a3b8);
         }
 
         .mc-focus-msg {

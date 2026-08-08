@@ -181,10 +181,15 @@ const ComprehensiveRouter: React.FC = () => {
           <SidebarAuth collapsed={sidebarCollapsed} />
           {!sidebarCollapsed && (
             <>
-              <div className="connection-indicator">
+              <button
+                type="button"
+                className={`connection-indicator ${connectionDotClass !== 'online' ? 'actionable' : ''}`}
+                onClick={() => { if (connectionDotClass !== 'online') navigate('/settings'); }}
+                title={connectionDotClass !== 'online' ? 'Diagnose Connection' : undefined}
+              >
                 <span className={`status-dot ${connectionDotClass}`}></span>
                 <span>{connectionLabel}</span>
-              </div>
+              </button>
               <div className="version-info">
                 <span>v4.1.0</span>
                 <span className="build-type">Tauri</span>
@@ -433,6 +438,10 @@ const ComprehensiveRouter: React.FC = () => {
         .sidebar-footer {
           padding: 16px;
           border-top: 1px solid var(--tnf-border);
+          margin-top: auto;
+          position: sticky;
+          bottom: 0;
+          background: var(--tnf-surface);
         }
 
         .sidebar-auth {
@@ -531,6 +540,22 @@ const ComprehensiveRouter: React.FC = () => {
           font-size: 12px;
           color: var(--tnf-text-muted);
           margin-bottom: 8px;
+          background: transparent;
+          border: none;
+          padding: 4px 6px;
+          margin-left: -6px;
+          border-radius: 6px;
+          text-align: left;
+        }
+        
+        .connection-indicator.actionable {
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+        
+        .connection-indicator.actionable:hover {
+          background: var(--tnf-surface-hover);
+          color: var(--tnf-text-primary);
         }
 
         .status-dot {
