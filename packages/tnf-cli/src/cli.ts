@@ -74,9 +74,10 @@ import {
   persistOperatorWindowMs,
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
-import { resolvePrompt } from './utils/prompt-input.js';
+import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
+import { createTuiInputCollector } from './utils/tui-input-collector.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
 // Propagates to both open-source installable binary (packages/tnf-cli/dist/cli.js)
@@ -18264,9 +18265,22 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     completer: createSlashCompleter(repoRoot),
   });
   const slashDropdown = attachSlashCommandDropdown(rl, repoRoot);
+  const stallTimeoutMs = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
+  const inputCollector = createTuiInputCollector({
+    rl,
+    stallTimeoutMs: Number.isFinite(stallTimeoutMs) && stallTimeoutMs > 0 ? stallTimeoutMs : 0,
+    stallFallbackPrompt:
+      process.env.TNF_STALL_DEFENSE_PROMPT ||
+      'Continue autonomous execution. Follow your overarching directive.',
+  });
   let rlClosed = false;
   rl.on('close', () => {
     rlClosed = true;
+    try {
+      inputCollector.dispose();
+    } catch {
+      /* best-effort */
+    }
   });
 
   const systemPrompt = await loadTnfSystemPrompt();
@@ -18332,7 +18346,8 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   console.log(
     chalk.dim(
       ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
-        ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n'
+        ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n' +
+        ' Prefer this `tnf tui` session for interactive TNF (paste-safe). `tnf hermes` is external passthrough.\n'
     )
   );
   if (voiceTty) {
@@ -18459,39 +18474,16 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     new Promise((resolve, reject) => {
       if (rlClosed) return reject(new Error('stdin closed'));
       operatorInputActive = true;
-
-      const finish = (answer: string) => {
-        operatorInputActive = false;
-        resolve(answer);
-      };
-
-      const timeoutSec = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
-
-      if (timeoutSec > 0) {
-        const ac = new AbortController();
-        let answered = false;
-
-        const timer = setTimeout(() => {
-          if (answered) return;
-          answered = true;
-          ac.abort();
+      inputCollector
+        .waitForIdleCommit(prompt)
+        .then((answer) => {
           operatorInputActive = false;
-          console.log(chalk.yellow('\n⏳ Stall timeout reached. Self-prompting to continue...'));
-          resolve(
-            process.env.TNF_STALL_DEFENSE_PROMPT ||
-              'Continue autonomous execution. Follow your overarching directive.'
-          );
-        }, timeoutSec * 1000);
-
-        (rl as any).question(prompt, { signal: ac.signal }, (answer: string) => {
-          if (answered) return;
-          answered = true;
-          clearTimeout(timer);
-          finish(answer);
+          resolve(answer);
+        })
+        .catch((err) => {
+          operatorInputActive = false;
+          reject(err);
         });
-      } else {
-        rl.question(prompt, finish);
-      }
     });
 
   // Operator-priority window (operator report 2026-07-22 / 2026-07-25):
@@ -18524,6 +18516,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
 
   // Optional seed prompt from --task / --task-file / positional (peer CLI parity).
   let pendingInitialPrompt: string | null = null;
+  let pendingQueuedPrompt: string | null = null;
   try {
     const seed = await resolvePrompt({
       task: options?.task || options?.initialPrompt,
@@ -18563,11 +18556,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = false;
     }
 
-    // Consume one-shot seed prompt before operator/autonomous input paths.
+    // Consume one-shot seed prompt / busy-queued paste before operator/autonomous paths.
     if (pendingInitialPrompt) {
       trimmed = pendingInitialPrompt;
       pendingInitialPrompt = null;
       console.log(chalk.green('\n❯ ') + trimmed);
+    } else if (pendingQueuedPrompt) {
+      trimmed = pendingQueuedPrompt;
+      pendingQueuedPrompt = null;
+      console.log(chalk.dim(`  Queued paste: ${trimmed.length} chars`));
+      console.log(
+        chalk.green('\n❯ ') + trimmed.split('\n')[0] + (trimmed.includes('\n') ? '…' : '')
+      );
     } else {
       let operatorTakeover = false;
       if (
@@ -18579,8 +18579,8 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           operatorWindowMs,
           autonomousState.consecutiveNoBashTurns
         );
-        if (String((rl as any).line || '').trim()) {
-          // Operator is mid-keystroke — never continue over a half-typed line.
+        if (String((rl as any).line || '').trim() || inputCollector.hasIdlePending()) {
+          // Operator is mid-keystroke or paste already landed — never continue over it.
           operatorTakeover = true;
         } else if (windowMs > 0 && process.stdin.isTTY) {
           console.log(
@@ -18594,6 +18594,10 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           operatorInputActive = true;
           operatorTakeover = await waitForOperatorInterrupt(windowMs);
           if (!operatorTakeover) operatorInputActive = false;
+          // Paste can land during the window without keypress race winning — park as takeover.
+          if (!operatorTakeover && inputCollector.hasIdlePending()) {
+            operatorTakeover = true;
+          }
         }
         if (operatorTakeover) {
           console.log(
@@ -18692,9 +18696,11 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = true;
     }
 
+    outbound = sanitizeUtf8Prompt(outbound);
     messages.push({ role: 'user', content: outbound });
 
     try {
+      inputCollector.setMode('busy');
       startProcessingIndicator('Thinking');
       const useStreaming = process.env.TNF_USE_STREAMING === '1';
       // Native tool calling is the default autonomous execution path
@@ -18883,6 +18889,13 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (slashContext.autonomousMode && !autonomousState.operatorHold) {
         autonomousState.continuePending = true;
       }
+    } finally {
+      inputCollector.setMode('idle');
+      const queuedPaste = inputCollector.takeBusyQueue();
+      if (queuedPaste) {
+        pendingQueuedPrompt = sanitizeUtf8Prompt(queuedPaste);
+        console.log(chalk.dim(`\n  Queued paste: ${pendingQueuedPrompt.length} chars (next turn)`));
+      }
     }
   }
 
@@ -18890,6 +18903,11 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   clearInterval(heartbeatInterval);
   clearInterval(contextRefreshInterval);
 
+  try {
+    inputCollector.dispose();
+  } catch {
+    /* already disposed on rl close */
+  }
   rl.close();
   console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
 }
