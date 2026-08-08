@@ -30,3 +30,9 @@
 **Vulnerability:** The Gemini bridge native host passed an extension-provided path through a shell command when handling `open-folder`, allowing shell metacharacters in a crafted path to execute arbitrary commands.
 **Learning:** Quoting an interpolated value does not make shell construction safe. Paths controlled by another process must be passed as discrete arguments.
 **Prevention:** Use `execFile('open', [targetPath])` for macOS folder opening so the path bypasses shell parsing.
+
+## 2026-08-08 - Predictable ID Generation in Message Relays
+
+**Vulnerability:** Weak random number generation using `Math.random().toString(36)` in `packages/relay-core` to generate message IDs, task IDs, and client IDs for real-time WebSocket communication and inter-agent event broadcasting.
+**Learning:** `Math.random()` is pseudo-random, highly predictable, and completely unsuited for distributed message brokers where attackers could theoretically guess connection IDs or message IDs to spoof system events or disrupt relay communication.
+**Prevention:** Always use Node's built-in `crypto.randomBytes(4).toString('hex')` or UUID libraries to ensure identifiers in message brokers are cryptographically secure and unguessable.
