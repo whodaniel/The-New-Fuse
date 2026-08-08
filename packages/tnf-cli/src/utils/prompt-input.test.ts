@@ -136,11 +136,14 @@ describe('prompt-input', () => {
     assert.ok(elapsed < 500, `post-data stall should finish quickly (took ${elapsed}ms)`);
   });
 
-  it('sanitizes lone UTF-16 surrogates in --task and positional', async () => {
+  it('sanitizes lone UTF-16 surrogates without breaking valid surrogate pairs (emojis)', async () => {
     assert.equal(sanitizeUtf8Prompt('ok\uD800bad'), 'ok\uFFFDbad');
+    assert.equal(sanitizeUtf8Prompt('valid 🤖 emoji'), 'valid 🤖 emoji');
+
     const fromFlag = await resolvePrompt({ task: 'hello\uD800world' });
     assert.equal(fromFlag?.text, 'hello\uFFFDworld');
-    const fromPos = await resolvePrompt({ positional: ['a\uDC00b'] });
-    assert.equal(fromPos?.text, 'a\uFFFDb');
+
+    const fromPos = await resolvePrompt({ positional: ['a\uDC00b', '🚀'] });
+    assert.equal(fromPos?.text, 'a\uFFFDb\n🚀');
   });
 });

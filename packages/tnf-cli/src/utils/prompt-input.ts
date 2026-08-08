@@ -115,7 +115,10 @@ function positionalText(positional?: string[]): string {
  */
 export function sanitizeUtf8Prompt(text: string): string {
   if (!text) return text;
-  return text.replace(/[\uD800-\uDFFF]/g, '\uFFFD');
+  return text.replace(
+    /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g,
+    '\uFFFD'
+  );
 }
 
 function decodePromptBuffer(buf: Buffer): string {
