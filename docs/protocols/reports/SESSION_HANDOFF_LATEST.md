@@ -1,71 +1,49 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-08T21:15:36.305Z`  
-Handoff ID: `7143d541-9ab2-4494-b0e0-3f99abf1e96c`
+Created At: `2026-08-08T21:45:38.208Z`  
+Handoff ID: `427fd2ad-b79e-4ba1-93ac-ace4f61a72a9`
 
 ## Scope
-
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `3a0ac08be935b9fd43beefe4fd01ab5fdc0f1b53`
+- Head SHA: `3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-
-- Stabilize live local fleet runtime: LaunchAgent smart-start, Redis/voice/KWS
-  watchdog hardening, ports preflight for healthy listeners.
-- Add tnf:local:services:\* helpers, local-runtime-stability skill, and
-  stability log; keep session handoff continuity for staged commits.
+- Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine.
+- Tsconfig path aliases for @the-new-fuse/types and core-vector-db references.
 
 ## Changed Paths
-
-- .agent/skills/tnf-local-runtime-stability/SKILL.md
-- .agent/skills/tnf-local-runtime-stability/agents/openai.yaml
-- .agent/skills/tnf-local-runtime-stability/references/launchd-runtime-pattern.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/TNF_LOCAL_RUNTIME_STABILITY_LOG_2026-08-08.md
-- package.json
-- scripts/runtime/establish-core-federated-fleet.cjs
-- scripts/runtime/local-subdirector-service.sh
-- scripts/runtime/redis-local-bootstrap.sh
-- scripts/runtime/repair-tnf-failing-services.sh
-- scripts/runtime/tnf-launchd-smart-start.sh
-- scripts/runtime/tnf-local-launchd-services.sh
-- scripts/runtime/tnf-master-heartbeat-service.sh
-- scripts/runtime/voice-bridge-service.sh
-- scripts/system/listen
-- scripts/system/tnf-voice-kws-boot.sh
-- scripts/system/voice-anchor-watchdog.sh
-- scripts/system/voice-beam-watchdog.sh
-- scripts/system/voice_server.py
-- scripts/tnf-onboard.cjs
-- scripts/tnf-ports.cjs
+- packages/agent-coordination/src/core/TaskAssigner.ts
+- packages/agent-coordination/src/core/types.ts
+- packages/agent/src/interfaces/agent.interface.ts
+- packages/api/src/mcp/services/mcp-broker.service.ts
+- packages/claude-skills/package.json
+- packages/claude-skills/src/registry/SkillRegistry.ts
+- packages/claude-skills/tsconfig.json
+- packages/core/src/services/AgentLLMService.ts
+- packages/core/src/workflow/testing.ts
+- packages/jules-integration/tsconfig.json
+- packages/testing/tsconfig.json
 
 ## Verification
-
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
-
 - Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
-
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-
-- Triage remaining dirty-tree buckets (agent defs, package boundaries,
-  docs/audits); peel Living State noise.
-- Restore full-auto only after TNF_SUPER_ADMIN_INPUT_TOKEN and
-  TNF_GATE_POLICY_TOKEN are set; then bounded tnf full-auto once.
+- Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set.

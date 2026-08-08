@@ -3,7 +3,7 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-08T21:09:31.085Z** — handoff
+Updated: **2026-08-08T21:45:12.040Z** — handoff `427fd2ad-b79e-4ba1-93ac-ace4f61a72a9` (`3fb1898a1b3c`).
 `7143d541-9ab2-4494-b0e0-3f99abf1e96c` (`3a0ac08be935`).
 `d9215a23-ced7-4966-945e-37949a6d28a8` (`9912fad1e93a`).
 `589e924f-5f55-492b-81db-db17e4236a8f` (`f19c57e1cf0f`).
@@ -138,10 +138,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -488,3 +487,5 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7143d541-9ab2-4494-b0e0-3f99abf1e96c) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST (427fd2ad-b79e-4ba1-93ac-ace4f61a72a9) | ✅ HANDOFF_READY |

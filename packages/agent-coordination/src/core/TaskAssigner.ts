@@ -54,6 +54,10 @@ export class TaskAssigner extends EventEmitter {
       expiresAt: this.config.taskTimeout
         ? new Date(Date.now() + this.config.taskTimeout)
         : undefined,
+      metadata: {
+        isolatedContext: true, // Enforce strict context boundaries
+        maxContextTokens: 4096
+      }
     };
 
     this.assignments.set(task.id, assignment);

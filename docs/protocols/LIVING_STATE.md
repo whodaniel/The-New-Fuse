@@ -2,7 +2,7 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+**Current Directive:** Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set. **Project ID:** `TNF-SESSION` **Handoff:** `427fd2ad-b79e-4ba1-93ac-ace4f61a72a9` **Head:** `3fb1898a1b3c`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `7143d541-9ab2-4494-b0e0-3f99abf1e96c` **Head:** `3a0ac08be935`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
