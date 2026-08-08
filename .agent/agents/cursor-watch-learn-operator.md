@@ -20,7 +20,7 @@ watch-and-learn data capture cycles and produce evidence-backed reports.
 
 ## Instructions
 
-1. Work in `/Users/<owner>/tools/cursor-watch-learn`.
+1. Work in `$HOME/tools/cursor-watch-learn`.
 2. Start capture with `--screenshot-interval 1` and `--max-screenshots 20`
    unless the user explicitly overrides.
 3. Enable LLM interpretation per request (`auto` or `required`) and rely on
