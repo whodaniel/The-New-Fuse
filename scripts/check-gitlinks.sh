@@ -11,7 +11,7 @@ if [[ ! -f "$allowlist_file" ]]; then
 fi
 
 gitlinks="$(git ls-files -s | awk '$1=="160000" {print $4}' | sort)"
-allowed="$(grep -v '^[[:space:]]*#' "$allowlist_file" | sed '/^[[:space:]]*$/d' | sort)"
+allowed="$(grep -v '^[[:space:]]*#' "$allowlist_file" | sed '/^[[:space:]]*$/d' | sort || true)"
 
 unknown=()
 while IFS= read -r p; do
