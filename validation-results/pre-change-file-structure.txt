@@ -94,7 +94,7 @@
 ./.verifier/process-atlas.verify.json
 ./.verifier/process-atlas.payload.json
 ./.gemini/settings.json
+./tools/framework-master-graph/master-framework-graph.json
 ./tools/config-files/mcp_config.json
 ./tools/config-files/enhanced_mcp_config.json
-./stripe.json
-./archive/voice-history/voice-checkpoints/20260327-012506/app/index.ts
+./tools/agent-relationship-graph/snapshots/latest-snapshot.json

@@ -1,7 +1,1228 @@
 {
   "spec": "tnf/llm-arena-intel/0.1",
-  "lastUpdated": "2026-05-12T00:01:24.561Z",
+  "lastUpdated": "2026-08-08T20:01:00.282Z",
   "snapshots": [
+    {
+      "id": "intel_1786219205698",
+      "collectedAt": "2026-08-08T20:00:05.463Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-08T20:00:07.108Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496652
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-08T20:00:08.474Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496716
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-08T20:00:09.161Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496712
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-08T20:00:10.445Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496715
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-08T20:00:11.053Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-08T20:00:11.468Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14567
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-08T20:00:11.989Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44064
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-08T20:00:12.522Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-08T20:00:13.576Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4222773
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-08T20:00:13.725Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-08T20:00:13.929Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-08T20:00:14.234Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-08T20:00:14.456Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-08T20:00:14.590Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 741
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 1,
+        "nvidiaSlow": 5,
+        "nvidiaEol": 26
+      },
+      "completedAt": "2026-08-08T20:01:00.282Z"
+    },
+    {
+      "id": "intel_1786204805663",
+      "collectedAt": "2026-08-08T16:00:05.646Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-08T16:00:08.651Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496379
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-08T16:00:09.787Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496446
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-08T16:00:10.542Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496443
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-08T16:00:11.129Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "rankings": []
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-08T16:00:11.757Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-08T16:00:12.182Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14567
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-08T16:00:12.506Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44064
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-08T16:00:13.047Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-08T16:00:14.590Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4222773
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-08T16:00:14.844Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-08T16:00:15.077Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-08T16:00:15.485Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-08T16:00:15.697Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-08T16:00:15.864Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 1017
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 7,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 1,
+        "nvidiaSlow": 5,
+        "nvidiaEol": 26
+      },
+      "completedAt": "2026-08-08T16:01:02.885Z"
+    },
+    {
+      "id": "intel_1786147206450",
+      "collectedAt": "2026-08-08T00:00:06.353Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-08T00:00:10.621Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496380
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-08T00:00:11.605Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496449
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-08T00:00:12.454Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496442
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-08T00:00:13.146Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 496449
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-08T00:00:13.985Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-08T00:00:14.660Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14567
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-08T00:00:14.934Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44064
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-08T00:00:15.614Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-08T00:00:18.103Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4222773
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-08T00:00:18.544Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-08T00:00:18.891Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-08T00:00:19.627Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-08T00:00:20.102Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-08T00:00:20.601Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 333
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 1,
+        "nvidiaSlow": 5,
+        "nvidiaEol": 26
+      },
+      "completedAt": "2026-08-08T00:01:07.029Z"
+    },
     {
       "id": "intel_1778544001835",
       "collectedAt": "2026-05-12T00:00:01.822Z",
@@ -130,7 +1351,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-12T00:00:08.211Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -534,7 +1757,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T20:00:07.872Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -938,7 +2163,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T16:00:07.038Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -1342,7 +2569,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T12:00:07.735Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -1746,7 +2975,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T08:00:09.727Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -2150,7 +3381,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T04:00:18.905Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -2554,7 +3787,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-11T00:00:10.821Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -2958,7 +4193,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-10T20:00:09.240Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -3362,7 +4599,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-10T12:00:18.482Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -3766,7 +5005,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-10T08:00:07.789Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -4170,7 +5411,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-10T04:00:10.271Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -4574,7 +5817,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-10T00:00:08.657Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -4978,7 +6223,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-09T20:00:07.725Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -5382,14 +6629,18 @@
               "title": "CyberSecQwen-4B: Why Defensive Cyber Needs Small, Specialized, Locally-Runnable Models",
               "url": "https://huggingface.co/blog/lablab-ai-amd-developer-hackathon/cybersecqwen-4b",
               "publishedAt": "2026-05-09T16:00:07.745Z",
-              "modelMentions": ["qwen-4b"],
+              "modelMentions": [
+                "qwen-4b"
+              ],
               "sentiment": "neutral"
             },
             {
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-09T16:00:07.745Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -5793,14 +7044,18 @@
               "title": "CyberSecQwen-4B: Why Defensive Cyber Needs Small, Specialized, Locally-Runnable Models",
               "url": "https://huggingface.co/blog/lablab-ai-amd-developer-hackathon/cybersecqwen-4b",
               "publishedAt": "2026-05-09T08:00:19.367Z",
-              "modelMentions": ["qwen-4b"],
+              "modelMentions": [
+                "qwen-4b"
+              ],
               "sentiment": "neutral"
             },
             {
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-09T08:00:19.367Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -6204,14 +7459,18 @@
               "title": "CyberSecQwen-4B: Why Defensive Cyber Needs Small, Specialized, Locally-Runnable Models",
               "url": "https://huggingface.co/blog/lablab-ai-amd-developer-hackathon/cybersecqwen-4b",
               "publishedAt": "2026-05-09T04:00:08.353Z",
-              "modelMentions": ["qwen-4b"],
+              "modelMentions": [
+                "qwen-4b"
+              ],
               "sentiment": "neutral"
             },
             {
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-09T04:00:08.353Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -6615,14 +7874,18 @@
               "title": "CyberSecQwen-4B: Why Defensive Cyber Needs Small, Specialized, Locally-Runnable Models",
               "url": "https://huggingface.co/blog/lablab-ai-amd-developer-hackathon/cybersecqwen-4b",
               "publishedAt": "2026-05-09T00:00:07.830Z",
-              "modelMentions": ["qwen-4b"],
+              "modelMentions": [
+                "qwen-4b"
+              ],
               "sentiment": "neutral"
             },
             {
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-09T00:00:07.830Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -7026,14 +8289,18 @@
               "title": "CyberSecQwen-4B: Why Defensive Cyber Needs Small, Specialized, Locally-Runnable Models",
               "url": "https://huggingface.co/blog/lablab-ai-amd-developer-hackathon/cybersecqwen-4b",
               "publishedAt": "2026-05-08T20:00:09.902Z",
-              "modelMentions": ["qwen-4b"],
+              "modelMentions": [
+                "qwen-4b"
+              ],
               "sentiment": "neutral"
             },
             {
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T20:00:09.902Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -7437,7 +8704,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T16:00:07.395Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -7841,7 +9110,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T12:00:10.522Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -8245,7 +9516,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T08:00:12.402Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -8649,7 +9922,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T04:00:14.907Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -9053,7 +10328,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-08T00:00:19.668Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -9457,7 +10734,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-07T20:00:13.416Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -9861,7 +11140,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-05T04:00:50.131Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -10265,7 +11546,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-04T16:00:54.403Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]
@@ -10669,7 +11952,9 @@
               "title": "DeepSeek-V4: a million-token context that agents can actually use",
               "url": "https://huggingface.co/blog/deepseekv4",
               "publishedAt": "2026-05-04T15:32:47.242Z",
-              "modelMentions": ["deepseek-v4"],
+              "modelMentions": [
+                "deepseek-v4"
+              ],
               "sentiment": "neutral"
             }
           ]

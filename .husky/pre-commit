@@ -23,6 +23,14 @@ pnpm run docs:pii:guard:staged
 pnpm run lint:staged
 pnpm run validate:locked-doc-ledger:staged
 
+# Handoff artifacts were validated manually and in CI, but never at commit time.
+# On 2026-08-08 a concurrent process injected schema-invalid fields into
+# SESSION_HANDOFF_LATEST.json between the manual check and the commit; the
+# corrupted artifact committed cleanly and CI then blocked on a defect already
+# on the branch. Re-checking the staged content here keeps the commit-time and
+# CI verdicts from disagreeing. No-op unless critical paths are staged.
+pnpm run handoff:gate:staged
+
 # Runs last: the slowest check, so everything cheap fails first. Type-checks
 # only the packages you touched, and blocks only on errors this commit
 # introduces — pre-existing breakage elsewhere stays out of your way, because
