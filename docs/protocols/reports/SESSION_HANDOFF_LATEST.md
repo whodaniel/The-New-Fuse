@@ -1,49 +1,54 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-08T21:45:38.208Z`  
-Handoff ID: `427fd2ad-b79e-4ba1-93ac-ace4f61a72a9`
+Created At: `2026-08-08T22:03:21.460Z`  
+Handoff ID: `09026b04-62a0-4d26-82dc-0e0c19a52f04`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54`
+- Head SHA: `ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine.
-- Tsconfig path aliases for @the-new-fuse/types and core-vector-db references.
+
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
-- docs/protocols/AGENT_STATUS_LEDGER.md
+
+- docs/protocols/LIVE_AGENT_WORK_CHECK.md
 - docs/protocols/LIVING_STATE.md
-- packages/agent-coordination/src/core/TaskAssigner.ts
-- packages/agent-coordination/src/core/types.ts
-- packages/agent/src/interfaces/agent.interface.ts
-- packages/api/src/mcp/services/mcp-broker.service.ts
-- packages/claude-skills/package.json
-- packages/claude-skills/src/registry/SkillRegistry.ts
-- packages/claude-skills/tsconfig.json
-- packages/core/src/services/AgentLLMService.ts
-- packages/core/src/workflow/testing.ts
-- packages/jules-integration/tsconfig.json
-- packages/testing/tsconfig.json
+- docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json
+- docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md
+- package.json
+- scripts/protocols/live-agent-work-check.cjs
 
 ## Verification
+
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set.
+
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

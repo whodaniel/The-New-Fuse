@@ -1,47 +1,35 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "427fd2ad-b79e-4ba1-93ac-ace4f61a72a9",
-  "created_at": "2026-08-08T21:45:38.208Z",
+  "handoff_id": "09026b04-62a0-4d26-82dc-0e0c19a52f04",
+  "created_at": "2026-08-08T22:03:21.460Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54",
+  "head_sha": "ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine.",
-    "Tsconfig path aliases for @the-new-fuse/types and core-vector-db references."
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
   "changed_paths": [
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVE_AGENT_WORK_CHECK.md",
     "docs/protocols/LIVING_STATE.md",
-    "packages/agent-coordination/src/core/TaskAssigner.ts",
-    "packages/agent-coordination/src/core/types.ts",
-    "packages/agent/src/interfaces/agent.interface.ts",
-    "packages/api/src/mcp/services/mcp-broker.service.ts",
-    "packages/claude-skills/package.json",
-    "packages/claude-skills/src/registry/SkillRegistry.ts",
-    "packages/claude-skills/tsconfig.json",
-    "packages/core/src/services/AgentLLMService.ts",
-    "packages/core/src/workflow/testing.ts",
-    "packages/jules-integration/tsconfig.json",
-    "packages/testing/tsconfig.json"
+    "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
+    "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md",
+    "package.json",
+    "scripts/protocols/live-agent-work-check.cjs"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-08T21:45:16.524Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-08-08T22:03:23.979Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -50,11 +38,10 @@
     ]
   },
   "next_actions": [
-    "Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set."
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": [
-      "3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54"
-    ]
+    "commits": ["ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45"]
   }
 }

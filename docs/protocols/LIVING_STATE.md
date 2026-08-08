@@ -2,7 +2,9 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set. **Project ID:** `TNF-SESSION` **Handoff:** `427fd2ad-b79e-4ba1-93ac-ace4f61a72a9` **Head:** `3fb1898a1b3c`
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`09026b04-62a0-4d26-82dc-0e0c19a52f04` **Head:** `ae4255de1d5b`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `7143d541-9ab2-4494-b0e0-3f99abf1e96c` **Head:** `3a0ac08be935`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
@@ -53,6 +55,14 @@ must not be mass-deleted without verification evidence. See
 ---
 
 ## ⚡ Active Steps
+
+- [✅] **2026-08-08 Live agent work cohesion guard** — Added
+  `scripts/protocols/live-agent-work-check.cjs` and `pnpm run tnf:live:agents:*`
+  scripts so Cursor, Agy, Kilo, Codex, and TNF CLI agents can verify the same
+  live state before claiming fleet success or handing off. Latest report:
+  `docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md`. Current verdict is
+  `BLOCK` because master-heartbeat is unloaded/stale, Redis is timing out, Local
+  Subdirector is critical, and full-auto remains token-gated.
 
 - [✅] **2026-08-08 Local runtime stability and audit documentation** —
   Documented the slow-boot investigation in
