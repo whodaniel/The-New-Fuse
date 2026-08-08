@@ -1,4 +1,9 @@
-TOKEN="fpX3SUxktWBIgDgb1sm29x5G8G9YmlaKyzE0uReM"
+TOKEN="${CLOUDFLARE_TOKEN}"
+
+if [ -z "$TOKEN" ]; then
+  echo "Error: CLOUDFLARE_TOKEN environment variable is not set." >&2
+  exit 1
+fi
 ACCOUNT_ID="7a340d098bbe253ce909af4ca6870ff0"
 BASE_URL="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID"
 
