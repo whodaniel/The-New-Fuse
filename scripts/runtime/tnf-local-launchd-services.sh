@@ -123,17 +123,17 @@ port 6379
 tcp-backlog 511
 timeout 0
 tcp-keepalive 300
-save 900 1
-save 300 100
-save 60 10000
+save ""
 stop-writes-on-bgsave-error no
 dir ${TNF_HOME}/redis
 dbfilename dump.rdb
 appendonly no
+shutdown-on-sigterm nosave
 logfile ${TNF_HOME}/logs/redis.log
 daemonize no
 maxmemory ${TNF_REDIS_MAXMEMORY:-256mb}
 maxmemory-policy allkeys-lru
+maxclients ${TNF_REDIS_MAXCLIENTS:-10000}
 CONF
 }
 

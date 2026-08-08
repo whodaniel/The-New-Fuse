@@ -56,7 +56,11 @@ if redis-cli ping 2>/dev/null | grep -q PONG; then
   ok_redis=1
 else
   actions+=("started_redis")
-  redis-server --daemonize yes --port 6379 --bind 127.0.0.1 >/dev/null 2>&1 || true
+  if [[ -x "scripts/runtime/redis-local-bootstrap.sh" ]]; then
+    bash scripts/runtime/redis-local-bootstrap.sh start >/dev/null 2>&1 || true
+  else
+    redis-server --daemonize yes --port 6379 --bind 127.0.0.1 >/dev/null 2>&1 || true
+  fi
   sleep 1
   redis-cli ping 2>/dev/null | grep -q PONG && ok_redis=1 || true
 fi

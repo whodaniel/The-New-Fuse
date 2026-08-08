@@ -44,18 +44,51 @@ port ${PORT}
 tcp-backlog 511
 timeout 0
 tcp-keepalive 300
-save 900 1
-save 300 100
-save 60 10000
+save ""
 stop-writes-on-bgsave-error no
 dir ${REDIS_DIR}
 dbfilename dump.rdb
 appendonly no
+shutdown-on-sigterm nosave
 logfile ${LOG_FILE}
 daemonize no
 maxmemory ${MAXMEMORY}
 maxmemory-policy allkeys-lru
+maxclients ${MAXCLIENTS}
 CONF
+}
+
+quarantine_legacy_rdb() {
+  local dump_file="$REDIS_DIR/dump.rdb"
+  if [[ "${TNF_REDIS_KEEP_RDB:-0}" == "1" || ! -f "$dump_file" ]]; then
+    return 0
+  fi
+  local quarantine_dir="$REDIS_DIR/quarantine"
+  local stamp
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+  mkdir -p "$quarantine_dir"
+  mv "$dump_file" "$quarantine_dir/dump.rdb.${stamp}"
+  echo "Quarantined legacy Redis RDB: $quarantine_dir/dump.rdb.${stamp}"
+}
+
+launchd_pid() {
+  launchctl list 2>/dev/null | awk -v label="$LABEL" '$3 == label && $1 != "-" { print $1; exit }'
+}
+
+stop_orphan_for_launchd() {
+  if ! redis_ping; then
+    return 0
+  fi
+  if [[ -n "$(launchd_pid)" ]]; then
+    return 0
+  fi
+  echo "Redis is reachable but ${LABEL} is not owning it; stopping orphan before launchd start."
+  "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" SHUTDOWN NOSAVE >/dev/null 2>&1 || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    sleep 1
+    redis_ping || return 0
+  done
+  echo "WARN: Redis orphan did not stop cleanly before launchd start" >&2
 }
 
 start_redis() {
@@ -63,12 +96,19 @@ start_redis() {
     echo "ERROR: redis-server not found" >&2
     exit 1
   fi
+  if [[ "$(uname -s)" == "Darwin" && "${TNF_REDIS_DISABLE_LAUNCHD:-0}" != "1" ]]; then
+    if ! redis_ping || [[ -z "$(launchd_pid)" ]]; then
+      launchd_start
+      return 0
+    fi
+  fi
   if redis_ping; then
     echo "Redis already reachable on ${BIND}:${PORT}"
     redis_clients || true
     return 0
   fi
   write_redis_conf
+  quarantine_legacy_rdb
   "${REDIS_BIN}" "$REDIS_CONF" --daemonize yes --maxclients "${MAXCLIENTS}" || true
   for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
@@ -129,22 +169,30 @@ launchd_start() {
   if ! launchctl print "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1; then
     launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
   fi
+  stop_orphan_for_launchd
+  quarantine_legacy_rdb
   launchctl enable "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 || true
-  launchctl kickstart "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 || true
-  for _ in 1 2 3 4 5; do
+  launchctl kickstart -k "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 || true
+  for _ in $(seq 1 30); do
     sleep 1
-    redis_ping && {
+    if redis_ping && [[ -n "$(launchd_pid)" ]]; then
       echo "Redis launchd service reachable on ${BIND}:${PORT}"
       return 0
-    }
+    fi
   done
-  echo "WARN: Redis launchd service not reachable yet" >&2
+  echo "WARN: Redis launchd service not reachable or not launchd-owned yet" >&2
 }
 
 restart_redis() {
-  pkill -9 redis-server 2>/dev/null || true
-  sleep 2
-  start_redis
+  if [[ "$(uname -s)" == "Darwin" && "${TNF_REDIS_DISABLE_LAUNCHD:-0}" != "1" ]]; then
+    "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" SHUTDOWN NOSAVE >/dev/null 2>&1 || true
+    sleep 2
+    launchd_start
+  else
+    pkill -9 redis-server 2>/dev/null || true
+    sleep 2
+    start_redis
+  fi
 }
 
 status_redis() {

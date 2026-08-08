@@ -70,7 +70,11 @@ if redis-cli ping &> /dev/null; then
     echo -e "${GREEN}✅ Redis already running on port 6379${NC}"
 else
     echo -e "${YELLOW}⏳ Starting redis-server on port 6379...${NC}"
-    redis-server --port 6379 --daemonize yes
+    if [[ -x "scripts/runtime/redis-local-bootstrap.sh" ]]; then
+        bash scripts/runtime/redis-local-bootstrap.sh start
+    else
+        redis-server --port 6379 --daemonize yes
+    fi
     sleep 2
 
     # Verify Redis started

@@ -4,6 +4,8 @@
 
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`46f370c2-c031-4e03-9550-ac5501f6d43b` **Head:** `f534c43c3a31`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `09026b04-62a0-4d26-82dc-0e0c19a52f04` **Head:** `ae4255de1d5b`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `7143d541-9ab2-4494-b0e0-3f99abf1e96c` **Head:** `3a0ac08be935`
@@ -61,8 +63,19 @@ must not be mass-deleted without verification evidence. See
   scripts so Cursor, Agy, Kilo, Codex, and TNF CLI agents can verify the same
   live state before claiming fleet success or handing off. Latest report:
   `docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md`. Current verdict is
-  `BLOCK` because master-heartbeat is unloaded/stale, Redis is timing out, Local
-  Subdirector is critical, and full-auto remains token-gated.
+  `CAUTION`: Redis returns `PONG`, Local Subdirector and master-heartbeat are
+  loaded/fresh, and remaining warnings are active git work plus protected
+  full-auto gates (`TNF_SUPER_ADMIN_INPUT_TOKEN`, `TNF_GATE_POLICY_TOKEN`).
+
+- [✅] **2026-08-08 Local Subdirector live fleet cohesion skill** — Captured the
+  Redis wedge recovery, agent polling, and live verification pattern as
+  `.agent/skills/tnf-live-fleet-cohesion/SKILL.md`. The live checker now detects
+  `redis-wedged` separately from ordinary `redis-unavailable`, records bounded
+  recovery guidance, detects launchd/config drift, and redacts sensitive state
+  payload fields before reports are written. Local Redis was reattached to
+  `com.thenewfuse.redis-tnf-bus`, configured with `save ""` and
+  `shutdown-on-sigterm nosave`, and its legacy `dump.rdb` was quarantined under
+  `~/.tnf/redis/quarantine/` to avoid future boot-time RDB load stalls.
 
 - [✅] **2026-08-08 Local runtime stability and audit documentation** —
   Documented the slow-boot investigation in

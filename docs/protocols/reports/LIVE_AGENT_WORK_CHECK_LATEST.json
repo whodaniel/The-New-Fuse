@@ -1,31 +1,39 @@
 {
   "schema": "tnf.live-agent-work-check.v1",
-  "generatedAt": "2026-08-08T22:02:29.553Z",
+  "generatedAt": "2026-08-08T22:47:15.577Z",
   "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "host": "Daniels-MacBook-Pro",
   "git": {
-    "branch": "## fix/honest-failure-reporting...origin/fix/honest-failure-reporting [ahead 8]",
+    "branch": "## fix/honest-failure-reporting...origin/fix/honest-failure-reporting [ahead 10]",
     "dirtyFiles": [
-      " M apps/frontend/src/data/codebase_map.json",
       " M apps/virtual-library-blueprints",
       " M data/llm-provider-status.json",
+      " M docs/operations/tnf-master-reconciliation-report-latest.json",
+      " M docs/operations/tnf-master-reconciliation-report-latest.md",
       " M docs/protocols/LIVING_STATE.md",
-      " M package.json",
-      "?? docs/protocols/LIVE_AGENT_WORK_CHECK.md",
-      "?? docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
-      "?? docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md",
-      "?? scripts/protocols/live-agent-work-check.cjs"
+      " M docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
+      " M docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md",
+      " M scripts/autonomy/tnf-fleet-autohealer.py",
+      " M scripts/boot-tnf.sh",
+      " M scripts/orchestrator/factory-boot.sh",
+      " M scripts/protocols/live-agent-work-check.cjs",
+      " M scripts/runtime/redis-local-bootstrap.sh",
+      " M scripts/runtime/tnf-anti-stall.sh",
+      " M scripts/runtime/tnf-local-launchd-services.sh",
+      " M scripts/start-agent-network.sh",
+      " M scripts/start-all.sh",
+      "?? .agent/skills/tnf-live-fleet-cohesion/"
     ],
-    "dirtyCount": 9,
+    "dirtyCount": 17,
     "recentCommits": [
+      "f534c43c3a\tTNF Agent\tchore(protocols): add live agent work check and sync state",
+      "f7cce2bc5e\tTNF Agent\tAdd live agent work cohesion check",
       "ae4255de1d\tTNF Agent\tfix(core): package boundary and typecheck resolution",
       "3fb1898a1b\tTNF Agent\tchore: update llm intel data, husky hooks, and validation reports",
       "69cd71b793\tTNF Agent\tfeat(apps): tauri desktop routing, audio trigger mvp, and frontend visualizations",
       "aecf71cccb\tTNF Agent\tRefresh director/staff agent defs and add CLI surface bindings.",
       "6bc3a222f6\tTNF Agent\tStabilize local runtime fleet services and LaunchAgent smart-start.",
-      "3a0ac08be9\tTNF Agent\tfix(protocols): restore schema-valid handoff artifact",
-      "9912fad1e9\tTNF Agent\tfix(protocols,build): honest failure reporting for dead loops and silent builds",
-      "f19c57e1cf\tTNF Agent\tMake TNF CLI default to Local Subdirector and auto-establish the core OSS fleet."
+      "3a0ac08be9\tTNF Agent\tfix(protocols): restore schema-valid handoff artifact"
     ],
     "stashCount": 38,
     "stashes": [
@@ -45,21 +53,17 @@
     }
   },
   "processes": [
-    "49048 49033 S       12:31 redis-cli -p 6379 HSET tnf:agent-registry agent_hermes-codegen-worker_1782364000001 {\"id\":\"agent_hermes-codegen-worker_1782364000001\",\"name\":\"hermes-codegen-worker\",\"role\":\"worker\",\"platform\":\"claude\",\"status\":\"active\",\"isOnline\":true,\"capabilities\":[\"code_generation\",\"typescript_strict\",\"monorepo_pnpm\",\"pnpm_filter_invocation\",\"drizzle_migration_apply\",\"zod_schema_generation\",\"subagent_dispatch_handoff\"],\"registeredAt\":\"2026-08-08T21:50:02.000Z\",\"lastSeen\":\"2026-08-08T21:50:02.000Z\",\"routing\":{\"callableWorker\":true,\"directorPoolEligible\":true},\"source\":\"sub-director-cron-refresh\",\"subdirector_authorized\":true}",
-    "50172     1 S       10:45 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs",
-    "51130 33030 Ss      09:04 /bin/zsh -c -l setopt NO_EXTENDED_GLOB NO_BARE_GLOB_QUAL 2>/dev/null || true && { \\builtin unalias -- 'unsetenv'; \\builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/tnf-onboard.cjs 2>&1 | tail -150' < /dev/null && pwd -P >| /tmp/claude-1aad-cwd",
-    "51965 51937 S       07:31 redis-cli -p 6379 HSET tnf:agent-registry agent_hermes-codegen-worker_1782364000001 {\"id\":\"agent_hermes-codegen-worker_1782364000001\",\"name\":\"hermes-codegen-worker\",\"role\":\"worker\",\"platform\":\"claude\",\"status\":\"active\",\"isOnline\":true,\"capabilities\":[\"code_generation\",\"typescript_strict\",\"monorepo_pnpm\",\"pnpm_filter_invocation\",\"drizzle_migration_apply\",\"zod_schema_generation\",\"subagent_dispatch_handoff\"],\"registeredAt\":\"2026-08-08T21:55:02.000Z\",\"lastSeen\":\"2026-08-08T21:55:02.000Z\",\"routing\":{\"callableWorker\":true,\"directorPoolEligible\":true},\"source\":\"sub-director-cron-refresh\",\"subdirector_authorized\":true}",
-    "55304 55271 S       02:33 redis-cli -p 6379 HSET tnf:agent-registry agent_hermes-infra-worker_1782364000002 {\"id\":\"agent_hermes-infra-worker_1782364000002\",\"name\":\"hermes-infra-worker\",\"role\":\"worker\",\"platform\":\"claude\",\"status\":\"active\",\"isOnline\":true,\"capabilities\":[\"infra_audit\",\"cloud_run_manifest_validate\",\"image_tag_resolve\",\"build_config_render\",\"rollout_health_probe\",\"iam_scope_audit\"],\"registeredAt\":\"2026-08-08T22:00:00.000Z\",\"lastSeen\":\"2026-08-08T22:00:00.000Z\",\"routing\":{\"callableWorker\":true,\"directorPoolEligible\":true},\"source\":\"sub-director-cron-refresh\",\"subdirector_authorized\":true}",
-    "55305 55272 S       02:33 redis-cli -p 6379 HSET tnf:agent-registry agent_hermes-codegen-worker_1782364000001 {\"id\":\"agent_hermes-codegen-worker_1782364000001\",\"name\":\"hermes-codegen-worker\",\"role\":\"worker\",\"platform\":\"claude\",\"status\":\"active\",\"isOnline\":true,\"capabilities\":[\"code_generation\",\"typescript_strict\",\"monorepo_pnpm\",\"pnpm_filter_invocation\",\"drizzle_migration_apply\",\"zod_schema_generation\",\"subagent_dispatch_handoff\"],\"registeredAt\":\"2026-08-08T22:00:00.000Z\",\"lastSeen\":\"2026-08-08T22:00:00.000Z\",\"routing\":{\"callableWorker\":true,\"directorPoolEligible\":true},\"source\":\"sub-director-cron-refresh\",\"subdirector_authorized\":true}",
-    " 2075  1371 S+   02:33:52 node /Users/danielgoldberg/.hermes/node/bin/codex --dangerously-bypass-approvals-and-sandbox",
-    " 2076  2075 R+   02:33:52 /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex --dangerously-bypass-approvals-and-sandbox",
-    "61094 60725 S+   01:20:15 sudo -n -u tnf-agent /opt/tnf-node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/antigravity-redis-wrapper.cjs",
-    "61138 61094 S+   01:20:14 /opt/tnf-node/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/antigravity-redis-wrapper.cjs",
-    "79138 78479 S+   01:09:37 /Users/danielgoldberg/.local/bin/cursor-agent --use-system-ca /Users/danielgoldberg/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js",
-    "82425 81858 S+   01:06:30 node /Users/danielgoldberg/.hermes/node/bin/kilo",
-    "82478 82425 R+   01:06:29 /Users/danielgoldberg/.hermes/node/lib/node_modules/@kilocode/cli/bin/.kilo",
-    "25592 23282 R+      31:34 agy --dangerously-skip-permissions",
-    "33030 32459 S+      24:48 claude"
+    "13486     1 S       02:40 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs",
+    "89557     1 S       14:19 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs",
+    "90324 49415 S       14:08 /Applications/Claude.app/Contents/Helpers/chrome-native-host chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/",
+    " 2075  1371 S+   03:18:37 node /Users/danielgoldberg/.hermes/node/bin/codex --dangerously-bypass-approvals-and-sandbox",
+    " 2076  2075 R+   03:18:37 /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex --dangerously-bypass-approvals-and-sandbox",
+    "79138 78479 S+   01:54:22 /Users/danielgoldberg/.local/bin/cursor-agent --use-system-ca /Users/danielgoldberg/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js",
+    "82425 81858 S+   01:51:15 node /Users/danielgoldberg/.hermes/node/bin/kilo",
+    "82478 82425 R+   01:51:14 /Users/danielgoldberg/.hermes/node/lib/node_modules/@kilocode/cli/bin/.kilo",
+    "25592 23282 R+   01:16:19 agy --dangerously-skip-permissions",
+    "33030 32459 S+   01:09:33 claude",
+    "66454 65571 S+      38:29 opencode"
   ],
   "launchd": {
     "ok": true,
@@ -67,20 +71,23 @@
       "com.tnf.local-subdirector": {
         "label": "com.tnf.local-subdirector",
         "loaded": true,
-        "pid": "50172",
+        "pid": "13486",
         "lastExit": "0",
-        "raw": "50172\t0\tcom.tnf.local-subdirector"
+        "raw": "13486\t0\tcom.tnf.local-subdirector"
       },
       "com.tnf.master-heartbeat": {
         "label": "com.tnf.master-heartbeat",
-        "loaded": false
+        "loaded": true,
+        "pid": "89557",
+        "lastExit": "0",
+        "raw": "89557\t0\tcom.tnf.master-heartbeat"
       },
       "com.tnf.fleet-health-probe": {
         "label": "com.tnf.fleet-health-probe",
         "loaded": true,
-        "pid": "49615",
+        "pid": null,
         "lastExit": "0",
-        "raw": "49615\t0\tcom.tnf.fleet-health-probe"
+        "raw": "-\t0\tcom.tnf.fleet-health-probe"
       },
       "com.tnf.master-reconciliation": {
         "label": "com.tnf.master-reconciliation",
@@ -92,9 +99,9 @@
       "com.thenewfuse.redis-tnf-bus": {
         "label": "com.thenewfuse.redis-tnf-bus",
         "loaded": true,
-        "pid": "35498",
-        "lastExit": "0",
-        "raw": "35498\t0\tcom.thenewfuse.redis-tnf-bus"
+        "pid": "17043",
+        "lastExit": "-15",
+        "raw": "17043\t-15\tcom.thenewfuse.redis-tnf-bus"
       },
       "com.thenewfuse.api-local": {
         "label": "com.thenewfuse.api-local",
@@ -125,23 +132,23 @@
       "record": {
         "exists": true,
         "path": "/Users/danielgoldberg/.tnf/local-subdirector/state/local-subdirector-heartbeat.json",
-        "mtimeMs": 1786226551941.7444,
+        "mtimeMs": 1786229236168.8923,
         "ageSeconds": 2,
         "payload": {
-          "generatedAt": "2026-08-08T22:02:27.326Z",
+          "generatedAt": "2026-08-08T22:47:13.152Z",
           "actor": {
             "id": "tnf-local-subdirector",
             "role": "tnf-sub-director",
             "lane": "local-terminal-runtime"
           },
-          "status": "critical",
-          "cycle": 17,
+          "status": "healthy",
+          "cycle": 6,
           "config": {
             "actorId": "tnf-local-subdirector",
             "nftId": "local-oss-5cf0356cd5d96efe",
             "walletAddress": "0x5cf0356cd5d96efe33394821ffacd84789299a74",
-            "signingPrivateKeyPem": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIMbwXsYPmUA0AvXokRRAOPYglNgc+4uMJqy3JLBh/eG2\n-----END PRIVATE KEY-----\n",
-            "encryptionPrivateKeyPem": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIJDe03B3oHPvanicVamCpmwwMZ7IpAI9CKIG/6fqwIpH\n-----END PRIVATE KEY-----\n",
+            "signingPrivateKeyPem": "[REDACTED]",
+            "encryptionPrivateKeyPem": "[REDACTED]",
             "intervalMs": 30000,
             "stallThresholdMs": 180000,
             "idleThresholdMs": 300000,
@@ -154,38 +161,84 @@
             "stateDir": "/Users/danielgoldberg/.tnf/local-subdirector/state"
           },
           "summary": {
-            "observedSessions": 12,
-            "agentSessions": 10,
-            "activeSessions": 3,
-            "idleSessions": 1,
-            "stalledSessions": 6,
+            "observedSessions": 13,
+            "agentSessions": 12,
+            "activeSessions": 12,
+            "idleSessions": 0,
+            "stalledSessions": 0,
             "wakePingsEmitted": 0,
             "processFallbackActive": 0,
             "processFallbackSessions": 0
           },
           "sessions": [
             {
-              "agentId": "tnf-local-terminal-ttys000",
-              "sessionKey": "tty:ttys000",
-              "windowId": 87,
-              "tty": "/dev/ttys000",
+              "agentId": "tnf-local-terminal-ttys009",
+              "sessionKey": "tty:ttys009",
+              "windowId": 413,
+              "tty": "/dev/ttys009",
               "source": "terminal-applescript",
               "busy": true,
               "status": "active",
               "cwd": "/Users/danielgoldberg",
-              "shellPid": 1371,
-              "foregroundPid": 2075,
+              "shellPid": 97831,
+              "foregroundPid": 99602,
+              "foregroundCommand": "pi",
+              "agentLike": true,
+              "interactiveReady": false,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
+              "customTitle": "π - danielgoldberg"
+            },
+            {
+              "agentId": "tnf-local-terminal-ttys008",
+              "sessionKey": "tty:ttys008",
+              "windowId": 388,
+              "tty": "/dev/ttys008",
+              "source": "terminal-applescript",
+              "busy": true,
+              "status": "active",
+              "cwd": "/Users/danielgoldberg",
+              "shellPid": 81858,
+              "foregroundPid": 82425,
               "foregroundCommand": "node",
               "agentLike": true,
-              "interactiveReady": true,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T22:02:27.326Z",
+              "interactiveReady": false,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
               "lastWakePingAt": null,
-              "noChangeCycles": 0,
+              "noChangeCycles": 5,
               "wakePingCount": 0,
-              "activityAgeMs": 0,
-              "customTitle": "⠧ danielgoldberg"
+              "activityAgeMs": 153955,
+              "customTitle": "Kilo CLI | TNF Turn Zero Discussion"
+            },
+            {
+              "agentId": "tnf-local-terminal-ttys012",
+              "sessionKey": "tty:ttys012",
+              "windowId": 466,
+              "tty": "/dev/ttys012",
+              "source": "terminal-applescript",
+              "busy": true,
+              "status": "active",
+              "cwd": "/Users/danielgoldberg",
+              "shellPid": 65571,
+              "foregroundPid": 66454,
+              "foregroundCommand": "opencode",
+              "agentLike": true,
+              "interactiveReady": false,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
+              "customTitle": "OC | TNF procedural skill loading and grap..."
             },
             {
               "agentId": "tnf-local-terminal-ttys011",
@@ -201,106 +254,14 @@
               "foregroundCommand": "claude",
               "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T22:01:57.329Z",
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
               "lastWakePingAt": null,
-              "noChangeCycles": 1,
+              "noChangeCycles": 5,
               "wakePingCount": 0,
-              "activityAgeMs": 29997,
+              "activityAgeMs": 153955,
               "customTitle": "✳ Onboard TNF and resolve outstanding PRs"
-            },
-            {
-              "agentId": "tnf-local-terminal-ttys009",
-              "sessionKey": "tty:ttys009",
-              "windowId": 413,
-              "tty": "/dev/ttys009",
-              "source": "terminal-applescript",
-              "busy": true,
-              "status": "observed",
-              "cwd": "/Users/danielgoldberg",
-              "shellPid": 97831,
-              "foregroundPid": 99602,
-              "foregroundCommand": "pi",
-              "agentLike": false,
-              "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T22:02:27.326Z",
-              "lastWakePingAt": null,
-              "noChangeCycles": 0,
-              "wakePingCount": 0,
-              "activityAgeMs": 0,
-              "customTitle": "π - danielgoldberg"
-            },
-            {
-              "agentId": "tnf-local-terminal-ttys007",
-              "sessionKey": "tty:ttys007",
-              "windowId": 379,
-              "tty": "/dev/ttys007",
-              "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
-              "shellPid": 78479,
-              "foregroundPid": 79138,
-              "foregroundCommand": "danielgol",
-              "agentLike": true,
-              "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:56:56.796Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 11,
-              "wakePingCount": 2,
-              "activityAgeMs": 330530,
-              "customTitle": "Cursor Agent"
-            },
-            {
-              "agentId": "tnf-local-terminal-ttys008",
-              "sessionKey": "tty:ttys008",
-              "windowId": 388,
-              "tty": "/dev/ttys008",
-              "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
-              "shellPid": 81858,
-              "foregroundPid": 82425,
-              "foregroundCommand": "node",
-              "agentLike": true,
-              "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:56:56.796Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 11,
-              "wakePingCount": 2,
-              "activityAgeMs": 330530,
-              "customTitle": "Kilo CLI | TNF Turn Zero Discussion"
-            },
-            {
-              "agentId": "tnf-local-terminal-ttys006",
-              "sessionKey": "tty:ttys006",
-              "windowId": 365,
-              "tty": "/dev/ttys006",
-              "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
-              "shellPid": 73228,
-              "foregroundPid": 74171,
-              "foregroundCommand": "node",
-              "agentLike": true,
-              "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 16,
-              "wakePingCount": 4,
-              "activityAgeMs": 629827,
-              "customTitle": "Terminal"
             },
             {
               "agentId": "tnf-local-terminal-ttys010",
@@ -315,14 +276,83 @@
               "foregroundPid": 25592,
               "foregroundCommand": "agy",
               "agentLike": true,
+              "interactiveReady": true,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
+              "customTitle": "Terminal"
+            },
+            {
+              "agentId": "tnf-local-terminal-ttys007",
+              "sessionKey": "tty:ttys007",
+              "windowId": 379,
+              "tty": "/dev/ttys007",
+              "source": "terminal-applescript",
+              "busy": true,
+              "status": "active",
+              "cwd": "/Users/danielgoldberg",
+              "shellPid": 78479,
+              "foregroundPid": 79138,
+              "foregroundCommand": "danielgol",
+              "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T22:02:27.326Z",
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
+              "customTitle": "Cursor Agent"
+            },
+            {
+              "agentId": "tnf-local-terminal-ttys000",
+              "sessionKey": "tty:ttys000",
+              "windowId": 87,
+              "tty": "/dev/ttys000",
+              "source": "terminal-applescript",
+              "busy": true,
+              "status": "active",
+              "cwd": "/Users/danielgoldberg",
+              "shellPid": 1371,
+              "foregroundPid": 2075,
+              "foregroundCommand": "node",
+              "agentLike": true,
+              "interactiveReady": true,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:47:13.152Z",
               "lastWakePingAt": null,
               "noChangeCycles": 0,
               "wakePingCount": 0,
               "activityAgeMs": 0,
+              "customTitle": "⠙ danielgoldberg"
+            },
+            {
+              "agentId": "tnf-local-terminal-ttys006",
+              "sessionKey": "tty:ttys006",
+              "windowId": 365,
+              "tty": "/dev/ttys006",
+              "source": "terminal-applescript",
+              "busy": true,
+              "status": "active",
+              "cwd": "/Users/danielgoldberg",
+              "shellPid": 73228,
+              "foregroundPid": 74171,
+              "foregroundCommand": "node",
+              "agentLike": true,
+              "interactiveReady": false,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
               "customTitle": "Terminal"
             },
             {
@@ -331,21 +361,21 @@
               "windowId": 347,
               "tty": "/dev/ttys005",
               "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
+              "busy": false,
+              "status": "active",
               "cwd": "/Users/danielgoldberg",
               "shellPid": 62439,
-              "foregroundPid": 62814,
-              "foregroundCommand": "sudo",
+              "foregroundPid": 62439,
+              "foregroundCommand": "zsh",
               "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 16,
-              "wakePingCount": 4,
-              "activityAgeMs": 629827,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
               "customTitle": "Terminal"
             },
             {
@@ -356,19 +386,19 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "observed",
-              "cwd": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend",
-              "shellPid": 41392,
-              "foregroundPid": 41452,
-              "foregroundCommand": "danielgol",
+              "cwd": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+              "shellPid": 17882,
+              "foregroundPid": 17901,
+              "foregroundCommand": "node",
               "agentLike": false,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:47:13.152Z",
               "lastWakePingAt": null,
-              "noChangeCycles": 16,
+              "noChangeCycles": 0,
               "wakePingCount": 0,
-              "activityAgeMs": 629827,
+              "activityAgeMs": 0,
               "customTitle": "Terminal"
             },
             {
@@ -378,20 +408,20 @@
               "tty": "/dev/ttys004",
               "source": "terminal-applescript",
               "busy": false,
-              "status": "idle",
+              "status": "active",
               "cwd": "/Users/danielgoldberg",
               "shellPid": 61554,
               "foregroundPid": 61554,
               "foregroundCommand": "zsh",
               "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
               "lastWakePingAt": null,
-              "noChangeCycles": 16,
+              "noChangeCycles": 5,
               "wakePingCount": 0,
-              "activityAgeMs": 629827,
+              "activityAgeMs": 153955,
               "customTitle": "Terminal"
             },
             {
@@ -400,21 +430,21 @@
               "windowId": 345,
               "tty": "/dev/ttys003",
               "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
+              "busy": false,
+              "status": "active",
               "cwd": "/Users/danielgoldberg",
               "shellPid": 61113,
-              "foregroundPid": 61510,
-              "foregroundCommand": "sudo",
+              "foregroundPid": 61113,
+              "foregroundCommand": "zsh",
               "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 16,
-              "wakePingCount": 4,
-              "activityAgeMs": 629827,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
               "customTitle": "Terminal"
             },
             {
@@ -423,21 +453,21 @@
               "windowId": 342,
               "tty": "/dev/ttys002",
               "source": "terminal-applescript",
-              "busy": true,
-              "status": "stalled",
+              "busy": false,
+              "status": "active",
               "cwd": "/Users/danielgoldberg",
               "shellPid": 60725,
-              "foregroundPid": 61094,
-              "foregroundCommand": "sudo",
+              "foregroundPid": 60725,
+              "foregroundCommand": "zsh",
               "agentLike": true,
               "interactiveReady": false,
-              "firstSeenAt": "2026-08-08T21:51:57.499Z",
-              "lastSeenAt": "2026-08-08T22:02:27.326Z",
-              "lastActivityAt": "2026-08-08T21:51:57.499Z",
-              "lastWakePingAt": "2026-08-08T22:01:57.329Z",
-              "noChangeCycles": 16,
-              "wakePingCount": 4,
-              "activityAgeMs": 629827,
+              "firstSeenAt": "2026-08-08T22:44:39.197Z",
+              "lastSeenAt": "2026-08-08T22:47:13.152Z",
+              "lastActivityAt": "2026-08-08T22:44:39.197Z",
+              "lastWakePingAt": null,
+              "noChangeCycles": 5,
+              "wakePingCount": 0,
+              "activityAgeMs": 153955,
               "customTitle": "Terminal"
             }
           ],
@@ -449,8 +479,8 @@
             "Process-table fallback is standing by for AppleScript Terminal inventory failures."
           ],
           "recommendations": [
-            "Keep the resident relay monitor running with per-agent aliases so each observed agent session receives direct wake coverage.",
-            "Use idle sessions as assignable capacity through the local director once lane selection is wired."
+            "Keep the local Sub-Director running so terminal heartbeats and wake queue stay current.",
+            "No idle terminal agent capacity is currently visible."
           ]
         }
       },
@@ -461,34 +491,85 @@
       "record": {
         "exists": true,
         "path": "/Users/danielgoldberg/.tnf/master-heartbeat/state/master-heartbeat-latest.json",
-        "mtimeMs": 1786225931779.3599,
-        "ageSeconds": 622,
+        "mtimeMs": 1786229113196.8687,
+        "ageSeconds": 125,
         "payload": {
-          "generatedAt": "2026-08-08T21:52:11.772Z",
-          "status": "skipped-locked",
+          "generatedAt": "2026-08-08T22:45:13.196Z",
+          "status": "healthy",
+          "cycle": 46,
           "actor": {
             "id": "tnf-master-heartbeat",
             "role": "tnf-master-clock"
           },
+          "config": {
+            "rootDir": "/Users/danielgoldberg/.tnf",
+            "intervalMs": 15000,
+            "commandTimeoutMs": 120000,
+            "watchdogEveryCycles": 3,
+            "ensureInstallEveryCycles": 20,
+            "ensureServicesEveryCycles": 4,
+            "resourceRetentionEveryCycles": 240,
+            "roleMapReconcileEveryCycles": 5760,
+            "allowPromptInjection": false,
+            "interactiveSafeMode": true,
+            "interactiveSafeModeFile": "/Users/danielgoldberg/.tnf/flags/interactive-safe-mode"
+          },
           "summary": {
-            "totalSteps": 0,
+            "totalSteps": 3,
             "failedSteps": 0
           },
-          "steps": []
+          "steps": [
+            {
+              "name": "terminal-heartbeat-pulse",
+              "ok": true,
+              "startedAt": "2026-08-08T22:45:08.740Z",
+              "endedAt": "2026-08-08T22:45:11.822Z",
+              "durationMs": 3082,
+              "exitCode": 0,
+              "signal": null,
+              "error": null,
+              "stdoutTail": "[terminal-heartbeat] status=skipped-safe-mode observed=13 targeted=0 injections=0\n",
+              "stderrTail": ""
+            },
+            {
+              "name": "swarm-context-bridge",
+              "ok": true,
+              "startedAt": "2026-08-08T22:45:11.822Z",
+              "endedAt": "2026-08-08T22:45:12.350Z",
+              "durationMs": 528,
+              "exitCode": 0,
+              "signal": null,
+              "error": null,
+              "stdoutTail": "[swarm-context-bridge] coherence=95 terminals=13 agents=5 directives=0\n",
+              "stderrTail": ""
+            },
+            {
+              "name": "director-cycle",
+              "ok": true,
+              "startedAt": "2026-08-08T22:45:12.350Z",
+              "endedAt": "2026-08-08T22:45:13.196Z",
+              "durationMs": 846,
+              "exitCode": 0,
+              "signal": null,
+              "error": null,
+              "stdoutTail": "\"observed\":13,\"idleAgents\":0,\"localHeartbeatAgeMs\":29698.598876953125,\"terminalHeartbeatAgeMs\":1017.142578125,\"fallbackUsed\":false}\n✅ Connected to Redis at localhost:6379\n📤 Sent [status]: Agent tnf-thin-client (worker) is now online\n🤖 Registered as: tnf-thin-client (worker) on tnf\n   ID: agent_tnf-thin-client_1786229113089\n   Capabilities: task_execution, report, collaborate, general\n📤 Sent [status]: Agent tnf-thin-client is going offline\n👋 Disconnected from Redis network\n{\"timestamp\":\"2026-08-08T22:45:13.178Z\",\"message\":\"LDA Relay Delegation Cycle Complete\",\"role\":\"Local-Director-Agent\"}\n",
+              "stderrTail": ""
+            }
+          ]
         }
       },
-      "stale": true
+      "stale": false
     },
     "coreFleet": {
       "staleAfterSeconds": 1800,
       "record": {
         "exists": true,
         "path": "/Users/danielgoldberg/.tnf/core-fleet-latest.json",
-        "mtimeMs": 1786225408951.3596,
-        "ageSeconds": 1145,
+        "mtimeMs": 1786229210806.6548,
+        "ageSeconds": 27,
         "payload": {
           "ok": true,
-          "generatedAt": "2026-08-08T21:33:42.189Z",
+          "generatedAt": "2026-08-08T22:46:01.036Z",
           "dryRun": false,
           "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
           "steps": [
@@ -496,109 +577,109 @@
               "step": "nft-identity",
               "status": "ok",
               "detail": "existing local-oss-5cf0356cd5d96efe",
-              "at": "2026-08-08T21:33:42.199Z"
+              "at": "2026-08-08T22:46:01.051Z"
             },
             {
               "step": "identity",
               "status": "ok",
               "detail": "already Local Sub-Director (/Users/danielgoldberg/.tnf/agent.yaml)",
-              "at": "2026-08-08T21:33:42.199Z"
+              "at": "2026-08-08T22:46:01.052Z"
             },
             {
               "step": "env-hints",
               "status": "ok",
               "detail": "/Users/danielgoldberg/.tnf/core-fleet.env",
-              "at": "2026-08-08T21:33:42.200Z"
+              "at": "2026-08-08T22:46:01.053Z"
             },
             {
               "step": "sync:local-subdirector",
               "status": "ok",
               "detail": "/Users/danielgoldberg/.tnf/local-subdirector",
-              "at": "2026-08-08T21:33:42.663Z"
+              "at": "2026-08-08T22:46:01.528Z"
             },
             {
               "step": "sync:master-heartbeat",
               "status": "ok",
               "detail": "/Users/danielgoldberg/.tnf/master-heartbeat",
-              "at": "2026-08-08T21:33:42.732Z"
+              "at": "2026-08-08T22:46:01.586Z"
             },
             {
               "step": "relocate:com.tnf.local-subdirector",
               "status": "ok",
               "detail": "already points at real runtime",
-              "at": "2026-08-08T21:33:42.734Z"
+              "at": "2026-08-08T22:46:01.589Z"
             },
             {
               "step": "relocate:com.tnf.master-heartbeat",
               "status": "ok",
               "detail": "already points at real runtime",
-              "at": "2026-08-08T21:33:42.735Z"
+              "at": "2026-08-08T22:46:01.589Z"
             },
             {
               "step": "redis",
               "status": "ok",
               "detail": "PONG",
-              "at": "2026-08-08T21:41:57.532Z"
+              "at": "2026-08-08T22:46:29.904Z"
             },
             {
               "step": "relay",
               "status": "ok",
               "detail": "local relay already healthy",
-              "at": "2026-08-08T21:41:57.738Z"
+              "at": "2026-08-08T22:46:30.051Z"
             },
             {
               "step": "mcp",
               "status": "ok",
               "detail": "/Users/danielgoldberg/.tnf/mcp.json",
-              "at": "2026-08-08T21:41:57.742Z"
+              "at": "2026-08-08T22:46:30.061Z"
             },
             {
               "step": "local-subdirector-service.sh",
               "status": "ok",
               "detail": "install",
-              "at": "2026-08-08T21:42:03.276Z"
+              "at": "2026-08-08T22:46:34.564Z"
             },
             {
               "step": "tnf-master-heartbeat-service.sh",
               "status": "ok",
               "detail": "install",
-              "at": "2026-08-08T21:42:05.839Z"
+              "at": "2026-08-08T22:46:37.184Z"
             },
             {
               "step": "harness-boot.sh",
               "status": "ok",
               "detail": "boot",
-              "at": "2026-08-08T21:42:17.088Z"
+              "at": "2026-08-08T22:46:48.463Z"
             },
             {
               "step": "worker:tnf-subdirector-codegen-worker",
               "status": "ok",
               "detail": "*/5 * * * *",
-              "at": "2026-08-08T21:42:17.128Z"
+              "at": "2026-08-08T22:46:48.474Z"
             },
             {
               "step": "worker:tnf-subdirector-infra-worker",
               "status": "ok",
               "detail": "*/15 * * * *",
-              "at": "2026-08-08T21:42:17.128Z"
+              "at": "2026-08-08T22:46:48.474Z"
             },
             {
               "step": "register:tnf-local-subdirector",
               "status": "ok",
               "detail": "director",
-              "at": "2026-08-08T21:43:07.981Z"
+              "at": "2026-08-08T22:46:50.599Z"
             },
             {
               "step": "register:agent_hermes-codegen-worker_1782364000001",
               "status": "ok",
               "detail": "worker",
-              "at": "2026-08-08T21:43:22.943Z"
+              "at": "2026-08-08T22:46:50.704Z"
             },
             {
               "step": "register:agent_hermes-infra-worker_1782364000002",
               "status": "ok",
               "detail": "worker",
-              "at": "2026-08-08T21:43:28.945Z"
+              "at": "2026-08-08T22:46:50.799Z"
             }
           ],
           "warnings": [],
@@ -612,21 +693,22 @@
       "record": {
         "exists": true,
         "path": "/Users/danielgoldberg/.tnf/handoff-current.json",
-        "mtimeMs": 1786226011722.0742,
-        "ageSeconds": 542,
+        "mtimeMs": 1786228592099.4373,
+        "ageSeconds": 646,
         "payload": {
-          "sessionKey": "427fd2ad-b79e-4ba1-93ac-ace4f61a72a9",
-          "handoff_id": "427fd2ad-b79e-4ba1-93ac-ace4f61a72a9",
-          "generatedAt": "2026-08-08T21:45:38.208Z",
+          "sessionKey": "09026b04-62a0-4d26-82dc-0e0c19a52f04",
+          "handoff_id": "09026b04-62a0-4d26-82dc-0e0c19a52f04",
+          "generatedAt": "2026-08-08T22:03:21.460Z",
           "MISSION": [
-            "Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine."
+            "Protocol enforcement layer implemented for mandatory session handoff continuity."
           ],
           "STATE": [
-            "Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine.",
-            "Tsconfig path aliases for @the-new-fuse/types and core-vector-db references."
+            "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+            "CI/hook gates now block critical changes without fresh handoff artifacts."
           ],
           "IMMEDIATE_TASKS": [
-            "Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set."
+            "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+            "Emit a fresh handoff artifact immediately after completing the next critical work unit."
           ],
           "OPERATOR_NOTICES": [],
           "POINTERS": [
@@ -635,14 +717,14 @@
             "Execute listed next actions in order and preserve privacy/security gates"
           ],
           "HANDOFF_HISTORY": [
-            "2026-08-08T21:45:38.208Z The-New-Fuse fix/honest-failure-reporting ID:427fd2ad-b79e-4ba1-93ac-ace4f61a72a9"
+            "2026-08-08T22:03:21.460Z The-New-Fuse fix/honest-failure-reporting ID:09026b04-62a0-4d26-82dc-0e0c19a52f04"
           ],
           "CLOUD_HEALTH": {},
           "SOURCE": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
           "priority": "high",
           "branch": "fix/honest-failure-reporting",
-          "head_sha": "3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54",
-          "UPDATED": "2026-08-08T21:53:31.721Z"
+          "head_sha": "ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45",
+          "UPDATED": "2026-08-08T22:36:32.097Z"
         }
       },
       "stale": false
@@ -652,43 +734,36 @@
       "record": {
         "exists": true,
         "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-        "mtimeMs": 1786225538214.5413,
-        "ageSeconds": 1015,
+        "mtimeMs": 1786226720481.548,
+        "ageSeconds": 2518,
         "payload": {
           "spec": "tnf/session-handoff/0.1",
-          "handoff_id": "427fd2ad-b79e-4ba1-93ac-ace4f61a72a9",
-          "created_at": "2026-08-08T21:45:38.208Z",
+          "handoff_id": "09026b04-62a0-4d26-82dc-0e0c19a52f04",
+          "created_at": "2026-08-08T22:03:21.460Z",
           "repository": "The-New-Fuse",
           "branch": "fix/honest-failure-reporting",
-          "head_sha": "3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54",
+          "head_sha": "ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45",
           "protocol_ack": "TNF_PROTOCOL_ACK",
           "sensitive_scope": "internal",
           "project_ids": ["TNF-SESSION"],
           "work_summary": [
-            "Harden package boundaries: isolated task assignment metadata, local Skill type with resource requirements, MCP tool schema validation, Qdrant-backed skill registry wiring, complexity-routed AgentLLMService, and AgenticEvalEngine.",
-            "Tsconfig path aliases for @the-new-fuse/types and core-vector-db references."
+            "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+            "CI/hook gates now block critical changes without fresh handoff artifacts."
           ],
           "changed_paths": [
-            "docs/protocols/AGENT_STATUS_LEDGER.md",
+            "docs/protocols/LIVE_AGENT_WORK_CHECK.md",
             "docs/protocols/LIVING_STATE.md",
-            "packages/agent-coordination/src/core/TaskAssigner.ts",
-            "packages/agent-coordination/src/core/types.ts",
-            "packages/agent/src/interfaces/agent.interface.ts",
-            "packages/api/src/mcp/services/mcp-broker.service.ts",
-            "packages/claude-skills/package.json",
-            "packages/claude-skills/src/registry/SkillRegistry.ts",
-            "packages/claude-skills/tsconfig.json",
-            "packages/core/src/services/AgentLLMService.ts",
-            "packages/core/src/workflow/testing.ts",
-            "packages/jules-integration/tsconfig.json",
-            "packages/testing/tsconfig.json"
+            "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
+            "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md",
+            "package.json",
+            "scripts/protocols/live-agent-work-check.cjs"
           ],
           "verification": {
             "privacy_guard": "pass",
-            "secret_sweep": "pass",
+            "secret_sweep": "[REDACTED]",
             "docs_pii_guard": "pass",
             "supabase_rls_audit": "na",
-            "notes": "Auto-verify 2026-08-08T21:45:16.524Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+            "notes": "Auto-verify 2026-08-08T22:03:23.979Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
           },
           "continuation": {
             "owner": "tnf-orchestrator",
@@ -701,10 +776,11 @@
             ]
           },
           "next_actions": [
-            "Commit remaining docs/audits bucket; peel Living State noise; do not enable full-auto until TNF_SUPER_ADMIN_INPUT_TOKEN and TNF_GATE_POLICY_TOKEN are set."
+            "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+            "Emit a fresh handoff artifact immediately after completing the next critical work unit."
           ],
           "artifacts": {
-            "commits": ["3fb1898a1b3cb56eb08c4fe930ee4417a7fa4c54"]
+            "commits": ["ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45"]
           }
         }
       },
@@ -712,13 +788,25 @@
     }
   },
   "redis": {
-    "ok": false,
-    "ping": "spawnSync redis-cli ETIMEDOUT",
+    "ok": true,
+    "ping": "PONG",
+    "listening": true,
+    "processes": [
+      "17043     1 S       00:58 /usr/local/bin/redis-server 127.0.0.1:6379 "
+    ],
+    "wedgedSignals": [],
+    "likelyWedged": false,
+    "config": {
+      "configFile": "/Users/danielgoldberg/.tnf/redis/redis.conf",
+      "processId": "17043",
+      "save": "",
+      "shutdownOnSigterm": "nosave"
+    },
     "queues": {
       "planning": 0,
       "realtime": 0
     },
-    "registryExists": false
+    "registryExists": true
   },
   "tokens": {
     "TNF_SUPER_ADMIN_TOKEN": true,
@@ -730,7 +818,7 @@
     "exists": true,
     "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/operations/tnf-full-auto-state.json",
     "mtimeMs": 1786206273087.746,
-    "ageSeconds": 20290,
+    "ageSeconds": 22966,
     "payload": {
       "mode": "running",
       "updatedAt": "2026-08-03T22:59:15.473Z",
@@ -748,56 +836,14 @@
       }
     }
   },
-  "verdict": "block",
+  "verdict": "caution",
   "findings": [
-    {
-      "severity": "critical",
-      "id": "master-heartbeat-unloaded",
-      "message": "com.tnf.master-heartbeat is not loaded in launchd.",
-      "evidence": {}
-    },
-    {
-      "severity": "critical",
-      "id": "master-heartbeat-stale",
-      "message": "Master heartbeat state is missing, unreadable, or stale.",
-      "evidence": {
-        "ageSeconds": 622,
-        "generatedAt": "2026-08-08T21:52:11.772Z"
-      }
-    },
-    {
-      "severity": "warn",
-      "id": "local-subdirector-attention",
-      "message": "Local Subdirector heartbeat is stale or not healthy.",
-      "evidence": {
-        "ageSeconds": 2,
-        "status": "critical",
-        "summary": {
-          "observedSessions": 12,
-          "agentSessions": 10,
-          "activeSessions": 3,
-          "idleSessions": 1,
-          "stalledSessions": 6,
-          "wakePingsEmitted": 0,
-          "processFallbackActive": 0,
-          "processFallbackSessions": 0
-        }
-      }
-    },
-    {
-      "severity": "critical",
-      "id": "redis-unavailable",
-      "message": "Redis is not responding with PONG.",
-      "evidence": {
-        "ping": "spawnSync redis-cli ETIMEDOUT"
-      }
-    },
     {
       "severity": "warn",
       "id": "full-auto-stale",
       "message": "Full-auto state has not updated recently.",
       "evidence": {
-        "ageSeconds": 20290
+        "ageSeconds": 22966
       }
     },
     {

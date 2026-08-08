@@ -133,8 +133,12 @@ start_local_redis_once() {
   if redis_ping "${LOCAL_REDIS_URL}"; then
     return 0
   fi
-  echo "[factory-boot] local Redis target set; starting redis-server --daemonize yes (port 6379)"
-  redis-server --daemonize yes --port 6379 --bind 127.0.0.1 >/dev/null 2>&1 || true
+  echo "[factory-boot] local Redis target set; starting TNF local Redis bus (port 6379)"
+  if [[ -x "scripts/runtime/redis-local-bootstrap.sh" ]]; then
+    bash scripts/runtime/redis-local-bootstrap.sh start >/dev/null 2>&1 || true
+  else
+    redis-server --daemonize yes --port 6379 --bind 127.0.0.1 >/dev/null 2>&1 || true
+  fi
   for _ in 1 2 3 4 5; do
     sleep 1
     if redis_ping "${LOCAL_REDIS_URL}"; then

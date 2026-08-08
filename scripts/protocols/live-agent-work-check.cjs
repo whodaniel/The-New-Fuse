@@ -48,7 +48,7 @@ function readJson(filePath) {
   try {
     if (!fs.existsSync(filePath)) return { exists: false, path: filePath };
     const stat = fs.statSync(filePath);
-    const payload = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const payload = sanitizeForReport(JSON.parse(fs.readFileSync(filePath, 'utf8')));
     return {
       exists: true,
       path: filePath,
@@ -59,6 +59,39 @@ function readJson(filePath) {
   } catch (err) {
     return { exists: true, path: filePath, unreadable: true, error: err.message };
   }
+}
+
+function shouldRedactKey(key) {
+  const normalized = String(key).toLowerCase().replace(/[^a-z0-9]/g, '');
+  return [
+    'apikey',
+    'authorization',
+    'credential',
+    'encryptionkey',
+    'encryptionprivatekeyfile',
+    'encryptionprivatekeypem',
+    'keypem',
+    'password',
+    'privatekey',
+    'privatekeypem',
+    'secret',
+    'signingkey',
+    'signingprivatekeyfile',
+    'signingprivatekeypem',
+    'token',
+  ].some((needle) => normalized.includes(needle));
+}
+
+function shouldRedactString(value) {
+  return /-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/.test(value);
+}
+
+function sanitizeForReport(value, key = '') {
+  if (shouldRedactKey(key)) return '[REDACTED]';
+  if (typeof value === 'string') return shouldRedactString(value) ? '[REDACTED]' : value;
+  if (Array.isArray(value)) return value.map((entry) => sanitizeForReport(entry));
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).map(([entryKey, entryValue]) => [entryKey, sanitizeForReport(entryValue, entryKey)]));
 }
 
 function ensureDir(dir) {
@@ -194,15 +227,56 @@ function collectRedis() {
   const planning = run('redis-cli', ['LLEN', 'tnf:master:tasks:planning']);
   const realtime = run('redis-cli', ['LLEN', 'tnf:master:tasks:realtime']);
   const registry = run('redis-cli', ['EXISTS', 'tnf:agent-registry']);
+  const serverInfo = run('redis-cli', ['INFO', 'server']);
+  const saveConfig = run('redis-cli', ['CONFIG', 'GET', 'save']);
+  const shutdownConfig = run('redis-cli', ['CONFIG', 'GET', 'shutdown-on-sigterm']);
+  const listener = run('lsof', ['-nP', '-iTCP:6379', '-sTCP:LISTEN'], { timeoutMs: 3000 });
+  const ps = run('ps', ['-axo', 'pid=,ppid=,stat=,etime=,command='], { timeoutMs: 4000 });
+  const redisProcesses = ps.stdout
+    ? ps.stdout
+        .split('\n')
+        .filter((line) => /redis-(server|rdb-bgsave)|redis-cli/i.test(line))
+        .filter((line) => !line.includes('live-agent-work-check.cjs'))
+        .filter((line) => !line.includes('ps -axo'))
+        .slice(0, 80)
+    : [];
+  const wedgedSignals = redisProcesses.filter(
+    (line) =>
+      /redis-rdb-bgsave|redis-cli shutdown|redis-cli ping|redis-cli .*HSET|redis-cli .*PUBLISH/i.test(
+        line
+      ) && !/\b0:0[0-5]\b/.test(line)
+  );
   return {
     ok: ping.stdout === 'PONG',
     ping: ping.stdout || ping.stderr || ping.error,
+    listening: listener.stdout ? listener.stdout.includes(':6379') : false,
+    processes: redisProcesses,
+    wedgedSignals,
+    likelyWedged: ping.stdout !== 'PONG' && (listener.stdout?.includes(':6379') || wedgedSignals.length > 0),
+    config: {
+      configFile: parseInfoValue(serverInfo.stdout, 'config_file'),
+      processId: parseInfoValue(serverInfo.stdout, 'process_id'),
+      save: parseConfigGet(saveConfig.stdout, 'save'),
+      shutdownOnSigterm: parseConfigGet(shutdownConfig.stdout, 'shutdown-on-sigterm'),
+    },
     queues: {
       planning: Number.parseInt(planning.stdout || '0', 10) || 0,
       realtime: Number.parseInt(realtime.stdout || '0', 10) || 0,
     },
     registryExists: registry.stdout === '1',
   };
+}
+
+function parseInfoValue(stdout, key) {
+  const row = (stdout || '').split('\n').find((line) => line.startsWith(`${key}:`));
+  if (!row) return '';
+  return row.slice(key.length + 1).trim();
+}
+
+function parseConfigGet(stdout, key) {
+  const lines = (stdout || '').split('\n').map((line) => line.trim());
+  const index = lines.indexOf(key);
+  return index === -1 ? '' : lines[index + 1] || '';
 }
 
 function collectTokens() {
@@ -276,9 +350,59 @@ function analyze(snapshot) {
   }
 
   if (!snapshot.redis.ok) {
-    addFinding(findings, 'critical', 'redis-unavailable', 'Redis is not responding with PONG.', { ping: snapshot.redis.ping });
+    if (snapshot.redis.likelyWedged) {
+      addFinding(
+        findings,
+        'critical',
+        'redis-wedged',
+        'Redis is listening or has blocked clients, but PING is timing out.',
+        {
+          ping: snapshot.redis.ping,
+          listening: snapshot.redis.listening,
+          wedgedSignals: snapshot.redis.wedgedSignals.slice(0, 12),
+          remediation:
+            'Pause new Redis clients, stop stuck bootstrap/shutdown callers, restart com.thenewfuse.redis-tnf-bus, then refresh master-heartbeat.',
+        }
+      );
+    } else {
+      addFinding(findings, 'critical', 'redis-unavailable', 'Redis is not responding with PONG.', { ping: snapshot.redis.ping });
+    }
   } else if (snapshot.redis.queues.planning || snapshot.redis.queues.realtime) {
     addFinding(findings, 'warn', 'redis-queues-pending', 'Master task queues are not empty.', snapshot.redis.queues);
+  }
+
+  const redisLaunchd = launchd['com.thenewfuse.redis-tnf-bus'];
+  if (snapshot.redis.ok && redisLaunchd?.loaded && !redisLaunchd.pid) {
+    addFinding(
+      findings,
+      'warn',
+      'redis-launchd-mismatch',
+      'Redis responds to PING but com.thenewfuse.redis-tnf-bus is not the owning launchd process.',
+      {
+        launchd: redisLaunchd,
+        processes: snapshot.redis.processes.slice(0, 8),
+      }
+    );
+  }
+
+  if (
+    snapshot.redis.ok &&
+    (snapshot.redis.config.save || snapshot.redis.config.shutdownOnSigterm !== 'nosave' || !snapshot.redis.config.configFile)
+  ) {
+    addFinding(
+      findings,
+      'warn',
+      'redis-config-drift',
+      'Redis is running outside TNF fleet-safe local bus settings.',
+      {
+        expected: {
+          configFile: path.join(HOME, '.tnf/redis/redis.conf'),
+          save: '',
+          shutdownOnSigterm: 'nosave',
+        },
+        actual: snapshot.redis.config,
+      }
+    );
   }
 
   if (fullAuto.exists) {
@@ -383,6 +507,11 @@ ${processRows}
 
 ## Operating Rule
 Agents should run \`pnpm run tnf:live:agents:write\` before claiming fleet success, committing multi-agent work, or handing off after concurrent agent activity. A BLOCK verdict means pause new autonomous work and repair the reported live-state gap first.
+
+If the report contains \`redis-wedged\`, agents must not launch more Redis clients
+or bootstrap loops. The Local Subdirector should serialize recovery: stop stuck
+Redis callers, restart \`com.thenewfuse.redis-tnf-bus\`, refresh
+\`com.tnf.master-heartbeat\`, and rerun this check.
 `;
 }
 

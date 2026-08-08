@@ -1,30 +1,44 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-08T22:03:21.460Z`  
-Handoff ID: `09026b04-62a0-4d26-82dc-0e0c19a52f04`
+Created At: `2026-08-08T22:48:47.891Z` Handoff ID:
+`46f370c2-c031-4e03-9550-ac5501f6d43b`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `ae4255de1d5b4eaa6ac7196f34f81e5c1746fe45`
+- Head SHA: `f534c43c3a31f18708ca0411a0cefb1ce0b0bb93`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Captured the Local Subdirector live fleet cohesion workflow as
+  `.agent/skills/tnf-live-fleet-cohesion/SKILL.md`.
+- Hardened `live-agent-work-check` to detect `redis-wedged`,
+  `redis-launchd-mismatch`, and `redis-config-drift` while redacting sensitive
+  state payloads.
+- Reconfigured local Redis boot paths to converge on the TNF launchd bus with
+  RDB saves disabled and legacy dump snapshots quarantined.
 
 ## Changed Paths
 
-- docs/protocols/LIVE_AGENT_WORK_CHECK.md
+- .agent/skills/tnf-live-fleet-cohesion/SKILL.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json
 - docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md
-- package.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/autonomy/tnf-fleet-autohealer.py
+- scripts/boot-tnf.sh
+- scripts/orchestrator/factory-boot.sh
 - scripts/protocols/live-agent-work-check.cjs
+- scripts/runtime/redis-local-bootstrap.sh
+- scripts/runtime/tnf-anti-stall.sh
+- scripts/runtime/tnf-local-launchd-services.sh
+- scripts/start-agent-network.sh
+- scripts/start-all.sh
 
 ## Verification
 
@@ -35,8 +49,9 @@ Handoff ID: `09026b04-62a0-4d26-82dc-0e0c19a52f04`
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
+- Owner: `tnf-local-subdirector`
+- Targets: `codex-cli-agent`, `cursor-agent`, `claude-code`, `kilo-agent`,
+  `opencode-agent`, `pi-agent`
 - Priority: `high`
 
 ### Resume Checklist
@@ -48,7 +63,10 @@ Handoff ID: `09026b04-62a0-4d26-82dc-0e0c19a52f04`
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Keep using `pnpm run tnf:live:agents:write` before multi-agent commits or
+  handoffs; current verdict is `CAUTION` only because full-auto remains
+  token-gated.
+- Do not run protected full-auto until `TNF_SUPER_ADMIN_INPUT_TOKEN` and
+  `TNF_GATE_POLICY_TOKEN` are set.
+- Cloudflare token exposure remains operator action: rotate the exposed token
+  before relying on PR #109 as complete remediation.
