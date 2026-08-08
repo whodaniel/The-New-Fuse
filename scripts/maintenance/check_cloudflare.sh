@@ -1,4 +1,4 @@
-TOKEN="${CLOUDFLARE_TOKEN}"
+TOKEN="${CLOUDFLARE_TOKEN:-}"
 
 if [ -z "$TOKEN" ]; then
   echo "Error: CLOUDFLARE_TOKEN environment variable is not set." >&2
