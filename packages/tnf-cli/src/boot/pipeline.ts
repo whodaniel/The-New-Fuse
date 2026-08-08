@@ -352,6 +352,30 @@ export function createBootPipeline(
       },
     },
     {
+      id: 'core-federated-fleet',
+      label: 'Local Sub-Director + core federated fleet',
+      critical: false,
+      launches: [
+        'node scripts/runtime/establish-core-federated-fleet.cjs',
+        'com.tnf.local-subdirector',
+        'com.tnf.master-heartbeat',
+        'tnf-subdirector-codegen-worker',
+        'tnf-subdirector-infra-worker',
+      ],
+      notes: [
+        'Default OSS endowment: TNF CLI identity becomes Local Sub-Director.',
+        'Establishes Redis/local harness/workers without requiring cloud Super Director credentials.',
+        'Skip with TNF_SKIP_CORE_FLEET=1.',
+      ],
+      action: async () => {
+        if (process.env.TNF_SKIP_CORE_FLEET === '1' || process.env.TNF_SKIP_CORE_FLEET === 'true') {
+          console.log(chalk.dim('   Core fleet establish skipped (TNF_SKIP_CORE_FLEET=1).'));
+          return;
+        }
+        await runCommand('node', ['scripts/runtime/establish-core-federated-fleet.cjs']);
+      },
+    },
+    {
       id: 'agent-swarm',
       label: 'Agent swarm',
       critical: true,

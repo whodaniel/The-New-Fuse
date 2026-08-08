@@ -7,7 +7,10 @@
  */
 
 import type { Command } from 'commander';
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { getOrCreateCommand } from '../_registry.js';
 
 export interface TerminalWindowRecord {
@@ -169,6 +172,52 @@ export function registerFleetCommands(program: Command): Command {
     });
 
   fleet
+    .command('establish')
+    .description(
+      'Endow Local Sub-Director + establish the core OSS federated fleet (Redis, harness, workers, launchd)'
+    )
+    .option('--dry-run', 'Show planned actions without applying')
+    .option('--force-identity', 'Overwrite ~/.tnf/agent.yaml with Local Sub-Director defaults')
+    .action((opts) => {
+      const script = resolveRepoPath('scripts/runtime/establish-core-federated-fleet.cjs');
+      const args: string[] = [];
+      if (opts.dryRun) args.push('--dry-run');
+      if (opts.forceIdentity) args.push('--force-identity');
+      try {
+        execFileSync(process.execPath, [script, ...args], {
+          stdio: 'inherit',
+          env: process.env,
+        });
+      } catch {
+        process.exitCode = 1;
+      }
+    });
+
+  fleet
+    .command('core-status')
+    .description('Show the latest core federated fleet establish receipt')
+    .option('--json', 'Print raw receipt JSON')
+    .action((opts) => {
+      const receiptPath = path.join(os.homedir(), '.tnf', 'core-fleet-latest.json');
+      if (!fs.existsSync(receiptPath)) {
+        console.error('No core fleet receipt yet. Run: tnf fleet establish');
+        process.exitCode = 1;
+        return;
+      }
+      const raw = fs.readFileSync(receiptPath, 'utf8');
+      if (opts.json) {
+        console.log(raw);
+        return;
+      }
+      const receipt = JSON.parse(raw);
+      console.log(`\nCore fleet ok=${receipt.ok} at ${receipt.generatedAt}`);
+      for (const step of receipt.steps || []) {
+        console.log(`- [${step.status}] ${step.step}${step.detail ? `: ${step.detail}` : ''}`);
+      }
+      console.log('');
+    });
+
+  fleet
     .command('prompt')
     .description(
       'Inject a prompt into a target terminal window by permanent ID with hardware Return submission'
@@ -196,4 +245,9 @@ export function registerFleetCommands(program: Command): Command {
     });
 
   return fleet;
+}
+
+function resolveRepoPath(rel: string): string {
+  const root = process.env.TNF_REPO_DIR || process.env.TNF_ROOT || path.resolve(process.cwd());
+  return path.join(root, rel);
 }

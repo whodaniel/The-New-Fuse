@@ -31,7 +31,7 @@ if tnf_fleet_paused; then
   exit 0
 fi
 
-REPO_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 REGISTRY_ID="agent_hermes-codegen-worker_1782364000001"
 LOG="$HOME/.tnf/poll-jobs/tnf-subdirector-codegen-worker/cron.log"
 ART_DIR="$HOME/.tnf/sub-director/run-artifacts"

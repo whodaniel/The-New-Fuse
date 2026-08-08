@@ -1362,6 +1362,31 @@ async function main() {
   printHeader('Voice Beam + KWS Always-On');
   ensureVoiceKwsAlwaysOnFromOnboard();
 
+  printHeader('Core Federated Fleet (Local Sub-Director default)');
+  if (process.env.TNF_SKIP_CORE_FLEET === '1' || process.env.TNF_SKIP_CORE_FLEET === 'true') {
+    console.log('- skipped (TNF_SKIP_CORE_FLEET=1)');
+  } else {
+    const establishScript = path.join(ROOT, 'scripts/runtime/establish-core-federated-fleet.cjs');
+    if (!fs.existsSync(establishScript)) {
+      console.log(`- missing: ${establishScript}`);
+    } else {
+      const { spawnSync } = require('node:child_process');
+      const result = spawnSync(process.execPath, [establishScript], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        stdio: 'inherit',
+        env: process.env,
+      });
+      if (result.status === 0) {
+        console.log('- established: Local Sub-Director identity + core OSS fleet');
+        console.log('- receipt: ~/.tnf/core-fleet-latest.json');
+      } else {
+        console.log(`- WARN: establish exited ${result.status}; install remains usable`);
+        console.log('- retry: node scripts/runtime/establish-core-federated-fleet.cjs');
+      }
+    }
+  }
+
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(
     'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.'

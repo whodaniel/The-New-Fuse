@@ -1493,6 +1493,16 @@ const HOOK_RUN_LOG_PATH =
   (process.env.HOME
     ? path.join(process.env.HOME, '.tnf', 'hooks', 'runs.jsonl')
     : path.join(repoRoot, '.tnf', 'hooks', 'runs.jsonl'));
+/**
+ * Home-relative rendering for help text only. The absolute path above is
+ * correct at runtime, but help strings are captured into the committed
+ * command-surface snapshot, which leaked the operator's home directory into
+ * the repository and tripped the local-runtime-boundary gate.
+ */
+const HOOK_RUN_LOG_DISPLAY =
+  process.env.HOME && HOOK_RUN_LOG_PATH.startsWith(`${process.env.HOME}/`)
+    ? `~${HOOK_RUN_LOG_PATH.slice(process.env.HOME.length)}`
+    : HOOK_RUN_LOG_PATH;
 
 type HookDiagnosticLevel = 'error' | 'warning';
 type HookDiagnostic = {
@@ -6027,19 +6037,52 @@ capabilitiesCommand
     }
   });
 
+function loadDefaultAgentIdentity(): {
+  name: string;
+  role: string;
+  platform: string;
+  directorTier?: string;
+} {
+  const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
+  const defaults = {
+    name: process.env.AGENT_NAME || 'tnf-local-subdirector',
+    role: process.env.AGENT_ROLE || 'director',
+    platform: process.env.AGENT_PLATFORM || 'tnf',
+    directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
+  };
+  try {
+    if (!fs.existsSync(identityPath)) return defaults;
+    const text = fs.readFileSync(identityPath, 'utf8');
+    const pick = (key: string): string | undefined => {
+      const match = text.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?\\s*$`, 'm'));
+      return match?.[1]?.trim();
+    };
+    return {
+      name: process.env.AGENT_NAME || pick('name') || defaults.name,
+      role: process.env.AGENT_ROLE || pick('role') || pick('dacc_role') || defaults.role,
+      platform: process.env.AGENT_PLATFORM || pick('platform') || defaults.platform,
+      directorTier: process.env.TNF_DIRECTOR_TIER || pick('director_tier') || defaults.directorTier,
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
+
 program
   .command('register')
   .description('Register and listen as an agent')
-  .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
+  .argument('[name]', 'Agent name', DEFAULT_AGENT_IDENTITY.name)
   .argument(
     '[role]',
     `Agent role (${EFFECTIVE_AGENT_ROLE_TRAITS.join(', ')})`,
-    process.env.AGENT_ROLE || 'worker'
+    DEFAULT_AGENT_IDENTITY.role
   )
   .argument(
     '[platform]',
     `Agent platform (${EFFECTIVE_PLATFORM_TAXONOMY.join(', ')})`,
-    process.env.AGENT_PLATFORM || 'vscode'
+    DEFAULT_AGENT_IDENTITY.platform
   )
   .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
   .option(
@@ -6048,7 +6091,8 @@ program
   )
   .option(
     '--director-tier <tier>',
-    `Director authority tier when role/dacc-role is director (${DIRECTOR_TIER_TRAITS.join(', ')})`
+    `Director authority tier when role/dacc-role is director (${DIRECTOR_TIER_TRAITS.join(', ')})`,
+    DEFAULT_AGENT_IDENTITY.directorTier
   )
   .option(
     '--worker-action <action>',
@@ -6080,7 +6124,8 @@ program
           )
         );
       }
-      const directorTier: string | undefined = options.directorTier;
+      const directorTier: string | undefined =
+        options.directorTier || DEFAULT_AGENT_IDENTITY.directorTier;
       if (directorTier && !DIRECTOR_TIER_TRAITS.includes(directorTier)) {
         console.error(
           chalk.yellow(
@@ -6095,10 +6140,19 @@ program
       if (directorTier && DIRECTOR_TIER_TRAITS.includes(directorTier)) {
         extra.directorTier = directorTier;
       }
+      if (role === 'director' && !extra.daccRole) {
+        extra.daccRole = 'director';
+      }
+      if (role === 'director' && extra.directorTier === 'sub') {
+        extra.embodiment = 'sub-director';
+      }
       const agentInfo = await client.register(name, role, platform, [], extra);
       console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
       console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
       console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
+      if (extra.directorTier) {
+        console.log(`   Director tier: ${chalk.dim(String(extra.directorTier))}`);
+      }
 
       if (options.daemon) {
         console.log(chalk.cyan('\n🚀 Daemon mode: Agent registered and running in background'));
@@ -12237,7 +12291,7 @@ hooks
   .option('--event <path>', 'Event fixture file (JSON/YAML)')
   .option('--strict', 'Fail when warnings are present')
   .option('--render-plan', 'Include compiled node/edge render plan')
-  .option('--record', `Append this dry-run result to ${HOOK_RUN_LOG_PATH}`)
+  .option('--record', `Append this dry-run result to ${HOOK_RUN_LOG_DISPLAY}`)
   .option('--json', 'Output machine-readable JSON')
   .option('--tenant <id>', 'Override tenant/workspace scope')
   .option('--trace-id <uuid>', 'Attach correlation ID')

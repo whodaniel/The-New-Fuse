@@ -45,6 +45,8 @@
     "tnf:store:pack:verify": "pnpm --dir apps/chrome-extension run store:pack:verify",
     "tnf:store:pack:list-assets": "pnpm --dir apps/chrome-extension run store:pack:list-assets",
     "tnf:onboard": "node scripts/tnf-onboard-twip.cjs",
+    "tnf:fleet:establish": "node scripts/runtime/establish-core-federated-fleet.cjs",
+    "tnf:fleet:establish:dry": "node scripts/runtime/establish-core-federated-fleet.cjs --dry-run",
     "tnf:harness:boot": "bash scripts/runtime/harness-boot.sh",
     "tnf:harness:status": "bash scripts/runtime/relay-monitor-service.sh status && crontab -l | grep tnf",
     "tnf:harness:uninstall": "bash scripts/runtime/relay-monitor-service.sh uninstall && bash scripts/runtime/terminal-heartbeat-cron.sh uninstall && bash scripts/runtime/tnf-director-cron.sh uninstall",

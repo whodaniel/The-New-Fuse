@@ -1,22 +1,44 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LABEL="com.tnf.master-heartbeat"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LAUNCH_DOMAIN="gui/$(id -u)"
 NODE_BIN="${TNF_MASTER_HEARTBEAT_NODE_BIN:-$(command -v node)}"
 SCRIPT_PATH="$HOME/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs"
+CANONICAL_SCRIPT="${REPO_DIR}/scripts/runtime/tnf-master-heartbeat-loop.cjs"
 WORK_DIR="$HOME/.tnf/master-heartbeat"
 LOG_DIR="$WORK_DIR/logs"
 STATE_DIR="$WORK_DIR/state"
-ROOT_DIR="${TNF_MASTER_HEARTBEAT_ROOT_DIR:-$HOME/.tnf}"
+LIB_DIR="$WORK_DIR/lib"
+# Prefer the live repo as master-heartbeat root so cycleCommands can invoke
+# scripts/runtime/*; fall back to ~/.tnf only when repo is unavailable.
+ROOT_DIR="${TNF_MASTER_HEARTBEAT_ROOT_DIR:-$REPO_DIR}"
 ALLOW_PROMPT_INJECTION="${TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION:-false}"
 INTERACTIVE_SAFE_MODE="${TNF_INTERACTIVE_SAFE_MODE:-true}"
 INTERACTIVE_SAFE_MODE_FILE="${TNF_INTERACTIVE_SAFE_MODE_FILE:-$HOME/.tnf/flags/interactive-safe-mode}"
 RUNTIME_PATH="$(dirname "$NODE_BIN"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 ensure_dirs() {
-  mkdir -p "$LOG_DIR" "$STATE_DIR"
+  mkdir -p "$LOG_DIR" "$STATE_DIR" "$LIB_DIR" "$(dirname "$SCRIPT_PATH")"
+}
+
+sync_runtime() {
+  ensure_dirs
+  if [[ -f "$CANONICAL_SCRIPT" ]]; then
+    cp -f "$CANONICAL_SCRIPT" "$SCRIPT_PATH"
+    chmod +x "$SCRIPT_PATH"
+  fi
+  local repo_lib="${REPO_DIR}/scripts/lib"
+  if [[ -d "$repo_lib" ]]; then
+    for f in "$repo_lib"/*.cjs "$repo_lib"/*.js "$repo_lib"/*.sh; do
+      [[ -e "$f" ]] || continue
+      cp -f "$f" "$LIB_DIR/"
+      mkdir -p "$HOME/.tnf/lib"
+      cp -f "$f" "$HOME/.tnf/lib/"
+    done
+  fi
 }
 
 create_plist() {
@@ -51,6 +73,8 @@ create_plist() {
   <true/>
   <key>KeepAlive</key>
   <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -63,20 +87,33 @@ PLIST
 }
 
 install() {
-  ensure_dirs
+  sync_runtime
   create_plist
   start
   echo "installed: $LABEL"
 }
 
 start() {
-  ensure_dirs
-  if [[ ! -f "$PLIST_PATH" ]]; then
-    create_plist
+  sync_runtime
+  # Drop stale directory locks left by SIGTERM/kickstart races.
+  if [[ -d "$STATE_DIR/loop.lock" ]]; then
+    owner_pid="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('pid') or '')" "$STATE_DIR/loop.lock/owner.json" 2>/dev/null || true)"
+    if [[ -n "${owner_pid}" ]] && kill -0 "${owner_pid}" 2>/dev/null; then
+      :
+    else
+      rm -rf "$STATE_DIR/loop.lock"
+    fi
+  fi
+  create_plist
+  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" 2>/dev/null | grep -q 'state = running'; then
+    echo "already-running: $LABEL"
+    return 0
   fi
   launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
-  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  # Do not use kickstart -k here: forced SIGTERM makes launchctl last-exit=-15
+  # even when KeepAlive immediately respawns a healthy process.
+  launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 

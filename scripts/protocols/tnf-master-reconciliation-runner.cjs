@@ -17,10 +17,30 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execFileSync, execSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const START_TIME = Date.now();
+const NODE_BIN = process.execPath;
+
+// launchd often gives a bare PATH without Homebrew/Hermes node. Always put
+// the current interpreter directory first so child `node` invocations resolve.
+process.env.PATH = [
+  path.dirname(NODE_BIN),
+  process.env.PATH || '',
+  '/opt/homebrew/bin',
+  '/usr/local/bin',
+  '/usr/bin',
+  '/bin',
+].filter(Boolean).join(':');
+
+function runNode(scriptPath, args = [], opts = {}) {
+  return execFileSync(NODE_BIN, [scriptPath, ...args], {
+    cwd: opts.cwd || REPO_ROOT,
+    encoding: 'utf8',
+    env: process.env,
+  });
+}
 
 /**
  * Run one audit step and classify its OUTCOME, not merely whether it threw.
@@ -101,7 +121,7 @@ function main() {
   report.steps.schemaIntegrity = runStep('Protocol & Schema Integrity', () => {
     const scriptPath = path.join(REPO_ROOT, 'scripts/validate-protocol-schemas.cjs');
     if (fs.existsSync(scriptPath)) {
-      const output = execSync(`node "${scriptPath}"`, { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
+      const output = runNode(scriptPath).trim();
       return { output };
     }
     return { status: 'skipped' };
@@ -122,7 +142,7 @@ function main() {
   report.steps.codebaseLineage = runStep('Codebase Lineage & Alignment Telemetry', () => {
     const scriptPath = path.join(REPO_ROOT, 'scripts/protocols/tnf-codebase-lineage-plotter.cjs');
     if (fs.existsSync(scriptPath)) {
-      const output = execSync(`node "${scriptPath}"`, { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
+      const output = runNode(scriptPath).trim();
       return { output };
     }
     return { status: 'skipped' };
@@ -140,7 +160,7 @@ function main() {
     // even when it finds problems (by design — a monitor that fails when it
     // detects something is one nobody can trust), so execSync never throws and
     // the caller MUST inspect the payload.
-    const raw = execSync(`node "${scriptPath}" --json --no-alert`, { cwd: REPO_ROOT, encoding: 'utf8' });
+    const raw = runNode(scriptPath, ['--json', '--no-alert']);
     let parsed;
     try {
       parsed = JSON.parse(raw);
