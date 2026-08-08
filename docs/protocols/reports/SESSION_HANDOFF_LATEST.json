@@ -1,60 +1,59 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "45e36991-4e07-4103-ae62-bd99f1bb1dc8",
-  "created_at": "2026-08-07T22:02:19.626Z",
+  "handoff_id": "589e924f-5f55-492b-81db-db17e4236a8f",
+  "created_at": "2026-08-08T16:24:17.532Z",
+  "updated_at": "2026-08-08T16:25:00.000Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "44a281faf71d5cd7fbb69d94697e0ab68d550d29",
+  "head_sha": "f19c57e1cf0f48e4ca3dd4c1d8170979ee25cf53",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION", "TNF-RELIABILITY"],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Origin tip 44a281faf7 on fix/honest-failure-reporting: substrate attestation harness + collision provision (C1-C12) + build-lock PID/timestamp/dist boot pre-check + TNF CLI agent autonomous commit/push path.",
-    "TNF_AGENT_ID=tnf-cli-agent bypasses live operator confirm in .husky/tnf-authority.sh; content gates (privacy/secret/PII/build/locked-doc/merge) and audit trail still run; authority-surface edits still need explicit approval; other agents remain fully gated.",
-    "Left uncommitted on purpose: docs/legal/ + Section13 draft (docs-pii-guard blocked personal name), docs/operations/tnf-action-receipts.jsonl, twip terminal public data churn, virtual-library-blueprints submodule dirty."
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts.",
+    "PI agent web browsing/search capabilities restored and documented. Added symlinks for agent-browser, crawl4ai, browser-session-auth-bridge, and brave-search skills to `~/.pi/agent/skills/`. Updated pi-coding-agent.md with correct integration points and web browsing documentation."
   ],
   "changed_paths": [
-    "AGENTS.md",
-    ".husky/tnf-authority.sh",
-    "docs/operations/tnf-substrate-seal.json",
-    "docs/operations/tnf-autonomy-level.json",
+    ".agent/agents/pi-coding-agent.md",
+    "apps/api/src/controllers/available-models.controller.ts",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/CLI_AGENT_SURFACE_COHESION_GAP_2026-08-07.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/tnf-cli/src/utils/preflight.ts",
-    "packages/tnf-cli/src/utils/action-receipt.ts",
-    "scripts/protocols/tnf-golden-smoke.cjs",
-    "scripts/protocols/validate-progressive-autonomy.cjs",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "packages/core/src/entities/agent-prompt.entity.ts",
+    "packages/protocol-contracts/package.json",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "scripts/protocols/chronological-dispatch.cjs",
     "scripts/protocols/validate-substrate-attestation.cjs",
-    "scripts/tnf-onboard.cjs"
+    "scripts/protocols/validate-substrate-attestation.test.cjs"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
-    "supabase_rls_audit": "pass",
-    "notes": ""
+    "supabase_rls_audit": "na",
+    "pi-browsing-capabilities": "operational",
+    "notes": "Auto-verify 2026-08-08T16:25:00Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; pi-browsing-capabilities=operational (web skills symlinked); supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
-    "owner": "tnf-cli-agent",
-    "targets": ["tnf-cli-agent", "tnf-orchestrator"],
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md and Living State.",
-      "Confirm HEAD is 44a281faf7 (or successor) on origin/fix/honest-failure-reporting.",
-      "Use TNF_AGENT_ID=tnf-cli-agent for gated commit/push; keep authority-surface edits operator-approved.",
-      "Verify onboard + fleet present and CLI-critical dists before full-auto once."
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "On resume: export TNF_AGENT_ID=tnf-cli-agent for commit/push; run pnpm run validate:session-handoff and node scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new work.",
-    "Do not commit docs/legal/ or Section13 drafts until PII redacted; leave receipts/twip noise local unless intentionally curated.",
-    "If scripts/tnf-onboard.cjs or packages/tnf-cli fleet/slack surfaces are stubbed/missing, restore from known-good commits before full-auto.",
-    "Optional: set TNF_GATE_POLICY_TOKEN and enable TNF_REQUIRE_SUBSTRATE=1; coalesce registry cohesion gap only with operator handshake."
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["44a281faf71d5cd7fbb69d94697e0ab68d550d29"]
+    "commits": ["f19c57e1cf0f48e4ca3dd4c1d8170979ee25cf53"]
   }
 }

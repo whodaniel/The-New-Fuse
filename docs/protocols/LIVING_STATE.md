@@ -2,8 +2,10 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** On resume: export TNF_AGENT_ID=tnf-cli-agent for
-commit/push; run pnpm run validate:session-handoff and node
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`589e924f-5f55-492b-81db-db17e4236a8f` **Head:** `f19c57e1cf0f` commit/push; run
+pnpm run validate:session-handoff and node
 scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new
 work. **Project ID:** `TNF-SESSION` **Handoff:**
 `45e36991-4e07-4103-ae62-bd99f1bb1dc8` **Head:** `44a281faf71d`
@@ -50,6 +52,10 @@ must not be mass-deleted without verification evidence. See
 
 - [✅] **2026-08-03 Living State / handoff noise peel on main** — Removed ~82
 - [✅] 2026-08-07T21:35:20.886Z New script(s) created: tnf-golden-smoke.cjs,
+- [✅] 2026-08-08T14:47:57.434Z New agent(s) created: codex-cli-agent,
+  gemini-cli-agent, opencode-cli-agent
+- [✅] 2026-08-08T14:47:57.434Z Agent definition change: 3 added, 0 removed
+
   validate-progressive-autonomy.cjs, validate-substrate-attestation.cjs,
   validate-substrate-attestation.test.cjs
 

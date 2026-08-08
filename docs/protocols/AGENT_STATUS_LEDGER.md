@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-07T22:02:19.626Z** — handoff
+Updated: **2026-08-08T16:24:17.532Z** — handoff
+`589e924f-5f55-492b-81db-db17e4236a8f` (`f19c57e1cf0f`).
 `45e36991-4e07-4103-ae62-bd99f1bb1dc8` (`44a281faf71d`).
 `94e8746b-e4fd-4a04-8677-1618437912a5` (`2422616d77a8`).
 `d387c30c-be30-4fdc-84ad-1e4e1f2ac763` (`1032bba9db31`).
@@ -135,12 +136,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                         |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | On resume: export TNF_AGENT_ID=tnf-cli-agent for commit/push; run pnpm run validate:session-handoff and node scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new work. |
-| **P0**   | Do not commit docs/legal/ or Section13 drafts until PII redacted; leave receipts/twip noise local unless intentionally curated.                                                                |
-| **P0**   | If scripts/tnf-onboard.cjs or packages/tnf-cli fleet/slack surfaces are stubbed/missing, restore from known-good commits before full-auto.                                                     |
-| **P0**   | Optional: set TNF_GATE_POLICY_TOKEN and enable TNF_REQUIRE_SUBSTRATE=1; coalesce registry cohesion gap only with operator handshake.                                                           |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -206,6 +205,14 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | relay-server-qa-agent   | `TNF:LOCAL:AGENT:RELAY-SERVER-QA-AGENT:001`   | **NEW** — registered at 2026-07-20T06:17:43.087Z |
 | staff-review-agent      | `TNF:LOCAL:AGENT:STAFF-REVIEW-AGENT:001`      | **NEW** — registered at 2026-07-20T06:17:43.087Z |
 | staffing-director-agent | `TNF:LOCAL:AGENT:STAFFING-DIRECTOR-AGENT:001` | **NEW** — registered at 2026-07-20T06:17:43.087Z |
+
+### Newly Registered (This Session)
+
+| Agent              | Identity                                 | Status                                           |
+| ------------------ | ---------------------------------------- | ------------------------------------------------ |
+| codex-cli-agent    | `TNF:LOCAL:AGENT:CODEX-CLI-AGENT:001`    | **NEW** — registered at 2026-08-08T00:47:12.955Z |
+| gemini-cli-agent   | `TNF:LOCAL:AGENT:GEMINI-CLI-AGENT:001`   | **NEW** — registered at 2026-08-08T00:47:12.955Z |
+| opencode-cli-agent | `TNF:LOCAL:AGENT:OPENCODE-CLI-AGENT:001` | **NEW** — registered at 2026-08-08T00:47:12.955Z |
 
 ## Protocol Gaps (prioritized)
 
@@ -443,3 +450,30 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-07 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (45e36991-4e07-4103-ae62-bd99f1bb1dc8) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d9b4aee2-2bcf-47e4-aee0-0204e99bc51e) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(bc29d10c-4406-4dc9-a7af-f56030019bc1) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(846911f5-4714-4608-805e-ab1c23a6e765) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(59113157-b4e5-4876-83a1-97bf7e06a887) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(80e052a9-7704-4305-8f8a-de065f29c37e) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(711543d0-fd44-4166-bc97-7782b3983991) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(5c666d4e-3368-45e0-ac1e-cdf5dd727553) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7111a329-efb2-49ff-8579-cbe80eed87ac) | ✅ HANDOFF_READY |
+
+| 2026-08-08 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(589e924f-5f55-492b-81db-db17e4236a8f) | ✅ HANDOFF_READY |

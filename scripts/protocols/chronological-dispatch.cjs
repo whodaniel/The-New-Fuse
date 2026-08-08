@@ -6,6 +6,7 @@ const { createClient } = require('redis');
 
 const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
 
+const DEFAULT_REDIS_URL = 'redis://127.0.0.1:6379';
 const DEFAULT_QUEUE = 'tnf:master:tasks:planning';
 const COMPAT_QUEUE = 'tnf:master:tasks:pending';
 const LOG_QUEUE = 'tnf:master:logs';
@@ -167,37 +168,57 @@ async function main() {
 
   const queueItem = buildQueueItem(options.processId, profile);
   const targetQueue = profile.targetQueue || DEFAULT_QUEUE;
-  const redisUrl = process.env.REDIS_URL || '';
+  const explicitUrl = process.env.REDIS_URL || '';
+  // An unset REDIS_URL in the cron environment routed every dispatch to the
+  // local-artifact fallback for months while Redis was running normally on the
+  // conventional port. Absence of the variable is not evidence of absence of
+  // Redis, so probe the default before declaring the queue unreachable.
+  const attempts = explicitUrl
+    ? [{ url: explicitUrl, source: 'REDIS_URL' }]
+    : [{ url: DEFAULT_REDIS_URL, source: 'default-local' }];
 
-  if (redisUrl) {
-    await dispatchToRedis(redisUrl, queueItem, targetQueue);
-    console.log(
-      JSON.stringify(
-        {
-          ok: true,
-          dispatched: true,
-          processId: options.processId,
-          dispatchId: queueItem.id,
-          targetQueue,
-        },
-        null,
-        2
-      )
-    );
-    return;
+  let lastError = null;
+  for (const attempt of attempts) {
+    try {
+      await dispatchToRedis(attempt.url, queueItem, targetQueue);
+      console.log(
+        JSON.stringify(
+          {
+            ok: true,
+            dispatched: true,
+            processId: options.processId,
+            dispatchId: queueItem.id,
+            targetQueue,
+            resolvedFrom: attempt.source,
+          },
+          null,
+          2
+        )
+      );
+      return;
+    } catch (error) {
+      lastError = error;
+    }
   }
 
   if (!options.allowLocalFallback) {
-    throw new Error('REDIS_URL is required for TNF-native chronological dispatch');
+    throw new Error(
+      `Chronological dispatch could not reach Redis (${lastError?.message || 'unknown error'})`
+    );
   }
 
   const artifactPath = writeFallbackArtifact(repoRoot, queueItem, targetQueue);
+  // Persisting the item is not the same as delivering it. The caller
+  // (run-chronological-process.cjs) records only our exit code, so reporting
+  // ok:true / exit 0 here is precisely what let undelivered items pile up
+  // unnoticed while every cycle logged healthy.
   console.log(
     JSON.stringify(
       {
-        ok: true,
+        ok: false,
         dispatched: false,
         fallback: 'local-artifact',
+        reason: `redis unreachable: ${lastError?.message || 'no REDIS_URL and default probe failed'}`,
         processId: options.processId,
         dispatchId: queueItem.id,
         targetQueue,
@@ -207,6 +228,7 @@ async function main() {
       2
     )
   );
+  process.exitCode = 1;
 }
 
 main().catch((error) => {

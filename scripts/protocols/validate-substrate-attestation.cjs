@@ -31,6 +31,17 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const SEAL_REL = 'docs/operations/tnf-substrate-seal.json';
 const FULL_AUTO_STATE_REL = 'docs/operations/tnf-full-auto-state.json';
 const FULL_AUTO_FAIL_STREAK = 5;
+/**
+ * A loop that dies (crashed supervisor, unloaded LaunchAgent, removed crontab
+ * entry) freezes its state file mid-flight and keeps reporting mode=running
+ * forever. Failure-streak counting cannot see that — the streak stops advancing
+ * precisely because nothing runs. Liveness must be judged on the clock instead:
+ * if mode=running and the state has not been touched in this many intervals,
+ * the loop is presumed dead rather than healthy.
+ */
+const FULL_AUTO_STALE_INTERVALS = 3;
+/** Floor for the staleness window when intervalMinutes is missing or absurdly small. */
+const FULL_AUTO_MIN_STALE_MS = 60 * 60 * 1000;
 
 /** Packages the CLI launcher cannot start without. */
 const CLI_CRITICAL_ARTIFACTS = [
@@ -375,6 +386,36 @@ function checkFullAutoQuarantine(applyQuarantine) {
   }
   const failed = Number(state.failedCycles || 0);
   const lastOk = state.lastRun && state.lastRun.ok === true;
+
+  // Liveness before health: a frozen state file is not a passing one.
+  if (state.mode === 'running') {
+    const stamp = Date.parse(state.updatedAt || '');
+    if (!Number.isFinite(stamp)) {
+      return {
+        id: 'full-auto-quarantine',
+        severity: 'soft',
+        ok: false,
+        detail: `full-auto mode=running but updatedAt is missing/unparseable (${state.updatedAt ?? 'absent'}) — liveness unverifiable`,
+      };
+    }
+    const intervalMs = Number(state.intervalMinutes || 0) * 60 * 1000;
+    const window = Math.max(
+      intervalMs * FULL_AUTO_STALE_INTERVALS,
+      FULL_AUTO_MIN_STALE_MS,
+    );
+    const age = Date.now() - stamp;
+    if (age > window) {
+      const hrs = (age / 3600000).toFixed(1);
+      const winHrs = (window / 3600000).toFixed(1);
+      return {
+        id: 'full-auto-quarantine',
+        severity: 'soft',
+        ok: false,
+        detail: `full-auto STALE: mode=running but last update ${hrs}h ago (>${winHrs}h window) — loop presumed dead, not healthy`,
+      };
+    }
+  }
+
   const streak =
     failed >= FULL_AUTO_FAIL_STREAK && state.mode === 'running' && !lastOk;
   if (!streak) {

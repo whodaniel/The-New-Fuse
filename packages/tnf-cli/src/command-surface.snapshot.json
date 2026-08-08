@@ -2031,6 +2031,10 @@
               "description": "Skip cross-agent CLI parity audit stage"
             },
             {
+              "flags": "--skip-preflight",
+              "description": "Skip structural and process health checks before execution"
+            },
+            {
               "flags": "--skip-scorecard",
               "description": "Skip self-improvement scorecard generation stage"
             },
@@ -2133,6 +2137,10 @@
             {
               "flags": "--skip-parity",
               "description": "Skip cross-agent CLI parity audit stage"
+            },
+            {
+              "flags": "--skip-preflight",
+              "description": "Skip structural and process health checks before execution"
             },
             {
               "flags": "--skip-scorecard",
@@ -2652,7 +2660,7 @@
             },
             {
               "flags": "--record",
-              "description": "Append this dry-run result to /Users/danielgoldberg/.tnf/hooks/runs.jsonl"
+              "description": "Append this dry-run result to ~/.tnf/hooks/runs.jsonl"
             },
             {
               "flags": "--render-plan",

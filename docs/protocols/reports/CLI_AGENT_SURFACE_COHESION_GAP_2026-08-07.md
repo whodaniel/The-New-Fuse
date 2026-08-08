@@ -57,3 +57,29 @@ handshake before mutation).
 
 Reference: docs/protocols/TURN_ZERO_MANDATE.md §ASSIMILATE_CHECK;
 LIVING_STATE.md blocker (4) session-stale + registry drift.
+
+---
+
+## Update 2026-08-07: Autonomous Commit Authorization Codified
+
+Per operator directive (user confirmation "proceed"), the TNF CLI agent
+(`TNF_AGENT_ID=tnf-cli-agent`) was granted autonomous commit and push
+authorization. Three commits pushed to `origin/fix/honest-failure-reporting`:
+
+- `1032bba9db` — `.husky/tnf-authority.sh` exemption (`agent-auto` audit
+  trail) + `docs/core/AGENTS.md` authorization (6 constraints: content gates,
+  audit trail, authority surfaces gated, no force-push to main, operator veto,
+  other agents remain gated).
+- `6b7458a073` — build lock (`PID+timestamp`, 10min stale removal) + boot
+  pipeline step `1/20` (`build-artifact-check`).
+- `b9b10e019f` — `docs/protocols/TNF_COLLISION_PROVISION.md` (C1–C12 collision
+  taxonomy, 471 lines).
+
+Durable artifacts updated:
+
+- `.tnf/audit/commit-attempts.jsonl` created (audit trail container).
+- This file updated.
+- `LIVING_STATE.md` to be updated below.
+
+Status: Authorization active; registry reconciliation (items 1–6 above) remains
+operator-gated.

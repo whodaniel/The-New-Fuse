@@ -30,6 +30,82 @@ test('TNF_SKIP_SUBSTRATE short-circuits', () => {
   assert.match(result.stdout, /SKIP/);
 });
 
+/**
+ * Liveness regression guard. A loop that dies freezes its state file, so the
+ * failure-streak counter stops advancing and the old check reported green
+ * indefinitely. These cases pin the clock-based verdict instead.
+ */
+function withFullAutoState(state, fn) {
+  const repo = path.resolve(__dirname, '..', '..');
+  const statePath = path.join(repo, 'docs/operations/tnf-full-auto-state.json');
+  const backup = fs.existsSync(statePath) ? fs.readFileSync(statePath, 'utf8') : null;
+  try {
+    fs.mkdirSync(path.dirname(statePath), { recursive: true });
+    fs.writeFileSync(statePath, `${JSON.stringify(state, null, 2)}\n`);
+    const result = run(['--mode=warn', '--json']);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const summary = JSON.parse(result.stdout);
+    return fn(summary.checks.find((c) => c.id === 'full-auto-quarantine'));
+  } finally {
+    if (backup != null) fs.writeFileSync(statePath, backup);
+    else if (fs.existsSync(statePath)) fs.unlinkSync(statePath);
+  }
+}
+
+const HOUR = 3600 * 1000;
+
+test('stale running full-auto is reported dead, not healthy', () => {
+  withFullAutoState(
+    {
+      mode: 'running',
+      intervalMinutes: 60,
+      failedCycles: 3, // deliberately under FULL_AUTO_FAIL_STREAK
+      completedCycles: 14,
+      updatedAt: new Date(Date.now() - 100 * HOUR).toISOString(),
+      lastRun: { cycle: 25, ok: false, error: 'synthetic' },
+    },
+    (check) => {
+      assert.ok(check, 'full-auto-quarantine check missing');
+      assert.equal(check.ok, false, 'a 100h-stale running loop must not pass');
+      assert.match(check.detail, /STALE/);
+    },
+  );
+});
+
+test('freshly ticking full-auto still passes', () => {
+  withFullAutoState(
+    {
+      mode: 'running',
+      intervalMinutes: 60,
+      failedCycles: 3,
+      completedCycles: 14,
+      updatedAt: new Date().toISOString(),
+      lastRun: { cycle: 26, ok: true },
+    },
+    (check) => {
+      assert.ok(check);
+      assert.equal(check.ok, true, 'a live loop must not be flagged stale');
+    },
+  );
+});
+
+test('full-auto with unparseable updatedAt is not treated as live', () => {
+  withFullAutoState(
+    {
+      mode: 'running',
+      intervalMinutes: 60,
+      failedCycles: 0,
+      completedCycles: 1,
+      lastRun: { cycle: 1, ok: true },
+    },
+    (check) => {
+      assert.ok(check);
+      assert.equal(check.ok, false, 'missing updatedAt means liveness is unverifiable');
+      assert.match(check.detail, /liveness unverifiable/);
+    },
+  );
+});
+
 test('apply-quarantine marks streaking full-auto state', () => {
   const repo = path.resolve(__dirname, '..', '..');
   const statePath = path.join(repo, 'docs/operations/tnf-full-auto-state.json');
