@@ -262,7 +262,7 @@ function collectStateFiles() {
       record: readJson(path.join(HOME, '.tnf/local-subdirector/state/local-subdirector-heartbeat.json')),
     },
     masterHeartbeat: {
-      staleAfterSeconds: 180,
+      staleAfterSeconds: 360,
       record: readJson(path.join(HOME, '.tnf/master-heartbeat/state/master-heartbeat-latest.json')),
     },
     coreFleet: {
@@ -491,6 +491,8 @@ function analyze(snapshot) {
       ageSeconds: state.masterHeartbeat.record.ageSeconds,
       generatedAt: firstJsonValue(state.masterHeartbeat.record, ['generatedAt', 'created_at']),
     });
+  } else if (String(masterStatus || '').toLowerCase() === 'cycle-running') {
+    // Fresh cycle-running state is expected while the master loop is mid-cycle.
   }
 
   const localStatus = firstJsonValue(state.localSubdirector.record, ['status']);
