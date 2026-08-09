@@ -1,0 +1,73 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-f0034bc6bdc927a2",
+  "generated_at": "2026-08-09T04:36:27+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6420",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6420",
+    "source_title": "We have just made major progress and achieved a very substantial breakthrough",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:27+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6420",
+    "source_digest_sha256": "f52825563385397d69fe58da9013c7f96ac014e6245246d4d084ef2e0c42627d"
+  },
+  "taxonomy": {
+    "procedural": ["in the TNF agent!"],
+    "strategic": [],
+    "governance": [
+      "It has also exposed where the current version of the protocol"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.091,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6420"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 1 procedural, 0 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 526,
+    "unit_count": 11
+  }
+}

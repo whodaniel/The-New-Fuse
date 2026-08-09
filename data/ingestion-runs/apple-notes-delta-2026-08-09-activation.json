@@ -1,0 +1,2478 @@
+{
+  "generatedAt": "2026-08-09T04:36:57.590715Z",
+  "seedSource": "tnf-executable-intelligence-activation",
+  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json",
+  "artifactDir": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/intelligence-artifacts",
+  "sourcePrefixes": ["apple-notes-new-may-2026-"],
+  "summary": {
+    "sources_seen": 208,
+    "artifacts_resolved": 121,
+    "tasks_generated": 60,
+    "procedural_artifacts": 0,
+    "dormant_artifacts": 148,
+    "activation_coverage_tasks_per_artifact": 0.496,
+    "immediate_execution_coverage": 0.0,
+    "no_procedural_video_count": 0,
+    "no_procedural_video_sources": [],
+    "missing_transcript_count": 0,
+    "missing_transcript_sources": [],
+    "transcript_present_but_nonprocedural_count": 0,
+    "dispatch_eligible_count": 0,
+    "confidence_counts": {
+      "high": 0,
+      "medium": 0,
+      "low": 60
+    },
+    "implementation_area_counts": {
+      "orchestration-runtime": 33,
+      "frontend-delivery": 1,
+      "cross-stack-intel-activation": 24,
+      "backend-and-data": 2
+    },
+    "status_counts": {
+      "pending": 60
+    },
+    "open_tasks": 60,
+    "execution_candidates": 0,
+    "execution_candidate_threshold": "medium"
+  },
+  "tasks": [
+    {
+      "id": "act-a105eb61a0485b4f",
+      "status": "pending",
+      "priority": "high",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Security & Stability (Kilo Agent):",
+      "description": "Apply governance gate before adoption: Security & Stability (Kilo Agent):",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Security & Stability (Kilo Agent):",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.320814Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6225",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6225",
+        "source_title": "We have successfully reached a major milestone for The New Fuse (next\u2026",
+        "artifact_id": "eia-4bfdd568c1479842",
+        "artifact_generated_at": "2026-05-17T14:17:13+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.093,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-b6352fc73923f511",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: * Every forged component is verified by the IR Safety Inspector",
+      "description": "Apply governance gate before adoption: * Every forged component is verified by the IR Safety Inspector",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: * Every forged component is verified by the IR Safety Inspector",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 20,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "frontend-delivery",
+        "file_hints": [
+          "apps/frontend/src/pages/TNFCommandCenter.tsx",
+          "apps/frontend/src/pages/Tasks/Detail.tsx",
+          "apps/frontend/src/services/unifiedLedgerApi.ts"
+        ],
+        "rationale": "Matched target rule for area 'frontend-delivery'"
+      },
+      "createdAt": "2026-08-09T04:36:57.329032Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6230",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6230",
+        "source_title": "Native Kernel: Intelligence Synthesis & Final Sync:",
+        "artifact_id": "eia-189b806eb3e000f1",
+        "artifact_generated_at": "2026-05-17T14:17:12+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.075,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-d2433cbee9643920",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: **Communication Patterns**: broadcast, relay, dispatch, subscribe, e...",
+      "description": "Apply governance gate before adoption: **Communication Patterns**: broadcast, relay, dispatch, subscribe, emit, notify, handoff, bridge, channel, message, protocol, negotiate",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: **Communication Patterns**: broadcast, relay, dispatch, subscribe, e...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 70,
+        "label": "high"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.315481Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6221",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6221",
+        "source_title": "# Write concordance skill SKILL.md",
+        "artifact_id": "eia-a0026f9e1849027f",
+        "artifact_generated_at": "2026-05-17T14:17:13+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.206,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-911570ff4fd106e9",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - No interop-protocol-qa-agent (wrapper exists but canonical is miss...",
+      "description": "Apply governance gate before adoption: - No interop-protocol-qa-agent (wrapper exists but canonical is missing)",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - No interop-protocol-qa-agent (wrapper exists but canonical is miss...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.574749Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6468",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6468",
+        "source_title": "Thought: Let me check the super-director agent and sub-director agent\u2026",
+        "artifact_id": "eia-da4020289bbdc59a",
+        "artifact_generated_at": "2026-08-09T04:36:14+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.017,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-f864eca0f1777850",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - Ran TNF state governor audit -> plan -> apply -> verify and safely...",
+      "description": "Apply governance gate before adoption: - Ran TNF state governor audit -> plan -> apply -> verify and safely removed",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - Ran TNF state governor audit -> plan -> apply -> verify and safely...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.339928Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6237",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6237",
+        "source_title": "Protocolized execution is now in place, not a one-off.",
+        "artifact_id": "eia-a2ced6076927e37a",
+        "artifact_generated_at": "2026-05-17T14:17:10+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.215,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-c93c914487a34718",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - TNF research policy (sources, scouts, thresholds): .openclaw/works...",
+      "description": "Apply governance gate before adoption: - TNF research policy (sources, scouts, thresholds): .openclaw/workspace/",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - TNF research policy (sources, scouts, thresholds): .openclaw/works...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.357696Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6246",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6246",
+        "source_title": "Completed. Fresh internet research is now integrated into TNF with\u2026",
+        "artifact_id": "eia-733d55dcd521a611",
+        "artifact_generated_at": "2026-05-17T14:17:09+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.115,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-c1207e2ec0f043a7",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - The redis-ws-bridge.log you've been staring at is the older, broke...",
+      "description": "Apply governance gate before adoption: - The redis-ws-bridge.log you've been staring at is the older, broken, swapping WS protocol that's been error-spamming on every tick.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - The redis-ws-bridge.log you've been staring at is the older, broke...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.386495Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6403",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6403",
+        "source_title": "Now the picture is clear. Three critical notes:",
+        "artifact_id": "eia-abde70369e2aef6d",
+        "artifact_generated_at": "2026-08-09T04:36:30+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.158,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-57be34658436d785",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - Updated the hardening audit/handoff doc.",
+      "description": "Apply governance gate before adoption: - Updated the hardening audit/handoff doc.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - Updated the hardening audit/handoff doc.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 20,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.322058Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6226",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6226",
+        "source_title": "Implemented the next hardening pass and validated it end-to-end.",
+        "artifact_id": "eia-185a71192b535c27",
+        "artifact_generated_at": "2026-05-17T14:17:13+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.175,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-abe5125dd6960b02",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: - a2a-core: Agent-to-Agent protocol implementation",
+      "description": "Apply governance gate before adoption: - a2a-core: Agent-to-Agent protocol implementation",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: - a2a-core: Agent-to-Agent protocol implementation",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.303133Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6213",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6213",
+        "source_title": "Based on my exploration of the TNF codebase, documentation, CLI, and\u2026",
+        "artifact_id": "eia-82f584499d1b110f",
+        "artifact_generated_at": "2026-05-17T14:17:15+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.084,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-320307cfd3f9fb5f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: > **Purpose**: Integrate findings from all protocols, operations, go...",
+      "description": "Apply governance gate before adoption: > **Purpose**: Integrate findings from all protocols, operations, governance, and agent systems to produce a single coherent view of how TNF's organizational structure functions end-to-end, where the seams are, and how to maintain cohesive synergy.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: > **Purpose**: Integrate findings from all protocols, operations, go...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.308837Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6215",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6215",
+        "source_title": "synthesize everything into a unified organizational analysis document\u2026",
+        "artifact_id": "eia-41d3ecd9f998b9da",
+        "artifact_generated_at": "2026-05-17T14:17:15+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.044,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-d5b9616160d09700",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: All core infrastructure layers now have the corrected assimilation t...",
+      "description": "Apply governance gate before adoption: All core infrastructure layers now have the corrected assimilation tenet",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: All core infrastructure layers now have the corrected assimilation t...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.452337Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6419",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6419",
+        "source_title": "All core infrastructure layers now have the corrected assimilation\u2026",
+        "artifact_id": "eia-6c0ca592680444fa",
+        "artifact_generated_at": "2026-08-09T04:36:27+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.213,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-005f943e4373f8ee",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Build a procedural protocol for reviewing files",
+      "description": "Apply governance gate before adoption: Build a procedural protocol for reviewing files",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Build a procedural protocol for reviewing files",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.310644Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6216",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6216",
+        "source_title": "This is a very good run, that has discovered a lot of cross domain\u2026",
+        "artifact_id": "eia-5f40029a98726cb9",
+        "artifact_generated_at": "2026-05-17T14:17:14+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.036,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-f109f818e5dfed12",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Committed: f8e109bdfa docs(authority): coherence audit follow-up",
+      "description": "Apply governance gate before adoption: Committed: f8e109bdfa docs(authority): coherence audit follow-up",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Committed: f8e109bdfa docs(authority): coherence audit follow-up",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.508495Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6440",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6440",
+        "source_title": "Last login: Fri Jul 24 20:09:09 on ttys001",
+        "artifact_id": "eia-0bea0619dbe4187d",
+        "artifact_generated_at": "2026-08-09T04:36:22+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.019,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-4a2ea0d70553e0cb",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Context Protocol agent; connect to Claude, GPT-4, Gemini via Redis",
+      "description": "Apply governance gate before adoption: Context Protocol agent; connect to Claude, GPT-4, Gemini via Redis",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Context Protocol agent; connect to Claude, GPT-4, Gemini via Redis",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 55,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.300798Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6211",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6211",
+        "source_title": "Based on my investigation of thenewfuse.com and the TNF (The New\u2026",
+        "artifact_id": "eia-a4e053e4cc2e5425",
+        "artifact_generated_at": "2026-05-17T14:17:15+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.03,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-3996081d3a1c1565",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Critique after audit.",
+      "description": "Apply governance gate before adoption: Critique after audit.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Critique after audit.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.520541Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6444",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6444",
+        "source_title": "I don't love the current version of the Web Browser control surface\u2026",
+        "artifact_id": "eia-6bec318af67a6844",
+        "artifact_generated_at": "2026-08-09T04:36:21+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.14,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-d292bf975b048072",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: It has also exposed where the current version of the protocol",
+      "description": "Apply governance gate before adoption: It has also exposed where the current version of the protocol",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: It has also exposed where the current version of the protocol",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.456857Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6420",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6420",
+        "source_title": "We have just made major progress and achieved a very substantial breakthrough",
+        "artifact_id": "eia-f0034bc6bdc927a2",
+        "artifact_generated_at": "2026-08-09T04:36:27+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.091,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-4c036667240f7b12",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Knowledge graph recovery/safety checks",
+      "description": "Apply governance gate before adoption: Knowledge graph recovery/safety checks",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Knowledge graph recovery/safety checks",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.317499Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6222",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6222",
+        "source_title": "Here\u2019s a consolidated list of what was worked on across this",
+        "artifact_id": "eia-ddea9bc3008bba22",
+        "artifact_generated_at": "2026-05-17T14:17:13+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.062,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-1ad166a566b1a17d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Make sure that TNF is always surfacing, learning from and assimilati...",
+      "description": "Apply governance gate before adoption: Make sure that TNF is always surfacing, learning from and assimilating all functional patterns and features from what is presented on the network, as weighed against it's pre-existing protocol structures.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Make sure that TNF is always surfacing, learning from and assimilati...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.562685Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6461",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6461",
+        "source_title": "Make sure that TNF is always surfacing, learning from and assimilating\u2026",
+        "artifact_id": "eia-56243421ee9fed19",
+        "artifact_generated_at": "2026-08-09T04:36:16+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.231,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-89d122153fc03e19",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: OPERATOR POLICY:",
+      "description": "Apply governance gate before adoption: OPERATOR POLICY:",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: OPERATOR POLICY:",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.458294Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6422",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6422",
+        "source_title": "\ud83d\udee1\ufe0f  TNF SYSTEM STATUS\u2026",
+        "artifact_id": "eia-a6ddd7e64fa3065e",
+        "artifact_generated_at": "2026-08-09T04:36:26+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.043,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-881cdafaa2562d91",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Parity Protocol.",
+      "description": "Apply governance gate before adoption: Parity Protocol.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Parity Protocol.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.350954Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6241",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6241",
+        "source_title": "To assure that every package, SaaS page, and CLI command in The New\u2026",
+        "artifact_id": "eia-83433b398941ef51",
+        "artifact_generated_at": "2026-05-17T14:17:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.216,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-c8be775095f87a5f",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Protocol enforcement layer implemented for mandatory session handoff...",
+      "description": "Apply governance gate before adoption: Protocol enforcement layer implemented for mandatory session handoff continuity.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Protocol enforcement layer implemented for mandatory session handoff...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.581674Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6476",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6476",
+        "source_title": "Last login: Sat Aug  8 11:27:50 on ttys007",
+        "artifact_id": "eia-b11a7bb3fba882c7",
+        "artifact_generated_at": "2026-08-09T04:36:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.067,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-80231bf81a8c61c5",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "security-audit",
+      "ownerHint": "security-auditor",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Pull canonical: federation policy, A2A protocol, broker/director",
+      "description": "Apply governance gate before adoption: Pull canonical: federation policy, A2A protocol, broker/director",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Pull canonical: federation policy, A2A protocol, broker/director",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.388683Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6408",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6408",
+        "source_title": "Can you find clear decisive directives to fallow that will help provide\u2026",
+        "artifact_id": "eia-f8aec56bff4f9955",
+        "artifact_generated_at": "2026-08-09T04:36:29+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.069,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-f722e9e2e293c299",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Source Block** (The Attribution Cornerstone).",
+      "description": "Apply governance gate before adoption: Source Block** (The Attribution Cornerstone).",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Source Block** (The Attribution Cornerstone).",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 20,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.334059Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6232",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6232",
+        "source_title": "TNF_INTELLIGENCE_PIPELINE_GAUNTLET.md \u2192 Accepted (+38, -0)",
+        "artifact_id": "eia-34beb33158cf4ed7",
+        "artifact_generated_at": "2026-05-17T14:17:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.016,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-e55673cae1960a8d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: TNF_AGENT_ID=tnf-cli-agent for autonomous commit/push (gates + audit",
+      "description": "Apply governance gate before adoption: TNF_AGENT_ID=tnf-cli-agent for autonomous commit/push (gates + audit",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: TNF_AGENT_ID=tnf-cli-agent for autonomous commit/push (gates + audit",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.579100Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6472",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6472",
+        "source_title": "Refresh the session handoff once (emit with the autonomy path +",
+        "artifact_id": "eia-685c6ed8dbe2a461",
+        "artifact_generated_at": "2026-08-09T04:36:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.222,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-7bb12af8a20801a5",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: The full \"Technical Architecture & Protocol Manual\" actually already...",
+      "description": "Apply governance gate before adoption: The full \"Technical Architecture & Protocol Manual\" actually already resolves my stack-conflict concern",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: The full \"Technical Architecture & Protocol Manual\" actually already...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.469854Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6430",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6430",
+        "source_title": "I have more than enough now to finalize this responsibly. The full\u2026",
+        "artifact_id": "eia-07a27d0f7fc71579",
+        "artifact_generated_at": "2026-08-09T04:36:24+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.253,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-1f8d1ae5c2cf1864",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: The system is at 100% Technical Integrity.",
+      "description": "Apply governance gate before adoption: The system is at 100% Technical Integrity.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: The system is at 100% Technical Integrity.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.336924Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6235",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6235",
+        "source_title": "The Factory Blueprint: Native Core & Super Cycle Alignment:",
+        "artifact_id": "eia-4c942f6d76a26a55",
+        "artifact_generated_at": "2026-05-17T14:17:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.045,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-ce91701f015e8f1e",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: There are 36 protocol scripts in scripts\u2026",
+      "description": "Apply governance gate before adoption: There are 36 protocol scripts in scripts\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: There are 36 protocol scripts in scripts\u2026",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.444188Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6414",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6414",
+        "source_title": "Now I have a clearer picture. There are 36 protocol scripts in scripts\u2026",
+        "artifact_id": "eia-c02fe32e01213101",
+        "artifact_generated_at": "2026-08-09T04:36:28+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.127,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-8b79dba78bdfd0cd",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: This is essentially a coordination protocol.",
+      "description": "Apply governance gate before adoption: This is essentially a coordination protocol.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: This is essentially a coordination protocol.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.440002Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6409",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6409",
+        "source_title": "tnf hermes is working on it. What I need from you is to work on what\u2026",
+        "artifact_id": "eia-119045a15a49f4b4",
+        "artifact_generated_at": "2026-08-09T04:36:29+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.046,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-787948c41f4e6170",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-fa...",
+      "description": "Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-failure\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-fa...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.576693Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6470",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6470",
+        "source_title": "All three commits pushed successfully to origin/fix/honest-failure\u2026",
+        "artifact_id": "eia-59b664eeca2799ea",
+        "artifact_generated_at": "2026-08-09T04:36:12+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.478,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-ef11e06f5e1d3cb0",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-fa...",
+      "description": "Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-failure\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: All three commits pushed successfully to origin/fix/honest-fa...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.578106Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6471",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6471",
+        "source_title": "All three commits pushed successfully to origin/fix/honest-failure\u2026",
+        "artifact_id": "eia-8aae503d72aeb3bb",
+        "artifact_generated_at": "2026-08-09T04:36:12+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.478,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-6a332a0a95966661",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: We need to expand the core protocol gaurdrails with a special...",
+      "description": "Apply governance gate before adoption: Title: We need to expand the core protocol gaurdrails with a special protected\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: We need to expand the core protocol gaurdrails with a special...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.486741Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6432",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6432",
+        "source_title": "We need to expand the core protocol gaurdrails with a special protected\u2026",
+        "artifact_id": "eia-dc08446f370163ff",
+        "artifact_generated_at": "2026-08-09T04:36:24+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.455,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-c17d805148ee7ae2",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "performance-budget",
+      "ownerHint": "performance-optimizer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: review all aspects, delegate, audit, stress test, smoke test,...",
+      "description": "Apply governance gate before adoption: Title: review all aspects, delegate, audit, stress test, smoke test, run\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: review all aspects, delegate, audit, stress test, smoke test,...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 40,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.580116Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6474",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6474",
+        "source_title": "review all aspects, delegate, audit, stress test, smoke test, run\u2026",
+        "artifact_id": "eia-c9d67a133b32ffad",
+        "artifact_generated_at": "2026-08-09T04:36:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.231,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-6594b64910a02be9",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: \u2022 TNF CLI audit/reconciliation is implemented, with a canonic...",
+      "description": "Apply governance gate before adoption: Title: \u2022 TNF CLI audit/reconciliation is implemented, with a canonical self\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: \u2022 TNF CLI audit/reconciliation is implemented, with a canonic...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 20,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.348124Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6238",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6238",
+        "source_title": "\u2022 TNF CLI audit/reconciliation is implemented, with a canonical self\u2026",
+        "artifact_id": "eia-848a2e0c6a8cdc83",
+        "artifact_generated_at": "2026-05-17T14:17:10+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.488,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-d8cf2ff0b4427b3e",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: \u276f We need to expand the core protocol gaurdrails with a speci...",
+      "description": "Apply governance gate before adoption: Title: \u276f We need to expand the core protocol gaurdrails with a special protected\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: \u276f We need to expand the core protocol gaurdrails with a speci...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.471299Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6431",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6431",
+        "source_title": "\u276f We need to expand the core protocol gaurdrails with a special protected\u2026",
+        "artifact_id": "eia-990a359ca34017f0",
+        "artifact_generated_at": "2026-08-09T04:36:24+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.333,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-bea9a3b2c8810e4a",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Verify infrastructure package import safety in RedisAgentClient",
+      "description": "Apply governance gate before adoption: Verify infrastructure package import safety in RedisAgentClient",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Verify infrastructure package import safety in RedisAgentClient",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 20,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.313775Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6220",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6220",
+        "source_title": "Core package now passes too. Let me do a final comprehensive check\u2026",
+        "artifact_id": "eia-d5ed1d034de2da7d",
+        "artifact_generated_at": "2026-05-17T14:17:14+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.114,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-dc960c067ec0c244",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Zero-Trust Governance:",
+      "description": "Apply governance gate before adoption: Zero-Trust Governance:",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Zero-Trust Governance:",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.327966Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6229",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6229",
+        "source_title": "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
+        "artifact_id": "eia-236af14ecb3c1795",
+        "artifact_generated_at": "2026-05-17T14:17:12+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.108,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-b6166b9daaf86b68",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: all 6 phrase groups (agent, communication, vocabulary, intelligence,...",
+      "description": "Apply governance gate before adoption: all 6 phrase groups (agent, communication, vocabulary, intelligence, resilience, governance)",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: all 6 phrase groups (agent, communication, vocabulary, intelligence,...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 25,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.324924Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6228",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6228",
+        "source_title": "All endpoints working correctly. Let me now update the AGENTS.md with\u2026",
+        "artifact_id": "eia-7df33ebe48cd33c8",
+        "artifact_generated_at": "2026-05-17T14:17:12+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.154,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-eeca5b0d46ed3866",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: audit entry; nothing auto-prunes or auto-shares without opt-in.",
+      "description": "Apply governance gate before adoption: audit entry; nothing auto-prunes or auto-shares without opt-in.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: audit entry; nothing auto-prunes or auto-shares without opt-in.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.461435Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6426",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6426",
+        "source_title": "None of the paths the service describes exist on disk. The whole builder\u2026",
+        "artifact_id": "eia-6e47f86f1d16969c",
+        "artifact_generated_at": "2026-08-09T04:36:25+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.241,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-7af53732e98cf99d",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "backend-contracts",
+      "ownerHint": "backend-specialist",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: failure when model endpoint is unavailable.",
+      "description": "Apply governance gate before adoption: failure when model endpoint is unavailable.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: failure when model endpoint is unavailable.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 40,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "backend-and-data",
+        "file_hints": [
+          "apps/api/src/modules/task/task.service.ts",
+          "apps/api/src/modules/task/task.controller.ts",
+          "packages/database/src/drizzle/schema/tasks.ts"
+        ],
+        "rationale": "Matched target rule for area 'backend-and-data'"
+      },
+      "createdAt": "2026-08-09T04:36:57.338561Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6236",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6236",
+        "source_title": "To keep Agents continuously and intelligently working is going to\u2026",
+        "artifact_id": "eia-fc56a2e5a463616b",
+        "artifact_generated_at": "2026-05-17T14:17:11+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.13,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-1ddd911fd6172f33",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: massive, embarrassing failure in architectural comprehension on my p...",
+      "description": "Apply governance gate before adoption: massive, embarrassing failure in architectural comprehension on my part.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: massive, embarrassing failure in architectural comprehension on my p...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.299012Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6209",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6209",
+        "source_title": "Architectural Course Correction:",
+        "artifact_id": "eia-cfb8475b8479357e",
+        "artifact_generated_at": "2026-05-17T14:17:15+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.021,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-40658e62ed8e84f3",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: metadata to gate constrained sampling.",
+      "description": "Apply governance gate before adoption: metadata to gate constrained sampling.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: metadata to gate constrained sampling.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.495191Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6438",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6438",
+        "source_title": "pi v0.82.0\u2026",
+        "artifact_id": "eia-eb61cb2a01b1d4fb",
+        "artifact_generated_at": "2026-08-09T04:36:22+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.029,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-16f8a25b9fed8dea",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: of a High-Dimensional Governance Lattice.",
+      "description": "Apply governance gate before adoption: of a High-Dimensional Governance Lattice.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: of a High-Dimensional Governance Lattice.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.334965Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6233",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6233",
+        "source_title": "Nodes\" of the Gauntlet to a large degree already exist in the\u2026",
+        "artifact_id": "eia-31dfc21f62b3893c",
+        "artifact_generated_at": "2026-05-17T14:17:11+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.017,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-af668862d203e731",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: protocol standards from some other Agentic plat form or LLM provider...",
+      "description": "Apply governance gate before adoption: protocol standards from some other Agentic plat form or LLM provider, that",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: protocol standards from some other Agentic plat form or LLM provider...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.349691Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6239",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6239",
+        "source_title": "It has come to my attention that the agent/agents/.agent folder\u2026",
+        "artifact_id": "eia-0fd24fd09fc624c7",
+        "artifact_generated_at": "2026-05-17T14:17:10+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.032,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-3b4813bda8ca414b",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: protocol that more faithfully and varifiably enforced TNF standards and",
+      "description": "Apply governance gate before adoption: protocol that more faithfully and varifiably enforced TNF standards and",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: protocol that more faithfully and varifiably enforced TNF standards and",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.464371Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6428",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6428",
+        "source_title": "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+        "artifact_id": "eia-22bc9e907b079df2",
+        "artifact_generated_at": "2026-08-09T04:36:25+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.194,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-59ab5e1dcc1332ec",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: protocol-contracts with:",
+      "description": "Apply governance gate before adoption: protocol-contracts with:",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: protocol-contracts with:",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.352656Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6242",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6242",
+        "source_title": "Implemented end-to-end TS-first contract scaffolding and consumer\u2026",
+        "artifact_id": "eia-11f965d81d513539",
+        "artifact_generated_at": "2026-05-17T14:17:10+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.25,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-bf0cccfbc1db8d40",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: shows that we may have broken a previously working protocol procedur...",
+      "description": "Apply governance gate before adoption: shows that we may have broken a previously working protocol procedure and or",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: shows that we may have broken a previously working protocol procedur...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.545192Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6456",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6456",
+        "source_title": "The fact that you were not dirrectly prompted with the frontloading\u2026",
+        "artifact_id": "eia-96f630490349bd47",
+        "artifact_generated_at": "2026-08-09T04:36:17+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.083,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-3314b9d074b5cf73",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: the Dynamic Agent Composition and Communication (DACC) Protocol.",
+      "description": "Apply governance gate before adoption: the Dynamic Agent Composition and Communication (DACC) Protocol.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: the Dynamic Agent Composition and Communication (DACC) Protocol.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.466965Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6429",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6429",
+        "source_title": "Both research threads are in. This significantly reframes the task\u2026",
+        "artifact_id": "eia-96bae5933e80c227",
+        "artifact_generated_at": "2026-08-09T04:36:25+00:00",
+        "freshness_decay": "Low",
+        "implementation_density": 0.333,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-6beed604121b9495",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: the protocol for multiple agents picking up the same related/overlap...",
+      "description": "Apply governance gate before adoption: the protocol for multiple agents picking up the same related/overlapping task.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: the protocol for multiple agents picking up the same related/overlap...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.441520Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6410",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6410",
+        "source_title": "Done. I built the coordination layer Hermes's directives work was\u2026",
+        "artifact_id": "eia-7e787d0fb5196be7",
+        "artifact_generated_at": "2026-08-09T04:36:29+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.323,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-0b3ccc9baa57f891",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: to the protocol so far today, that I want you to carry this fresh co...",
+      "description": "Apply governance gate before adoption: to the protocol so far today, that I want you to carry this fresh context",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: to the protocol so far today, that I want you to carry this fresh co...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.589143Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6483",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6483",
+        "source_title": "Please make sure that your work from today in logged and documented\u2026",
+        "artifact_id": "eia-917deb285b274cca",
+        "artifact_generated_at": "2026-08-09T04:36:08+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.091,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-9b4364a90f6866a4",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: utiny, at how the core protocol tenents are divided between hard cod...",
+      "description": "Apply governance gate before adoption: utiny, at how the core protocol tenents are divided between hard coded infrastru",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: utiny, at how the core protocol tenents are divided between hard cod...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.450741Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6418",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6418",
+        "source_title": "Yes, we need to take a fresh look from fresh first principals perspectives\u2026",
+        "artifact_id": "eia-a8eef7e6dee7bdd9",
+        "artifact_generated_at": "2026-08-09T04:36:27+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.2,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-15f9df2f06026424",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: what the core tenant is and a cornerstone to the purpose of the tnf...",
+      "description": "Apply governance gate before adoption: what the core tenant is and a cornerstone to the purpose of the tnf protocol and",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: what the core tenant is and a cornerstone to the purpose of the tnf...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.449361Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6417",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6417",
+        "source_title": "The following is what the .poi agent is currently. I want you to apply\u2026",
+        "artifact_id": "eia-62f8693d3377faf9",
+        "artifact_generated_at": "2026-08-09T04:36:27+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.03,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-f70a77bab57ee391",
+      "status": "pending",
+      "priority": "medium",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: you to audit and refine the configuration and settings of any or all...",
+      "description": "Apply governance gate before adoption: you to audit and refine the configuration and settings of any or all of the",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: you to audit and refine the configuration and settings of any or all...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.585382Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6478",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6478",
+        "source_title": "I want you to take over and take full control and responsibility for\u2026",
+        "artifact_id": "eia-1ef907954f7e47fa",
+        "artifact_generated_at": "2026-08-09T04:36:10+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.091,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-ce2b84b85fe65db0",
+      "status": "pending",
+      "priority": "low",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: * Hardened the packages/protocol-contracts package by fixing Zod syntax",
+      "description": "Apply governance gate before adoption: * Hardened the packages/protocol-contracts package by fixing Zod syntax",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: * Hardened the packages/protocol-contracts package by fixing Zod syntax",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 85,
+        "label": "high"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "backend-and-data",
+        "file_hints": [
+          "apps/api/src/modules/task/task.service.ts",
+          "apps/api/src/modules/task/task.controller.ts",
+          "packages/database/src/drizzle/schema/tasks.ts"
+        ],
+        "rationale": "Matched target rule for area 'backend-and-data'"
+      },
+      "createdAt": "2026-08-09T04:36:57.358286Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6247",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6247",
+        "source_title": "Strategic Refactoring & Crypto Migration Complete",
+        "artifact_id": "eia-25e80879e9d6360a",
+        "artifact_generated_at": "2026-05-19T05:25:12+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-763d4fb8c329cbf7",
+      "status": "pending",
+      "priority": "low",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Any borrowed protocol capability gets reimplemented as TNF-native",
+      "description": "Apply governance gate before adoption: Any borrowed protocol capability gets reimplemented as TNF-native",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Any borrowed protocol capability gets reimplemented as TNF-native",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.353653Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6243",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6243",
+        "source_title": "It is fine that you have been working on openclaw. But, remember that",
+        "artifact_id": "eia-b987ea99d147dc71",
+        "artifact_generated_at": "2026-05-17T14:17:09+00:00",
+        "freshness_decay": "High",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-304c9510e9c137cd",
+      "status": "pending",
+      "priority": "low",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: Phase 3.4: IR Safety Inspector Complete:",
+      "description": "Apply governance gate before adoption: Title: Phase 3.4: IR Safety Inspector Complete:",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: Phase 3.4: IR Safety Inspector Complete:",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.323223Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6227",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6227",
+        "source_title": "Phase 3.4: IR Safety Inspector Complete:",
+        "artifact_id": "eia-9e95fcd5673f349c",
+        "artifact_generated_at": "2026-05-17T14:17:12+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-b04774431558d261",
+      "status": "pending",
+      "priority": "low",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: Review, inventory, audit, reconcile,",
+      "description": "Apply governance gate before adoption: Title: Review, inventory, audit, reconcile,",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: Review, inventory, audit, reconcile,",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.487682Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6433",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6433",
+        "source_title": "Review, inventory, audit,  reconcile,",
+        "artifact_id": "eia-e5e1546f45da6b98",
+        "artifact_generated_at": "2026-08-09T04:36:23+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-65a05a75e82c28c4",
+      "status": "pending",
+      "priority": "low",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: Title: The tnf agent IS the full agentic harness, procedure, protoco...",
+      "description": "Apply governance gate before adoption: Title: The tnf agent IS the full agentic harness, procedure, protocol, mixture\u2026",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: Title: The tnf agent IS the full agentic harness, procedure, protoco...",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 45,
+        "label": "medium"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.319494Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6224",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6224",
+        "source_title": "The tnf agent IS the full agentic harness, procedure, protocol, mixture\u2026",
+        "artifact_id": "eia-50bf8ca046ba709c",
+        "artifact_generated_at": "2026-05-17T14:17:13+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-cf2b53fed5f6eb2a",
+      "status": "pending",
+      "priority": "low",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: a monolithic entity; it is a Scoped Projection of the Protocol.",
+      "description": "Apply governance gate before adoption: a monolithic entity; it is a Scoped Projection of the Protocol.",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: a monolithic entity; it is a Scoped Projection of the Protocol.",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.336046Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6234",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6234",
+        "source_title": "Your insight cuts through the \"AI hype\" and identifies the core structural",
+        "artifact_id": "eia-6ea94e6fa41e4af1",
+        "artifact_generated_at": "2026-05-17T14:17:11+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-a9bbf9d22f9bc35f",
+      "status": "pending",
+      "priority": "low",
+      "lane": "product-intel-activation",
+      "ownerHint": "product-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: integrity of depth and width into the exausive layers of logical",
+      "description": "Apply governance gate before adoption: integrity of depth and width into the exausive layers of logical",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: integrity of depth and width into the exausive layers of logical",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 10,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "cross-stack-intel-activation",
+        "file_hints": [
+          "scripts/autonomy/activate_intelligence_actions.py",
+          "scripts/autonomy/ingest_ai5_and_new_may_notes.py"
+        ],
+        "rationale": "No strong domain match; defaulting to cross-stack activation surface."
+      },
+      "createdAt": "2026-08-09T04:36:57.294239Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6206",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6206",
+        "source_title": "Just as I had feared, the results show a massive loss of contextual\u2026",
+        "artifact_id": "eia-c1f133bc2b8dda40",
+        "artifact_generated_at": "2026-05-17T14:17:16+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    },
+    {
+      "id": "act-077c259b6a0bb442",
+      "status": "pending",
+      "priority": "low",
+      "lane": "orchestration-runtime",
+      "ownerHint": "orchestration-engineer",
+      "taskType": "governance_activation",
+      "title": "[AI5] Apply governance gate before adoption: protocol, every directive, let's make some branches accessible only to",
+      "description": "Apply governance gate before adoption: protocol, every directive, let's make some branches accessible only to",
+      "acceptance": "Execution evidence captured for: Apply governance gate before adoption: protocol, every directive, let's make some branches accessible only to",
+      "confidence": {
+        "score": 0.45,
+        "label": "low"
+      },
+      "relevance": {
+        "score": 35,
+        "label": "low"
+      },
+      "dispatchEligible": false,
+      "implementationTarget": {
+        "area": "orchestration-runtime",
+        "file_hints": [
+          "packages/relay-core/src/director-agent.ts",
+          "packages/workflow-engine/src/telemetry/TelemetryService.ts",
+          "scripts/protocols/chronological-dispatch.cjs"
+        ],
+        "rationale": "Matched target rule for area 'orchestration-runtime'"
+      },
+      "createdAt": "2026-08-09T04:36:57.301676Z",
+      "source": {
+        "source_id": "apple-notes-new-may-2026-6212",
+        "source_type": "note",
+        "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6212",
+        "source_title": "OK! It is working! Very Good! Now keep itterating through and over\u2026",
+        "artifact_id": "eia-6f06354674f680be",
+        "artifact_generated_at": "2026-05-17T14:17:15+00:00",
+        "freshness_decay": "Medium",
+        "implementation_density": 0.0,
+        "transcript_status": "unknown"
+      }
+    }
+  ],
+  "executionCandidates": []
+}

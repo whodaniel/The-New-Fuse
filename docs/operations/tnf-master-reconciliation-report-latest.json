@@ -1,89 +1,73 @@
 {
-  "timestamp": "2026-08-06T20:37:59.235Z",
+  "timestamp": "2026-08-09T13:10:12.039Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
-      "durationMs": 131,
+      "verdict": "clean",
+      "durationMs": 139,
       "data": {
         "branch": "fix/honest-failure-reporting",
-        "commit": "38c92bad70",
+        "commit": "da185b3983",
         "platform": "darwin",
         "node": "v22.22.3"
       }
     },
     "schemaIntegrity": {
       "ok": true,
-      "durationMs": 419,
+      "verdict": "clean",
+      "durationMs": 287,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
     },
     "selfEvolution": {
-      "ok": true,
-      "durationMs": 736,
+      "ok": false,
+      "verdict": "unresolved",
+      "durationMs": 0,
       "data": {
-        "timestamp": "2026-08-06T20:37:59.827Z",
-        "scanned_surfaces": [
-          ".agent/skills",
-          ".agent/agents",
-          "data/mcp_config.json"
-        ],
-        "discovered_skills": 572,
-        "discovered_agents": 191,
-        "mcp_servers": 6,
-        "assimilation_candidates": [
-          {
-            "skill": "tnf-fleet-delegation-governor",
-            "target": "fleet",
-            "status": "ASSIMILATED"
-          },
-          {
-            "skill": "tnf-harness-integrity-auditor",
-            "target": "auditor",
-            "status": "CANDIDATE"
-          },
-          {
-            "skill": "concordance",
-            "target": "concordance",
-            "status": "CANDIDATE"
-          },
-          {
-            "skill": "agent-discovery-protocol",
-            "target": "agents",
-            "status": "CANDIDATE"
-          },
-          {
-            "skill": "crawl4ai",
-            "target": "crawler",
-            "status": "CANDIDATE"
-          }
-        ]
+        "status": "skipped"
       }
     },
     "codebaseLineage": {
-      "ok": true,
-      "durationMs": 728,
+      "ok": false,
+      "verdict": "unresolved",
+      "durationMs": 1,
       "data": {
-        "output": "=== TNF Codebase Lineage & Alignment Analysis ===\nAnalyzed Commits: 40\nAverage Alignment Score: 68%\nProtocol/Harness Revisions: 16\nTesting/Quality Revisions: 4\n\nGenerated HTML Visualizer: apps/frontend/public/visualizations/TNF_CODEBASE_LINEAGE_VISUALIZER.html\nSaved Telemetry: docs/operations/tnf-codebase-lineage-telemetry.json"
+        "status": "skipped"
       }
     },
     "processHealth": {
-      "ok": true,
-      "durationMs": 454,
+      "ok": false,
+      "verdict": "findings",
+      "findings": 2,
+      "durationMs": 166,
       "data": {
-        "output": "[process-health] chronological control plane\n\n  NEVER-RAN  tenant-daily-priority-plan\n             cron invokes it on \"0 9 * * *\" but no cycle has ever recorded a result\n  ERROR      tenant-hourly-attribution-audit\n             exit=1 { \"ok\": false, \"error\": \"Connection timeout\" }\n  ERROR      tenant-knowledge-scout-sprint\n             exit=1 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/knowledge-scout-complete.cjs:120 - TNF defaults follow **verified-live** winners from \n  NEVER-RAN  tenant-nightly-maintenance\n             cron invokes it on \"30 3 * * *\" but no cycle has ever recorded a result\n  NEVER-RAN  tenant-personal-archaeology-digest\n             cron invokes it on \"0 */12 * * *\" but no cycle has ever recorded a result\n  ERROR      tnf-llm-arena-intel-collector\n             exit=1 [2026-08-06T20:04:12.597Z] LLM Arena Intel Collector starting... Collecting arena/benchmark data... Collecting arena: LM Arena (Chatbot Arena)... Collecting are\n  ERROR      tnf-master-clock-super-cycle\n             exit=1 synthetic-federation-gate-check failed: valid_request expected allow decision='allow' but got status=401 decision=undefined body={\"ok\":false,\"error\":\"UNAUTHORIZ\n  ERROR      tnf-swarm-stress-test\n             exit=1 {\"ok\":true,\"acquired\":true,\"processId\":\"swarm-stress-test\",\"pid\":97592,\"timestamp\":\"2026-08-06T20:37:05Z\"} Testing app.thenewfuse.com... Status: 200 Testing the\n\n  8 finding(s), 22 healthy"
+        "findings": 2,
+        "healthy": 27,
+        "detail": [
+          "error: tnf-master-clock-super-cycle",
+          "error: tnf-terminal-awareness-reminder"
+        ]
       }
     },
     "goalReconciliation": {
       "ok": true,
-      "durationMs": 1,
+      "verdict": "clean",
+      "durationMs": 2,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
-  "passed": true,
-  "totalDurationMs": 2478
+  "passed": false,
+  "totalDurationMs": 599,
+  "summary": {
+    "clean": 3,
+    "findings": 1,
+    "unresolved": 2,
+    "errored": 0,
+    "totalFindings": 2
+  }
 }

@@ -1,0 +1,116 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-b11a7bb3fba882c7",
+  "generated_at": "2026-08-09T04:36:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6476",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6476",
+    "source_title": "Last login: Sat Aug  8 11:27:50 on ttys007",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:11+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6476",
+    "source_digest_sha256": "0207258b10efc16727a7550d09c096e954e87d491e455b4ca2ebbe9a85e6154b"
+  },
+  "taxonomy": {
+    "procedural": [
+      "cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+      "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+      "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
+      "Use 'tnf' as the entrypoint for OpenClaw and other Claw-type agent operations.",
+      "Prefer native 'tnf <command>' routes first, then 'tnf openclaw ...' or 'tnf claw ...'.",
+      "TURN ZERO ONBOARDING PROMPT (Copy/Paste for new agent sessions):",
+      "Launch raw AI CLIs from the TNF repository root so ./docs/...",
+      "or 'cat ~/.tnf/handoff-current.json' for raw JSON",
+      "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+      "Discovery Warning: Found 3 active agent terminals.",
+      "To prevent duplication, ensure you are not running \"tnf boot\" in an existing agent lane.",
+      "- .agent/SYSTEM_PROMPT.md: present",
+      "- .agent/context/resource-map.md: present",
+      "- .agent/context/agent-onboarding.md: present",
+      "- .agent/workflows/frontload.md: present",
+      "- docs/protocols/reports/SESSION_HANDOFF_LATEST.json: present",
+      "- data/mcp_config.json: present",
+      "- read: .agent/SYSTEM_PROMPT.md (2575 words)",
+      "- read: docs/protocols/reports/SESSION_HANDOFF_LATEST.json (166 words)",
+      "- defer-until-needed: .agent/context/agent-onboarding.md (384 words)"
+    ],
+    "strategic": [
+      "cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+      "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+      "- OpenClaw is an optional integration surface routed through TNF",
+      "Cmd: danielgol /Users/danielgoldberg/.hermes/node/bin/node --require /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/tsx/dist/preflight.cjs --import file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/tsx/dist/loader.mjs /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/cli.ts tui",
+      "> the-new-fuse@ relay:start /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+      "> @the-new-fuse/relay-core@1.0.0 relay /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core",
+      "Error: Cannot find module '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
+      "path: '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'",
+      "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core:"
+    ],
+    "governance": [
+      "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+      "OPERATOR POLICY:",
+      "- skipped (policy file has no models.cloud list)",
+      "- Core Tenet 1 (Fleet Delegation): Maximize compute by delegating to specialized fleet peers (tnf agents who / tnf send).",
+      "- Core Tenet 2 (Assimilation): Parody & assimilate best patterns from external agents into native TNF skills.",
+      "- Core Tenet 3 (Attribution Cornerstone): Human & scientific source attribution overrules AI distillation.",
+      "- Core Tenet 4 (Operating Loop): Inspect -> Act -> Verify.",
+      "- Core Tenet 5 (Anti-Lobotomy): Never delete or prune .agent/, .gemini/, .claude/, .tnf/ state trees.",
+      "- agent-discovery-protocol",
+      "=== OpenClaw / Claw Operator Policy ===",
+      "- Audit current compatibility with: tnf compat openclaw",
+      "Error: Cannot find module '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
+      "path: '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.067,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6476"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 9 strategic, and 13 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 16603,
+    "unit_count": 297
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-b3a51707e47aa04f",
+  "generated_at": "2026-08-09T04:36:16+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6463",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6463",
+    "source_title": "I want you to allow the agents in the system to perform all level\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:16+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6463",
+    "source_digest_sha256": "412b4a9d6aafc0406fa29f4debf9df817523c2e58ff081a8dc024e023023ce4b"
+  },
+  "taxonomy": {
+    "procedural": [
+      "and updated to the live site or codebase then this must be exposed to the user",
+      "and allowed to be a configurable setting in the user level config."
+    ],
+    "strategic": [
+      "eveloper of TNF to allow the system to be fully agentic and fully hands free and"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.143,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6463"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 2 procedural, 1 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 808,
+    "unit_count": 14
+  }
+}
