@@ -185,8 +185,8 @@ DEPLOYMENT_STRATEGY=canary ./scripts/deployment/deploy-automated.sh
 
 ## Support
 
-- See [ROLLBACK_PROCEDURES.md](./ROLLBACK_PROCEDURES.md)
-- See [EMERGENCY_PROCEDURES.md](./EMERGENCY_PROCEDURES.md)
+- See [ROLLBACK_PROCEDURES.md](../../../../../deployment/ROLLBACK_PROCEDURES.md)
+- See [EMERGENCY_PROCEDURES.md](../../../../../deployment/EMERGENCY_PROCEDURES.md)
 - See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ---
@@ -194,38 +194,38 @@ DEPLOYMENT_STRATEGY=canary ./scripts/deployment/deploy-automated.sh
 ## Related Documentation
 
 ### Deployment Guides
-- [CloudRuntime Deployment Guide](./CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - CloudRuntime-specific deployment
-- [Docker Optimization](./DOCKER_OPTIMIZATION_SUMMARY.md) - Docker optimization strategies
-- [Deployment Automation](./DEPLOYMENT_AUTOMATION_COMPLETE.md) - Automation setup
-- [Deployment Status](./DEPLOYMENT_STATUS.md) - Current deployment status
-- [Quick Deployment](./DEPLOY_NOW.md) - Quick deployment guide
+- [CloudRuntime Deployment Guide](../../../../../deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - CloudRuntime-specific deployment
+- [Docker Optimization](../../../../../deployment/DOCKER_OPTIMIZATION_SUMMARY.md) - Docker optimization strategies
+- [Deployment Automation](../../../../../deployment/DEPLOYMENT_AUTOMATION_COMPLETE.md) - Automation setup
+- [Deployment Status](../../../../../deployment/DEPLOYMENT_STATUS.md) - Current deployment status
+- [Quick Deployment](../../../../../deployment/DEPLOY_NOW.md) - Quick deployment guide
 
 ### Operations
-- [Monitoring](./MONITORING.md) - Monitoring and observability
-- [Scaling](./SCALING.md) - Scaling strategies
-- [Emergency Procedures](./EMERGENCY_PROCEDURES.md) - Emergency response
-- [Rollback Procedures](./ROLLBACK_PROCEDURES.md) - Rollback guide
+- [Monitoring](../../../../../deployment/MONITORING.md) - Monitoring and observability
+- [Scaling](../../../../../deployment/SCALING.md) - Scaling strategies
+- [Emergency Procedures](../../../../../deployment/EMERGENCY_PROCEDURES.md) - Emergency response
+- [Rollback Procedures](../../../../../deployment/ROLLBACK_PROCEDURES.md) - Rollback guide
 
 ### Infrastructure
-- [Docker Setup](../guides/docker-setup.md) - Docker configuration
-- [Docker Best Practices](./DOCKER_OPTIMIZATION_SUMMARY.md) - Docker guidelines
+- [Docker Setup](../../../../../guides/docker-setup.md) - Docker configuration
+- [Docker Best Practices](../../../../../deployment/DOCKER_OPTIMIZATION_SUMMARY.md) - Docker guidelines
 - [CI/CD Strategy](../ci-cd/workflows.md) - CI/CD pipeline
 
 ### Pre-Deployment
-- [Production Readiness](../project-management/PRODUCTION_READINESS.md) - Production status
-- [Build Guide](../development/BUILD_GUIDE.md) - Build process
-- [Testing Setup](../testing/TESTING_SETUP_COMPLETE.md) - Testing framework
-- [Security Checklist](../security/DEVELOPER_SECURITY_CHECKLIST.md) - Security audit
+- [Production Readiness](../../../../../project-management/PRODUCTION_READINESS.md) - Production status
+- [Build Guide](../../../../../development/BUILD_GUIDE.md) - Build process
+- [Testing Setup](../../../../../testing/TESTING_SETUP_COMPLETE.md) - Testing framework
+- [Security Checklist](../../../../../security/DEVELOPER_SECURITY_CHECKLIST.md) - Security audit
 
 ### Post-Deployment
-- [Monitoring Guide](./MONITORING.md) - Deployment monitoring
+- [Monitoring Guide](../../../../../deployment/MONITORING.md) - Deployment monitoring
 - [Troubleshooting](./TROUBLESHOOTING.md) - Common issues
-- [Performance Optimization](../performance/PERFORMANCE_OPTIMIZATION_REPORT.md)
+- [Performance Optimization](../../../../../performance/PERFORMANCE_OPTIMIZATION_REPORT.md)
 
 ### Getting Started
 - [README.md](../../README.md) - Project overview
 - [Quick Start Guide](../../QUICK_START_GUIDE.md) - Quick setup
-- [Documentation Map](../../DOCUMENTATION_MAP.md) - All documentation
+- [Documentation Map](../../../../../archive/planning/DOCUMENTATION_MAP.md) - All documentation
 
 ---
 

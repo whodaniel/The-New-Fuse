@@ -367,7 +367,7 @@ cloud_runtime deployments
 
 ## Troubleshooting
 
-See [docs/deployment/TROUBLESHOOTING.md](./docs/deployment/TROUBLESHOOTING.md)
+See [docs/deployment/TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 for:
 
 - Build failures
@@ -380,7 +380,7 @@ for:
 ## Emergency Procedures
 
 See
-[docs/deployment/EMERGENCY_PROCEDURES.md](./docs/deployment/EMERGENCY_PROCEDURES.md)
+[docs/deployment/EMERGENCY_PROCEDURES.md](./EMERGENCY_PROCEDURES.md)
 for:
 
 - Critical service failures

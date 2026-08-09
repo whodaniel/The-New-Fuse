@@ -71,12 +71,18 @@ function encodeBase58(num) {
 
 function deterministicIdNumber(agentId) {
   let h = 0x811c9dc5;
+  const PROVISIONAL_ID_FLOOR = 1_000_000_000;
+  const PROVISIONAL_ID_SPACE = 1_000_000_000;
   const id = String(agentId || 'agent');
   for (let i = 0; i < id.length; i += 1) {
     h ^= id.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
+  // PROVISIONAL only — Phase 9 assigns real idNumbers sequentially via Redis
+  // (FederatedIdentityService). Must match federation-identity.ts and
+  // recovery-federation.ts exactly. Widened from 10,000 values on 2026-08-09
+  // after two live collisions in the 194-agent roster.
+  return `ID#:${encodeBase58(PROVISIONAL_ID_FLOOR + (h % PROVISIONAL_ID_SPACE))}`;
 }
 
 function buildIdentityRecord(input) {

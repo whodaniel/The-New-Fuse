@@ -1,13 +1,23 @@
 # 🧱 TNF Agent Workspace Isolation Protocol
 
+`[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE] [OWNER:TNF]`
+
 **Status:** ACTIVE · **Class:** [CLASS:PRIME] · **Protocol ID:**
 TNF*AGENT_WORKSPACE_ISOLATION_CANONICAL **Scope:** Every agent that writes to a
 TNF repository — which \_physical workspace* it works in, and what it may do
 there. **Location:** `docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md`
 **Machine policy:** `docs/protocols/agent-workspace-policy.json` **Companions:**
+`TNF_COLLISION_PROVISION.md` (**C2**, git working-tree collisions — see below),
 `TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md` (conceptual overlap),
 `MULTI_AGENT_INTEGRATION_PROTOCOL.md` (git-level conflicts),
 `AGENT_STATUS_LEDGER.md`.
+
+> **Boundary with `TNF_COLLISION_PROVISION` C2.** C2 governs _two actors racing
+> on one working tree_ — locks, overlap checks, recovery. This protocol governs
+> _which tree a task should be running in at all_, resolved by task class before
+> any race can occur. C2 is the collision; this is the seating chart. The
+> pre-mutation guard is registered as C2's **Pre-Action Check #8** and is the
+> single implementation shared by both.
 
 > The companion protocols answer _"who owns this task"_ and _"how do we merge."_
 > This one answers the question underneath both: **whose working tree am I

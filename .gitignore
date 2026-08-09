@@ -114,6 +114,19 @@ docs/project-management/*analysis*.md
 !.agent/agents/
 !.agent/agents/**
 !.agent/skills/
+# Tier-0 skill map. Generated, but tracked: agents load it at session start in a
+# fresh clone, before any build step can run.
+!.agent/SKILL_MANIFEST.md
+# Already tracked in HEAD and read as P1 by the context-frontloader skill, but
+# `.agent/*` shadowed it, so every edit needed `git add -f`. Allowlisted so the
+# rule matches what is actually versioned.
+# Git cannot re-include a file whose parent directory is excluded, so the
+# directory is un-ignored for traversal and its contents re-ignored immediately.
+# Without the middle line, allowlisting the directory would expose every other
+# runtime file in it (boot prompts, recovery axioms) to the next `git add -A`.
+!.agent/context/
+.agent/context/*
+!.agent/context/resource-map.md
 !.agent/skills/skill-management/
 !.agent/skills/skill-management/**
 !.agent/fleet/

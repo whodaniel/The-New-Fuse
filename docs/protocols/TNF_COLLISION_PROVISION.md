@@ -107,17 +107,48 @@ operations racing against working-tree edits.
    run `git status --short` before producing output against shared artifacts. If
    the target file is already modified by another actor, coordinate.
 3. **Stash discipline.** Stashes (`git stash list`) are a tell of interrupted
-   flows. Clean stashes before starting new work. Do not let stashes accumulate
-   beyond 3 entries — beyond that, they rot.
+   flows. Do not let stashes accumulate beyond 3 entries — beyond that, they
+   rot.
+
+   **Never drop a stash without archiving it first.** A stash is frequently the
+   _only_ copy of another actor's work: on 2026-08-09 two maintenance stashes
+   held the sole copy of 36 files. Tag, verify, then drop:
+
+   ```bash
+   git tag archive/stash-$(date +%F)-<label> 'stash@{0}'
+   git show archive/stash-<date>-<label>:path/to/file   # verify FIRST
+   git stash drop 'stash@{0}'
+   ```
+
+   And note what a stash does **not** hold: `git stash push` omits untracked
+   files entirely. "I stashed first" is not evidence that work was protected.
+   See `TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md` §1.1.
+
 4. **No concurrent `git checkout` / `git reset`.** These mutate the working tree
    and will corrupt concurrent edits. Only one actor may checkout/reset at a
-   time.
+   time. Per `TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md` R1, anything that moves
+   `HEAD` belongs in a separate clone, not a shared checkout.
 
 **Recovery:**
 
 - If `.git/index.lock` is stale (holder PID is dead): `rm .git/index.lock` is
   safe. Verify PID first.
-- If working tree is corrupted: `git checkout -- .` from a clean branch.
+- If the working tree is corrupted, **recover the work before restoring the
+  tree.** `git checkout -- .` discards every uncommitted change in the tree,
+  including other actors' — it is a data-loss operation, not a repair, and no
+  hook can intercept it (it updates no ref, so `reference-transaction` never
+  fires). Order:
+
+  1. `node scripts/security/workspace-mutation-guard.cjs --check` — see exactly
+     what is at risk, tracked and untracked, before touching anything.
+  2. Park everything that is not yours:
+     `git switch -c wip/$(date +%Y%m%d-%H%M%S) && git add -A && git commit -m wip`.
+     This captures untracked files, which a stash would not.
+  3. Only then restore, and restore the **narrowest path that fixes it** —
+     `git checkout -- <path>`, not `-- .`.
+
+  `git checkout -- .` across the whole tree is an operator action requiring
+  `TNF_MUTATION_OK=1`, never an agent's recovery step.
 
 ---
 
@@ -399,6 +430,21 @@ resource, run this check:
 6. **Disk headroom** (if writing >100MB): `df -h .` — is there room?
 7. **File mtime** (if overwriting shared state): is the file newer than your
    session start?
+8. **Working-tree dirtiness** (if moving `HEAD` — `stash`, `reset`, `merge`,
+   `rebase`, `pull`, `clean`, branch switch): is there uncommitted work in the
+   tree?
+
+   ```bash
+   node scripts/security/workspace-mutation-guard.cjs --check [--json]
+   ```
+
+   Checks 1–7 all ask _"is another actor mid-write?"_ Check 8 asks the question
+   that the 2026-08-09 incident turned on and that no other check covers: _"is
+   there uncommitted work that this operation will destroy?"_ The index lock was
+   free and every other signal was green while ~30 files were erased, twice.
+
+   The check reports tracked and untracked counts **separately**, because
+   `git stash` saves only the former. Exit 0 = clean, 1 = work at risk.
 
 If any check shows contention: wait, yield, or coordinate. Do not proceed
 blindly.
@@ -442,6 +488,7 @@ After any collision, verify:
 | `DIRECTIVES.md` (D7)                         | Anti-Lobotomy                                                | Enforcement — state-dir damage is both a collision (C5/C6) and an Anti-Lobotomy violation.                  |
 | `DIRECTIVES.md` (D14)                        | Handoff Enforcement                                          | Handoff packets are a collision surface (C6) — atomic writes required.                                      |
 | `TNF_ARTIFACTS_LIFECYCLE_PROTOCOL`           | Artifact lifecycle                                           | Adjacent — artifacts move through lifecycle states; collisions happen at transitions.                       |
+| `TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL`     | Which physical checkout a task runs in, by task class        | Upstream of C2 — C2 governs actors racing on one tree; that protocol keeps HEAD-moving work out of shared trees entirely, so the race never starts. Owns Pre-Action Check #8. |
 
 ---
 

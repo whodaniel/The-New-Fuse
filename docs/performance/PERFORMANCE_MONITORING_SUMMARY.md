@@ -529,7 +529,7 @@ For questions or issues:
 
 - Check [Performance Documentation](docs/performance/)
 - Review
-  [Monitoring Setup Guide](docs/performance/PERFORMANCE_MONITORING_SETUP.md)
+  [Monitoring Setup Guide](./PERFORMANCE_MONITORING_SETUP.md)
 - Contact DevOps team
 
 ---

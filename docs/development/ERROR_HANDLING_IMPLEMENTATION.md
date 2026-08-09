@@ -335,13 +335,13 @@ VITE_APP_VERSION=1.0.0
 
 ### Comprehensive Guides
 
-1. **[Error Handling Guide](<repo-root>/docs/ERROR_HANDLING_GUIDE.md)**
+1. **[Error Handling Guide](../ERROR_HANDLING_GUIDE.md)**
    - Complete documentation
    - Architecture overview
    - API reference
    - Best practices
 
-2. **[Error Handling Examples](<repo-root>/docs/ERROR_HANDLING_EXAMPLES.md)**
+2. **[Error Handling Examples](../ERROR_HANDLING_EXAMPLES.md)**
    - 16+ real-world examples
    - Quick start guides
    - Testing examples
@@ -525,5 +525,5 @@ the entire application stack.
 
 **For detailed usage instructions, see**:
 
-- [Error Handling Guide](<repo-root>/docs/ERROR_HANDLING_GUIDE.md)
-- [Error Handling Examples](<repo-root>/docs/ERROR_HANDLING_EXAMPLES.md)
+- [Error Handling Guide](../ERROR_HANDLING_GUIDE.md)
+- [Error Handling Examples](../ERROR_HANDLING_EXAMPLES.md)

@@ -1151,7 +1151,7 @@ Agents can leverage tools and capabilities provided by Google's Agent Developmen
   }
   ```
 
-- **Further Examples:** For more detailed examples of interacting with the ADK bridge service and its API, see the [ADK Integration Usage Examples](../integrations/adk-usage.md).
+- **Further Examples:** For more detailed examples of interacting with the ADK bridge service and its API, see the [ADK Integration Usage Examples](../../integrations/adk-usage.md).
 
 ## Conclusion
 
@@ -1159,5 +1159,5 @@ This guide provides a comprehensive overview of agent development for The New Fu
 
 For more information, refer to:
 - [The New Fuse API Specification](./API_SPECIFICATION.md)
-- [Model Context Protocol (MCP) Specification](./MCP_SPECIFICATION.md)
+- [Model Context Protocol (MCP) Specification](../../specifications/_archive/MCP_SPECIFICATION.md)
 - [The New Fuse Workflow System Guide](./WORKFLOW_GUIDE.md)

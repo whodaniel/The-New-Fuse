@@ -26,15 +26,43 @@ function encodeBase58(num: number): string {
   return encoded;
 }
 
+/**
+ * PROVISIONAL bridge ID# — the fourth mirror of this hash.
+ *
+ * Band allocation (Phase 9, revised 2026-08-09). The bands exist so an ID#'s
+ * provenance is readable from its value:
+ *
+ *   1 – 999,999,999      production sequential (Redis INCR, FederatedIdentityService)
+ *   1,000 – 9,999        seeder  (legacy, overlaps production — see note)
+ *   1e9 – 2e9            PROVISIONAL: this function + the three edge mirrors
+ *
+ * The previous band was `5000 + (h % 10000)`, chosen to be "visually distinct
+ * from production sequential (1-N) and from seeder (1000-9999)". It was neither
+ * distinct nor large enough:
+ *
+ *   - it OVERLAPPED the seeder band at 5,000–9,999, so provenance was not in
+ *     fact readable from the value;
+ *   - 10,000 values against a 194-agent roster produced two live collisions
+ *     (`ID#:4gV`, `ID#:3Ub`). This runs on the registration path, so those were
+ *     ambiguous addresses for `resolveMessageTarget`, which routes on `@ID#:…`.
+ *
+ * Must stay in lock-step with `federation-identity.ts`,
+ * `federation-protocol.cjs`, and `recovery-federation.ts` — a divergence yields
+ * a different ID# for the same agent depending on which side computed it.
+ *
+ * Still provisional: a server-assigned sequential `idNumber` always wins.
+ */
+const PROVISIONAL_ID_FLOOR = 1_000_000_000;
+const PROVISIONAL_ID_SPACE = 1_000_000_000;
+
 function deterministicBridgeIdNumber(agentId: string): string {
   let h = 0x811c9dc5;
-  for (let i = 0; i < agentId.length; i += 1) {
-    h ^= agentId.charCodeAt(i);
+  const id = String(agentId || 'agent');
+  for (let i = 0; i < id.length; i += 1) {
+    h ^= id.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  // Bias 5000-14999 so deterministic bridge IDs are visually distinct
-  // from production sequential (1-N) and from seeder (1000-9999).
-  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
+  return `ID#:${encodeBase58(PROVISIONAL_ID_FLOOR + (h % PROVISIONAL_ID_SPACE))}`;
 }
 
 // Phase 9 FOLLOWUP-3: build a fresh mcid envelope at registration time.

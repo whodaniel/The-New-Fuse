@@ -760,10 +760,10 @@ k6 run k6-load-test.js
 
 ### Documentation
 
-- [PERFORMANCE_OPTIMIZATION.md](apps/backend/PERFORMANCE_OPTIMIZATION.md) -
+- [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md) -
   Comprehensive guide
-- [PERFORMANCE_SETUP.md](apps/backend/PERFORMANCE_SETUP.md) - Setup instructions
-- [Load Testing README](apps/backend/tests/load/README.md) - Load testing guide
+- [PERFORMANCE_SETUP.md](../../apps/backend/PERFORMANCE_SETUP.md) - Setup instructions
+- [Load Testing README](./README.md) - Load testing guide
 
 ### Monitoring
 

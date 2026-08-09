@@ -81,10 +81,19 @@ const isAuthored = (file) => !NON_AUTHORED.some((re) => re.test(file));
  */
 const DANGEROUS_ACTIONS = [/^reset/i, /^merge/i, /^rebase/i, /^pull/i];
 
+/**
+ * Strips trailing newlines only — NOT a full `.trim()`.
+ *
+ * `git status --porcelain` encodes staged-vs-worktree state in the first two
+ * columns, and an unstaged-only change leads with a SPACE (` M a.txt`). A
+ * `.trim()` ate that space on the first line, so the filename parsed as
+ * `.txt` and the file was reported as staged when it was not — a wrong filename
+ * inside a data-loss warning, which is the one place it must be right.
+ */
 function git(args) {
   const r = spawnSync('git', args, { encoding: 'utf8' });
   if (r.status !== 0) return null;
-  return (r.stdout || '').trim();
+  return (r.stdout || '').replace(/\n+$/, '');
 }
 
 /** Working-tree state, split by what a stash would and would not save. */
@@ -140,7 +149,48 @@ function summarize(state) {
   return lines.join('\n');
 }
 
-function refuse(action, state) {
+/**
+ * TNF_COLLISION_PROVISION §4.4 — every collision is appended to COLLISION_LOG.
+ * A block is a collision that was caught rather than survived, and it is the
+ * only record that this guard did anything: the refusal text goes to a terminal
+ * nobody may be watching.
+ *
+ * Best-effort by design. A guard that fails because it could not write its own
+ * audit line would be worse than one that stays quiet.
+ */
+function logCollision(action, state) {
+  try {
+    const root = git(['rev-parse', '--show-toplevel']);
+    if (!root) return;
+    const dir = require('node:path').join(root, 'data', 'protocols');
+    require('node:fs').mkdirSync(dir, { recursive: true });
+    require('node:fs').appendFileSync(
+      require('node:path').join(dir, 'COLLISION_LOG.jsonl'),
+      `${JSON.stringify({
+        at: new Date().toISOString(),
+        type: 'C2',
+        detector: 'workspace-mutation-guard',
+        action,
+        branch: git(['branch', '--show-current']) || '(detached)',
+        resolution: 'blocked',
+        tracked: state.tracked.length,
+        staged: state.staged.length,
+        untracked: state.untracked.length,
+        sample: [...state.tracked, ...state.untracked].slice(0, 20),
+      })}\n`
+    );
+  } catch {
+    /* never let auditing break the guard */
+  }
+}
+
+/**
+ * `blocked` distinguishes an operation we actually stopped (hook mode) from an
+ * advisory `--check` that merely reported a dirty tree. Only the former is a
+ * collision; logging every inspection would bury the real events.
+ */
+function refuse(action, state, blocked = false) {
+  if (blocked) logCollision(action, state);
   const branch = git(['branch', '--show-current']) || '(detached)';
   console.error('');
   console.error('[workspace-mutation-guard] BLOCKED');
@@ -208,7 +258,7 @@ function main(argv) {
     if (!touchesStash && !isDangerous(action)) return 0;
     if (state.dirty === 0) return 0;
 
-    return refuse(touchesStash ? `git stash (${action || 'stash'})` : action, state);
+    return refuse(touchesStash ? `git stash (${action || 'stash'})` : action, state, true);
   }
 
   // Standalone --check: for maintenance jobs to call before mutating.

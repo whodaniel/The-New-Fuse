@@ -451,35 +451,35 @@ pnpm run deploy:gcp
 
 ## Documentation
 
-- **[DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)** — Navigational index
+- **[DOCUMENTATION_INDEX.md](./core/DOCUMENTATION_INDEX.md)** — Navigational index
   with guided paths
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
 - **[CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)** —
   Infrastructure reference (GCP + Cloudflare)
 - **[RELEASE_GATE.md](./RELEASE_GATE.md)** — Merge-blocking release gate
-- **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)**
+- **[PRODUCTION_READINESS.md](./project-management/PRODUCTION_READINESS.md)**
   — Production status
 
 ### By Topic
 
 | Topic               | Primary Doc                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------- |
-| Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./docs/architecture/ARCHITECTURE_STANDARDS.md) |
-| Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./docs/agents/COMPLETE-AGENT-GUIDE.md)                 |
-| Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./docs/AGENT_COMMUNICATION_PROTOCOL.md)               |
-| API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                           |
+| Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./architecture/ARCHITECTURE_STANDARDS.md) |
+| Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./agents/COMPLETE-AGENT-GUIDE.md)                 |
+| Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./AGENT_COMMUNICATION_PROTOCOL.md)               |
+| API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./api/COMPLETE-API-GUIDE.md)                           |
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
-| Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
+| Deployment          | [docs/guides/deployment-guide.md](./guides/deployment-guide.md)                         |
 | Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)                                |
-| Security            | [docs/security/audit-findings.md](./docs/security/audit-findings.md)                         |
-| Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |
-| Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./docs/PREMIUM_THEME_MANIFEST.md)                           |
+| Security            | [docs/security/audit-findings.md](./security/audit-findings.md)                         |
+| Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./testing/TESTING_SETUP_COMPLETE.md)           |
+| Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./PREMIUM_THEME_MANIFEST.md)                           |
 | Chrome Extension    | [apps/chrome-extension/README.md](./apps/chrome-extension/README.md)                         |
 | VS Code Extension   | [apps/vscode-extension/README.md](./apps/vscode-extension/README.md)                         |
-| Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./docs/workflows/WORKFLOW_QUICKSTART.md)             |
-| CLI Commands        | [docs/reference/command-map.md](./docs/reference/command-map.md)                             |
-| Cloud QA            | [docs/qa/cloud-qa-guide.md](./docs/qa/cloud-qa-guide.md)                                     |
+| Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./workflows/WORKFLOW_QUICKSTART.md)             |
+| CLI Commands        | [docs/reference/command-map.md](./reference/command-map.md)                             |
+| Cloud QA            | [docs/qa/cloud-qa-guide.md](./qa/cloud-qa-guide.md)                                     |
 
 ## Package Manager
 

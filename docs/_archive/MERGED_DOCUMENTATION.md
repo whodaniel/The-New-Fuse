@@ -21,7 +21,7 @@ Essential concepts and architectures that power The New Fuse.
 - [Web Tools](vitereact/src/pages/docs/core-concepts/web-tools.mdx) - Available web tools and usage
 - [Integration](vitereact/src/pages/docs/core-concepts/integration.mdx) - Integration patterns
 
-[View core concepts guide →](sections/core-concepts.md)
+[View core concepts guide →](../sections/core-concepts.md)
 
 ## Advanced Features
 Deep dive into sophisticated features for power users.
@@ -41,7 +41,7 @@ Complete API documentation for developers and integrators.
 - [Rate Limiting](vitereact/src/pages/docs/api-reference/rate-limiting.mdx) - API usage limits
 - [Error Handling](vitereact/src/pages/docs/api-reference/error-handling.mdx) - Error patterns and handling
 
-[View API reference guide →](sections/api-reference.md)
+[View API reference guide →](../../apps/chrome-extension/docs/api-reference.md)
 
 ## Workflow Examples
 Real-world examples and templates to kickstart your development.
@@ -120,7 +120,7 @@ Community resources and support channels.
 - [FAQ](vitereact/src/pages/support/faq.tsx) - Common questions
 - [Support Tickets](vitereact/src/pages/support/tickets/index.tsx) - Get help
 
-[View support resources →](sections/support.md)
+[View support resources →](../../apps/chrome-extension/store-submission/support.md)
 
 ## Legal
 Important legal documentation.

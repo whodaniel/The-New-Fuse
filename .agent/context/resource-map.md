@@ -46,6 +46,29 @@ distributed source:
 
 ## 📚 Available Skills
 
+> **Canonical skill index:
+> [`.agent/SKILL_MANIFEST.md`](../SKILL_MANIFEST.md)** — generated, complete,
+> ~4.9k tokens. Regenerate with
+> `node scripts/skills/build-skill-manifest.cjs`.
+>
+> **Read the manifest first.** The hand-curated list below is a _highlights
+> reel_, not an index: it describes ~20 skills out of **578**, was last revised
+> 2026-06-09, and its numbering has drifted (two `#8`s, two `#9`s,
+> `master-of-taxonomies` listed twice). Treating it as the capability list is
+> the "Capability Blindness" failure this map exists to prevent — an agent that
+> reads only this section believes 3.5% of the corpus is everything there is.
+>
+> Traversal is three cheap hops, not one impossible load — the full skill bodies
+> are ~2.3M tokens and every frontmatter block is ~128k:
+>
+> 1. `.agent/SKILL_MANIFEST.md` — which domain?
+> 2. `node scripts/skills/skill-bank-query.cjs <term>` — descriptions.
+> 3. Read that one `SKILL.md` body, only when invoking it.
+>
+> Entries below are kept because they carry operator commentary (the ⭐ ratings
+> and usage notes) that a generator cannot infer. Add new skills to the corpus,
+> not to this list.
+
 ### 1. **browser-automation**
 
 - **Location**: `.agent/skills/browser-automation/SKILL.md`

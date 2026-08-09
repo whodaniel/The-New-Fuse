@@ -105,6 +105,43 @@ function encodeBase58(num: number): string {
 }
 
 /** Deterministic bridge-style ID# until master-clock assigns sequential idNumber. */
+/**
+ * PROVISIONAL local ID# — not a Phase 9 federated identifier.
+ *
+ * ROLE_DEFINITIONS.md Phase 9 names exactly one source of truth for `idNumber`:
+ * `FederatedIdentityService`, which allocates SEQUENTIALLY via Redis
+ * `INCR tnf:identity:seq:<agentId>`. A browser content script cannot reach
+ * Redis, so this hash exists purely to give an unregistered edge agent a stable
+ * handle until the registry assigns the real one. Whenever a server-supplied
+ * `idNumber` is available, it wins — never overwrite one with this.
+ *
+ * The old space was `5000 + (h % 10000)` — 10,000 values. Measured against the
+ * live 194-agent roster on 2026-08-09 that produced TWO real collisions:
+ *
+ *   ID#:4gV  <-  brand-outreach-agent || temporal-agent-reclassifier
+ *   ID#:3Ub  <-  interoperability-protocol-agent || research-agent
+ *
+ * `resolveMessageTarget` routes on `@ID#:…`, so a collision is an ambiguous
+ * address, not a cosmetic clash. Expected collisions grow as n²/2N, so the
+ * fleet was already past the point where this was survivable.
+ *
+ * Band allocation (Phase 9, revised 2026-08-09) — an ID#'s provenance should be
+ * readable from its value:
+ *
+ *   1 – 999,999,999   production sequential (Redis INCR)
+ *   1,000 – 9,999     seeder (legacy; overlaps production — known, see Phase 9)
+ *   1e9 – 2e9         PROVISIONAL: this function and its three mirrors
+ *
+ * The old 5,000–14,999 band failed at both jobs: it overlapped the seeder band
+ * at 5,000–9,999, and 10,000 values put collision probability near 90% at fleet
+ * scale. The new band is disjoint and puts it near 1e-5.
+ *
+ * Fourth mirror: `packages/relay-core/src/agent-registry-bridge.ts`
+ * (`deterministicBridgeIdNumber`) — on the live registration path.
+ */
+const PROVISIONAL_ID_FLOOR = 1_000_000_000;
+const PROVISIONAL_ID_SPACE = 1_000_000_000;
+
 export function deterministicIdNumber(agentId: string): string {
   let h = 0x811c9dc5;
   // Must match scripts/lib/federation-protocol.cjs and
@@ -116,7 +153,7 @@ export function deterministicIdNumber(agentId: string): string {
     h ^= id.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
+  return `ID#:${encodeBase58(PROVISIONAL_ID_FLOOR + (h % PROVISIONAL_ID_SPACE))}`;
 }
 
 export function buildMcidEnvelope(input: {

@@ -282,9 +282,9 @@ errorMessageFormatter.setLanguage('en'); // en, es, fr, de, zh, ja
 
 ## Resources
 
-- 📖 [Complete Guide](<repo-root>/docs/ERROR_HANDLING_GUIDE.md)
-- 💡 [Examples](<repo-root>/docs/ERROR_HANDLING_EXAMPLES.md)
-- 📋 [Implementation Summary](<repo-root>/ERROR_HANDLING_IMPLEMENTATION.md)
+- 📖 [Complete Guide](./ERROR_HANDLING_GUIDE.md)
+- 💡 [Examples](./ERROR_HANDLING_EXAMPLES.md)
+- 📋 [Implementation Summary](./development/ERROR_HANDLING_IMPLEMENTATION.md)
 
 ---
 
