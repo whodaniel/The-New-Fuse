@@ -201,6 +201,11 @@ export class EnhancedFloatingPanel {
    */
   private requestConnectionState(): void {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn('[FuseConnect] GET_STATE unavailable:', chrome.runtime.lastError.message);
+        return;
+      }
+      if (!response) return;
       this.connectionStatus = response.connectionStatus || 'disconnected';
       this.agents = response.agents || [];
       this.channels = response.channels || [];
@@ -216,8 +221,8 @@ export class EnhancedFloatingPanel {
         (this as any).browserAgentId = response.browserAgentId;
       }
 
-      if (response.agentId) {
-        this.myAgentId = response.agentId;
+      if (response.pageAgentId || response.agentId) {
+        this.myAgentId = response.pageAgentId || response.agentId;
       }
       this.update();
     });
@@ -2087,16 +2092,22 @@ export class EnhancedFloatingPanel {
 
     try {
       chrome.runtime.sendMessage(message, (response) => {
-        // Check for runtime.lastError which indicates context invalidation
+        // Check for runtime.lastError and distinguish fatal reloads from MV3 listener misses.
         if (chrome.runtime.lastError) {
           const errorMessage = chrome.runtime.lastError.message || '';
-          if (
-            errorMessage.includes('Extension context invalidated') ||
-            errorMessage.includes('Receiving end does not exist')
-          ) {
+          if (errorMessage.includes('Extension context invalidated')) {
             console.error('[FuseConnect] Extension context invalidated:', errorMessage);
             this.isContextValid = false;
             this.showContextInvalidatedWarning();
+            return;
+          }
+          if (errorMessage.includes('Receiving end does not exist')) {
+            console.warn(
+              '[FuseConnect] Background listener unavailable; will retry state:',
+              errorMessage
+            );
+            window.setTimeout(() => this.requestConnectionState(), 500);
+            callback?.({ success: false, transient: true, error: errorMessage });
             return;
           }
           console.warn('[FuseConnect] Chrome runtime error:', errorMessage);

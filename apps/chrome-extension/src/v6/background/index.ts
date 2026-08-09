@@ -16,6 +16,12 @@ import {
   STORAGE_KEYS as STORAGE_KEYS_CONST,
   TIMINGS,
 } from '../shared/constants';
+import {
+  buildBrowserAgentIdentity,
+  buildPageAgentIdentity,
+  enrichOutboundMetadata,
+  type FederationIdentityRecord,
+} from '../shared/federation-identity';
 import type {
   Agent,
   AgentMessage,
@@ -81,6 +87,7 @@ class BackgroundService {
   private channelLastActivityAt: Map<string, number> = new Map();
   private connectionAttempts: number = 0;
   private maxInitialAttempts: number = 1; // Only try once on startup
+  private browserIdentity: FederationIdentityRecord | null = null;
 
   // Message deduplication - track recently sent/received message hashes
   private recentMessageHashes: Map<string, number> = new Map();
@@ -120,6 +127,7 @@ class BackgroundService {
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
+    this.browserIdentity = buildBrowserAgentIdentity(this.agentId);
 
     // Load saved state
     await this.loadSavedState();
@@ -555,57 +563,118 @@ class BackgroundService {
    * Register agent with relay
    */
   private registerAgent(ws: WebSocket): void {
+    const identity = this.browserIdentity || buildBrowserAgentIdentity(this.agentId);
+    const agent: Agent = {
+      id: this.agentId,
+      name: 'Browser Agent',
+      platform: 'chrome-extension',
+      status: 'active',
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
+      capabilities: [
+        'chat-injection',
+        'dom-reading',
+        'universal-detection',
+        'streaming-detection',
+        'notifications',
+      ],
+      channels: Array.from(this.joinedChannels),
+      metadata: {
+        ...enrichOutboundMetadata(identity, {
+          senderId: this.agentId,
+          extra: {
+            eventType: 'agent_registered',
+          },
+        }),
+        node: {
+          type: 'browser',
+          platform: navigator.platform,
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+        },
+      },
+      lastSeen: Date.now(),
+    };
+    this.agents.set(this.agentId, agent);
+
     const message: ProtocolMessage = {
       id: crypto.randomUUID(),
       type: 'AGENT_REGISTER',
       timestamp: Date.now(),
       source: this.agentId,
       payload: {
-        agent: {
-          id: this.agentId,
-          name: 'Browser Agent',
-          platform: 'chrome-extension',
-          status: 'active',
-          capabilities: [
-            'chat-injection',
-            'dom-reading',
-            'universal-detection',
-            'streaming-detection',
-            'notifications',
-          ],
-          channels: Array.from(this.joinedChannels),
-          metadata: {
-            node: {
-              type: 'browser',
-              platform: navigator.platform,
-              userAgent: navigator.userAgent,
-              language: navigator.language,
-            },
-          },
-        },
+        agent,
       },
     };
 
     ws.send(JSON.stringify(message));
   }
 
+  private getCompleteAgentIdentity(agentId: string): FederationIdentityRecord | null {
+    const agent = this.agents.get(agentId);
+    if (!agent) return null;
+    if (
+      !agent.operationalHandle ||
+      !agent.runtimeSessionId ||
+      !agent.idNumber ||
+      !agent.correlationId ||
+      !agent.mcid
+    ) {
+      return null;
+    }
+    return {
+      id: agent.id,
+      operationalHandle: agent.operationalHandle,
+      runtimeSessionId: agent.runtimeSessionId,
+      canonicalEntityId: agent.canonicalEntityId || null,
+      idNumber: agent.idNumber,
+      aliases: agent.aliases || [],
+      daccRole: agent.daccRole || 'participant',
+      correlationId: agent.correlationId,
+      mcid: agent.mcid as unknown as FederationIdentityRecord['mcid'],
+    };
+  }
+
   /**
    * Register a new page agent (for AI chat tabs)
    */
   private registerPageAgent(id: string, name: string, platform: string, tabId?: number): void {
+    const identity = buildPageAgentIdentity(id, platform, tabId);
     // 1. Create agent object
     const agent: Agent = {
       id: id,
       name: name,
       platform: 'browser-page',
       status: 'active',
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
       capabilities: ['chat-injection', 'dom-reading'], // Basic capabilities for a page agent
       channels: [], // Initially no channels
       metadata: {
+        ...enrichOutboundMetadata(identity, {
+          senderId: id,
+          platform,
+          extra: {
+            eventType: 'page_agent_registered',
+          },
+        }),
         node: {
           type: 'browser-tab',
           platform: platform,
         },
+        aliases: identity.aliases,
         tabId: tabId, // TRACK TAB ID
       },
       lastSeen: Date.now(),
@@ -683,6 +752,16 @@ class BackgroundService {
    */
   private send(data: Record<string, unknown>, ws?: WebSocket): void {
     const connection = ws || this.primaryConnection;
+    const senderId = String((data.metadata as any)?.senderId || data.source || this.agentId);
+    const senderIdentity =
+      this.getCompleteAgentIdentity(senderId) || this.getCompleteAgentIdentity(this.agentId);
+    const enrichedMetadata = senderIdentity
+      ? enrichOutboundMetadata(senderIdentity, {
+          channel: (data.channel as string) || 'general',
+          senderId,
+          extra: (data.metadata as Record<string, unknown>) || {},
+        })
+      : data.metadata;
 
     let message: ProtocolMessage;
 
@@ -698,7 +777,7 @@ class BackgroundService {
           to: data.to,
           content: data.content,
           messageType: data.messageType || 'text',
-          metadata: data.metadata, // <-- INCLUDE SENDER METADATA
+          metadata: enrichedMetadata, // <-- INCLUDE SENDER METADATA
         },
       };
     } else {
@@ -1911,8 +1990,8 @@ class BackgroundService {
     );
     return {
       id: String(data?.id || ''),
-      title: String(data?.snippet?.title || title),
-      description: String(data?.snippet?.description || data?.description || ''),
+      title: String(data?.title || title),
+      description: String(data?.description || ''),
     };
   }
 
@@ -2561,10 +2640,12 @@ class BackgroundService {
         case 'GET_STATE': {
           // Find the page agent for this tab if it exists
           let tabPageAgentId = null;
+          let tabPageAgent: Agent | null = null;
           if (sender.tab?.id) {
             for (const [id, agent] of this.agents) {
               if (agent.metadata?.tabId === sender.tab.id) {
                 tabPageAgentId = id;
+                tabPageAgent = agent;
                 break;
               }
             }
@@ -2581,6 +2662,9 @@ class BackgroundService {
             nodes: Object.fromEntries(this.nodeStatus),
             agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
             browserAgentId: this.agentId,
+            pageAgentId: tabPageAgentId,
+            pageAgent: tabPageAgent,
+            browserIdentity: this.browserIdentity,
             relayUrl: this.relayUrl,
             autoConnect: this.autoConnect,
             autoMonitor: this.autoMonitor,
@@ -3543,20 +3627,31 @@ Format as JSON array:
         case 'BROADCAST_MESSAGE':
           // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
           // can identify messages that originated from themselves and avoid self-injection loops.
-          this.send({
-            type: 'MESSAGE_SEND',
-            to: 'broadcast',
-            channel: message.channel,
-            content: message.content,
-            messageType: 'text',
-            metadata: message.metadata, // <-- PRESERVE SENDER INFO
-          });
-          this.sendActivityEvent('broadcast_message', {
-            channel: message.channel || null,
-            senderId: message.senderId || message.metadata?.senderId || null,
-            contentPreview: String(message.content || '').substring(0, 120),
-          });
-          sendResponse({ success: true });
+          {
+            const senderId = String(message.senderId || message.metadata?.senderId || '');
+            const senderIdentity = senderId ? this.getCompleteAgentIdentity(senderId) : null;
+            const metadata = senderIdentity
+              ? enrichOutboundMetadata(senderIdentity, {
+                  channel: message.channel || null,
+                  senderId,
+                  extra: message.metadata || {},
+                })
+              : message.metadata;
+            this.send({
+              type: 'MESSAGE_SEND',
+              to: 'broadcast',
+              channel: message.channel,
+              content: message.content,
+              messageType: 'text',
+              metadata, // <-- PRESERVE SENDER INFO
+            });
+            this.sendActivityEvent('broadcast_message', {
+              channel: message.channel || null,
+              senderId: senderId || null,
+              contentPreview: String(message.content || '').substring(0, 120),
+            });
+            sendResponse({ success: true });
+          }
           break;
 
         case 'SEND_TO_AGENT':
@@ -3950,6 +4045,9 @@ Format as JSON array:
             else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
             else if (hostname.includes('claude.ai')) platformName = 'Claude';
             else if (hostname.includes('perplexity.ai')) platformName = 'Perplexity';
+            else if (hostname.includes('kimi.com') || hostname.includes('moonshot.cn'))
+              platformName = 'Kimi';
+            else if (hostname.includes('qwen.ai')) platformName = 'Qwen';
 
             this.registerPageAgent(
               pageAgentId,
@@ -3966,7 +4064,8 @@ Format as JSON array:
             this.broadcastToTabs(message);
 
             // 3. Return the assigned Agent ID to the tab so it knows who it is
-            sendResponse({ success: true, agentId: pageAgentId });
+            const agent = this.agents.get(pageAgentId);
+            sendResponse({ success: true, agentId: pageAgentId, pageAgentId, agent });
           } else {
             sendResponse({ success: true });
           }
@@ -4044,16 +4143,31 @@ Format as JSON array:
                     platformName = 'ChatGPT';
                   else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
                   else if (tabUrl.includes('copilot')) platformName = 'Copilot';
+                  else if (tabUrl.includes('kimi.com') || tabUrl.includes('moonshot.cn'))
+                    platformName = 'Kimi';
+                  else if (tabUrl.includes('qwen.ai')) platformName = 'Qwen';
                 }
 
                 // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
-                const responseMetadata: any = {
-                  senderId: senderId, // KEY: Used to prevent self-injection
-                  senderType: 'ai-agent',
-                  platform: platformName,
-                  isAIResponse: true,
-                  timestamp: Date.now(),
-                };
+                const senderIdentity = this.getCompleteAgentIdentity(senderId);
+                const responseMetadata: any = senderIdentity
+                  ? enrichOutboundMetadata(senderIdentity, {
+                      channel,
+                      senderId,
+                      extra: {
+                        senderType: 'ai-agent',
+                        platform: platformName,
+                        isAIResponse: true,
+                        timestamp: Date.now(),
+                      },
+                    })
+                  : {
+                      senderId: senderId, // KEY: Used to prevent self-injection
+                      senderType: 'ai-agent',
+                      platform: platformName,
+                      isAIResponse: true,
+                      timestamp: Date.now(),
+                    };
 
                 // Include correlation info if present (from orchestrator requests)
                 if (message.metadata?.correlationId) {

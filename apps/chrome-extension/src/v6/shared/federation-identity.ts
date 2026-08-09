@@ -5,8 +5,7 @@
 
 import type { Agent } from './types';
 
-const FEDERATED_BASE58_ALPHABET =
-  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const FEDERATED_BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
 const IDENTITY_CATEGORIES = new Set([
   'AGENT',
@@ -108,8 +107,13 @@ function encodeBase58(num: number): string {
 /** Deterministic bridge-style ID# until master-clock assigns sequential idNumber. */
 export function deterministicIdNumber(agentId: string): string {
   let h = 0x811c9dc5;
-  for (let i = 0; i < agentId.length; i += 1) {
-    h ^= agentId.charCodeAt(i);
+  // Must match scripts/lib/federation-protocol.cjs and
+  // packages/relay-core/src/contracts/recovery-federation.ts exactly, including
+  // the empty/nullish fallback — a divergence here yields a different ID# on the
+  // browser edge than the relay computes for the same agent.
+  const id = String(agentId || 'agent');
+  for (let i = 0; i < id.length; i += 1) {
+    h ^= id.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
   return `ID#:${encodeBase58(5000 + (h % 10000))}`;
@@ -148,6 +152,7 @@ function platformProvider(platform: string): string {
   if (p.includes('claude')) return 'ANTHROPIC_CLAUDE';
   if (p.includes('glm') || p.includes('z.ai')) return 'ZHIPU_GLM';
   if (p.includes('qwen')) return 'ALIBABA_QWEN';
+  if (p.includes('kimi') || p.includes('moonshot')) return 'MOONSHOT_KIMI';
   if (p.includes('perplexity')) return 'PERPLEXITY';
   if (p.includes('copilot')) return 'MICROSOFT_COPILOT';
   if (p.includes('chrome')) return 'FUSE_BROWSER';
@@ -290,7 +295,11 @@ export function enrichOutboundMetadata(
     inResponseTo: options.inResponseTo || null,
     conversationId: options.conversationId || options.channel || null,
     mcid,
-    federation: { mcid, canonicalEntityId: identity.canonicalEntityId, idNumber: identity.idNumber },
+    federation: {
+      mcid,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+    },
     audit: {
       source: 'fuse-connect-v7',
       actor: identity.operationalHandle,
@@ -329,6 +338,7 @@ const PLATFORM_ALIASES: Record<string, string[]> = {
   chatgpt: ['chatgpt', 'gpt', 'openai'],
   claude: ['claude', 'anthropic'],
   qwen: ['qwen'],
+  kimi: ['kimi', 'moonshot'],
   copilot: ['copilot'],
 };
 
@@ -361,9 +371,7 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
     }
   }
 
-  const pageAgentMatch = working.match(
-    /@((?:page-agent|browser-agent|agent|AGENT)-[\w-]+)/i
-  );
+  const pageAgentMatch = working.match(/@((?:page-agent|browser-agent|agent|AGENT)-[\w-]+)/i);
   if (pageAgentMatch) {
     const agent = findAgentByAlias(agents, pageAgentMatch[1]);
     if (agent) {
@@ -375,13 +383,16 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
   }
 
   if (to === 'broadcast') {
-    const platformMatch = working.match(/@(GLM|Gemini|ChatGPT|Claude|Qwen|Copilot)\b/i);
+    const platformMatch = working.match(/@(GLM|Gemini|ChatGPT|Claude|Qwen|Kimi|Copilot)\b/i);
     if (platformMatch) {
       const key = platformMatch[1].toLowerCase();
       const aliases = PLATFORM_ALIASES[key] || [key];
       const agent = agents.find((a) => {
-        const platform = String(a.metadata?.node?.platform || a.platform || a.name || '').toLowerCase();
-        return aliases.some((alias) => platform.includes(alias) || normalizeAlias(a.name).includes(alias));
+        const node = a.metadata?.node as { platform?: unknown } | undefined;
+        const platform = String(node?.platform || a.platform || a.name || '').toLowerCase();
+        return aliases.some(
+          (alias) => platform.includes(alias) || normalizeAlias(a.name).includes(alias)
+        );
       });
       if (agent) {
         to = agent.id;
@@ -400,10 +411,7 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
   };
 }
 
-export function mergeRegistrationPayload(
-  agent: Agent,
-  payload: Record<string, unknown>
-): Agent {
+export function mergeRegistrationPayload(agent: Agent, payload: Record<string, unknown>): Agent {
   const federation =
     payload.federation && typeof payload.federation === 'object'
       ? (payload.federation as Record<string, unknown>)
@@ -423,10 +431,7 @@ export function mergeRegistrationPayload(
       (typeof payload.runtimeSessionId === 'string' && payload.runtimeSessionId) ||
       agent.runtimeSessionId ||
       null,
-    idNumber:
-      (typeof payload.idNumber === 'string' && payload.idNumber) ||
-      agent.idNumber ||
-      null,
+    idNumber: (typeof payload.idNumber === 'string' && payload.idNumber) || agent.idNumber || null,
     metadata: {
       ...(agent.metadata || {}),
       federation: {
