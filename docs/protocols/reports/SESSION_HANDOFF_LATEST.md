@@ -1,32 +1,30 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-09T00:41:26.967Z`  
-Handoff ID: `bceed412-7b76-456b-8c25-5c1d43522817`
+Created At: `2026-08-09T01:44:19.914Z`  
+Handoff ID: `78f48e0c-3969-45c8-9e1a-0cf69a9b45f1`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `cfb41eadb12bc1786d158e317cda0bd8ef43817b`
+- Head SHA: `516285d9dc1910db4dd29dda7c47bc05cefdedb0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Fuse Connect V7 chat injection restored for Gemini placeholder editors and
+  Kimi ProseMirror-style composers.
+- Fuse Connect V7 popup channel rendering hardened against malformed or partial
+  relay messages.
 
 ## Changed Paths
 
-- .agent/skills/fuse-connect-chat-injection-qa/SKILL.md
-- apps/chrome-extension/package.json
-- apps/chrome-extension/src/v6/background/index.ts
-- apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts
-- apps/chrome-extension/src/v6/content/adapters/**tests**/SimpleChatBridge.test.ts
-- apps/chrome-extension/src/v6/content/index.ts
-- apps/chrome-extension/src/v6/manifest.json
-- docs/protocols/LIVING_STATE.md
+- `apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts`
+- `apps/chrome-extension/src/v6/content/adapters/__tests__/SimpleChatBridge.test.ts`
+- `apps/chrome-extension/src/v6/popup/popup.js`
+- `apps/chrome-extension/tsconfig.json`
+- `docs/protocols/LIVING_STATE.md`
 
 ## Verification
 

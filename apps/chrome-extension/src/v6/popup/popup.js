@@ -2123,13 +2123,13 @@ class FuseConnectPopup {
           break;
 
         case 'AGENTS_UPDATE':
-          this.state.agents = message.agents;
+          this.state.agents = Array.isArray(message.agents) ? message.agents : [];
           this.updateAgentsList();
           this.updateStats();
           break;
 
         case 'NEW_MESSAGE':
-          this.state.messages.unshift(message.message);
+          this.state.messages.unshift(this.normalizeRelayMessage(message.message || message));
           if (this.state.messages.length > 120) {
             this.state.messages = this.state.messages.slice(0, 120);
           }
@@ -2138,13 +2138,15 @@ class FuseConnectPopup {
           break;
 
         case 'CHANNELS_UPDATE':
-          this.state.channels = message.channels || [];
+          this.state.channels = Array.isArray(message.channels) ? message.channels : [];
           this.reconcileSelectedChannel();
           this.updateCentralControlPanel();
           break;
 
         case 'JOINED_CHANNELS_UPDATE':
-          this.state.joinedChannels = message.joinedChannels || [];
+          this.state.joinedChannels = Array.isArray(message.joinedChannels)
+            ? message.joinedChannels
+            : [];
           this.updateCentralControlPanel();
           break;
 
@@ -2388,7 +2390,9 @@ class FuseConnectPopup {
     const container = document.getElementById('message-list');
     if (!container) return;
 
-    if (this.state.messages.length === 0) {
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+
+    if (messages.length === 0) {
       container.innerHTML = `
         <div class="empty-state small">
           <p>No recent messages</p>
@@ -2397,16 +2401,16 @@ class FuseConnectPopup {
       return;
     }
 
-    container.innerHTML = this.state.messages
+    container.innerHTML = messages
       .slice(0, 10)
       .map(
         (msg) => `
       <div class="message-item">
         <div class="message-item-header">
-          <span class="message-item-from">${msg.from}</span>
+          <span class="message-item-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
           <span class="message-item-time">${this.formatTime(msg.timestamp)}</span>
         </div>
-        <div class="message-item-content">${this.truncate(msg.content, 80)}</div>
+        <div class="message-item-content">${this.escapeHtml(this.truncate(msg.content, 80))}</div>
       </div>
     `
       )
@@ -2698,7 +2702,8 @@ class FuseConnectPopup {
       return;
     }
 
-    const filtered = this.state.messages
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+    const filtered = messages
       .filter((msg) => msg?.channel === selectedChannel)
       .slice(0, 25)
       .reverse();
@@ -2717,10 +2722,10 @@ class FuseConnectPopup {
         (msg) => `
         <div class="central-chat-message">
           <div class="central-chat-message-header">
-            <span class="central-chat-from">${msg.from || 'Unknown'}</span>
+            <span class="central-chat-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
             <span class="central-chat-meta">${this.formatTime(msg.timestamp)}</span>
           </div>
-          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content || '', 500))}</div>
+          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content, 500))}</div>
         </div>
       `
       )
@@ -2736,6 +2741,29 @@ class FuseConnectPopup {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  normalizeRelayMessage(message = {}) {
+    const source = message && typeof message === 'object' ? message : { content: message };
+    const metadata = source.metadata && typeof source.metadata === 'object' ? source.metadata : {};
+    const content =
+      source.content ??
+      source.text ??
+      source.body ??
+      source.message ??
+      metadata.content ??
+      metadata.text ??
+      '';
+
+    return {
+      ...source,
+      content: this.toDisplayText(content),
+      from: this.toDisplayText(
+        source.from || source.sender || source.senderId || metadata.senderId || 'Unknown'
+      ),
+      timestamp: source.timestamp || source.ts || metadata.timestamp || Date.now(),
+      channel: source.channel || source.channelId || metadata.channel || metadata.channelId || null,
+    };
   }
 
   showDirectMessagePrompt(agentId) {
@@ -2812,14 +2840,23 @@ class FuseConnectPopup {
   }
 
   formatTime(timestamp) {
-    return new Date(timestamp).toLocaleTimeString([], {
+    const date = new Date(timestamp || Date.now());
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
   }
 
+  toDisplayText(value) {
+    if (value === null || value === undefined) return '';
+    return typeof value === 'string' ? value : String(value);
+  }
+
   truncate(text, length) {
-    return text.length > length ? text.substring(0, length) + '...' : text;
+    const safeText = this.toDisplayText(text);
+    const maxLength = Number.isFinite(Number(length)) ? Number(length) : 0;
+    return safeText.length > maxLength ? safeText.substring(0, maxLength) + '...' : safeText;
   }
 }
 

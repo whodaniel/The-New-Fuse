@@ -108,6 +108,45 @@ class SimpleChatBridge {
     );
   }
 
+  private isTextControl(el: Element | null): el is HTMLInputElement | HTMLTextAreaElement {
+    return el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement;
+  }
+
+  private isEditableElement(el: Element | null): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    return (
+      this.isTextControl(el) ||
+      el.isContentEditable ||
+      el.getAttribute('contenteditable') === 'true'
+    );
+  }
+
+  /**
+   * Some AI UIs expose placeholder children inside a real editor, e.g.
+   * Gemini `rich-textarea p[data-placeholder]`. Mutating that child can create
+   * a fake `.value` without touching the page composer. Resolve those matches
+   * back to the actual editable control before injection.
+   */
+  private resolveEditableTarget(candidate: HTMLElement): HTMLElement | null {
+    if (this.isEditableElement(candidate)) return candidate;
+
+    const descendant = candidate.querySelector(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"]'
+    );
+    if (this.isEditableElement(descendant)) return descendant as HTMLElement;
+
+    const ancestor = candidate.closest(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"], .ql-editor[contenteditable="true"], .ProseMirror[contenteditable="true"]'
+    );
+    if (this.isEditableElement(ancestor)) return ancestor as HTMLElement;
+
+    const richTextarea = candidate.closest('rich-textarea');
+    const richEditable = richTextarea?.querySelector('[contenteditable="true"]');
+    if (this.isEditableElement(richEditable)) return richEditable as HTMLElement;
+
+    return null;
+  }
+
   /**
    * Check if current page is a supported chat platform
    * Used to suppress noisy logging on non-chat sites
@@ -252,6 +291,13 @@ class SimpleChatBridge {
 
     const hostname = window.location.hostname.toLowerCase();
     const isQwenHost = hostname === 'chat.qwen.ai' || hostname.endsWith('.qwen.ai');
+    const isKimiHost =
+      hostname === 'kimi.com' ||
+      hostname.endsWith('.kimi.com') ||
+      hostname === 'kimi.moonshot.cn' ||
+      hostname.endsWith('.kimi.moonshot.cn') ||
+      hostname === 'moonshot.cn' ||
+      hostname.endsWith('.moonshot.cn');
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
@@ -314,12 +360,26 @@ class SimpleChatBridge {
       'textarea[data-id="root"]',
       'textarea[placeholder*="Message" i]',
       // Kimi / Moonshot
+      ...(isKimiHost
+        ? [
+            '.ProseMirror[contenteditable="true"]',
+            'div[class*="ProseMirror"][contenteditable="true"]',
+            'div[class*="chat-input" i][contenteditable="true"]',
+            'div[class*="input" i] [contenteditable="true"]',
+            'main [contenteditable="true"][role="textbox"]',
+            'main [contenteditable="true"]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Send" i]',
+          ]
+        : []),
       'textarea[placeholder*="Kimi" i]',
       'textarea[aria-label*="Kimi" i]',
       'div[contenteditable="true"][aria-label*="Kimi" i]',
       // Claude-specific
       'div[contenteditable="true"][aria-label*="Message" i]',
       // Generic fallbacks
+      '.ProseMirror[contenteditable="true"]',
+      'div[class*="ProseMirror"][contenteditable="true"]',
       'div[contenteditable="true"][role="textbox"]',
       'p[contenteditable="true"]',
       'div[contenteditable="true"][data-placeholder]',
@@ -417,8 +477,10 @@ class SimpleChatBridge {
         const candidates = this.queryAllIncludingShadow(selector);
         for (const el of candidates) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el)) {
-            input = el;
+          const target = this.resolveEditableTarget(el);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target)) {
+            input = target;
             break;
           }
         }
@@ -435,7 +497,9 @@ class SimpleChatBridge {
           const candidates = this.queryAllIncludingShadow(selector);
           for (const el of candidates) {
             if (this.isExtensionUiElement(el)) continue;
-            input = el;
+            const target = this.resolveEditableTarget(el);
+            if (!target || this.isExtensionUiElement(target)) continue;
+            input = target;
             if (DEBUG) {
               console.log(
                 '[SimpleChatBridge] Using fallback input (no visibility check):',
@@ -498,8 +562,10 @@ class SimpleChatBridge {
       const allTextareas = this.queryAllIncludingShadow('textarea');
       for (const el of allTextareas) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el) && !(el as HTMLTextAreaElement).disabled) {
-          input = el;
+        const target = this.resolveEditableTarget(el);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+          input = target;
           break;
         }
       }
@@ -512,12 +578,14 @@ class SimpleChatBridge {
       const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
       for (const el of allEditable) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el as HTMLElement)) {
-          input = el as HTMLElement;
+        const target = this.resolveEditableTarget(el as HTMLElement);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target)) {
+          input = target;
           console.warn('[SimpleChatBridge] Ultra fallback input found:', {
-            tag: el.tagName,
-            classes: el.className,
-            parent: el.parentElement?.tagName,
+            tag: target.tagName,
+            classes: target.className,
+            parent: target.parentElement?.tagName,
           });
           break;
         }
@@ -528,8 +596,10 @@ class SimpleChatBridge {
         const allTextareas = Array.from(document.querySelectorAll('textarea'));
         for (const el of allTextareas) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el as HTMLElement) && !(el as HTMLTextAreaElement).disabled) {
-            input = el as HTMLElement;
+          const target = this.resolveEditableTarget(el as HTMLElement);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+            input = target;
             console.warn('[SimpleChatBridge] Ultra fallback textarea found');
             break;
           }
@@ -1385,6 +1455,15 @@ class SimpleChatBridge {
    */
   destroy(): void {
     this.stopWatching();
+    this.cachedElements = null;
+    this.cacheValidUntil = 0;
+    this.lastSentText = '';
+    this.lastSendResult = {
+      success: false,
+      injected: false,
+      submitted: false,
+      error: 'No send attempted yet',
+    };
     if (this.responseObserver) {
       this.responseObserver.disconnect();
       this.responseObserver = null;
