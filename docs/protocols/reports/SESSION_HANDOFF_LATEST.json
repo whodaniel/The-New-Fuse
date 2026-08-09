@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "8f003f7f-1dbe-4227-9958-285e1bf904c5",
-  "created_at": "2026-08-09T05:05:09.894Z",
+  "handoff_id": "69b39874-bd24-4448-acb4-f444bb6f7598",
+  "created_at": "2026-08-09T05:33:19.341Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "909f3246f4299b1dbd5254c80c59f326a1d8c67c",
+  "head_sha": "099b002f03bd96bb3bf63eccd00e7fa8edd1fc43",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -14,10 +14,13 @@
   ],
   "changed_paths": [
     "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVE_AGENT_WORK_CHECK.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "scripts/packaging/check-oss-app-boundary.cjs"
+    "scripts/protocols/live-agent-work-check.cjs",
+    "scripts/runtime/redis-local-bootstrap.sh",
+    "scripts/runtime/tnf-local-launchd-services.sh"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -41,6 +44,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["909f3246f4299b1dbd5254c80c59f326a1d8c67c"]
+    "commits": ["099b002f03bd96bb3bf63eccd00e7fa8edd1fc43"]
   }
 }

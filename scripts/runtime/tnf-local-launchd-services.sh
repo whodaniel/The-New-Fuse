@@ -9,6 +9,7 @@ TNF_HOME="$HOME/.tnf"
 LOCAL_ENV="$HOME/.tnf.local.env"
 NODE_BIN="${TNF_NODE_BIN:-$(command -v node || true)}"
 REDIS_BIN="${TNF_REDIS_SERVER_BIN:-$(command -v redis-server || true)}"
+REDIS_LOCALE="${TNF_REDIS_LOCALE:-C}"
 SMART_START="$ROOT_DIR/scripts/runtime/tnf-launchd-smart-start.sh"
 
 api_env_files() {
@@ -101,6 +102,8 @@ ${wait_block}
   </dict>
   <key>RunAtLoad</key>
   <true/>
+  <key>KeepAlive</key>
+  <true/>
   <key>StartInterval</key>
   <integer>300</integer>
   <key>WorkingDirectory</key>
@@ -159,6 +162,15 @@ write_redis_plist() {
   </array>
   <key>WorkingDirectory</key>
   <string>${TNF_HOME}/redis</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>LANG</key>
+    <string>${REDIS_LOCALE}</string>
+    <key>LC_ALL</key>
+    <string>${REDIS_LOCALE}</string>
+    <key>LC_CTYPE</key>
+    <string>${REDIS_LOCALE}</string>
+  </dict>
   <key>RunAtLoad</key>
   <true/>
   <key>StartInterval</key>

@@ -36,6 +36,31 @@ The checker writes:
 - Redis availability, master task queues, and agent registry presence.
 - Full-auto recency and protected token presence.
 
+## Redis Failure Handling
+
+The checker distinguishes Redis states because the recovery path differs:
+
+- `redis-unavailable`: Redis did not return `PONG`. Do not trust launchd
+  `loaded` or a PID as proof of health. Re-run
+  `bash scripts/runtime/redis-local-bootstrap.sh launchd-start`, require a
+  bounded `redis-cli -h 127.0.0.1 -p 6379 PING` result of `PONG`, refresh
+  `com.tnf.master-heartbeat`, then rerun `pnpm run tnf:live:agents:write`.
+- `redis-wedged`: Redis is listening or blocked clients are present, but `PING`
+  does not return `PONG`. Pause new Redis clients/bootstrap loops, stop stuck
+  Redis callers, restart `com.thenewfuse.redis-tnf-bus`, refresh
+  `com.tnf.master-heartbeat`, then rerun the live check.
+- `redis-launchd-mismatch` / `redis-config-drift`: Redis answers, but not as the
+  TNF fleet-safe local bus. Re-run
+  `bash scripts/runtime/redis-local-bootstrap.sh launchd-start` and verify
+  `config_file=~/.tnf/redis/redis.conf`, empty `save`, and
+  `shutdown-on-sigterm=nosave`.
+
+To avoid amplifying a Redis wedge, the checker performs only a bounded PING
+until Redis is healthy. Queue, registry, INFO, and CONFIG probes are skipped
+when PING fails.
+
+Operational skill: `.agent/skills/tnf-live-fleet-cohesion/SKILL.md`.
+
 ## Operating Rule
 
 No agent output propagates as current TNF state until this checker confirms it.

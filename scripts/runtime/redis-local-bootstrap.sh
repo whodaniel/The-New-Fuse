@@ -14,6 +14,8 @@ LOG_DIR="${TNF_LOG_DIR:-$TNF_HOME/logs}"
 REDIS_CONF="${TNF_REDIS_CONF:-$REDIS_DIR/redis.conf}"
 LOG_FILE="${REDIS_LOG_FILE:-$LOG_DIR/redis.log}"
 CLIENT_WARN="${REDIS_CLIENT_WARN:-8000}"
+REDIS_CLI_TIMEOUT_SECONDS="${REDIS_CLI_TIMEOUT_SECONDS:-2}"
+REDIS_LOCALE="${TNF_REDIS_LOCALE:-C}"
 LABEL="com.thenewfuse.redis-tnf-bus"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LAUNCH_DOMAIN="gui/$(id -u)"
@@ -27,12 +29,43 @@ usage() {
   echo "  launchd-install/start — macOS LaunchAgent with StartInterval, not KeepAlive"
 }
 
+redis_cli() {
+  python3 - "$REDIS_CLI_TIMEOUT_SECONDS" "$REDIS_CLI" "$BIND" "$PORT" "$@" <<'PY'
+import subprocess
+import sys
+
+timeout = float(sys.argv[1])
+binary = sys.argv[2]
+bind = sys.argv[3]
+port = sys.argv[4]
+args = sys.argv[5:]
+
+try:
+    completed = subprocess.run(
+        [binary, "-h", bind, "-p", port, *args],
+        text=True,
+        capture_output=True,
+        timeout=timeout,
+        check=False,
+    )
+except subprocess.TimeoutExpired:
+    print(f"redis-cli timeout after {timeout:g}s", file=sys.stderr)
+    sys.exit(124)
+
+if completed.stdout:
+    print(completed.stdout, end="")
+if completed.stderr:
+    print(completed.stderr, end="", file=sys.stderr)
+sys.exit(completed.returncode)
+PY
+}
+
 redis_ping() {
-  "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" ping >/dev/null 2>&1
+  redis_cli ping >/dev/null 2>&1
 }
 
 redis_clients() {
-  "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" INFO clients 2>/dev/null | awk -F: '/^connected_clients:|^maxclients:/ {gsub(/\r/,"",$2); print $2}' | paste - - | awk '{print $1" "$2}'
+  redis_cli INFO clients 2>/dev/null | awk -F: '/^connected_clients:|^maxclients:/ {gsub(/\r/,"",$2); print $2}' | paste - - | awk '{print $1" "$2}'
 }
 
 write_redis_conf() {
@@ -83,7 +116,7 @@ stop_orphan_for_launchd() {
     return 0
   fi
   echo "Redis is reachable but ${LABEL} is not owning it; stopping orphan before launchd start."
-  "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" SHUTDOWN NOSAVE >/dev/null 2>&1 || true
+  redis_cli SHUTDOWN NOSAVE >/dev/null 2>&1 || true
   for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
     redis_ping || return 0
@@ -109,7 +142,8 @@ start_redis() {
   fi
   write_redis_conf
   quarantine_legacy_rdb
-  "${REDIS_BIN}" "$REDIS_CONF" --daemonize yes --maxclients "${MAXCLIENTS}" || true
+  LANG="$REDIS_LOCALE" LC_ALL="$REDIS_LOCALE" LC_CTYPE="$REDIS_LOCALE" \
+    "${REDIS_BIN}" "$REDIS_CONF" --daemonize yes --maxclients "${MAXCLIENTS}" || true
   for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
     if redis_ping; then
@@ -147,7 +181,18 @@ launchd_install() {
   </array>
   <key>WorkingDirectory</key>
   <string>${REDIS_DIR}</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>LANG</key>
+    <string>${REDIS_LOCALE}</string>
+    <key>LC_ALL</key>
+    <string>${REDIS_LOCALE}</string>
+    <key>LC_CTYPE</key>
+    <string>${REDIS_LOCALE}</string>
+  </dict>
   <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
   <true/>
   <key>StartInterval</key>
   <integer>300</integer>
@@ -185,7 +230,7 @@ launchd_start() {
 
 restart_redis() {
   if [[ "$(uname -s)" == "Darwin" && "${TNF_REDIS_DISABLE_LAUNCHD:-0}" != "1" ]]; then
-    "${REDIS_CLI}" -h "${BIND}" -p "${PORT}" SHUTDOWN NOSAVE >/dev/null 2>&1 || true
+    redis_cli SHUTDOWN NOSAVE >/dev/null 2>&1 || true
     sleep 2
     launchd_start
   else

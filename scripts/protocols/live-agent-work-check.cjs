@@ -10,12 +10,18 @@ const ROOT = path.resolve(__dirname, '../..');
 const HOME = os.homedir();
 const REPORT_DIR = path.join(ROOT, 'docs/protocols/reports');
 const HOME_REPORT = path.join(HOME, '.tnf/live-agent-work-check-latest.json');
-const DEFAULT_TIMEOUT_MS = 2500;
+const DEFAULT_TIMEOUT_MS = 5000;
+const REDIS_FAST_TIMEOUT_MS = 3000;
+const REDIS_RECOVERY =
+  'Verify/repair com.thenewfuse.redis-tnf-bus with scripts/runtime/redis-local-bootstrap.sh launchd-start, require bounded PONG, then refresh com.tnf.master-heartbeat and rerun this check.';
+const REDIS_WEDGE_RECOVERY =
+  'Pause new Redis clients, stop stuck bootstrap/shutdown callers, restart com.thenewfuse.redis-tnf-bus, then refresh master-heartbeat.';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const writeMode = args.includes('--write');
 const strictMode = args.includes('--strict');
+const wsChannelsMode = args.includes('--ws-channels') || process.env.TNF_LIVE_CHECK_WS_CHANNELS === '1';
 const timeoutMs = readIntOption('--timeout-ms', DEFAULT_TIMEOUT_MS);
 
 function readIntOption(name, fallback) {
@@ -42,6 +48,12 @@ function run(command, commandArgs = [], options = {}) {
     stderr: (result.stderr || '').trim(),
     error: result.error?.message || null,
   };
+}
+
+function redisCli(args = []) {
+  return run('redis-cli', ['-h', '127.0.0.1', '-p', '6379', ...args], {
+    timeoutMs: Math.min(timeoutMs, REDIS_FAST_TIMEOUT_MS),
+  });
 }
 
 function readJson(filePath) {
@@ -161,6 +173,57 @@ function collectProcesses() {
     .slice(0, 80);
 }
 
+function collectRelay() {
+  const listener = run('lsof', ['-nP', '-iTCP:3000', '-sTCP:LISTEN'], { timeoutMs: 3000 });
+  const health = run('curl', ['-fsS', '--max-time', '2', 'http://127.0.0.1:3000/health'], { timeoutMs: 3500 });
+  const ps = run('ps', ['-axo', 'pid=,ppid=,stat=,etime=,command='], { timeoutMs: 4000 });
+  const processLines = ps.stdout ? ps.stdout.split('\n') : [];
+  const masterClockProcessCandidates = processLines
+    .filter((line) => /(^|\/|\s)(pnpm run master-clock|dist\/master-clock\.js|@the-new-fuse\/relay-core run master-clock)/.test(line))
+    .filter((line) => !line.includes('live-agent-work-check.cjs'))
+    .filter((line) => !line.includes('ps -axo'))
+    .slice(0, 40);
+  const masterClockRuntimeProcesses = masterClockProcessCandidates.filter((line) => {
+    const parsed = parsePsLine(line);
+    return (
+      /^(?:\S+\/)?node\s+dist\/master-clock\.js\b/.test(parsed.command || '') ||
+      /@the-new-fuse\/relay-core run master-clock/.test(parsed.command || '')
+    );
+  });
+  let healthPayload = null;
+  try {
+    healthPayload = health.stdout ? JSON.parse(health.stdout) : null;
+  } catch {
+    healthPayload = null;
+  }
+
+  let channelCheck = null;
+  if (wsChannelsMode) {
+    const check = run(
+      'node',
+      ['scripts/protocols/check-federated-ws-channels.cjs', '--json', '--write', '--timeout-ms', '10000'],
+      { timeoutMs: 20000 }
+    );
+    try {
+      channelCheck = check.stdout ? JSON.parse(check.stdout) : { ok: false, error: check.stderr || check.error || 'empty output' };
+    } catch (err) {
+      channelCheck = { ok: false, error: err.message, stdout: check.stdout, stderr: check.stderr };
+    }
+  }
+
+  return {
+    listening: listener.stdout ? listener.stdout.includes(':3000') : false,
+    listener: listener.stdout ? listener.stdout.split('\n').slice(0, 6) : [],
+    healthOk: health.ok && healthPayload?.status === 'ok' && healthPayload?.relay === 'running',
+    health: healthPayload || health.stderr || health.error || health.stdout,
+    masterClockProcesses: masterClockRuntimeProcesses,
+    masterClockProcessCandidates,
+    masterClockProcessCount: masterClockRuntimeProcesses.length,
+    wsChannelsMode,
+    channelCheck,
+  };
+}
+
 function parseLaunchctlList(stdout, label) {
   const row = (stdout || '').split('\n').find((line) => line.includes(label));
   if (!row) return { label, loaded: false };
@@ -223,13 +286,6 @@ function collectStateFiles() {
 }
 
 function collectRedis() {
-  const ping = run('redis-cli', ['PING']);
-  const planning = run('redis-cli', ['LLEN', 'tnf:master:tasks:planning']);
-  const realtime = run('redis-cli', ['LLEN', 'tnf:master:tasks:realtime']);
-  const registry = run('redis-cli', ['EXISTS', 'tnf:agent-registry']);
-  const serverInfo = run('redis-cli', ['INFO', 'server']);
-  const saveConfig = run('redis-cli', ['CONFIG', 'GET', 'save']);
-  const shutdownConfig = run('redis-cli', ['CONFIG', 'GET', 'shutdown-on-sigterm']);
   const listener = run('lsof', ['-nP', '-iTCP:6379', '-sTCP:LISTEN'], { timeoutMs: 3000 });
   const ps = run('ps', ['-axo', 'pid=,ppid=,stat=,etime=,command='], { timeoutMs: 4000 });
   const redisProcesses = ps.stdout
@@ -240,19 +296,47 @@ function collectRedis() {
         .filter((line) => !line.includes('ps -axo'))
         .slice(0, 80)
     : [];
-  const wedgedSignals = redisProcesses.filter(
-    (line) =>
-      /redis-rdb-bgsave|redis-cli shutdown|redis-cli ping|redis-cli .*HSET|redis-cli .*PUBLISH/i.test(
-        line
-      ) && !/\b0:0[0-5]\b/.test(line)
-  );
+  const wedgedSignals = redisProcesses.filter((line) => isRedisWedgeSignal(line));
+  const ping = redisCli(['PING']);
+  const ok = ping.stdout === 'PONG';
+
+  if (!ok) {
+    return {
+      ok: false,
+      ping: ping.timedOut ? `timeout after ${Math.min(timeoutMs, REDIS_FAST_TIMEOUT_MS)}ms` : ping.stdout || ping.stderr || ping.error,
+      listening: listener.stdout ? listener.stdout.includes(':6379') : false,
+      processes: redisProcesses,
+      wedgedSignals,
+      likelyWedged: Boolean(listener.stdout?.includes(':6379') || wedgedSignals.length > 0),
+      config: {
+        configFile: '',
+        processId: '',
+        save: '',
+        shutdownOnSigterm: '',
+      },
+      queues: {
+        planning: null,
+        realtime: null,
+      },
+      registryExists: null,
+      skippedDeepQueries: true,
+      skippedReason: 'PING did not return PONG; skipped LLEN/EXISTS/INFO/CONFIG to avoid amplifying Redis failure',
+    };
+  }
+
+  const planning = redisCli(['LLEN', 'tnf:master:tasks:planning']);
+  const realtime = redisCli(['LLEN', 'tnf:master:tasks:realtime']);
+  const registry = redisCli(['EXISTS', 'tnf:agent-registry']);
+  const serverInfo = redisCli(['INFO', 'server']);
+  const saveConfig = redisCli(['CONFIG', 'GET', 'save']);
+  const shutdownConfig = redisCli(['CONFIG', 'GET', 'shutdown-on-sigterm']);
   return {
-    ok: ping.stdout === 'PONG',
+    ok,
     ping: ping.stdout || ping.stderr || ping.error,
     listening: listener.stdout ? listener.stdout.includes(':6379') : false,
     processes: redisProcesses,
     wedgedSignals,
-    likelyWedged: ping.stdout !== 'PONG' && (listener.stdout?.includes(':6379') || wedgedSignals.length > 0),
+    likelyWedged: false,
     config: {
       configFile: parseInfoValue(serverInfo.stdout, 'config_file'),
       processId: parseInfoValue(serverInfo.stdout, 'process_id'),
@@ -265,6 +349,41 @@ function collectRedis() {
     },
     registryExists: registry.stdout === '1',
   };
+}
+
+function isRedisWedgeSignal(line) {
+  if (!/redis-rdb-bgsave|redis-cli shutdown|redis-cli ping|redis-cli .*HSET|redis-cli .*PUBLISH/i.test(line)) {
+    return false;
+  }
+  const parsed = parsePsLine(line);
+  // Very young redis-cli commands are normal probes. Treat only older clients or
+  // redis-rdb-bgsave as wedge evidence.
+  return /redis-rdb-bgsave/i.test(line) || Number(parsed.elapsedSeconds || 0) > 5;
+}
+
+function parsePsLine(line) {
+  const match = String(line).trim().match(/^(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(.+)$/);
+  if (!match) return { elapsedSeconds: 0, command: line };
+  return {
+    pid: match[1],
+    ppid: match[2],
+    stat: match[3],
+    etime: match[4],
+    command: match[5],
+    elapsedSeconds: parseElapsedSeconds(match[4]),
+  };
+}
+
+function parseElapsedSeconds(etime) {
+  const value = String(etime || '').trim();
+  const dayMatch = value.match(/^(\d+)-(.+)$/);
+  const days = dayMatch ? Number.parseInt(dayMatch[1], 10) || 0 : 0;
+  const clock = dayMatch ? dayMatch[2] : value;
+  const parts = clock.split(':').map((part) => Number.parseInt(part, 10) || 0);
+  if (parts.length === 3) return days * 86400 + parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return days * 86400 + parts[0] * 60 + parts[1];
+  if (parts.length === 1) return days * 86400 + parts[0];
+  return days * 86400;
 }
 
 function parseInfoValue(stdout, key) {
@@ -302,6 +421,7 @@ function analyze(snapshot) {
   const state = snapshot.stateFiles;
   const tokens = snapshot.tokens;
   const fullAuto = snapshot.fullAuto;
+  const relay = snapshot.relay;
 
   if (snapshot.git.indexLock.exists) {
     const hasOwner = snapshot.git.indexLock.owners.length > 1;
@@ -324,8 +444,50 @@ function analyze(snapshot) {
     addFinding(findings, 'critical', 'master-heartbeat-unloaded', 'com.tnf.master-heartbeat is not loaded in launchd.');
   }
 
+  if (!relay.healthOk) {
+    addFinding(findings, 'critical', 'relay-unhealthy', 'WebSocket relay on :3000 is not healthy.', {
+      listening: relay.listening,
+      health: relay.health,
+      listener: relay.listener,
+    });
+  }
+
+  if (relay.masterClockProcessCount > 3) {
+    addFinding(
+      findings,
+      'critical',
+      'duplicate-master-clock-flood-risk',
+      'Multiple master-clock stacks are live and can flood the WebSocket relay after reconnect.',
+      { count: relay.masterClockProcessCount, processes: relay.masterClockProcesses.slice(0, 12) }
+    );
+  } else if (relay.masterClockProcessCount > 1) {
+    addFinding(findings, 'warn', 'duplicate-master-clock', 'More than one master-clock process is live.', {
+      count: relay.masterClockProcessCount,
+      processes: relay.masterClockProcesses.slice(0, 8),
+    });
+  }
+
+  if (relay.wsChannelsMode && relay.channelCheck && relay.channelCheck.ok !== true) {
+    addFinding(findings, 'critical', 'federated-ws-channel-check-failed', 'Green/Blue federated WebSocket channel probe failed.', {
+      channelCheck: relay.channelCheck,
+    });
+  }
+
+  const masterStatus = firstJsonValue(state.masterHeartbeat.record, ['status']);
   if (state.masterHeartbeat.stale) {
     addFinding(findings, 'critical', 'master-heartbeat-stale', 'Master heartbeat state is missing, unreadable, or stale.', {
+      ageSeconds: state.masterHeartbeat.record.ageSeconds,
+      generatedAt: firstJsonValue(state.masterHeartbeat.record, ['generatedAt', 'created_at']),
+    });
+  } else if (['fatal', 'stopped'].includes(String(masterStatus || '').toLowerCase())) {
+    addFinding(findings, 'critical', 'master-heartbeat-not-running', 'Master heartbeat state is fresh but not running.', {
+      status: masterStatus,
+      ageSeconds: state.masterHeartbeat.record.ageSeconds,
+      generatedAt: firstJsonValue(state.masterHeartbeat.record, ['generatedAt', 'created_at']),
+    });
+  } else if (String(masterStatus || '').toLowerCase() === 'skipped-locked') {
+    addFinding(findings, 'warn', 'master-heartbeat-lock-held', 'Master heartbeat wrote skipped-locked instead of a cycle state.', {
+      status: masterStatus,
       ageSeconds: state.masterHeartbeat.record.ageSeconds,
       generatedAt: firstJsonValue(state.masterHeartbeat.record, ['generatedAt', 'created_at']),
     });
@@ -360,14 +522,18 @@ function analyze(snapshot) {
           ping: snapshot.redis.ping,
           listening: snapshot.redis.listening,
           wedgedSignals: snapshot.redis.wedgedSignals.slice(0, 12),
-          remediation:
-            'Pause new Redis clients, stop stuck bootstrap/shutdown callers, restart com.thenewfuse.redis-tnf-bus, then refresh master-heartbeat.',
+          remediation: REDIS_WEDGE_RECOVERY,
         }
       );
     } else {
-      addFinding(findings, 'critical', 'redis-unavailable', 'Redis is not responding with PONG.', { ping: snapshot.redis.ping });
+      addFinding(findings, 'critical', 'redis-unavailable', 'Redis is not responding with PONG.', {
+        ping: snapshot.redis.ping,
+        listening: snapshot.redis.listening,
+        skippedDeepQueries: snapshot.redis.skippedDeepQueries,
+        remediation: REDIS_RECOVERY,
+      });
     }
-  } else if (snapshot.redis.queues.planning || snapshot.redis.queues.realtime) {
+  } else if (Number(snapshot.redis.queues.planning || 0) || Number(snapshot.redis.queues.realtime || 0)) {
     addFinding(findings, 'warn', 'redis-queues-pending', 'Master task queues are not empty.', snapshot.redis.queues);
   }
 
@@ -448,6 +614,7 @@ function buildSnapshot() {
     launchd: collectLaunchd(),
     stateFiles: collectStateFiles(),
     redis: collectRedis(),
+    relay: collectRelay(),
     tokens: collectTokens(),
     fullAuto: collectFullAuto(),
   };
@@ -493,6 +660,18 @@ ${findings}
 | --- | --- | ---: | ---: |
 ${launchRows}
 
+## Relay
+- Health: ${snapshot.relay.healthOk ? 'healthy' : 'unhealthy'}
+- Listener: ${snapshot.relay.listener[0] || 'none'}
+- Master-clock process count: ${snapshot.relay.masterClockProcessCount}
+- WS channel probe: ${
+    snapshot.relay.wsChannelsMode
+      ? snapshot.relay.channelCheck?.ok
+        ? 'pass'
+        : 'fail'
+      : 'not run'
+  }
+
 ## State Files
 | Anchor | Freshness | Status | Age | Generated |
 | --- | --- | --- | ---: | --- |
@@ -512,6 +691,13 @@ If the report contains \`redis-wedged\`, agents must not launch more Redis clien
 or bootstrap loops. The Local Subdirector should serialize recovery: stop stuck
 Redis callers, restart \`com.thenewfuse.redis-tnf-bus\`, refresh
 \`com.tnf.master-heartbeat\`, and rerun this check.
+
+If the report contains \`redis-unavailable\`, do not trust launchd loaded state
+or PID alone. Run \`bash scripts/runtime/redis-local-bootstrap.sh launchd-start\`,
+require a bounded \`redis-cli -h 127.0.0.1 -p 6379 PING\` result of \`PONG\`,
+refresh \`com.tnf.master-heartbeat\`, and rerun this check.
+
+Operational skill: \`.agent/skills/tnf-live-fleet-cohesion/SKILL.md\`.
 `;
 }
 
