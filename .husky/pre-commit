@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
 set -e
 
+# Committing is the SAFE path the mutation guard exists to steer agents toward,
+# and lint-staged parks unstaged changes with `git stash` as an implementation
+# detail of it. Without this, the guard would block its own commit pipeline.
+# Scoped to this hook's process tree only — it does not leak to the shell.
+export TNF_MUTATION_OK=1
+
 # Authority first: cheapest check, and the one that decides whether this
 # commit should exist at all. See .husky/tnf-authority.sh for what this does
 # and does not guarantee.

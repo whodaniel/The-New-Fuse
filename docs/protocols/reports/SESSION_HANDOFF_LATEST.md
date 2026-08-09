@@ -1,35 +1,39 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-09T13:19:44.689Z`  
-Handoff ID: `d9e5c9ce-3291-449d-8e15-90fa5ffe4f8b`
+Created At: `2026-08-09T18:16:11.985Z`  
+Handoff ID: `a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `99e5152edc430d327c3ed241f0f79aa9c217e0a3`
+- Head SHA: `1703dea33849612c46fd07416d211635b2f2bdee`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Add TNF Agent Workspace Isolation Protocol: which physical checkout an agent
-  works in, keyed by task class.
-- Load-bearing rule R1 — commands that move HEAD
-  (stash/checkout/reset/merge/clean) are clone-tier only; they destroy other
-  agents uncommitted work regardless of task coordination.
-- Documents the non-obvious hazard that git stash skips untracked files, so
-  survival of a maintenance stash is accidental rather than policy.
-- Machine policy at data/protocols/agent-workspace-policy.json (force-added,
-  matching the tracked agent-owned-docs.registry.json precedent).
+- Pre-mutation guard closing the commit-time/mutation-time gate asymmetry: git
+  stash on a dirty shared tree is now blocked.
+- Rides reference-transaction, the only hook that sees stash/reset/merge/rebase
+  — git has no pre-stash, pre-checkout or pre-reset hook.
+- Sandbox-verified: commits pass untouched; stash blocked with the untracked
+  file preserved. Plain checkout deliberately NOT blocked — git already carries
+  or refuses, and false positives get guards bypassed.
+- Shim reinstalled from prepare because husky does not generate
+  reference-transaction and .husky/\_ is gitignored.
 
 ## Changed Paths
 
-- `docs/protocols/PROTOCOL_MAP.md`
-- `docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md`
-- `docs/protocols/agent-workspace-policy.json`
+- `.husky/pre-commit`
+- `.husky/reference-transaction`
+- `docs/protocols/AGENT_STATUS_LEDGER.md`
+- `docs/protocols/LIVING_STATE.md`
 - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
 - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
+- `package.json`
+- `scripts/security/install-mutation-guard-hook.cjs`
+- `scripts/security/workspace-mutation-guard.cjs`
 
 ## Verification
 
