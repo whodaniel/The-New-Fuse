@@ -429,7 +429,10 @@ class FuseConnectContentScript {
 
           case 'INJECT_MESSAGE':
             this.injectMessage(message.content).then((success) => {
-              safeSendResponse({ success });
+              safeSendResponse({
+                success,
+                result: simpleChatBridge.getLastSendResult(),
+              });
             });
             return true;
 

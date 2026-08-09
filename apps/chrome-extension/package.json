@@ -19,6 +19,7 @@
     "dev": "webpack --mode development --watch",
     "package": "node scripts/package-extension.js",
     "test": "jest",
+    "test:chat-injection": "jest src/v6/content/adapters/__tests__/SimpleChatBridge.test.ts --runInBand",
     "test:self-prompter": "jest --config jest.self-prompter.config.cjs --runInBand",
     "test:self-prompter:coverage": "jest --config jest.self-prompter.config.cjs --runInBand --coverage",
     "test:watch": "jest --watch",

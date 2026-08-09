@@ -1277,29 +1277,30 @@ class BackgroundService {
   /**
    * Inject message to active tab
    */
-  private async injectMessageToActiveTab(text: string): Promise<void> {
+  private async injectMessageToActiveTab(text: string): Promise<any> {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs[0]?.id) {
       this.logEvent('chat', 'inject_active_tab', {
         tabId: tabs[0].id,
         preview: String(text || '').slice(0, 120),
       });
-      chrome.tabs.sendMessage(tabs[0].id, {
+      return await chrome.tabs.sendMessage(tabs[0].id, {
         type: 'INJECT_MESSAGE',
         content: text,
       });
     }
+    return { success: false, error: 'No active tab available for injection' };
   }
 
   /**
    * Inject message to a specific tab
    */
-  private async injectMessageToTab(tabId: number, text: string): Promise<void> {
+  private async injectMessageToTab(tabId: number, text: string): Promise<any> {
     this.logEvent('chat', 'inject_specific_tab', {
       tabId,
       preview: String(text || '').slice(0, 120),
     });
-    chrome.tabs.sendMessage(tabId, {
+    return await chrome.tabs.sendMessage(tabId, {
       type: 'INJECT_MESSAGE',
       content: text,
     });
@@ -3899,12 +3900,19 @@ Format as JSON array:
             ? this.injectMessageToTab(sender.tab.id, message.content)
             : this.injectMessageToActiveTab(message.content)
           )
-            .then(() => {
+            .then((result) => {
+              const success = result?.success !== false;
               this.logEvent('chat', 'inject_message', {
                 tabId: sender.tab?.id ?? null,
                 preview: String(message.content || '').slice(0, 120),
+                success,
+                error: result?.error || result?.result?.error || null,
               });
-              sendResponse({ success: true });
+              sendResponse({
+                success,
+                result: result?.result || result,
+                error: result?.error || result?.result?.error,
+              });
             })
             .catch((error) => {
               console.error('[FuseConnect v7] Error injecting message:', error);
