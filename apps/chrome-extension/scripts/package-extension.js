@@ -1,14 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const archiver = require('archiver');
-const { execSync } = require('child_process');
+import archiver from 'archiver';
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
+const distName = process.env.TNF_CHROME_DIST_DIR || 'dist-v7';
 const config = {
-  distDir: path.join(__dirname, '../dist'),
+  distDir: path.join(__dirname, '..', distName),
   outputDir: path.join(__dirname, '../releases'),
-  manifestPath: path.join(__dirname, '../manifest.json'),
   packageJsonPath: path.join(__dirname, '../package.json'),
+  buildScript: process.env.TNF_CHROME_BUILD_SCRIPT || 'build:v7',
 };
 
 // Ensure directories exist
@@ -22,10 +27,17 @@ function ensureDirectories() {
 
 // Update version numbers
 function updateVersions(version) {
-  // Update manifest.json
-  const manifest = JSON.parse(fs.readFileSync(config.manifestPath, 'utf8'));
+  const sourceManifestPath = path.join(__dirname, '../src/v6/manifest.json');
+  const distManifestPath = path.join(config.distDir, 'manifest.json');
+  const manifestPath = fs.existsSync(sourceManifestPath) ? sourceManifestPath : distManifestPath;
+
+  if (!fs.existsSync(manifestPath)) {
+    throw new Error(`Manifest not found for version update: ${manifestPath}`);
+  }
+
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   manifest.version = version;
-  fs.writeFileSync(config.manifestPath, JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
   // Update package.json
   const packageJson = JSON.parse(fs.readFileSync(config.packageJsonPath, 'utf8'));
@@ -37,7 +49,7 @@ function updateVersions(version) {
 
 // Create ZIP archive
 function createArchive(version) {
-  const outputPath = path.join(config.outputDir, `the-new-fuse-v${version}.zip`);
+  const outputPath = path.join(config.outputDir, `fuse-connect-${distName}-v${version}.zip`);
   const output = fs.createWriteStream(outputPath);
   const archive = archiver('zip', {
     zlib: { level: 9 }, // Maximum compression
@@ -66,9 +78,13 @@ function createArchive(version) {
 
 // Run build process
 function buildExtension() {
-  console.log('Building extension...');
+  console.log(`Building extension with ${config.buildScript}...`);
   try {
-    execSync('npm run build', { stdio: 'inherit' });
+    const runner =
+      process.env.npm_execpath && path.basename(process.env.npm_execpath).includes('pnpm')
+        ? 'pnpm'
+        : 'npm';
+    execSync(`${runner} run ${config.buildScript}`, { stdio: 'inherit' });
   } catch (error) {
     console.error('Build failed:', error);
     process.exit(1);
@@ -79,13 +95,10 @@ function buildExtension() {
 function validateBuild() {
   const requiredFiles = [
     'manifest.json',
-    'background.js',
-    'popup.js',
-    'popup.html',
-    'options.js',
-    'options.html',
-    'content.js',
-    'utils.js',
+    'background/index.js',
+    'content/index.js',
+    'popup/index.html',
+    'popup/popup.js',
   ];
 
   const missingFiles = requiredFiles.filter(
@@ -104,7 +117,7 @@ function validateBuild() {
 async function packageExtension() {
   try {
     // Get version from package.json
-    const { version } = require('../package.json');
+    const { version } = JSON.parse(fs.readFileSync(config.packageJsonPath, 'utf8'));
 
     // Ensure output directories exist
     ensureDirectories();
@@ -134,13 +147,8 @@ async function packageExtension() {
 }
 
 // If running this script directly
-if (require.main === module) {
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   packageExtension().catch(console.error);
 }
 
-module.exports = {
-  packageExtension,
-  updateVersions,
-  validateBuild,
-  createArchive,
-};
+export { createArchive, packageExtension, updateVersions, validateBuild };

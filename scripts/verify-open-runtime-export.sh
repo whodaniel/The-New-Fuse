@@ -8,7 +8,12 @@ EXPORT="/tmp/tnf-open-export-$$"
 trap 'rm -rf "$EXPORT"' EXIT
 
 mkdir -p "$EXPORT"
-(cd "$MONO_ROOT" && git archive HEAD) | tar -x -C "$EXPORT"
+(cd "$MONO_ROOT" && git archive HEAD) | tar -x \
+  --exclude='node_modules' \
+  --exclude='*/node_modules' \
+  --exclude='.turbo' \
+  --exclude='*/.turbo' \
+  -C "$EXPORT"
 
 # Source proprietary arrays from sync-repos.sh
 eval "$(awk '
