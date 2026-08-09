@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useComputerUseEmbed } from '../contexts/ComputerUseEmbedContext';
 import { openExternal } from '../lib/openExternal';
 
@@ -627,7 +626,6 @@ const OAGIHub: React.FC = () => {
       subtitle="Visual computer use — screen capture, mouse/keyboard automation via native Tauri layer"
       actions={actions}
     >
-      <SynergyStatusBar />
       {body}
     </PageShell>
   );

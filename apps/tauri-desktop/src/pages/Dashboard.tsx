@@ -3,7 +3,6 @@ import TnfLogo from '../components/brand/TnfLogo';
 import ForefrontOperatorPanel from '../components/ForefrontOperatorPanel';
 import ConfirmDialog from '../components/layout/ConfirmDialog';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
 import { useRoute } from '../components/route-context';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
@@ -96,7 +95,6 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       </div>
-      <SynergyStatusBar />
       <div className="tab-switcher-row">
         <div className="tab-switcher">
           <button

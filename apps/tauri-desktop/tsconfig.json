@@ -40,7 +40,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "src/_archive/**"
   ],
   "references": [
     { "path": "../../packages/types" },

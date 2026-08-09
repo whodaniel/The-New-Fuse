@@ -318,14 +318,29 @@ class ApiService {
 
   // Health check
   async healthCheck(): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl.replace(/\/$/, '')}/api/agents`, {
-        signal: AbortSignal.timeout(2500),
-      });
-      return response.ok;
-    } catch {
-      return false;
+    /**
+     * Liveness only — must stay cheap.
+     *
+     * This used to fetch the full /api/agents list every 5s and throw the body
+     * away. That self-inflicted a rate limit: /api/agents then answered 429 after
+     * ~2.5s, so apiOnline flipped to false and the operator surface reported
+     * "API: OFFLINE" while the API was in fact healthy (/health: 200 in 2ms).
+     * The fluctuating agent counts had the same origin.
+     */
+    const base = this.baseUrl.replace(/\/$/, '');
+    for (const path of ['/health', '/api/health']) {
+      try {
+        const response = await fetch(`${base}${path}`, {
+          signal: AbortSignal.timeout(2500),
+        });
+        if (response.ok) return true;
+        // 404 means this deployment names it differently; try the next candidate.
+        if (response.status !== 404) return false;
+      } catch {
+        return false;
+      }
     }
+    return false;
   }
 
   /** Dynamic LLM catalog for Create Agent (NVIDIA-first verified + optional live). */

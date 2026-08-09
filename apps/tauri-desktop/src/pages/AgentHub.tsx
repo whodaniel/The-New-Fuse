@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
 import {
   VERIFIED_PROVIDER_CATALOG,
@@ -144,8 +143,6 @@ const AgentHub: React.FC = () => {
         ) : null
       }
     >
-      <SynergyStatusBar />
-
       {/* Filter Tabs */}
       <div className="filter-tabs">
         {(['all', 'active', 'idle', 'error'] as const).map((f) => (

@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-09T12:05:32.655Z** — handoff
+Updated: **2026-08-09T13:08:46.830Z** — handoff
+`e9278705-53bf-4b19-9c44-e7e5ed9d1f7c` (`da185b398393`).
 `8e151e22-837c-43e2-a067-dafc97a21a71` (`b4eb8329aee7`).
 `190b8780-0596-40da-ab6b-df0a68708f8e` (`c5d7aacc4a9d`).
 `aa668d6a-3194-4053-a6ca-a84571cdf5a6` (`8f1628a8872c`).
@@ -153,10 +154,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                          |
-| -------- | ----------------------------------------------------------------------------------------------- |
-| **P0**   | Validate operator tooling still resolves apps/extensions paths.                                 |
-| **P0**   | Decide whether TNF-Extensions should become its own git repo for former apps/external gitlinks. |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -566,3 +567,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-09 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (8e151e22-837c-43e2-a067-dafc97a21a71) | ✅ HANDOFF_READY |
+
+| 2026-08-09 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e9278705-53bf-4b19-9c44-e7e5ed9d1f7c) | ✅ HANDOFF_READY |

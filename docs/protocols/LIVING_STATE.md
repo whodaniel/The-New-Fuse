@@ -2,13 +2,14 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Validate operator tooling still resolves apps/extensions
-paths. **Project ID:** `TNF-SESSION` **Handoff:**
-`8e151e22-837c-43e2-a067-dafc97a21a71` **Head:** `b4eb8329aee7`
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`190b8780-0596-40da-ab6b-df0a68708f8e` **Head:** `c5d7aacc4a9d`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`aa668d6a-3194-4053-a6ca-a84571cdf5a6` **Head:** `8f1628a8872c`
+`e9278705-53bf-4b19-9c44-e7e5ed9d1f7c` **Head:** `da185b398393` paths. **Project
+ID:** `TNF-SESSION` **Handoff:** `8e151e22-837c-43e2-a067-dafc97a21a71`
+**Head:** `b4eb8329aee7` continuation.resume_checklist. **Project ID:**
+`TNF-SESSION` **Handoff:** `190b8780-0596-40da-ab6b-df0a68708f8e` **Head:**
+`c5d7aacc4a9d` continuation.resume_checklist. **Project ID:** `TNF-SESSION`
+**Handoff:** `aa668d6a-3194-4053-a6ca-a84571cdf5a6` **Head:** `8f1628a8872c`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
 `69b39874-bd24-4448-acb4-f444bb6f7598` **Head:** `099b002f03bd`
 continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**

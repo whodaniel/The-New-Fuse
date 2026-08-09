@@ -131,32 +131,64 @@ export const Terminal: React.FC<TerminalProps> = ({
 
     terminal.loadAddon(fitAddon);
 
-    // Open terminal
-    terminal.open(terminalRef.current);
-    fitAddon.fit();
+    /**
+     * xterm derives its renderer from the container's measured box. Opening or
+     * writing while that box is still 0x0 — mounted hidden, or before layout
+     * settles — makes Viewport._innerRefresh / syncScrollArea read `dimensions`
+     * off an undefined renderer and throw. The welcome writes hit that path on
+     * every load, which is why the crash fired even on pages without a visible
+     * terminal. Defer the whole init until the host has real size.
+     */
+    let disposed = false;
+    let started = false;
 
-    xtermRef.current = terminal;
-    fitAddonRef.current = fitAddon;
-
-    // Write welcome message
-    terminal.writeln('\x1b[1;34m╔═══════════════════════════════════════════════════╗\x1b[0m');
-    terminal.writeln('\x1b[1;34m║       TNF Terminal - AI Agent Command Center      ║\x1b[0m');
-    terminal.writeln('\x1b[1;34m╚═══════════════════════════════════════════════════╝\x1b[0m');
-    terminal.writeln('');
-    terminal.writeln('\x1b[33mType commands or use Quick Actions above.\x1b[0m');
-    terminal.writeln('');
-
-    // Connect to shell
-    connectToShell(terminal);
-
-    // Handle resize
-    const handleResize = () => {
-      fitAddon.fit();
+    const safeFit = () => {
+      if (disposed || !started) return;
+      try {
+        fitAddon.fit();
+      } catch {
+        /* renderer not ready yet; the observer refits */
+      }
     };
-    window.addEventListener('resize', handleResize);
+
+    const start = (): boolean => {
+      const host = terminalRef.current;
+      if (disposed || started || !host) return false;
+      if (host.offsetWidth === 0 || host.offsetHeight === 0) return false;
+      started = true;
+
+      terminal.open(host);
+      safeFit();
+
+      xtermRef.current = terminal;
+      fitAddonRef.current = fitAddon;
+
+      terminal.writeln('\x1b[1;34m╔═══════════════════════════════════════════════════╗\x1b[0m');
+      terminal.writeln('\x1b[1;34m║       TNF Terminal - AI Agent Command Center      ║\x1b[0m');
+      terminal.writeln('\x1b[1;34m╚═══════════════════════════════════════════════════╝\x1b[0m');
+      terminal.writeln('');
+      terminal.writeln('\x1b[33mType commands or use Quick Actions above.\x1b[0m');
+      terminal.writeln('');
+
+      connectToShell(terminal);
+      return true;
+    };
+
+    const observer =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            if (!started) start();
+            else safeFit();
+          })
+        : null;
+    start();
+    if (observer && terminalRef.current) observer.observe(terminalRef.current);
+    window.addEventListener('resize', safeFit);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      disposed = true;
+      window.removeEventListener('resize', safeFit);
+      observer?.disconnect();
       terminal.dispose();
     };
   }, []);

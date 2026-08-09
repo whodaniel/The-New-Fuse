@@ -1,6 +1,5 @@
 import React, { lazy, Suspense, useMemo, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
 import { ComputerUseEmbedProvider } from '../contexts/ComputerUseEmbedContext';
 
@@ -64,7 +63,6 @@ const ComputerUseHub: React.FC = () => {
         </div>
       }
     >
-      <SynergyStatusBar />
       <ComputerUseEmbedProvider value={true}>
         <div className="cu-body page-fill-body">
           <Suspense fallback={<div className="cu-loading">Loading tool surface…</div>}>

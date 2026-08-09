@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
 import { desktopNativeOnlyRoutes } from '../config/routes';
 import { resolveWebAppBaseUrl, WEB_SURFACES, webSurfaceUrl } from '../config/webSurfaces';
@@ -61,7 +60,6 @@ const WebParityHub: React.FC = () => {
         </div>
       }
     >
-      <SynergyStatusBar />
       <div className="parity-toolbar">
         <input
           className="parity-search"

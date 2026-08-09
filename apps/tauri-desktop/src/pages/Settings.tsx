@@ -2,7 +2,6 @@ import { Bell, Bot, Copy, Eye, EyeOff, Info, Palette, ShieldCheck, Wifi } from '
 import React, { useState, type ComponentType } from 'react';
 import TnfLogo from '../components/brand/TnfLogo';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useTheme } from '../providers/ThemeProvider';
 
 import { getVoicePort } from '../config/voiceBridge';
@@ -92,7 +91,6 @@ const Settings: React.FC = () => {
 
   return (
     <PageShell title="Settings" subtitle="Configure your workspace and connection preferences">
-      <SynergyStatusBar />
       <div className="settings-layout">
         <nav className="settings-nav">
           {settingsSections.map((section) => {

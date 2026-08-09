@@ -17,7 +17,6 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useAuth } from '../hooks/useAuth';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { safeStorage } from '../lib/safeStorage';
@@ -555,7 +554,6 @@ const WorkflowBuilderContent: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
       <div className="page-fill-body">
         <div className="workflow-builder-container">
           <div className="workflow-toolbar">

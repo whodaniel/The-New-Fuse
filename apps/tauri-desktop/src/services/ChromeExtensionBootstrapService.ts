@@ -96,7 +96,7 @@ class ChromeExtensionBootstrapServiceClass {
           extensionPath: null,
           launched: false,
           connected: false,
-          message: 'TNF extension bundle missing — run pnpm --dir apps/chrome-extension build:v7',
+          message: 'TNF extension bundle missing — run pnpm --dir apps/chrome-extension build',
         });
       }
 

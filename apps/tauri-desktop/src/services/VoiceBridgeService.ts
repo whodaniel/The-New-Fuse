@@ -100,6 +100,24 @@ class VoiceBridgeService {
   private listeners = new Set<Listener>();
   private pollTimer: number | null = null;
   private pollIntervalMs = 2000;
+  /**
+   * Backoff state.
+   *
+   * This polled four endpoints (/mic_state, /is_ai_speaking, /kws_state, /stt_state)
+   * every 2s forever — 120 req/min — regardless of whether the bridge was running or
+   * the operator was anywhere near a voice surface. Measured at 31 req/min per
+   * endpoint while completely idle, and the bridge port is usually closed, so nearly
+   * all of it was hammering a dead socket and contributing to the 429s the API was
+   * returning on /api/agents.
+   *
+   * On failure the interval doubles up to POLL_MAX_MS; the first success snaps it
+   * straight back, so a bridge that comes up is still picked up promptly.
+   */
+  private readonly POLL_MIN_MS = 2000;
+  private readonly POLL_MAX_MS = 60000;
+  private consecutiveFailures = 0;
+  private visibilityBound = false;
+  private suspendedByVisibility = false;
   private subscriberCount = 0;
 
   private emptySnapshot(): VoiceBridgeSnapshot {
@@ -158,19 +176,71 @@ class VoiceBridgeService {
   }
 
   startPolling(intervalMs = 2000): void {
-    this.pollIntervalMs = intervalMs;
+    this.pollIntervalMs = Math.max(intervalMs, this.POLL_MIN_MS);
     this.stopPolling();
+    this.bindVisibility();
     void this.refresh();
-    this.pollTimer = window.setInterval(() => {
+    this.scheduleNextPoll();
+  }
+
+  /**
+   * A backgrounded desktop window has no one to show voice state to, but this kept
+   * polling four endpoints every 2s regardless. Suspend while hidden and refresh
+   * once on the way back, so returning to the app shows current state immediately.
+   */
+  private bindVisibility(): void {
+    if (this.visibilityBound || typeof document === 'undefined') return;
+    this.visibilityBound = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        // Only suspend a poll loop that is actually running, so this never
+        // resurrects one that stopPolling() deliberately tore down.
+        if (this.pollTimer !== null) {
+          window.clearTimeout(this.pollTimer);
+          this.pollTimer = null;
+          this.suspendedByVisibility = true;
+        }
+        return;
+      }
+      if (!this.suspendedByVisibility) return;
+      this.suspendedByVisibility = false;
       void this.refresh();
-    }, intervalMs);
+      this.scheduleNextPoll();
+    });
+  }
+
+  /** Self-rescheduling timer so the cadence can adapt to reachability. */
+  private scheduleNextPoll(): void {
+    if (this.pollTimer !== null) window.clearTimeout(this.pollTimer);
+    this.pollTimer = window.setTimeout(() => {
+      void this.refresh().finally(() => {
+        if (this.pollTimer !== null) this.scheduleNextPoll();
+      });
+    }, this.pollIntervalMs) as unknown as number;
+  }
+
+  /** Widen the interval while the bridge is unreachable; snap back once it answers. */
+  private noteReachability(ok: boolean): void {
+    if (ok) {
+      this.consecutiveFailures = 0;
+      this.pollIntervalMs = this.POLL_MIN_MS;
+      return;
+    }
+    this.consecutiveFailures += 1;
+    this.pollIntervalMs = Math.min(
+      this.POLL_MAX_MS,
+      this.POLL_MIN_MS * 2 ** Math.min(this.consecutiveFailures, 5)
+    );
   }
 
   stopPolling(): void {
     if (this.pollTimer !== null) {
-      window.clearInterval(this.pollTimer);
+      window.clearTimeout(this.pollTimer);
       this.pollTimer = null;
     }
+    this.consecutiveFailures = 0;
+    this.pollIntervalMs = this.POLL_MIN_MS;
+    this.suspendedByVisibility = false;
   }
 
   async refresh(): Promise<VoiceBridgeSnapshot> {
@@ -250,6 +320,7 @@ class VoiceBridgeService {
         sttDetail = 'Whisper + listen sidecar live';
       }
 
+      this.noteReachability(true);
       this.patch({
         online: true,
         micPaused: Boolean(micState.paused),
@@ -272,6 +343,7 @@ class VoiceBridgeService {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      this.noteReachability(false);
       this.patch({
         online: false,
         listenRunning,

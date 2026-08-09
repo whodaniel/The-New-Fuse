@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import type { FederationChannelMessage } from '../services/FederationNodeService';
 import FederationNodeService from '../services/FederationNodeService';
+import { selectAgentPopulations } from '../services/operatorSynergy/populations';
 import { wsService } from '../services/websocket';
 import type { ChatMessage } from '../types';
 
@@ -13,6 +13,7 @@ import type { ChatMessage } from '../types';
  */
 const MultiAgentChat: React.FC = () => {
   const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
+  const population = selectAgentPopulations(synergy);
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -181,7 +182,7 @@ const MultiAgentChat: React.FC = () => {
     <PageShell
       className="page-fill"
       title="Multi-Agent Chat"
-      subtitle={`${activeAgents.length} agents available · ${synergy.relayRegistered ? 'federation' : synergy.apiOnline ? 'API' : 'offline'}`}
+      subtitle={`${activeAgents.length} of ${population.registered} agents reachable · ${synergy.relayRegistered ? 'federation' : synergy.apiOnline ? 'API' : 'offline'}`}
       banner={
         !synergy.relayRegistered && !(synergy.apiOnline && isConnected) ? (
           <div className="offline-banner">
@@ -191,7 +192,6 @@ const MultiAgentChat: React.FC = () => {
         ) : null
       }
     >
-      <SynergyStatusBar />
       <div className="page-fill-body">
         <div className="chat-container">
           {/* Agent Selector Sidebar */}

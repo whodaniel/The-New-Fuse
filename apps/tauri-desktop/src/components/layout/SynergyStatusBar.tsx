@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { LIBRARY_KWS_BASE_URL, STORY_ARCHITECT_RELAY_URL } from '../../config/virtualLibrary';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
 import { useVoiceBridge } from '../../hooks/useVoiceBridge';
+import {
+  describePopulation,
+  selectAgentPopulations,
+} from '../../services/operatorSynergy/populations';
 import { useRoute } from '../route-context';
 
 const CHIP_ROUTES: Record<string, string> = {
@@ -11,11 +15,6 @@ const CHIP_ROUTES: Record<string, string> = {
   Federation: '/a2a',
   Extension: '/computer-use',
   API: '/settings',
-};
-
-// Simulated sparkline data generator
-const generateSparklineData = () => {
-  return Array.from({ length: 12 }, () => Math.max(20, Math.random() * 100));
 };
 
 async function probeLibraryAudioReady(): Promise<boolean> {
@@ -39,10 +38,10 @@ async function probeLibraryAudioReady(): Promise<boolean> {
 /** Compact synergy plane status — use at top of operator pages */
 export const SynergyStatusBar: React.FC = () => {
   const { state } = useOperatorSynergy();
+  const population = selectAgentPopulations(state);
   const { snapshot: voice } = useVoiceBridge();
   const { navigate } = useRoute();
   const [libraryAudioReady, setLibraryAudioReady] = useState(false);
-  const [sparklineData, setSparklineData] = useState(generateSparklineData());
 
   useEffect(() => {
     let cancelled = false;
@@ -52,15 +51,10 @@ export const SynergyStatusBar: React.FC = () => {
     };
     void tick();
     const timer = window.setInterval(() => void tick(), 10000);
-    
-    const sparkTimer = window.setInterval(() => {
-      if (!cancelled) setSparklineData(generateSparklineData());
-    }, 2000);
-    
+
     return () => {
       cancelled = true;
       window.clearInterval(timer);
-      window.clearInterval(sparkTimer);
     };
   }, []);
 
@@ -112,14 +106,19 @@ export const SynergyStatusBar: React.FC = () => {
         </button>
       ))}
       <div className="synergy-meta">
-        <span style={{ marginRight: '12px' }}>
-          {state.unifiedAgents.length} agents · {state.channelCount} channels
+        <span
+          title={`${population.registered} registered · ${population.online} online · ${population.federated} reported by relay`}
+        >
+          {describePopulation(population)} · {population.channels} channels
         </span>
-        <div className="sparkline" title="Telemetry Pulse">
-          {sparklineData.map((val, i) => (
-            <div key={i} className="sparkline-bar" style={{ height: `${val}%` }} />
-          ))}
-        </div>
+        {population.divergent ? (
+          <span
+            className="synergy-divergence"
+            title={`Local discovery sees ${population.registered}; the relay reports ${population.federated}. One side is stale.`}
+          >
+            relay reports {population.federated}
+          </span>
+        ) : null}
       </div>
       <style>{`
         .synergy-status-bar {
@@ -175,27 +174,20 @@ export const SynergyStatusBar: React.FC = () => {
           margin-left: auto;
           display: flex;
           align-items: center;
+          gap: 10px;
           font-size: 12px;
           color: var(--tnf-text-secondary, #cbd5e1);
           font-weight: 500;
         }
-        .sparkline {
-          display: flex;
-          align-items: flex-end;
-          gap: 2px;
-          height: 14px;
-          padding-left: 12px;
-          border-left: 1px solid var(--tnf-border);
-        }
-        .sparkline-bar {
-          width: 3px;
-          background: var(--tnf-text-muted, #94a3b8);
-          border-radius: 1px;
-          opacity: 0.6;
-          transition: height 0.3s ease;
-        }
-        .synergy-chip.ok ~ .synergy-meta .sparkline-bar {
-          background: var(--tnf-success, #10b981);
+        /* Shown only when local discovery and the relay disagree, so a single
+           number never quietly hides a stale side. */
+        .synergy-divergence {
+          padding: 2px 8px;
+          border-radius: 999px;
+          border: 1px solid rgba(245, 158, 11, 0.45);
+          background: rgba(245, 158, 11, 0.1);
+          color: #fbbf24;
+          font-weight: 600;
         }
       `}</style>
     </div>

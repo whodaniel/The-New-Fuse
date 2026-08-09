@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import BrowserControlPanel from '../components/browser/BrowserControlPanel';
 import StartRuntimeHint from '../components/browser/StartRuntimeHint';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useComputerUseEmbed } from '../contexts/ComputerUseEmbedContext';
 import { useTnfBrowser } from '../hooks/useTnfBrowser';
 import {
@@ -715,7 +714,6 @@ const WebBrowser: React.FC = () => {
       subtitle="Operator console for the agent-browser Chromium session — not a built-in browser"
       actions={<span className={`env-badge ${statusClass}`}>{statusLabel}</span>}
     >
-      <SynergyStatusBar />
       {body}
     </PageShell>
   );
