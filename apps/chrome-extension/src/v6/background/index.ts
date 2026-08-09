@@ -20,6 +20,8 @@ import {
   buildBrowserAgentIdentity,
   buildPageAgentIdentity,
   enrichOutboundMetadata,
+  mergeRegistrationPayload,
+  resolveMessageTarget,
   type FederationIdentityRecord,
 } from '../shared/federation-identity';
 import type {
@@ -1031,9 +1033,40 @@ class BackgroundService {
         break;
 
       case 'AGENT_LIST': {
-        const agents = (message.payload as any).agents || [];
-        this.agents.clear();
-        agents.forEach((a: Agent) => this.agents.set(a.id, a));
+        const incoming = ((message.payload as any).agents || []) as Agent[];
+
+        // The relay is authoritative for WHICH agents exist and for their volatile
+        // state, but it does not carry this browser's local bookkeeping (tabId), and
+        // it may echo an agent back before it has re-broadcast the federated identity
+        // this edge minted. Clearing and overwriting therefore dropped `metadata.tabId`
+        // — breaking tab reuse in CHAT_DETECTED — and dropped idNumber/handle, which
+        // is what made `@ID#:` and `/to` addressing stop resolving after any sync.
+        const next = new Map<string, Agent>();
+        for (const agent of incoming) {
+          const existing = this.agents.get(agent.id);
+          if (!existing) {
+            next.set(agent.id, agent);
+            continue;
+          }
+          const base: Agent = {
+            ...agent,
+            metadata: { ...(agent.metadata || {}), ...(existing.metadata || {}) },
+          };
+          next.set(
+            agent.id,
+            mergeRegistrationPayload(base, agent as unknown as Record<string, unknown>)
+          );
+        }
+
+        // Page agents this browser owns can be missing from the relay's snapshot while
+        // their registration is still in flight. Dropping them would orphan the tab.
+        for (const [id, agent] of this.agents) {
+          if (next.has(id)) continue;
+          if (agent.metadata?.tabId != null) next.set(id, agent);
+        }
+
+        this.agents = next;
+        const agents = Array.from(this.agents.values());
         this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents });
         this.notifyPopup({ type: 'AGENTS_UPDATE', agents });
         break;
@@ -1051,12 +1084,21 @@ class BackgroundService {
             console.log(`[FuseConnect v7] Agent ${agent.id} went offline/removed`);
             this.agents.delete(agent.id);
           } else {
-            // Keep local metadata (like tabId) if we're just updating status
+            // Keep local bookkeeping (tabId) AND the federated identity fields when
+            // the relay sends a status-only update that omits them.
             const existing = this.agents.get(agent.id);
-            if (existing && existing.metadata?.tabId && !agent.metadata?.tabId) {
-              agent.metadata = { ...agent.metadata, tabId: existing.metadata.tabId };
+            if (existing) {
+              const base: Agent = {
+                ...agent,
+                metadata: { ...(agent.metadata || {}), ...(existing.metadata || {}) },
+              };
+              this.agents.set(
+                agent.id,
+                mergeRegistrationPayload(base, agent as unknown as Record<string, unknown>)
+              );
+            } else {
+              this.agents.set(agent.id, agent);
             }
-            this.agents.set(agent.id, agent);
           }
 
           this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) });
@@ -3673,18 +3715,46 @@ Format as JSON array:
           {
             const senderId = String(message.senderId || message.metadata?.senderId || '');
             const senderIdentity = senderId ? this.getCompleteAgentIdentity(senderId) : null;
+
+            // Federated addressing: `/to <handle>`, `@ID#:<base58>`, `@page-agent-...`
+            // and `@<Platform>` resolve to a concrete recipient and are stripped from
+            // the content. Anything unaddressed stays a broadcast. Mirrors
+            // scripts/lib/federation-relay-client.cjs#sendChannelMessage so the browser
+            // edge and standalone relay clients address each other identically.
+            const resolved = resolveMessageTarget(
+              String(message.content ?? ''),
+              Array.from(this.agents.values())
+            );
+
             const metadata = senderIdentity
               ? enrichOutboundMetadata(senderIdentity, {
                   channel: message.channel || null,
                   senderId,
-                  extra: message.metadata || {},
+                  extra: {
+                    ...(message.metadata || {}),
+                    addressedAgentId: resolved.addressedAgentId,
+                    addressedHandle: resolved.addressedHandle,
+                  },
                 })
-              : message.metadata;
+              : {
+                  ...(message.metadata || {}),
+                  addressedAgentId: resolved.addressedAgentId,
+                  addressedHandle: resolved.addressedHandle,
+                };
+
+            if (resolved.addressedAgentId) {
+              console.log('[FuseConnect v7] Addressed message ->', {
+                to: resolved.to,
+                handle: resolved.addressedHandle,
+                channel: message.channel || null,
+              });
+            }
+
             this.send({
               type: 'MESSAGE_SEND',
-              to: 'broadcast',
+              to: resolved.to,
               channel: message.channel,
-              content: message.content,
+              content: resolved.content,
               messageType: 'text',
               metadata, // <-- PRESERVE SENDER INFO
             });

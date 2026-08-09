@@ -11,6 +11,19 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
 
+  // Ship-time extras that belong to web deploys, not to the desktop bundle.
+  //
+  // Tauri loads assets off the local filesystem, so precompressed .gz/.br are never
+  // content-negotiated — they added 74 files / ~1.1MB of dead weight to the .app.
+  // Worse, vite-plugin-compression@0.5.1 intermittently aborted the whole build with
+  // `ENOENT ... .js.gz` on its own output, which failed DMG packaging outright.
+  // The visualizer likewise emitted a ~1.5MB bundle-analysis.html into the shipped app.
+  //
+  // Opt in for web builds that actually serve precompressed assets:
+  //   TNF_PRECOMPRESS=1 pnpm build      TNF_BUNDLE_ANALYZE=1 pnpm build
+  const precompressAssets = process.env.TNF_PRECOMPRESS === '1';
+  const emitBundleAnalysis = process.env.TNF_BUNDLE_ANALYZE === '1';
+
   // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420`).
   // Do NOT default HMR to localhost:3000 — that opens a second WS listener on
   // [::1]:3000 and collides with relay-core (supervisor then sees HTTP 426).
@@ -36,21 +49,24 @@ export default defineConfig(({ mode }) => {
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
       }),
-      // Generate bundle analysis report in production
+      // Generate bundle analysis report (opt-in; see TNF_BUNDLE_ANALYZE above)
       isProduction &&
+        emitBundleAnalysis &&
         visualizer({
           filename: 'dist/bundle-analysis.html',
           open: false,
           gzipSize: true,
           brotliSize: true,
         }),
-      // Compression plugins for better performance
+      // Precompression (opt-in; see TNF_PRECOMPRESS above)
       isProduction &&
+        precompressAssets &&
         compression({
           algorithm: 'gzip',
           ext: '.gz',
         }),
       isProduction &&
+        precompressAssets &&
         compression({
           algorithm: 'brotliCompress',
           ext: '.br',

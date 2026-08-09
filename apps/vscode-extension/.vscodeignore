@@ -1,20 +1,57 @@
-.vscode/**
-.vscode-test/**
+# Keep the published VSIX to the runtime surface only.
+#
+# This file is tracked in git but had gone MISSING from the working tree, so vsce
+# fell back to packaging the whole directory: a duplicate out_vsix/ tree, a
+# package.json.bak, and every one-off icon/packaging script. Restored as the union
+# of the original rules plus the gaps that let those through.
+#
+# What actually ships: package.json, dist/extension.js (the bundle), browser/,
+# media/, docs/, readme/changelog/LICENSE.
+
+# ── Build inputs (dist/extension.js is the shipped artifact) ────────────────
 src/**
 test/**
+**/*.ts
+**/*.map
+esbuild.js
+tsconfig*.json
+eslint.config.*
+.eslintrc*
+
+# ── One-off packaging / asset-generation scripts ────────────────────────────
+create-vsix.js
+create-vsix.mjs
+create-icon.js
+create-real-png.js
+create-final-icon.js
+create-better-icon.js
+create-actual-official.js
+generate-icon-fallback.js
+install-v7.4.0.sh
+test-openrouter.js
+test-openrouter-api.js
+
+# ── Packaging by-products ───────────────────────────────────────────────────
+out/**
+out_vsix/**
+*.vsix
+**/*.bak
+package.json.bak
+
+# Full-resolution icon master. media/icon.png is the 256px derivative that ships;
+# the 1024px original stays in the repo as the source of truth.
+media/icon-1024-source.png
+
+# ── Repo / dev noise ────────────────────────────────────────────────────────
+.vscode/**
+.vscode-test/**
+.github/**
+node_modules/**
 .gitignore
 .yarnrc
-vsc-extension-quickstart.md
-**/*.map
-**/*.ts
-node_modules/**
-create-vsix.js
-esbuild.js
-install-v7.4.0.sh
-test-openrouter-api.js
-test-openrouter.js
-tsconfig.json
-eslint.config.mjs
 bun.lock
 pnpm-lock.yaml
-out/**
+vsc-extension-quickstart.md
+**/tsconfig.tsbuildinfo
+**/.DS_Store
+**/__tests__/**

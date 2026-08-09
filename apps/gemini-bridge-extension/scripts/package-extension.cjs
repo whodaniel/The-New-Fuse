@@ -4,8 +4,13 @@ const archiver = require('archiver');
 const { execSync } = require('child_process');
 
 // Configuration
+// `build` emits the v6 layout into dist-v6/. This pointed at dist/ (the retired v5
+// output) and validated a flat v5 file list, so packaging failed on every run even
+// though the webpack build succeeded. Overridable for other build variants.
+const DIST_DIR_NAME = process.env.TNF_EXTENSION_DIST || 'dist-v6';
+
 const config = {
-  distDir: path.join(__dirname, '../dist'),
+  distDir: path.join(__dirname, '..', DIST_DIR_NAME),
   outputDir: path.join(__dirname, '../releases'),
   manifestPath: path.join(__dirname, '../manifest.json'),
   packageJsonPath: path.join(__dirname, '../package.json'),
@@ -77,15 +82,12 @@ function buildExtension() {
 
 // Validate the build
 function validateBuild() {
+  // v6 layout — entry points are nested per surface, not flat at the dist root.
   const requiredFiles = [
     'manifest.json',
-    'background.js',
-    'popup.js',
-    'popup.html',
-    'options.js',
-    'options.html',
-    'content.js',
-    'utils.js',
+    'background/index.js',
+    'content/index.js',
+    'popup/popup.js',
   ];
 
   const missingFiles = requiredFiles.filter(

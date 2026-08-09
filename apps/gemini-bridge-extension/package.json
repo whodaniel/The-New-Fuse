@@ -17,7 +17,7 @@
     "dev:v7": "webpack --config webpack.v7.config.cjs --mode development --watch",
     "prebuild": "node generate-icons.cjs && node scripts/generate-notification-icons.cjs",
     "dev": "webpack --mode development --watch",
-    "package": "node scripts/package-extension.js",
+    "package": "node scripts/package-extension.cjs",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
