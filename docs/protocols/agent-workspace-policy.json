@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-08-09",
+  "spec": "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
+  "rationale": "Four agents shared one checkout on 2026-08-09. A branch-maintenance job (stash -> merge -> branch switch) erased ~30 files of uncommitted work twice; two builds deadlocked 13 min on one cargo target dir; a dry-run copy filled the disk and killed a build. Tier is a function of task class, not an ad hoc choice.",
+  "tiers": {
+    "shared-readonly": {
+      "workspace": "shared checkout",
+      "writes": false,
+      "note": "Audits, inventories, investigation, reporting."
+    },
+    "shared": {
+      "workspace": "shared checkout",
+      "writes": true,
+      "note": "Single-file or short edits. Requires commit-early discipline (R3)."
+    },
+    "shared-leased": {
+      "workspace": "shared checkout",
+      "writes": true,
+      "requiresLease": true,
+      "note": "Multi-file work while other agents are active."
+    },
+    "worktree": {
+      "workspace": "git worktree",
+      "writes": true,
+      "note": "Multi-hour refactors, risky or broad changes. ~3.3GB Rust target; node_modules ~free via pnpm hardlinks."
+    },
+    "clone": {
+      "workspace": "separate clone",
+      "writes": true,
+      "note": "Anything that moves HEAD. See rule R1."
+    }
+  },
+  "byTaskClass": {
+    "analysis": "shared-readonly",
+    "edit": "shared",
+    "refactor": "shared-leased",
+    "large-refactor": "worktree",
+    "release-build": "worktree",
+    "branch-maintenance": "clone",
+    "history-rewrite": "clone",
+    "dependency-upgrade": "worktree"
+  },
+  "sharedTree": {
+    "maxUncommittedMinutes": 20,
+    "requireLeaseForPaths": ["apps/**", "packages/**", "scripts/**"],
+    "onForeignDirtyTree": "refuse",
+    "parkForeignWorkAs": "scratch-branch",
+    "forbiddenCommands": [
+      "git stash",
+      "git checkout <branch>",
+      "git reset --hard",
+      "git clean",
+      "git merge",
+      "git rebase"
+    ],
+    "forbiddenCommandsNote": "Tier 4 (clone) only \u2014 see R1. These destroy other agents' uncommitted work regardless of task coordination."
+  },
+  "worktree": {
+    "root": ".claude/worktrees",
+    "cargoTargetDir": "per-worktree",
+    "cargoTargetDirOptions": ["per-worktree", "shared"],
+    "cargoTargetDirTradeoff": "shared saves ~3.3GB per worktree but reintroduces the cargo lock contention measured at 13 min on 2026-08-09; per-worktree avoids contention and pays disk.",
+    "nodeModules": "link"
+  },
+  "scratch": {
+    "root": "/tmp/tnf-scratch",
+    "maxGB": 2,
+    "cleanOnExit": true,
+    "note": "/tmp is the same APFS volume as the repo on the operator machine. A sync-repos dry-run filled it and caused ENOSPC on 2026-08-09."
+  },
+  "recovery": {
+    "beforeDroppingAStash": "git tag archive/stash-<date>-<name> 'stash@{n}' && git show <tag>:<path>",
+    "untrackedWarning": "git stash push does NOT capture untracked files. Absence from a stash is silent \u2014 check the working tree and any scratch branch separately.",
+    "bulkCheckoutWarning": "One missing path aborts a bulk `git checkout <ref> -- ...`. Restore file by file."
+  },
+  "openDecisions": [
+    "worktree.cargoTargetDir: per-worktree vs shared",
+    "lease format: extend AGENT_STATUS_LEDGER.md or add data/protocols/path-leases.json",
+    "enforcement depth: advisory warnings first vs hard refusal"
+  ],
+  "note": "Lives in docs/protocols/ because data/protocols/** is a privacy-guarded, gitignored boundary \u2014 a policy there could not be committed and would be invisible to other clones."
+}
