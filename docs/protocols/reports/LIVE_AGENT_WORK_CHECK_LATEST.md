@@ -1,6 +1,6 @@
 # TNF Live Agent Work Check
 
-- Generated: 2026-08-09T02:13:34.605Z
+- Generated: 2026-08-09T02:24:05.413Z
 - Verdict: CAUTION
 - Repo: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
@@ -14,8 +14,8 @@
 
 ## Git
 
-- ## fix/honest-failure-reporting...origin/fix/honest-failure-reporting [ahead 13]
-- Dirty files: 35
+- ## fix/honest-failure-reporting...origin/fix/honest-failure-reporting [ahead 14]
+- Dirty files: 28
 - Stashes: 38
 - Index lock: absent
 
@@ -43,34 +43,34 @@
 
 | Anchor            | Freshness | Status   |   Age | Generated                |
 | ----------------- | --------- | -------- | ----: | ------------------------ |
-| local-subdirector | fresh     | critical |   15s | 2026-08-09T02:13:19.865Z |
-| master-heartbeat  | fresh     | healthy  |    7s | 2026-08-09T02:13:29.245Z |
-| core-fleet        | fresh     | true     |  536s | 2026-08-09T02:04:07.398Z |
-| home-handoff      | fresh     | n/a      |  572s | 2026-08-09T01:44:19.914Z |
-| repo-handoff      | fresh     | n/a      | 1321s | 2026-08-09T01:44:19.914Z |
+| local-subdirector | fresh     | critical |   14s | 2026-08-09T02:23:49.954Z |
+| master-heartbeat  | fresh     | healthy  |    2s | 2026-08-09T02:24:05.086Z |
+| core-fleet        | fresh     | true     | 1166s | 2026-08-09T02:04:07.398Z |
+| home-handoff      | fresh     | n/a      |  487s | 2026-08-09T02:15:59.495Z |
+| repo-handoff      | fresh     | n/a      |  403s | 2026-08-09T02:15:59.495Z |
 
 ## Agent Processes
 
-- 39570 1 S 33:24 /Users/danielgoldberg/.local/bin/node
+- 39570 1 S 43:54 /Users/danielgoldberg/.local/bin/node
   /Users/danielgoldberg/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs
-- 90324 49415 S 03:40:26
+- 90324 49415 S 03:50:56
   /Applications/Claude.app/Contents/Helpers/chrome-native-host
   chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/
-- 97422 1 S 01:00:31 /Users/danielgoldberg/.local/bin/node
+- 97422 1 S 01:11:01 /Users/danielgoldberg/.local/bin/node
   /Users/danielgoldberg/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs
-- 2075 1371 S+ 06:44:55 node /Users/danielgoldberg/.hermes/node/bin/codex
+- 2075 1371 S+ 06:55:25 node /Users/danielgoldberg/.hermes/node/bin/codex
   --dangerously-bypass-approvals-and-sandbox
-- 2076 2075 R+ 06:44:55
+- 2076 2075 R+ 06:55:25
   /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex
   --dangerously-bypass-approvals-and-sandbox
-- 98043 2076 S 02:42:59
+- 98043 2076 S 02:53:29
   /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex-code-mode-host
-- 61523 60837 R+ 20:03 claude
-- 79138 78479 S+ 05:20:40 /Users/danielgoldberg/.local/bin/cursor-agent
+- 61523 60837 S+ 30:33 claude
+- 79138 78479 S+ 05:31:10 /Users/danielgoldberg/.local/bin/cursor-agent
   --use-system-ca
   /Users/danielgoldberg/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js
-- 33030 32459 S+ 04:35:51 claude
-- 66454 65571 S+ 04:04:47 opencode
+- 33030 32459 S+ 04:46:21 claude
+- 66454 65571 S+ 04:15:17 opencode
 
 ## Operating Rule
 

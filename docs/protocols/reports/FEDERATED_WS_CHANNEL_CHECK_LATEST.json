@@ -1,20 +1,22 @@
 {
   "schema": "tnf.federated-ws-channel-check.v1",
-  "generatedAt": "2026-08-09T02:13:48.561Z",
+  "generatedAt": "2026-08-09T02:24:18.110Z",
   "host": "Daniels-MacBook-Pro",
   "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "relayUrl": "ws://127.0.0.1:3000/ws",
-  "runId": "fed-ws-1786241618175",
+  "runId": "fed-ws-1786242248574",
   "keepAlive": false,
-  "greenToken": "TNF_GREEN_GEMINI_ONBOARD_fed-ws-1786241618175",
-  "blueToken": "TNF_BLUE_KIMI_K3_ONBOARD_fed-ws-1786241618175",
+  "settleMs": 1500,
+  "holdMs": 8000,
+  "greenToken": "TNF_GREEN_GEMINI_ONBOARD_fed-ws-1786242248574",
+  "blueToken": "TNF_BLUE_KIMI_K3_ONBOARD_fed-ws-1786242248574",
   "confirmed": {
     "web-gemini-green-agent": true,
     "web-kimi-k3-blue-agent": true,
-    "fed-ws-1786241618175-green-observer": true,
-    "fed-ws-1786241618175-blue-observer": true,
-    "fed-ws-1786241618175-subdirector-green-bridge": true,
-    "fed-ws-1786241618175-subdirector-blue-bridge": true
+    "fed-ws-1786242248574-green-observer": true,
+    "fed-ws-1786242248574-blue-observer": true,
+    "fed-ws-1786242248574-subdirector-green-bridge": true,
+    "fed-ws-1786242248574-subdirector-blue-bridge": true
   },
   "greenDelivery": {
     "gemini": true,
@@ -33,16 +35,16 @@
     "blueHasSubdirectorId": true,
     "geminiRegisteredIdNumber": "ID#:4Xr",
     "kimiRegisteredIdNumber": "ID#:5Ds",
-    "subdirectorGreenIdNumber": "ID#:4aM",
-    "subdirectorBlueIdNumber": "ID#:58G"
+    "subdirectorGreenIdNumber": "ID#:4W4",
+    "subdirectorBlueIdNumber": "ID#:4dh"
   },
   "receivedCounts": {
-    "web-gemini-green-agent": 9361,
-    "web-kimi-k3-blue-agent": 36,
-    "fed-ws-1786241618175-green-observer": 2630,
-    "fed-ws-1786241618175-blue-observer": 8,
-    "fed-ws-1786241618175-subdirector-green-bridge": 799,
-    "fed-ws-1786241618175-subdirector-blue-bridge": 1
+    "web-gemini-green-agent": 10570,
+    "web-kimi-k3-blue-agent": 45,
+    "fed-ws-1786242248574-green-observer": 5604,
+    "fed-ws-1786242248574-blue-observer": 16,
+    "fed-ws-1786242248574-subdirector-green-bridge": 5574,
+    "fed-ws-1786242248574-subdirector-blue-bridge": 16
   },
   "eventTypes": [
     "web-gemini-green-agent:WELCOME",

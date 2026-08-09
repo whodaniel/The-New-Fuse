@@ -351,8 +351,9 @@ class BackgroundService {
       this.extensionEventLog = existing.slice(-this.EVENT_LOG_LIMIT);
     }
 
-    // Auto-join Red channel
-    this.joinedChannels.add('red');
+    // No channel is auto-joined by name. Membership is driven entirely by saved
+    // state and explicit CHANNEL_JOIN/CHANNEL_CREATE, so every channel — the ones
+    // restored above and any created later — is treated identically.
 
     // Load auto-connect preference (default true)
     this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
@@ -850,6 +851,48 @@ class BackgroundService {
           agent.channels.push(channelId);
         }
       }
+    }
+  }
+
+  /**
+   * Join every registered page agent to a channel.
+   *
+   * Channel membership has to be symmetric in both directions:
+   *   - registerPageAgent() joins a NEW page agent to the channels that already exist
+   *   - this joins the page agents that ALREADY exist to a NEW channel
+   *
+   * Only the first half used to be implemented, so a channel created (or joined)
+   * after a tab had registered never delivered to that tab — the tab was in the
+   * channel locally but was never a member on the relay. That made older channels
+   * look healthy while newly created ones appeared half-broken.
+   *
+   * `agent.channels` is updated whether or not the socket is currently open, so
+   * reRegisterAllAgents() replays the membership after a reconnect.
+   */
+  private joinPageAgentsToChannel(channelId: string): void {
+    const id = String(channelId || '').trim();
+    if (!id) return;
+
+    const isOpen = this.primaryConnection?.readyState === WebSocket.OPEN;
+
+    for (const [agentId, agent] of this.agents) {
+      // The browser agent joins through this.send() on the caller's behalf.
+      if (agentId === this.agentId) continue;
+
+      if (!Array.isArray(agent.channels)) agent.channels = [];
+      const alreadyMember = agent.channels.includes(id);
+      if (!alreadyMember) agent.channels.push(id);
+
+      if (!isOpen) continue;
+
+      const joinMessage: ProtocolMessage = {
+        id: crypto.randomUUID(),
+        type: 'CHANNEL_JOIN',
+        timestamp: Date.now(),
+        source: agentId,
+        payload: { channelId: id },
+      };
+      this.primaryConnection!.send(JSON.stringify(joinMessage));
     }
   }
 
@@ -3697,6 +3740,8 @@ Format as JSON array:
 
           this.channels.set(newChannel.id, newChannel);
           this.joinedChannels.add(newChannel.id);
+          // A brand-new channel must reach the tabs that are already open.
+          this.joinPageAgentsToChannel(newChannel.id);
           this.broadcastToTabs({
             type: 'CHANNELS_UPDATE',
             channels: Array.from(this.channels.values()),
@@ -3724,6 +3769,8 @@ Format as JSON array:
 
         case 'CHANNEL_JOIN':
           this.joinedChannels.add(message.channelId);
+          // Existing page agents must become members too, not just this tab.
+          this.joinPageAgentsToChannel(message.channelId);
           if (sender.tab?.id) {
             this.setTabActiveChannel(sender.tab.id, message.channelId);
             chrome.tabs.sendMessage(sender.tab.id, {

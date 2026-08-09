@@ -20,7 +20,8 @@ const writeMode = args.includes('--write');
 const keepAlive = args.includes('--keep-alive');
 const relayUrl = readOption('--url', process.env.TNF_RELAY_WS_URL || 'ws://127.0.0.1:3000/ws');
 const timeoutMs = readIntOption('--timeout-ms', 10000);
-const holdMs = readIntOption('--hold-ms', keepAlive ? 0 : 1500);
+const settleMs = readIntOption('--settle-ms', 1500);
+const holdMs = readIntOption('--hold-ms', keepAlive ? 0 : 8000);
 
 function readOption(name, fallback) {
   const index = args.indexOf(name);
@@ -130,6 +131,45 @@ function hasFederatedIdentity(state, identity) {
       (!identity.canonicalEntityId || haystack.includes(identity.canonicalEntityId))
     );
   });
+}
+
+async function waitForDelivery(connected, agents, greenToken, blueToken) {
+  const startedAt = Date.now();
+  let snapshot = null;
+  while (Date.now() - startedAt <= holdMs) {
+    snapshot = {
+      greenDelivery: {
+        gemini: hasToken(connected.gemini, greenToken),
+        greenObserver: hasToken(connected.greenObserver, greenToken),
+        blueLeakToGemini: hasToken(connected.gemini, blueToken),
+        blueLeakToGreenObserver: hasToken(connected.greenObserver, blueToken),
+      },
+      blueDelivery: {
+        kimi: hasToken(connected.kimi, blueToken),
+        blueObserver: hasToken(connected.blueObserver, blueToken),
+        greenLeakToKimi: hasToken(connected.kimi, greenToken),
+        greenLeakToBlueObserver: hasToken(connected.blueObserver, greenToken),
+      },
+      identityDelivery: {
+        greenHasSubdirectorId: hasFederatedIdentity(connected.gemini, agents.subGreen.identity),
+        blueHasSubdirectorId: hasFederatedIdentity(connected.kimi, agents.subBlue.identity),
+        geminiRegisteredIdNumber: agents.gemini.identity.idNumber,
+        kimiRegisteredIdNumber: agents.kimi.identity.idNumber,
+        subdirectorGreenIdNumber: agents.subGreen.identity.idNumber,
+        subdirectorBlueIdNumber: agents.subBlue.identity.idNumber,
+      },
+    };
+    const delivered =
+      snapshot.greenDelivery.gemini &&
+      snapshot.greenDelivery.greenObserver &&
+      snapshot.blueDelivery.kimi &&
+      snapshot.blueDelivery.blueObserver &&
+      snapshot.identityDelivery.greenHasSubdirectorId &&
+      snapshot.identityDelivery.blueHasSubdirectorId;
+    if (delivered) return snapshot;
+    await sleep(250);
+  }
+  return snapshot;
 }
 
 function closeClients(clients) {
@@ -251,7 +291,7 @@ async function runCheck() {
     connected[key] = await connectAgent(agent, runId, clients, events);
   }
 
-  await sleep(500);
+  await sleep(settleMs);
   connected.subGreen.ws.send(protocolEnvelope(buildRelayMessageSend(agents.subGreen.identity, {
     to: 'broadcast',
     channel: 'Green',
@@ -269,7 +309,7 @@ async function runCheck() {
     metadata: { onboarding: true, target: 'Kimi K3 Web', runId, expectedChannel: 'Blue' },
   })));
 
-  await sleep(holdMs || 1500);
+  const deliverySnapshot = await waitForDelivery(connected, agents, greenToken, blueToken);
 
   const result = {
     schema: 'tnf.federated-ws-channel-check.v1',
@@ -279,29 +319,14 @@ async function runCheck() {
     relayUrl,
     runId,
     keepAlive,
+    settleMs,
+    holdMs,
     greenToken,
     blueToken,
     confirmed: Object.fromEntries([...clients].map(([id, state]) => [id, state.confirmed])),
-    greenDelivery: {
-      gemini: hasToken(connected.gemini, greenToken),
-      greenObserver: hasToken(connected.greenObserver, greenToken),
-      blueLeakToGemini: hasToken(connected.gemini, blueToken),
-      blueLeakToGreenObserver: hasToken(connected.greenObserver, blueToken),
-    },
-    blueDelivery: {
-      kimi: hasToken(connected.kimi, blueToken),
-      blueObserver: hasToken(connected.blueObserver, blueToken),
-      greenLeakToKimi: hasToken(connected.kimi, greenToken),
-      greenLeakToBlueObserver: hasToken(connected.blueObserver, greenToken),
-    },
-    identityDelivery: {
-      greenHasSubdirectorId: hasFederatedIdentity(connected.gemini, agents.subGreen.identity),
-      blueHasSubdirectorId: hasFederatedIdentity(connected.kimi, agents.subBlue.identity),
-      geminiRegisteredIdNumber: agents.gemini.identity.idNumber,
-      kimiRegisteredIdNumber: agents.kimi.identity.idNumber,
-      subdirectorGreenIdNumber: agents.subGreen.identity.idNumber,
-      subdirectorBlueIdNumber: agents.subBlue.identity.idNumber,
-    },
+    greenDelivery: deliverySnapshot.greenDelivery,
+    blueDelivery: deliverySnapshot.blueDelivery,
+    identityDelivery: deliverySnapshot.identityDelivery,
     receivedCounts: Object.fromEntries([...clients].map(([id, state]) => [id, state.channelMessages.length])),
     eventTypes: events.slice(0, 80).map((entry) => `${entry.agentId}:${entry.type}`),
   };
