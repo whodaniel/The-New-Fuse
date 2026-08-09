@@ -47,7 +47,7 @@ const MODES: Array<{
 
 const Loading = () => (
   <div className="flex min-h-[50vh] items-center justify-center text-sm text-slate-400">
-    Loading chat…
+    <span>Loading chat…</span>
   </div>
 );
 
@@ -75,12 +75,14 @@ export default function ChatHub() {
   };
 
   return (
-    <div className="flex h-full min-h-[70vh] flex-col gap-4">
+    <div className="flex h-full min-h-[70vh] flex-col gap-4" translate="no">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Chat</h1>
+          <h1 className="text-2xl font-semibold text-white">
+            <span>Chat</span>
+          </h1>
           <p className="mt-1 text-sm text-slate-400">
-            One place for agent, multi-agent, and workspace conversations.
+            <span>One place for agent, multi-agent, and workspace conversations.</span>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -101,7 +103,7 @@ export default function ChatHub() {
                 aria-pressed={active}
               >
                 <Icon className="h-3.5 w-3.5" />
-                {item.label}
+                <span>{item.label}</span>
               </button>
             );
           })}
@@ -118,22 +120,22 @@ export default function ChatHub() {
       </div>
 
       <p className="text-[11px] text-slate-500">
-        Prefer a deep link? Use{' '}
+        <span>Prefer a deep link? Use </span>
         <Link className="text-slate-300 underline-offset-2 hover:underline" to="/chat?mode=multi">
           /chat?mode=multi
         </Link>
-        ,{' '}
+        <span>, </span>
         <Link
           className="text-slate-300 underline-offset-2 hover:underline"
           to="/chat?mode=workspace"
         >
           workspace
         </Link>
-        , or{' '}
+        <span>, or </span>
         <Link className="text-slate-300 underline-offset-2 hover:underline" to="/chat?mode=unified">
           unified
         </Link>
-        .
+        <span>.</span>
       </p>
     </div>
   );

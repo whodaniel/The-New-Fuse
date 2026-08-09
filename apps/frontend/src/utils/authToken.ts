@@ -3,6 +3,12 @@ import {
   getAuthTokenCandidates as sessionTokenCandidates,
   silentRefreshAccessToken,
 } from '@/services/authSession';
+import {
+  isRateLimitBlocked,
+  noteRateLimitResponse,
+  RateLimitedError,
+  getRateLimitRetryAfterMs,
+} from '@/utils/rateLimitCoordinator';
 
 const AUTH_TOKEN_KEYS = ['auth_token', 'authToken', 'accessToken', 'token', 'AUTH_TOKEN'] as const;
 
@@ -47,6 +53,14 @@ export async function buildAuthHeaders(
 }
 
 export async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  if (isRateLimitBlocked()) {
+    const retryAfterMs = getRateLimitRetryAfterMs();
+    throw new RateLimitedError(
+      `Rate limit exceeded. Please retry in ${Math.ceil(retryAfterMs / 1000)}s.`,
+      retryAfterMs
+    );
+  }
+
   const headers = await buildAuthHeaders(init?.headers);
   const tokenCandidates = await getAuthTokenCandidates();
   const authOptions = tokenCandidates.length > 0 ? tokenCandidates : [null];
@@ -68,6 +82,11 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     });
     lastResponse = response;
 
+    if (response.status === 429) {
+      noteRateLimitResponse(response);
+      return response;
+    }
+
     const canRetryToken = i < authOptions.length - 1;
     if ((response.status === 401 || response.status === 403) && canRetryToken) {
       continue;
@@ -78,11 +97,15 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
       const refreshed = await silentRefreshAccessToken();
       if (refreshed) {
         const retryHeaders = { ...attemptHeaders, Authorization: `Bearer ${refreshed}` };
-        return fetch(input, {
+        const retryResponse = await fetch(input, {
           ...init,
           headers: retryHeaders,
           credentials: init?.credentials ?? 'include',
         });
+        if (retryResponse.status === 429) {
+          noteRateLimitResponse(retryResponse);
+        }
+        return retryResponse;
       }
     }
 

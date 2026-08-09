@@ -193,6 +193,11 @@ class ChatApiService {
       return response.data?.text || 'No response received.';
     } catch (error) {
       console.error('Error calling text API:', error);
+      const status = (error as { status?: number })?.status;
+      const message = String((error as Error)?.message || '');
+      if (status === 429 || message.toLowerCase().includes('rate limit')) {
+        throw new Error('Rate limit exceeded. Wait a moment and try sending again.');
+      }
       throw error;
     }
   }

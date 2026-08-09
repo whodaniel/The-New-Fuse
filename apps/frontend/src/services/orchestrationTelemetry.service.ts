@@ -47,10 +47,17 @@ async function fetchFirstJson(
   for (const path of paths) {
     try {
       const response = await authFetch(path);
+      if (response.status === 429) {
+        // Don't walk aliases — each attempt burns more rate-limit budget.
+        return null;
+      }
       if (validateStatus && !response.ok) continue;
       const data = (await response.json().catch(() => ({}))) as Record<string, unknown>;
       return { data: data ?? {}, source: path };
-    } catch {
+    } catch (error) {
+      if ((error as { status?: number })?.status === 429) {
+        return null;
+      }
       // Try next alias.
     }
   }

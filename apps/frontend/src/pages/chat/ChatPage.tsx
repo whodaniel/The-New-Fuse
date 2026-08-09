@@ -182,6 +182,10 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
         return await chatApiService.callTextApi(prompt, systemPrompt);
       } catch (error) {
         console.error('Text API error:', error);
+        const message = String((error as Error)?.message || '');
+        if (message.toLowerCase().includes('rate limit')) {
+          throw error instanceof Error ? error : new Error(message);
+        }
         throw new Error('Text generation request failed. Check AI provider configuration.');
       }
     },
@@ -270,6 +274,7 @@ function ChatPage() {
   const [newGoalInput, setNewGoalInput] = useState('');
   const [newRuleSource, setNewRuleSource] = useState('');
   const [newRuleTarget, setNewRuleTarget] = useState('');
+  const [sendError, setSendError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const context = useContext(ChatContext);
@@ -457,6 +462,7 @@ function ChatPage() {
       type: 'text' as const,
     };
     setNewMessage('');
+    setSendError(null);
 
     try {
       await addMessage(userMessage);
@@ -486,6 +492,9 @@ function ChatPage() {
       await speak(botText, respondingAgent.voice);
     } catch (error) {
       console.error('Error sending message:', error);
+      setSendError(
+        String((error as Error)?.message || 'Failed to send message. Please try again.')
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -544,13 +553,17 @@ function ChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col">
+    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col" translate="no">
       {/* Header */}
       <div className="mb-6 flex-none">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">💬 Chat Center</h1>
-            <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              <span>💬 Chat Center</span>
+            </h1>
+            <p className="text-muted-foreground">
+              <span>Communicate with AI agents and get instant help</span>
+            </p>
           </div>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <button
@@ -558,28 +571,28 @@ function ChatPage() {
               className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center shadow-none"
             >
               <Users size={14} className="mr-2" />
-              Agents ({agents?.length || 0})
+              <span>Agents ({agents?.length || 0})</span>
             </button>
             <button
               onClick={() => setIsGoalModalOpen(true)}
               className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors flex items-center shadow-none"
             >
               <Lightbulb size={14} className="mr-2" />
-              Set Goal
+              <span>Set Goal</span>
             </button>
             <button
               onClick={() => setIsRuleModalOpen(true)}
               className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors flex items-center shadow-none"
             >
               <Copy size={14} className="mr-2" />
-              Rules
+              <span>Rules</span>
             </button>
             <button
               className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors flex items-center shadow-none"
               disabled={isSynthesizing}
             >
               <Sparkles size={14} className="mr-2" />
-              {isSynthesizing ? 'Synthesizing...' : 'Creative Synthesis'}
+              <span>{isSynthesizing ? 'Synthesizing...' : 'Creative Synthesis'}</span>
             </button>
           </div>
         </div>
@@ -589,7 +602,9 @@ function ChatPage() {
         {/* Agent Selection Sidebar */}
         <div className="flex flex-col gap-4 overflow-hidden h-full">
           <div className="bg-card text-card-foreground rounded-md border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
-            <h2 className="text-lg font-semibold mb-4 flex-none">Available Agents</h2>
+            <h2 className="text-lg font-semibold mb-4 flex-none">
+              <span>Available Agents</span>
+            </h2>
             <div className="space-y-3 flex-1 overflow-y-auto pr-2">
               {agents.map((agent) => (
                 <button
@@ -609,10 +624,12 @@ function ChatPage() {
                         <span
                           className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}
                         >
-                          {getStatusIcon(agent.status)} {agent.status}
+                          <span>
+                            {getStatusIcon(agent.status)} {agent.status}
+                          </span>
                         </span>
                         <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-secondary-foreground border border-secondary">
-                          {agent.type}
+                          <span>{agent.type}</span>
                         </span>
                       </div>
                     </div>
@@ -623,7 +640,9 @@ function ChatPage() {
 
             {/* Conversation Controls */}
             <div className="mt-6 pt-4 border-t border-border space-y-4 flex-none">
-              <h3 className="text-sm font-medium text-muted-foreground">Conversation Controls</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                <span>Conversation Controls</span>
+              </h3>
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Mode:</span>
@@ -631,7 +650,7 @@ function ChatPage() {
                   onClick={() => setMode(mode === 'manual' ? 'auto' : 'manual')}
                   className={`px-3 py-1 rounded-full text-sm transition-colors ${mode === 'auto' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
                 >
-                  {mode === 'auto' ? 'Auto' : 'Manual'}
+                  <span>{mode === 'auto' ? 'Auto' : 'Manual'}</span>
                 </button>
               </div>
 
@@ -654,7 +673,7 @@ function ChatPage() {
                   onClick={() => setIsTtsEnabled(!isTtsEnabled)}
                   className={`px-3 py-1 rounded-full text-sm transition-colors ${isTtsEnabled ? 'bg-slate-700 text-slate-100' : 'bg-secondary text-secondary-foreground'}`}
                 >
-                  {isTtsEnabled ? 'ON' : 'OFF'}
+                  <span>{isTtsEnabled ? 'ON' : 'OFF'}</span>
                 </button>
               </div>
 
@@ -663,25 +682,25 @@ function ChatPage() {
                   to="/agents"
                   className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
-                  🤖 Manage All Agents
+                  <span>🤖 Manage All Agents</span>
                 </Link>
                 <Link
                   to="/agents/new"
                   className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
-                  ➕ Create New Agent
+                  <span>➕ Create New Agent</span>
                 </Link>
                 <Link
                   to="/tasks/new"
                   className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
-                  📋 Create Task
+                  <span>📋 Create Task</span>
                 </Link>
                 <button
                   onClick={() => setIsGalleryOpen(true)}
                   className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
-                  🎬 Synthesis Gallery
+                  <span>🎬 Synthesis Gallery</span>
                 </button>
               </div>
             </div>
@@ -829,6 +848,11 @@ function ChatPage() {
                 <span>Press Enter to send</span>
                 <span>{newMessage.length}/500</span>
               </div>
+              {sendError && (
+                <p className="mt-2 text-xs text-red-400" role="alert">
+                  {sendError}
+                </p>
+              )}
             </div>
           </div>
         </div>

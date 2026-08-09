@@ -47,6 +47,44 @@ async function fetchText(url) {
 async function main() {
   console.log(`Verifying ${SITE}\n`);
 
+  // --- Edge function + auth shell (regression: /auth/login → marketing page) -
+  // When Pages Functions are missing from a Direct Upload, SPA routes fall
+  // through to marketing index.html and login disappears.
+  try {
+    const health = await fetchText(`${SITE}/health`);
+    let healthOk = false;
+    try {
+      const parsed = JSON.parse(health.body);
+      healthOk = health.status === 200 && parsed?.status === 'ok';
+    } catch {
+      healthOk = false;
+    }
+    check(
+      '/health is JSON from edge function',
+      healthOk,
+      healthOk
+        ? 'ok'
+        : `status=${health.status}; body starts ${JSON.stringify(health.body.slice(0, 80))} — Functions missing?`
+    );
+  } catch (err) {
+    check('/health is JSON from edge function', false, err.message);
+  }
+
+  try {
+    const login = await fetchText(`${SITE}/auth/login`);
+    const hasRoot = login.body.includes('id="root"') || login.body.includes("id='root'");
+    const isMarketing = !hasRoot && login.body.includes('Start Building');
+    check(
+      '/auth/login serves SPA shell (not marketing index.html)',
+      login.status === 200 && hasRoot && !isMarketing,
+      hasRoot
+        ? `status=${login.status}; spa shell ok`
+        : `status=${login.status}; got marketing/landing HTML instead of app.html`
+    );
+  } catch (err) {
+    check('/auth/login serves SPA shell (not marketing index.html)', false, err.message);
+  }
+
   // --- The page itself loads -------------------------------------------------
   let html;
   try {
