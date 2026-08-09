@@ -3,6 +3,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const MANIFEST_PATH = path.join(ROOT, 'data', 'distribution', 'oss-app-boundary.json');
@@ -39,6 +40,16 @@ function readShellArray(scriptText, name) {
     .map((line) => line.replace(/^['"]|['"]$/g, ''));
 }
 
+/** The committed copy of sync-repos.sh, or null outside a git checkout. */
+function readCommittedSyncScript() {
+  const result = spawnSync('git', ['show', 'HEAD:scripts/sync-repos.sh'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  });
+  if (result.status !== 0 || typeof result.stdout !== 'string') return null;
+  return result.stdout;
+}
+
 function main() {
   const manifest = readJson(MANIFEST_PATH);
   const entries = manifestEntries(manifest);
@@ -47,6 +58,7 @@ function main() {
   const proprietaryDirs = new Set(readShellArray(syncScript, 'PROPRIETARY_DIRS'));
   const alwaysExclude = new Set(readShellArray(syncScript, 'ALWAYS_EXCLUDE'));
   const errors = [];
+  const warnings = [];
 
   const byPath = new Map();
   for (const entry of entries) {
@@ -80,11 +92,43 @@ function main() {
     }
   }
 
+  // The checks above read the WORKING TREE copy of sync-repos.sh. If the exclusions
+  // are only in an uncommitted edit, this reports OK while a clean clone, CI job, or
+  // anyone who runs the sync after a checkout still publishes the excluded apps —
+  // false assurance on exactly the paths that matter most (payments, personal data).
+  const committedSync = readCommittedSyncScript();
+  if (committedSync === null) {
+    warnings.push(
+      'Could not read the committed scripts/sync-repos.sh (not a git checkout?); ' +
+        'verified the working tree only.'
+    );
+  } else {
+    const committedExclude = new Set([
+      ...readShellArray(committedSync, 'ALWAYS_EXCLUDE'),
+      ...readShellArray(committedSync, 'PROPRIETARY_DIRS'),
+    ]);
+    const uncommitted = [...byPath.entries()]
+      .filter(([appPath, entry]) => {
+        if (!knownApps.includes(appPath)) return false;
+        return entry.tier !== 'regularOpenSourceDownload' && !committedExclude.has(appPath);
+      })
+      .map(([appPath]) => appPath);
+
+    if (uncommitted.length > 0) {
+      errors.push(
+        `Boundary is not committed. These are excluded in the working tree but NOT in ` +
+          `HEAD, so a clean checkout would publish them: ${uncommitted.join(', ')}`
+      );
+    }
+  }
+
   if (errors.length > 0) {
     console.error('[oss-app-boundary] FAIL');
     for (const error of errors) console.error(`- ${error}`);
     process.exit(1);
   }
+
+  for (const warning of warnings) console.warn(`[oss-app-boundary] WARN ${warning}`);
 
   console.log('[oss-app-boundary] OK');
   console.log(`regularOpenSourceDownload=${manifest.regularOpenSourceDownload.length}`);
