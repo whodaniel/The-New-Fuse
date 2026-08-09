@@ -4174,10 +4174,29 @@ Format as JSON array:
               // This supports per-tab channel selection where each tab maintains its own channel
               let channel = message.channel || message.metadata?.channel;
 
-              if (!channel && this.joinedChannels.size > 0) {
-                // Fallback to first joined channel if no specific channel provided
+              if (!channel && sender.tab?.id) {
+                // Authoritative per-tab binding, set on CHANNEL_JOIN and persisted.
+                channel = this.tabActiveChannels.get(sender.tab.id);
+                if (channel) {
+                  console.log('[FuseConnect v7] Using tab-bound channel:', channel);
+                }
+              }
+
+              if (!channel && this.joinedChannels.size === 1) {
+                // Only safe to infer when exactly one channel is joined. Picking the
+                // first of several would publish this response into whichever channel
+                // happened to be enumerated first — a cross-channel leak that looks
+                // like one channel "stealing" another channel's traffic.
                 channel = Array.from(this.joinedChannels)[0];
-                console.log('[FuseConnect v7] Using fallback channel:', channel);
+                console.log('[FuseConnect v7] Using sole joined channel:', channel);
+              }
+
+              if (!channel && this.joinedChannels.size > 1) {
+                console.warn(
+                  '[FuseConnect v7] Response has no channel and tab has no binding; ' +
+                    'not broadcasting rather than guessing among',
+                  Array.from(this.joinedChannels)
+                );
               }
 
               if (channel) {
