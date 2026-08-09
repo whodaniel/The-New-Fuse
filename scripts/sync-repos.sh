@@ -97,10 +97,10 @@ PROPRIETARY_FILES=(
 PROPRIETARY_DIRS=(
   # Backend orchestrator module (Director authority)
   "apps/backend/src/modules/orchestrator"
-  # Nexus Orchestrator app (private 3D visualization)
-  "apps/nexus-orchestrator"
-  # PicoClaw Overseer (private agent oversight)
-  "apps/picoclaw-overseer"
+  # Nexus Orchestrator + PicoClaw live under sibling TNF-Extensions,
+  # reached via apps/extensions symlink (must stay in ALWAYS_EXCLUDE too).
+  "apps/extensions/nexus-orchestrator"
+  "apps/extensions/picoclaw-overseer"
   # Cloudflare SharedState worker
   "cloudflare-sharedstate"
   # Agent coordination patterns
@@ -112,10 +112,9 @@ PROPRIETARY_DIRS=(
   # new files here are proprietary by default.
   "scripts/registry/orchestrator"
 
-  # NOTE: apps that are merely outside the regular open-source download (games,
-  # sandboxes, standalone products, payments) do NOT belong here - this array
-  # EXTRACTS to fuse-control-plane. They are handled by ALWAYS_EXCLUDE below,
-  # sourced from data/distribution/oss-app-boundary.json.
+  # NOTE: satellite / standalone product apps live outside this monorepo under
+  # ../TNF-Extensions (apps/extensions redirect). Do not add them here unless
+  # they must be extracted into fuse-control-plane.
 )
 
 # Paths are repo-root-relative, exactly like PROPRIETARY_FILES/DIRS — every
@@ -151,29 +150,10 @@ ALWAYS_EXCLUDE=(
   # Private env files (should never be in any public repo)
   ".env"
   ".env.local"
-  # App boundary: the regular public OSS download is the core runtime and
-  # supported form factors only. Satellite, demo, standalone-product, vendor,
-  # and operator-specific apps stay in the development monorepo or get separate
-  # publication lanes. See data/distribution/oss-app-boundary.json.
-  "apps/adk-gateway"
-  "apps/ai-arcade"
-  "apps/audio-trigger-kws-mvp"
-  "apps/browser-extension"
-  "apps/casin8-games"
-  "apps/claim-tracker"
-  "apps/cloud-sandbox"
-  "apps/demo-agent-extension"
-  "apps/external"
-  "apps/gemini-bridge-extension"
-  "apps/myphoneremote-api"
-  "apps/openclaw"
-  "apps/poker-room"
-  "apps/skideancer-ide"
-  "apps/stripe-provider-bridge"
-  "apps/telegram-mcp"
-  "apps/virtual-library-blueprints"
-  "apps/visualization-hub"
-  "apps/zeroclaw-sandbox"
+  # Core apps only under apps/. Satellite tree is external:
+  # The-New-Fuse/apps/extensions → ../../TNF-Extensions (symlink). Never follow
+  # into public OSS export.
+  "apps/extensions"
   # Personal-data tooling: mines the operator's Google Drive / ArDrive and hard-codes
   # a path to ~/.config/gcloud/legacy_credentials/<personal email>/. No credentials
   # live in these files, but the tooling and the PII do not belong in a public runtime.
@@ -333,12 +313,12 @@ EOF
   cp "$MONO_ROOT/apps/backend/src/modules/orchestrator/"* "$CTRL_DIR/source-originals/backend-orchestrator/" 2>/dev/null || true
 
   mkdir -p "$CTRL_DIR/source-originals/nexus-orchestrator"
-  cp -R "$MONO_ROOT/apps/nexus-orchestrator/src/"* "$CTRL_DIR/source-originals/nexus-orchestrator/" 2>/dev/null || true
-  cp "$MONO_ROOT/apps/nexus-orchestrator/package.json" "$CTRL_DIR/source-originals/nexus-orchestrator/" 2>/dev/null || true
+  cp -R "$MONO_ROOT/apps/extensions/nexus-orchestrator/src/"* "$CTRL_DIR/source-originals/nexus-orchestrator/" 2>/dev/null || true
+  cp "$MONO_ROOT/apps/extensions/nexus-orchestrator/package.json" "$CTRL_DIR/source-originals/nexus-orchestrator/" 2>/dev/null || true
 
   mkdir -p "$CTRL_DIR/source-originals/picoclaw-overseer"
-  find "$MONO_ROOT/apps/picoclaw-overseer" -maxdepth 1 -type f -not -name '*.map' -exec cp {} "$CTRL_DIR/source-originals/picoclaw-overseer/" \; 2>/dev/null || true
-  [ -d "$MONO_ROOT/apps/picoclaw-overseer/src" ] && cp -R "$MONO_ROOT/apps/picoclaw-overseer/src" "$CTRL_DIR/source-originals/picoclaw-overseer/" 2>/dev/null || true
+  find "$MONO_ROOT/apps/extensions/picoclaw-overseer" -maxdepth 1 -type f -not -name '*.map' -exec cp {} "$CTRL_DIR/source-originals/picoclaw-overseer/" \; 2>/dev/null || true
+  [ -d "$MONO_ROOT/apps/extensions/picoclaw-overseer/src" ] && cp -R "$MONO_ROOT/apps/extensions/picoclaw-overseer/src" "$CTRL_DIR/source-originals/picoclaw-overseer/" 2>/dev/null || true
 
   if [ -d "$MONO_ROOT/packages/agent-coordination/src" ]; then
     mkdir -p "$CTRL_DIR/source-originals/agent-coordination"

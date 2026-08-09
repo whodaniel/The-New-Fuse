@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "updated": "2026-08-09",
   "regularOpenSourceDownload": [
     {
@@ -39,91 +39,91 @@
       "role": "VS Code extension form factor"
     }
   ],
+  "appsExtensionsRedirect": {
+    "path": "apps/extensions",
+    "target": "../../TNF-Extensions",
+    "description": "Symlink from The-New-Fuse/apps/extensions into the sibling TNF-Extensions tree (outside the monorepo). Not a product form factor."
+  },
+  "coreRationale": {
+    "keptInApps": "Form factors and runtime surfaces that ship with the regular OSS / local runtime download.",
+    "movedToTnfExtensions": "Satellites, games, proprietary control planes, hosted experiments, and vendored external checkouts.",
+    "reconsidered2026-08-09": [
+      "mcp-servers stays core — ships with open runtime as local MCP bridges",
+      "visualization-hub stays satellite (merge into frontend later if ops routes consolidate)",
+      "chrome/vscode/tauri stay core form factors; tnf extension CLI manages those, not TNF-Extensions"
+    ]
+  },
   "separateOpenSourceSatellites": [
     {
-      "path": "apps/adk-gateway",
+      "path": "adk-gateway",
+      "root": "TNF-Extensions",
       "reason": "agent-development satellite; publish separately when productized"
     },
     {
-      "path": "apps/ai-arcade",
+      "path": "ai-arcade",
+      "root": "TNF-Extensions",
       "reason": "game/demo satellite, not part of the default TNF runtime"
     },
     {
-      "path": "apps/audio-trigger-kws-mvp",
+      "path": "audio-trigger-kws-mvp",
+      "root": "TNF-Extensions",
       "reason": "voice/KWS pilot; optional operator stack, not default OSS app"
     },
     {
-      "path": "apps/browser-extension",
-      "reason": "legacy/alternate browser extension surface; chrome-extension is the default"
-    },
-    {
-      "path": "apps/casin8-games",
+      "path": "casin8-games",
+      "root": "TNF-Extensions",
       "reason": "game/demo satellite with separate product and asset concerns"
     },
     {
-      "path": "apps/demo-agent-extension",
-      "reason": "demo extension, not a supported default form factor"
+      "path": "openclaw",
+      "root": "TNF-Extensions",
+      "reason": "adjacent agent skills/vendor overlay; publish separately when needed"
     },
     {
-      "path": "apps/gemini-bridge-extension",
-      "reason": "legacy bridge surface superseded by Fuse Connect V7"
-    },
-    {
-      "path": "apps/openclaw",
-      "reason": "adjacent agent/browser runtime; publish separately when needed"
-    },
-    {
-      "path": "apps/poker-room",
+      "path": "poker-room",
+      "root": "TNF-Extensions",
       "reason": "game/demo satellite, not part of the default TNF runtime"
     },
     {
-      "path": "apps/telegram-mcp",
+      "path": "telegram-mcp",
+      "root": "TNF-Extensions",
       "reason": "optional integration adapter, not default OSS app"
     },
     {
-      "path": "apps/visualization-hub",
+      "path": "visualization-hub",
+      "root": "TNF-Extensions",
       "reason": "observability/visualization satellite, not default OSS app"
-    },
-    {
-      "path": "apps/zeroclaw-sandbox",
-      "reason": "sandbox surface, not part of the default TNF runtime"
     }
   ],
   "nonOssOrPersonalApps": [
     {
-      "path": "apps/claim-tracker",
-      "reason": "product-specific app outside the regular TNF OSS runtime"
-    },
-    {
-      "path": "apps/cloud-sandbox",
+      "path": "cloud-sandbox",
+      "root": "TNF-Extensions",
       "reason": "hosted/cloud experimentation surface"
     },
     {
-      "path": "apps/external",
+      "path": "external",
+      "root": "TNF-Extensions",
       "reason": "vendored and research checkouts; not TNF source distribution"
     },
     {
-      "path": "apps/myphoneremote-api",
+      "path": "myphoneremote-api",
+      "root": "TNF-Extensions",
       "reason": "standalone product, tracked outside TNF distribution"
     },
     {
-      "path": "apps/nexus-orchestrator",
+      "path": "nexus-orchestrator",
+      "root": "TNF-Extensions",
       "reason": "proprietary control-plane/orchestration surface"
     },
     {
-      "path": "apps/picoclaw-overseer",
+      "path": "picoclaw-overseer",
+      "root": "TNF-Extensions",
       "reason": "proprietary/private overseer surface"
     },
     {
-      "path": "apps/skideancer-ide",
-      "reason": "standalone Cloud IDE product, not a TNF distribution target"
-    },
-    {
-      "path": "apps/stripe-provider-bridge",
-      "reason": "billing/provider bridge; not part of the default OSS runtime"
-    },
-    {
-      "path": "apps/virtual-library-blueprints",
+      "path": "virtual-library-blueprints",
+      "root": "TNF-Extensions",
       "reason": "operator/library intake workstream and submodule, not default runtime"
     }
   ]

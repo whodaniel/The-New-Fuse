@@ -45,10 +45,11 @@ stubs.
 - Proprietary apps: `nexus-orchestrator`, `picoclaw-overseer`, orchestrator
   module, etc.
 
-**Optional in monorepo, not the regular OSS download:**
-`apps/audio-trigger-kws-mvp` (pilot), `casin8-games`, `poker-room` (demos),
-legacy browser bridges, standalone products, vendor checkouts, and operator
-library intake surfaces.
+**Optional satellites (not the regular OSS download):** live under sibling
+`TNF-Extensions/` (core redirect: `apps/extensions`). Includes
+`audio-trigger-kws-mvp` (pilot), `casin8-games`, `poker-room` (demos), legacy
+browser bridges, standalone products, vendor checkouts (`external`), and
+operator library intake surfaces. See `data/distribution/oss-app-boundary.json`.
 
 ---
 

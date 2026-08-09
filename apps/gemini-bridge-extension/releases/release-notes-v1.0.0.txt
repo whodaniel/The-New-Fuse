@@ -1,3 +1,0 @@
-Version 1.0.0
-Released: 2026-08-09T04:19:12.194Z
-Build hash: b538c2484db1a1929ccacb656fe40e63ba200903
