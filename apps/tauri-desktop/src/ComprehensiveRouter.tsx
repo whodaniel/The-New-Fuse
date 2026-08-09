@@ -1,11 +1,21 @@
-import React, { lazy, Suspense, useCallback, useState } from 'react';
+import { ChevronDown, ChevronRight, Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react';
+import React, { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import TnfLogo from './components/brand/TnfLogo';
 import CommandPalette, { useCommandPaletteShortcut } from './components/layout/CommandPalette';
 import NavIcon from './components/layout/NavIcon';
 import SidebarAuth from './components/layout/SidebarAuth';
 import { useRoute } from './components/route-context';
 import './ComprehensiveRouter.css';
 import { ROUTE_COMPONENTS } from './config/routeComponents';
-import { isKnownRoute, NAV_GROUPS, resolveLegacyRedirect, routesForGroup } from './config/routes';
+import {
+  DESKTOP_ROUTES,
+  isKnownRoute,
+  isSecondaryNavGroup,
+  NAV_GROUPS,
+  resolveLegacyRedirect,
+  routesForGroup,
+  SECONDARY_NAV_GROUPS,
+} from './config/routes';
 import { useLayout } from './contexts/LayoutContext';
 import { useOperatorSynergy } from './hooks/useOperatorSynergy';
 
@@ -22,6 +32,22 @@ const ComprehensiveRouter: React.FC = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const togglePalette = useCallback(() => setPaletteOpen((prev) => !prev), []);
   useCommandPaletteShortcut(togglePalette);
+
+  const goHome = useCallback(() => {
+    navigate('/');
+    if (isMobile) setSidebarOpen(false);
+  }, [isMobile, navigate, setSidebarOpen]);
+
+  const showFirstRunCue = !synergy.relayConnected && !synergy.apiOnline;
+  const activeRouteMeta = useMemo(
+    () => DESKTOP_ROUTES.find((route) => route.path === resolveLegacyRedirect(currentRoute)),
+    [currentRoute]
+  );
+  const activeNeedsSecondary = Boolean(
+    activeRouteMeta && isSecondaryNavGroup(activeRouteMeta.group)
+  );
+  const [showSecondaryNav, setShowSecondaryNav] = useState(activeNeedsSecondary);
+  const secondaryExpanded = showSecondaryNav || activeNeedsSecondary;
 
   const renderPage = () => {
     const resolvedRoute = resolveLegacyRedirect(currentRoute);
@@ -71,17 +97,10 @@ const ComprehensiveRouter: React.FC = () => {
             onClick={toggleSidebar}
             aria-label={sidebarOpen ? 'Close navigation' : 'Open navigation'}
           >
-            {sidebarOpen ? '✕' : '☰'}
+            {sidebarOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
           </button>
           <div className="mobile-logo">
-            <img
-              src="https://thenewfuse.com/assets/brand/tnf-logo.png"
-              alt="TNF Logo"
-              className="brand-logo"
-            />
-            <span className="logo-text" style={{ marginLeft: '8px' }}>
-              The New Fuse
-            </span>
+            <TnfLogo size={28} compactWordmark onClick={goHome} />
           </div>
           <div className="mobile-header-spacer"></div>
         </header>
@@ -105,15 +124,10 @@ const ComprehensiveRouter: React.FC = () => {
         {!isMobile && (
           <div className="sidebar-header">
             <div className="logo">
-              <img
-                src="https://thenewfuse.com/assets/brand/tnf-logo.png"
-                alt="TNF Logo"
-                className="brand-logo"
-              />
-              {!sidebarCollapsed && (
-                <span className="logo-text" style={{ marginLeft: '10px' }}>
-                  The New Fuse
-                </span>
+              {sidebarCollapsed ? (
+                <TnfLogo size={32} onClick={goHome} />
+              ) : (
+                <TnfLogo size={36} showWordmark onClick={goHome} />
               )}
             </div>
             <button
@@ -122,13 +136,32 @@ const ComprehensiveRouter: React.FC = () => {
               onClick={toggleSidebar}
               aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              {sidebarCollapsed ? '→' : '←'}
+              {sidebarCollapsed ? (
+                <PanelLeftOpen size={16} strokeWidth={2} />
+              ) : (
+                <PanelLeftClose size={16} strokeWidth={2} />
+              )}
             </button>
           </div>
         )}
 
+        {!sidebarCollapsed && showFirstRunCue ? (
+          <button
+            type="button"
+            className="first-run-cue"
+            onClick={() => handleNavClick('/settings')}
+          >
+            <span className="first-run-cue-title">Connect the runtime</span>
+            <span className="first-run-cue-body">
+              Relay and API are offline. Open Settings to finish first-run wiring.
+            </span>
+          </button>
+        ) : null}
+
         <nav className="sidebar-nav" aria-label="Primary">
-          {NAV_GROUPS.filter((group) => group.id !== 'system').map((group) => {
+          {NAV_GROUPS.filter(
+            (group) => group.id !== 'system' && !isSecondaryNavGroup(group.id)
+          ).map((group) => {
             const groupRoutes = routesForGroup(group.id);
             if (groupRoutes.length === 0) return null;
             return (
@@ -158,6 +191,65 @@ const ComprehensiveRouter: React.FC = () => {
             );
           })}
 
+          {!sidebarCollapsed ? (
+            <button
+              type="button"
+              className={`nav-more-toggle ${secondaryExpanded ? 'expanded' : ''}`}
+              onClick={() => setShowSecondaryNav((prev) => !prev)}
+              aria-expanded={secondaryExpanded}
+            >
+              {secondaryExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              <span>More</span>
+              <span className="nav-more-count">{SECONDARY_NAV_GROUPS.length}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`nav-item ${secondaryExpanded ? 'active' : ''}`}
+              onClick={() => setShowSecondaryNav((prev) => !prev)}
+              title="More"
+              aria-expanded={secondaryExpanded}
+            >
+              <span className="nav-icon">
+                {secondaryExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              </span>
+            </button>
+          )}
+
+          {secondaryExpanded
+            ? NAV_GROUPS.filter((group) => isSecondaryNavGroup(group.id)).map((group) => {
+                const groupRoutes = routesForGroup(group.id);
+                if (groupRoutes.length === 0) return null;
+                return (
+                  <React.Fragment key={group.id}>
+                    {!sidebarCollapsed ? (
+                      <div className="nav-section-label secondary">{group.label}</div>
+                    ) : null}
+                    {groupRoutes.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
+                        onClick={() => handleNavClick(item.path)}
+                        title={sidebarCollapsed ? item.label : undefined}
+                        aria-current={currentRoute === item.path ? 'page' : undefined}
+                      >
+                        <span className="nav-icon">
+                          <NavIcon id={item.id} />
+                        </span>
+                        {!sidebarCollapsed ? (
+                          <span className="nav-label">
+                            {item.label}
+                            {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
+                          </span>
+                        ) : null}
+                      </button>
+                    ))}
+                  </React.Fragment>
+                );
+              })
+            : null}
+
           <div className="nav-spacer" />
 
           {routesForGroup('system').map((item) => (
@@ -183,8 +275,19 @@ const ComprehensiveRouter: React.FC = () => {
             <>
               <button
                 type="button"
+                className="command-hint"
+                onClick={() => setPaletteOpen(true)}
+                title="Open command palette"
+              >
+                <span>Command palette</span>
+                <kbd>⌘K</kbd>
+              </button>
+              <button
+                type="button"
                 className={`connection-indicator ${connectionDotClass !== 'online' ? 'actionable' : ''}`}
-                onClick={() => { if (connectionDotClass !== 'online') navigate('/settings'); }}
+                onClick={() => {
+                  if (connectionDotClass !== 'online') navigate('/settings');
+                }}
                 title={connectionDotClass !== 'online' ? 'Diagnose Connection' : undefined}
               >
                 <span className={`status-dot ${connectionDotClass}`}></span>
@@ -636,34 +739,10 @@ const ComprehensiveRouter: React.FC = () => {
 // Loading Screen Component
 const LoadingScreen: React.FC = () => (
   <div className="loading-screen" role="status" aria-live="polite">
-    <div className="loading-content">
-      <div className="loading-spinner"></div>
-      <p>Loading...</p>
+    <div className="loading-content loading-brand">
+      <TnfLogo size={48} />
+      <p>Loading The New Fuse…</p>
     </div>
-    <style>{`
-      .loading-screen {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: var(--tnf-text-muted, #64748b);
-      }
-      .loading-content {
-        text-align: center;
-      }
-      .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--tnf-border, rgba(255, 255, 255, 0.08));
-        border-top-color: var(--tnf-primary, #6366f1);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 16px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    `}</style>
   </div>
 );
 

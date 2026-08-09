@@ -45,6 +45,8 @@
     "tnf:store:pack:verify": "pnpm --dir apps/chrome-extension run store:pack:verify",
     "tnf:store:pack:list-assets": "pnpm --dir apps/chrome-extension run store:pack:list-assets",
     "tnf:onboard": "node scripts/tnf-onboard-twip.cjs",
+    "tnf:ws:channels:check": "node scripts/protocols/check-federated-ws-channels.cjs --write",
+    "tnf:ws:channels:check:json": "node scripts/protocols/check-federated-ws-channels.cjs --json --write",
     "tnf:fleet:establish": "node scripts/runtime/establish-core-federated-fleet.cjs",
     "tnf:fleet:establish:dry": "node scripts/runtime/establish-core-federated-fleet.cjs --dry-run",
     "tnf:local:services:install": "bash scripts/runtime/tnf-local-launchd-services.sh install",

@@ -1067,6 +1067,8 @@ type SelfImprovementRunCliOptions = {
   skipScorecard?: boolean;
   skipMermaid?: boolean;
   skipParity?: boolean;
+  /** Record audit findings without aborting the self-improvement / full-auto cycle. */
+  softFailAudits?: boolean;
   note?: string;
   superAdminToken?: string;
 };
@@ -1415,6 +1417,7 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
   if (options.skipScorecard) args.push('--skip-scorecard');
   if (options.skipMermaid) args.push('--skip-mermaid');
   if (options.skipParity) args.push('--skip-parity');
+  if (options.softFailAudits) args.push('--soft-fail-audits');
   if (options.note) args.push('--note', options.note);
   if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
   return args;
@@ -9861,6 +9864,10 @@ selfImprovement
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
+  .option(
+    '--soft-fail-audits',
+    'Write audit artifacts without failing the run on broken links / semantic / auth / scorecard issues'
+  )
   .option('--note <text>', 'Override protocol run-log note')
   .option('--json', 'Output machine-readable JSON summary')
   .option(
@@ -9883,6 +9890,7 @@ selfImprovement
         skipScorecard?: boolean;
         skipMermaid?: boolean;
         skipParity?: boolean;
+        softFailAudits?: boolean;
         note?: string;
         json?: boolean;
         superAdminToken?: string;
@@ -9900,6 +9908,10 @@ selfImprovement
         const maxExternal = parsePositiveIntegerOption(options.maxExternal, 400, '--max-external');
         const frontendCwd = path.join(repoRoot, 'apps/frontend');
         const expectedArtifacts: string[] = [];
+        // Soft-fail keeps writing audit artifacts but does not abort the cycle.
+        // Used by full-auto when --skip-strict-status / --soft-fail-audits is set
+        // so live broken links report honestly without killing the autopilot.
+        const failFlag = options.softFailAudits ? '0' : '1';
 
         if (!options.skipBuild) {
           await runCommand('pnpm', ['--filter', '@the-new-fuse/frontend-app', 'run', 'build']);
@@ -9911,7 +9923,7 @@ selfImprovement
               LIVE_AUDIT_MAX_DEPTH: String(maxDepth),
               LIVE_AUDIT_MAX_PAGES: String(maxPages),
               LIVE_AUDIT_MAX_EXTERNAL: String(maxExternal),
-              FAIL_ON_BROKEN: '1',
+              FAIL_ON_BROKEN: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.liveLinkCrawlJson);
@@ -9923,7 +9935,7 @@ selfImprovement
               // Router paths are served by the SPA on the app domain, not the
               // static landing domain used by the live-link crawl.
               SEMANTIC_AUDIT_BASE_URL: appUrl,
-              FAIL_ON_SEMANTIC_ISSUES: '1',
+              FAIL_ON_SEMANTIC_ISSUES: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.semanticAuditJson);
@@ -9934,7 +9946,7 @@ selfImprovement
             env: {
               AUTH_AUDIT_PUBLIC_BASE_URL: baseUrl,
               AUTH_AUDIT_API_BASE_URL: apiUrl,
-              FAIL_ON_AUTH_ISSUES: '1',
+              FAIL_ON_AUTH_ISSUES: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.authPathAuditJson);
@@ -9943,7 +9955,7 @@ selfImprovement
           await runCommand('pnpm', ['run', 'audit:self-improvement-scorecard'], {
             cwd: frontendCwd,
             env: {
-              FAIL_ON_SCORECARD: '1',
+              FAIL_ON_SCORECARD: failFlag,
             },
           });
           expectedArtifacts.push(
@@ -10230,7 +10242,12 @@ fullAuto
         });
 
         const startedAt = new Date();
-        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        // --skip-strict-status implies soft audit failure so findings still land
+        // while the unattended cycle completes.
+        const cycleArgs = buildSelfImprovementRunCliArgs({
+          ...options,
+          softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
+        });
         await runSelfCli(cycleArgs);
 
         if (options.broadcast) {
@@ -10345,7 +10362,10 @@ fullAuto
           DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES,
           '--cycle-timeout-minutes'
         );
-        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        const cycleArgs = buildSelfImprovementRunCliArgs({
+          ...options,
+          softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
+        });
         const intervalMs = intervalMinutes * 60 * 1000;
         const cycleTimeoutMs = cycleTimeoutMinutes * 60 * 1000;
         let completedCycles = 0;

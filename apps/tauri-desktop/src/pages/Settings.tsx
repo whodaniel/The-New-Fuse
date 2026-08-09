@@ -1,5 +1,6 @@
-import { Copy, Eye, EyeOff, ShieldCheck } from 'lucide-react';
-import React, { useState } from 'react';
+import { Bell, Bot, Copy, Eye, EyeOff, Info, Palette, ShieldCheck, Wifi } from 'lucide-react';
+import React, { useState, type ComponentType } from 'react';
+import TnfLogo from '../components/brand/TnfLogo';
 import PageShell from '../components/layout/PageShell';
 import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useTheme } from '../providers/ThemeProvider';
@@ -9,6 +10,12 @@ import { resolveWebAppBaseUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
 import { useSettingsStore } from '../stores/settingsStore';
+
+type SettingsSection = {
+  id: string;
+  title: string;
+  Icon: ComponentType<{ size?: number; strokeWidth?: number }>;
+};
 
 /**
  * Settings Page - The New Fuse Desktop
@@ -21,12 +28,12 @@ const Settings: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
   const voicePort = getVoicePort();
 
-  const settingsSections = [
-    { id: 'connection', title: 'Connection', icon: '🌐' },
-    { id: 'appearance', title: 'Appearance', icon: '🎨' },
-    { id: 'ai', title: 'AI Configuration', icon: '🤖' },
-    { id: 'notifications', title: 'Notifications', icon: '🔔' },
-    { id: 'about', title: 'About', icon: 'ℹ️' },
+  const settingsSections: SettingsSection[] = [
+    { id: 'connection', title: 'Connection', Icon: Wifi },
+    { id: 'appearance', title: 'Appearance', Icon: Palette },
+    { id: 'ai', title: 'AI Configuration', Icon: Bot },
+    { id: 'notifications', title: 'Notifications', Icon: Bell },
+    { id: 'about', title: 'About', Icon: Info },
   ];
 
   const [activeSection, setActiveSection] = useState('connection');
@@ -88,23 +95,26 @@ const Settings: React.FC = () => {
       <SynergyStatusBar />
       <div className="settings-layout">
         <nav className="settings-nav">
-          {settingsSections.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              className={`nav-link ${activeSection === section.id ? 'active' : ''}`}
-              onClick={() => scrollToSection(section.id)}
-            >
-              <span>{section.icon}</span>
-              <span>{section.title}</span>
-            </button>
-          ))}
+          {settingsSections.map((section) => {
+            const Icon = section.Icon;
+            return (
+              <button
+                key={section.id}
+                type="button"
+                className={`nav-link ${activeSection === section.id ? 'active' : ''}`}
+                onClick={() => scrollToSection(section.id)}
+              >
+                <Icon size={16} strokeWidth={2} />
+                <span>{section.title}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="settings-content">
           {/* Connection Section */}
           <section id="connection" className="settings-section">
-            <h2 className="section-title">🌐 Connection & Environment</h2>
+            <h2 className="section-title">Connection & Environment</h2>
 
             <div className="setting-item">
               <div className="setting-info">
@@ -160,7 +170,14 @@ const Settings: React.FC = () => {
                     {' · '}
                     {synergy.apiOnline ? 'online' : 'offline'}
                   </p>
-                  <button type="button" className="icon-btn" onClick={() => copyToClipboard(synergy.apiUrl)} title="Copy API URL"><Copy size={14} /></button>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(synergy.apiUrl)}
+                    title="Copy API URL"
+                  >
+                    <Copy size={14} />
+                  </button>
                 </div>
                 <div className="endpoint-row">
                   <p>
@@ -168,16 +185,35 @@ const Settings: React.FC = () => {
                     {' · '}
                     {synergy.relayConnected ? 'connected' : 'offline'}
                   </p>
-                  <button type="button" className="icon-btn" onClick={() => copyToClipboard(synergy.relayUrl)} title="Copy Relay URL"><Copy size={14} /></button>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(synergy.relayUrl)}
+                    title="Copy Relay URL"
+                  >
+                    <Copy size={14} />
+                  </button>
                 </div>
                 <div className="endpoint-row">
                   <p>
                     Voice: <code className="url-code">http://127.0.0.1:{voicePort}</code>
                   </p>
-                  <button type="button" className="icon-btn" onClick={() => copyToClipboard(`http://127.0.0.1:${voicePort}`)} title="Copy Voice URL"><Copy size={14} /></button>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(`http://127.0.0.1:${voicePort}`)}
+                    title="Copy Voice URL"
+                  >
+                    <Copy size={14} />
+                  </button>
                 </div>
               </div>
-              <button type="button" className="secondary-button" onClick={() => void handleRediscover()} disabled={isPolling}>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => void handleRediscover()}
+                disabled={isPolling}
+              >
                 {isPolling ? 'Polling...' : 'Rediscover'}
               </button>
             </div>
@@ -189,7 +225,14 @@ const Settings: React.FC = () => {
               </div>
               <div className="web-app-row">
                 <code className="url-code">{webAppUrl}</code>
-                <button type="button" className="icon-btn" onClick={() => copyToClipboard(webAppUrl)} title="Copy Web App URL"><Copy size={14} /></button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => copyToClipboard(webAppUrl)}
+                  title="Copy Web App URL"
+                >
+                  <Copy size={14} />
+                </button>
                 <button
                   type="button"
                   className="secondary-button"
@@ -203,7 +246,7 @@ const Settings: React.FC = () => {
 
           {/* Appearance Section */}
           <section id="appearance" className="settings-section">
-            <h2 className="section-title">🎨 Appearance</h2>
+            <h2 className="section-title">Appearance</h2>
 
             <div className="setting-item">
               <div className="setting-info">
@@ -234,9 +277,13 @@ const Settings: React.FC = () => {
                 <span className="slider"></span>
               </label>
             </div>
-            
+
             <div className="advanced-tui-controls">
-              <button type="button" className="advanced-tui-btn" onClick={() => setShowAdvancedTui(!showAdvancedTui)}>
+              <button
+                type="button"
+                className="advanced-tui-btn"
+                onClick={() => setShowAdvancedTui(!showAdvancedTui)}
+              >
                 {showAdvancedTui ? '▼' : '▶'} Advanced TUI Precision Controls
               </button>
               {showAdvancedTui && (
@@ -246,14 +293,26 @@ const Settings: React.FC = () => {
                       <label>Terminal Mirror Contrast</label>
                       <p>Adjust the contrast of the live terminal mirror</p>
                     </div>
-                    <input type="range" min="0" max="100" defaultValue="50" className="range-input" />
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      defaultValue="50"
+                      className="range-input"
+                    />
                   </div>
                   <div className="setting-item">
                     <div className="setting-info">
                       <label>Syntax Highlighting Intensity</label>
                       <p>Enhance the vibrancy of terminal output</p>
                     </div>
-                    <input type="range" min="0" max="100" defaultValue="75" className="range-input" />
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      defaultValue="75"
+                      className="range-input"
+                    />
                   </div>
                 </div>
               )}
@@ -262,7 +321,7 @@ const Settings: React.FC = () => {
 
           {/* AI Configuration Section */}
           <section id="ai" className="settings-section">
-            <h2 className="section-title">🤖 AI Configuration</h2>
+            <h2 className="section-title">AI Configuration</h2>
 
             <div className="setting-item">
               <div className="setting-info">
@@ -282,7 +341,11 @@ const Settings: React.FC = () => {
                 <label>Fallback Provider</label>
                 <p>Secondary provider used if the primary is unavailable</p>
               </div>
-              <select className="select-input" value={fallbackProvider} onChange={(e) => setFallbackProvider(e.target.value)}>
+              <select
+                className="select-input"
+                value={fallbackProvider}
+                onChange={(e) => setFallbackProvider(e.target.value)}
+              >
                 <option>Claude (Anthropic)</option>
                 <option>GPT-4 (OpenAI)</option>
                 <option>Gemini (Google)</option>
@@ -298,17 +361,17 @@ const Settings: React.FC = () => {
               </div>
               <div className="password-input-wrapper">
                 <input
-                  type={showApiKey ? "text" : "password"}
+                  type={showApiKey ? 'text' : 'password'}
                   className="text-input"
                   placeholder="sk-..."
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                 />
-                <button 
-                  type="button" 
-                  className="visibility-toggle" 
+                <button
+                  type="button"
+                  className="visibility-toggle"
                   onClick={() => setShowApiKey(!showApiKey)}
-                  title={showApiKey ? "Hide API Key" : "Show API Key"}
+                  title={showApiKey ? 'Hide API Key' : 'Show API Key'}
                 >
                   {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -318,7 +381,7 @@ const Settings: React.FC = () => {
 
           {/* Notifications Section */}
           <section id="notifications" className="settings-section">
-            <h2 className="section-title">🔔 Notifications</h2>
+            <h2 className="section-title">Notifications</h2>
 
             <div className="setting-item">
               <div className="setting-info">
@@ -341,7 +404,7 @@ const Settings: React.FC = () => {
                 <span className="slider"></span>
               </label>
             </div>
-            
+
             <div className="setting-item">
               <div className="setting-info">
                 <label>Agent Lifecycle Events</label>
@@ -356,14 +419,10 @@ const Settings: React.FC = () => {
 
           {/* About Section */}
           <section id="about" className="settings-section">
-            <h2 className="section-title">ℹ️ About</h2>
+            <h2 className="section-title">About</h2>
             <div className="about-info">
               <div className="app-info">
-                <img
-                  src="https://thenewfuse.com/assets/brand/tnf-logo.png"
-                  alt="TNF Logo"
-                  className="brand-logo"
-                />
+                <TnfLogo size={56} />
                 <div>
                   <h3>The New Fuse Desktop</h3>
                   <p>Version 4.1.0</p>
@@ -377,16 +436,35 @@ const Settings: React.FC = () => {
                 <a href="https://docs.thenewfuse.com" target="_blank" rel="noopener noreferrer">
                   Documentation
                 </a>
-                <a href="https://github.com/whodaniel/The-New-Fuse" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://github.com/whodaniel/The-New-Fuse"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   GitHub
                 </a>
               </div>
               <div className="integrity-check-wrapper" style={{ marginTop: '24px' }}>
-                <button type="button" className="secondary-button" onClick={() => runIntegrityCheck()}>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => runIntegrityCheck()}
+                >
                   <ShieldCheck size={14} style={{ marginRight: '6px' }} />
                   Run System Integrity Check
                 </button>
-                {integrityStatus && <p className="integrity-status" style={{ marginTop: '12px', fontSize: '13px', color: 'var(--tnf-success, #10b981)' }}>{integrityStatus}</p>}
+                {integrityStatus && (
+                  <p
+                    className="integrity-status"
+                    style={{
+                      marginTop: '12px',
+                      fontSize: '13px',
+                      color: 'var(--tnf-success, #10b981)',
+                    }}
+                  >
+                    {integrityStatus}
+                  </p>
+                )}
               </div>
             </div>
           </section>
