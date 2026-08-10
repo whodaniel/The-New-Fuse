@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Unified Orchestration
 domain:
 - workflow-management
 - inter-agent-coordination

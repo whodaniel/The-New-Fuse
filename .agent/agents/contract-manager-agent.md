@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Governance
 domain: brand
 visibility: collective
 dacc_role: worker

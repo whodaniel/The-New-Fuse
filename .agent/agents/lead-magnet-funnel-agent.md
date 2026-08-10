@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Unified Orchestration
 domain: funnel
 visibility: collective
 dacc_role: worker

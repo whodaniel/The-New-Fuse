@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Journaling
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker

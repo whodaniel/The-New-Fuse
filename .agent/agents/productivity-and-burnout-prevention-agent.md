@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Governance
 domain: ops
 visibility: collective
 dacc_role: worker

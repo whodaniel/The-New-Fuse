@@ -134,6 +134,7 @@ save ""
 stop-writes-on-bgsave-error no
 dir ${TNF_HOME}/redis
 dbfilename dump.rdb
+pidfile ${TNF_HOME}/redis/redis.pid
 appendonly no
 shutdown-on-sigterm nosave
 logfile ${TNF_HOME}/logs/redis.log
@@ -177,6 +178,10 @@ write_redis_plist() {
   </dict>
   <key>RunAtLoad</key>
   <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
   <key>StartInterval</key>
   <integer>300</integer>
   <key>StandardOutPath</key>

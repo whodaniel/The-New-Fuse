@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Scouting
 domain: podcast
 visibility: collective
 dacc_role: worker

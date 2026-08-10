@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Scouting
 domain: social
 visibility: collective
 dacc_role: worker

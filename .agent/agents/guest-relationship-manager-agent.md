@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Journaling
 domain: podcast
 visibility: collective
 dacc_role: worker

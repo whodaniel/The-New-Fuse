@@ -1,5 +1,5 @@
 ---
-category: Unclassified
+category: Unified Orchestration
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker

@@ -1,5 +1,5 @@
 ---
-category: Engineering
+category: Unified Orchestration
 domain:
 - cli
 - software-development
@@ -22,7 +22,9 @@ traits:
   persona_source: assimilated
   autonomy_level: high
 name: tnf-cli-agent
-description: Canonical CLI agent for The New Fuse (TNF). Integrates best practices from Gemini CLI, OpenCode, Codex, Jules, Qoder, and Claude Code for CLI-optimized multi-agent orchestration and coding workflows.
+description: Canonical CLI agent for The New Fuse (TNF). Integrates best practices
+  from Gemini CLI, OpenCode, Codex, Jules, Qoder, and Claude Code for CLI-optimized
+  multi-agent orchestration and coding workflows.
 skills:
 - planning-with-files
 - env-manager
