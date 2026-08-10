@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optional: wire Cursor MCP client to
-data/harness/mcp.memory.server.json
+**Current Directive:** Optional: update tnf-harness-master-loop skill with
+one-line completeness pointer
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -858,6 +858,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-10T23:08:27.357Z handoff `d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` head
+  `e1b4cb08ccb8` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
+
+- 2026-08-10T23:08:01.146Z handoff `388ea49f-b91d-4889-86d3-2bbb43976e0a` head
+  `e1b4cb08ccb8` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
 
 - 2026-08-10T22:59:49.998Z handoff `d2cd71ba-93e9-42cf-88e0-946428d7f89b` head
   `319fd7b59f4b` project `TNF-SESSION` — Optional: wire Cursor MCP client to

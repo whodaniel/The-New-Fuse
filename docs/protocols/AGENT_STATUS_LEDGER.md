@@ -5,7 +5,9 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T22:59:49.947Z** — handoff
+Updated: **2026-08-10T23:08:27.314Z** — handoff
+`d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` (`e1b4cb08ccb8`).
+`388ea49f-b91d-4889-86d3-2bbb43976e0a` (`e1b4cb08ccb8`).
 `d2cd71ba-93e9-42cf-88e0-946428d7f89b` (`319fd7b59f4b`).
 `f0328147-662d-4a50-8427-bc94c797a4d0` (`2770f1a135d4`).
 `fc8fff90-4ec8-4cac-9b6c-07f36ec4faad` (`2770f1a135d4`).
@@ -173,11 +175,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                  |
-| -------- | ----------------------------------------------------------------------- |
-| **P0**   | Optional: wire Cursor MCP client to data/harness/mcp.memory.server.json |
-| **P0**   | Optional: strict supply-chain CI                                        |
-| **P0**   | Environmental autonomy.health (disk/autopilot/a2a) outside harness      |
+| Priority | Action                                                                            |
+| -------- | --------------------------------------------------------------------------------- |
+| **P0**   | Optional: update tnf-harness-master-loop skill with one-line completeness pointer |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -704,3 +704,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d2cd71ba-93e9-42cf-88e0-946428d7f89b) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(388ea49f-b91d-4889-86d3-2bbb43976e0a) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d834cd6e-7e99-4bf5-bb8e-324e82cac7dd) | ✅ HANDOFF_READY |

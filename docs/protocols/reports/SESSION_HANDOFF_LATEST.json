@@ -1,57 +1,40 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "d2cd71ba-93e9-42cf-88e0-946428d7f89b",
-  "created_at": "2026-08-10T22:59:49.947Z",
+  "handoff_id": "d834cd6e-7e99-4bf5-bb8e-324e82cac7dd",
+  "created_at": "2026-08-10T23:08:27.314Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "319fd7b59f4baa6cb9269aa679a9a99c87022945",
+  "head_sha": "e1b4cb08ccb8ea1040908a44023d8e5239c195c4",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Wired harness completeness into working paths: onboard UNU check + memory recall, tnf harness operator commands, cycle trajectory receipts, MCP memory server + supply-chain attest, host-compaction adapter."
+    "Added tnf-harness-completeness skill covering UNU completeness, injection proof, berm/memory/trajectory/supply-chain operator commands."
   ],
   "changed_paths": [
-    ".gitignore",
-    "data/harness/harness-config.json",
-    "data/harness/mcp.memory.server.json",
+    ".agent/skills/tnf-harness-completeness/SKILL.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "package.json",
-    "packages/tnf-cli/src/cli.ts",
-    "scripts/harness/host-compaction-adapter.cjs",
-    "scripts/harness/mcp-supply-chain-attest.cjs",
-    "scripts/harness/memory-mcp-server.cjs",
-    "scripts/harness/tnf-harness.cjs",
-    "scripts/harness/verify-harness-completeness.cjs",
-    "scripts/tnf-onboard.cjs"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "completeness PASS; onboard Harness Completeness PASS; berm/memory/host-compaction/MCP initialize OK"
+    "notes": "skill under .agent/skills; mirrored to ~/.cursor/skills"
   },
   "continuation": {
     "owner": "tnf-cli-agent",
     "targets": ["story-architect", "librarian"],
     "priority": "high",
-    "resume_checklist": [
-      "tnf harness completeness",
-      "tnf harness berm evaluate --action-class read --json",
-      "tnf harness memory status"
-    ]
+    "resume_checklist": ["tnf harness completeness"]
   },
   "next_actions": [
-    "Optional: wire Cursor MCP client to data/harness/mcp.memory.server.json",
-    "Optional: strict supply-chain CI",
-    "Environmental autonomy.health (disk/autopilot/a2a) outside harness"
+    "Optional: update tnf-harness-master-loop skill with one-line completeness pointer"
   ],
   "artifacts": {
-    "commits": ["319fd7b59f4baa6cb9269aa679a9a99c87022945"]
+    "commits": ["e1b4cb08ccb8ea1040908a44023d8e5239c195c4"]
   }
 }
