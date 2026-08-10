@@ -2,56 +2,12 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
+<!-- CURRENT_DIRECTIVE:START -->
+
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9` **Head:** `1703dea33849`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`d9e5c9ce-3291-449d-8e15-90fa5ffe4f8b` **Head:** `99e5152edc43`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`e9278705-53bf-4b19-9c44-e7e5ed9d1f7c` **Head:** `da185b398393` paths. **Project
-ID:** `TNF-SESSION` **Handoff:** `8e151e22-837c-43e2-a067-dafc97a21a71`
-**Head:** `b4eb8329aee7` continuation.resume_checklist. **Project ID:**
-`TNF-SESSION` **Handoff:** `190b8780-0596-40da-ab6b-df0a68708f8e` **Head:**
-`c5d7aacc4a9d` continuation.resume_checklist. **Project ID:** `TNF-SESSION`
-**Handoff:** `aa668d6a-3194-4053-a6ca-a84571cdf5a6` **Head:** `8f1628a8872c`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`69b39874-bd24-4448-acb4-f444bb6f7598` **Head:** `099b002f03bd`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`8f003f7f-1dbe-4227-9958-285e1bf904c5` **Head:** `909f3246f429`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`e45d389f-0458-49ca-b42d-d3bbb0647b58` **Head:** `b538c2484db1`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`319a7926-483b-4082-a468-8fbb3805df8e` **Head:** `6a7b9c45eee0`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`45be6e85-e91d-4821-a61b-3534ced0d808` **Head:** `56c29b595556`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`1185e130-3a3b-433d-a6ef-cad2b6608c86` **Head:** `d7190c18191b`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`78f48e0c-3969-45c8-9e1a-0cf69a9b45f1` **Head:** `516285d9dc19`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`bceed412-7b76-456b-8c25-5c1d43522817` **Head:** `cfb41eadb12b`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`46f370c2-c031-4e03-9550-ac5501f6d43b` **Head:** `f534c43c3a31`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`09026b04-62a0-4d26-82dc-0e0c19a52f04` **Head:** `ae4255de1d5b`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`7143d541-9ab2-4494-b0e0-3f99abf1e96c` **Head:** `3a0ac08be935`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`d9215a23-ced7-4966-945e-37949a6d28a8` **Head:** `9912fad1e93a`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`589e924f-5f55-492b-81db-db17e4236a8f` **Head:** `f19c57e1cf0f` commit/push; run
-pnpm run validate:session-handoff and node
-scripts/protocols/validate-substrate-attestation.cjs --mode=warn before new
-work. **Project ID:** `TNF-SESSION` **Handoff:**
-`45e36991-4e07-4103-ae62-bd99f1bb1dc8` **Head:** `44a281faf71d`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`94e8746b-e4fd-4a04-8677-1618437912a5` **Head:** `2422616d77a8`
-continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
-`d387c30c-be30-4fdc-84ad-1e4e1f2ac763` **Head:** `1032bba9db31` surface/noun
-parity is complete (PR #77 MERGED); prefer product work (optional real
-Slack/WhatsApp channels) over protocol notice churn. **Project ID:**
-`TNF-SESSION` **Handoff:** `169cd0cf-4cf8-4947-ae0a-f373a62bb236` **Head:**
-`62f7a36ab59a`
+continuation.resume_checklist.
+
+<!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
 
@@ -86,6 +42,9 @@ must not be mass-deleted without verification evidence. See
 ## ⚡ Active Steps
 
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
+- [✅] 2026-08-10T02:51:16.876Z New script(s) created: validate-agents-json.cjs,
+  tnf-autonomy-health-rollup.cjs
+
   `scripts/protocols/live-agent-work-check.cjs` and `pnpm run tnf:live:agents:*`
   scripts so Cursor, Agy, Kilo, Codex, and TNF CLI agents can verify the same
   live state before claiming fleet success or handing off. Latest report:
@@ -871,3 +830,52 @@ and generated refactoring_consensus_report.md.
 
 - [✅] 2026-08-05T03:31:15.226Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T01:20:04.048Z Orchestrator: Completed: Goal: FULL ENCHILADA
+  multi-expert audit of TNF harness and platfor...
+
+- [✅] 2026-08-10T02:08:12.190Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+## History
+
+- 2026-08-10T03:02:10.738Z handoff `b3be439b-3f54-4ffc-923b-8ee32b2dd996` head
+  `8a762b98d001` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10 A5 tip-align: archived pre-fence Current Directive sludge
+  (tipAligned=True, HEAD=8a762b98d001, handoff=8a762b98d001)
+
+```
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9` **Head:** `1703dea33849`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`d9e5c9ce-3291-449d-8e15-90fa5ffe4f8b` **Head:** `99e5152edc43`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`e9278705-53bf-4b19-9c44-e7e5ed9d1f7c` **Head:** `da185b398393` paths. **Project
+ID:** `TNF-SESSION` **Handoff:** `8e151e22-837c-43e2-a067-dafc97a21a71`
+**Head:** `b4eb8329aee7` continuation.resume_checklist. **Project ID:**
+`TNF-SESSION` **Handoff:** `190b8780-0596-40da-ab6b-df0a68708f8e` **Head:**
+`c5d7aacc4a9d` continuation.resume_checklist. **Project ID:** `TNF-SESSION`
+**Handoff:** `aa668d6a-3194-4053-a6ca-a84571cdf5a6` **Head:** `8f1628a8872c`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`69b39874-bd24-4448-acb4-f444bb6f7598` **Head:** `099b002f03bd`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`8f003f7f-1dbe-4227-9958-285e1bf904c5` **Head:** `909f3246f429`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`e45d389f-0458-49ca-b42d-d3bbb0647b58` **Head:** `b538c2484db1`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`319a7926-483b-4082-a468-8fbb3805df8e` **Head:** `6a7b9c45eee0`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`45be6e85-e91d-4821-a61b-3534ced0d808` **Head:** `56c29b595556`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`1185e130-3a3b-433d-a6ef-cad2b6608c86` **Head:** `d7190c18191b`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`78f48e0c-3969-45c8-9e1a-0cf69a9b45f1` **Head:** `516285d9dc19`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`bceed412-7b76-456b-8c25-5c1d43522817` **Head:** `cfb41eadb12b`
+continuation
+...truncated...
+
+```
