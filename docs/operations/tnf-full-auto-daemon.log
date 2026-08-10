@@ -4115,3 +4115,73 @@ Scorecard: PASS (2026-08-10T19:01:55.024Z)
 
 [full-auto] cycle 3 completed in 663s (with 1 post-step warning(s))
 [full-auto] sleeping 30 minute(s) before next cycle...
+[Preflight] Running system integrity checks...
+[Preflight] ✅ All systems nominal. Proceeding with full-auto loop.
+
+
+TNF Full-Auto Loop Started
+
+Interval: 30 minute(s)
+Cycle timeout: 30 minute(s)
+Max cycles: unbounded
+Resuming from cycle: 3
+Historical tallies: 45 ok / 224 failed
+Primary argv: self-improvement run --base-url https://thenewfuse.com --api-url https://api.thenewfuse.com --skip-build --skip-live-links --skip-semantic --skip-auth --skip-scorecard --skip-mermaid --soft-fail-audits
+State: docs/operations/tnf-full-auto-state.json
+
+[parity] 8/13 agents reachable, 190 gaps, 38% mean coverage
+
+TNF Self-Improvement Run Complete
+
+Base URL: https://thenewfuse.com
+API URL: https://api.thenewfuse.com
+Artifacts verified: 3
+Run log: docs/operations/tnf-self-improvement-run-log.md
+
+
+TNF Self-Improvement Status
+
+Overall: PASS
+Scorecard: PASS (2026-08-10T19:01:55.024Z)
+
+[full-auto] cycle 4 completed in 33s
+[full-auto] sleeping 30 minute(s) before next cycle...
+[ProtocolInterceptor] silent mode: 2 protocol check(s) failed
+  - Turn Zero Mandate: 1 error(s): activeDirective: LIVING_STATE.md is not marked [STATUS:SYNCHRONIZED]
+  - Living State Sync: LIVING_STATE.md missing or not synchronized
+[Preflight] Running system integrity checks...
+[Preflight] ✅ All systems nominal. Proceeding with full-auto loop.
+
+
+TNF Full-Auto Loop Started
+
+Interval: 30 minute(s)
+Cycle timeout: 30 minute(s)
+Max cycles: unbounded
+Resuming from cycle: 4
+Historical tallies: 46 ok / 224 failed
+Primary argv: self-improvement run --base-url https://thenewfuse.com --api-url https://api.thenewfuse.com --skip-build --skip-live-links --skip-semantic --skip-auth --skip-scorecard --skip-mermaid --skip-parity --soft-fail-audits
+State: docs/operations/tnf-full-auto-state.json
+
+[ProtocolInterceptor] silent mode: 2 protocol check(s) failed
+  - Turn Zero Mandate: 1 error(s): activeDirective: LIVING_STATE.md is not marked [STATUS:SYNCHRONIZED]
+  - Living State Sync: LIVING_STATE.md missing or not synchronized
+
+TNF Self-Improvement Run Complete
+
+Base URL: https://thenewfuse.com
+API URL: https://api.thenewfuse.com
+Artifacts verified: 1
+Run log: docs/operations/tnf-self-improvement-run-log.md
+
+[ProtocolInterceptor] silent mode: 2 protocol check(s) failed
+  - Turn Zero Mandate: 1 error(s): activeDirective: LIVING_STATE.md is not marked [STATUS:SYNCHRONIZED]
+  - Living State Sync: LIVING_STATE.md missing or not synchronized
+
+TNF Self-Improvement Status
+
+Overall: PASS
+Scorecard: PASS (2026-08-10T19:01:55.024Z)
+
+[full-auto] cycle 5 completed in 17s
+[full-auto] sleeping 30 minute(s) before next cycle...

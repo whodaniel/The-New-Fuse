@@ -3,7 +3,7 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T20:44:07.523Z** — handoff
+Updated: **2026-08-10T20:50:14.992Z** — handoff `282f06a9-f4a6-4028-a73a-4deaad1e66c7` (`73d653091e75`).
 `05697d16-0f12-4299-b792-a95a6e03702c` (`511254383b6f`).
 `14c1d312-923b-4bb7-86d4-e8ab95ed5133` (`97ae46efb551`). Node modules rebuilt,
 API healthy, relay operational. `8066f785-ec83-43da-8c0e-ab9eec2ad5d4`
@@ -167,11 +167,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                           |
-| -------- | -------------------------------------------------------------------------------- |
-| **P0**   | Operator may paste EXA_API_KEY / TAVILY_API_KEY into ~/.tnf.local.env when ready |
-| **P0**   | Keep Homebrew redis disabled so TNF owns :6379                                   |
-| **P0**   | Monitor next full-auto cycle for clean ok=true without broadcast hang            |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -650,3 +649,5 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (05697d16-0f12-4299-b792-a95a6e03702c) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (282f06a9-f4a6-4028-a73a-4deaad1e66c7) | ✅ HANDOFF_READY |

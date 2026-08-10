@@ -1,18 +1,17 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "05697d16-0f12-4299-b792-a95a6e03702c",
-  "created_at": "2026-08-10T20:44:07.523Z",
+  "handoff_id": "282f06a9-f4a6-4028-a73a-4deaad1e66c7",
+  "created_at": "2026-08-10T20:50:14.992Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "511254383b6ff2992d36fb00ddb3748809d351c3",
+  "head_sha": "73d653091e75df21488fc9d5ae6c4a993e8c48fc",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
-    "Reclaimed Redis :6379 from Homebrew onto com.thenewfuse.redis-tnf-bus",
-    "Soft-failed mermaid/parity under --soft-fail-audits / full-auto",
-    "Fixed full-auto process detector false positives",
-    "Restarted full-auto without --broadcast; cycle 3 already ok=true with broadcast soft-fail"
+    "Assimilated CLI best practices from Jules, Gemini, OpenCode, Codex, Qoder, Claude Code into TNF CLI agent. Added session persistence, parallel execution, model cycling, cost tracking, context management capabilities."
   ],
   "changed_paths": [
     ".agent/ROLE_DEFINITIONS.md",
@@ -4966,12 +4965,15 @@
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Relay:3007 gateway:3001 api:3002 redis launchd pid=1190 searxng scout OK; EXA/TAVILY still absent by operator choice"
+    "notes": ""
   },
   "continuation": {
-    "owner": "cursor-operator",
-    "targets": ["orchestrator"],
-    "priority": "medium",
+    "owner": "tnf-cli-agent",
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
       "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
@@ -4979,11 +4981,12 @@
     ]
   },
   "next_actions": [
-    "Operator may paste EXA_API_KEY / TAVILY_API_KEY into ~/.tnf.local.env when ready",
-    "Keep Homebrew redis disabled so TNF owns :6379",
-    "Monitor next full-auto cycle for clean ok=true without broadcast hang"
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["511254383b6ff2992d36fb00ddb3748809d351c3"]
+    "commits": [
+      "73d653091e75df21488fc9d5ae6c4a993e8c48fc"
+    ]
   }
 }

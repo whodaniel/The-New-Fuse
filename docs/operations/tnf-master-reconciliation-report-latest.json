@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-10T19:47:34.533Z",
+  "timestamp": "2026-08-10T20:47:43.169Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 763,
+      "durationMs": 84,
       "data": {
         "branch": "fix/honest-failure-reporting",
-        "commit": "97ae46efb5",
+        "commit": "156ecbfca4",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 1808,
+      "durationMs": 137,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 0,
+      "durationMs": 1,
       "data": {
         "status": "skipped"
       }
@@ -39,35 +39,31 @@
       }
     },
     "processHealth": {
-      "ok": false,
-      "verdict": "findings",
-      "findings": 2,
-      "durationMs": 4384,
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 152,
       "data": {
-        "findings": 2,
-        "healthy": 28,
-        "detail": [
-          "error: tenant-knowledge-scout-sprint",
-          "stale: tnf-llm-ranking-optimizer"
-        ]
+        "findings": 0,
+        "healthy": 30,
+        "detail": []
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 479,
+      "durationMs": 0,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 7656,
+  "totalDurationMs": 378,
   "summary": {
-    "clean": 3,
-    "findings": 1,
+    "clean": 4,
+    "findings": 0,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 2
+    "totalFindings": 0
   }
 }
