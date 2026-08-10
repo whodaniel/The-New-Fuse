@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Repair apps/api node_modules so api-local :3002 stays
-healthy
+**Current Directive:** Complete node_modules rebuild for apps/api and verify
+api-local health
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -43,7 +43,11 @@ must not be mass-deleted without verification evidence. See
 
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
 - [✅] 2026-08-10T17:45:54.079Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs
+
   generate-crontab-from-catalog.cjs, relay-service.sh
+
 - [✅] 2026-08-10T18:00:51.130Z New script(s) created: validate-agents-json.cjs,
   generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs, relay-service.sh,
   searxng-service.sh

@@ -1,21 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "8066f785-ec83-43da-8c0e-ab9eec2ad5d4",
-  "created_at": "2026-08-10T19:05:01.706Z",
+  "handoff_id": "14c1d312-923b-4bb7-86d4-e8ab95ed5133",
+  "created_at": "2026-08-10T20:01:39.070Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "0f34cf4157a01ce5c70e8eafc4abc564fdcc6cd8",
+  "head_sha": "97ae46efb551f1a4cc00cbdfb51e34792a946c81",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
-  "work_summary": [
-    "Persisted relay :3007 via launchd (com.thenewfuse.relay).",
-    "Wired api-gateway WS target to ws://127.0.0.1:3007/ws (code default + env + launchd) and removed :3002 wait so gateway KeepAlive works.",
-    "Fixed smart-start empty env_args; start-local-relay --port + ACTIVITY_PERSISTENCE_REQUIRED=false.",
-    "api-local still blocked by corrupted apps/api node_modules (@asamuzakjp/css-color etc)."
-  ],
+  "project_ids": [],
+  "work_summary": ["Added 3 new script file(s)", "Modified 118 file(s)"],
   "changed_paths": [
-    ".env.example",
     "apps/api-gateway/src/main.ts",
     "packages/ap2-protocol/package.json",
     "scripts/qa/start-local-relay.sh",
@@ -26,33 +20,35 @@
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "packages/tnf-cli/src/cli.ts",
-    "scripts/operations/tnf-full-auto-contention-observe.cjs",
-    "scripts/runtime/searxng-service.sh"
+    ".env.example"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-10T19:05:03.323Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": ""
   },
   "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "owner": "operator",
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
-      "curl :3007/health and :3001/health after login",
-      "pnpm install / rebuild apps/api deps",
-      "Add EXA_API_KEY/TAVILY_API_KEY if needed"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
     ]
   },
   "next_actions": [
-    "Repair apps/api node_modules so api-local :3002 stays healthy",
-    "Optionally add EXA/TAVILY keys for scout resilience",
-    "Confirm relay+gateway survive logout/login"
+    "Review updated LIVING_STATE.md for new active steps",
+    "Complete node_modules rebuild for apps/api",
+    "Verify api-local :3002 is healthy",
+    "Run protocol gate to confirm all checks pass",
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 180 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["0f34cf4157a01ce5c70e8eafc4abc564fdcc6cd8"]
+    "commits": ["97ae46efb551f1a4cc00cbdfb51e34792a946c81"],
+    "deployment_urls": [],
+    "database_migrations": []
   }
 }
