@@ -69,9 +69,9 @@ For raw AI CLI sessions launched without TNF auto-injection, paste:
 Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
 ```
 
-## Autonomous Commits and Pushes (TNF CLI Agent)
+## Autonomous Commits and Pushes
 
-The TNF CLI agent (`tnf-cli-agent`) is authorized to commit and push changes
+All TNF agents and CLI tools are authorized to commit and push changes
 autonomously, subject to the following constraints:
 
 1. **All content gates must pass** — privacy, secret sweep, PII guard, lint,
@@ -92,16 +92,11 @@ autonomously, subject to the following constraints:
 5. **Operator retains veto** — Daniel can revoke this authorization at any time
    by restoring the `TNF_OPERATOR_CONFIRM` requirement in
    `.husky/tnf-authority.sh`.
-6. **Other agents remain gated** — only the TNF CLI agent
-   (`TNF_AGENT_ID=tnf-cli-agent`) is exempted from the live-operator
-   confirmation requirement. All other agents still require
-   `TNF_OPERATOR_CONFIRM=1` for commits and pushes.
 
-This authorization was granted by operator directive on 2026-08-07. Prior
+This authorization was granted by operator directive on 2026-08-09. Prior
 session evidence: the operator explicitly requested protocol changes to allow
-the TNF CLI agent to commit and push autonomously, after repeated friction with
-the manual confirmation gate blocking progress on routine (non-authority)
-changes.
+all agents to commit and push autonomously, after repeated friction with the
+manual confirmation gate blocking progress on routine (non-authority) changes.
 
 ## Build Before You Merge
 
