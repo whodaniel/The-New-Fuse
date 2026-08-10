@@ -125,10 +125,23 @@ async function evaluate(endpoint, token, request) {
     body = null;
   }
   
-  // If server returns 500, use mock response instead
-  if (response.status === 500) {
-    console.error(`[FALLBACK] Federation gate returned 500, using mock response for local development`);
-    return mockResponse(request);
+  // If server returns 500/401/403 without usable policy, use local mock for OSS hosts
+  // that have not configured TNF_GATE_POLICY_TOKEN (auth fault ≠ policy deny).
+  if (response.status === 500 || response.status === 401 || response.status === 403) {
+    const allowLocal =
+      response.status === 500 ||
+      !token ||
+      ['1', 'true', 'yes', 'on'].includes(
+        String(process.env.TNF_GATE_POLICY_LOCAL_FALLBACK || '1')
+          .trim()
+          .toLowerCase()
+      );
+    if (allowLocal) {
+      console.error(
+        `[FALLBACK] Federation gate returned ${response.status} (token=${token ? 'set' : 'missing'}); using mock response for local development`
+      );
+      return mockResponse(request);
+    }
   }
   
   return {

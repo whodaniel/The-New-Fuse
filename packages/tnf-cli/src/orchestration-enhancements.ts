@@ -4,12 +4,20 @@
  *  1. Real execution via Redis (pushes to worker queues)
  *  2. Self-improvement feedback loop
  *  3. Comprehensive skill scanning for all 128 skills
+ *  4. A2 REPORT_ONLY classifier re-exports
  */
 
+export {
+  REPORT_ONLY_GOAL_RE,
+  REPORT_ONLY_MUTATE_EXPLICIT_RE,
+  classifyOrchestrateIntent,
+  extractReportOutputPath,
+} from './orchestration-intent.js';
+
 import fs from 'fs';
-import path from 'path';
 import { readFile, readdir } from 'fs/promises';
 import { Redis } from 'ioredis';
+import path from 'path';
 
 // ============================================================================
 // 1. REAL WORKER DISPATCHER
@@ -17,13 +25,13 @@ import { Redis } from 'ioredis';
 // ============================================================================
 
 export interface WorkerDispatch {
-  id: string;               // Unique task ID
-  skillRef: string;           // Which skill to invoke
-  goal: string;               // Original goal text
+  id: string; // Unique task ID
+  skillRef: string; // Which skill to invoke
+  goal: string; // Original goal text
   payload: Record<string, any>;
-  capability: string;         // 'code' or 'infra' for routing
+  capability: string; // 'code' or 'infra' for routing
   createdAt: string;
-  priority: number;           // Lower = higher priority
+  priority: number; // Lower = higher priority
 }
 
 export class WorkerDispatcher {
@@ -152,7 +160,12 @@ export class SelfImprovementTracker {
   }
 
   /** Log a task failure for later analysis */
-  async logFailure(goal: string, taskId: string, details: string, suggestedFix?: string): Promise<void> {
+  async logFailure(
+    goal: string,
+    taskId: string,
+    details: string,
+    suggestedFix?: string
+  ): Promise<void> {
     await this.log({
       timestamp: new Date().toISOString(),
       category: 'failure',
@@ -243,10 +256,19 @@ export class ComprehensiveSkillScanner {
       // Extract meaningful trigger words from description + body
       const fullText = (description + ' ' + body).toLowerCase();
       const words = fullText.match(/\b[a-z]{5,}\b/g) || [];
-      
+
       // Filter to most meaningful words
-      const stopWords = new Set(['skill', 'agent', 'using', 'when', 'create', 'build', 'use', 'this']);
-      const triggers = [...new Set(words.filter(w => !stopWords.has(w)))].slice(0, 8);
+      const stopWords = new Set([
+        'skill',
+        'agent',
+        'using',
+        'when',
+        'create',
+        'build',
+        'use',
+        'this',
+      ]);
+      const triggers = [...new Set(words.filter((w) => !stopWords.has(w)))].slice(0, 8);
 
       // Calculate confidence based on description quality
       const confidence = description.length > 30 ? 0.9 : 0.6;
@@ -260,10 +282,12 @@ export class ComprehensiveSkillScanner {
   /** Find best matching skills for a natural language goal */
   matchGoal(goal: string): SkillPattern[] {
     const q = goal.toLowerCase();
-    const scored = this.patterns.map(p => {
-      const score = p.triggers.filter(t => q.includes(t.toLowerCase())).length;
-      return { ...p, score };
-    }).filter(p => p.score > 0);
+    const scored = this.patterns
+      .map((p) => {
+        const score = p.triggers.filter((t) => q.includes(t.toLowerCase())).length;
+        return { ...p, score };
+      })
+      .filter((p) => p.score > 0);
 
     return scored.sort((a, b) => b.score - a.score).slice(0, 5);
   }

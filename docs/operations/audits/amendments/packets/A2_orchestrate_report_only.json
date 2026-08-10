@@ -1,0 +1,32 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A2",
+  "title": "Orchestrate audit/report-only classifier",
+  "priority": "P0",
+  "owner_role": "orchestrator",
+  "implementer_roles": ["tnf-cli-agent", "hermes-codegen-worker"],
+  "human_gate_required": false,
+  "problem": "Natural-language audit/report-only goals matched tnf-refactoring-triage including execute-safe-refactors and returned false SUCCESS without producing the named artifact.",
+  "solution": {
+    "summary": "Detect audit/report-only intent; refuse mutate workflow patterns; require named output path exists before SUCCESS.",
+    "files": [
+      "packages/tnf-cli/src/orchestration.ts",
+      "packages/tnf-cli/src/cli.ts"
+    ],
+    "steps": [
+      "Locate executeGoal / pattern matcher in packages/tnf-cli/src/orchestration.ts (tnf-refactoring-triage already referenced ~L95); add intent class REPORT_ONLY when goal matches /\\b(audit|report-only|report only|synthesis|what makes sense|full enchilada)\\b/i.",
+      "If REPORT_ONLY, exclude patterns containing execute-safe-refactors, refactor, mutate, apply-fix unless goal also contains explicit 'implement'/'fix now'.",
+      "Route REPORT_ONLY to a workflow that: (a) gathers evidence commands, (b) writes/updates the path extracted from goal (docs/...md), (c) verifies file exists + non-empty before status=completed.",
+      "Add unit/fixture test: audit goal must not select tnf-refactoring-triage.",
+      "Log classifier decision into docs/operations/tnf-full-auto-runs.jsonl-compatible or orchestrator run log."
+    ],
+    "verify": [
+      "tnf orchestrate --goal 'REPORT-ONLY audit: write docs/operations/audits/amendments/_orchestrate_smoke.md with one line ping' --no-splash",
+      "test -s docs/operations/audits/amendments/_orchestrate_smoke.md",
+      "Negative: goal with audit must not schedule execute-safe-refactors (assert in orchestrator log/JSON)"
+    ],
+    "rollback": "Env TNF_ORCHESTRATE_ALLOW_MUTATE_ON_AUDIT=1 restores old matching (debug only)."
+  },
+  "acceptance_probe": "Audit goal never claims completed unless synthesis path exists; mutate tasks absent from planned steps.",
+  "conflicts": []
+}

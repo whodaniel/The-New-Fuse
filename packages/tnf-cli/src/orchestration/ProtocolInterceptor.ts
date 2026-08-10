@@ -215,10 +215,17 @@ export class ProtocolInterceptor {
 
       log(chalk.bold('\nResult:'));
       if (allPassed) {
-        log(chalk.green('  ALL PROTOCOLS PASSED'));
+        // Final PASS/FAIL belongs to `tnf protocol gate` (or other callers) after
+        // CI subgates. Interceptor output is provisional only — unless legacy banner
+        // is explicitly requested.
+        if (isTruthyEnv(process.env.TNF_PROTOCOL_GATE_LEGACY_BANNER)) {
+          log(chalk.green('  ALL PROTOCOLS PASSED'));
+        } else {
+          log(chalk.cyan('  PREFLIGHT SECTIONS OK (provisional)'));
+        }
       } else {
         const failed = checks.filter((c) => !c.passed);
-        log(chalk.yellow(`  ${failed.length} protocol check(s) failed`));
+        log(chalk.yellow(`  ${failed.length} protocol check(s) failed (provisional)`));
         for (const f of failed) {
           log(chalk.yellow(`  - ${f.name}: ${f.details}`));
         }

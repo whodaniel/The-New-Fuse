@@ -36,6 +36,7 @@ import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
+import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
@@ -6369,42 +6370,88 @@ protocol
   .description('Run all protocol gates: Turn Zero, handoff source drift, session handoff')
   .option('--mode <mode>', 'Gate mode (ci, pre-push, pre-commit)', 'ci')
   .action(async (options: { mode?: string }) => {
+    const mode = options.mode || 'ci';
+    const reasons: string[] = [];
+    let preflightOk = true;
+    let ciOk = true;
+
     try {
       const interceptor = new ProtocolInterceptor(repoRoot);
       const checks = await interceptor.runPreFlightChecks();
 
       console.log(chalk.bold.cyan('\n[TNF Protocol Gate]\n'));
-      console.log(`Mode: ${chalk.yellow(options.mode || 'ci')}`);
+      console.log(`Mode: ${chalk.yellow(mode)}`);
 
-      if (!checks.allPassed) {
-        console.warn(
-          chalk.yellow(`Pre-flight: ${checks.checks.filter((c) => !c.passed).length} issue(s)`)
-        );
-        for (const check of checks.checks.filter((c) => !c.passed)) {
+      preflightOk = !!checks.allPassed;
+      if (!preflightOk) {
+        const failed = checks.checks.filter((c) => !c.passed);
+        console.warn(chalk.yellow(`Pre-flight: ${failed.length} issue(s) (provisional)`));
+        for (const check of failed) {
           console.warn(chalk.dim(`  - ${check.name}: ${check.details}`));
+          reasons.push(`preflight:${check.name}`);
         }
       } else {
-        console.log(chalk.green('Pre-flight: OK'));
+        console.log(chalk.cyan('Pre-flight: OK (provisional)'));
       }
 
-      await runCommand('node', [
-        'scripts/protocols/validate-turn-zero-authority.cjs',
-        `--mode=${options.mode || 'ci'}`,
-      ]);
-      await runCommand('node', [
-        'scripts/protocols/validate-handoff-source-drift.cjs',
-        '--mode=ci',
-      ]);
-      await runCommand('node', [
-        'scripts/protocols/enforce-session-handoff.cjs',
-        `--mode=${options.mode || 'ci'}`,
-      ]);
+      const ciGates: Array<{ name: string; args: string[] }> = [
+        {
+          name: 'turn-zero-authority',
+          args: ['scripts/protocols/validate-turn-zero-authority.cjs', `--mode=${mode}`],
+        },
+        {
+          name: 'handoff-source-drift',
+          args: ['scripts/protocols/validate-handoff-source-drift.cjs', '--mode=ci'],
+        },
+        {
+          name: 'living-state-directive',
+          args: ['scripts/protocols/validate-living-state-directive.cjs', `--mode=${mode}`],
+        },
+        {
+          name: 'session-handoff',
+          args: ['scripts/protocols/enforce-session-handoff.cjs', `--mode=${mode}`],
+        },
+      ];
 
-      console.log(chalk.green('\n[TNF Protocol Gate] All checks passed.\n'));
+      for (const gate of ciGates) {
+        try {
+          await runCommand('node', gate.args);
+          console.log(chalk.dim(`[${gate.name}] OK (${mode})`));
+        } catch (gateErr: any) {
+          ciOk = false;
+          const msg = String(gateErr?.message || gateErr);
+          reasons.push(`${gate.name}: ${msg}`);
+          console.error(chalk.red(`[${gate.name}] FAIL (${mode}): ${msg}`));
+        }
+      }
     } catch (err: any) {
-      console.error(chalk.red(`Protocol gate failed: ${err.message}`));
-      process.exit(1);
+      ciOk = false;
+      reasons.push(String(err?.message || err));
+      console.error(chalk.red(`Protocol gate infrastructure error: ${err.message}`));
     }
+
+    // Single final verdict — never claim ALL PROTOCOLS PASSED before CI subgates finish.
+    // Verdict reports ceremony/baton health only; it must not recommend stopping full-auto loops.
+    const legacy = ['1', 'true', 'yes', 'on'].includes(
+      String(process.env.TNF_PROTOCOL_GATE_LEGACY_BANNER || '')
+        .trim()
+        .toLowerCase()
+    );
+    const passed = preflightOk && ciOk;
+    if (passed) {
+      if (legacy) {
+        console.log(chalk.green('\n[TNF Protocol Gate] All checks passed.\n'));
+      }
+      console.log(chalk.green('\nVERDICT: PASS\n'));
+      process.exit(0);
+    }
+
+    console.log(chalk.red('\nVERDICT: FAIL'));
+    for (const reason of reasons) {
+      console.log(chalk.red(`  - ${reason}`));
+    }
+    console.log('');
+    process.exit(1);
   });
 
 program
@@ -7249,6 +7296,40 @@ function collectHarnessInspectChecks(): HarnessCheckResult[] {
       : 'No handoff next_actions found',
   });
 
+  // A1: establish ≠ operate — fail-closed rollup (observe only; never kills full-auto).
+  const failClosedAutonomy = !['0', 'false', 'no', 'off'].includes(
+    String(process.env.TNF_AUTONOMY_HEALTH_FAIL_CLOSED || '1')
+      .trim()
+      .toLowerCase()
+  );
+  const rollup = runCommandCapture('node', [
+    'scripts/runtime/tnf-autonomy-health-rollup.cjs',
+    '--json',
+  ]);
+  let autonomyStatus = 'unknown';
+  let autonomyReasons: string[] = [];
+  try {
+    const parsed = JSON.parse(rollup.stdout || '{}') as {
+      status?: string;
+      reasons?: string[];
+    };
+    autonomyStatus = String(parsed.status || 'unknown');
+    autonomyReasons = Array.isArray(parsed.reasons) ? parsed.reasons.map(String) : [];
+  } catch {
+    autonomyStatus = rollup.code === 0 ? 'healthy' : 'critical';
+    autonomyReasons = ['rollup_parse_failed'];
+  }
+  const autonomyOk = failClosedAutonomy
+    ? autonomyStatus === 'healthy'
+    : autonomyStatus !== 'critical';
+  checks.push({
+    name: 'autonomy.health',
+    passed: autonomyOk,
+    detail: autonomyOk
+      ? `rollup=${autonomyStatus}`
+      : `rollup=${autonomyStatus}${autonomyReasons.length ? ` (${autonomyReasons.join(', ')})` : ''}`,
+  });
+
   return checks;
 }
 
@@ -7582,6 +7663,32 @@ harness
       process.exit(1);
     }
   });
+
+// A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
+{
+  const autonomy = program
+    .command('autonomy')
+    .description('Autonomy health surfaces (establish ≠ operate)');
+  autonomy
+    .command('health')
+    .description(
+      'Print autonomy health rollup (healthy|degraded|critical); non-zero on critical when fail-closed'
+    )
+    .option('--json', 'Machine-readable JSON')
+    .action(async (options: { json?: boolean }) => {
+      try {
+        const args = ['scripts/runtime/tnf-autonomy-health-rollup.cjs'];
+        if (options.json) args.push('--json');
+        const result = runCommandCapture('node', args);
+        if (result.stdout) process.stdout.write(result.stdout);
+        if (result.stderr) process.stderr.write(result.stderr);
+        process.exit(result.code);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    });
+}
 
 harness
   .command('inspect')
@@ -10643,9 +10750,12 @@ fullAutoDaemon
       const state = readFullAutoState();
       const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
       const processes = findFullAutoStartProcesses();
+      const loopCount = processes.length;
       const payload = {
         running: processes.length > 0,
         processes,
+        loopCount,
+        contention: loopCount >= 2,
         state,
         lastRun,
         statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
@@ -10662,6 +10772,9 @@ fullAutoDaemon
       console.log(`Running: ${payload.running ? chalk.green('yes') : chalk.yellow('no')}`);
       for (const proc of processes) {
         console.log(`- pid=${chalk.cyan(String(proc.pid))} ${chalk.dim(proc.cmd)}`);
+      }
+      if (loopCount >= 2) {
+        console.log(chalk.yellow(`CONTENTION: ${loopCount} loops (observe-only — do not kill)`));
       }
       if (state) {
         console.log(
@@ -10686,6 +10799,31 @@ fullAutoDaemon
     }
   });
 
+{
+  const contend = fullAuto
+    .command('contend')
+    .description('Observe dual full-auto contention (never kills by default)');
+  contend
+    .command('status')
+    .description('Read-only contention sample (≥2 full-auto start loops)')
+    .option('--json', 'Machine-readable JSON')
+    .option('--append', 'Append sample to docs/operations/tnf-full-auto-contention.jsonl')
+    .action(async (options: { json?: boolean; append?: boolean } = {}) => {
+      try {
+        const args = ['scripts/operations/tnf-full-auto-contention-observe.cjs'];
+        if (options.json) args.push('--json');
+        if (options.append) args.push('--append');
+        const result = runCommandCapture('node', args);
+        if (result.stdout) process.stdout.write(result.stdout);
+        if (result.stderr) process.stderr.write(result.stderr);
+        process.exit(result.code);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    });
+}
+
 fullAuto
   .command('status')
   .description('Show persisted full-auto loop state and latest cycle result')
@@ -10694,9 +10832,14 @@ fullAuto
     try {
       const state = readFullAutoState();
       const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
+      const processes = findFullAutoStartProcesses();
+      const loopCount = processes.length;
       const payload = {
         state,
         lastRun,
+        loopCount,
+        contention: loopCount >= 2,
+        processes,
         statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
         runLogPath: path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH),
       };
@@ -10722,6 +10865,10 @@ fullAuto
         console.log(
           `Failed cycles: ${state.failedCycles > 0 ? chalk.yellow(String(state.failedCycles)) : chalk.green('0')}`
         );
+      }
+
+      if (loopCount >= 2) {
+        console.log(chalk.yellow(`\nCONTENTION: ${loopCount} loops (observe-only — do not kill)`));
       }
 
       if (lastRun) {
@@ -17557,6 +17704,8 @@ registerParityCommand(program, repoRoot);
 registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
+registerStaffingCommands(program);
+registerFleetCommands(program);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
@@ -17633,7 +17782,6 @@ memoryCommand
         `- ${provider.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(provider.name)} [${provider.type}]`
       );
     }
-    registerFleetCommands(program);
   });
 
 async function loadTnfSystemPrompt(): Promise<string> {

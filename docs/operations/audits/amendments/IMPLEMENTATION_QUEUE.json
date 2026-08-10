@@ -1,0 +1,279 @@
+{
+  "schema": "tnf.amendment.implementation_queue.v1",
+  "sealedAt": "2026-08-09T22:37:30-04:00",
+  "seal_status": "SEALED",
+  "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "authority": "TNF Orchestrator \u2014 sealed after Sub-Director + Staff Review",
+  "sources": {
+    "intake": "docs/operations/audits/amendments/00_INTAKE.md",
+    "subdirector_md": "docs/operations/audits/amendments/01_SUBDIRECTOR_INTAKE_DECISION.md",
+    "subdirector_json": "docs/operations/audits/amendments/SUBDIRECTOR_DECISIONS.json",
+    "staff_review_md": "docs/operations/audits/amendments/02_STAFF_REVIEW_VALIDATION.md",
+    "staff_review_json": "docs/operations/audits/amendments/STAFF_REVIEW_VALIDATION.json",
+    "acceptance_ledger": "docs/operations/audits/amendments/03_ACCEPTANCE_LEDGER.md"
+  },
+  "ordering_rationale": "P0 truthfulness rails first (gate verdict \u2192 health \u2192 tip-align \u2192 orchestrate classifier), then P1 observe/non-block (contention observer \u2192 reflect timeout). Dual-loop observer never kills.",
+  "doctrine": {
+    "human_gate": false,
+    "queue_only": [
+      "ACCEPT",
+      "ACCEPT_WITH_CHANGES",
+      "pass",
+      "pass_with_conditions"
+    ],
+    "dual_full_auto": "observe_only_never_kill",
+    "kill_jobs_scheduled": false
+  },
+  "hygiene_done": {
+    "items": ["swarm-context prune", "PEM scrub", "retention"],
+    "decision": "ACCEPTED_AS_DONE",
+    "queued": false
+  },
+  "rejected": [],
+  "queue": [
+    {
+      "order": 1,
+      "id": "A6",
+      "title": "Protocol gate single final verdict",
+      "priority": "P0",
+      "status": "done",
+      "owner_role": "local-subdirector",
+      "assignee_role": "tnf-cli-agent",
+      "backup_roles": ["hermes-codegen-worker"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT_WITH_CHANGES",
+        "staff_review": "pass",
+        "staff_decision": "ACCEPT"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A6_protocol_gate_verdict.json",
+      "files": [
+        "packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts",
+        "packages/tnf-cli/src/cli.ts",
+        "scripts/protocols/enforce-session-handoff.cjs"
+      ],
+      "notes": [
+        "Apply Sub-Director required_packet_edits: pin files to ProtocolInterceptor.ts + cli.ts + enforce-session-handoff.cjs.",
+        "Replace premature ALL PROTOCOLS PASSED finality with provisional 'Preflight sections OK (provisional)'; print exactly one VERDICT: PASS|FAIL after all subgates; exit code must match VERDICT.",
+        "Single VERDICT must not recommend stopping full-auto loops; gate reports baton/health ceremony only.",
+        "conflicts := [\"None with adversarial dual full-auto \u2014 verdict UX only.\"]",
+        "Add regression fixture: preflight ok + handoff gate block must not end with ALL PROTOCOLS PASSED."
+      ],
+      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'ALL PROTOCOLS PASSED|VERDICT:' packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts packages/tnf-cli/src/cli.ts scripts/protocols/enforce-session-handoff.cjs",
+      "verify_probe": "tnf protocol gate --no-splash; if fail, stdout must contain 'VERDICT: FAIL' and must not end with 'ALL PROTOCOLS PASSED'; exit code must match VERDICT",
+      "rollback": "TNF_PROTOCOL_GATE_LEGACY_BANNER=1",
+      "kill_jobs_forbidden": true,
+      "implemented_at": "2026-08-10T03:00:00Z",
+      "implementer": "cursor"
+    },
+    {
+      "order": 2,
+      "id": "A1",
+      "title": "Autonomy health gate \u2014 establish\u2260operate",
+      "priority": "P0",
+      "status": "done",
+      "owner_role": "local-subdirector",
+      "assignee_role": "hermes-infra-worker",
+      "backup_roles": ["tnf-cli-agent", "fleet-coordinator"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT_WITH_CHANGES",
+        "staff_review": "pass",
+        "staff_decision": "ACCEPT"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A1_autonomy_health_gate.json",
+      "files": [
+        "scripts/runtime/tnf-autonomy-health-rollup.cjs",
+        "packages/tnf-cli/src/cli.ts"
+      ],
+      "notes": [
+        "Wire exactly `tnf autonomy health` (not fleet health alias); prints rollup and exits non-zero when status=critical.",
+        "Remove scripts/operations/swarm-disk-retention.sh from A1 scope (hygiene ACCEPTED_AS_DONE).",
+        "Do not stop/kill full-auto loops based on rollup; rollup is observe/fail-closed for inspect only.",
+        "Create rollup reading: core-fleet-latest.json, subdirector-autopilot-latest.json, df free+capacity%, bridge process+ttl, thin-client zombie ratio, handoff head_sha vs git HEAD.",
+        "Harness inspect calls rollup; critical \u21d2 overall FAIL (fail-closed) while listing individual checks; gate via TNF_AUTONOMY_HEALTH_FAIL_CLOSED."
+      ],
+      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && mkdir -p scripts/runtime && test ! -f scripts/runtime/tnf-autonomy-health-rollup.cjs && printf '%s\\n' 'BEGIN implement A1 rollup: create scripts/runtime/tnf-autonomy-health-rollup.cjs emitting {status:healthy|degraded|critical}' || echo 'rollup stub present \u2014 continue wire to tnf autonomy health'",
+      "verify_probe": "node scripts/runtime/tnf-autonomy-health-rollup.cjs --json | jq -e '.status'; tnf autonomy health --no-splash; expect non-zero exit when status=critical; rollup critical \u21d2 harness inspect fails",
+      "rollback": "TNF_AUTONOMY_HEALTH_FAIL_CLOSED=0",
+      "kill_jobs_forbidden": true,
+      "implemented_at": "2026-08-10T03:00:00Z",
+      "implementer": "cursor"
+    },
+    {
+      "order": 3,
+      "id": "A5",
+      "title": "Living State Current Directive slot + tip-align handoff",
+      "priority": "P0",
+      "status": "done",
+      "owner_role": "state-governor",
+      "assignee_role": "hermes-codegen-worker",
+      "backup_roles": ["tnf-cli-agent"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT_WITH_CHANGES",
+        "staff_review": "pass_with_conditions",
+        "staff_decision": "ACCEPT_WITH_CONDITIONS"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A5_living_state_tip_align.json",
+      "files": [
+        "docs/protocols/LIVING_STATE.md",
+        "scripts/turn-end.cjs",
+        "scripts/protocols/emit-session-handoff.cjs",
+        "scripts/protocols/enforce-session-handoff.cjs",
+        "scripts/protocols/validate-handoff-source-drift.cjs",
+        "scripts/protocols/validate-living-state-directive.cjs"
+      ],
+      "notes": [
+        "STAFF CONDITION: enumerate concrete handoff writers \u2014 use emit-session-handoff.cjs, enforce-session-handoff.cjs, validate-handoff-source-drift.cjs (no *handoff* glob).",
+        "STAFF CONDITION: if agent commit policy gated, tip-align writes artifacts only; do not invent human OK.",
+        "SUBDIRECTOR: Autonomous tip-align via emit-session-handoff + Living State marker rewrite writing artifacts only; do not require git commit for packet success.",
+        "STATUS:SYNCHRONIZED only when handoff head_sha == git rev-parse HEAD; else STATUS:DRIFT.",
+        "Enforce fenced Current Directive: <!-- CURRENT_DIRECTIVE:START --> ... <!-- CURRENT_DIRECTIVE:END -->; writers replace-between-markers; history under ## History only.",
+        "Add validator scripts/protocols/validate-living-state-directive.cjs wired into protocol gate profile.",
+        "Verify via: tnf state show --full | rg -n 'CURRENT_DIRECTIVE:(START|END)' proves single fenced slot."
+      ],
+      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'CURRENT_DIRECTIVE|Current Directive' docs/protocols/LIVING_STATE.md scripts/turn-end.cjs scripts/protocols/emit-session-handoff.cjs scripts/protocols/enforce-session-handoff.cjs scripts/protocols/validate-handoff-source-drift.cjs",
+      "verify_probe": "node scripts/protocols/validate-living-state-directive.cjs; tnf state show --full | rg -n 'CURRENT_DIRECTIVE:(START|END)'; after tip-align, handoff head_sha == git rev-parse HEAD OR Living State STATUS:DRIFT",
+      "rollback": "node scripts/protocols/validate-living-state-directive.cjs --mode=warn",
+      "kill_jobs_forbidden": true,
+      "implemented_at": "2026-08-10T03:00:00Z",
+      "implementer": "cursor"
+    },
+    {
+      "order": 4,
+      "id": "A2",
+      "title": "Orchestrate audit/report-only classifier",
+      "priority": "P0",
+      "status": "done",
+      "owner_role": "orchestrator",
+      "assignee_role": "tnf-cli-agent",
+      "backup_roles": ["hermes-codegen-worker"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT_WITH_CHANGES",
+        "staff_review": "pass_with_conditions",
+        "staff_decision": "ACCEPT_WITH_CONDITIONS"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A2_orchestrate_report_only.json",
+      "files": [
+        "packages/tnf-cli/src/orchestration.ts",
+        "packages/tnf-cli/src/orchestration-enhancements.ts",
+        "packages/tnf-cli/src/cli.ts",
+        "packages/tnf-cli/src/__tests__/orchestrate-report-only.test.ts"
+      ],
+      "notes": [
+        "STAFF CONDITION + SUBDIRECTOR: Pin executeGoal/pattern matcher to orchestration.ts (+ orchestration-enhancements.ts) \u2014 no locate wildcards.",
+        "SUBDIRECTOR: Remove packets/A2_verify.md from deliverable list; ship fixture packages/tnf-cli/src/__tests__/orchestrate-report-only.test.ts (or nearest existing harness).",
+        "STAFF CONDITION: ship verify fixture as part of implement (test file satisfies A2_verify.md intent).",
+        "Add REPORT_ONLY intent when goal matches /\\b(audit|report-only|report only|synthesis|what makes sense|full enchilada)\\b/i; exclude execute-safe-refactors/mutate unless explicit implement/fix now.",
+        "SUCCESS only after named output path exists + non-empty; log classifier decision.",
+        "STAFF CONDITION: Negative assert \u2014 audit goals must not schedule execute-safe-refactors (log/JSON check in verify).",
+        "After smoke: rm -f docs/operations/audits/amendments/_orchestrate_smoke.md"
+      ],
+      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'executeGoal|execute-safe-refactors|tnf-refactoring-triage|REPORT_ONLY' packages/tnf-cli/src/orchestration.ts packages/tnf-cli/src/orchestration-enhancements.ts packages/tnf-cli/src/cli.ts",
+      "verify_probe": "tnf orchestrate --goal 'REPORT-ONLY audit: write docs/operations/audits/amendments/_orchestrate_smoke.md with one line ping' --no-splash; test -s docs/operations/audits/amendments/_orchestrate_smoke.md; assert orchestrator log/JSON has no execute-safe-refactors for audit goal; rm -f docs/operations/audits/amendments/_orchestrate_smoke.md",
+      "rollback": "TNF_ORCHESTRATE_ALLOW_MUTATE_ON_AUDIT=1",
+      "kill_jobs_forbidden": true,
+      "implemented_at": "2026-08-10T03:03:00Z",
+      "implementer": "cursor"
+    },
+    {
+      "order": 5,
+      "id": "A3",
+      "title": "Dual full-auto contention observer (do not collapse)",
+      "priority": "P1",
+      "status": "done",
+      "owner_role": "local-subdirector",
+      "assignee_role": "fleet-coordinator",
+      "backup_roles": ["state-governor", "hermes-infra-worker"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT",
+        "staff_review": "pass",
+        "staff_decision": "ACCEPT"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A3_full_auto_contention_observer.json",
+      "files": [
+        "scripts/operations/tnf-full-auto-contention-observe.cjs",
+        "docs/operations/tnf-full-auto-contention.jsonl",
+        "packages/tnf-cli/src/cli.ts"
+      ],
+      "notes": [
+        "Observe-only by default: detect \u22652 full-auto start processes; record contention metrics; NEVER kill unless --resolve-kill explicitly set by separate policy ticket (NOT scheduled on this queue).",
+        "Wire `tnf full-auto contend status` read-only; patch daemon/full-auto status to print CONTENTION: N loops when N\u22652 without recommending kill.",
+        "StaffOps forbids any recommend-kill language in status UX.",
+        "Must not conflict with pause/fleet-pause (explicit policy); only auto-kill is forbidden.",
+        "THIS QUEUE ITEM MUST NOT INCLUDE ANY KILL JOB \u2014 dual full-auto contention is adversarial observe-only."
+      ],
+      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && mkdir -p scripts/operations docs/operations && printf '' >> docs/operations/tnf-full-auto-contention.jsonl && rg -n 'full-auto start|contend|CONTENTION' packages/tnf-cli/src/cli.ts scripts/operations 2>/dev/null; echo 'BEGIN implement observe-only contention script (no kill path on default)'",
+      "verify_probe": "With dual loops running: tnf full-auto contend status --json | jq -e '.loopCount >= 2'; observer must not change PIDs (before/after pgrep identical)",
+      "rollback": "Remove contend command / observe script; no process impact",
+      "kill_jobs_forbidden": true,
+      "explicitly_excluded_commands": [
+        "kill",
+        "pkill",
+        "killall",
+        "--resolve-kill"
+      ],
+      "implemented_at": "2026-08-10T03:10:00Z",
+      "implementer": "cursor"
+    },
+    {
+      "order": 6,
+      "id": "A4",
+      "title": "Reflect non-blocking \u2014 edge-flywheel timeout",
+      "priority": "P1",
+      "status": "done",
+      "owner_role": "state-governor",
+      "assignee_role": "hermes-infra-worker",
+      "backup_roles": ["tnf-cli-agent"],
+      "human_gate": false,
+      "acceptance": {
+        "subdirector": "ACCEPT_WITH_CHANGES",
+        "staff_review": "pass_with_conditions",
+        "staff_decision": "ACCEPT_WITH_CONDITIONS"
+      },
+      "packet": "docs/operations/audits/amendments/packets/A4_reflect_flywheel_timeout.json",
+      "files": [
+        "~/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh",
+        "~/.agents/skills/tnf-desktop-rebuild/scripts/edge-flywheel.sh"
+      ],
+      "notes": [
+        "STAFF CONDITION: Repo mirror .agents/skills/tnf-self-improvement-loop/scripts/reflect.sh is ABSENT \u2014 implement on ~/.agents skill SoT (authoritative); do not block if repo mirror absent (optional sync only).",
+        "STAFF CONDITION: Timeout wrapper must be macOS-safe (perl/python alarm; default REFLECT_FLYWHEEL_TIMEOUT_SEC=120; no GNU timeout required).",
+        "STAFF CONDITION: SKIP_EDGE_FLYWHEEL=1 must complete and write reflect-*.md without blocking lesson append.",
+        "On timeout: append aborted note and exit 0 for reflect; progress to stderr; add tnf reflect --skip-flywheel or SKIP_EDGE_FLYWHEEL=1.",
+        "Update skill text: lesson append independent of reflect completion."
+      ],
+      "first_command": "test -f \"$HOME/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh\" && rg -n 'edge-flywheel|SKIP_EDGE_FLYWHEEL|REFLECT_FLYWHEEL_TIMEOUT' \"$HOME/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh\" \"$HOME/.agents/skills/tnf-desktop-rebuild/scripts/edge-flywheel.sh\" 2>/dev/null; echo 'BEGIN wrap flywheel with macOS-safe 120s timeout + SKIP_EDGE_FLYWHEEL'",
+      "verify_probe": "SKIP_EDGE_FLYWHEEL=1 bash \"$HOME/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh\" completes <60s and writes ~/.tnf/reports/self-improvement/reflect-*.md; forced hang simulation writes aborted note",
+      "rollback": "Remove timeout wrapper from reflect.sh",
+      "kill_jobs_forbidden": true,
+      "implemented_at": "2026-08-10T03:10:00Z",
+      "implementer": "cursor"
+    }
+  ],
+  "parallel_ops_not_on_queue": [
+    {
+      "title": "Close high-priority growth blockers (count=6)",
+      "ownerSuggestion": "tnf-growth-blocker-auditor"
+    },
+    {
+      "title": "Address staffing architecture gap (count=1)",
+      "ownerSuggestion": "tnf-staffops-staffing-director-01"
+    }
+  ],
+  "summary": {
+    "accepted_queued": 6,
+    "rejected": 0,
+    "done_not_queued": 3,
+    "queue_order": ["A6", "A1", "A5", "A2", "A3", "A4"],
+    "human_gate_any": false,
+    "kill_jobs_any": false,
+    "seal_status": "SEALED",
+    "p0_progress": "A6\u2192A4 complete",
+    "done": ["A6", "A1", "A5", "A2"],
+    "queue_complete": true
+  }
+}
