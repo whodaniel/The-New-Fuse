@@ -67,6 +67,7 @@ import {
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
+import { resolvePostStepTimeoutMs, tallyFullAutoRuns } from './utils/full-auto-cycle.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -76,10 +77,6 @@ import {
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
-import {
-  resolvePostStepTimeoutMs,
-  tallyFullAutoRuns,
-} from './utils/full-auto-cycle.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
@@ -4092,6 +4089,7 @@ function buildFullAutoStartArgs(
     broadcast?: boolean;
     strict?: boolean;
     skipStrictStatus?: boolean;
+    skipPreflight?: boolean;
   }
 ): string[] {
   const args = ['full-auto', 'start'];
@@ -4111,7 +4109,9 @@ function buildFullAutoStartArgs(
   if (options.skipAuth) args.push('--skip-auth');
   if (options.skipScorecard) args.push('--skip-scorecard');
   if (options.skipMermaid) args.push('--skip-mermaid');
+  if (options.skipParity) args.push('--skip-parity');
   if (options.skipStrictStatus) args.push('--skip-strict-status');
+  if (options.skipPreflight) args.push('--skip-preflight');
   if (options.broadcast) args.push('--broadcast');
   if (options.strict) args.push('--strict');
   if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
@@ -10243,9 +10243,7 @@ selfImprovement
           } catch (err: unknown) {
             if (!options.softFailAudits) throw err;
             const message = err instanceof Error ? err.message : String(err);
-            console.error(
-              chalk.yellow(`[self-improvement] mermaid soft-failed: ${message}`)
-            );
+            console.error(chalk.yellow(`[self-improvement] mermaid soft-failed: ${message}`));
           }
         }
         if (!options.skipParity) {
@@ -10266,9 +10264,7 @@ selfImprovement
           } catch (err: unknown) {
             if (!options.softFailAudits) throw err;
             const message = err instanceof Error ? err.message : String(err);
-            console.error(
-              chalk.yellow(`[self-improvement] parity soft-failed: ${message}`)
-            );
+            console.error(chalk.yellow(`[self-improvement] parity soft-failed: ${message}`));
           }
         }
 
@@ -10731,8 +10727,7 @@ fullAuto
               try {
                 await runSelfCli(args, budget);
               } catch (postErr: unknown) {
-                const message =
-                  postErr instanceof Error ? postErr.message : String(postErr);
+                const message = postErr instanceof Error ? postErr.message : String(postErr);
                 postWarnings.push(`${label}: ${message}`);
                 console.error(
                   chalk.yellow(
@@ -10762,7 +10757,9 @@ fullAuto
             console.log(
               chalk.green(
                 `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s` +
-                  (postWarnings.length > 0 ? ` (with ${postWarnings.length} post-step warning(s))` : '')
+                  (postWarnings.length > 0
+                    ? ` (with ${postWarnings.length} post-step warning(s))`
+                    : '')
               )
             );
           } catch (err: any) {

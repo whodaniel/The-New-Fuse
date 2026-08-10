@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T20:39:31.442Z** — handoff `fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141` (`656a04f4e251`).
+Updated: **2026-08-10T20:44:07.523Z** — handoff
+`05697d16-0f12-4299-b792-a95a6e03702c` (`511254383b6f`).
 `14c1d312-923b-4bb7-86d4-e8ab95ed5133` (`97ae46efb551`). Node modules rebuilt,
 API healthy, relay operational. `8066f785-ec83-43da-8c0e-ab9eec2ad5d4`
 (`0f34cf4157a0`). `427721a0-205f-4646-b433-ea0d22d210c4` (`04b0ed53f05c`).
@@ -166,10 +167,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                           |
+| -------- | -------------------------------------------------------------------------------- |
+| **P0**   | Operator may paste EXA_API_KEY / TAVILY_API_KEY into ~/.tnf.local.env when ready |
+| **P0**   | Keep Homebrew redis disabled so TNF owns :6379                                   |
+| **P0**   | Monitor next full-auto cycle for clean ok=true without broadcast hang            |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -634,10 +636,17 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (8066f785-ec83-43da-8c0e-ab9eec2ad5d4) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (c5a69078-fc51-475f-9678-d1a45ca41e1d) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c5a69078-fc51-475f-9678-d1a45ca41e1d) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (096d6795-30a3-4fdf-b89d-9ee70a2c8411) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(096d6795-30a3-4fdf-b89d-9ee70a2c8411) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (3f60ab82-a680-4451-8d50-ce2b2f62b4df) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3f60ab82-a680-4451-8d50-ce2b2f62b4df) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(05697d16-0f12-4299-b792-a95a6e03702c) | ✅ HANDOFF_READY |

@@ -1,9 +1,12 @@
 # 📍 LIVING_STATE.md - Active Session Synchronization
 
-`[CLASS:PRIME] [STATUS:DRIFT]`
+`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+**Current Directive:** Operator may paste EXA_API_KEY / TAVILY_API_KEY into
+~/.tnf.local.env when ready
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
@@ -827,13 +830,24 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-10T20:39:31.513Z handoff `fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141` head `656a04f4e251` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T20:44:07.601Z handoff `05697d16-0f12-4299-b792-a95a6e03702c` head
+  `511254383b6f` project `TNF-SESSION` — Operator may paste EXA_API_KEY /
+  TAVILY_API_KEY into ~/.tnf.local.env when ready
 
-- 2026-08-10T20:38:06.619Z handoff `3f60ab82-a680-4451-8d50-ce2b2f62b4df` head `5a4b687e9ac5` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T20:39:31.513Z handoff `fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141` head
+  `656a04f4e251` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-08-10T20:36:41.392Z handoff `096d6795-30a3-4fdf-b89d-9ee70a2c8411` head `dff09cd93e5f` project `TNF-SESSION` — Monitor full-auto daemon status
+- 2026-08-10T20:38:06.619Z handoff `3f60ab82-a680-4451-8d50-ce2b2f62b4df` head
+  `5a4b687e9ac5` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-08-10T20:30:42.722Z handoff `c5a69078-fc51-475f-9678-d1a45ca41e1d` head `b3973402df64` project `TNF-SESSION` — Watch full-auto for ok=true instead of TIMED OUT on hung broadcast
+- 2026-08-10T20:36:41.392Z handoff `096d6795-30a3-4fdf-b89d-9ee70a2c8411` head
+  `dff09cd93e5f` project `TNF-SESSION` — Monitor full-auto daemon status
+
+- 2026-08-10T20:30:42.722Z handoff `c5a69078-fc51-475f-9678-d1a45ca41e1d` head
+  `b3973402df64` project `TNF-SESSION` — Watch full-auto for ok=true instead of
+  TIMED OUT on hung broadcast
 
 - 2026-08-10T19:05:03.371Z handoff `8066f785-ec83-43da-8c0e-ab9eec2ad5d4` head
   `0f34cf4157a0` project `TNF-SESSION` — Repair apps/api node_modules so
@@ -960,4 +974,5 @@ continuation
 - [✅] 2026-08-10T18:37:23.797Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings
 
-- [✅] 2026-08-10T20:27:43.815Z Orchestrator: Completed: Goal: Run self-improvement cycle and capture learnings
+- [✅] 2026-08-10T20:27:43.815Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
