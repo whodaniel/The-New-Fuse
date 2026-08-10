@@ -79,6 +79,11 @@ class ApiService {
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          const hint = retryAfter ? ` (retry after ${retryAfter}s)` : '';
+          throw new Error(`HTTP 429: Too Many Requests${hint}`);
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 

@@ -42,17 +42,45 @@ export async function probeRelayUrl(relayUrl: string, timeoutMs = 2500): Promise
   }
 }
 
-/** REST API must expose agent CRUD — /health alone is not enough (WS gateways also return ok). */
+/**
+ * REST liveness probe — use /health (not /api/agents).
+ *
+ * Hitting /api/agents during discovery burned the shared rate-limit budget
+ * (StrictMode double-bootstrap × 4 candidates → easy 429s, then agent CRUD failed).
+ * Relay vs API is already separated by different candidate ports; reject payloads
+ * that advertise as a federation relay so a relay-on-API-port can't spoof us.
+ */
 export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise<boolean> {
   const base = apiUrl.replace(/\/$/, '');
-  try {
-    const res = await fetch(`${base}/api/agents`, {
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-    return res.ok;
-  } catch {
-    return false;
+  for (const path of ['/health', '/api/health']) {
+    try {
+      const res = await fetch(`${base}${path}`, {
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (!res.ok) {
+        if (res.status === 404) continue;
+        return false;
+      }
+      try {
+        const data = (await res.json()) as Record<string, unknown>;
+        if (data?.relay === 'running') return false;
+      } catch {
+        // Non-JSON 200 is acceptable for simple health endpoints.
+      }
+      return true;
+    } catch {
+      // try next path
+    }
   }
+  return false;
+}
+
+let discoveryCache: { at: number; result: DiscoveredLocalEndpoints } | null = null;
+const DISCOVERY_TTL_MS = 10_000;
+
+/** Test / ops helper — drop the in-memory discovery memo. */
+export function clearDiscoveryCache(): void {
+  discoveryCache = null;
 }
 
 /**
@@ -61,6 +89,10 @@ export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise
  * services bind to non-default ports (e.g. relay on :3007 instead of :3000).
  */
 export async function discoverLocalEndpoints(): Promise<DiscoveredLocalEndpoints> {
+  if (discoveryCache && Date.now() - discoveryCache.at < DISCOVERY_TTL_MS) {
+    return discoveryCache.result;
+  }
+
   let relayUrl: string | null = null;
   for (const candidate of LOCAL_RELAY_CANDIDATES) {
     if (await probeRelayUrl(candidate)) {
@@ -77,9 +109,11 @@ export async function discoverLocalEndpoints(): Promise<DiscoveredLocalEndpoints
     }
   }
 
-  return {
+  const result: DiscoveredLocalEndpoints = {
     relayUrl,
     apiUrl,
     wsUrl: apiUrl ? deriveWsUrlFromApi(apiUrl) : null,
   };
+  discoveryCache = { at: Date.now(), result };
+  return result;
 }

@@ -196,6 +196,16 @@ test.describe('UX audit — Workflow Builder', () => {
     await page.getByRole('button', { name: /hide library|show library/i }).click();
     await page.getByRole('button', { name: /hide library|show library/i }).click();
 
+    // Click-to-add (Tauri WebView drag is unreliable)
+    const before = await page.locator('.react-flow__node').count();
+    await page
+      .getByRole('button', { name: /AI Agent/i })
+      .first()
+      .click();
+    await expect
+      .poll(async () => page.locator('.react-flow__node').count())
+      .toBeGreaterThan(before);
+
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('button', { name: 'Run' }).click();
 

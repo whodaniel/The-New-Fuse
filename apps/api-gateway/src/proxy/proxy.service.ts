@@ -30,7 +30,11 @@ export class ProxyService {
   }
 
   private initializeServices() {
-    const apiServerUrl = this.defaultServiceUrl('api-server', 8080, 3001);
+    // Host ports:
+    // - 3001 = this gateway (never use as an upstream — self-proxy deadlocks)
+    // - 3002 = apps/api (Nest) locally
+    // - 3004 = optional dedicated backend
+    const nestApiUrl = this.defaultServiceUrl('api-server', 8080, 3002);
     const backendUrl = this.defaultServiceUrl('api-server', 8080, 3004);
     const casin8Url = this.defaultServiceUrl('casin8-games', 8080, 8088);
 
@@ -49,7 +53,7 @@ export class ProxyService {
 
     this.registerService({
       name: 'webhooks',
-      baseUrl: this.configService.get('WEBHOOKS_SERVICE_URL', apiServerUrl),
+      baseUrl: this.configService.get('WEBHOOKS_SERVICE_URL', nestApiUrl),
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
@@ -57,9 +61,9 @@ export class ProxyService {
 
     this.registerService({
       name: 'agents',
-      baseUrl: this.configService.get(
-        'AGENTS_SERVICE_URL',
-        this.configService.get('API_URL', apiServerUrl)
+      baseUrl: this.avoidGatewaySelfProxy(
+        this.configService.get('AGENTS_SERVICE_URL', this.configService.get('API_URL', nestApiUrl)),
+        nestApiUrl
       ),
       healthPath: '/health',
       timeout: 30000,
@@ -70,26 +74,27 @@ export class ProxyService {
     // agent endpoints to the core API service without assuming backend parity.
     this.registerService({
       name: 'api',
-      baseUrl: this.configService.get(
-        'API_SERVICE_URL',
+      baseUrl: this.avoidGatewaySelfProxy(
         this.configService.get(
-          'API_URL',
-          this.configService.get('AGENTS_SERVICE_URL', apiServerUrl)
-        )
+          'API_SERVICE_URL',
+          this.configService.get(
+            'API_URL',
+            this.configService.get('AGENTS_SERVICE_URL', nestApiUrl)
+          )
+        ),
+        nestApiUrl
       ),
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
     });
 
-    // Local NestJS API for Mission Control local-runtime data. Distinct from
-    // 'api' because that alias defaults to the gateway's own port (3001) when
-    // env is unset, which would loop; apps/api falls back to 3002 locally.
+    // Local NestJS API for Mission Control local-runtime data.
     this.registerService({
       name: 'local-runtime',
       baseUrl: this.configService.get(
         'LOCAL_API_SERVICE_URL',
-        this.configService.get('API_SERVICE_URL', 'http://127.0.0.1:3002')
+        this.configService.get('API_SERVICE_URL', nestApiUrl)
       ),
       healthPath: '/health',
       timeout: 10000,
@@ -123,6 +128,26 @@ export class ProxyService {
       return `http://${serviceName}:${dockerPort}`;
     }
     return `http://localhost:${hostPort}`;
+  }
+
+  /** Env often sets API_URL=http://localhost:3001 (the gateway). Rewrite to Nest. */
+  private avoidGatewaySelfProxy(candidate: string, nestApiUrl: string): string {
+    try {
+      const url = new URL(candidate);
+      const gatewayPort = String(process.env.PORT || '3001');
+      if (
+        (url.hostname === 'localhost' || url.hostname === '127.0.0.1') &&
+        url.port === gatewayPort
+      ) {
+        this.logger.warn(
+          `Upstream ${candidate} points at the gateway — rewriting to ${nestApiUrl}`
+        );
+        return nestApiUrl;
+      }
+    } catch {
+      // keep candidate
+    }
+    return candidate;
   }
 
   registerService(config: ServiceConfig) {

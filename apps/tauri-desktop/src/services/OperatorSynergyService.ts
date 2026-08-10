@@ -41,6 +41,7 @@ const INITIAL: OperatorSynergySnapshot = {
 class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
   private snapshot: OperatorSynergySnapshot = { ...INITIAL };
   private bootstrapped = false;
+  private bootstrapPromise: Promise<void> | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private boundHandlers: Array<{
     target: object;
@@ -114,6 +115,18 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
   }
 
   async bootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
+    // Collapse StrictMode double-mount + rapid env flips into one in-flight bootstrap.
+    if (this.bootstrapPromise) {
+      return this.bootstrapPromise;
+    }
+
+    this.bootstrapPromise = this.runBootstrap(environment, customApiUrl).finally(() => {
+      this.bootstrapPromise = null;
+    });
+    return this.bootstrapPromise;
+  }
+
+  private async runBootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
     let endpoints = resolveEnvironmentEndpoints(environment, customApiUrl);
     let relayUrl = resolveRelayUrlForEnvironment(environment, customApiUrl);
 

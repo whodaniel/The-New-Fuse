@@ -43,6 +43,9 @@ must not be mass-deleted without verification evidence. See
 
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
 - [✅] 2026-08-10T02:51:16.876Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-10T04:24:36.115Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs
+
   tnf-autonomy-health-rollup.cjs
 
   `scripts/protocols/live-agent-work-check.cjs` and `pnpm run tnf:live:agents:*`
@@ -838,6 +841,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-10T04:37:09.788Z handoff `ce8362a2-024a-4925-975d-ca4a72d2819b` head
+  `67d2d37cd850` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T04:37:08.548Z handoff `69d483c0-ce7a-46cc-9a6c-e6404b6c1b56` head
+  `67d2d37cd850` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-10T04:14:42.912Z handoff `07fc8a0e-f443-4459-9629-c17eec75345a` head
   `7f2a12a7785f` project `TNF-SESSION` — Continue priority queue from

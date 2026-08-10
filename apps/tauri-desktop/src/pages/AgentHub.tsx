@@ -110,7 +110,11 @@ const AgentHub: React.FC = () => {
           >
             Computer Use
           </button>
-          <button type="button" className="secondary-button" onClick={() => fetchAgents()}>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => fetchAgents({ force: true })}
+          >
             Refresh
           </button>
           <button type="button" className="primary-button" onClick={() => setShowCreateModal(true)}>
