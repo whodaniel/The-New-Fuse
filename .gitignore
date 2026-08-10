@@ -140,6 +140,11 @@ apps/api/data/unified-task-ledger.json
 data/protocols/*.json
 data/protocols/*.jsonl
 data/protocols/*.md
+# Harness runtime artefacts (config/policy JSON + README stay tracked)
+data/harness/memory/entries.jsonl
+data/harness/trajectories/
+data/harness/compaction/
+data/harness/receipts/
 # Exception: this one is POLICY, not runtime state. It is the authorization
 # registry for scripts/protocols/agent-self-edit-gate.cjs, and the gate cannot
 # run without it — which is exactly why that gate sat at zero call sites. The

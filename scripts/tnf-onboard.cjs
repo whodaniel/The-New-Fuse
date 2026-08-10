@@ -49,6 +49,18 @@ const FRONTLOAD_CHECKLIST = [
   'docs/protocols/LIVING_STATE.md',
   'docs/protocols/AGENT_STATUS_LEDGER.md',
   CANONICAL_SESSION_HANDOFF_JSON,
+  'docs/core/FRONTLOAD_MANIFEST.md',
+  'docs/core/SOUL.md',
+  'docs/core/IDENTITY.md',
+  'docs/core/USER.md',
+  'docs/core/TOOLS.md',
+  'docs/core/HEARTBEAT.md',
+  'docs/core/SECURITY.md',
+  'docs/core/MEMORY.md',
+  'docs/core/BOOTSTRAP.md',
+  'docs/core/ENGINEERING_PRINCIPLES.md',
+  'docs/protocols/HARNESS_CONFIG.md',
+  'data/harness/harness-config.json',
   'data/mcp_config.json',
 ];
 const FRONTLOAD_BUDGET_PROFILE = [
@@ -56,10 +68,14 @@ const FRONTLOAD_BUDGET_PROFILE = [
   { path: CANONICAL_TURN_ZERO_MANDATE, stage: 'eager' },
   { path: 'docs/protocols/LIVING_STATE.md', stage: 'eager' },
   { path: CANONICAL_SESSION_HANDOFF_JSON, stage: 'eager' },
+  { path: 'docs/core/FRONTLOAD_MANIFEST.md', stage: 'defer' },
   { path: '.agent/context/agent-onboarding.md', stage: 'defer' },
   { path: '.agent/workflows/frontload.md', stage: 'defer' },
   { path: '.agent/context/resource-map.md', stage: 'defer' },
   { path: 'docs/protocols/AGENT_STATUS_LEDGER.md', stage: 'defer' },
+  { path: 'docs/core/SOUL.md', stage: 'defer' },
+  { path: 'docs/core/MEMORY.md', stage: 'defer' },
+  { path: 'docs/core/BOOTSTRAP.md', stage: 'defer' },
   { path: 'data/mcp_config.json', stage: 'metadata' },
 ];
 const MCP_CONFIG_PATHS = [
@@ -756,6 +772,27 @@ function repairOnboardingAssets() {
   }
   if (ensureTextFile('.agent/workflows/frontload.md', frontloadWorkflowTemplate())) {
     changes.push({ path: '.agent/workflows/frontload.md', status: 'created' });
+  }
+  // Core harness pack — only create stubs if a checkout is missing them.
+  // Prefer the committed docs/core templates; do not overwrite curated MEMORY.
+  const corePointers = [
+    [
+      'docs/core/FRONTLOAD_MANIFEST.md',
+      '# FRONTLOAD_MANIFEST.md\n\nRun `tnf onboard --repair` from a full checkout so this manifest is restored.\n',
+    ],
+    [
+      'docs/core/MEMORY.md',
+      '# MEMORY.md\n\nCurated long-term facts. Restore from repo template if this stub remains.\n',
+    ],
+    [
+      'docs/core/BOOTSTRAP.md',
+      '# BOOTSTRAP.md\n\n`[BOOTSTRAP_STATUS:PENDING]`\n\nComplete the ritual in the repo template, then stamp COMPLETE.\n',
+    ],
+  ];
+  for (const [rel, body] of corePointers) {
+    if (ensureTextFile(rel, body)) {
+      changes.push({ path: rel, status: 'created' });
+    }
   }
   const baseMcp = baseMcpConfigTemplate();
   const mcpConfigStatus = upsertGeneratedJsonFile('data/mcp_config.json', baseMcp);

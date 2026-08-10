@@ -20,6 +20,9 @@ Catalog truth: `~/.tnf/model-providers.json`. Live hosts:
 
 ## Mandatory Context Files
 
+Canonical ordered list: **`docs/core/FRONTLOAD_MANIFEST.md`** (Stages A–C).
+Verify with `node scripts/verify-repo-frontload.cjs`.
+
 1. `docs/protocols/TURN_ZERO_MANDATE.md` (canonical Turn Zero authority)
 2. `docs/protocols/LIVING_STATE.md`
 3. `docs/protocols/AGENT_STATUS_LEDGER.md`
@@ -32,12 +35,28 @@ Catalog truth: `~/.tnf/model-providers.json`. Live hosts:
 9. `.agent/workflows/frontload.md`
 10. `docs/core/ENGINEERING_PRINCIPLES.md`
 11. `docs/core/SOUL.md`, `docs/core/USER.md`, `docs/core/IDENTITY.md`,
-    `docs/core/HEARTBEAT.md`
-12. `docs/operations/STALL_DEFENSE.md`
-13. `docs/protocols/TNF_FRONTEND_IA_CANON.md` (frontend chrome / chat / Ask AI —
+    `docs/core/HEARTBEAT.md`, `docs/core/TOOLS.md`, `docs/core/SECURITY.md`
+12. `docs/core/MEMORY.md` (curated long-term facts; private sessions)
+13. `docs/core/BOOTSTRAP.md` (first-run harness ritual; stamp COMPLETE)
+14. `docs/protocols/HARNESS_CONFIG.md` + `data/harness/harness-config.json`
+
+Also verify host injection (not just docs presence):
+
+```bash
+node scripts/harness/verify-harness-completeness.cjs --provision
+```
+
+14. `docs/operations/STALL_DEFENSE.md`
+15. `docs/protocols/TNF_FRONTEND_IA_CANON.md` (frontend chrome / chat / Ask AI —
     do not reintroduce always-open assist panels or duplicate chat homes)
-14. `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` (agent shell transcripts ≠
+16. `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` (agent shell transcripts ≠
     operator terminals; prefer short-lived shells)
+
+### Informal → Canonical Aliases
+
+- `soul.md` → `docs/core/SOUL.md`
+- `agent.md` → `.agent/agents/<id>.md` + `docs/core/IDENTITY.md`
+- `brain.md` → `docs/core/MEMORY.md` + Living State + session handoff
 
 ## Where Resources Live
 

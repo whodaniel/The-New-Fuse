@@ -1514,7 +1514,8 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
   if (options.skipParity) args.push('--skip-parity');
   if (options.softFailAudits) args.push('--soft-fail-audits');
   if (options.note) args.push('--note', options.note);
-  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  // Never put the super-admin token on argv — it leaks via `ps`, daemon status,
+  // and Primary argv logs. Nested CLIs inherit TNF_SUPER_ADMIN_INPUT_TOKEN.
   return args;
 }
 
@@ -4114,7 +4115,7 @@ function buildFullAutoStartArgs(
   if (options.skipPreflight) args.push('--skip-preflight');
   if (options.broadcast) args.push('--broadcast');
   if (options.strict) args.push('--strict');
-  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  // Auth stays in TNF_SUPER_ADMIN_INPUT_TOKEN (daemon spawn env), never argv.
   return args;
 }
 
@@ -7488,6 +7489,31 @@ function collectHarnessInspectChecks(): HarnessCheckResult[] {
     detail: autonomyOk
       ? `rollup=${autonomyStatus}`
       : `rollup=${autonomyStatus}${autonomyReasons.length ? ` (${autonomyReasons.join(', ')})` : ''}`,
+  });
+
+  const harnessCompleteness = runCommandCapture('node', [
+    'scripts/harness/verify-harness-completeness.cjs',
+    '--json',
+  ]);
+  let harnessCompletenessOk = harnessCompleteness.code === 0;
+  let harnessCompletenessDetail = 'harness completeness pass';
+  try {
+    const parsed = JSON.parse(harnessCompleteness.stdout || '{}') as {
+      ok?: boolean;
+      failed?: number;
+    };
+    harnessCompletenessOk = harnessCompleteness.code === 0 && parsed.ok === true;
+    harnessCompletenessDetail = harnessCompletenessOk
+      ? 'UNU layers + injection surfaces ok'
+      : `failed=${parsed.failed ?? '?'} (run verify-harness-completeness --provision)`;
+  } catch {
+    harnessCompletenessOk = false;
+    harnessCompletenessDetail = 'harness completeness parse failed';
+  }
+  checks.push({
+    name: 'harness.completeness',
+    passed: harnessCompletenessOk,
+    detail: harnessCompletenessDetail,
   });
 
   return checks;

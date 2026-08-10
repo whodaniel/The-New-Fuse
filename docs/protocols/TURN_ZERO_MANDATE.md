@@ -107,6 +107,14 @@ When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
    - `.agent/context/resource-map.md`
    - `.agent/context/agent-onboarding.md`
    - `.agent/workflows/frontload.md`
+   - `docs/core/FRONTLOAD_MANIFEST.md` (ordered injection Stages A–C)
+   - `docs/protocols/HARNESS_CONFIG.md` (harness inventory; file presence ≠ host
+     injection — verify surfaces)
+   - `docs/core/MEMORY.md` (curated long-term facts; skip in shared/group
+     contexts)
+   - `docs/core/BOOTSTRAP.md` when status is `PENDING` (complete + stamp)
+   - Optional dynamic recall:
+     `node scripts/harness/memory-layer.cjs recall --query "<task>"`
 3. Read the canonical session handoff:
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred)
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)

@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Free more disk on Data volume (outside TNF logs)
+**Current Directive:** Use verify-harness-completeness in Turn Zero
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -829,6 +829,26 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-10T22:44:47.407Z handoff `f0328147-662d-4a50-8427-bc94c797a4d0` head
+  `2770f1a135d4` project `TNF-SESSION` — Use verify-harness-completeness in Turn
+  Zero
+
+- 2026-08-10T22:44:35.730Z handoff `b2a90849-e5ef-4637-9bd8-25c72cd5c66a` head
+  `2770f1a135d4` project `TNF-SESSION` — Use verify-harness-completeness in Turn
+  Zero
+
+- 2026-08-10T22:39:44.957Z handoff `fc8fff90-4ec8-4cac-9b6c-07f36ec4faad` head
+  `2770f1a135d4` project `TNF-SESSION` — Continue using node
+  scripts/harness/verify-harness-completeness.cjs in Turn Zero
+
+- 2026-08-10T22:31:23.454Z handoff `e29ba73f-e334-4805-a502-817b2dd722a8` head
+  `2770f1a135d4` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T22:21:59.709Z handoff `2cc8c274-46a6-4fb2-8fd0-bdcf90b47588` head
+  `2770f1a135d4` project `TNF-SESSION` — Optional: promote daily notes into
+  MEMORY.md on heartbeats
+
 - 2026-08-10T21:20:01.230Z handoff `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` head
   `f3eb9042fe26` project `TNF-SESSION` — Free more disk on Data volume (outside
   TNF logs)
@@ -1006,4 +1026,16 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-10T20:27:43.815Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:23:02.556Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:34:08.019Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:35:37.322Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T22:15:54.611Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

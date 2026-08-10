@@ -129,17 +129,61 @@ const TARGETS = [
 ];
 
 function parseArgs(argv) {
-  const o = { dryRun: false, verify: false, includeUnverified: false };
+  const o = { dryRun: false, verify: false, includeUnverified: false, repair: false };
   for (const a of argv) {
     if (a === '--dry-run') o.dryRun = true;
     else if (a === '--verify') o.verify = true;
+    else if (a === '--repair') o.repair = true;
     else if (a === '--include-unverified') o.includeUnverified = true;
     else if (a === '-h' || a === '--help') {
-      console.log('Usage: node scripts/install-agent-frontload.cjs [--dry-run|--verify] [--include-unverified]');
+      console.log(
+        'Usage: node scripts/install-agent-frontload.cjs [--dry-run|--verify|--repair] [--include-unverified]'
+      );
       process.exit(0);
     } else throw new Error(`Unknown option: ${a}`);
   }
   return o;
+}
+
+function registerClaudeSessionStartHook({ dryRun = false } = {}) {
+  const hookScript = path.join(HOME, '.claude', 'hooks', 'tnf-frontload.sh');
+  const settingsPath = path.join(HOME, '.claude', 'settings.json');
+  if (!fs.existsSync(hookScript)) {
+    return { ok: false, detail: 'hook script MISSING — expected ~/.claude/hooks/tnf-frontload.sh' };
+  }
+  let settings = {};
+  if (fs.existsSync(settingsPath)) {
+    try {
+      settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    } catch (err) {
+      return { ok: false, detail: `settings.json parse failed: ${err.message}` };
+    }
+  }
+  const serialized = JSON.stringify(settings.hooks?.SessionStart || []);
+  if (serialized.includes('tnf-frontload.sh')) {
+    return { ok: true, detail: 'hook already registered' };
+  }
+  const entry = {
+    hooks: [
+      {
+        type: 'command',
+        command: hookScript,
+      },
+    ],
+  };
+  settings.hooks = settings.hooks || {};
+  settings.hooks.SessionStart = Array.isArray(settings.hooks.SessionStart)
+    ? [...settings.hooks.SessionStart, entry]
+    : [entry];
+  if (dryRun) {
+    return { ok: true, detail: 'would register SessionStart hook (dry-run)' };
+  }
+  fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
+  if (fs.existsSync(settingsPath)) {
+    fs.copyFileSync(settingsPath, `${settingsPath}.tnf-bak`);
+  }
+  fs.writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`, 'utf8');
+  return { ok: true, detail: 'registered SessionStart → tnf-frontload.sh (backup: .tnf-bak)' };
 }
 
 function classify(t) {
@@ -249,14 +293,18 @@ function main() {
     );
   }
 
-  // Claude Code is not a markdown-context runtime — it frontloads via a
-  // SessionStart hook. Report its wiring rather than silently editing the file
-  // that governs permissions and hook execution.
+  // Claude Code frontloads via SessionStart hook (not markdown context).
+  // --repair registers the existing ~/.claude/hooks/tnf-frontload.sh entry.
   const hookScript = path.join(HOME, '.claude', 'hooks', 'tnf-frontload.sh');
   const settingsPath = path.join(HOME, '.claude', 'settings.json');
   let claudeStatus;
   if (!fs.existsSync(hookScript)) {
     claudeStatus = 'hook script MISSING — expected ~/.claude/hooks/tnf-frontload.sh';
+    failures += 1;
+  } else if (opts.repair && !opts.verify) {
+    const reg = registerClaudeSessionStartHook({ dryRun: opts.dryRun });
+    claudeStatus = reg.detail;
+    if (!reg.ok) failures += 1;
   } else {
     let registered = false;
     try {
@@ -267,7 +315,7 @@ function main() {
     }
     claudeStatus = registered
       ? 'hook installed and registered'
-      : 'hook script present but NOT registered in ~/.claude/settings.json (add hooks.SessionStart, or run /hooks)';
+      : 'hook script present but NOT registered in ~/.claude/settings.json (run with --repair)';
     if (!registered) failures += 1;
   }
   console.log(`\nClaude Code  ${claudeStatus}`);

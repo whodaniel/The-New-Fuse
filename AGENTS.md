@@ -42,6 +42,23 @@ unit** defined by the triad:
     Vision/Audio/Relay Synapses). This is how the agent interacts with the
     Merkle Tree.
 
+### Harness Completeness (UNU-aligned)
+
+TNF harness config is first-class: `docs/protocols/HARNESS_CONFIG.md` +
+`data/harness/harness-config.json`. File presence under `docs/core` is **not**
+the same as host injection. Verify:
+
+```bash
+node scripts/harness/verify-harness-completeness.cjs --provision
+```
+
+| Layer concern                     | Entry point                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| Permissions outside the model     | `scripts/harness/permission-berm.cjs`                        |
+| Dynamic memory retain/recall      | `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
+| Trajectories / compaction records | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`    |
+| Sandbox materialization (D11)     | `scripts/harness/materialize-sandbox-profile.cjs`            |
+
 ### Core Tenet (CORRECTED 2026-07-22)
 
 TNF's core tenet is to **PARODY + ASSIMILATE the BEST from ANY and ALL

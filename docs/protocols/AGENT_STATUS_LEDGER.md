@@ -3,7 +3,9 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T21:20:01.155Z** — handoff
+Updated: **2026-08-10T22:44:47.353Z** — handoff
+`f0328147-662d-4a50-8427-bc94c797a4d0` (`2770f1a135d4`).
+`fc8fff90-4ec8-4cac-9b6c-07f36ec4faad` (`2770f1a135d4`).
 `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` (`f3eb9042fe26`).
 `05697d16-0f12-4299-b792-a95a6e03702c` (`511254383b6f`).
 `14c1d312-923b-4bb7-86d4-e8ab95ed5133` (`97ae46efb551`). Node modules rebuilt,
@@ -168,11 +170,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                         |
-| -------- | -------------------------------------------------------------- |
-| **P0**   | Free more disk on Data volume (outside TNF logs)               |
-| **P0**   | Keep redis launchd ownership durable after reboot              |
-| **P0**   | Drive agent registration so harness agents.registration passes |
+| Priority | Action                                       |
+| -------- | -------------------------------------------- |
+| **P0**   | Use verify-harness-completeness in Turn Zero |
+| **P0**   | Optional MCP supply-chain attestation        |
+| **P0**   | Optional host-transcript compaction adapters |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -675,3 +677,18 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(2cc8c274-46a6-4fb2-8fd0-bdcf90b47588) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e29ba73f-e334-4805-a502-817b2dd722a8) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(fc8fff90-4ec8-4cac-9b6c-07f36ec4faad) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b2a90849-e5ef-4637-9bd8-25c72cd5c66a) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f0328147-662d-4a50-8427-bc94c797a4d0) | ✅ HANDOFF_READY |

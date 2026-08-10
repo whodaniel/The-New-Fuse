@@ -1,0 +1,35 @@
+---
+description: TNF harness control-plane pointers (Turn Zero, berm, memory layer)
+alwaysApply: true
+---
+
+# TNF Harness (required)
+
+TNF is the control plane. This rule injects **pointers**, not copies.
+
+## Eager (Stage A)
+
+1. `docs/protocols/TURN_ZERO_MANDATE.md`
+2. `docs/protocols/LIVING_STATE.md`
+3. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+4. `docs/protocols/HARNESS_CONFIG.md` + `data/harness/harness-config.json`
+
+## Operating loop
+
+Inspect → Act → Verify. Before high-impact tools run:
+
+```bash
+node scripts/harness/permission-berm.cjs evaluate --action-class <class> --json
+```
+
+## Dynamic memory (≠ docs/core/MEMORY.md)
+
+```bash
+node scripts/harness/memory-layer.cjs recall --query "<task keywords>" --limit 5
+```
+
+## Completeness
+
+```bash
+node scripts/harness/verify-harness-completeness.cjs
+```

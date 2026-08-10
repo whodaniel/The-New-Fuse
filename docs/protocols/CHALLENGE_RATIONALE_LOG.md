@@ -491,3 +491,20 @@ with no dependency on the commit landing first. Existing entries with
   require your explicit authorization need to be modified in the protocols, so
   that tnf can always proceed autonomously" on 2026-08-09.
 - ledger_event_id: f5e4d3c2-b1a0-4c3d-9e8f-7a6b5c4d3e2f
+
+## 2026-08-10 — docs/protocols/TURN_ZERO_MANDATE.md (harness completeness)
+
+- file: docs/protocols/TURN_ZERO_MANDATE.md
+- doc_hash:
+  sha256:bb74c779ebab81979953f316c94ad1ac7f4d576da45219ead525a5a3da947f97
+- rationale: Operator directed implementation of missing UNU-aligned harness
+  components while respecting existing protocols. Swarm Turn Zero frontload
+  policy now explicitly includes HARNESS_CONFIG, distinguishes host injection
+  from docs/core file presence, and points agents at the dynamic memory-layer
+  recall path (scripts/harness/memory-layer.cjs) as optional Stage B/C work.
+  Additive orientation guidance only; does not weaken confirmation, privacy, or
+  Inspect→Act→Verify gates.
+- attributed_to: Daniel Goldberg (operator), explicit instruction to implement
+  all missing TNF harness components (2026-08-10) plus authority-edit confirm
+  for this commit.
+- ledger_event_id: c969bb39-07fe-4b96-8cbf-6ebad019e16c
