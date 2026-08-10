@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Persist relay :3007 via launchd (current session-backed
-process)
+**Current Directive:** Optionally set
+API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -42,14 +42,11 @@ must not be mass-deleted without verification evidence. See
 ## ⚡ Active Steps
 
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
-- [✅] 2026-08-10T02:51:16.876Z New script(s) created: validate-agents-json.cjs,
-- [✅] 2026-08-10T04:24:36.115Z New script(s) created: validate-agents-json.cjs,
-- [✅] 2026-08-10T16:56:08.732Z New script(s) created: validate-agents-json.cjs,
-  generate-crontab-from-catalog.cjs
-
-  generate-crontab-from-catalog.cjs
-
-  tnf-autonomy-health-rollup.cjs
+- [✅] 2026-08-10T17:45:54.079Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs, relay-service.sh
+- [✅] 2026-08-10T18:00:51.130Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs, relay-service.sh,
+  searxng-service.sh
 
   `scripts/protocols/live-agent-work-check.cjs` and `pnpm run tnf:live:agents:*`
   scripts so Cursor, Agy, Kilo, Codex, and TNF CLI agents can verify the same
@@ -77,25 +74,9 @@ must not be mass-deleted without verification evidence. See
   Verified RAM OK; remaining full-auto work is gated by stale daemon state,
   lockfile seal drift, and missing input/policy tokens.
 
-- [✅] **2026-08-03 Living State / handoff noise peel on main** — Removed ~82
-- [✅] 2026-08-07T21:35:20.886Z New script(s) created: tnf-golden-smoke.cjs,
-- [✅] 2026-08-08T14:47:57.434Z New agent(s) created: codex-cli-agent,
-- [✅] 2026-08-08T20:41:00.754Z New agent(s) created: codex-cli-agent,
-  gemini-cli-agent, opencode-cli-agent
-- [✅] 2026-08-08T20:41:00.754Z New script(s) created:
-  tnf-launchd-smart-start.sh, tnf-local-launchd-services.sh
-- [✅] 2026-08-08T20:41:00.754Z Agent definition change: 3 added, 0 removed
-
-  gemini-cli-agent, opencode-cli-agent
-
-- [✅] 2026-08-08T14:47:57.434Z Agent definition change: 3 added, 0 removed
-
-  validate-progressive-autonomy.cjs, validate-substrate-attestation.cjs,
-  validate-substrate-attestation.test.cjs
-
-  duplicate "System cron entries installed…" Active Steps (+ orphans).
-  `turn-end.cjs` no longer logs crontab presence as completed work. PR #77 noted
-  MERGED; directive points at actionable queue not commit-gate notices.
+- [✅] **2026-08-03 Living State / handoff noise peel on main** `turn-end.cjs`
+  no longer logs crontab presence as completed work. PR #77 noted MERGED;
+  directive points at actionable queue not commit-gate notices.
 
 - [✅] **Steady-state infra (do not re-log):** system cron hosts
   `tnf-frontend-tester` (5m) and `tnf-fleet-health-probe` (15m). Presence is not
@@ -845,6 +826,26 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-10T18:37:34.552Z handoff `427721a0-205f-4646-b433-ea0d22d210c4` head
+  `04b0ed53f05c` project `TNF-SESSION` — Optionally set
+  API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws
+
+- 2026-08-10T18:25:02.851Z handoff `633c2f63-a243-47e3-8206-9237771e7ee8` head
+  `04b0ed53f05c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T17:24:02.287Z handoff `c76a2c04-548d-4b51-8633-a9a478e53791` head
+  `04b0ed53f05c` project `TNF-SESSION` — Keep SearXNG container healthy /
+  recreate docker-compose.dev-simple.yml
+
+- 2026-08-10T17:21:59.942Z handoff `f6284814-df93-4209-a40e-542ad3a672d0` head
+  `04b0ed53f05c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T17:21:19.744Z handoff `a6045093-12eb-4520-8e12-11873203d0e1` head
+  `04b0ed53f05c` project `TNF-SESSION` — Keep SearXNG container healthy /
+  recreate docker-compose.dev-simple.yml
+
 - 2026-08-10T17:02:11.896Z handoff `7e36d088-db3c-4e26-bd7c-2606d7854878` head
   `c1ef9ca8d576` project `TNF-SESSION` — Persist relay :3007 via launchd
   (current session-backed process)
@@ -932,4 +933,16 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-10T17:06:13.993Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:38:31.273Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:41:22.185Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:54:47.024Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T18:37:23.797Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

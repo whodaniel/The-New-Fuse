@@ -63,41 +63,65 @@ function tailJsonl(p, n = 3) {
 function listFullAutoStartProcesses() {
   let out = '';
   try {
-    out = execFileSync('ps', ['-ax', '-o', 'pid=,command='], {
+    out = execFileSync('ps', ['-ax', '-o', 'pid=,ppid=,command='], {
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
     });
   } catch {
-    return [];
+    return { allMatching: [], loopProcesses: [] };
   }
-  const procs = [];
+  const table = [];
   for (const line of out.split('\n')) {
     const trimmed = line.trim();
     if (!trimmed) continue;
-    const m = trimmed.match(/^(\d+)\s+(.*)$/);
+    const m = trimmed.match(/^(\d+)\s+(\d+)\s+(.*)$/);
     if (!m) continue;
-    const pid = Number(m[1]);
-    const cmd = m[2];
+    table.push({ pid: Number(m[1]), ppid: Number(m[2]), cmd: m[3] });
+  }
+  const procs = [];
+  for (const entry of table) {
+    const { pid, cmd } = entry;
     // Match real loop entrypoints; exclude this observer and pgrep/rg noise.
     if (!/\bfull-auto\s+start\b/.test(cmd)) continue;
     if (/tnf-full-auto-contention-observe/.test(cmd)) continue;
     if (/\b(pgrep|rg|grep)\b/.test(cmd) && !/cli\.ts/.test(cmd)) continue;
-    procs.push({ pid, cmd });
+    procs.push(entry);
   }
-  // Collapse trees: prefer unique process groups by leaf cli.ts node when present
-  const leaf = procs.filter((p) => /cli\.ts\s+full-auto\s+start/.test(p.cmd) && !/npm exec/.test(p.cmd) && !/\/tsx\s/.test(p.cmd));
-  const uniqueRoots = leaf.length
-    ? leaf
-    : procs.filter((p) => /cli\.ts\s+full-auto\s+start/.test(p.cmd));
-  // Dedup by pid
-  const seen = new Set();
+  const matchPids = new Set(procs.map((p) => p.pid));
+  const roots = procs.filter((p) => !matchPids.has(p.ppid));
+  const byPid = new Map(table.map((e) => [e.pid, e]));
+  const children = new Map();
+  for (const entry of table) {
+    const list = children.get(entry.ppid) || [];
+    list.push(entry.pid);
+    children.set(entry.ppid, list);
+  }
+  const collectDescendants = (rootPid) => {
+    const outPids = [];
+    const stack = [rootPid];
+    while (stack.length) {
+      const pid = stack.pop();
+      outPids.push(pid);
+      for (const child of children.get(pid) || []) stack.push(child);
+    }
+    return outPids;
+  };
   const dedup = [];
-  for (const p of uniqueRoots.length ? uniqueRoots : procs) {
-    if (seen.has(p.pid)) continue;
-    seen.add(p.pid);
-    dedup.push(p);
+  const seen = new Set();
+  for (const root of roots) {
+    const descendants = collectDescendants(root.pid)
+      .map((pid) => byPid.get(pid))
+      .filter(Boolean)
+      .filter((e) => matchPids.has(e.pid));
+    const leaf =
+      descendants.find((e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd) && !/\/tsx\s/.test(e.cmd)) ||
+      descendants.find((e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd)) ||
+      root;
+    if (seen.has(leaf.pid)) continue;
+    seen.add(leaf.pid);
+    dedup.push({ pid: leaf.pid, cmd: leaf.cmd });
   }
-  return { allMatching: procs, loopProcesses: dedup };
+  return { allMatching: procs.map((p) => ({ pid: p.pid, cmd: p.cmd })), loopProcesses: dedup };
 }
 
 function main() {

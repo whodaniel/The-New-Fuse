@@ -318,39 +318,123 @@ function resolveProvidedSuperAdminToken(options?: { superAdminToken?: string }):
   return candidates.find((candidate) => Boolean(candidate.token)) ?? {};
 }
 
-function requireSuperAdmin(
+async function requireSuperAdmin(
   options: { superAdminToken?: string } | undefined,
   commandLabel: string
-): void {
-  const expected = normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]);
-  const provided = resolveProvidedSuperAdminToken(options);
+): Promise<void> {
+  let expected = normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]);
+  let provided = resolveProvidedSuperAdminToken(options);
 
-  if (!expected) {
-    throw new Error(
-      `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment (e.g. ~/.zshrc or .env).`
-    );
+  if (expected && provided.token && provided.token === expected) {
+    if (!process.env[SUPER_ADMIN_INPUT_ENV_KEY]) {
+      process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token;
+    }
+    return;
   }
 
-  if (!provided.token) {
-    throw new Error(
-      `Super Admin authentication required for '${commandLabel}'.\n` +
-        `No token provided. Ways to authenticate:\n` +
-        ` 1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
-        ` 2. Env Var: export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
-        ` 3. CI Secret: Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.\n` +
-        ` 4. Env Var: export ${SUPER_ADMIN_ENV_KEY}=YOUR_TOKEN`
+  const readline = await import('readline/promises');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  console.log(chalk.yellow(`\n⚠️  Super Admin authentication required for '${commandLabel}'.`));
+
+  if (expected) {
+    const action = await rl.question(
+      'Choose an action:\n' +
+        '  1. Provide existing token to authenticate\n' +
+        '  2. Release existing token & generate a new one\n' +
+        '  3. Cancel\n' +
+        '> '
     );
+
+    if (action.trim() === '2') {
+      const auth = await rl.question(
+        'Are you sure? This will invalidate the old token everywhere (y/N): '
+      );
+      if (auth.trim().toLowerCase() !== 'y') {
+        rl.close();
+        throw new Error('Cancelled token generation.');
+      }
+
+      const crypto = await import('crypto');
+      const newToken = crypto.randomBytes(32).toString('base64');
+      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
+
+      const fs = await import('fs');
+      const path = await import('path');
+      const envPath = path.join(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        envContent = envContent.replace(
+          new RegExp(expected.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'g'),
+          newToken
+        );
+        fs.writeFileSync(envPath, envContent);
+        console.log(chalk.green(`Updated .env with the new token.`));
+      }
+      console.log(
+        chalk.cyan(
+          `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
+        )
+      );
+
+      expected = newToken;
+      process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      provided = { token: newToken, source: 'interactive' };
+    } else if (action.trim() === '1') {
+      const token = await rl.question(`Enter ${SUPER_ADMIN_ENV_KEY}: `);
+      if (token.trim() !== expected) {
+        rl.close();
+        throw new Error(`Super Admin authentication failed. Token does not match.`);
+      }
+      provided = { token: token.trim(), source: 'interactive' };
+    } else {
+      rl.close();
+      throw new Error(`Super Admin authentication cancelled.`);
+    }
+  } else {
+    const action = await rl.question(
+      'No Super Admin token is configured.\n' + '  1. Generate a new token\n' + '  2. Exit\n' + '> '
+    );
+    if (action.trim() === '1') {
+      const crypto = await import('crypto');
+      const newToken = crypto.randomBytes(32).toString('base64');
+      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
+
+      const fs = await import('fs');
+      const path = await import('path');
+      const envPath = path.join(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        fs.appendFileSync(
+          envPath,
+          `\n${SUPER_ADMIN_ENV_KEY}=${newToken}\n${SUPER_ADMIN_INPUT_ENV_KEY}=${newToken}\n`
+        );
+        console.log(chalk.green(`Appended new token to .env.`));
+      }
+      console.log(
+        chalk.cyan(
+          `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
+        )
+      );
+
+      expected = newToken;
+      process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      provided = { token: newToken, source: 'interactive' };
+    } else {
+      rl.close();
+      throw new Error('Super Admin auth is not configured.');
+    }
   }
 
-  if (provided.token !== expected) {
-    throw new Error(
-      `Super Admin authentication failed for '${commandLabel}'. Token from ${provided.source || 'unknown source'} does not match ${SUPER_ADMIN_ENV_KEY}.`
-    );
-  }
+  rl.close();
 
-  // Normalize downstream command behavior to the input token channel.
-  if (!process.env[SUPER_ADMIN_INPUT_ENV_KEY]) {
-    process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token;
+  if (
+    !process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] !== provided.token
+  ) {
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token as string;
   }
 }
 
@@ -558,8 +642,8 @@ function removeVoiceSession(profileInput?: string): void {
   if (fs.existsSync(file)) fs.rmSync(file, { force: true });
 }
 
-function parseProcessTable(): Array<{ pid: number; cmd: string }> {
-  const result = spawnSync('ps', ['-Ao', 'pid=,command='], {
+function parseProcessTable(): Array<{ pid: number; ppid: number; cmd: string }> {
+  const result = spawnSync('ps', ['-Ao', 'pid=,ppid=,command='], {
     encoding: 'utf8',
     env: process.env,
   });
@@ -569,14 +653,21 @@ function parseProcessTable(): Array<{ pid: number; cmd: string }> {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const firstWhitespace = line.search(/\s/);
-      if (firstWhitespace <= 0) return { pid: Number.NaN, cmd: '' };
-      const pidText = line.slice(0, firstWhitespace).trim();
-      const cmd = line.slice(firstWhitespace).trim();
-      const pid = Number.parseInt(pidText, 10);
-      return { pid, cmd };
+      const parts = line.match(/^(\d+)\s+(\d+)\s+(.*)$/);
+      if (!parts) return { pid: Number.NaN, ppid: Number.NaN, cmd: '' };
+      return {
+        pid: Number.parseInt(parts[1], 10),
+        ppid: Number.parseInt(parts[2], 10),
+        cmd: parts[3].trim(),
+      };
     })
-    .filter((entry) => Number.isFinite(entry.pid) && entry.pid > 0 && entry.cmd.length > 0);
+    .filter(
+      (entry) =>
+        Number.isFinite(entry.pid) &&
+        entry.pid > 0 &&
+        Number.isFinite(entry.ppid) &&
+        entry.cmd.length > 0
+    );
 }
 
 function matchesVoiceProfileProcess(cmd: string, profileInput?: string): boolean {
@@ -1109,6 +1200,8 @@ const DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES = 90;
 const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
 const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
 const FULL_AUTO_DAEMON_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.log');
+const FULL_AUTO_DAEMON_PID_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.pid');
+const FULL_AUTO_LOOP_PID_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto.pid');
 
 const SELF_IMPROVEMENT_ARTIFACTS: SelfImprovementArtifactsIndex = {
   liveLinkCrawlJson: path.join(repoRoot, 'apps/frontend/docs/audits/live-link-crawl.json'),
@@ -3919,10 +4012,51 @@ async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
 }
 
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
-  return parseProcessTable().filter((entry) => {
+  // Collapse wrapper trees (pnpm/tsx/node) into a single loop root so status
+  // does not report false CONTENTION for one detached daemon lineage.
+  const table = parseProcessTable();
+  const matches = table.filter((entry) => {
     if (entry.pid === process.pid) return false;
-    return /\bfull-auto\s+start\b/.test(entry.cmd);
+    if (!/\bfull-auto\s+start\b/.test(entry.cmd)) return false;
+    if (/tnf-full-auto-contention-observe/.test(entry.cmd)) return false;
+    return true;
   });
+  if (matches.length === 0) return [];
+  const matchPids = new Set(matches.map((m) => m.pid));
+  const roots = matches.filter((entry) => !matchPids.has(entry.ppid));
+  // Prefer the leaf CLI process when present under a root's descendants.
+  const byPid = new Map(table.map((e) => [e.pid, e]));
+  const children = new Map<number, number[]>();
+  for (const entry of table) {
+    const list = children.get(entry.ppid) || [];
+    list.push(entry.pid);
+    children.set(entry.ppid, list);
+  }
+  const collectDescendants = (rootPid: number): number[] => {
+    const out: number[] = [];
+    const stack = [rootPid];
+    while (stack.length) {
+      const pid = stack.pop()!;
+      out.push(pid);
+      for (const child of children.get(pid) || []) stack.push(child);
+    }
+    return out;
+  };
+  const collapsed: Array<{ pid: number; cmd: string }> = [];
+  for (const root of roots) {
+    const descendants = collectDescendants(root.pid)
+      .map((pid) => byPid.get(pid))
+      .filter((e): e is { pid: number; ppid: number; cmd: string } => Boolean(e))
+      .filter((e) => matchPids.has(e.pid));
+    const leaf =
+      descendants.find(
+        (e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd) && !/\/tsx\s/.test(e.cmd)
+      ) ||
+      descendants.find((e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd)) ||
+      root;
+    collapsed.push({ pid: leaf.pid, cmd: leaf.cmd });
+  }
+  return collapsed;
 }
 
 function buildFullAutoStartArgs(
@@ -4914,7 +5048,7 @@ program
           return;
         }
 
-        requireSuperAdmin(options, 'boot');
+        await requireSuperAdmin(options, 'boot');
         console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
         if (options.nonInteractive) {
           console.log(chalk.dim('Boot mode: non-interactive'));
@@ -7012,7 +7146,8 @@ handoff
   });
 
 handoff
-  .command('emit')
+  .command('generate')
+  .alias('emit')
   .description('Emit SESSION_HANDOFF_LATEST.json and markdown mirror')
   .option('--owner <owner>', 'Handoff owner')
   .option('--targets <targets>', 'Comma-separated target agents')
@@ -8688,7 +8823,7 @@ relay
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'relay start');
+      await requireSuperAdmin(options, 'relay start');
       await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'relay']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8718,7 +8853,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules loop');
+      await requireSuperAdmin(options, 'jules loop');
       await runCommand('bash', ['scripts/jules-autonomous-loop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8734,7 +8869,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor');
+      await requireSuperAdmin(options, 'jules supervisor');
       await runCommand('bash', ['scripts/jules-followup-supervisor.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8750,7 +8885,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-start');
+      await requireSuperAdmin(options, 'jules supervisor-start');
       await runCommand('bash', ['scripts/jules-followup-start.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8766,7 +8901,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-stop');
+      await requireSuperAdmin(options, 'jules supervisor-stop');
       await runCommand('bash', ['scripts/jules-followup-stop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8793,7 +8928,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
+      await requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
       await runCommand('bash', ['scripts/jules-followup-migrate-from-cron.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8809,7 +8944,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules merge-open');
+      await requireSuperAdmin(options, 'jules merge-open');
       await runCommand('bash', ['scripts/jules-merge-open-prs.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8825,7 +8960,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules cron-install');
+      await requireSuperAdmin(options, 'jules cron-install');
       await runCommand('bash', ['scripts/install-jules-cron.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8989,7 +9124,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock start');
+        await requireSuperAdmin(options, 'master-clock start');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
@@ -9032,7 +9167,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock logs');
+        await requireSuperAdmin(options, 'master-clock logs');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           const logDir = resolveMasterClockLogDir();
@@ -9084,7 +9219,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock status');
+        await requireSuperAdmin(options, 'master-clock status');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           const logDir = resolveMasterClockLogDir();
@@ -9173,7 +9308,7 @@ superCycle
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'super-cycle event');
+        await requireSuperAdmin(options, 'super-cycle event');
         const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
         const baseArgs = [
           '--filter',
@@ -9650,7 +9785,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor');
+      await requireSuperAdmin(options, 'skills bank supervisor');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9666,7 +9801,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor-start');
+      await requireSuperAdmin(options, 'skills bank supervisor-start');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor-start.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9682,7 +9817,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor-stop');
+      await requireSuperAdmin(options, 'skills bank supervisor-stop');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor-stop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9723,7 +9858,7 @@ superCycle
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'super-cycle status');
+        await requireSuperAdmin(options, 'super-cycle status');
         const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           await runCommand('pnpm', [
@@ -9770,7 +9905,7 @@ program
       options: { superAdminToken?: string; skipProtocolGate?: boolean }
     ) => {
       try {
-        requireSuperAdmin(options, 'run');
+        await requireSuperAdmin(options, 'run');
         if (!options.skipProtocolGate) {
           await runFastHarnessProtocolGate(`tnf run ${script}`);
         }
@@ -10004,7 +10139,7 @@ selfImprovement
       } = {}
     ) => {
       try {
-        requireSuperAdmin(options, 'self-improvement run');
+        await requireSuperAdmin(options, 'self-improvement run');
         const startedAt = new Date();
         const startedAtMs = startedAt.getTime();
         const baseUrl = resolveSelfImprovementBaseUrl(options.baseUrl);
@@ -10340,7 +10475,7 @@ fullAuto
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto once');
+        await requireSuperAdmin(options, 'full-auto once');
         const { runFullAutoPreflight } = await import('./utils/preflight.js');
         await runFullAutoPreflight({
           repoRoot,
@@ -10447,7 +10582,7 @@ fullAuto
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto start');
+        await requireSuperAdmin(options, 'full-auto start');
         const { runFullAutoPreflight } = await import('./utils/preflight.js');
         await runFullAutoPreflight({
           repoRoot,
@@ -10675,7 +10810,7 @@ fullAutoDaemon
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto daemon start');
+        await requireSuperAdmin(options, 'full-auto daemon start');
 
         const existing = findFullAutoStartProcesses();
         if (existing.length > 0 && !options.force) {
@@ -10718,12 +10853,17 @@ fullAutoDaemon
         child.unref();
         fs.closeSync(outFd);
         fs.closeSync(errFd);
+        if (child.pid) {
+          ensureParentDir(FULL_AUTO_DAEMON_PID_PATH);
+          fs.writeFileSync(FULL_AUTO_DAEMON_PID_PATH, `${child.pid}\n`, 'utf8');
+        }
 
         const payload = {
           started: true,
           pid: child.pid,
           command: ['tnf', ...args],
           logPath: path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH),
+          pidPath: path.relative(repoRoot, FULL_AUTO_DAEMON_PID_PATH),
         };
         if (options.json) {
           console.log(JSON.stringify(payload, null, 2));
@@ -10793,6 +10933,84 @@ fullAutoDaemon
       }
       console.log(`Log: ${chalk.dim(payload.daemonLogPath)}`);
       console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+fullAutoDaemon
+  .command('stop')
+  .description(
+    'Stop the detached full-auto daemon using the recorded pid file (process-tree aware)'
+  )
+  .option('--json', 'Output machine-readable JSON')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(async (options: { json?: boolean; superAdminToken?: string } = {}) => {
+    try {
+      await requireSuperAdmin(options, 'full-auto daemon stop');
+      const readPid = (p: string): number | null => {
+        try {
+          const n = Number.parseInt(fs.readFileSync(p, 'utf8').trim(), 10);
+          return Number.isFinite(n) && n > 0 ? n : null;
+        } catch {
+          return null;
+        }
+      };
+      const daemonPid = readPid(FULL_AUTO_DAEMON_PID_PATH);
+      const loopPid = readPid(FULL_AUTO_LOOP_PID_PATH);
+      const processes = findFullAutoStartProcesses();
+      const targets = new Set<number>();
+      if (daemonPid) targets.add(daemonPid);
+      if (loopPid) targets.add(loopPid);
+      for (const proc of processes) targets.add(proc.pid);
+
+      const signaled: number[] = [];
+      for (const pid of targets) {
+        try {
+          process.kill(pid, 'SIGTERM');
+          signaled.push(pid);
+        } catch {
+          /* already gone */
+        }
+      }
+
+      // Best-effort clear stale lock files after stop request.
+      for (const p of [FULL_AUTO_DAEMON_PID_PATH, FULL_AUTO_LOOP_PID_PATH]) {
+        try {
+          if (fs.existsSync(p)) fs.unlinkSync(p);
+        } catch {
+          /* ignore */
+        }
+      }
+
+      const state = readFullAutoState();
+      if (state && state.mode === 'running') {
+        writeFullAutoState({
+          ...state,
+          mode: 'idle',
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      const payload = {
+        stopped: true,
+        signaled,
+        previousProcessCount: processes.length,
+      };
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+      console.log(chalk.green('TNF full-auto daemon stop requested.'));
+      console.log(
+        signaled.length
+          ? `Signaled: ${signaled.map((p) => chalk.cyan(String(p))).join(', ')}`
+          : chalk.yellow('No live full-auto start processes found.')
+      );
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -10914,7 +11132,7 @@ zeroTurnCommand
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'zero-turn boot');
+        await requireSuperAdmin(options, 'zero-turn boot');
 
         console.log(chalk.bold.cyan('\n🚀 TNF Zero-Turn Autonomous Boot\n'));
         console.log(chalk.dim(`Profile: ${options.profile}`));

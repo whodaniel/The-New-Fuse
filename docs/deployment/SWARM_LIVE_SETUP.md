@@ -19,7 +19,8 @@ pnpm run swarm:setup
 
 What it does:
 
-- Starts `redis-dev` and `searxng-dev` via `docker-compose.dev-simple.yml`
+- Starts SearXNG via `docker-compose.searxng.yml` (`pnpm run searxng:up`;
+  `docker-compose.dev-simple.yml` remains a compatibility shim)
 - Creates `.env.local` if missing
 - Adds missing keys (without overwriting existing values):
   - `REDIS_URL=redis://127.0.0.1:6380`
@@ -113,15 +114,16 @@ pnpm run swarm:provider:test
 
 ## CloudRuntime-Native Setup
 
-Use this to run everything online from CloudRuntime (recommended for CloudRuntime Redis).
+Use this to run everything online from CloudRuntime (recommended for
+CloudRuntime Redis).
 
 ```bash
 pnpm run swarm:setup:cloud_runtime
 pnpm run swarm:supercycle:cloud_runtime
 ```
 
-If CloudRuntime SSH is unavailable (sleeping/serverless), the runner automatically
-falls back to local execution using:
+If CloudRuntime SSH is unavailable (sleeping/serverless), the runner
+automatically falls back to local execution using:
 
 - `Redis.REDIS_PUBLIC_URL`
 - `SEARXNG_BASE_URL` (or `CLOUD_RUNTIME_SERVICE_SEARXNG_URL`)
@@ -154,7 +156,8 @@ redis-cli -p 6380 LRANGE tnf:master:logs 0 20
 ## Validation Snapshot (2026-02-22)
 
 - `pnpm run swarm:provider:test` passed with `effective_provider=exa`.
-- `pnpm run swarm:setup` completed and updated CloudRuntime runner service variables.
+- `pnpm run swarm:setup` completed and updated CloudRuntime runner service
+  variables.
 - `pnpm run swarm:supercycle:live` completed successfully:
   - SSH to serverless runners was unavailable/sleeping, then automatic local
     fallback was used.

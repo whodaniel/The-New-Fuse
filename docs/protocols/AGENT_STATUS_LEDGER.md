@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T17:02:08.745Z** — handoff
+Updated: **2026-08-10T18:37:17.598Z** — handoff
+`427721a0-205f-4646-b433-ea0d22d210c4` (`04b0ed53f05c`).
 `7e36d088-db3c-4e26-bd7c-2606d7854878` (`c1ef9ca8d576`).
 `ce8362a2-024a-4925-975d-ca4a72d2819b` (`67d2d37cd850`).
 `07fc8a0e-f443-4459-9629-c17eec75345a` (`7f2a12a7785f`).
@@ -163,12 +164,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                  |
-| -------- | ----------------------------------------------------------------------- |
-| **P0**   | Persist relay :3007 via launchd (current session-backed process)        |
-| **P0**   | Keep SearXNG container healthy / recreate docker-compose.dev-simple.yml |
-| **P0**   | Monitor full-auto daemon first completed cycle                          |
-| **P0**   | Clear tip-drift in living-state vs handoff after this emit              |
+| Priority | Action                                                            |
+| -------- | ----------------------------------------------------------------- |
+| **P0**   | Optionally set API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws |
+| **P0**   | Add EXA/TAVILY keys for scout resilience                          |
+| **P0**   | Watch full-auto daemon complete its next cycle without seal drift |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -614,3 +614,18 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7e36d088-db3c-4e26-bd7c-2606d7854878) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a6045093-12eb-4520-8e12-11873203d0e1) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f6284814-df93-4209-a40e-542ad3a672d0) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c76a2c04-548d-4b51-8633-a9a478e53791) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(633c2f63-a243-47e3-8206-9237771e7ee8) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(427721a0-205f-4646-b433-ea0d22d210c4) | ✅ HANDOFF_READY |

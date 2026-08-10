@@ -1,52 +1,52 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "7e36d088-db3c-4e26-bd7c-2606d7854878",
-  "created_at": "2026-08-10T17:02:08.745Z",
+  "handoff_id": "427721a0-205f-4646-b433-ea0d22d210c4",
+  "created_at": "2026-08-10T18:37:17.598Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "c1ef9ca8d576a5b3d51555f811cbe8c70c44127a",
+  "head_sha": "04b0ed53f05cb73ea700dc6903b219b6954c7521",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Autonomous recovery: apps/api typecheck PASS (swagger present); security.guard loopback skip already wired; relay health restored on :3007 (fixed --port CLI parsing); SearXNG container tnf-searxng on :8080; knowledge-scout ok=true; terminal-awareness ok=true; WorkflowBuilder pointer-drag contract PASS + tauri tsc 0; substrate resealed; full-auto daemon restarted."
+    "Runtime persistence evolution: com.thenewfuse.relay launchd verified on :3007; docker-compose.searxng.yml + searxng-service.sh restored; docker-compose.dev-simple.yml shim; full-auto process-tree contention collapse; daemon stop + daemon.pid write; substrate resealed; single loopCount=1 daemon running."
   ],
   "changed_paths": [
-    "packages/relay-core/src/standalone-relay.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "scripts/operations/tnf-full-auto-contention-observe.cjs",
+    "scripts/runtime/searxng-service.sh",
+    "docker-compose.searxng.yml",
+    "docker-compose.dev-simple.yml",
+    "docs/deployment/SWARM_LIVE_SETUP.md",
     "docs/operations/tnf-substrate-seal.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-10T17:02:11.842Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-08-10T18:37:34.496Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": [
-      "story-architect",
-      "librarian",
-      "tenant-knowledge-scout-sprint"
-    ],
+    "targets": ["story-architect", "librarian"],
     "priority": "medium",
     "resume_checklist": [
-      "Confirm relay survives shell session relaunch",
-      "Optionally add EXA/TAVILY keys for scout resilience",
-      "Verify api-gateway loads with relay :3007 clients"
+      "curl -sS http://127.0.0.1:3007/health",
+      "bash scripts/runtime/searxng-service.sh status",
+      "tnf full-auto daemon status"
     ]
   },
   "next_actions": [
-    "Persist relay :3007 via launchd (current session-backed process)",
-    "Keep SearXNG container healthy / recreate docker-compose.dev-simple.yml",
-    "Monitor full-auto daemon first completed cycle",
-    "Clear tip-drift in living-state vs handoff after this emit"
+    "Optionally set API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws",
+    "Add EXA/TAVILY keys for scout resilience",
+    "Watch full-auto daemon complete its next cycle without seal drift"
   ],
   "artifacts": {
-    "commits": ["c1ef9ca8d576a5b3d51555f811cbe8c70c44127a"]
+    "commits": ["04b0ed53f05cb73ea700dc6903b219b6954c7521"]
   }
 }
