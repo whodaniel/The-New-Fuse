@@ -4033,11 +4033,17 @@ async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
   // Collapse wrapper trees (pnpm/tsx/node) into a single loop root so status
   // does not report false CONTENTION for one detached daemon lineage.
+  // Match the real CLI loop only — not shells/checkers that merely mention
+  // "full-auto start" in argv (e.g. `pgrep -fl 'full-auto start'`).
+  const loopCmd =
+    /(?:packages\/tnf-cli\/src\/cli\.ts|packages\/tnf-cli\/dist\/cli\.js|[\/\s]tnf(?:\.js)?)\s+full-auto\s+start\b/;
   const table = parseProcessTable();
   const matches = table.filter((entry) => {
     if (entry.pid === process.pid) return false;
-    if (!/\bfull-auto\s+start\b/.test(entry.cmd)) return false;
+    if (!loopCmd.test(entry.cmd)) return false;
+    if (/\bfull-auto\s+daemon\b/.test(entry.cmd)) return false;
     if (/tnf-full-auto-contention-observe/.test(entry.cmd)) return false;
+    if (/\b(pgrep|grep|rg|awk)\b/.test(entry.cmd)) return false;
     return true;
   });
   if (matches.length === 0) return [];
