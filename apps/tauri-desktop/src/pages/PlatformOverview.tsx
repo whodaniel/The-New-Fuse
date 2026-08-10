@@ -7,7 +7,7 @@ const FEATURES = [
   {
     icon: '🔌',
     title: 'Universal MCP & A2A',
-    body: 'Orchestrate Claude, GPT, Gemini, and federated agents via the Redis Synaptic Bus.',
+    body: 'Orchestrate NVIDIA NIM, Groq, SambaNova, Cerebras, DeepSeek, Gemini, OpenAI, OpenRouter, and federated agents via the Redis Synaptic Bus.',
     route: '/a2a',
   },
   {

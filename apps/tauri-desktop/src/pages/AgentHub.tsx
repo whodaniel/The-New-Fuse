@@ -51,10 +51,14 @@ const AgentHub: React.FC = () => {
 
   const getTypeIcon = (type: Agent['type']) => {
     const icons: Record<string, string> = {
-      claude: '🧠',
+      nvidia: '⚡',
+      groq: '🚀',
+      sambanova: '💠',
+      cerebras: '🧠',
+      deepseek: '🌊',
       gemini: '💎',
-      gpt: '🤖',
-      perplexity: '🔍',
+      openai: '🤖',
+      openrouter: '🔗',
       custom: '⚙️',
       local: '🏠',
     };

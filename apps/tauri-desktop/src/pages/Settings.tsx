@@ -38,7 +38,8 @@ const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState('connection');
   const [isPolling, setIsPolling] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
-  const [fallbackProvider, setFallbackProvider] = useState('GPT-4 (OpenAI)');
+  const [fallbackProvider, setFallbackProvider] = useState('NVIDIA NIM');
+  const [defaultProvider, setDefaultProvider] = useState('NVIDIA NIM');
   const [showAdvancedTui, setShowAdvancedTui] = useState(false);
   const [integrityStatus, setIntegrityStatus] = useState<string | null>(null);
 
@@ -249,14 +250,19 @@ const Settings: React.FC = () => {
             <div className="setting-item">
               <div className="setting-info">
                 <label>Theme</label>
-                <p>Choose your preferred color scheme</p>
+                <p>
+                  Choose light, dark, or follow the OS. You can also toggle from the sidebar footer
+                  or ⌘K → &quot;light/dark mode&quot;.
+                </p>
               </div>
-              <div className="theme-selector">
+              <div className="theme-selector" role="group" aria-label="Theme">
                 {(['light', 'dark', 'system'] as const).map((t) => (
                   <button
                     key={t}
+                    type="button"
                     className={`theme-btn ${theme === t ? 'active' : ''}`}
                     onClick={() => setTheme(t)}
+                    aria-pressed={theme === t}
                   >
                     {t === 'light' ? '☀️' : t === 'dark' ? '🌙' : '💻'}
                     <span>{t.charAt(0).toUpperCase() + t.slice(1)}</span>
@@ -326,11 +332,19 @@ const Settings: React.FC = () => {
                 <label>Default Provider</label>
                 <p>Primary AI service for new conversations</p>
               </div>
-              <select className="select-input">
-                <option>Claude (Anthropic)</option>
-                <option>GPT-4 (OpenAI)</option>
-                <option>Gemini (Google)</option>
-                <option>Perplexity</option>
+              <select
+                className="select-input"
+                value={defaultProvider}
+                onChange={(e) => setDefaultProvider(e.target.value)}
+              >
+                <option>NVIDIA NIM</option>
+                <option>Groq</option>
+                <option>SambaNova</option>
+                <option>Cerebras</option>
+                <option>DeepSeek</option>
+                <option>Google Gemini</option>
+                <option>OpenAI</option>
+                <option>OpenRouter</option>
               </select>
             </div>
 
@@ -344,10 +358,14 @@ const Settings: React.FC = () => {
                 value={fallbackProvider}
                 onChange={(e) => setFallbackProvider(e.target.value)}
               >
-                <option>Claude (Anthropic)</option>
-                <option>GPT-4 (OpenAI)</option>
-                <option>Gemini (Google)</option>
-                <option>Perplexity</option>
+                <option>NVIDIA NIM</option>
+                <option>Groq</option>
+                <option>SambaNova</option>
+                <option>Cerebras</option>
+                <option>DeepSeek</option>
+                <option>Google Gemini</option>
+                <option>OpenAI</option>
+                <option>OpenRouter</option>
                 <option>None</option>
               </select>
             </div>
@@ -355,13 +373,16 @@ const Settings: React.FC = () => {
             <div className="setting-item">
               <div className="setting-info">
                 <label>API Key</label>
-                <p>Your provider API key (stored securely)</p>
+                <p>
+                  Provider API key (e.g. NVIDIA_API_KEY, GROQ_API_KEY, OPENAI_API_KEY,
+                  GEMINI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY) — stored securely
+                </p>
               </div>
               <div className="password-input-wrapper">
                 <input
                   type={showApiKey ? 'text' : 'password'}
                   className="text-input"
-                  placeholder="sk-..."
+                  placeholder="NVIDIA_API_KEY / GROQ_API_KEY / OPENAI_API_KEY ..."
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                 />

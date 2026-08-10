@@ -1,26 +1,146 @@
+import { MessageSquare, PanelLeft, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import AgentDetailModal from '../components/chat/AgentDetailModal';
+import AgentSelectorPanel from '../components/chat/AgentSelectorPanel';
+import ChatInputArea from '../components/chat/ChatInputArea';
+import ChatMessageItem from '../components/chat/ChatMessageItem';
+import ChatSessionSidebar from '../components/chat/ChatSessionSidebar';
 import PageShell from '../components/layout/PageShell';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
-import type { FederationChannelMessage } from '../services/FederationNodeService';
-import FederationNodeService from '../services/FederationNodeService';
-import { selectAgentPopulations } from '../services/operatorSynergy/populations';
+import FederationNodeService, {
+  type FederationChannelMessage,
+} from '../services/FederationNodeService';
+import localChatEngine from '../services/localChatEngine';
 import { wsService } from '../services/websocket';
-import type { ChatMessage } from '../types';
+import { useAgentStore } from '../stores/agentStore';
+import { useChatStore } from '../stores/chatStore';
+import type { Agent, ChatMessage } from '../types';
 
 /**
- * Multi-Agent Chat Page
- * Chat with multiple AI agents simultaneously
+ * Enhanced Multi-Agent Chat Page
+ * Features persistent sessions, markdown rendering, code syntax highlighting,
+ * 4 execution modes, agent detail configuration, and offline JIT simulation.
  */
 const MultiAgentChat: React.FC = () => {
   const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
-  const population = selectAgentPopulations(synergy);
-  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
+  const { agents: apiAgents, fetchAgents, updateAgent } = useAgentStore();
+
+  const {
+    sessions,
+    activeSessionId,
+    createSession,
+    setActiveSession,
+    addMessage,
+    deleteMessage,
+    setSelectedAgents,
+    mode,
+    setExecutionMode,
+    temperature,
+    setTemperature,
+    systemPromptOverride,
+    useLocalFallback,
+  } = useChatStore();
+
+  const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0];
+  const selectedAgents = activeSession?.agents || [];
+
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [inspectedAgent, setInspectedAgent] = useState<Agent | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const loadingTimeoutRef = useRef<number | null>(null);
+  // Seed defaults once per session so Clear All is not immediately undone.
+  const seededAgentSessionsRef = useRef<Set<string>>(new Set());
+
+  const activeAgents = unifiedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline');
+
+  useEffect(() => {
+    void fetchAgents();
+  }, [fetchAgents]);
+
+  // Initialize active session if missing
+  useEffect(() => {
+    if (!activeSessionId && sessions.length > 0) {
+      setActiveSession(sessions[0].id);
+    }
+  }, [activeSessionId, sessions, setActiveSession]);
+
+  // Seed default agents once per session id (never re-fight Clear All).
+  useEffect(() => {
+    if (!activeSession) return;
+    if (seededAgentSessionsRef.current.has(activeSession.id)) return;
+    const pool =
+      unifiedAgents.length > 0
+        ? unifiedAgents
+        : apiAgents.map((a) => ({ id: a.id, status: a.status }));
+    if (pool.length === 0) return;
+    seededAgentSessionsRef.current.add(activeSession.id);
+    if (activeSession.agents.length > 0) return;
+    setSelectedAgents(
+      activeSession.id,
+      pool
+        .filter((a) => a.status !== 'error' && a.status !== 'offline')
+        .slice(0, 2)
+        .map((a) => a.id)
+    );
+  }, [activeSession, unifiedAgents, apiAgents, setSelectedAgents]);
+
+  // WebSocket Connection
+  useEffect(() => {
+    wsService.connect();
+    const unsubConnection = wsService.onConnection(setIsConnected);
+
+    const unsubMessages = wsService.on('chat:message', (data: ChatMessage) => {
+      if (activeSessionId) {
+        addMessage(activeSessionId, data);
+      }
+      stopLoading();
+    });
+
+    return () => {
+      unsubConnection();
+      unsubMessages();
+      clearLoadingTimeout();
+    };
+  }, [activeSessionId, addMessage]);
+
+  // Scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [activeSession?.messages, isLoading]);
+
+  // Listen for Federation Channel messages
+  useEffect(() => {
+    const handler = (raw?: unknown) => {
+      const payload = raw as FederationChannelMessage | undefined;
+      if (!payload?.content || payload.from === FederationNodeService.getState().agentId) return;
+
+      const agent = unifiedAgents.find((entry) => entry.id === payload.from);
+
+      if (selectedAgents.length > 0 && !selectedAgents.includes(payload.from)) return;
+
+      const incoming: ChatMessage = {
+        id: payload.id || `${Date.now()}-fed`,
+        role: 'agent',
+        content: payload.content,
+        agentId: payload.from,
+        agentName: agent?.name || payload.from,
+        timestamp: new Date(payload.timestamp || Date.now()).toISOString(),
+      };
+
+      if (activeSessionId) {
+        addMessage(activeSessionId, incoming);
+      }
+      stopLoading();
+    };
+
+    FederationNodeService.on('channel_message', handler);
+    return () => {
+      FederationNodeService.off('channel_message', handler);
+    };
+  }, [selectedAgents, unifiedAgents, activeSessionId, addMessage]);
 
   const clearLoadingTimeout = () => {
     if (loadingTimeoutRef.current !== null) {
@@ -34,102 +154,46 @@ const MultiAgentChat: React.FC = () => {
     setIsLoading(false);
   };
 
-  // Safety net so the typing indicator never spins forever if no reply arrives.
   const armLoadingTimeout = (ms: number, notice: string) => {
     clearLoadingTimeout();
     loadingTimeoutRef.current = window.setTimeout(() => {
       loadingTimeoutRef.current = null;
       setIsLoading(false);
-      setMessages((prev) => [
-        ...prev,
-        {
+      if (activeSessionId) {
+        addMessage(activeSessionId, {
           id: `${Date.now()}-timeout`,
           role: 'system',
           content: notice,
           timestamp: new Date().toISOString(),
-        },
-      ]);
+        });
+      }
     }, ms);
   };
 
-  useEffect(() => {
-    if (selectedAgents.length === 0 && unifiedAgents.length > 0) {
-      setSelectedAgents(unifiedAgents.slice(0, 2).map((agent) => agent.id));
-    }
-  }, [selectedAgents.length, unifiedAgents]);
+  const handleSend = async (messageText: string) => {
+    if (!messageText.trim() || selectedAgents.length === 0 || !activeSession) return;
 
-  useEffect(() => {
-    // Connect to WebSocket
-    wsService.connect();
-    const unsubConnection = wsService.onConnection(setIsConnected);
-
-    // Listen for incoming messages
-    const unsubMessages = wsService.on('chat:message', (data: ChatMessage) => {
-      setMessages((prev) => [...prev, data]);
-      stopLoading();
-    });
-
-    return () => {
-      unsubConnection();
-      unsubMessages();
-      clearLoadingTimeout();
-    };
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  useEffect(() => {
-    const handler = (raw?: unknown) => {
-      const payload = raw as FederationChannelMessage | undefined;
-      if (!payload?.content || payload.from === FederationNodeService.getState().agentId) return;
-
-      const agent = unifiedAgents.find((entry) => entry.id === payload.from);
-      if (selectedAgents.length > 0 && !selectedAgents.includes(payload.from)) return;
-
-      const incoming: ChatMessage = {
-        id: payload.id || `${Date.now()}-fed`,
-        role: 'agent',
-        content: payload.content,
-        agentId: payload.from,
-        agentName: agent?.name || payload.from,
-        timestamp: new Date(payload.timestamp || Date.now()).toISOString(),
-      };
-
-      setMessages((prev) => [...prev, incoming]);
-      stopLoading();
+    const currentSessionId = activeSession.id;
+    const generationOpts = {
+      temperature,
+      systemPrompt: systemPromptOverride || undefined,
+      mode,
     };
 
-    FederationNodeService.on('channel_message', handler);
-    return () => {
-      FederationNodeService.off('channel_message', handler);
-    };
-  }, [selectedAgents, unifiedAgents]);
-
-  const handleSend = () => {
-    if (!input.trim() || selectedAgents.length === 0) return;
-
-    const messageText = input.trim();
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+    const userMsg: ChatMessage = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       role: 'user',
       content: messageText,
       timestamp: new Date().toISOString(),
+      metadata: generationOpts,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    addMessage(currentSessionId, userMsg);
     setIsLoading(true);
 
-    // Send via API websocket, federation channel, or relay echo
     if (isConnected && synergy.apiOnline) {
-      wsService.sendChatMessage('main', messageText, selectedAgents);
-      armLoadingTimeout(
-        30000,
-        '⚠️ No response from the API within 30s. The request may still be processing — check the agent or REST API on port 3001.'
-      );
+      wsService.sendChatMessage(currentSessionId, messageText, selectedAgents, generationOpts);
+      armLoadingTimeout(30000, '⚠️ No response from REST API within 30s.');
     } else if (synergy.relayRegistered) {
       const joined = FederationNodeService.getState().joinedChannels;
       const channelId = joined[0] || 'general';
@@ -139,490 +203,280 @@ const MultiAgentChat: React.FC = () => {
           type: 'operator_chat',
           content: messageText,
           targets: selectedAgents,
+          mode,
+          temperature,
+          ...(systemPromptOverride ? { systemPrompt: systemPromptOverride } : {}),
           from: FederationNodeService.getState().agentId,
         })
       );
-      armLoadingTimeout(8000, '⚠️ No federated agent replied within 8s.');
+      armLoadingTimeout(8000, '⚠️ Federation channel message timed out.');
+    } else if (useLocalFallback) {
+      // Fallback: Local JIT Agent Simulator
+      const selectedAgentObjs = unifiedAgents
+        .filter((a) => selectedAgents.includes(a.id))
+        .map((a) => ({ id: a.id, name: a.name, platform: a.platform }));
+
+      await localChatEngine.generateResponses(
+        messageText,
+        selectedAgentObjs,
+        mode,
+        (agentMsg) => {
+          addMessage(currentSessionId, {
+            ...agentMsg,
+            metadata: { ...(agentMsg.metadata || {}), ...generationOpts },
+          });
+        },
+        { temperature, systemPrompt: systemPromptOverride }
+      );
+      stopLoading();
     } else {
       stopLoading();
-      const offlineNotice: ChatMessage = {
+      addMessage(currentSessionId, {
         id: `${Date.now()}-offline`,
         role: 'system',
         content:
-          '⚠️ Relay and API are offline — message not sent. Connect relay from Dashboard → Forefront panel or start the REST API on port 3001.',
+          '⚠️ Relay and API are offline — local JIT fallback is disabled. Connect relay from Dashboard or enable Local Fallback in chat settings.',
         timestamp: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, offlineNotice]);
+      });
     }
   };
 
+  const mappedAgents: Agent[] = (() => {
+    const fromFederation: Agent[] = unifiedAgents.map((ua) => ({
+      id: ua.id,
+      name: ua.name,
+      type: (ua.platform.toLowerCase() as Agent['type']) || 'custom',
+      status: (ua.status as Agent['status']) || 'idle',
+      description: ua.source === 'federation' ? 'Federated Swarm Node' : 'Local API Agent',
+      capabilities: ua.capabilities || [],
+      lastActive: 'Now',
+      tasks: 0,
+      config: {
+        model: ua.platform,
+        temperature: 0.7,
+        maxTokens: 4096,
+        systemPrompt: '',
+        tools: ua.capabilities || [],
+      },
+    }));
+
+    if (fromFederation.length > 0) return fromFederation;
+
+    return apiAgents.map((agent) => ({
+      ...agent,
+      description: agent.description || 'API agent',
+      lastActive: agent.lastActive || 'Now',
+      tasks: agent.tasks || 0,
+    }));
+  })();
+
+  const fleetCountLabel =
+    mappedAgents.length > 0
+      ? `${mappedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline').length} of ${mappedAgents.length}`
+      : `${activeAgents.length} of ${unifiedAgents.length}`;
+
   const toggleAgent = (agentId: string) => {
-    setSelectedAgents((prev) =>
-      prev.includes(agentId) ? prev.filter((id) => id !== agentId) : [...prev, agentId]
+    if (!activeSession) return;
+    const current = activeSession.agents;
+    const updated = current.includes(agentId)
+      ? current.filter((id) => id !== agentId)
+      : [...current, agentId];
+    setSelectedAgents(activeSession.id, updated);
+  };
+
+  const handleSelectAllAgents = () => {
+    if (!activeSession) return;
+    setSelectedAgents(
+      activeSession.id,
+      mappedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline').map((a) => a.id)
     );
+  };
+
+  const handleClearAllAgents = () => {
+    if (!activeSession) return;
+    setSelectedAgents(activeSession.id, []);
   };
 
   const getAgentColor = (platform: string) => {
     const colors: Record<string, string> = {
-      claude: '#f97316',
-      gpt: '#10b981',
-      gemini: '#3b82f6',
-      perplexity: '#8b5cf6',
+      nvidia: '#f97316',
+      groq: '#10b981',
+      sambanova: '#3b82f6',
+      cerebras: '#eab308',
+      deepseek: '#8b5cf6',
+      gemini: '#6366f1',
+      openai: '#0ea5e9',
+      openrouter: '#64748b',
       custom: '#64748b',
       local: '#eab308',
       'tauri-desktop': '#6366f1',
       'federation-node': '#8b5cf6',
     };
-    return colors[platform] || '#64748b';
+    return colors[platform.toLowerCase()] || '#6366f1';
   };
 
-  const activeAgents = unifiedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline');
+  const getAgentPlatform = (agentId?: string) => {
+    if (!agentId) return 'custom';
+    const found = unifiedAgents.find((a) => a.id === agentId);
+    return found?.platform || 'custom';
+  };
 
   return (
     <PageShell
       className="page-fill"
-      title="Multi-Agent Chat"
-      subtitle={`${activeAgents.length} of ${population.registered} agents reachable · ${synergy.relayRegistered ? 'federation' : synergy.apiOnline ? 'API' : 'offline'}`}
-      banner={
-        !synergy.relayRegistered && !(synergy.apiOnline && isConnected) ? (
-          <div className="offline-banner">
-            Chat requires the REST API websocket or a registered federation relay. Messages will not
-            be delivered while offline.
-          </div>
-        ) : null
+      title="Multi-Agent Swarm Chat"
+      subtitle={`${fleetCountLabel} agents reachable · Mode: ${mode.toUpperCase()} · ${
+        synergy.apiOnline && isConnected
+          ? 'API Connected'
+          : synergy.relayRegistered
+            ? 'Federation Active'
+            : 'Local JIT Engine'
+      }`}
+      actions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="secondary-button flex items-center gap-1.5"
+          >
+            <PanelLeft className="w-4 h-4" />
+            <span>{showSidebar ? 'Hide History' : 'Show History'}</span>
+          </button>
+          <button
+            onClick={() => createSession()}
+            className="primary-button flex items-center gap-1.5"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>New Chat</span>
+          </button>
+        </div>
       }
     >
-      <div className="page-fill-body">
-        <div className="chat-container">
-          {/* Agent Selector Sidebar */}
-          <aside className="agent-selector">
-            <h3>Select Agents</h3>
-            <p className="helper-text">Choose agents to chat with</p>
+      <div
+        className="page-fill-body flex h-full overflow-hidden"
+        style={{ background: 'var(--tnf-obsidian)', color: 'var(--tnf-text-primary)' }}
+      >
+        {/* Sessions Sidebar */}
+        <ChatSessionSidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} />
 
-            <div className="agent-list">
-              {activeAgents.map((agent) => (
-                <button
-                  key={agent.id}
-                  className={`agent-item ${selectedAgents.includes(agent.id) ? 'selected' : ''}`}
-                  onClick={() => toggleAgent(agent.id)}
-                >
-                  <div
-                    className="agent-avatar"
+        {/* Agent Fleet Selector */}
+        <AgentSelectorPanel
+          agents={mappedAgents}
+          selectedAgents={selectedAgents}
+          onToggleAgent={toggleAgent}
+          onSelectAll={handleSelectAllAgents}
+          onClearAll={handleClearAllAgents}
+          onInspectAgent={setInspectedAgent}
+          getAgentColor={getAgentColor}
+          synergy={synergy}
+          isConnected={isConnected}
+        />
+
+        {/* Main Chat Area */}
+        <main
+          className="flex-1 flex flex-col min-w-0 relative"
+          style={{ background: 'var(--tnf-obsidian)' }}
+        >
+          {/* Header Bar */}
+          <header
+            className="p-4 border-b backdrop-blur-md flex items-center justify-between"
+            style={{
+              borderColor: 'var(--tnf-border)',
+              background: 'var(--tnf-surface-card, var(--tnf-surface))',
+            }}
+          >
+            <div className="flex items-center gap-2 overflow-x-auto py-1">
+              <span className="text-xs font-bold text-slate-400 uppercase mr-1">Active Swarm:</span>
+              {selectedAgents.map((id) => {
+                const agent = unifiedAgents.find((a) => a.id === id);
+                if (!agent) return null;
+                return (
+                  <span
+                    key={id}
+                    className="px-2.5 py-1 rounded-xl text-xs border font-medium bg-slate-900/80 flex items-center gap-1.5 shrink-0"
                     style={{ borderColor: getAgentColor(agent.platform) }}
                   >
-                    {agent.source === 'federation' ? '🌐' : '🤖'}
-                  </div>
-                  <div className="agent-info">
-                    <span className="agent-name">{agent.name}</span>
-                    <span className="agent-model">{agent.platform}</span>
-                  </div>
-                  {selectedAgents.includes(agent.id) && <span className="check-mark">✓</span>}
-                </button>
-              ))}
-            </div>
-
-            <div className="connection-status">
-              <span
-                className={`status-dot ${synergy.relayRegistered || isConnected ? 'connected' : 'disconnected'}`}
-              ></span>
-              <span>
-                {synergy.apiOnline && isConnected
-                  ? 'API + WS'
-                  : synergy.relayRegistered
-                    ? 'Federation'
-                    : 'Offline'}
-              </span>
-            </div>
-          </aside>
-
-          {/* Chat Area */}
-          <div className="chat-main">
-            <header className="chat-header">
-              <div className="selected-agents">
-                {selectedAgents.map((id) => {
-                  const agent = unifiedAgents.find((a) => a.id === id);
-                  if (!agent) return null;
-                  return (
                     <span
-                      key={id}
-                      className="agent-chip"
-                      style={{ borderColor: getAgentColor(agent.platform) }}
-                    >
-                      {agent.name}
-                    </span>
-                  );
-                })}
-                {selectedAgents.length === 0 && (
-                  <span className="no-agents">Select agents to start chatting</span>
-                )}
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: getAgentColor(agent.platform) }}
+                    />
+                    {agent.name}
+                  </span>
+                );
+              })}
+              {selectedAgents.length === 0 && (
+                <span className="text-xs text-amber-400 italic">
+                  Select agents to begin chatting
+                </span>
+              )}
+            </div>
+          </header>
+
+          {/* Messages Feed */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
+            {!activeSession || activeSession.messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center text-slate-400 space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-3xl shadow-lg">
+                  <Sparkles className="w-8 h-8 text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Multi-Agent Swarm Arena</h3>
+                  <p className="text-xs text-slate-400 max-w-sm mt-1">
+                    Select agents, choose an execution mode (Broadcast, Direct, Round-Robin,
+                    Consensus), and type a prompt to start collaborating.
+                  </p>
+                </div>
               </div>
-            </header>
+            ) : (
+              activeSession.messages.map((msg) => (
+                <ChatMessageItem
+                  key={msg.id}
+                  message={msg}
+                  getAgentColor={getAgentColor}
+                  getAgentPlatform={getAgentPlatform}
+                  onDelete={(id) => activeSessionId && deleteMessage(activeSessionId, id)}
+                  onRegenerate={(msg) => handleSend(`Re-evaluate: ${msg.content}`)}
+                />
+              ))
+            )}
 
-            <div className="messages-container">
-              {messages.length === 0 ? (
-                <div className="empty-state">
-                  <span className="empty-icon">💬</span>
-                  <h3>Start a Conversation</h3>
-                  <p>Select one or more agents and send a message</p>
+            {/* Loading Indicator */}
+            {isLoading && (
+              <div className="flex justify-start items-center gap-3 p-4 rounded-2xl bg-slate-900 border border-slate-800 w-fit animate-pulse">
+                <div className="flex gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.4s]" />
                 </div>
-              ) : (
-                messages.map((msg) => (
-                  <div key={msg.id} className={`message ${msg.role}`}>
-                    {msg.role === 'agent' && (
-                      <div className="message-header">
-                        <span
-                          className="agent-badge"
-                          style={{
-                            backgroundColor: getAgentColor(
-                              unifiedAgents.find((a) => a.id === msg.agentId)?.platform || 'custom'
-                            ),
-                          }}
-                        >
-                          {msg.agentName}
-                        </span>
-                      </div>
-                    )}
-                    <div className="message-content">{msg.content}</div>
-                    <div className="message-time">
-                      {new Date(msg.timestamp).toLocaleTimeString()}
-                    </div>
-                  </div>
-                ))
-              )}
-              {isLoading && (
-                <div className="message agent loading">
-                  <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <div className="input-container">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder={
-                  selectedAgents.length > 0 ? 'Type your message...' : 'Select agents first'
-                }
-                disabled={selectedAgents.length === 0}
-              />
-              <button
-                className="send-button"
-                onClick={handleSend}
-                disabled={!input.trim() || selectedAgents.length === 0}
-              >
-                Send
-              </button>
-            </div>
+                <span className="text-xs text-slate-400 font-mono">
+                  Swarm agents generating response...
+                </span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
-          <style>{`
-        .chat-container {
-          display: flex;
-          height: 100%;
-          background: var(--tnf-obsidian);
-        }
-
-        /* Agent Selector Sidebar */
-        .agent-selector {
-          width: 280px;
-          background: var(--tnf-surface);
-          border-right: 1px solid var(--tnf-border);
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .agent-selector h3 {
-          font-family: var(--tnf-font-heading);
-          margin: 0 0 4px;
-        }
-
-        .helper-text {
-          font-size: 13px;
-          color: var(--tnf-text-muted);
-          margin: 0 0 20px;
-        }
-
-        .agent-list {
-          flex: 1;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .agent-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px;
-          background: var(--tnf-surface-hover);
-          border: 1px solid transparent;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s;
-          text-align: left;
-        }
-
-        .agent-item:hover {
-          border-color: var(--tnf-border);
-        }
-
-        .agent-item.selected {
-          border-color: var(--tnf-primary);
-          background: rgba(99, 102, 241, 0.1);
-        }
-
-        .agent-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          border: 2px solid;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-        }
-
-        .agent-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .agent-name {
-          font-weight: 500;
-          font-size: 14px;
-        }
-
-        .agent-model {
-          font-size: 11px;
-          color: var(--tnf-text-muted);
-        }
-
-        .check-mark {
-          color: var(--tnf-primary);
-          font-weight: bold;
-        }
-
-        .connection-status {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding-top: 16px;
-          border-top: 1px solid var(--tnf-border);
-          margin-top: 16px;
-          font-size: 12px;
-          color: var(--tnf-text-muted);
-        }
-
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-
-        .status-dot.connected {
-          background: #10b981;
-          box-shadow: 0 0 8px #10b981;
-        }
-
-        .status-dot.disconnected {
-          background: #f59e0b;
-        }
-
-        /* Chat Main */
-        .chat-main {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .chat-header {
-          padding: 20px 24px;
-          border-bottom: 1px solid var(--tnf-border);
-        }
-
-        .chat-header h2 {
-          font-family: var(--tnf-font-heading);
-          margin: 0 0 12px;
-        }
-
-        .selected-agents {
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
-        }
-
-        .agent-chip {
-          padding: 4px 12px;
-          border-radius: 12px;
-          font-size: 12px;
-          border: 1px solid;
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .no-agents {
-          font-size: 13px;
-          color: var(--tnf-text-muted);
-          font-style: italic;
-        }
-
-        /* Messages */
-        .messages-container {
-          flex: 1;
-          overflow-y: auto;
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .empty-state {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: var(--tnf-text-muted);
-        }
-
-        .empty-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
-        }
-
-        .empty-state h3 {
-          margin: 0 0 8px;
-          color: var(--tnf-text-primary);
-        }
-
-        .message {
-          max-width: 80%;
-          padding: 12px 16px;
-          border-radius: 16px;
-        }
-
-        .message.user {
-          align-self: flex-end;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
-        }
-
-        .message.agent {
-          align-self: flex-start;
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-        }
-
-        .message-header {
-          margin-bottom: 8px;
-        }
-
-        .agent-badge {
-          padding: 2px 8px;
-          border-radius: 8px;
-          font-size: 11px;
-          color: white;
-        }
-
-        .message-content {
-          line-height: 1.5;
-        }
-
-        .message-time {
-          font-size: 10px;
-          color: var(--tnf-text-muted);
-          margin-top: 6px;
-        }
-
-        .message.user .message-time {
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .message.loading {
-          padding: 16px;
-        }
-
-        .typing-indicator {
-          display: flex;
-          gap: 4px;
-        }
-
-        .typing-indicator span {
-          width: 8px;
-          height: 8px;
-          background: var(--tnf-text-muted);
-          border-radius: 50%;
-          animation: bounce 1.4s infinite ease-in-out;
-        }
-
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-6px); }
-        }
-
-        /* Input */
-        .input-container {
-          padding: 20px 24px;
-          border-top: 1px solid var(--tnf-border);
-          display: flex;
-          gap: 12px;
-        }
-
-        .input-container input {
-          flex: 1;
-          padding: 14px 20px;
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-          border-radius: 12px;
-          color: var(--tnf-text-primary);
-          font-size: 14px;
-        }
-
-        .input-container input:focus {
-          outline: none;
-          border-color: var(--tnf-primary);
-        }
-
-        .input-container input:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .send-button {
-          padding: 14px 28px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          border: none;
-          border-radius: 12px;
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .send-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .send-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-      `}</style>
-        </div>
+          {/* Input Area */}
+          <ChatInputArea
+            onSend={handleSend}
+            disabled={selectedAgents.length === 0}
+            isLoading={isLoading}
+            mode={mode}
+            onModeChange={setExecutionMode}
+            temperature={temperature}
+            onTemperatureChange={setTemperature}
+            selectedAgentCount={selectedAgents.length}
+          />
+        </main>
       </div>
+
+      {/* Agent Detail Modal */}
+      {inspectedAgent && (
+        <AgentDetailModal
+          agent={inspectedAgent}
+          onClose={() => setInspectedAgent(null)}
+          onUpdateAgent={updateAgent}
+        />
+      )}
     </PageShell>
   );
 };

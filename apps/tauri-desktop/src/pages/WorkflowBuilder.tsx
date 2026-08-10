@@ -50,13 +50,17 @@ const ProviderSelect: React.FC<{
 }> = ({ value, onChange }) => (
   <select
     className="nodrag nopan"
-    value={value || 'claude'}
+    value={value || 'nvidia'}
     onChange={(e) => onChange(e.target.value)}
   >
-    <option value="claude">Claude AI</option>
+    <option value="nvidia">NVIDIA NIM</option>
+    <option value="groq">Groq</option>
+    <option value="sambanova">SambaNova</option>
+    <option value="cerebras">Cerebras</option>
+    <option value="deepseek">DeepSeek</option>
     <option value="gemini">Gemini</option>
-    <option value="gpt">ChatGPT</option>
-    <option value="perplexity">Perplexity</option>
+    <option value="openai">OpenAI</option>
+    <option value="openrouter">OpenRouter</option>
     <option value="local">Local LLM</option>
   </select>
 );
@@ -72,7 +76,7 @@ const AgentNode = ({ data }: { data: WorkflowNodeData }) => (
       <div className="node-field">
         <label>Provider</label>
         <ProviderSelect
-          value={data.provider || 'claude'}
+          value={data.provider || 'nvidia'}
           onChange={(v) => data.onChange?.('provider', v)}
         />
       </div>
@@ -480,14 +484,119 @@ const WorkflowBuilderContent: React.FC = () => {
       event.preventDefault();
       const type = event.dataTransfer.getData('application/reactflow');
       if (!type) return;
-      addNodeAt(type, { x: event.clientX, y: event.clientY });
+      let extras: Partial<WorkflowNodeData> | undefined;
+      const rawExtras = event.dataTransfer.getData('application/tnf-node-extras');
+      if (rawExtras) {
+        try {
+          extras = JSON.parse(rawExtras) as Partial<WorkflowNodeData>;
+        } catch {
+          extras = undefined;
+        }
+      }
+      addNodeAt(type, { x: event.clientX, y: event.clientY }, extras);
     },
     [addNodeAt]
   );
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+  const onDragStart = (
+    event: React.DragEvent,
+    nodeType: string,
+    extras?: Partial<WorkflowNodeData>
+  ) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
+    if (extras) {
+      event.dataTransfer.setData('application/tnf-node-extras', JSON.stringify(extras));
+    }
     event.dataTransfer.effectAllowed = 'move';
+  };
+
+  // WKWebView / Tauri often breaks HTML5 DnD. Pointer drag works reliably.
+  type PaletteDragPayload = {
+    type: string;
+    extras?: Partial<WorkflowNodeData>;
+    label: string;
+    icon: string;
+    color: string;
+  };
+
+  const [paletteGhost, setPaletteGhost] = useState<
+    (PaletteDragPayload & { x: number; y: number }) | null
+  >(null);
+  const pointerPayloadRef = useRef<PaletteDragPayload | null>(null);
+  const pointerOriginRef = useRef<{ x: number; y: number } | null>(null);
+  const pointerDraggingRef = useRef(false);
+  const suppressClickRef = useRef(false);
+
+  const endPointerDrag = useCallback(
+    (clientX: number, clientY: number) => {
+      const payload = pointerPayloadRef.current;
+      const wasDragging = pointerDraggingRef.current;
+      pointerPayloadRef.current = null;
+      pointerOriginRef.current = null;
+      pointerDraggingRef.current = false;
+      setPaletteGhost(null);
+
+      if (!payload || !wasDragging) return;
+      suppressClickRef.current = true;
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 0);
+
+      const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+      if (
+        bounds &&
+        clientX >= bounds.left &&
+        clientX <= bounds.right &&
+        clientY >= bounds.top &&
+        clientY <= bounds.bottom
+      ) {
+        addNodeAt(payload.type, { x: clientX, y: clientY }, payload.extras);
+      }
+    },
+    [addNodeAt]
+  );
+
+  useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      const payload = pointerPayloadRef.current;
+      const origin = pointerOriginRef.current;
+      if (!payload || !origin) return;
+      const dx = event.clientX - origin.x;
+      const dy = event.clientY - origin.y;
+      if (!pointerDraggingRef.current) {
+        if (dx * dx + dy * dy < 36) return;
+        pointerDraggingRef.current = true;
+      }
+      setPaletteGhost({
+        ...payload,
+        x: event.clientX,
+        y: event.clientY,
+      });
+    };
+    const onUp = (event: PointerEvent) => {
+      if (!pointerPayloadRef.current) return;
+      endPointerDrag(event.clientX, event.clientY);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [endPointerDrag]);
+
+  const beginPointerDrag = (event: React.PointerEvent, payload: PaletteDragPayload) => {
+    if (event.button !== 0) return;
+    pointerPayloadRef.current = payload;
+    pointerOriginRef.current = { x: event.clientX, y: event.clientY };
+    pointerDraggingRef.current = false;
+  };
+
+  const handleLibraryActivate = (type: string, extras?: Partial<WorkflowNodeData>) => {
+    if (suppressClickRef.current) return;
+    addNodeAt(type, undefined, extras);
   };
 
   const deleteSelected = useCallback(() => {
@@ -629,7 +738,7 @@ const WorkflowBuilderContent: React.FC = () => {
             position: { x: 350, y: 150 },
             data: {
               label: 'Research Agent',
-              provider: 'perplexity',
+              provider: 'nvidia',
               prompt: 'Research the given topic',
             },
           },
@@ -637,7 +746,7 @@ const WorkflowBuilderContent: React.FC = () => {
             id: 'analyze',
             type: 'agent',
             position: { x: 600, y: 150 },
-            data: { label: 'Analysis Agent', provider: 'claude', prompt: 'Analyze the research' },
+            data: { label: 'Analysis Agent', provider: 'openai', prompt: 'Analyze the research' },
           },
           {
             id: 'report',
@@ -671,7 +780,7 @@ const WorkflowBuilderContent: React.FC = () => {
             id: 'process',
             type: 'agent',
             position: { x: 600, y: 150 },
-            data: { label: 'Process Data', provider: 'claude', prompt: 'Process the scraped data' },
+            data: { label: 'Process Data', provider: 'openai', prompt: 'Process the scraped data' },
           },
           {
             id: 'save',
@@ -749,11 +858,74 @@ const WorkflowBuilderContent: React.FC = () => {
     setSaveNotice('Canvas cleared.');
   };
 
-  const nodeLibrary = [
-    { type: 'agent', icon: '🤖', label: 'AI Agent', color: '#8b5cf6' },
-    { type: 'mcpTool', icon: '🔧', label: 'MCP Tool', color: '#10b981' },
-    { type: 'flowControl', icon: '⚡', label: 'Flow Control', color: '#f59e0b' },
-    { type: 'output', icon: '📤', label: 'Output', color: '#06b6d4' },
+  const nodeLibrary: Array<{
+    id: string;
+    type: string;
+    icon: string;
+    label: string;
+    color: string;
+    extras?: Partial<WorkflowNodeData>;
+  }> = [
+    { id: 'agent', type: 'agent', icon: '🤖', label: 'AI Agent', color: '#8b5cf6' },
+    {
+      id: 'research-agent',
+      type: 'agent',
+      icon: '🔎',
+      label: 'Research Agent',
+      color: '#8b5cf6',
+      extras: {
+        label: 'Research Agent',
+        provider: 'nvidia',
+        prompt: 'Research the given topic thoroughly',
+      },
+    },
+    {
+      id: 'analysis-agent',
+      type: 'agent',
+      icon: '🧪',
+      label: 'Analysis Agent',
+      color: '#8b5cf6',
+      extras: {
+        label: 'Analysis Agent',
+        provider: 'openai',
+        prompt: 'Analyze the upstream result',
+      },
+    },
+    { id: 'mcp', type: 'mcpTool', icon: '🔧', label: 'MCP Tool', color: '#10b981' },
+    {
+      id: 'mcp-browser',
+      type: 'mcpTool',
+      icon: '🌐',
+      label: 'Browser Action',
+      color: '#10b981',
+      extras: { label: 'Browser Action', tool: 'browser', parameters: '{}' },
+    },
+    {
+      id: 'mcp-fs',
+      type: 'mcpTool',
+      icon: '📁',
+      label: 'File System',
+      color: '#10b981',
+      extras: { label: 'File System', tool: 'filesystem', parameters: '{}' },
+    },
+    { id: 'flow', type: 'flowControl', icon: '⚡', label: 'Flow Control', color: '#f59e0b' },
+    {
+      id: 'flow-condition',
+      type: 'flowControl',
+      icon: '⎇',
+      label: 'Condition',
+      color: '#f59e0b',
+      extras: { label: 'Condition', controlType: 'condition' },
+    },
+    {
+      id: 'flow-loop',
+      type: 'flowControl',
+      icon: '🔁',
+      label: 'Loop',
+      color: '#f59e0b',
+      extras: { label: 'Loop', controlType: 'loop' },
+    },
+    { id: 'output', type: 'output', icon: '📤', label: 'Output', color: '#06b6d4' },
   ];
 
   return (
@@ -771,8 +943,8 @@ const WorkflowBuilderContent: React.FC = () => {
             {canUseWorkflowApi
               ? 'Signed in with API online — Save syncs canvas to /workflows; Run executes saved workflow on server.'
               : 'Save always stores a local draft. Sign in (sidebar) and start REST API on :3001 to sync and run for real.'}{' '}
-            Tip: click a library node to add it (drag also works). Connect nodes via the blue/green
-            handles.
+            Tip: drag library components onto the canvas (pointer drag works in desktop WebView), or
+            click to place. Connect nodes via the blue/green handles.
           </div>
           {saveNotice && (
             <div className="info-banner" role="status">
@@ -787,6 +959,7 @@ const WorkflowBuilderContent: React.FC = () => {
             type="button"
             className="ghost-button"
             onClick={() => setShowSidebar(!showSidebar)}
+            aria-label={showSidebar ? 'Hide library' : 'Show library'}
           >
             {showSidebar ? 'Hide library' : 'Show library'}
           </button>
@@ -868,29 +1041,39 @@ const WorkflowBuilderContent: React.FC = () => {
               <aside className="workflow-sidebar">
                 <div className="sidebar-section">
                   <h3>📦 Node Library</h3>
-                  <p className="sidebar-hint">Click to add · or drag onto the canvas</p>
+                  <p className="sidebar-hint">Drag onto canvas · or click to place</p>
                   <div className="node-library">
-                    {nodeLibrary.map((node) => (
-                      <div
-                        key={node.type}
-                        className="library-node"
-                        draggable
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => addNodeAt(node.type)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            addNodeAt(node.type);
-                          }
-                        }}
-                        onDragStart={(e) => onDragStart(e, node.type)}
-                        style={{ borderLeftColor: node.color }}
-                      >
-                        <span className="node-icon">{node.icon}</span>
-                        <span className="node-label">{node.label}</span>
-                      </div>
-                    ))}
+                    {nodeLibrary.map((node) => {
+                      const payload = {
+                        type: node.type,
+                        extras: node.extras,
+                        label: node.label,
+                        icon: node.icon,
+                        color: node.color,
+                      };
+                      return (
+                        <div
+                          key={node.id}
+                          className="library-node"
+                          draggable
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleLibraryActivate(node.type, node.extras)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleLibraryActivate(node.type, node.extras);
+                            }
+                          }}
+                          onPointerDown={(e) => beginPointerDrag(e, payload)}
+                          onDragStart={(e) => onDragStart(e, node.type, node.extras)}
+                          style={{ borderLeftColor: node.color }}
+                        >
+                          <span className="node-icon">{node.icon}</span>
+                          <span className="node-label">{node.label}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -913,27 +1096,38 @@ const WorkflowBuilderContent: React.FC = () => {
                     </p>
                   )}
                   <div className="agent-palette">
-                    {paletteAgents.map((agent) => (
-                      <button
-                        key={`${agent.source}-${agent.id}`}
-                        type="button"
-                        className="agent-chip"
-                        title={`Add ${agent.name}`}
-                        onClick={() =>
-                          addNodeAt('agent', undefined, {
-                            label: agent.name,
-                            agentId: agent.id,
-                            provider: agent.provider || 'claude',
-                            prompt: `Run as ${agent.name}`,
-                          })
-                        }
-                      >
-                        <span className="agent-chip-name">{agent.name}</span>
-                        <span className="agent-chip-meta">
-                          {agent.provider || 'agent'} · {agent.source}
-                        </span>
-                      </button>
-                    ))}
+                    {paletteAgents.map((agent) => {
+                      const extras: Partial<WorkflowNodeData> = {
+                        label: agent.name,
+                        agentId: agent.id,
+                        provider: agent.provider || 'nvidia',
+                        prompt: `Run as ${agent.name}`,
+                      };
+                      const payload = {
+                        type: 'agent',
+                        extras,
+                        label: agent.name,
+                        icon: '🤖',
+                        color: '#8b5cf6',
+                      };
+                      return (
+                        <button
+                          key={`${agent.source}-${agent.id}`}
+                          type="button"
+                          className="agent-chip"
+                          title={`Drag or click to add ${agent.name}`}
+                          onClick={() => handleLibraryActivate('agent', extras)}
+                          onPointerDown={(e) => beginPointerDrag(e, payload)}
+                          draggable
+                          onDragStart={(e) => onDragStart(e, 'agent', extras)}
+                        >
+                          <span className="agent-chip-name">{agent.name}</span>
+                          <span className="agent-chip-meta">
+                            {agent.provider || 'agent'} · {agent.source}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -1055,6 +1249,21 @@ const WorkflowBuilderContent: React.FC = () => {
             </div>
           </div>
 
+          {paletteGhost ? (
+            <div
+              className="palette-drag-ghost"
+              style={{
+                left: paletteGhost.x + 12,
+                top: paletteGhost.y + 12,
+                borderLeftColor: paletteGhost.color,
+              }}
+              aria-hidden
+            >
+              <span className="node-icon">{paletteGhost.icon}</span>
+              <span className="node-label">{paletteGhost.label}</span>
+            </div>
+          ) : null}
+
           <style>{`
         .workflow-builder-container {
           height: 100%;
@@ -1062,6 +1271,32 @@ const WorkflowBuilderContent: React.FC = () => {
           flex-direction: column;
           background: var(--tnf-obsidian, #020617);
           color: var(--tnf-text-primary, #f8fafc);
+          position: relative;
+        }
+
+        .palette-drag-ghost {
+          position: fixed;
+          z-index: 9999;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: var(--tnf-surface-card, rgba(15, 23, 42, 0.92));
+          border: 1px solid var(--tnf-border);
+          border-left-width: 4px;
+          border-radius: 10px;
+          box-shadow: var(--tnf-shadow-md);
+          color: var(--tnf-text-primary);
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .library-node,
+        .agent-chip {
+          -webkit-user-drag: element;
+          user-select: none;
+          touch-action: none;
         }
 
         .workflow-toolbar {
