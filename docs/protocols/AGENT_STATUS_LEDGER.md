@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T18:37:17.598Z** — handoff
+Updated: **2026-08-10T19:05:01.706Z** — handoff
+`8066f785-ec83-43da-8c0e-ab9eec2ad5d4` (`0f34cf4157a0`).
 `427721a0-205f-4646-b433-ea0d22d210c4` (`04b0ed53f05c`).
 `7e36d088-db3c-4e26-bd7c-2606d7854878` (`c1ef9ca8d576`).
 `ce8362a2-024a-4925-975d-ca4a72d2819b` (`67d2d37cd850`).
@@ -164,11 +165,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                            |
-| -------- | ----------------------------------------------------------------- |
-| **P0**   | Optionally set API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws |
-| **P0**   | Add EXA/TAVILY keys for scout resilience                          |
-| **P0**   | Watch full-auto daemon complete its next cycle without seal drift |
+| Priority | Action                                                        |
+| -------- | ------------------------------------------------------------- |
+| **P0**   | Repair apps/api node_modules so api-local :3002 stays healthy |
+| **P0**   | Optionally add EXA/TAVILY keys for scout resilience           |
+| **P0**   | Confirm relay+gateway survive logout/login                    |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -629,3 +630,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (427721a0-205f-4646-b433-ea0d22d210c4) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(8066f785-ec83-43da-8c0e-ab9eec2ad5d4) | ✅ HANDOFF_READY |

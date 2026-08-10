@@ -183,7 +183,7 @@ function buildWebSocketProxyRoutes(): WebSocketProxyRoute[] {
     process.env.TNF_RELAY_URL ||
     process.env.RELAY_WS_URL ||
     process.env.RELAY_URL ||
-    'ws://127.0.0.1:3000/ws';
+    'ws://127.0.0.1:3007/ws';
   const bridgeTarget =
     process.env.API_GATEWAY_REDIS_BRIDGE_WS_TARGET ||
     `ws://127.0.0.1:${process.env.WS_BRIDGE_PORT || '3005'}/redis-bridge`;

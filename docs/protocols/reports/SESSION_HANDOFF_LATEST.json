@@ -1,52 +1,58 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "427721a0-205f-4646-b433-ea0d22d210c4",
-  "created_at": "2026-08-10T18:37:17.598Z",
+  "handoff_id": "8066f785-ec83-43da-8c0e-ab9eec2ad5d4",
+  "created_at": "2026-08-10T19:05:01.706Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "04b0ed53f05cb73ea700dc6903b219b6954c7521",
+  "head_sha": "0f34cf4157a01ce5c70e8eafc4abc564fdcc6cd8",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Runtime persistence evolution: com.thenewfuse.relay launchd verified on :3007; docker-compose.searxng.yml + searxng-service.sh restored; docker-compose.dev-simple.yml shim; full-auto process-tree contention collapse; daemon stop + daemon.pid write; substrate resealed; single loopCount=1 daemon running."
+    "Persisted relay :3007 via launchd (com.thenewfuse.relay).",
+    "Wired api-gateway WS target to ws://127.0.0.1:3007/ws (code default + env + launchd) and removed :3002 wait so gateway KeepAlive works.",
+    "Fixed smart-start empty env_args; start-local-relay --port + ACTIVITY_PERSISTENCE_REQUIRED=false.",
+    "api-local still blocked by corrupted apps/api node_modules (@asamuzakjp/css-color etc)."
   ],
   "changed_paths": [
-    "packages/tnf-cli/src/cli.ts",
-    "scripts/operations/tnf-full-auto-contention-observe.cjs",
-    "scripts/runtime/searxng-service.sh",
-    "docker-compose.searxng.yml",
-    "docker-compose.dev-simple.yml",
-    "docs/deployment/SWARM_LIVE_SETUP.md",
-    "docs/operations/tnf-substrate-seal.json",
+    ".env.example",
+    "apps/api-gateway/src/main.ts",
+    "packages/ap2-protocol/package.json",
+    "scripts/qa/start-local-relay.sh",
+    "scripts/runtime/relay-service.sh",
+    "scripts/runtime/tnf-launchd-smart-start.sh",
+    "scripts/runtime/tnf-local-launchd-services.sh",
+    "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md"
+    "packages/tnf-cli/src/cli.ts",
+    "scripts/operations/tnf-full-auto-contention-observe.cjs",
+    "scripts/runtime/searxng-service.sh"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-10T18:37:34.496Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-08-10T19:05:03.323Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
     "targets": ["story-architect", "librarian"],
     "priority": "medium",
     "resume_checklist": [
-      "curl -sS http://127.0.0.1:3007/health",
-      "bash scripts/runtime/searxng-service.sh status",
-      "tnf full-auto daemon status"
+      "curl :3007/health and :3001/health after login",
+      "pnpm install / rebuild apps/api deps",
+      "Add EXA_API_KEY/TAVILY_API_KEY if needed"
     ]
   },
   "next_actions": [
-    "Optionally set API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws",
-    "Add EXA/TAVILY keys for scout resilience",
-    "Watch full-auto daemon complete its next cycle without seal drift"
+    "Repair apps/api node_modules so api-local :3002 stays healthy",
+    "Optionally add EXA/TAVILY keys for scout resilience",
+    "Confirm relay+gateway survive logout/login"
   ],
   "artifacts": {
-    "commits": ["04b0ed53f05cb73ea700dc6903b219b6954c7521"]
+    "commits": ["0f34cf4157a01ce5c70e8eafc4abc564fdcc6cd8"]
   }
 }

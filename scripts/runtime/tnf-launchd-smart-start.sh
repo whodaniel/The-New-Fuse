@@ -56,4 +56,7 @@ if [[ -n "${TNF_LAUNCHD_WAIT_TCP:-}" ]]; then
 fi
 
 cd "$work_dir"
-exec "$node_bin" "${env_args[@]}" "$entrypoint" "$@"
+if ((${#env_args[@]} > 0)); then
+  exec "$node_bin" "${env_args[@]}" "$entrypoint" "$@"
+fi
+exec "$node_bin" "$entrypoint" "$@"

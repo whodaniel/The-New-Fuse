@@ -31,7 +31,8 @@ echo "[relay] starting standalone relay on :${PORT} ..."
 PORT="$PORT" \
   ENABLE_REDIS_BRIDGE="${ENABLE_REDIS_BRIDGE:-false}" \
   ENABLE_ACTIVITY_PERSISTENCE="${ENABLE_ACTIVITY_PERSISTENCE:-false}" \
-  nohup node "$RELAY_DIR/dist/standalone-relay.js" >"$LOG_FILE" 2>&1 &
+  ACTIVITY_PERSISTENCE_REQUIRED="${ACTIVITY_PERSISTENCE_REQUIRED:-false}" \
+  nohup node "$RELAY_DIR/dist/standalone-relay.js" --port "$PORT" >"$LOG_FILE" 2>&1 &
 echo $! >"$PID_FILE"
 
 for _ in $(seq 1 60); do

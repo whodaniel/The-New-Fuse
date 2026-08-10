@@ -96,6 +96,10 @@ write_api_plist() {
     <string>${port}</string>
     <key>LOCAL_API_SERVICE_URL</key>
     <string>http://127.0.0.1:3002</string>
+    <key>API_GATEWAY_RELAY_WS_TARGET</key>
+    <string>${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3007/ws}}}</string>
+    <key>TNF_RELAY_URL</key>
+    <string>${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3007/ws}}}</string>
     <key>TNF_LAUNCHD_ENV_FILES</key>
     <string>$(api_env_files)</string>
 ${wait_block}
@@ -221,7 +225,7 @@ write_voice_plist() {
     <key>VOICE_RESPONSE_AUDIO_DEFAULT_ON</key>
     <string>${VOICE_RESPONSE_AUDIO_DEFAULT_ON:-0}</string>
     <key>RELAY_URL</key>
-    <string>${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3000/ws}}}</string>
+    <string>${TNF_RELAY_URL:-${RELAY_WS_URL:-${RELAY_URL:-ws://127.0.0.1:3007/ws}}}</string>
   </dict>
   <key>RunAtLoad</key>
   <true/>
@@ -231,6 +235,62 @@ write_voice_plist() {
   <string>/tmp/voice_beam_watchdog.launchd.log</string>
   <key>StandardErrorPath</key>
   <string>/tmp/voice_beam_watchdog.launchd.err.log</string>
+</dict>
+</plist>
+PLIST
+  plutil -lint "$plist" >/dev/null
+}
+
+write_relay_plist() {
+  local label="com.thenewfuse.relay"
+  local plist="$LAUNCH_AGENTS_DIR/$label.plist"
+  local relay_dir="$ROOT_DIR/packages/relay-core"
+  local relay_entry="$relay_dir/dist/standalone-relay.js"
+  local port="${RELAY_PORT:-${PORT:-3007}}"
+  cat >"$plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>${label}</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>${SMART_START}</string>
+    <string>${label}</string>
+    <string>${relay_dir}</string>
+    <string>${NODE_BIN}</string>
+    <string>${relay_entry}</string>
+    <string>--port</string>
+    <string>${port}</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PORT</key>
+    <string>${port}</string>
+    <key>RELAY_PORT</key>
+    <string>${port}</string>
+    <key>ENABLE_REDIS_BRIDGE</key>
+    <string>${ENABLE_REDIS_BRIDGE:-false}</string>
+    <key>ENABLE_ACTIVITY_PERSISTENCE</key>
+    <string>${ENABLE_ACTIVITY_PERSISTENCE:-false}</string>
+    <key>ACTIVITY_PERSISTENCE_REQUIRED</key>
+    <string>${ACTIVITY_PERSISTENCE_REQUIRED:-false}</string>
+    <key>PATH</key>
+    <string>$(dirname "$NODE_BIN"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HOME</key>
+    <string>${HOME}</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>WorkingDirectory</key>
+  <string>${relay_dir}</string>
+  <key>StandardOutPath</key>
+  <string>${TNF_HOME}/logs/relay-stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>${TNF_HOME}/logs/relay-stderr.log</string>
 </dict>
 </plist>
 PLIST
@@ -258,9 +318,10 @@ install() {
     "com.thenewfuse.api-gateway" \
     "$ROOT_DIR/apps/api-gateway" \
     "$ROOT_DIR/apps/api-gateway/dist/main.js" \
-    "3001" \
-    "127.0.0.1:3002"
-  write_redis_plist
+    "3001"
+  # Note: do not wait on api-local :3002 — local API node_modules can be unhealthy
+  # while the gateway should still proxy WS to the launchd relay on :3007.  write_redis_plist
+  write_relay_plist
   write_voice_plist
   echo "installed local TNF launchd services"
 }
@@ -326,6 +387,8 @@ start() {
   install
   start_label com.thenewfuse.redis-tnf-bus
   wait_tcp 127.0.0.1 6379 30 || echo "WARN: Redis did not accept TCP on 127.0.0.1:6379 yet" >&2
+  start_label com.thenewfuse.relay
+  wait_tcp 127.0.0.1 3007 30 || echo "WARN: relay did not accept TCP on 127.0.0.1:3007 yet" >&2
   start_label com.thenewfuse.api-local
   wait_tcp 127.0.0.1 3002 30 || echo "WARN: local API did not accept TCP on 127.0.0.1:3002 yet" >&2
   start_label com.thenewfuse.api-gateway
@@ -339,11 +402,14 @@ restart() {
     com.tnf.voice-beam-watchdog \
     com.thenewfuse.api-gateway \
     com.thenewfuse.api-local \
+    com.thenewfuse.relay \
     com.thenewfuse.redis-tnf-bus; do
     bootout_label "$label"
   done
   start_label com.thenewfuse.redis-tnf-bus
   wait_tcp 127.0.0.1 6379 30 || echo "WARN: Redis did not accept TCP on 127.0.0.1:6379 yet" >&2
+  start_label com.thenewfuse.relay
+  wait_tcp 127.0.0.1 3007 30 || echo "WARN: relay did not accept TCP on 127.0.0.1:3007 yet" >&2
   start_label com.thenewfuse.api-local
   wait_tcp 127.0.0.1 3002 30 || echo "WARN: local API did not accept TCP on 127.0.0.1:3002 yet" >&2
   start_label com.thenewfuse.api-gateway
@@ -356,6 +422,7 @@ stop() {
     com.tnf.voice-beam-watchdog \
     com.thenewfuse.api-gateway \
     com.thenewfuse.api-local \
+    com.thenewfuse.relay \
     com.thenewfuse.redis-tnf-bus; do
     launchctl bootout "$LAUNCH_DOMAIN/$label" >/dev/null 2>&1 || true
   done
@@ -365,6 +432,7 @@ stop() {
 status() {
   for label in \
     com.thenewfuse.redis-tnf-bus \
+    com.thenewfuse.relay \
     com.thenewfuse.api-local \
     com.thenewfuse.api-gateway \
     com.tnf.voice-beam-watchdog; do

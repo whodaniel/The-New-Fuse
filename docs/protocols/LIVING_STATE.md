@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optionally set
-API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws
+**Current Directive:** Repair apps/api node_modules so api-local :3002 stays
+healthy
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -825,6 +825,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-10T19:05:03.371Z handoff `8066f785-ec83-43da-8c0e-ab9eec2ad5d4` head
+  `0f34cf4157a0` project `TNF-SESSION` — Repair apps/api node_modules so
+  api-local :3002 stays healthy
 
 - 2026-08-10T18:37:34.552Z handoff `427721a0-205f-4646-b433-ea0d22d210c4` head
   `04b0ed53f05c` project `TNF-SESSION` — Optionally set
