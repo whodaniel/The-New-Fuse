@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Use verify-harness-completeness in Turn Zero
+**Current Directive:** Optional: wire Cursor MCP client to
+data/harness/mcp.memory.server.json
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -35,6 +36,35 @@ must not be mass-deleted without verification evidence. See
 
 **Prior notes:** Authority coherence audit mixed —
 `docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`.
+
+---
+
+- [✅] 2026-08-10T18:25:00Z New protocol:
+  `docs/protocols/HARNESS_AGENT_MODES.md` — Formal PLAN/EXECUTE/VERIFY mode
+  transitions with guardrails, timeouts, and audit trails
+
+- [✅] 2026-08-10T18:26:00Z New protocol:
+  `docs/protocols/USER_CONFIRMATION_PROTOCOL.md` — Three-level user confirmation
+  workflow (inform/user/operator) for safeguarding sensitive operations
+
+- [✅] 2026-08-10T18:27:00Z New protocol:
+  `docs/protocols/FEEDBACK_LOOP_PROTOCOL.md` — Bounded loop evaluation with
+  bailout conditions, error recovery, and collapse prevention
+
+- [✅] 2026-08-10T18:28:00Z New skill: `.agent/skills/tnf-todo-providers/` —
+  Full todo tracking with priority, dependencies, complexity estimation, and CLI
+  interface
+
+- [✅] 2026-08-10T18:29:00Z New scripts:
+  - `scripts/todo-provider.cjs` — Todo management CLI
+  - `scripts/agent-registry/discover-by-scope.cjs` — Scope-based API discovery
+  - `scripts/progressive-disclosure-loader.cjs` — Context-aware tool loading
+    optimization
+  - `scripts/bounded-loop-evaluator.cjs` — Execution loop control with budgets
+
+- [✅] 2026-08-10T18:30:00Z Schema extension:
+  `data/agent-registry/agent-card.extensions.schema.json` — JSON Schema for
+  dynamic capabilities, modes, confirmation requirements, and loop configuration
 
 ---
 
@@ -828,6 +858,18 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-10T22:59:49.998Z handoff `d2cd71ba-93e9-42cf-88e0-946428d7f89b` head
+  `319fd7b59f4b` project `TNF-SESSION` — Optional: wire Cursor MCP client to
+  data/harness/mcp.memory.server.json
+
+- 2026-08-10T22:59:49.200Z handoff `c9f2d3b6-0902-4495-8253-874c0ff55da3` head
+  `319fd7b59f4b` project `TNF-SESSION` — Optional: point Cursor MCP client at
+  data/harness/mcp.memory.server.json
+
+- 2026-08-10T22:57:34.435Z handoff `856efb1e-2ef7-400c-a706-ffbe250fffd7` head
+  `319fd7b59f4b` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-10T22:44:47.407Z handoff `f0328147-662d-4a50-8427-bc94c797a4d0` head
   `2770f1a135d4` project `TNF-SESSION` — Use verify-harness-completeness in Turn

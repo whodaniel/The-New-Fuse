@@ -7635,13 +7635,86 @@ function deriveHarnessActFocus(inspect: HarnessCheckResult[]): {
 
 async function runHarnessMasterCycle(): Promise<HarnessMasterCycleReport> {
   const startedAt = new Date().toISOString();
+  const trajStart = runCommandCapture('node', [
+    'scripts/harness/trajectory.cjs',
+    'start',
+    '--task',
+    'tnf harness cycle',
+  ]);
+  let runId = '';
+  try {
+    runId = String((JSON.parse(trajStart.stdout || '{}') as { runId?: string }).runId || '');
+  } catch {
+    runId = '';
+  }
+
   const inspect = await collectHarnessInspectChecksAsync();
   const act = deriveHarnessActFocus(inspect);
+  if (runId) {
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'append',
+      '--run',
+      runId,
+      '--type',
+      'inspect_act',
+      '--payload',
+      JSON.stringify({
+        failed: inspect.filter((c) => !c.passed).map((c) => c.name),
+        focus: act.focus,
+      }),
+    ]);
+  }
+
+  // Berm gate for cycle act focus when it smells like a mutation class
+  const berm = runCommandCapture('node', [
+    'scripts/harness/permission-berm.cjs',
+    'evaluate',
+    '--action-class',
+    'verify',
+    '--json',
+  ]);
 
   const verify = await collectHarnessInspectChecksAsync();
   const passed = verify.every((check) => check.passed);
+  if (runId) {
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'append',
+      '--run',
+      runId,
+      '--type',
+      'verify',
+      '--payload',
+      JSON.stringify({
+        passed,
+        bermExit: berm.code,
+        failed: verify.filter((c) => !c.passed).map((c) => c.name),
+      }),
+    ]);
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'end',
+      '--run',
+      runId,
+      '--status',
+      passed ? 'ok' : 'degraded',
+    ]);
+    runCommandCapture('node', [
+      'scripts/harness/compaction-record.cjs',
+      'write',
+      '--run',
+      runId,
+      '--stage',
+      'cheap_clearance',
+      '--summary',
+      `Harness master cycle ${passed ? 'PASS' : 'DEGRADED'}; inspect/verify tallies retained in trajectory ${runId}`,
+      '--tnf-owned',
+    ]);
+  }
+
   const report: HarnessMasterCycleReport = {
-    cycleId: `harness-${Date.now()}`,
+    cycleId: runId ? `harness-${runId}` : `harness-${Date.now()}`,
     startedAt,
     completedAt: new Date().toISOString(),
     phase: 'verify',
@@ -7951,13 +8024,35 @@ harness
     try {
       const report = options.skipLiveLoop
         ? (() => {
+            const traj = runCommandCapture('node', [
+              'scripts/harness/trajectory.cjs',
+              'start',
+              '--task',
+              'tnf harness cycle --skip-live-loop',
+            ]);
+            let runId = '';
+            try {
+              runId = String((JSON.parse(traj.stdout || '{}') as { runId?: string }).runId || '');
+            } catch {
+              runId = '';
+            }
             const startedAt = new Date().toISOString();
             const inspect = collectHarnessInspectChecks();
             const act = deriveHarnessActFocus(inspect);
             const verify = collectHarnessInspectChecks();
             const passed = verify.every((check) => check.passed);
+            if (runId) {
+              runCommandCapture('node', [
+                'scripts/harness/trajectory.cjs',
+                'end',
+                '--run',
+                runId,
+                '--status',
+                passed ? 'ok' : 'degraded',
+              ]);
+            }
             const cycle: HarnessMasterCycleReport = {
-              cycleId: `harness-${Date.now()}`,
+              cycleId: runId ? `harness-${runId}` : `harness-${Date.now()}`,
               startedAt,
               completedAt: new Date().toISOString(),
               phase: 'verify',
@@ -7989,13 +8084,108 @@ harness
         const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
         console.log(`  ${icon} ${check.name}: ${check.detail}`);
       }
-      console.log(`\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')}`);
+      console.log(
+        `\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')} (${report.cycleId})`
+      );
       console.log(chalk.dim(`Logged to docs/operations/tnf-harness-cycle.jsonl\n`));
       if (!report.passed) process.exitCode = 1;
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }
+  });
+
+function runHarnessScript(rel: string, args: string[]): number {
+  const result = spawnSync(process.execPath, [path.join(repoRoot, rel), ...args], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    env: process.env,
+  });
+  return result.status ?? 1;
+}
+
+harness
+  .command('completeness')
+  .description('Verify UNU-aligned harness completeness (layers + injection + berm/memory)')
+  .option('--provision', 'Repair injection surfaces before verify')
+  .option('--json', 'JSON output')
+  .action((options: { provision?: boolean; json?: boolean }) => {
+    const args: string[] = [];
+    if (options.provision) args.push('--provision');
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/harness/verify-harness-completeness.cjs', args);
+  });
+
+harness
+  .command('provision')
+  .description('Provision or verify per-runtime harness injection surfaces')
+  .option('--repair', 'Write/repair surfaces')
+  .option('--json', 'JSON output')
+  .action((options: { repair?: boolean; json?: boolean }) => {
+    const args: string[] = [options.repair ? '--repair' : '--verify'];
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/harness/provision-injection-surfaces.cjs', args);
+  });
+
+harness
+  .command('memory')
+  .description('Dynamic memory layer (retain/recall/pin/status) — not MEMORY.md')
+  .allowUnknownOption(true)
+  .argument('<action>', 'retain | recall | pin | status')
+  .argument('[args...]', 'passthrough flags for memory-layer.cjs')
+  .action((action: string, args: string[] = []) => {
+    process.exitCode = runHarnessScript('scripts/harness/memory-layer.cjs', [action, ...args]);
+  });
+
+harness
+  .command('berm')
+  .description('Permission berm evaluate (outside the model)')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: evaluate)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['evaluate'];
+    process.exitCode = runHarnessScript('scripts/harness/permission-berm.cjs', passthrough);
+  });
+
+harness
+  .command('trajectory')
+  .description('Trajectory retention start/append/end/list')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: list)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['list'];
+    process.exitCode = runHarnessScript('scripts/harness/trajectory.cjs', passthrough);
+  });
+
+harness
+  .command('supply-chain')
+  .description('MCP/skills supply-chain attestation inventory')
+  .option('--json', 'JSON output')
+  .option('--strict', 'Fail closed on missing entrypoints')
+  .action((options: { json?: boolean; strict?: boolean }) => {
+    const args: string[] = [];
+    if (options.json) args.push('--json');
+    if (options.strict) args.push('--strict');
+    process.exitCode = runHarnessScript('scripts/harness/mcp-supply-chain-attest.cjs', args);
+  });
+
+harness
+  .command('host-compaction')
+  .description('Record/import host (Cursor/Claude) compaction boundaries')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: list)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['list'];
+    process.exitCode = runHarnessScript('scripts/harness/host-compaction-adapter.cjs', passthrough);
+  });
+
+harness
+  .command('sandbox')
+  .description('Materialize macOS seatbelt profile for D11 untrusted execution')
+  .option('--out <path>', 'Output .sb path')
+  .action((options: { out?: string }) => {
+    const args = options.out ? ['--out', options.out] : [];
+    process.exitCode = runHarnessScript('scripts/harness/materialize-sandbox-profile.cjs', args);
   });
 
 program

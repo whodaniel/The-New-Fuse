@@ -64,12 +64,19 @@ permissions · lifecycle hooks · provider abstraction · progressive disclosure
 ## 5. Commands
 
 ```bash
-# Inventory + layer status
-node scripts/harness/verify-harness-completeness.cjs
+# Inventory + layer status (also runs inside `tnf onboard`)
+tnf harness completeness --provision
+# or: node scripts/harness/verify-harness-completeness.cjs --provision
 
-# Prove / repair host injection surfaces (Cursor rule, CLAUDE.md, OpenClaw pointers)
-node scripts/harness/provision-injection-surfaces.cjs --repair
-node scripts/harness/provision-injection-surfaces.cjs --verify
+# Per-runtime injection surfaces
+tnf harness provision --repair
+
+# Working operators
+tnf harness memory recall --query "redis" --limit 5
+tnf harness berm evaluate --action-class git_push --json
+tnf harness supply-chain
+tnf harness host-compaction record --host cursor
+tnf harness cycle --skip-live-loop
 
 # Global host frontload pointers (Codex/Gemini/Hermes/…)
 node scripts/install-agent-frontload.cjs --verify

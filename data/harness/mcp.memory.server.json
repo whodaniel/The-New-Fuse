@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "tnf-memory-layer": {
+      "command": "node",
+      "args": ["scripts/harness/memory-mcp-server.cjs"],
+      "description": "TNF dynamic retain/recall memory layer (≠ docs/core/MEMORY.md)"
+    }
+  }
+}

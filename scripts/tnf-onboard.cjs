@@ -1245,6 +1245,48 @@ async function main() {
   printHeader('Frontload Checklist');
   FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
+  printHeader('Harness Completeness (UNU)');
+  try {
+    const harnessArgs = parsed.repair
+      ? ['scripts/harness/verify-harness-completeness.cjs', '--provision']
+      : ['scripts/harness/verify-harness-completeness.cjs'];
+    const harness = require('node:child_process').spawnSync(process.execPath, harnessArgs, {
+      cwd: ROOT,
+      encoding: 'utf8',
+      env: process.env,
+    });
+    const lines = String(harness.stdout || '')
+      .trim()
+      .split('\n')
+      .filter(Boolean);
+    const summary = lines.slice(-3);
+    if (harness.status === 0) {
+      console.log('- status: PASS');
+    } else {
+      console.log('- status: FAIL (run: node scripts/harness/verify-harness-completeness.cjs --provision)');
+    }
+    summary.forEach((line) => console.log(`  ${line}`));
+    // Light dynamic recall for continuity — not Stage A dump
+    const recall = require('node:child_process').spawnSync(
+      process.execPath,
+      ['scripts/harness/memory-layer.cjs', 'recall', '--query', 'harness redis relay', '--limit', '3', '--json'],
+      { cwd: ROOT, encoding: 'utf8' }
+    );
+    if (recall.status === 0) {
+      try {
+        const parsedRecall = JSON.parse(recall.stdout || '{}');
+        const n = Array.isArray(parsedRecall.matches) ? parsedRecall.matches.length : 0;
+        console.log(`- dynamic memory recall hits: ${n} (scripts/harness/memory-layer.cjs)`);
+      } catch {
+        console.log('- dynamic memory recall: unavailable');
+      }
+    } else {
+      console.log('- dynamic memory recall: skipped');
+    }
+  } catch (err) {
+    console.log(`- WARN harness completeness check failed: ${err.message}`);
+  }
+
   printHeader('Frontload Token Budget');
   const { budget: resolvedBudget, provenance: budgetProvenance } = resolveAdaptiveBudget(parsed.frontloadBudgetWords);
   printFrontloadBudget(resolvedBudget, budgetProvenance);

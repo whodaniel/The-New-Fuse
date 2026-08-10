@@ -58,9 +58,10 @@
         "docs/core/FRONTLOAD_MANIFEST.md",
         "scripts/tnf-onboard.cjs",
         "scripts/harness/compaction-record.cjs",
+        "scripts/harness/host-compaction-adapter.cjs",
         "data/harness/compaction/"
       ],
-      "gap": "Host LLM compaction remains vendor-owned; TNF retains compaction *records* and Stage A–C progressive disclosure."
+      "gap": "Host LLM compaction remains vendor-owned; TNF host-compaction-adapter records control-plane boundaries and optional transcript imports."
     },
     "sandbox_isolation": {
       "status": "partial",
@@ -107,10 +108,13 @@
       "status": "partial",
       "evidence": [
         "data/mcp_config.json",
+        "data/harness/mcp.memory.server.json",
         "scripts/install-agent-frontload.cjs",
-        "scripts/harness/verify-harness-completeness.cjs"
+        "scripts/harness/verify-harness-completeness.cjs",
+        "scripts/harness/mcp-supply-chain-attest.cjs",
+        "scripts/harness/memory-mcp-server.cjs"
       ],
-      "gap": "Skills/MCP inventory exists; continuous supply-chain attestation for every MCP skill remains soft."
+      "gap": "Soft inventory + entrypoint hashes land; cryptographic publisher attestation for every third-party skill remains soft."
     }
   },
   "injectionSurfaces": {

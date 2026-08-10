@@ -145,6 +145,7 @@ data/harness/memory/entries.jsonl
 data/harness/trajectories/
 data/harness/compaction/
 data/harness/receipts/
+data/harness/host-compaction/
 # Exception: this one is POLICY, not runtime state. It is the authorization
 # registry for scripts/protocols/agent-self-edit-gate.cjs, and the gate cannot
 # run without it — which is exactly why that gate sat at zero call sites. The

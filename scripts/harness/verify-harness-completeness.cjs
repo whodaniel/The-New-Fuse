@@ -137,6 +137,41 @@ function main() {
     detail: mem.code === 0 ? 'ok' : mem.stderr.trim() || 'failed',
   });
 
+  const supply = runNode('scripts/harness/mcp-supply-chain-attest.cjs', ['--json']);
+  let supplyOk = supply.code === 0;
+  try {
+    const parsed = JSON.parse(supply.stdout || '{}');
+    supplyOk = supply.code === 0 && parsed.ok === true;
+  } catch {
+    supplyOk = false;
+  }
+  checks.push({
+    name: 'supply_chain.inventory',
+    ok: supplyOk,
+    detail: supplyOk ? 'soft inventory ok' : 'supply-chain attest failed',
+  });
+
+  const hostCmpOk =
+    exists('scripts/harness/host-compaction-adapter.cjs') &&
+    exists('scripts/harness/compaction-record.cjs');
+  checks.push({
+    name: 'host_compaction.adapter',
+    ok: hostCmpOk,
+    detail: hostCmpOk
+      ? 'adapter present (tnf harness host-compaction record|import)'
+      : 'host-compaction adapter missing',
+  });
+
+  for (const rel of [
+    'scripts/harness/tnf-harness.cjs',
+    'scripts/harness/mcp-supply-chain-attest.cjs',
+    'scripts/harness/host-compaction-adapter.cjs',
+    'scripts/harness/memory-mcp-server.cjs',
+    'data/harness/mcp.memory.server.json',
+  ]) {
+    checks.push({ name: `file.${rel}`, ok: exists(rel), detail: exists(rel) ? 'present' : 'missing' });
+  }
+
   const failed = checks.filter((c) => !c.ok);
   const ok = failed.length === 0;
   const out = { ok, failed: failed.length, checks };
