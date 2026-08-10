@@ -1,9 +1,11 @@
 # 📍 LIVING_STATE.md - Active Session Synchronization
 
-`[CLASS:PRIME] [STATUS:DRIFT]`
+`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+**Current Directive:** Free more disk on Data volume (outside TNF logs)
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
@@ -827,17 +829,37 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-10T21:07:52.200Z handoff `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3` head `0fc4222745f6` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T21:20:01.230Z handoff `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` head
+  `f3eb9042fe26` project `TNF-SESSION` — Free more disk on Data volume (outside
+  TNF logs)
 
-- 2026-08-10T21:07:35.859Z handoff `3f572a34-336c-442e-aa1e-2a0f30798f42` head `0fc4222745f6` project `TNF-SESSION` — Confirm redis-cli PONG stays green after reboot via redis-service.sh start
+- 2026-08-10T21:10:46.868Z handoff `4051ab6a-9617-48fc-b4b0-930f31a5cb4f` head
+  `f3eb9042fe26` project `TNF-SESSION` — Reattach Redis under launchd without
+  thrash
 
-- 2026-08-10T21:03:58.885Z handoff `3a0b827b-9f85-4209-86ef-e9aa71672e51` head `150b7689d699` project `TNF-SESSION` — Keep factory:supercycle:loop and qa-swarm service healthy
+- 2026-08-10T21:07:52.200Z handoff `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3` head
+  `0fc4222745f6` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-08-10T20:52:20.637Z handoff `54a20982-af9e-488b-baea-42ca7750ee76` head `d7534a29fb32` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T21:07:35.859Z handoff `3f572a34-336c-442e-aa1e-2a0f30798f42` head
+  `0fc4222745f6` project `TNF-SESSION` — Confirm redis-cli PONG stays green
+  after reboot via redis-service.sh start
 
-- 2026-08-10T20:50:32.231Z handoff `596e6df4-c70c-4912-9c02-3c4cc3e9a808` head `ff305ac4139e` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T21:03:58.885Z handoff `3a0b827b-9f85-4209-86ef-e9aa71672e51` head
+  `150b7689d699` project `TNF-SESSION` — Keep factory:supercycle:loop and
+  qa-swarm service healthy
 
-- 2026-08-10T20:50:15.043Z handoff `282f06a9-f4a6-4028-a73a-4deaad1e66c7` head `73d653091e75` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-10T20:52:20.637Z handoff `54a20982-af9e-488b-baea-42ca7750ee76` head
+  `d7534a29fb32` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:50:32.231Z handoff `596e6df4-c70c-4912-9c02-3c4cc3e9a808` head
+  `ff305ac4139e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:50:15.043Z handoff `282f06a9-f4a6-4028-a73a-4deaad1e66c7` head
+  `73d653091e75` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-10T20:44:07.601Z handoff `05697d16-0f12-4299-b792-a95a6e03702c` head
   `511254383b6f` project `TNF-SESSION` — Operator may paste EXA_API_KEY /

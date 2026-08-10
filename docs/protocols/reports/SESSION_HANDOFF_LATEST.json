@@ -1,17 +1,17 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3",
-  "created_at": "2026-08-10T21:07:52.138Z",
+  "handoff_id": "b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863",
+  "created_at": "2026-08-10T21:20:01.155Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "0fc4222745f6b0d7f408b2a72bd6ba62eec8f3c6",
+  "head_sha": "f3eb9042fe269ef7ace928a72747f94549e7060c",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Fixed OpenAPI schema type issue in agent.ts. Full type-check passes."
+    "Launched full-blast control-plane: full-auto provision, QA swarm continuous testing, supercycle flywheel, scout assimilation, 8+ sim-bidders, A2A bridge",
+    "Hardened Redis launchd (removed StartInterval thrash; gentler kickstart)",
+    "Harness cycle: living state OK; autonomy health critical mainly due to disk 99%"
   ],
   "changed_paths": [
     ".agent/ROLE_DEFINITIONS.md",
@@ -4929,6 +4929,8 @@
     "packages/tnf-cli/src/commands/staffing/index.ts",
     "packages/tnf-cli/src/utils/full-auto-cycle.test.ts",
     "packages/tnf-cli/src/utils/full-auto-cycle.ts",
+    "packages/tnf-cli/src/utils/run-command.test.ts",
+    "packages/tnf-cli/src/utils/run-command.ts",
     "packages/types/package.json",
     "packages/types/src/agent.ts",
     "packages/ui-consolidated/jest.setup.js",
@@ -4957,6 +4959,7 @@
     "scripts/qa/start-local-relay.sh",
     "scripts/runtime/local-subdirector-runtime.cjs",
     "scripts/runtime/redis-local-bootstrap.sh",
+    "scripts/runtime/redis-service.sh",
     "scripts/runtime/relay-service.sh",
     "scripts/runtime/tnf-launchd-smart-start.sh",
     "scripts/runtime/tnf-local-launchd-services.sh",
@@ -4971,15 +4974,12 @@
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Local only; no remote push"
   },
   "continuation": {
-    "owner": "tnf-cli-agent",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
-    "priority": "medium",
+    "owner": "cursor-operator",
+    "targets": ["orchestrator", "qa-swarm", "supercycle"],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
       "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
@@ -4987,12 +4987,11 @@
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Free more disk on Data volume (outside TNF logs)",
+    "Keep redis launchd ownership durable after reboot",
+    "Drive agent registration so harness agents.registration passes"
   ],
   "artifacts": {
-    "commits": [
-      "0fc4222745f6b0d7f408b2a72bd6ba62eec8f3c6"
-    ]
+    "commits": ["f3eb9042fe269ef7ace928a72747f94549e7060c"]
   }
 }

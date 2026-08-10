@@ -208,8 +208,9 @@ launchd_install() {
   <true/>
   <key>KeepAlive</key>
   <true/>
-  <key>StartInterval</key>
-  <integer>300</integer>
+  <!-- StartInterval + KeepAlive causes launchd respawn thrash / stuck xpcproxy. -->
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
   <key>StandardOutPath</key>
   <string>${LOG_DIR}/redis-stdout.log</string>
   <key>StandardErrorPath</key>
@@ -231,7 +232,15 @@ launchd_start() {
   stop_orphan_for_launchd
   quarantine_legacy_rdb
   launchctl enable "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 || true
-  launchctl kickstart -k "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 || true
+  # Prefer non-killing kickstart. -k sends SIGTERM to a healthy instance and
+  # under KeepAlive can leave launchd stuck in xpcproxy during respawn storms.
+  if [[ -n "$(launchd_pid)" ]] && redis_ping; then
+    echo "Redis already launchd-owned and reachable; skip kickstart"
+  else
+    launchctl kickstart "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 \
+      || launchctl kickstart -k "$LAUNCH_DOMAIN/$LABEL" >/dev/null 2>&1 \
+      || true
+  fi
   for _ in $(seq 1 30); do
     sleep 1
     if redis_ping && [[ -n "$(launchd_pid)" ]]; then

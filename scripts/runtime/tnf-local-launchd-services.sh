@@ -182,8 +182,6 @@ write_redis_plist() {
   <true/>
   <key>ThrottleInterval</key>
   <integer>10</integer>
-  <key>StartInterval</key>
-  <integer>300</integer>
   <key>StandardOutPath</key>
   <string>${TNF_HOME}/logs/redis-stdout.log</string>
   <key>StandardErrorPath</key>
@@ -394,6 +392,10 @@ start() {
   install
   start_label com.thenewfuse.redis-tnf-bus
   wait_tcp 127.0.0.1 6379 30 || echo "WARN: Redis did not accept TCP on 127.0.0.1:6379 yet" >&2
+  # launchd can stall in xpcproxy on some macOS hosts; fall back to nohup.
+  if ! redis-cli -h 127.0.0.1 ping >/dev/null 2>&1; then
+    bash "$ROOT_DIR/scripts/runtime/redis-service.sh" start || true
+  fi
   start_label com.thenewfuse.relay
   wait_tcp 127.0.0.1 3007 30 || echo "WARN: relay did not accept TCP on 127.0.0.1:3007 yet" >&2
   start_label com.thenewfuse.api-local
@@ -415,6 +417,9 @@ restart() {
   done
   start_label com.thenewfuse.redis-tnf-bus
   wait_tcp 127.0.0.1 6379 30 || echo "WARN: Redis did not accept TCP on 127.0.0.1:6379 yet" >&2
+  if ! redis-cli -h 127.0.0.1 ping >/dev/null 2>&1; then
+    bash "$ROOT_DIR/scripts/runtime/redis-service.sh" start || true
+  fi
   start_label com.thenewfuse.relay
   wait_tcp 127.0.0.1 3007 30 || echo "WARN: relay did not accept TCP on 127.0.0.1:3007 yet" >&2
   start_label com.thenewfuse.api-local

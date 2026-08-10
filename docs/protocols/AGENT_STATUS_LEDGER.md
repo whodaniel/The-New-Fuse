@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T21:07:52.138Z** — handoff `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3` (`0fc4222745f6`).
+Updated: **2026-08-10T21:20:01.155Z** — handoff
+`b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` (`f3eb9042fe26`).
 `05697d16-0f12-4299-b792-a95a6e03702c` (`511254383b6f`).
 `14c1d312-923b-4bb7-86d4-e8ab95ed5133` (`97ae46efb551`). Node modules rebuilt,
 API healthy, relay operational. `8066f785-ec83-43da-8c0e-ab9eec2ad5d4`
@@ -167,10 +168,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                         |
+| -------- | -------------------------------------------------------------- |
+| **P0**   | Free more disk on Data volume (outside TNF logs)               |
+| **P0**   | Keep redis launchd ownership durable after reboot              |
+| **P0**   | Drive agent registration so harness agents.registration passes |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -650,14 +652,26 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (05697d16-0f12-4299-b792-a95a6e03702c) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (282f06a9-f4a6-4028-a73a-4deaad1e66c7) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(282f06a9-f4a6-4028-a73a-4deaad1e66c7) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (596e6df4-c70c-4912-9c02-3c4cc3e9a808) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(596e6df4-c70c-4912-9c02-3c4cc3e9a808) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (54a20982-af9e-488b-baea-42ca7750ee76) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(54a20982-af9e-488b-baea-42ca7750ee76) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (3a0b827b-9f85-4209-86ef-e9aa71672e51) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3a0b827b-9f85-4209-86ef-e9aa71672e51) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (3f572a34-336c-442e-aa1e-2a0f30798f42) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3f572a34-336c-442e-aa1e-2a0f30798f42) | ✅ HANDOFF_READY |
 
-| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST (81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3) | ✅ HANDOFF_READY |
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4051ab6a-9617-48fc-b4b0-930f31a5cb4f) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863) | ✅ HANDOFF_READY |

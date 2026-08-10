@@ -1,19 +1,26 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-10T21:07:52.138Z`  
-Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
+Created At: `2026-08-10T21:20:01.155Z`  
+Handoff ID: `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `fix/honest-failure-reporting`
-- Head SHA: `0fc4222745f6b0d7f408b2a72bd6ba62eec8f3c6`
+- Head SHA: `f3eb9042fe269ef7ace928a72747f94549e7060c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Fixed OpenAPI schema type issue in agent.ts. Full type-check passes.
+
+- Launched full-blast control-plane: full-auto provision, QA swarm continuous
+  testing, supercycle flywheel, scout assimilation, 8+ sim-bidders, A2A bridge
+- Hardened Redis launchd (removed StartInterval thrash; gentler kickstart)
+- Harness cycle: living state OK; autonomy health critical mainly due to disk
+  99%
 
 ## Changed Paths
+
 - .agent/ROLE_DEFINITIONS.md
 - .agent/SKILL_MANIFEST.md
 - .agent/agents/ab-testing-optimizer-agent.md
@@ -239,7 +246,7 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - .agent/skill-bank/snapshots/codex/jules-cli-agent-a748a3f3/SKILL.md
 - .agent/skill-bank/snapshots/project-agent/loki-mode-d8a3e2e6/references/deployment.md
 - .agent/skill-bank/snapshots/project-agent/screenshot-081935a6/scripts/macos_window_info.swift
-- .agent/test-reports/_rolling-summary.json
+- .agent/test-reports/\_rolling-summary.json
 - .env.example
 - .fuse/monitoring/logs/validation-report.json
 - .fuse/monitoring/metrics/current.json
@@ -646,128 +653,128 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/scripts/package-extension.cjs
 - archive/apps/gemini-bridge-extension/scripts/system-qa-loop.cjs
 - archive/apps/gemini-bridge-extension/scripts/yolo-tester.cjs
-- archive/apps/gemini-bridge-extension/src/__tests__/setup.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/agents/BaseAgent.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/agents/interfaces/IAgent.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/auth/unstoppable-domains-auth.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/ai-studio-background.js
-- archive/apps/gemini-bridge-extension/src/_legacy/background/auth-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/background.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/browser-control-handler.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/connection-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/message-handler.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/screen-recording.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/background/web3-interceptor.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/config.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/ai-element-detector.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/browser-control-handlers.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/chat-integration-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/element-selector.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/content/selection-mode.css
-- archive/apps/gemini-bridge-extension/src/_legacy/content/syntax-highlighter.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/debug/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/debug/logs-viewer.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/debug/settings-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/debug/websocket-tester.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/federation/FederationManager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/federation/RedisBridge.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/federation/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/floatingPanel/EnhancedFloatingPanel.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/floatingPanel/floatingPanel.html
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon-error.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon-success.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon-warning.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon128-connected.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon128-error.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon128-partial.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon128.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon16-connected.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon16-error.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon16-partial.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon16.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon48-connected.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon48-error.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon48-partial.png
-- archive/apps/gemini-bridge-extension/src/_legacy/icons/icon48.png
-- archive/apps/gemini-bridge-extension/src/_legacy/manifest.json
-- archive/apps/gemini-bridge-extension/src/_legacy/options/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/options/index.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/options/options.css
-- archive/apps/gemini-bridge-extension/src/_legacy/options/options.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/Popup.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/popup.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/tabs/AgentsTab.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/tabs/ConnectTab.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/tabs/NetworkTab.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup-new/tabs/SettingsTab.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/UnstoppableLogin.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/UnstoppableLogin.tsx
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/accessibility.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/ai-studio-tab.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/ai-studio/popup.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/ai-studio/popup.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/ai-studio/popup.js
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/chat-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/components/AgentNetworkPanel.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/components/Popup.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/connection-status.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/element-selection-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/header-connection.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/index.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup-fallback.js
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup-neon.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup-neon.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup-neon.js
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup.html
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/popup.js
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/server-management.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/styles/tnf-relay.css
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/tab-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/theme-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/popup/theme.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/processors/BaseProcessor.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/services/ApiClient.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/shared-protocol.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/styles/content.css
-- archive/apps/gemini-bridge-extension/src/_legacy/styles/element-selection.css
-- archive/apps/gemini-bridge-extension/src/_legacy/styles/theme.css
-- archive/apps/gemini-bridge-extension/src/_legacy/styles/theme.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/test/__mocks__/fileMock.js
-- archive/apps/gemini-bridge-extension/src/_legacy/test/setup.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/tests/setup.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/tests/utils/ai-models.test.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/tests/utils/code-snippets.test.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/tests/utils/file-transfer.test.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/tests/utils/websocket-manager.test.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/types.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/types/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/ai-models.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/code-snippets.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/compression.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/enhanced-theme.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/file-transfer.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/floating-panel-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/index.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/logger.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/messageHandler.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/performance-optimizer.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/rate-limiter.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/security.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/settings-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/store.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/tnf-message-formatter.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/web3-url-resolver.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/websocket-manager.ts
-- archive/apps/gemini-bridge-extension/src/_legacy/utils/websocket.ts
+- archive/apps/gemini-bridge-extension/src/**tests**/setup.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/agents/BaseAgent.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/agents/interfaces/IAgent.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/auth/unstoppable-domains-auth.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/ai-studio-background.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/auth-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/background.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/browser-control-handler.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/connection-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/message-handler.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/screen-recording.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/background/web3-interceptor.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/config.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/ai-element-detector.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/browser-control-handlers.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/chat-integration-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/element-selector.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/selection-mode.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/content/syntax-highlighter.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/debug/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/debug/logs-viewer.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/debug/settings-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/debug/websocket-tester.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/federation/FederationManager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/federation/RedisBridge.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/federation/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/floatingPanel/EnhancedFloatingPanel.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/floatingPanel/floatingPanel.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon-error.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon-success.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon-warning.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon128-connected.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon128-error.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon128-partial.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon128.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon16-connected.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon16-error.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon16-partial.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon16.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon48-connected.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon48-error.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon48-partial.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/icons/icon48.png
+- archive/apps/gemini-bridge-extension/src/\_legacy/manifest.json
+- archive/apps/gemini-bridge-extension/src/\_legacy/options/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/options/index.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/options/options.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/options/options.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/Popup.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/popup.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/tabs/AgentsTab.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/tabs/ConnectTab.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/tabs/NetworkTab.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup-new/tabs/SettingsTab.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/UnstoppableLogin.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/UnstoppableLogin.tsx
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/accessibility.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/ai-studio-tab.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/ai-studio/popup.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/ai-studio/popup.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/ai-studio/popup.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/chat-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/components/AgentNetworkPanel.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/components/Popup.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/connection-status.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/element-selection-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/header-connection.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/index.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup-fallback.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup-neon.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup-neon.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup-neon.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup.html
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/popup.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/server-management.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/styles/tnf-relay.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/tab-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/theme-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/popup/theme.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/processors/BaseProcessor.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/services/ApiClient.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/shared-protocol.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/styles/content.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/styles/element-selection.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/styles/theme.css
+- archive/apps/gemini-bridge-extension/src/\_legacy/styles/theme.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/test/**mocks**/fileMock.js
+- archive/apps/gemini-bridge-extension/src/\_legacy/test/setup.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/tests/setup.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/tests/utils/ai-models.test.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/tests/utils/code-snippets.test.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/tests/utils/file-transfer.test.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/tests/utils/websocket-manager.test.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/types.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/types/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/ai-models.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/code-snippets.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/compression.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/enhanced-theme.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/file-transfer.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/floating-panel-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/index.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/logger.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/messageHandler.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/performance-optimizer.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/rate-limiter.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/security.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/settings-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/store.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/tnf-message-formatter.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/web3-url-resolver.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/websocket-manager.ts
+- archive/apps/gemini-bridge-extension/src/\_legacy/utils/websocket.ts
 - archive/apps/gemini-bridge-extension/src/v5/background/index.ts
 - archive/apps/gemini-bridge-extension/src/v5/content/adapters/SimpleChatBridge.ts
-- archive/apps/gemini-bridge-extension/src/v5/content/adapters/_archive/SiteConfigs.ts
-- archive/apps/gemini-bridge-extension/src/v5/content/adapters/_archive/UniversalChatDetector.ts
+- archive/apps/gemini-bridge-extension/src/v5/content/adapters/\_archive/SiteConfigs.ts
+- archive/apps/gemini-bridge-extension/src/v5/content/adapters/\_archive/UniversalChatDetector.ts
 - archive/apps/gemini-bridge-extension/src/v5/content/ai-studio/ai-studio.js
 - archive/apps/gemini-bridge-extension/src/v5/content/ai-studio/iframe-bridge.js
 - archive/apps/gemini-bridge-extension/src/v5/content/ai-studio/notebooklm.js
@@ -802,8 +809,8 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/src/v5/utils/NativeMessaging.ts
 - archive/apps/gemini-bridge-extension/src/v6/background/index.ts
 - archive/apps/gemini-bridge-extension/src/v6/content/adapters/SimpleChatBridge.ts
-- archive/apps/gemini-bridge-extension/src/v6/content/adapters/_archive/SiteConfigs.ts
-- archive/apps/gemini-bridge-extension/src/v6/content/adapters/_archive/UniversalChatDetector.ts
+- archive/apps/gemini-bridge-extension/src/v6/content/adapters/\_archive/SiteConfigs.ts
+- archive/apps/gemini-bridge-extension/src/v6/content/adapters/\_archive/UniversalChatDetector.ts
 - archive/apps/gemini-bridge-extension/src/v6/content/ai-studio/ai-studio.js
 - archive/apps/gemini-bridge-extension/src/v6/content/ai-studio/iframe-bridge.js
 - archive/apps/gemini-bridge-extension/src/v6/content/ai-studio/notebooklm.js
@@ -836,12 +843,12 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/src/v6/services/ai-studio/storage-service.js
 - archive/apps/gemini-bridge-extension/src/v6/services/ai-studio/subscription-service.js
 - archive/apps/gemini-bridge-extension/src/v6/services/ai-studio/youtube-service.js
-- archive/apps/gemini-bridge-extension/src/v6/shared/__tests__/utils.test.ts
+- archive/apps/gemini-bridge-extension/src/v6/shared/**tests**/utils.test.ts
 - archive/apps/gemini-bridge-extension/src/v6/shared/constants.ts
 - archive/apps/gemini-bridge-extension/src/v6/shared/types.ts
 - archive/apps/gemini-bridge-extension/src/v6/shared/utils.ts
 - archive/apps/gemini-bridge-extension/src/v6/utils/NativeMessaging.ts
-- archive/apps/gemini-bridge-extension/src/v6/utils/__tests__/NativeMessaging.test.ts
+- archive/apps/gemini-bridge-extension/src/v6/utils/**tests**/NativeMessaging.test.ts
 - archive/apps/gemini-bridge-extension/store-submission/README.md
 - archive/apps/gemini-bridge-extension/store-submission/assets/marquee.png
 - archive/apps/gemini-bridge-extension/store-submission/assets/screenshot1_services_1280x800.png
@@ -871,10 +878,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -1058,148 +1069,290 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/00220c6382cf717a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/00a410469bc8d8e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/00d26b61e9720c33_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/030150ac1f134627_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/0887b3436a435942_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/0ff5a6abbb347ca6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/105d1691b68cdaaf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/17cbcf55e72c4401_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/18febbd173050518_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/1e1217762ab596dc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/1e5483e0fab8dcce_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/24fc4cf91ce4733a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2745579a8906c0ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2756c63daf881952_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2ceb47a32f340f65_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/2d929ea9eb3fd6e4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/33996348fd91d6cd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3498013b10b89b4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/36e6f4319db88ba8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3ac6beec71e469b3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3b90f2f077c8dc94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/467ef13182b5e056_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/4eb5e21b25f8a3a5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/510888e48d505416_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/5402b517f92edac4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/54f04bd4a18c0ff3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/5805e490bd690ee4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/5b6ff95121e8b16e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/60b03c3ac0f09236_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/654ea2a45ec0c72b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/6763a8517bd68aac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/6f969ba15f180f3b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/79e886eafae90b78_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/7d2348ab3cf298c3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/7ed2f96465df68c3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/7f10a7570afa5719_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/7f31af8128ecb92a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/8355e1fa308feb26_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/8b38262706f2a0dd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/8b4c0c44ffa85ff1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/8ec5606d6499da7d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/91ae405af2aba084_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/93c053e14079df93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/99ac48f488cb015c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/99ba5e00decb4d5d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/9af7fbf81a3f75de_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/9b20e7ed2f1aa3fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a00d9ae2d118c14b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a2623844a6171faf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a2f8861ab39336ad_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a415dc38a067117e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/aef4609946541d7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/b7395d98da2b186a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/bd278399da7d5c80_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/c711c3076a0e540c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/c770c8bfe354d3a9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/c78aa36f69fa102d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/c803bc4c82c9195f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/cb02e403a27c57da_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/cfa21341b02d0e66_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/cfcc5e7a2effd845_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d0074d836f32f0aa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d4851a5d3a4f7eae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/dbacfca4d6d6887b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/dbdb7e4222976b20_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/dfac9758e9b5c790_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e438df803b93fc41_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/f37e61d4b21192ce_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/f3e5462a222856bb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/fad11bc7350f6512_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/fc6eeff35dcb3092_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/fdc8117cd88264d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/00220c6382cf717a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/00a410469bc8d8e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/00d26b61e9720c33_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/030150ac1f134627_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/0887b3436a435942_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/0ff5a6abbb347ca6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/105d1691b68cdaaf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/17cbcf55e72c4401_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/18febbd173050518_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/1e1217762ab596dc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/1e5483e0fab8dcce_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/24fc4cf91ce4733a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2745579a8906c0ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2756c63daf881952_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2ceb47a32f340f65_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/2d929ea9eb3fd6e4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/33996348fd91d6cd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3498013b10b89b4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/36e6f4319db88ba8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3ac6beec71e469b3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3b90f2f077c8dc94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/467ef13182b5e056_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/4eb5e21b25f8a3a5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/510888e48d505416_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/5402b517f92edac4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/54f04bd4a18c0ff3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/5805e490bd690ee4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/5b6ff95121e8b16e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/60b03c3ac0f09236_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/654ea2a45ec0c72b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/6763a8517bd68aac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/6f969ba15f180f3b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/79e886eafae90b78_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/7d2348ab3cf298c3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/7ed2f96465df68c3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/7f10a7570afa5719_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/7f31af8128ecb92a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/8355e1fa308feb26_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/8b38262706f2a0dd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/8b4c0c44ffa85ff1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/8ec5606d6499da7d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/91ae405af2aba084_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/93c053e14079df93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/99ac48f488cb015c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/99ba5e00decb4d5d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/9af7fbf81a3f75de_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/9b20e7ed2f1aa3fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a00d9ae2d118c14b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a2623844a6171faf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a2f8861ab39336ad_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a415dc38a067117e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/aef4609946541d7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/b7395d98da2b186a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/bd278399da7d5c80_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/c711c3076a0e540c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/c770c8bfe354d3a9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/c78aa36f69fa102d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/c803bc4c82c9195f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/cb02e403a27c57da_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/cfa21341b02d0e66_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/cfcc5e7a2effd845_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d0074d836f32f0aa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d4851a5d3a4f7eae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/dbacfca4d6d6887b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/dbdb7e4222976b20_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/dfac9758e9b5c790_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e438df803b93fc41_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/f37e61d4b21192ce_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/f3e5462a222856bb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/fad11bc7350f6512_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/fc6eeff35dcb3092_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/fdc8117cd88264d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/DIPS
@@ -1213,28 +1366,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/GPUCache/index
@@ -1247,79 +1420,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sessions/Session_13416314102540889
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sessions/Tabs_13416314261064180
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -1361,8 +1592,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-54-58-979Z/pw-profile/ShaderCache/data_3
@@ -1378,10 +1611,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -1557,140 +1794,274 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/030150ac1f134627_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/08061728052e65c4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/08f346e892c9fe6e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/0ff5a6abbb347ca6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/105d1691b68cdaaf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/129e997673952428_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/1441c7d1fde2b985_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/1521fc720afdd407_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/18febbd173050518_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2208bae3a105464d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2745579a8906c0ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/28fb1d0cc7fe4eda_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2b537b4e213ab01d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2c44d3b228271d97_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/2d9e7674e3a44af9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3498013b10b89b4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/399b8698c554446e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3b90f2f077c8dc94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/41b122aa13f12eee_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/42c9d7554f8db50d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/437fc630d525f2f3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/47c55d987b707161_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/4d8c94c16439ed2c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/5402b517f92edac4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/5b6ff95121e8b16e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/60b03c3ac0f09236_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/6657a4ee63935c76_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/6763a8517bd68aac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/67a3595828f97d6a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/6b62238afce132b9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/76ccf1d4050a32fc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/7a5c683ddcace39a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/7f31af8128ecb92a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/894057d504c2678f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/89b8754a902d45d0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/8b4c0c44ffa85ff1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/91ae405af2aba084_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/926397fd58a6f5ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/93c053e14079df93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/99ac48f488cb015c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/a364fb04611e073a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/acdd509168bdf5aa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/aded7fa285a79095_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/ae39f02e342ccd04_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/aef4609946541d7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/afe273edd303ccf2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b089be2f7fb9525a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/b9423974b7bf2fb1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/bbbc0509a2e15bbc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/bd278399da7d5c80_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/bebd4487a1162e90_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/c711c3076a0e540c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/c713d5633d21e7f2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/c78aa36f69fa102d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/ca99f11c24c07e76_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/e87f8c6b2b991d98_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/ee5a8643878b9214_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f14ec17b6c5f60b7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f64cb017b3745c9b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f6685a8f6aed33db_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f72ad4b6fae50e7d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/f78387c7166a09fe_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/fc6eeff35dcb3092_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/feb4ab831075105d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/030150ac1f134627_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/08061728052e65c4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/08f346e892c9fe6e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/0ff5a6abbb347ca6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/105d1691b68cdaaf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/129e997673952428_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/1441c7d1fde2b985_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/1521fc720afdd407_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/18febbd173050518_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2208bae3a105464d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2745579a8906c0ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/28fb1d0cc7fe4eda_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2b537b4e213ab01d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2c44d3b228271d97_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/2d9e7674e3a44af9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3498013b10b89b4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/399b8698c554446e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3b90f2f077c8dc94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/41b122aa13f12eee_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/42c9d7554f8db50d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/437fc630d525f2f3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/47c55d987b707161_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/4d8c94c16439ed2c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/5402b517f92edac4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/5b6ff95121e8b16e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/60b03c3ac0f09236_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/6657a4ee63935c76_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/6763a8517bd68aac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/67a3595828f97d6a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/6b62238afce132b9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/76ccf1d4050a32fc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/7a5c683ddcace39a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/7f31af8128ecb92a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/894057d504c2678f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/89b8754a902d45d0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/8b4c0c44ffa85ff1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/91ae405af2aba084_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/926397fd58a6f5ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/93c053e14079df93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/99ac48f488cb015c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/a364fb04611e073a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/acdd509168bdf5aa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/aded7fa285a79095_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/ae39f02e342ccd04_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/aef4609946541d7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/afe273edd303ccf2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b089be2f7fb9525a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/b9423974b7bf2fb1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/bbbc0509a2e15bbc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/bd278399da7d5c80_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/bebd4487a1162e90_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/c711c3076a0e540c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/c713d5633d21e7f2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/c78aa36f69fa102d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/ca99f11c24c07e76_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/e87f8c6b2b991d98_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/ee5a8643878b9214_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f14ec17b6c5f60b7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f64cb017b3745c9b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f6685a8f6aed33db_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f72ad4b6fae50e7d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/f78387c7166a09fe_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/fc6eeff35dcb3092_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/feb4ab831075105d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/DIPS
@@ -1705,28 +2076,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/GPUCache/index
@@ -1739,79 +2130,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sessions/Session_13416314383983973
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sessions/Tabs_13416314547602728
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -1853,8 +2302,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T09-59-40-328Z/pw-profile/ShaderCache/data_3
@@ -1870,10 +2321,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -2044,147 +2499,288 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/06f9c6d07f959042_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/0d31b487592ce533_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/10061e55b68d776f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/128306592bb58948_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/12cea76dc463c376_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/16d39c75f5fc5e99_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/1abe98e3726d5aa6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/1c560b2f64e717ee_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/1dce617e3eb82823_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/1fde8b1b26e69ffa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/275872845292eba5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/289ecabf1d23d3af_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/340aa8524bc41be4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/340bc35b1b078427_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/368a11f6be659a04_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3dc815f3db78d24f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/44310a2918076be5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/462c198ef69341c8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/496d5906d3781f24_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4a63f20e16e540d6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4b96f69195311c73_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4d47148d698ebbf3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4e3eed81024d8dfc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4ee9eab527f10c0e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/4f90cd2f2103c184_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/5f468bd647f2922a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/5fe5445e4b12f130_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/64368a3a55a4e21e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/651dc804e8ff39d1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/71541fd82f2fe698_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/728c4d29d1c35bdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/733c059b75bed060_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/755adf98447995da_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7aec8d7edf16803a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7c1cdea79415eeae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7c3406cdb66bbe22_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7e7b2ee0348e23c9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/7fc17ae5a31983e5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/892142edcbe55c2f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/8e1cfa532259f01f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/9399bb7542270845_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/967b182da370b164_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/979cefd05074d016_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/9a7df3bf1fcbf411_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a03cc92dcb74cc1f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a58208262386ba6d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a80880001be65c5e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/a9c34d613b1b6a13_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b215fb28b68f0201_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b3334f369b44c43b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/b9b7bea390762d03_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/bad50088d4409c98_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/bbe38a2f2777f64a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/bda8f5be29f6fd33_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/bfbc3d14c47e0658_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/c62f9cfc4bffc7fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/c82ae330f0c9b84d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/cc56197935025a3b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/cee3ac2b3d8af5d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d05fe522a515c9b3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d0b8b7f878e4aa05_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d38133ed2874a6e7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/d869c2c807c5eaf3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e274ed7bfe233319_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/eaa642f551cb4048_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/f10c5edcc1833d41_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/f171688531b20af9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/f2533e02348d0ab3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/fdc8117cd88264d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/fe8e718a3ceec210_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/ff8093ee4627b08d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/06f9c6d07f959042_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/0d31b487592ce533_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/10061e55b68d776f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/128306592bb58948_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/12cea76dc463c376_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/16d39c75f5fc5e99_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/1abe98e3726d5aa6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/1c560b2f64e717ee_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/1dce617e3eb82823_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/1fde8b1b26e69ffa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/275872845292eba5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/289ecabf1d23d3af_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/340aa8524bc41be4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/340bc35b1b078427_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/368a11f6be659a04_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3dc815f3db78d24f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/44310a2918076be5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/462c198ef69341c8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/496d5906d3781f24_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4a63f20e16e540d6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4b96f69195311c73_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4d47148d698ebbf3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4e3eed81024d8dfc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4ee9eab527f10c0e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/4f90cd2f2103c184_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/5f468bd647f2922a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/5fe5445e4b12f130_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/64368a3a55a4e21e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/651dc804e8ff39d1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/71541fd82f2fe698_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/728c4d29d1c35bdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/733c059b75bed060_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/755adf98447995da_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7aec8d7edf16803a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7c1cdea79415eeae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7c3406cdb66bbe22_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7e7b2ee0348e23c9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/7fc17ae5a31983e5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/892142edcbe55c2f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/8e1cfa532259f01f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/9399bb7542270845_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/967b182da370b164_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/979cefd05074d016_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/9a7df3bf1fcbf411_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a03cc92dcb74cc1f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a58208262386ba6d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a80880001be65c5e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/a9c34d613b1b6a13_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b215fb28b68f0201_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b3334f369b44c43b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/b9b7bea390762d03_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/bad50088d4409c98_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/bbe38a2f2777f64a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/bda8f5be29f6fd33_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/bfbc3d14c47e0658_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/c62f9cfc4bffc7fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/c82ae330f0c9b84d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/cc56197935025a3b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/cee3ac2b3d8af5d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d05fe522a515c9b3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d0b8b7f878e4aa05_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d38133ed2874a6e7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/d869c2c807c5eaf3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e274ed7bfe233319_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/eaa642f551cb4048_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/f10c5edcc1833d41_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/f171688531b20af9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/f2533e02348d0ab3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/fdc8117cd88264d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/fe8e718a3ceec210_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/ff8093ee4627b08d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/DIPS
@@ -2198,28 +2794,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/GPUCache/index
@@ -2232,79 +2848,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sessions/Session_13416314607359659
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sessions/Tabs_13416314793605520
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -2341,8 +3015,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-03-23-741Z/pw-profile/ShaderCache/data_3
@@ -2358,10 +3034,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -2533,147 +3213,288 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/030150ac1f134627_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/0d2174f3f6f598fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/0ff5a6abbb347ca6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/105d1691b68cdaaf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/10e45e34c3adaf73_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/18febbd173050518_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/19a7548eb67a8dfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/1d5c9bd0e6576fcc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/20698c32ce916380_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/234007c4204dd40d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/2745579a8906c0ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/2abb0fd74379aa98_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/2d3e9f3036e787ed_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/32f2824e5904552d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/33b18231c5b4df71_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3498013b10b89b4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3b90f2f077c8dc94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/437fc630d525f2f3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/44c26b48efa3bf93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/4d28fbe840a38045_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/4f242a6cf22a0630_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5402b517f92edac4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/56049350e3e42a91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5b6ff95121e8b16e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5c173e45ddafd29d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5cfcc4bac1c43b56_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5eb2e2ef9678be8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/60b03c3ac0f09236_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/61e1ac68c8cd1ed7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/665fc750cffa8d2d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/6763a8517bd68aac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/69c3d40c6e346ff0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/6da87cc0dbd221b5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/72b993383e15480a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/746c81708a5b834c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/766b336652256818_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/79876ed13cf4d2db_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7afdabb14fa97f92_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7c8baacb8b1159c7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7c930d9a6606220d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7f2839e0877df902_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/7f31af8128ecb92a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8293befe0dfc3b53_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8435dfa8c402fcf4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8b4c0c44ffa85ff1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8bd1d3440b7a9547_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8cb9d2cbbf9fa46d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8e6661e2dbb6161e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/8f43c7d8c0130ad1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/91ae405af2aba084_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/93c053e14079df93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/93cc4d5ca18dd3d6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/97fcce771ce45ba6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/99ac48f488cb015c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/a3079b5a9ded449c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/a9708c08f0a3d49e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/aef4609946541d7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/bd278399da7d5c80_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/bebd6025b55f1471_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/c526abfad427ec04_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/c711c3076a0e540c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/c78aa36f69fa102d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/c79d34f0938f6807_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/ce89e86c000bbd61_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/da87da366e721879_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/dcfd9702c2c03bff_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/ebc4f8a698ad77e5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fa184796f3e2cb25_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fbd86c71cea82fd5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fc148ed54f426e39_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fc6eeff35dcb3092_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/030150ac1f134627_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/0d2174f3f6f598fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/0ff5a6abbb347ca6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/105d1691b68cdaaf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/10e45e34c3adaf73_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/18febbd173050518_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/19a7548eb67a8dfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/1d5c9bd0e6576fcc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/20698c32ce916380_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/234007c4204dd40d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/2745579a8906c0ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/2abb0fd74379aa98_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/2d3e9f3036e787ed_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/32f2824e5904552d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/33b18231c5b4df71_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3498013b10b89b4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3b90f2f077c8dc94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/437fc630d525f2f3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/44c26b48efa3bf93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/4d28fbe840a38045_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/4f242a6cf22a0630_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5402b517f92edac4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/56049350e3e42a91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5b6ff95121e8b16e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5c173e45ddafd29d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5cfcc4bac1c43b56_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5eb2e2ef9678be8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/60b03c3ac0f09236_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/61e1ac68c8cd1ed7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/665fc750cffa8d2d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/6763a8517bd68aac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/69c3d40c6e346ff0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/6da87cc0dbd221b5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/72b993383e15480a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/746c81708a5b834c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/766b336652256818_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/79876ed13cf4d2db_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7afdabb14fa97f92_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7c8baacb8b1159c7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7c930d9a6606220d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7f2839e0877df902_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/7f31af8128ecb92a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8293befe0dfc3b53_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8435dfa8c402fcf4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8b4c0c44ffa85ff1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8bd1d3440b7a9547_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8cb9d2cbbf9fa46d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8e6661e2dbb6161e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/8f43c7d8c0130ad1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/91ae405af2aba084_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/93c053e14079df93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/93cc4d5ca18dd3d6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/97fcce771ce45ba6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/99ac48f488cb015c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/a3079b5a9ded449c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/a9708c08f0a3d49e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/aef4609946541d7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/bd278399da7d5c80_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/bebd6025b55f1471_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/c526abfad427ec04_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/c711c3076a0e540c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/c78aa36f69fa102d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/c79d34f0938f6807_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/ce89e86c000bbd61_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/da87da366e721879_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/dcfd9702c2c03bff_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/ebc4f8a698ad77e5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fa184796f3e2cb25_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fbd86c71cea82fd5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fc148ed54f426e39_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fc6eeff35dcb3092_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/DIPS
@@ -2687,28 +3508,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/GPUCache/index
@@ -2721,79 +3562,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sessions/Session_13416314824701439
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sessions/Tabs_13416315027092579
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -2835,8 +3734,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-07-00-974Z/pw-profile/ShaderCache/data_3
@@ -2852,10 +3753,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -3027,147 +3932,288 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/030150ac1f134627_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/0f4cfd2fc74044d5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/0ff5a6abbb347ca6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/105d1691b68cdaaf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/1429e7e2d24636b2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/18febbd173050518_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/1aaad2f201332bb9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/1abe2c7642c8843e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/208061effcb601d6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/2745579a8906c0ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/2c885ab118a9bc01_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/308b45491c37d043_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/31efbc352436c666_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3498013b10b89b4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/37046e304b1c0bee_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/39d56ced569e5951_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3b90f2f077c8dc94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3c38fdeafe8b0d5d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/45acc8a3b2b20e70_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/4f9f92ed809e25bb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/52ad64980a00c60e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/53624154257d9edd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/5402b517f92edac4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/57da20c6d6b6b6d5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/5a672728c4444f9a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/5b6ff95121e8b16e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/60b03c3ac0f09236_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/619e95ff4a7ca46d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/65764bd07d1e73cb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/6763a8517bd68aac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/7194261dace8ab62_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/755ff9555f2c1ce1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/7f31af8128ecb92a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/8b4c0c44ffa85ff1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/8dd2124590024dfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/8fd45399c5f1f04d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/91ae405af2aba084_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/93c053e14079df93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/96864e7f5f66e1e3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/99ac48f488cb015c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/9ab67c85e5269c5d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/9b349dd515e3e17e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a22decaea9065139_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a2ffa36a3237b347_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a337af6123ceab2e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/a7310396b7696106_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/ae4491bca14ce311_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/ae7d6e245efe219d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/aef4609946541d7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/b3e07472cf17f59f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/ba4b10a3fb015be5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/bd278399da7d5c80_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/c539b2541d660836_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/c711c3076a0e540c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/c78aa36f69fa102d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d0261e22d38a3955_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d4c36239c3a4db62_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d5eeb8bbfe540ad5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e15a563a18ff052b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e64168080bcf0a7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e6580828555c720e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/eb660108adf2bd9a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f0cdd39e6272663b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f0f82cae10a8ccb1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f101e135dbd71a15_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f3c21cfc0618389b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f55e06125626c974_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/f9cd6226f68e143a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/fc6eeff35dcb3092_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/fdc8117cd88264d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/fdd089e22c8e549b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/030150ac1f134627_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/0f4cfd2fc74044d5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/0ff5a6abbb347ca6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/105d1691b68cdaaf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/1429e7e2d24636b2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/18febbd173050518_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/1aaad2f201332bb9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/1abe2c7642c8843e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/208061effcb601d6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/2745579a8906c0ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/2c885ab118a9bc01_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/308b45491c37d043_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/31efbc352436c666_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3498013b10b89b4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/37046e304b1c0bee_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/39d56ced569e5951_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3b90f2f077c8dc94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3c38fdeafe8b0d5d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/45acc8a3b2b20e70_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/4f9f92ed809e25bb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/52ad64980a00c60e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/53624154257d9edd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/5402b517f92edac4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/57da20c6d6b6b6d5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/5a672728c4444f9a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/5b6ff95121e8b16e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/60b03c3ac0f09236_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/619e95ff4a7ca46d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/65764bd07d1e73cb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/6763a8517bd68aac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/7194261dace8ab62_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/755ff9555f2c1ce1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/7f31af8128ecb92a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/8b4c0c44ffa85ff1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/8dd2124590024dfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/8fd45399c5f1f04d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/91ae405af2aba084_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/93c053e14079df93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/96864e7f5f66e1e3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/99ac48f488cb015c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/9ab67c85e5269c5d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/9b349dd515e3e17e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a22decaea9065139_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a2ffa36a3237b347_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a337af6123ceab2e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/a7310396b7696106_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/ae4491bca14ce311_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/ae7d6e245efe219d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/aef4609946541d7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/b3e07472cf17f59f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/ba4b10a3fb015be5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/bd278399da7d5c80_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/c539b2541d660836_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/c711c3076a0e540c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/c78aa36f69fa102d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d0261e22d38a3955_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d4c36239c3a4db62_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d5eeb8bbfe540ad5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e15a563a18ff052b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e64168080bcf0a7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e6580828555c720e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/eb660108adf2bd9a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f0cdd39e6272663b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f0f82cae10a8ccb1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f101e135dbd71a15_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f3c21cfc0618389b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f55e06125626c974_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/f9cd6226f68e143a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/fc6eeff35dcb3092_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/fdc8117cd88264d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/fdd089e22c8e549b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/DIPS
@@ -3181,28 +4227,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/GPUCache/index
@@ -3215,80 +4281,138 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sessions/Session_13416315277814357
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sessions/Session_13416315290910689
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sessions/Tabs_13416315262921099
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -3330,8 +4454,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-11-11-450Z/pw-profile/ShaderCache/index
@@ -3346,10 +4472,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -3521,147 +4651,288 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/0183f9fa4f252e05_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/0b565b10355eeed7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/0eb86d9b668c07ff_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/125ef1db0ebd40d0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/128306592bb58948_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/139643bc5d2a32fe_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/1582df01dc651a39_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/16d39c75f5fc5e99_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/19ae36065fbdd59e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/1c560b2f64e717ee_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/25fe06d29c9d8437_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/2854070f71b5da8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/2f8d1306b7ad4836_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/33b75b856286b6c5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/344eaae152ac16d4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/368a11f6be659a04_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3c32c694513c7424_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/3f6d910a2a85de8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/42b7974cea59854a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/462c198ef69341c8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/4b96f69195311c73_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/4d47148d698ebbf3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/520b71ec4ea80032_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/52c84dca01fdc88d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/54ecdbd81b4c283c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/5e1d76413b7db32e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/6290e3bf04302cdb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/63fc0f68e87886cd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/651dc804e8ff39d1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/66b27305f709067c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/6eb4a54e98748c2e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/7442fd1f63a8629a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/759001ede26a0bb7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/76f1bf2075197d94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/77d1d27e38e7948e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/7aec8d7edf16803a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/7c1c10a41fdadfeb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/7e7b2ee0348e23c9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/8130fb6e7a0313ba_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/8963ecce7810980c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/8e1cfa532259f01f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/935186c40d75c4f7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/972f78100f08e747_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/9756d2e6b75b6ae5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/97fc49977bc04daf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/9a5ca7e063a4d7bb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/aef202b766e57c0b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b2d408e81392b8ea_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/b5d3b95834baa69c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/bacefe57087975e3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/be8ff0eaeff528ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/bfbc3d14c47e0658_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c0bbcde2a2e16a53_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c43f4fc370899167_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c54101a75984f8b4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c82ae330f0c9b84d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/c91d75485473b82d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d3414075bd8f9bb8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/d869c2c807c5eaf3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/db8c8b22c50ceb05_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/dfcdb97efeb4db3f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e0c5e6578351f5ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e1d234763ffdefe9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e3b4182366e22302_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e464f932126e5296_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e55f6fe5171d668d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e7c3c14e24655b4f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/f7b1ef3ad10f98a2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/fdc8117cd88264d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/fe8e718a3ceec210_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/ff8093ee4627b08d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/0183f9fa4f252e05_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/0b565b10355eeed7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/0eb86d9b668c07ff_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/125ef1db0ebd40d0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/128306592bb58948_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/139643bc5d2a32fe_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/1582df01dc651a39_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/16d39c75f5fc5e99_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/19ae36065fbdd59e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/1c560b2f64e717ee_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/25fe06d29c9d8437_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/2854070f71b5da8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/2f8d1306b7ad4836_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/33b75b856286b6c5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/344eaae152ac16d4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/368a11f6be659a04_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3c32c694513c7424_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/3f6d910a2a85de8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/42b7974cea59854a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/462c198ef69341c8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/4b96f69195311c73_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/4d47148d698ebbf3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/520b71ec4ea80032_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/52c84dca01fdc88d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/54ecdbd81b4c283c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/5e1d76413b7db32e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/6290e3bf04302cdb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/63fc0f68e87886cd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/651dc804e8ff39d1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/66b27305f709067c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/6eb4a54e98748c2e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/7442fd1f63a8629a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/759001ede26a0bb7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/76f1bf2075197d94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/77d1d27e38e7948e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/7aec8d7edf16803a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/7c1c10a41fdadfeb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/7e7b2ee0348e23c9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/8130fb6e7a0313ba_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/8963ecce7810980c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/8e1cfa532259f01f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/935186c40d75c4f7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/972f78100f08e747_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/9756d2e6b75b6ae5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/97fc49977bc04daf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/9a5ca7e063a4d7bb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/aef202b766e57c0b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b2d408e81392b8ea_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/b5d3b95834baa69c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/bacefe57087975e3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/be8ff0eaeff528ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/bfbc3d14c47e0658_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c0bbcde2a2e16a53_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c43f4fc370899167_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c54101a75984f8b4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c82ae330f0c9b84d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/c91d75485473b82d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d3414075bd8f9bb8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/d869c2c807c5eaf3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/db8c8b22c50ceb05_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/dfcdb97efeb4db3f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e0c5e6578351f5ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e1d234763ffdefe9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e3b4182366e22302_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e464f932126e5296_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e55f6fe5171d668d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e7c3c14e24655b4f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/f7b1ef3ad10f98a2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/fdc8117cd88264d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/fe8e718a3ceec210_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/ff8093ee4627b08d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/DIPS
@@ -3675,28 +4946,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/GPUCache/index
@@ -3709,80 +5000,138 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sessions/Session_13416315583264623
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sessions/Session_13416315595055254
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sessions/Tabs_13416315570501845
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -3822,8 +5171,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/ShaderCache/data_3
@@ -3839,10 +5190,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -4013,147 +5368,288 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/030150ac1f134627_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/04655ad3e872ccb4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/09343f7806d30195_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/0b536d8f6e6854db_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/0ff5a6abbb347ca6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/105d1691b68cdaaf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/14888a60f9497ab5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/16d0dbbd95ceb439_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/17a27c194ca894e6_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/18febbd173050518_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/2389a20717339e2c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/254780c4da7f6444_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/2745579a8906c0ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/2affcfe7eedef184_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/31e67ff126e9b59b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/33148a04899d676f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3498013b10b89b4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3521f75dbaa4b0e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3b90f2f077c8dc94_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/431aaaf29c5c1d6e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/437fc630d525f2f3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/4855e39dc6ca1f05_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/485d04e47e50a3ac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/496246456434fffc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/5402b517f92edac4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/554ca5f6656d24f1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/5b6ff95121e8b16e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/60b03c3ac0f09236_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/6763a8517bd68aac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/6d6cd1ce7d1ab7be_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/6f10a895080103d3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/6f80ec9ec44e6d19_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/78f8df18c2553541_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/79a3f02dabe64406_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/7c3a68f857be236b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/7d9b926ca7a3b7ea_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/7f31af8128ecb92a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/8b4c0c44ffa85ff1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/91ae405af2aba084_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/91b2f25406c86cd2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/92130c51b32fd697_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/93c053e14079df93_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/97332bef1104a568_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/99ac48f488cb015c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/99fe129dcd5ddc1f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/9c8565af04072284_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/9daaa7d416aadac2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/a200dd2722d61362_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/ae8ef636bc02fc55_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/aef4609946541d7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/b7c84b5302aaff83_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/bbb08b499d05b93a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/bc56558c26626b9e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/bd278399da7d5c80_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/c711c3076a0e540c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/c78aa36f69fa102d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d32f8cef1afda354_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/d87b5447284b1c46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e3b4c593b8f80ff7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e74a46c0f658fe48_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e8882c1ba6d8b573_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/e93a8cfdc55cdec2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/ee1cb9dc79c1f442_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/ee4feb7bf7c9781f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/f0ddd59d1057667c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/f679d9f816b7513e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/f7b75fa17600e71b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fc6eeff35dcb3092_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fc7f338898a8aba9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fcc655511656ecc4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/fecec20acad31e7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/030150ac1f134627_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/04655ad3e872ccb4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/09343f7806d30195_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/0b536d8f6e6854db_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/0ff5a6abbb347ca6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/105d1691b68cdaaf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/14888a60f9497ab5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/16d0dbbd95ceb439_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/17a27c194ca894e6_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/18febbd173050518_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/2389a20717339e2c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/254780c4da7f6444_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/2745579a8906c0ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/2affcfe7eedef184_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/31e67ff126e9b59b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/33148a04899d676f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3498013b10b89b4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3521f75dbaa4b0e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3b90f2f077c8dc94_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/431aaaf29c5c1d6e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/437fc630d525f2f3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/4855e39dc6ca1f05_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/485d04e47e50a3ac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/496246456434fffc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/5402b517f92edac4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/554ca5f6656d24f1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/5b6ff95121e8b16e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/60b03c3ac0f09236_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/6763a8517bd68aac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/6d6cd1ce7d1ab7be_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/6f10a895080103d3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/6f80ec9ec44e6d19_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/78f8df18c2553541_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/79a3f02dabe64406_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/7c3a68f857be236b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/7d9b926ca7a3b7ea_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/7f31af8128ecb92a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/8b4c0c44ffa85ff1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/91ae405af2aba084_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/91b2f25406c86cd2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/92130c51b32fd697_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/93c053e14079df93_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/97332bef1104a568_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/99ac48f488cb015c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/99fe129dcd5ddc1f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/9c8565af04072284_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/9daaa7d416aadac2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/a200dd2722d61362_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/ae8ef636bc02fc55_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/aef4609946541d7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/b7c84b5302aaff83_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/bbb08b499d05b93a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/bc56558c26626b9e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/bd278399da7d5c80_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/c711c3076a0e540c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/c78aa36f69fa102d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d32f8cef1afda354_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/d87b5447284b1c46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e3b4c593b8f80ff7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e74a46c0f658fe48_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e8882c1ba6d8b573_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/e93a8cfdc55cdec2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/ee1cb9dc79c1f442_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/ee4feb7bf7c9781f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/f0ddd59d1057667c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/f679d9f816b7513e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/f7b75fa17600e71b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fc6eeff35dcb3092_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fc7f338898a8aba9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fcc655511656ecc4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/fecec20acad31e7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/DIPS
@@ -4167,28 +5663,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/GPUCache/index
@@ -4201,79 +5717,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sessions/Session_13416320316027088
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sessions/Tabs_13416320507183822
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -4314,8 +5888,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-38-32-175Z/pw-profile/ShaderCache/data_3
@@ -4331,10 +5907,14 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/events.json
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/failures.md
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/ChromeFeatureState
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Account Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Account Web Data-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Affiliation Database
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Affiliation Database-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Account
+  Web Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Account
+  Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Affiliation
+  Database
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Affiliation
+  Database-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/AutofillAiModelCache/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/AutofillAiModelCache/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/AutofillStrikeDatabase/LOCK
@@ -4505,148 +6085,290 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Cache/No_Vary_Search/snapshot.baf
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/ClientCertificates/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/ClientCertificates/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/0298a418029c3c54_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/031125537be6db81_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/05929001b08cc4c7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/09afd3205fd134b8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/09c1b6f2de59577c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/0e35a7d2833c20e5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/0ee42521291c282a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/121213b81f9b357a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/157ac5dc69855318_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/19e5697c105ea06a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/1b1d2504520f8b39_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/1b8cc00d5dfec28c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/1de240cb506c1674_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/20dc2bb907624ddb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2308f59a4bed7f3e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/236e32f9c7e16f16_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/26c8dde1ad990ab4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/275c98fb4da5d54c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2965712176e1d616_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/29aff4d54cf56c87_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2afcad71f61d70b2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2b2b817c3afa96e9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2bf93a7e9d89fd4b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2c9925f7201fcebc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/2e122d5f78632152_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3171b10627f55328_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/329d731e991c1d64_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/32aa858ad62355d5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3420aa3cbd81ebdc_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/34d9f634af62762a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/362049d38e9d5063_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/362bdd7d9f065203_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3b1b4216abb8c412_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3e9d16e95f7848a4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3ef5903480758dd4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/3f24318211dbad2b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/437fc630d525f2f3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/454a2d8cda370e8f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/4662432e63f0b1bf_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/467241f675151e88_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/46d3fa26de780397_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/47abafdcd9e83ae0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/4bbe51b1f53a0c1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/4ead6b1ec0f04fcb_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/4f5f1613b4bdb2d0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/501a1f5f89cf13e0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/5237a89425d841b9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/584df39078aac504_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/58c02eae2b47944c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/5b748e52488c9c67_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/5eb9cb53b9f5efa5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/5efc255a25137788_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/60a2923805ef9bfd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/639e6db2125fd541_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/659b4ce8cc0dbd36_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/66a60afcc0cf1365_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/6a9998ab2b55271b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/715d5e50f5b897af_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/72c7414daa9f46f4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/7397cbaaf384a426_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/75cac3d409a1a9fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/7c74a0e149af067d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/7f580107f7b51a35_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/800ac70e8d620451_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/821c5e2c872bb577_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/838d41db9f6fbc46_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/854b57996cf6ee45_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/872c4f6c04160f4a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/8b64dd9ad9c895b0_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/8c34dae5777013f4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/8d5e6f2231993faa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/91dcaaad13da2df1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/93e9d41cba2146e1_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/95293ac4ee984ad7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/99c04feff761f515_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/9c946c7cf1f8e6bd_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/9d7c118baeebdb7b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/9d85ee021fbdb67a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/a103a55b557a569e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/a22b9975f0535a11_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/a347131763700ada_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/a4f219208320171c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/a74d4bb5adb638da_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/aac0eff75afe338d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ac312c2bb0f1a00d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ac3f13f43f66dc7e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b0a7f2b754a87ce5_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b2a6951c79cf11ae_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b2e58eabc71b7b89_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b35fa5322fda533d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b3b04c8597ed6e5c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b44b2f009e4a2db3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b51f565c4a0bb71e_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b59657f7b40cb8f2_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b71d1f227276ea70_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/b85b088af6e66a19_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ba2f42a8541eb185_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/be462aa20bafe432_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/bf623ff6be0e35e3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/c0312200f24ada68_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/c56c9e335cb989ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/c6df161907008167_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/cb9a7327da51177c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/cc562ae5b393a891_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d381ad61279c28d7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d544bb49a2a34d84_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d6335c82d4ddbda9_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d688d0113da2c25b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d6ccfca136fffdc7_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d70c427fe34bb18d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/d722b231659c6114_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/db3576c38ff5ae74_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/dbd01e44a5c13792_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/defdbcbe4bceca1c_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/dfae0cd24e0ec2fa_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/dfd626e0682ed224_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e38cde50b7d6bde4_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e485987a4398e9ca_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e657f93ffc8b3413_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e67f798d5ab8abe3_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e711b6a45d11a7be_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e74e521df0c4247d_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e78346fbd3a57337_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e81299038a96c11f_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e85678dd73d82073_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e87c326c14a2d142_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/e98ef4e2e1192b62_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ea69743bba845ab8_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/eb9489b77272e579_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ef3f74fac5fc926a_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/ef4ab4cfe8963b78_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/f110ce41643dfcef_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/f234b5156eede2ac_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/f3018c4b8db01190_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/f32a45eb40192c91_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/fb8442ca43d2b59b_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/fc5f1f0806d9f176_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/fe7172ce48f4c847_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/js/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/wasm/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code Cache/wasm/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/0298a418029c3c54_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/031125537be6db81_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/05929001b08cc4c7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/09afd3205fd134b8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/09c1b6f2de59577c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/0e35a7d2833c20e5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/0ee42521291c282a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/121213b81f9b357a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/157ac5dc69855318_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/19e5697c105ea06a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/1b1d2504520f8b39_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/1b8cc00d5dfec28c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/1de240cb506c1674_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/20dc2bb907624ddb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2308f59a4bed7f3e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/236e32f9c7e16f16_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/26c8dde1ad990ab4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/275c98fb4da5d54c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2965712176e1d616_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/29aff4d54cf56c87_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2afcad71f61d70b2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2b2b817c3afa96e9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2bf93a7e9d89fd4b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2c9925f7201fcebc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/2e122d5f78632152_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3171b10627f55328_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/329d731e991c1d64_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/32aa858ad62355d5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3420aa3cbd81ebdc_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/34d9f634af62762a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/362049d38e9d5063_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/362bdd7d9f065203_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3b1b4216abb8c412_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3e9d16e95f7848a4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3ef5903480758dd4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/3f24318211dbad2b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/437fc630d525f2f3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/454a2d8cda370e8f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/4662432e63f0b1bf_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/467241f675151e88_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/46d3fa26de780397_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/47abafdcd9e83ae0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/4bbe51b1f53a0c1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/4ead6b1ec0f04fcb_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/4f5f1613b4bdb2d0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/501a1f5f89cf13e0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/5237a89425d841b9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/584df39078aac504_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/58c02eae2b47944c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/5b748e52488c9c67_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/5eb9cb53b9f5efa5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/5efc255a25137788_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/60a2923805ef9bfd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/639e6db2125fd541_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/659b4ce8cc0dbd36_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/66a60afcc0cf1365_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/6a9998ab2b55271b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/715d5e50f5b897af_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/72c7414daa9f46f4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/7397cbaaf384a426_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/75cac3d409a1a9fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/7c74a0e149af067d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/7f580107f7b51a35_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/800ac70e8d620451_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/821c5e2c872bb577_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/838d41db9f6fbc46_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/854b57996cf6ee45_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/872c4f6c04160f4a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/8b64dd9ad9c895b0_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/8c34dae5777013f4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/8d5e6f2231993faa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/91dcaaad13da2df1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/93e9d41cba2146e1_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/95293ac4ee984ad7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/99c04feff761f515_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/9c946c7cf1f8e6bd_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/9d7c118baeebdb7b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/9d85ee021fbdb67a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/a103a55b557a569e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/a22b9975f0535a11_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/a347131763700ada_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/a4f219208320171c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/a74d4bb5adb638da_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/aac0eff75afe338d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ac312c2bb0f1a00d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ac3f13f43f66dc7e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b0a7f2b754a87ce5_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b2a6951c79cf11ae_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b2e58eabc71b7b89_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b35fa5322fda533d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b3b04c8597ed6e5c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b44b2f009e4a2db3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b51f565c4a0bb71e_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b59657f7b40cb8f2_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b71d1f227276ea70_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/b85b088af6e66a19_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ba2f42a8541eb185_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/be462aa20bafe432_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/bf623ff6be0e35e3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/c0312200f24ada68_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/c56c9e335cb989ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/c6df161907008167_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/cb9a7327da51177c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/cc562ae5b393a891_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d381ad61279c28d7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d544bb49a2a34d84_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d6335c82d4ddbda9_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d688d0113da2c25b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d6ccfca136fffdc7_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d70c427fe34bb18d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/d722b231659c6114_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/db3576c38ff5ae74_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/dbd01e44a5c13792_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/defdbcbe4bceca1c_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/dfae0cd24e0ec2fa_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/dfd626e0682ed224_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e38cde50b7d6bde4_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e485987a4398e9ca_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e657f93ffc8b3413_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e67f798d5ab8abe3_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e711b6a45d11a7be_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e74e521df0c4247d_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e78346fbd3a57337_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e81299038a96c11f_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e85678dd73d82073_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e87c326c14a2d142_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/e98ef4e2e1192b62_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ea69743bba845ab8_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/eb9489b77272e579_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ef3f74fac5fc926a_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/ef4ab4cfe8963b78_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/f110ce41643dfcef_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/f234b5156eede2ac_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/f3018c4b8db01190_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/f32a45eb40192c91_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/fb8442ca43d2b59b_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/fc5f1f0806d9f176_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/fe7172ce48f4c847_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/js/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/wasm/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Code
+  Cache/wasm/index-dir/the-real-index
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Cookies
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Cookies-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/DIPS
@@ -4660,28 +6382,48 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/DawnWebGPUCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/DawnWebGPUCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/DawnWebGPUCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Rules/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Rules/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Rules/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Rules/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Scripts/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Scripts/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Scripts/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension Scripts/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension State/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension State/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension State/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension State/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Rules/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Rules/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Rules/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Rules/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Scripts/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Scripts/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Scripts/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  Scripts/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  State/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  State/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  State/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Extension
+  State/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Favicons
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Favicons-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature Engagement Tracker/AvailabilityDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature Engagement Tracker/EventDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM Store/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM Store/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM Store/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM Store/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature
+  Engagement Tracker/AvailabilityDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Feature
+  Engagement Tracker/EventDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM
+  Store/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM
+  Store/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM
+  Store/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GCM
+  Store/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GPUCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GPUCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/GPUCache/index
@@ -4694,79 +6436,137 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/IndexedDB/https_chat.qwen.ai_0.indexeddb.leveldb/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/000005.ldb
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login Data For Account
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login Data For Account-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local
+  Storage/leveldb/000005.ldb
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local
+  Storage/leveldb/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local
+  Storage/leveldb/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local
+  Storage/leveldb/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local
+  Storage/leveldb/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login
+  Data For Account
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login
+  Data For Account-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Login
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/MediaDeviceSalts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/MediaDeviceSalts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network Action Predictor
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network Action Predictor-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network Persistent State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network
+  Action Predictor
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network
+  Action Predictor-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Network
+  Persistent State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/PersistentOriginTrials/LOCK
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/PersistentOriginTrials/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform Notifications/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform Notifications/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform Notifications/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform Notifications/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform
+  Notifications/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform
+  Notifications/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform
+  Notifications/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Platform
+  Notifications/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Preferences
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/PreferredApps
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/README
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Reporting and NEL
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Reporting and NEL-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/SCT Auditing Pending Reports
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Safe Browsing Cookies
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Safe Browsing Cookies-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Secure Preferences
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SegmentInfoDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SignalDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SignalDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Reporting
+  and NEL
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Reporting
+  and NEL-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/SCT
+  Auditing Pending Reports
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Safe
+  Browsing Cookies
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Safe
+  Browsing Cookies-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Secure
+  Preferences
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SegmentInfoDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SignalDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Segmentation
+  Platform/SignalStorageConfigDB/LOG
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/ServerCertificate
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/ServerCertificate-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_0
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/ScriptCache/ba23d8ecda68de77_1
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/ScriptCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service Worker/ScriptCache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session Storage/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session Storage/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session Storage/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session Storage/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_0
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/ScriptCache/ba23d8ecda68de77_1
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/ScriptCache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Service
+  Worker/ScriptCache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session
+  Storage/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session
+  Storage/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session
+  Storage/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Session
+  Storage/MANIFEST-000001
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sessions/Session_13416320527298774
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sessions/Tabs_13416320727943048
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared Dictionary/cache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared Dictionary/db
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared Dictionary/db-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared
+  Dictionary/cache/index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared
+  Dictionary/cache/index-dir/the-real-index
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared
+  Dictionary/db
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shared
+  Dictionary/db-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/SharedStorage
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shortcuts
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Shortcuts-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site Characteristics Database/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site Characteristics Database/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site Characteristics Database/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site Characteristics Database/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync Data/LevelDB/CURRENT
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync Data/LevelDB/LOCK
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync Data/LevelDB/LOG
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync Data/LevelDB/MANIFEST-000001
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Top Sites
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Top Sites-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site
+  Characteristics Database/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site
+  Characteristics Database/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site
+  Characteristics Database/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Site
+  Characteristics Database/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync
+  Data/LevelDB/CURRENT
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync
+  Data/LevelDB/LOCK
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync
+  Data/LevelDB/LOG
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Sync
+  Data/LevelDB/MANIFEST-000001
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Top
+  Sites
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Top
+  Sites-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/TransportSecurity
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Trust Tokens
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Trust Tokens-journal
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Web Data
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Web Data-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Trust
+  Tokens
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Trust
+  Tokens-journal
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Web
+  Data
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Web
+  Data-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/WebStorage/QuotaManager
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/WebStorage/QuotaManager-journal
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/chrome_cart_db/LOCK
@@ -4808,8 +6608,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/GraphiteDawnCache/data_2
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/GraphiteDawnCache/data_3
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/GraphiteDawnCache/index
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Last Version
-- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Local State
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Last
+  Version
+- archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Local
+  State
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/ShaderCache/data_0
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/ShaderCache/data_1
 - archive/apps/gemini-bridge-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/ShaderCache/data_3
@@ -4881,10 +6683,10 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - docs/operations/audits/lanes/L5_AGENT_SWARM.md
 - docs/operations/audits/lanes/L6_PLATFORM_PRODUCT_UX.md
 - docs/operations/audits/lanes/L7_STATE_GROWTH_OPS.md
-- docs/operations/audits/lanes/_fleet_coordinator_2026-08-09/capability_mapping.json
-- docs/operations/audits/lanes/_fleet_coordinator_2026-08-09/cost_metrics.json
-- docs/operations/audits/lanes/_fleet_coordinator_2026-08-09/dispatch_log.json
-- docs/operations/audits/lanes/_fleet_coordinator_2026-08-09/model_resolution_report.json
+- docs/operations/audits/lanes/\_fleet_coordinator_2026-08-09/capability_mapping.json
+- docs/operations/audits/lanes/\_fleet_coordinator_2026-08-09/cost_metrics.json
+- docs/operations/audits/lanes/\_fleet_coordinator_2026-08-09/dispatch_log.json
+- docs/operations/audits/lanes/\_fleet_coordinator_2026-08-09/model_resolution_report.json
 - docs/operations/audits/tauri_live_test_summary.md
 - docs/operations/debug/tnf-native-host-relay-debug-execution.md
 - docs/operations/tnf-action-receipts.jsonl
@@ -4929,6 +6731,8 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - packages/tnf-cli/src/commands/staffing/index.ts
 - packages/tnf-cli/src/utils/full-auto-cycle.test.ts
 - packages/tnf-cli/src/utils/full-auto-cycle.ts
+- packages/tnf-cli/src/utils/run-command.test.ts
+- packages/tnf-cli/src/utils/run-command.ts
 - packages/types/package.json
 - packages/types/src/agent.ts
 - packages/ui-consolidated/jest.setup.js
@@ -4957,6 +6761,7 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - scripts/qa/start-local-relay.sh
 - scripts/runtime/local-subdirector-runtime.cjs
 - scripts/runtime/redis-local-bootstrap.sh
+- scripts/runtime/redis-service.sh
 - scripts/runtime/relay-service.sh
 - scripts/runtime/tnf-launchd-smart-start.sh
 - scripts/runtime/tnf-local-launchd-services.sh
@@ -4967,21 +6772,27 @@ Handoff ID: `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3`
 - test-ws.js
 
 ## Verification
+
 - privacy_guard: `na`
 - secret_sweep: `na`
 - docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `tnf-cli-agent`
-- Targets: `story-architect`, `librarian`
-- Priority: `medium`
+
+- Owner: `cursor-operator`
+- Targets: `orchestrator`, `qa-swarm`, `supercycle`
+- Priority: `high`
 
 ### Resume Checklist
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical work unit.
+
+- Free more disk on Data volume (outside TNF logs)
+- Keep redis launchd ownership durable after reboot
+- Drive agent registration so harness agents.registration passes
