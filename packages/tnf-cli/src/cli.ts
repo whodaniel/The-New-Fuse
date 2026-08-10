@@ -10225,29 +10225,45 @@ selfImprovement
           );
         }
         if (!options.skipMermaid) {
-          await runCommand('python3', [
-            'scripts/architecture/generate_tnf_master_mermaid.py',
-            '--repo',
-            repoRoot,
-            '--out',
-            SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
-          ]);
-          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+          try {
+            await runCommand('python3', [
+              'scripts/architecture/generate_tnf_master_mermaid.py',
+              '--repo',
+              repoRoot,
+              '--out',
+              SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
+            ]);
+            expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+          } catch (err: unknown) {
+            if (!options.softFailAudits) throw err;
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(
+              chalk.yellow(`[self-improvement] mermaid soft-failed: ${message}`)
+            );
+          }
         }
         if (!options.skipParity) {
           // Cross-agent parity: measure TNF against every reachable agent CLI
           // and refresh the gap ledger. Runs in-process (no subprocess) so the
           // audit sees the exact live command tree.
-          const parityService = new ParityService(repoRoot);
-          const ledger = await parityService.audit(program);
-          const written = parityService.write(ledger);
-          console.log(
-            chalk.dim(
-              `[parity] ${ledger.totals.agentsAvailable}/${ledger.totals.agentsTracked} agents reachable, ` +
-                `${ledger.totals.totalGaps} gaps, ${ledger.totals.meanCoverage}% mean coverage`
-            )
-          );
-          expectedArtifacts.push(written.json, written.markdown);
+          try {
+            const parityService = new ParityService(repoRoot);
+            const ledger = await parityService.audit(program);
+            const written = parityService.write(ledger);
+            console.log(
+              chalk.dim(
+                `[parity] ${ledger.totals.agentsAvailable}/${ledger.totals.agentsTracked} agents reachable, ` +
+                  `${ledger.totals.totalGaps} gaps, ${ledger.totals.meanCoverage}% mean coverage`
+              )
+            );
+            expectedArtifacts.push(written.json, written.markdown);
+          } catch (err: unknown) {
+            if (!options.softFailAudits) throw err;
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(
+              chalk.yellow(`[self-improvement] parity soft-failed: ${message}`)
+            );
+          }
         }
 
         const runNote =

@@ -108,7 +108,21 @@ launchd_pid() {
   launchctl list 2>/dev/null | awk -v label="$LABEL" '$3 == label && $1 != "-" { print $1; exit }'
 }
 
+stop_homebrew_redis_if_needed() {
+  # Homebrew's redis LaunchAgent fights TNF for 127.0.0.1:6379.
+  # Disable it before we claim the port so com.thenewfuse.redis-tnf-bus stays owner.
+  if launchctl print "${LAUNCH_DOMAIN}/homebrew.mxcl.redis" >/dev/null 2>&1; then
+    echo "Disabling conflicting Homebrew redis (homebrew.mxcl.redis) for TNF bus ownership."
+    launchctl bootout "${LAUNCH_DOMAIN}/homebrew.mxcl.redis" >/dev/null 2>&1 || true
+    launchctl disable "${LAUNCH_DOMAIN}/homebrew.mxcl.redis" >/dev/null 2>&1 || true
+  fi
+  if command -v brew >/dev/null 2>&1; then
+    brew services stop redis >/dev/null 2>&1 || true
+  fi
+}
+
 stop_orphan_for_launchd() {
+  stop_homebrew_redis_if_needed
   if ! redis_ping; then
     return 0
   fi

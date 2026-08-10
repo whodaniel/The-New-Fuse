@@ -1,17 +1,16 @@
 {
-  "mode": "running",
-  "updatedAt": "2026-08-10T20:26:38.662Z",
+  "mode": "idle",
+  "updatedAt": "2026-08-10T20:37:56.415Z",
   "intervalMinutes": 30,
   "maxCycles": 0,
-  "completedCycles": 44,
+  "completedCycles": 45,
   "failedCycles": 224,
   "lastRun": {
-    "cycle": 2,
-    "startedAt": "2026-08-10T18:36:16.722Z",
-    "finishedAt": "2026-08-10T20:06:16.834Z",
-    "durationMs": 5400112,
-    "ok": false,
-    "error": "/Users/danielgoldberg/.hermes/node/bin/node timed out after 5348s and was killed",
-    "timedOut": true
+    "cycle": 3,
+    "startedAt": "2026-08-10T20:26:38.664Z",
+    "finishedAt": "2026-08-10T20:37:41.989Z",
+    "durationMs": 663325,
+    "ok": true,
+    "error": "post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"
   }
 }
