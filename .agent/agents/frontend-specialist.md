@@ -1,15 +1,27 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: frontend-specialist
-description:
-  Senior Frontend Architect who builds maintainable React/Next.js systems with
-  performance-first mindset. Use when working on UI components, styling, state
-  management, responsive design, or frontend architecture. Triggers on keywords
-  like component, react, vue, ui, ux, css, tailwind, responsive.
-tools: Read, Grep, Glob, Bash, Edit, Write
+description: Senior Frontend Architect who builds maintainable React/Next.js systems
+  with performance-first mindset. Use when working on UI components, styling, state
+  management, responsive design, or frontend architecture. Triggers on keywords like
+  component, react, vue, ui, ux, css, tailwind, responsive.
+skills: clean-code, react-patterns, nextjs-best-practices, tailwind-patterns, frontend-design,
+  lint-and-validate
 model: inherit
-skills:
-  clean-code, react-patterns, nextjs-best-practices, tailwind-patterns,
-  frontend-design, lint-and-validate
 ---
 
 # Senior Frontend Architect

@@ -11,6 +11,12 @@ technical dossiers) by enforcing deterministic header tags and validation.
 
 Every governed markdown unit must include:
 
+> **Note:** A "governed markdown unit" is explicitly defined as the files in the
+> `STRICT_FILES` allowlist (e.g. this protocol, the vetting procedure, etc.) and
+> any markdown files inside the `docs/library/` directory, as enforced by
+> `validate-doc-tagging.cjs`. This does not apply to all markdown files in the
+> repository.
+
 - `[CLASS:<value>]`
 - `[STATUS:<value>]`
 - `[DOC_TYPE:<value>]`

@@ -116,12 +116,26 @@ function main(argv) {
 
   const missingByKey = new Map();
   let conformingTnf = 0;
+  // Schema conformance and assessed governance data are different questions.
+  // On 2026-08-09 all 136 cards were brought to 136/136 by writing one
+  // identical default into every `classification` — riskTier=low,
+  // complexity=medium, domain=[general], workflowStage=[execution] — and
+  // `categoriesNormalized=["Uncategorized"]`. The validator went green while
+  // `financial-manager-agent`, `contract-manager-agent`, and
+  // `tax-compliance-agent` all became "low risk". A green number over
+  // placeholder data is worse than a red one: 0/136 says "unclassified",
+  // 136/136-with-one-value says "all assessed, all safe".
+  //
+  // Defaults now carry `classification.assessment: "defaulted-unassessed"`.
+  // Conformance stays honest AND the assessment gap stays visible.
+  let unassessed = 0;
   const projected = [];
   const projectionFailures = [];
 
   for (const card of cards) {
     const miss = missingRequired(card, tnfSchema);
     if (miss.length === 0) conformingTnf += 1;
+    if ((card.classification || {}).assessment === 'defaulted-unassessed') unassessed += 1;
     for (const k of miss) missingByKey.set(k, (missingByKey.get(k) || 0) + 1);
 
     const a2a = project(card);
@@ -144,6 +158,13 @@ function main(argv) {
     console.log('[agent-card-projection]\n');
     console.log(`  cards                    : ${result.cards}`);
     console.log(`  conform to TNF schema    : ${conformingTnf}/${cards.length}`);
+    console.log(`  classification ASSESSED  : ${cards.length - unassessed}/${cards.length}`);
+    if (unassessed) {
+      console.log(
+        `    ^ ${unassessed} carry defaulted placeholders, not assessments.\n` +
+          '      Conformance is green; governance data is not yet real.'
+      );
+    }
     if (missingByKey.size) {
       console.log('\n  TNF required fields missing (count of cards):');
       for (const [k, n] of Object.entries(result.tnfMissingFields)) {

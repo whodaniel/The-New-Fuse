@@ -1,15 +1,35 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: codex-cli-agent
-displayName: Codex CLI Surface
-description:
-  Live CLI runtime surface for the Codex CLI, driven through its interactive TUI
-  slash-command interface.
-agentType: local
-tools: ['run_command', 'slash_command_dispatch', 'patch_apply']
-capabilities:
-  ['session_management', 'model_switching', 'code_review', 'patch_application']
-tags: ['cli', 'runtime-surface', 'local', 'codex']
+description: Live CLI runtime surface for the Codex CLI, driven through its interactive
+  TUI slash-command interface.
 version: 1.0.0
+tags:
+- cli
+- runtime-surface
+- local
+- codex
+capabilities:
+- session_management
+- model_switching
+- code_review
+- patch_application
+displayName: Codex CLI Surface
+agentType: local
 ---
 
 # Codex CLI Agent

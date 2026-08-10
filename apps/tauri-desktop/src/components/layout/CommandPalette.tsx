@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DESKTOP_ROUTES } from '../../config/routes';
 import { WEB_SURFACES, resolveWebAppBaseUrl, webSurfaceUrl } from '../../config/webSurfaces';
 import { openExternal } from '../../lib/openExternal';
+import { useTheme } from '../../providers/ThemeProvider';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useRoute } from '../route-context';
 
@@ -20,6 +21,7 @@ interface PaletteItem {
 const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose }) => {
   const { navigate } = useRoute();
   const { environment } = useSettingsStore();
+  const { resolvedTheme, setTheme, toggleTheme } = useTheme();
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,45 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose }) => {
       },
     }));
 
+    const themeActions: PaletteItem[] = [
+      {
+        id: 'theme-toggle',
+        label: `Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`,
+        hint: 'theme',
+        action: () => {
+          toggleTheme();
+          onClose();
+        },
+      },
+      {
+        id: 'theme-dark',
+        label: 'Use dark mode',
+        hint: 'theme dark',
+        action: () => {
+          setTheme('dark');
+          onClose();
+        },
+      },
+      {
+        id: 'theme-light',
+        label: 'Use light mode',
+        hint: 'theme light',
+        action: () => {
+          setTheme('light');
+          onClose();
+        },
+      },
+      {
+        id: 'theme-system',
+        label: 'Use system theme',
+        hint: 'theme system',
+        action: () => {
+          setTheme('system');
+          onClose();
+        },
+      },
+    ];
+
     const web: PaletteItem[] = WEB_SURFACES.filter((surface) => !surface.nativeRoute).map(
       (surface) => ({
         id: `web-${surface.id}`,
@@ -48,8 +89,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose }) => {
       })
     );
 
-    return [...native, ...web];
-  }, [navigate, onClose, webBase]);
+    return [...themeActions, ...native, ...web];
+  }, [navigate, onClose, resolvedTheme, setTheme, toggleTheme, webBase]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

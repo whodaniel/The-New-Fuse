@@ -1,45 +1,58 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: pi-coding-agent
-description:
-  'MUST BE USED for coding tasks requiring autonomous file editing, bash
-  execution, and multi-provider LLM inference. Pi is a TUI-based AI coding agent
-  with read/bash/edit/write tools, multi-provider support (Google, Anthropic,
-  OpenAI, OpenRouter, NVIDIA, DeepSeek, etc.), skills, extensions, sessions, and
-  plan-mode capabilities. Ingested from @earendil-works/pi-coding-agent v0.74.1.'
-tools: [Read, Write, Edit, Bash, Grep, Find, Ls]
+description: MUST BE USED for coding tasks requiring autonomous file editing, bash
+  execution, and multi-provider LLM inference. Pi is a TUI-based AI coding agent with
+  read/bash/edit/write tools, multi-provider support (Google, Anthropic, OpenAI, OpenRouter,
+  NVIDIA, DeepSeek, etc.), skills, extensions, sessions, and plan-mode capabilities.
+  Ingested from @earendil-works/pi-coding-agent v0.74.1.
+version: 0.74.1
+tags:
+- coding
+- autonomous
+- multi-provider
+- tui
+- skills
+- extensions
+- sessions
+- read-write-edit-bash
+- web
+capabilities:
+- autonomous-code-editing
+- multi-provider-llm
+- skill-loading
+- extension-system
+- session-persistence
+- plan-mode
+- thinking-levels
+- model-cycling
+- non-interactive-mode
+- session-export
+- context-file-discovery
+- prompt-templates
+- theming
+- web-browsing
+- web-search
+- url-scraping
 color: Cyan
 provider: multi
 config_dir: ~/.pi/agent
 cli: pi
-version: 0.74.1
 package: '@earendil-works/pi-coding-agent'
-capabilities:
-  - autonomous-code-editing
-  - multi-provider-llm
-  - skill-loading
-  - extension-system
-  - session-persistence
-  - plan-mode
-  - thinking-levels
-  - model-cycling
-  - non-interactive-mode
-  - session-export
-  - context-file-discovery
-  - prompt-templates
-  - theming
-  - web-browsing
-  - web-search
-  - url-scraping
-tags:
-  - coding
-  - autonomous
-  - multi-provider
-  - tui
-  - skills
-  - extensions
-  - sessions
-  - read-write-edit-bash
-  - web
 ---
 
 # Pi Coding Agent

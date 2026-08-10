@@ -4,7 +4,6 @@ import {
   DeleteIcon,
   EditIcon,
   SettingsIcon,
-  SystemIcon,
   providerDetails,
   useMultiAgentChat,
 } from './MultiAgentChatProvider.js';
@@ -21,7 +20,7 @@ const AgentTag: React.FC<{ agent: Agent; onEdit: () => void; onDelete: () => voi
       alt={agent.name}
       className="w-8 h-8 rounded-full object-cover"
     />
-    <span className="font-medium text-sm">{agent.name}</span>
+    <span className="font-bold text-sm">{agent.name}</span>
     <button onClick={onEdit} className="text-gray-500 hover:text-blue-500">
       <EditIcon />
     </button>
@@ -39,7 +38,7 @@ const MessageBubble: React.FC<{
   const agent = message.agentId ? agents.find((a) => a.id === message.agentId) : null;
   const Icon =
     message.sender === 'system'
-      ? SystemIcon
+      ? SettingsIcon
       : agent && providerDetails[agent.llm as keyof typeof providerDetails]
         ? providerDetails[agent.llm as keyof typeof providerDetails].icon
         : null;
@@ -66,10 +65,9 @@ const MessageBubble: React.FC<{
       )}
       {isSystem && (
         <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
-          <SystemIcon />
+          <SettingsIcon />
         </div>
       )}
-
       <div className={`p-4 rounded-xl shadow-md ${bubbleClass}`}>
         {!isYou && !isSystem && (
           <div className="flex items-center gap-2 mb-1">
@@ -309,7 +307,7 @@ const RulesModal: React.FC<{
               </option>
             ))}
           </select>
-          <span>➡️</span>
+          <span>{'\u27A1\uFE0F'}</span>
           <select
             name="target"
             required
@@ -341,7 +339,7 @@ const RulesModal: React.FC<{
                 className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-2 rounded"
               >
                 <span>
-                  {sourceAgent.name} ➡️ {targetAgent.name}
+                  {sourceAgent.name} {'\u27A1\uFE0F'} {targetAgent.name}
                 </span>
                 <button
                   onClick={() => deleteRule(rule.id)}
@@ -386,8 +384,8 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
     injectScenario,
     session,
     setMode,
+    startSession,
   } = useMultiAgentChat();
-
   const [inputValue, setInputValue] = useState('');
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [agentToEdit, setAgentToEdit] = useState<Agent | undefined>();
@@ -397,7 +395,8 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
   const [senderId, setSenderId] = useState('You');
   const [recipientAgentId, setRecipientAgentId] = useState('');
   const [conversationGoal, setConversationGoal] = useState('');
-  const [mode, setLocalMode] = useState<'manual' | 'auto'>('manual');
+  // Local mode mirrors the session mode; both are updated together.
+  const [mode, setLocalMode] = useState<'manual' | 'auto'>(session?.state.mode ?? 'manual');
   const [isAutomating, setIsAutomating] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -419,7 +418,6 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
 
     const messageText = inputValue;
     setInputValue('');
-
     await sendMessage(messageText, senderId, recipientAgentId);
     onMessageSent?.({
       id: `temp-${Date.now()}`,
@@ -525,7 +523,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
             disabled={isAutomating}
             className="flex-shrink-0 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400"
           >
-            🚀 Automate
+            {'\u{1F680}'} Automate
           </button>
           <button
             onClick={() => setIsRuleModalOpen(true)}
@@ -537,13 +535,26 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
             onClick={() => setIsScenarioModalOpen(true)}
             className="flex-shrink-0 px-3 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
           >
-            ✨ Inject
+            {'\u2728'} Inject
           </button>
           <input
             type="text"
             placeholder="Set Goal..."
             value={conversationGoal}
             onChange={(e) => setConversationGoal(e.target.value)}
+            onBlur={() => {
+              // Persist the goal to the session when the user leaves the field.
+              if (session) {
+                setMode(mode);
+                startSession(conversationGoal);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                startSession(conversationGoal);
+              }
+            }}
             className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
           />
           <div className="flex items-center gap-2">
@@ -629,7 +640,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatViewProps> = ({
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Type a message..."
               className="w-full p-2 pr-10 border bg-transparent border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-blue-500"
             />

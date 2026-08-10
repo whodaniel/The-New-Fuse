@@ -1,7 +1,23 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: contextual-model-implementation-architect
-description: Use proactively for contextual LLM model selection, routing policy design, benchmark interpretation, sentiment-aware model evaluation, and cost-moderated fallback architecture across TNF.
-tools: [Read, Grep, Glob, Edit, Write, Bash, WebSearch, WebFetch]
+description: Use proactively for contextual LLM model selection, routing policy design,
+  benchmark interpretation, sentiment-aware model evaluation, and cost-moderated fallback
+  architecture across TNF.
 color: Blue
 ---
 

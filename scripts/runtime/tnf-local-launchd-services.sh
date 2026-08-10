@@ -320,7 +320,9 @@ install() {
     "$ROOT_DIR/apps/api-gateway/dist/main.js" \
     "3001"
   # Note: do not wait on api-local :3002 — local API node_modules can be unhealthy
-  # while the gateway should still proxy WS to the launchd relay on :3007.  write_redis_plist
+  # while the gateway should still proxy WS to the launchd relay on :3007.
+  # smart-start defers when nested css-color dist or workspace links are missing.
+  write_redis_plist
   write_relay_plist
   write_voice_plist
   echo "installed local TNF launchd services"

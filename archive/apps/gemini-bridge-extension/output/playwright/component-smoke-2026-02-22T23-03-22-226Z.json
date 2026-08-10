@@ -1,0 +1,217 @@
+{
+  "startedAt": "2026-02-22T23:03:22.227Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "channelTests": {
+    "firstCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771801496485",
+        "name": "TNF-Autotest-1771801496482",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771801496485,
+        "createdBy": "browser-1771801405677-umkei6j2c",
+        "members": ["browser-1771801405677-umkei6j2c"]
+      }
+    },
+    "secondCreate": {
+      "success": false,
+      "alreadyExists": true,
+      "error": "Channel \"TNF-Autotest-1771801496482\" already exists",
+      "channel": {
+        "id": "channel-1771801496489",
+        "name": "TNF-Autotest-1771801496482",
+        "description": "",
+        "createdBy": "browser-1771801405677-umkei6j2c",
+        "createdAt": 1771801496489,
+        "isPrivate": false,
+        "members": ["browser-1771801405677-umkei6j2c"]
+      }
+    },
+    "channelCount": 6,
+    "duplicateNameKeys": []
+  },
+  "supportedSiteChecks": [
+    {
+      "url": "https://chatgpt.com",
+      "loaded": true,
+      "finalUrl": "https://chatgpt.com/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1835593
+    },
+    {
+      "url": "https://claude.ai",
+      "loaded": true,
+      "finalUrl": "https://claude.ai/login",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "show": {
+          "success": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        }
+      },
+      "panelVisible": false,
+      "tabId": 1835594
+    },
+    {
+      "url": "https://gemini.google.com",
+      "loaded": true,
+      "finalUrl": "https://gemini.google.com/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1835595
+    },
+    {
+      "url": "https://www.perplexity.ai",
+      "loaded": true,
+      "finalUrl": "https://www.perplexity.ai/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1835596
+    },
+    {
+      "url": "https://poe.com",
+      "loaded": true,
+      "finalUrl": "https://poe.com/login?redirect_url=%2F",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "show": {
+          "success": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        }
+      },
+      "panelVisible": false,
+      "tabId": 1835597
+    }
+  ],
+  "experimentalSiteChecks": [
+    {
+      "url": "https://copilot.microsoft.com",
+      "loaded": true,
+      "finalUrl": "https://copilot.microsoft.com/",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://pi.ai",
+      "loaded": true,
+      "finalUrl": "https://pi.ai/redirect",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://huggingface.co/chat",
+      "loaded": true,
+      "finalUrl": "https://huggingface.co/chat/",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    }
+  ],
+  "tabChannelIsolation": {
+    "firstTabId": 1835593,
+    "secondTabId": 1835595,
+    "firstChannelId": "fuse-activity-log",
+    "secondChannelId": "Red",
+    "firstSelectApplied": true,
+    "secondSelectApplied": true,
+    "persisted": {
+      "1835593": "fuse-activity-log",
+      "1835595": "Red"
+    }
+  },
+  "errors": [],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-22T23:05:48.702Z"
+}

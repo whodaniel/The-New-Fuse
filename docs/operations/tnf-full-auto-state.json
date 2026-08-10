@@ -1,16 +1,17 @@
 {
   "mode": "running",
-  "updatedAt": "2026-08-03T22:59:15.473Z",
-  "intervalMinutes": 60,
+  "updatedAt": "2026-08-10T20:26:38.662Z",
+  "intervalMinutes": 30,
   "maxCycles": 0,
-  "completedCycles": 14,
-  "failedCycles": 3,
+  "completedCycles": 44,
+  "failedCycles": 224,
   "lastRun": {
-    "cycle": 25,
-    "startedAt": "2026-08-03T22:44:45.717Z",
-    "finishedAt": "2026-08-03T22:59:15.470Z",
-    "durationMs": 869753,
+    "cycle": 2,
+    "startedAt": "2026-08-10T18:36:16.722Z",
+    "finishedAt": "2026-08-10T20:06:16.834Z",
+    "durationMs": 5400112,
     "ok": false,
-    "error": "/Users/danielgoldberg/.hermes/node/bin/node exited with code 1"
+    "error": "/Users/danielgoldberg/.hermes/node/bin/node timed out after 5348s and was killed",
+    "timedOut": true
   }
 }

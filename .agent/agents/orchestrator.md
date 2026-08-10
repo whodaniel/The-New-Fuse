@@ -1,15 +1,27 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: orchestrator
-description:
-  Multi-agent coordination and task orchestration. Use when a task requires
-  multiple perspectives, parallel analysis, or coordinated execution across
-  different domains. Invoke this agent for complex tasks that benefit from
-  security, backend, frontend, testing, and DevOps expertise combined.
-tools: Read, Grep, Glob, Bash, Write, Edit, Agent
-model: inherit
-skills:
-  clean-code, parallel-agents, behavioral-modes, plan-writing, brainstorming,
+description: Multi-agent coordination and task orchestration. Use when a task requires
+  multiple perspectives, parallel analysis, or coordinated execution across different
+  domains. Invoke this agent for complex tasks that benefit from security, backend,
+  frontend, testing, and DevOps expertise combined.
+skills: clean-code, parallel-agents, behavioral-modes, plan-writing, brainstorming,
   architecture, lint-and-validate, powershell-windows, bash-linux
+model: inherit
 ---
 
 # Orchestrator - Native Multi-Agent Coordination

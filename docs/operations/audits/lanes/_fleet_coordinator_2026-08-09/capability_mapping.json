@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-10T01:25:00Z",
+  "agents": [
+    {
+      "id": "tnf-local-subdirector",
+      "role": "sub-director",
+      "provider": "launchd:com.tnf.local-subdirector",
+      "capability": ["lane-observe", "wake-ping", "nft-identity"],
+      "fulfillment": "degraded-critical",
+      "gap": "status critical; cloud Super Director deferred"
+    },
+    {
+      "id": "tnf-subdirector-autopilot",
+      "role": "continuity-governor",
+      "provider": "launchd:com.tnf.subdirector-autopilot",
+      "capability": ["cycle-check", "self-prompt"],
+      "fulfillment": "degraded",
+      "gap": "ENOSPC; owner terminal unobserved"
+    },
+    {
+      "id": "agent_hermes-codegen-worker_1782364000001",
+      "role": "worker-code",
+      "provider": "cron:*/5",
+      "capability": ["code_generation", "envelope-drain"],
+      "fulfillment": "broken",
+      "gap": "envelope parse error every cycle; exit 0 mask"
+    },
+    {
+      "id": "agent_hermes-infra-worker_1782364000002",
+      "role": "worker-infra",
+      "provider": "cron:*/15",
+      "capability": ["infra", "envelope-drain"],
+      "fulfillment": "broken",
+      "gap": "same envelope parse failure pattern"
+    },
+    {
+      "id": "tnf-thin-client*",
+      "role": "ephemeral-default",
+      "provider": "scripts/lib/redis-agent-client.cjs default name",
+      "capability": ["task_execution(claimed)"],
+      "fulfillment": "zombie-spam",
+      "gap": "933 offline registry rows; callableWorker true"
+    },
+    {
+      "id": "tnf-master-heartbeat",
+      "role": "master-clock-pulse",
+      "provider": "launchd:com.tnf.master-heartbeat",
+      "capability": ["fleet-pulse"],
+      "fulfillment": "fragile",
+      "gap": "historical MODULE_NOT_FOUND; ENOSPC writes"
+    }
+  ],
+  "providerLayers": {
+    "local": ["redis", "launchd", "cron", "tnf-cli"],
+    "cloud": ["super-director-bridge:deferred"]
+  }
+}

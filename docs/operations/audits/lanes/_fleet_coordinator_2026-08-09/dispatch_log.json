@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-08-10T01:25:00Z",
+  "mandate": "docs/operations/audits/FULL_ENCHILADA_HARNESS_PLATFORM_AUDIT_MANDATE_2026-08-09.md",
+  "dispatches": [
+    {
+      "lane": "L2",
+      "task": "harness/alive/launchd/heartbeat inspect",
+      "routedTo": "fleet-coordinator-local",
+      "tools": ["tnf alive|harness|fleet", "launchctl", "logs", "df"],
+      "receipt": "docs/operations/audits/lanes/L2_HARNESS_RUNTIME.md",
+      "decision": "report-only"
+    },
+    {
+      "lane": "L5",
+      "task": "registry/zombie/worker/swarm inspect",
+      "routedTo": "fleet-coordinator-local",
+      "tools": ["tnf list", "redis-cli", "cron logs", "state json"],
+      "receipt": "docs/operations/audits/lanes/L5_AGENT_SWARM.md",
+      "decision": "report-only"
+    }
+  ],
+  "parallelism": "single-embodiment dual-lane (no cloud fanout)",
+  "blockedEscalations": []
+}

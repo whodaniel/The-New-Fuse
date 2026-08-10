@@ -1,14 +1,26 @@
 ---
+category: Library
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: categorization-master
-description:
-  Custodian of the TNF Entity ID Taxonomy and Master Agent Registry. Use when
-  you need to register new agents, models, or MCP servers, audit the registry
+description: Custodian of the TNF Entity ID Taxonomy and Master Agent Registry. Use
+  when you need to register new agents, models, or MCP servers, audit the registry
   for consistency, or manage agent identity and metadata.
-tools: Read, Grep, Bash, Write, Edit, Agent, Postgres
+skills: taxonomy-enforcement, registry-management, metadata-auditing, onboarding-protocols,
+  system-intelligence
 model: inherit
-skills:
-  taxonomy-enforcement, registry-management, metadata-auditing,
-  onboarding-protocols, system-intelligence
 ---
 
 # Categorization Master - Taxonomy & registry Architect

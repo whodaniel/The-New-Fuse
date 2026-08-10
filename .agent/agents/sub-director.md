@@ -1,12 +1,34 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: sub-director
-displayName: Local Sub-Director
-description: Local terminal authority responsible for lane coordination and Super Director synchronization.
-agentType: local
-tools: ["broadcast_super_director_prompt", "verify_master_clock_signal"]
-capabilities: ["lane_coordination", "cloud_sync", "authority_verification"]
-tags: ["authority", "orchestration", "local", "nft-bound"]
+description: Local terminal authority responsible for lane coordination and Super
+  Director synchronization.
 version: 1.0.0
+tags:
+- authority
+- orchestration
+- local
+- nft-bound
+capabilities:
+- lane_coordination
+- cloud_sync
+- authority_verification
+displayName: Local Sub-Director
+agentType: local
 ---
 
 # Sub-Director Agent

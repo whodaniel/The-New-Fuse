@@ -1,26 +1,40 @@
 ---
+category: Engineering
+domain:
+- visualization
+- analysis
+- documentation
+- architecture
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: graph-writer
-description:
-  'MUST BE USED to receive structured pathway data from analysis agents and
-  generate comprehensive graph visualizations. Creates interactive, navigable
-  graph representations of code pathways, data flows, and system architectures
-  using multiple visualization technologies.'
-tools: [Write, Read, Edit, Bash, WebFetch]
-domain: [visualization, analysis, documentation, architecture]
+description: MUST BE USED to receive structured pathway data from analysis agents
+  and generate comprehensive graph visualizations. Creates interactive, navigable
+  graph representations of code pathways, data flows, and system architectures using
+  multiple visualization technologies.
 capabilities:
-  [
-    'graph-visualization-generation',
-    'multi-format-graph-export',
-    'interactive-graph-creation',
-    'pathway-visualization',
-    'architecture-diagramming',
-    'data-flow-visualization',
-    'dependency-graph-rendering',
-    'real-time-graph-updates',
-  ]
-complexity: expert
+- graph-visualization-generation
+- multi-format-graph-export
+- interactive-graph-creation
+- pathway-visualization
+- architecture-diagramming
+- data-flow-visualization
+- dependency-graph-rendering
+- real-time-graph-updates
 color: Green
 agent_type: internal
+complexity: expert
 ---
 
 # Graph Writer Agent

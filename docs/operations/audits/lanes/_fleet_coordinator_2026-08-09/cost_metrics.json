@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-10T01:25:00Z",
+  "currency": "USD-estimate",
+  "note": "Audit cycle used local CLI/redis/logs only; cloud LLM spend not attributed to this cycle",
+  "providers": [
+    {
+      "provider": "local-redis",
+      "calls": "registry HKEYS/HGET sampling",
+      "estimatedCost": 0,
+      "notes": "954 agent registry keys; noisy"
+    },
+    {
+      "provider": "local-tnf-cli",
+      "calls": "alive/harness/fleet/list/help",
+      "estimatedCost": 0,
+      "notes": "high wall-clock latency under disk pressure"
+    },
+    {
+      "provider": "nvidia-nemotron-3-ultra (harness inspect live loop check)",
+      "calls": 1,
+      "estimatedCost": "unknown-env",
+      "notes": "Observed by harness inspect as live provider; not invoked by fleet-coordinator for synthesis"
+    }
+  ],
+  "storagePressure": {
+    "dataVolumeFreeMiB": 747,
+    "dataVolumeCapacityPct": 100,
+    "autopilotHistoryBytes": 159213499,
+    "severity": "P0"
+  }
+}

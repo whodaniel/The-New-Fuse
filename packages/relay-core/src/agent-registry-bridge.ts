@@ -3,6 +3,10 @@
  * Registers agents with Master Clock and keeps them alive via heartbeat
  * Acts as a living agent on the relay — always present, always listening
  */
+import {
+  connectStandaloneRedisClient,
+  createStandaloneRedisClient,
+} from '@the-new-fuse/infrastructure';
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
 import { buildCanonicalEntityId } from './contracts/identity.js';
@@ -103,9 +107,9 @@ class AgentRegistryBridge {
     return new Promise<void>((resolve, reject) => {
       this.ws = new WebSocket(RELAY_URL);
 
-      this.ws.on('open', () => {
+      this.ws.on('open', async () => {
         console.log(`[${AGENT_ID}] Connected to relay ${RELAY_URL}`);
-        this.register();
+        await this.register();
         resolve();
       });
 
@@ -130,7 +134,31 @@ class AgentRegistryBridge {
     });
   }
 
-  private register() {
+  private async allocateAuthoritativeIdNumber(agentId: string): Promise<string> {
+    try {
+      const redis = createStandaloneRedisClient({ lazyConnect: true });
+      await connectStandaloneRedisClient(redis as any);
+
+      const key = `tnf:identity:seq:${agentId}`;
+      const seq = await redis.incr(key);
+      const encoded = encodeBase58(seq);
+
+      if ('quit' in redis && typeof redis.quit === 'function') {
+        await redis.quit();
+      } else if ('disconnect' in redis && typeof redis.disconnect === 'function') {
+        await redis.disconnect();
+      }
+
+      return `ID#:${encoded}`;
+    } catch (e) {
+      console.warn(
+        `[${AGENT_ID}] Failed to connect to Redis for authoritative ID#. Falling back to provisional hash. Reason: ${e instanceof Error ? e.message : e}`
+      );
+      return deterministicBridgeIdNumber(agentId);
+    }
+  }
+
+  private async register() {
     if (!this.ws || this.registered) return;
     this.ws.send(
       JSON.stringify({
@@ -153,7 +181,7 @@ class AgentRegistryBridge {
             // payload. In production this is allocated by FederatedIdentityService;
             // here we use a deterministic hash so it survives restarts and
             // does not collide with seeder-generated values.
-            idNumber: deterministicBridgeIdNumber(AGENT_ID),
+            idNumber: await this.allocateAuthoritativeIdNumber(AGENT_ID),
             // Phase 9 FOLLOWUP-3: emit mcid envelope at registration. mcid is
             // the cumulative event id; correlation_id links registration events
             // originating from the same bridge session.

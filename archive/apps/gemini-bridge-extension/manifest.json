@@ -1,0 +1,81 @@
+{
+  "manifest_version": 3,
+  "name": "TNF Gemini Sidebar Bridge",
+  "version": "7.2.0",
+  "description": "Bridge to connect the Gemini Sidebar Chat to the TNF Relay. Works alongside Fuse Connect without conflict.",
+
+  "key": "MIIBCgKCAQEAxhfUfSzmsn3yCEEJ2Z0lmTasqSARJUov0byaSmgaYxPl0UaLCgC40P0B4LIGnbWJSwkyQLdh3DqQIrJSe3iSfcJk8snhPbOmEEmUR+56lEqkehKIB6z8wEbLYvKvvXRLogYyXjfE3YLBoaMSxcLdWQbccMQLiDnn0gRmFoWhMCwYnrNogenSHDJBh7wgYf/dNfeEtYoEZ57Za6/oDYRDQbC5NBid+F9e7m79bKd+G7DGi/oDPEF5pGLLqMXlzLqEXUwi+RUjEj9jVagPKz1qAh1iuTlAhLpiHLhPZn39q5CZlmMHvFxROpfhPuGRQPBcZRc9Xlnt/r2sLutxBXU/xwIDAQAB",
+
+  "icons": {
+    "16": "dist-v7/icons/icon16.png",
+    "48": "dist-v7/icons/icon48.png",
+    "128": "dist-v7/icons/icon128.png"
+  },
+
+  "action": {
+    "default_popup": "dist-v7/popup/index.html",
+    "default_title": "TNF Gemini Bridge"
+  },
+
+  "background": {
+    "service_worker": "dist-v7/background/index.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://aistudio.google.com/*",
+        "https://gemini.google.com/*",
+        "https://*.google.com/*",
+        "http://localhost:*/*"
+      ],
+      "js": ["dist-v7/content/index.js"],
+      "css": [],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs",
+    "notifications",
+    "nativeMessaging",
+    "scripting",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest"
+  ],
+
+  "host_permissions": [
+    "https://aistudio.google.com/*",
+    "https://gemini.google.com/*",
+    "https://*.google.com/*",
+    "http://localhost:*/*"
+  ],
+
+  "commands": {
+    "toggle-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Toggle the Gemini Bridge panel"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["dist-v7/icons/*", "dist-v7/popup/*"],
+      "matches": [
+        "https://aistudio.google.com/*",
+        "https://gemini.google.com/*"
+      ]
+    }
+  ]
+}

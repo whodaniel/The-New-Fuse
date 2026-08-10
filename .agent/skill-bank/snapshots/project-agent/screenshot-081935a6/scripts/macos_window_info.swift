@@ -18,10 +18,20 @@ struct WindowInfo: Encodable {
   let area: Int
 }
 
+struct DisplayInfo: Encodable {
+  let id: Int
+  let x: Int
+  let y: Int
+  let width: Int
+  let height: Int
+  let main: Bool
+}
+
 struct Response: Encodable {
   let count: Int
   let selected: WindowInfo?
   let windows: [WindowInfo]?
+  let displays: [DisplayInfo]?
 }
 
 func value(for flag: String) -> String? {
@@ -45,6 +55,7 @@ if frontmostFlag && frontmostName == nil {
 let appFilter = (explicitApp ?? frontmostName)?.lowercased()
 let nameFilter = value(for: "--window-name")?.lowercased()
 let includeList = CommandLine.arguments.contains("--list")
+let includeScreens = CommandLine.arguments.contains("--screens")
 
 let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
 guard let raw = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
@@ -113,7 +124,33 @@ if includeList {
   list = nil
 }
 
-let response = Response(count: windows.count, selected: selected, windows: list)
+let displays: [DisplayInfo]?
+if includeScreens {
+  // Convert NSScreen frames (bottom-left origin) into the CGWindow
+  // top-left-origin global space so display and window bounds share one
+  // coordinate system. The primary screen (origin 0,0) anchors the flip.
+  let screens = NSScreen.screens
+  let primaryHeight = screens.first(where: { $0.frame.origin == .zero })?.frame.height
+    ?? screens.first?.frame.height ?? 0
+  displays = screens.enumerated().map { index, screen in
+    let frame = screen.frame
+    let screenNumber =
+      (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.intValue
+      ?? index
+    return DisplayInfo(
+      id: screenNumber,
+      x: Int(frame.origin.x),
+      y: Int(primaryHeight - (frame.origin.y + frame.height)),
+      width: Int(frame.width),
+      height: Int(frame.height),
+      main: frame.origin == .zero
+    )
+  }
+} else {
+  displays = nil
+}
+
+let response = Response(count: windows.count, selected: selected, windows: list, displays: displays)
 let encoder = JSONEncoder()
 encoder.outputFormatting = [.sortedKeys]
 

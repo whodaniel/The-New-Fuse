@@ -1,28 +1,28 @@
 {
   "spec": "tnf/llm-ranking-recommendations/0.1",
-  "generatedAt": "2026-08-08T20:30:01.765Z",
-  "intelSnapshotId": "intel_1786219205698",
+  "generatedAt": "2026-08-10T06:01:29.085Z",
+  "intelSnapshotId": "intel_1786341635493",
   "compositeScores": [
+    {
+      "nvidiaId": "meta/llama-3.2-90b-vision-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "live",
+      "latencyMs": 953,
+      "compositeRank": 1
+    },
     {
       "nvidiaId": "openai/gpt-oss-20b",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "live",
-      "latencyMs": 741,
-      "compositeRank": 1
-    },
-    {
-      "nvidiaId": "meta/llama-3.3-70b-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
+      "latencyMs": 384,
       "compositeRank": 2
     },
     {
-      "nvidiaId": "meta/llama-3.2-90b-vision-instruct",
+      "nvidiaId": "meta/llama-3.3-70b-instruct",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
@@ -1156,12 +1156,22 @@
       "healthStatus": "eol"
     },
     {
+      "model": "meta/llama-3.2-90b-vision-instruct",
+      "action": "reorder",
+      "currentPriority": 111,
+      "proposedPriority": 0,
+      "delta": -111,
+      "reason": "Arena score change suggests priority shift of 111 positions",
+      "compositeScore": 0,
+      "healthStatus": "live"
+    },
+    {
       "model": "openai/gpt-oss-20b",
       "action": "reorder",
       "currentPriority": 253,
-      "proposedPriority": 0,
-      "delta": -253,
-      "reason": "Arena score change suggests priority shift of 253 positions",
+      "proposedPriority": 1,
+      "delta": -252,
+      "reason": "Arena score change suggests priority shift of 252 positions",
       "compositeScore": 0,
       "healthStatus": "live"
     },
@@ -1169,19 +1179,9 @@
       "model": "meta/llama-3.3-70b-instruct",
       "action": "reorder",
       "currentPriority": 245,
-      "proposedPriority": 1,
-      "delta": -244,
-      "reason": "Arena score change suggests priority shift of 244 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
-      "model": "meta/llama-3.2-90b-vision-instruct",
-      "action": "reorder",
-      "currentPriority": 111,
       "proposedPriority": 2,
-      "delta": -109,
-      "reason": "Arena score change suggests priority shift of 109 positions",
+      "delta": -243,
+      "reason": "Arena score change suggests priority shift of 243 positions",
       "compositeScore": 0,
       "healthStatus": "timeout"
     },
@@ -2219,7 +2219,7 @@
   "newsDigest": [],
   "summary": {
     "totalModelsScored": 37,
-    "liveModels": 1,
+    "liveModels": 2,
     "recommendationsCount": 125,
     "addAction": 0,
     "reorderAction": 6,

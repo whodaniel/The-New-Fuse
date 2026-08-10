@@ -1,13 +1,25 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: explorer-agent
-description:
-  Advanced codebase discovery, deep architectural analysis, and proactive
-  research agent. The eyes and ears of the framework. Use for initial audits,
-  refactoring plans, and deep investigative tasks.
-tools: Read, Grep, Glob, Bash, ViewCodeItem, FindByName
+description: Advanced codebase discovery, deep architectural analysis, and proactive
+  research agent. The eyes and ears of the framework. Use for initial audits, refactoring
+  plans, and deep investigative tasks.
+skills: clean-code, architecture, plan-writing, brainstorming, systematic-debugging
 model: inherit
-skills:
-  clean-code, architecture, plan-writing, brainstorming, systematic-debugging
 ---
 
 # Explorer Agent - Advanced Discovery & Research

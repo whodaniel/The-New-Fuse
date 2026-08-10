@@ -9,6 +9,8 @@ import { RouteProvider } from './components/route-context';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
+import { LiveAIAssist } from './components/LiveAIAssist';
+import './components/LiveAIAssist.css';
 import ComprehensiveRouter from './ComprehensiveRouter';
 import { AuthProvider } from './providers/AuthProvider';
 import { OperatorSynergyProvider } from './providers/OperatorSynergyProvider';
@@ -23,6 +25,7 @@ const AppContent: React.FC = () => {
     <>
       <ComprehensiveRouter />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
+      <LiveAIAssist />
     </>
   );
 };

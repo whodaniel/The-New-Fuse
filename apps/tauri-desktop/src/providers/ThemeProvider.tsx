@@ -67,10 +67,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(resolvedTheme);
+    root.style.colorScheme = resolvedTheme;
 
-    // Also add TNF-specific class
-    document.body.classList.remove('tnf-light', 'tnf-dark');
+    // Also add TNF-specific + legacy class used by styles.css
+    document.body.classList.remove('tnf-light', 'tnf-dark', 'light-mode');
     document.body.classList.add(`tnf-${resolvedTheme}`);
+    if (resolvedTheme === 'light') {
+      document.body.classList.add('light-mode');
+    }
   }, [resolvedTheme]);
 
   const setTheme = (newTheme: Theme) => {

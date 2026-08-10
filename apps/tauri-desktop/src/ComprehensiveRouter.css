@@ -58,6 +58,27 @@
   --tnf-transition-slow: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Light mode — ComprehensiveRouter :root was dark-only, so theme toggles
+ * appeared broken (Settings Theme buttons changed storage but the shell
+ * kept rendering the deep-space tokens). */
+html.light {
+  --tnf-obsidian: #f8fafc;
+  --tnf-surface: rgba(15, 23, 42, 0.04);
+  --tnf-surface-hover: rgba(15, 23, 42, 0.08);
+  --tnf-surface-active: rgba(15, 23, 42, 0.12);
+  --tnf-surface-card: rgba(255, 255, 255, 0.92);
+  --tnf-border: rgba(15, 23, 42, 0.12);
+  --tnf-border-hover: rgba(15, 23, 42, 0.22);
+  --tnf-border-focus: rgba(99, 102, 241, 0.45);
+  --tnf-text-primary: #0f172a;
+  --tnf-text-secondary: #334155;
+  --tnf-text-muted: #64748b;
+  --tnf-text-dim: #94a3b8;
+  --tnf-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --tnf-shadow-md: 0 6px 24px rgba(15, 23, 42, 0.12);
+  --tnf-shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.16);
+}
+
 /* ---- Base ---- */
 *,
 *::before,
@@ -1076,6 +1097,44 @@ select {
   background: rgba(99, 102, 241, 0.18);
   color: #c4b5fd;
   border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: var(--tnf-radius-md);
+  border: 1px solid var(--tnf-border);
+  background: var(--tnf-surface);
+  color: var(--tnf-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    background var(--tnf-transition-fast),
+    border-color var(--tnf-transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--tnf-surface-hover);
+  border-color: var(--tnf-border-hover);
+}
+
+.theme-toggle-btn.collapsed {
+  justify-content: center;
+  padding: 10px;
+}
+
+.theme-toggle-btn.mobile-header-theme {
+  width: auto;
+  margin: 0;
+  padding: 8px;
+  border: none;
+  background: transparent;
 }
 
 .sidebar-footer {

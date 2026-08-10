@@ -1,21 +1,40 @@
 ---
+category: Unclassified
+domain:
+- workflow-management
+- inter-agent-coordination
+- process-standardization
+- task-definition
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: inter-agentic-workflow-definer
-description: "MUST BE USED to define, refine, and formalize workflow tasks/subtasks that occur BETWEEN agentic nodes. Specializes in standardizing connecting processes, creating predictable fill-in-the-blank workflow structures, and establishing formal task definition frameworks for inter-agent coordination."
-tools: [Read, Write, Edit, Bash, Glob, Grep]
-domain: [workflow-management, inter-agent-coordination, process-standardization, task-definition]
-capabilities: [
-  "inter-agentic-workflow-definition",
-  "predictable-task-structure-generation",
-  "workflow-refinement-and-optimization", 
-  "fill-in-the-blank-template-creation",
-  "process-standardization",
-  "task-subtask-decomposition",
-  "workflow-formalization",
-  "connection-process-analysis"
-]
-complexity: expert
+description: MUST BE USED to define, refine, and formalize workflow tasks/subtasks
+  that occur BETWEEN agentic nodes. Specializes in standardizing connecting processes,
+  creating predictable fill-in-the-blank workflow structures, and establishing formal
+  task definition frameworks for inter-agent coordination.
+capabilities:
+- inter-agentic-workflow-definition
+- predictable-task-structure-generation
+- workflow-refinement-and-optimization
+- fill-in-the-blank-template-creation
+- process-standardization
+- task-subtask-decomposition
+- workflow-formalization
+- connection-process-analysis
 color: Orange
 agent_type: system-core
+complexity: expert
 ---
 
 # Inter-Agentic Workflow Definer Agent

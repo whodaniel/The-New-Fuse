@@ -170,7 +170,7 @@ TURBO_TOKEN        # Remote caching (speeds up builds)
 TURBO_TEAM         # Turborepo team ID
 ```
 
-See [Secrets Setup Guide](./docs/ci-cd/secrets-setup.md) for detailed
+See [Secrets Setup Guide](./secrets-setup.md) for detailed
 instructions.
 
 #### 2. Configure Cloudflare
@@ -526,7 +526,7 @@ See [Monitoring Guide](../deployment/MONITORING.md) for details.
 ### Documentation
 
 - [Architecture](../architecture/ARCHITECTURE.md)
-- [Workflows](./docs/ci-cd/workflows.md)
+- [Workflows](./workflows.md)
 - [Deployment](../deployment/DEPLOYMENT.md)
 - [Troubleshooting](../deployment/TROUBLESHOOTING.md)
 - [Monitoring](../deployment/MONITORING.md)

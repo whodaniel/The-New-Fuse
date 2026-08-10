@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
@@ -37,7 +36,7 @@ const MessageBubble = React.memo<{ msg: A2AMessage; agents: AgentSummary[] }>(({
   const bubbleClass = cn(
     'p-4 rounded-md shadow-md max-w-lg',
     isUser && 'bg-blue-500 text-white ml-auto',
-    isSystem && 'bg-transparent0 text-white text-center text-xs italic mx-auto',
+    isSystem && 'bg-transparent text-white text-center text-xs italic mx-auto',
     !isUser && !isSystem && 'bg-transparent dark:bg-gray-700 mr-auto'
   );
 
@@ -85,7 +84,9 @@ export default function MultiAgentChat() {
 }
 
 // ⚡ Bolt: Extracted component to prevent inline definition re-renders
-const ConnectionStatus = React.memo<{ connectionState: { connected: boolean; authenticated: boolean; connecting: boolean } }>(({ connectionState }) => (
+const ConnectionStatus = React.memo<{
+  connectionState: { connected: boolean; authenticated: boolean; connecting: boolean };
+}>(({ connectionState }) => (
   <div
     role="status"
     aria-live="polite"
@@ -473,9 +474,7 @@ function EnhancedMultiAgentChatUI() {
         {conversations.length > 0 && (
           <div className="mt-2">
             <div className="text-sm font-medium mb-1">Active Conversations:</div>
-            <div className="flex gap-2 flex-wrap">
-              {conversationButtons}
-            </div>
+            <div className="flex gap-2 flex-wrap">{conversationButtons}</div>
           </div>
         )}
       </header>

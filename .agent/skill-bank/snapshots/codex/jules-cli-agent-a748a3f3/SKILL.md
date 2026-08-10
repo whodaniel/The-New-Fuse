@@ -322,9 +322,9 @@ const workflow = {
 
 ```bash
 # 1. Launch multiple specialized sessions
-jules new --repo whodaniel/The-New-Fuse "Fix navigation links and dead ends"
-jules new --repo whodaniel/The-New-Fuse "Implement WCAG 2.1 AA accessibility"
-jules new --repo whodaniel/The-New-Fuse "Optimize performance (Lighthouse 90+)"
+jules new --repo whodaniel/fuse "Fix navigation links and dead ends"
+jules new --repo whodaniel/fuse "Implement WCAG 2.1 AA accessibility"
+jules new --repo whodaniel/fuse "Optimize performance (Lighthouse 90+)"
 
 # 2. Monitor sessions
 jules remote list --session

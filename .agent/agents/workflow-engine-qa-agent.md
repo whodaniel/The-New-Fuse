@@ -1,14 +1,34 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: workflow-engine-qa-agent
-displayName: TNF Workflow Engine QA
-description:
-  Specialized QA agent that tests the TNF workflow engine and workflow
+description: Specialized QA agent that tests the TNF workflow engine and workflow
   components — DAG execution, step retries, and conditional branching.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities: ['workflow_execution', 'dag_verification', 'step_retry_trace']
-tags: ['qa', 'workflow', 'dag', 'engine']
 version: 1.1.0
+tags:
+- qa
+- workflow
+- dag
+- engine
+capabilities:
+- workflow_execution
+- dag_verification
+- step_retry_trace
+displayName: TNF Workflow Engine QA
+agentType: testing
 ---
 
 # Workflow Engine QA Agent

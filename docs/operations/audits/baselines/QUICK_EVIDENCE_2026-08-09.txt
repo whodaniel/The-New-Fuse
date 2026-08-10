@@ -1,0 +1,90 @@
+## fleet core
+
+Core fleet ok=true at 2026-08-10T01:16:46.663Z
+- [ok] nft-identity: existing local-oss-5cf0356cd5d96efe
+- [ok] identity: already Local Sub-Director (/Users/danielgoldberg/.tnf/agent.yaml)
+- [ok] env-hints: /Users/danielgoldberg/.tnf/core-fleet.env
+- [ok] sync:local-subdirector: /Users/danielgoldberg/.tnf/local-subdirector
+- [ok] sync:master-heartbeat: /Users/danielgoldberg/.tnf/master-heartbeat
+- [ok] relocate:com.tnf.local-subdirector: already points at real runtime
+- [ok] relocate:com.tnf.master-heartbeat: already points at real runtime
+- [ok] redis: PONG
+- [ok] relay: local relay already healthy
+- [ok] mcp: /Users/danielgoldberg/.tnf/mcp.json
+- [ok] local-subdirector-service.sh: install
+- [ok] tnf-master-heartbeat-service.sh: install
+- [ok] harness-boot.sh: boot
+- [ok] worker:tnf-subdirector-codegen-worker: */5 * * * *
+- [ok] worker:tnf-subdirector-infra-worker: */15 * * * *
+- [ok] register:tnf-local-subdirector: director
+- [ok] register:agent_hermes-codegen-worker_1782364000001: worker
+- [ok] register:agent_hermes-infra-worker_1782364000002: worker
+
+## alive
+
+=== tnf alive status ===
+
+✅ TNF Agent Daemon: running (1 pid(s))
+   78730       06:05 /Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python /Users/d
+⚪ A2A Bridge: not running (start with `tnf bridge start`)
+✅ Heartbeat self-wake cron: installed
+
+## autopilot
+{
+  "generatedAt": "2026-08-10T01:21:58.611Z",
+  "status": "degraded",
+  "summary": {
+    "cycle": 2,
+    "state": "degraded",
+    "ownerAgentsCsv": "tnf-local-terminal-ttys000",
+    "forcedTargets": 0,
+    "frontloadStatus": "healthy"
+  }
+}
+## list counts
+2842
+## agent identity
+# Written by establish-core-federated-fleet at 2026-08-08T16:09:54.489Z
+name: tnf-local-subdirector
+role: director
+dacc_role: director
+director_tier: sub
+platform: tnf
+embodiment: sub-director
+corporate_title: "Local Sub-Director"
+nft_id: local-oss-5cf0356cd5d96efe
+wallet_address: "0x5cf0356cd5d96efe33394821ffacd84789299a74"
+notes: "Default Local Sub-Director endowment written by establish-core-federated-fleet. Cloud Super Director binding is optional and credential-gated."
+## handoff age
+-rw-r--r--  1 danielgoldberg  tnf-agents  2458 Aug  9 14:19 docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+-rw-r--r--  1 danielgoldberg  tnf-agents  1997 Aug  9 14:19 docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+## living state head
+3:`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
+5:**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+92:  `docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md`. Current verdict is
+767:- **Vault Status:** `SYNCHRONIZED` (GitHub Release active).
+798:- **Current Truth:** Reconstructed **651 implementation-grade directives** from
+844:  errors. [CLASS:PRIME] [STATUS:RESOLVED] Handoff
+870:    [CLASS:PRIME] [STATUS:RESOLVED]
+## protocol gate quick
+Step 3: Reading session handoff...
+  ✓ docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+  ✓ docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+  ✓ handoff freshness
+✓ Turn Zero passed (3 state files, 3 frontload files, 2 handoff artifacts, 1 step(s) skipped)
+  Active Directive: Continue priority queue from SESSION_HANDOFF_LATEST.json
+    docs/protocols/AGENT_TARGETED_HANDOFF_V1.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/HANDOFF_PACKET_LIFECYCLE.md: [CLASS:PROTOCOL] [STATUS:ACTIVE]
+    docs/protocols/HANDOFF_VALIDATION_PIPELINE.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/SESSION_HANDOFF_TEMPLATE.md: [CLASS:INTEL] [STATUS:PENDING]
+  ✓ Current directive: Continue priority queue from SESSION_HANDOFF_LATEST.json
+▶ Protocol: Session Handoff
+✓ Turn Zero Mandate: 3 state files, 2 handoff artifacts, 1 step(s) skipped
+✓ Session Handoff: Handoff a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9 from 2026-08-09T18:16:11.985Z
+Result:
+  ALL PROTOCOLS PASSED
+[TNF Protocol Gate]
+[handoff-source-drift] OK (ci): canonical source verified and legacy pointer aligned
+[session-handoff-gate] BLOCKED (ci): Critical-path changes require fresh handoff artifacts. Missing in this change set: docs/protocols/reports/SESSION_HANDOFF_LATEST.json, docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+Protocol gate failed: node exited with code 1

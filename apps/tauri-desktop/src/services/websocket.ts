@@ -131,11 +131,23 @@ class WebSocketService {
   }
 
   // Convenience methods for common message types
-  sendChatMessage(sessionId: string, content: string, targets?: string[]): void {
+  sendChatMessage(
+    sessionId: string,
+    content: string,
+    targets?: string[],
+    options?: {
+      temperature?: number;
+      systemPrompt?: string;
+      mode?: string;
+    }
+  ): void {
     this.send('chat:message', {
       sessionId,
       content,
       ...(targets && targets.length ? { targets } : {}),
+      ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
+      ...(options?.systemPrompt ? { systemPrompt: options.systemPrompt } : {}),
+      ...(options?.mode ? { mode: options.mode } : {}),
     });
   }
 

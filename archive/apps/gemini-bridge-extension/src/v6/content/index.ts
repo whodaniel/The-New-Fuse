@@ -1,0 +1,1024 @@
+/**
+ * Gemini Bridge v7 - Content Script Entry Point
+ *
+ * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
+ *
+ * The floating panel is NOT auto-injected. It only appears when:
+ * 1. User clicks "Open Panel" button in popup
+ * 2. User presses Ctrl+Shift+G keyboard shortcut
+ */
+
+import { simpleChatBridge } from './adapters/SimpleChatBridge';
+import './guard'; // MUST BE FIRST - Patches customElements.define
+import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
+import { accessibilityTree } from './utils/AccessibilityTree';
+import { captchaHandler } from './utils/CaptchaHandler';
+import { humanSimulator } from './utils/HumanBehaviorSimulator';
+
+const shouldSkipForPage = (): boolean => {
+  const host = window.location.hostname;
+  const path = window.location.pathname;
+
+  // Skip initialization on SkIDEancer IDE pages to prevent editor collisions.
+  if (host === 'skideancer.thenewfuse.com') return true;
+
+  // Skip auth and Cloudflare challenge routes so login/register are not disrupted.
+  if (
+    path === '/login' ||
+    path === '/register' ||
+    path.startsWith('/auth/') ||
+    path.startsWith('/cdn-cgi/challenge-platform/')
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+// Guard against multiple initialization (can happen in iframes or with hot reload)
+declare global {
+  interface Window {
+    __GEMINI_BRIDGE_INITIALIZED__?: boolean;
+    __GEMINI_BRIDGE_DEBUG?: {
+      getLastResponse: () => string | null;
+      sendTestMessage: (msg: string) => void;
+      checkExtensionContext: () => boolean;
+      findElements: () => object;
+    };
+  }
+}
+
+class GeminiBridgeContentScript {
+  private panel: EnhancedFloatingPanel | null = null;
+  private isInitialized = false;
+  private panelVisible = false;
+  private chatReady = false;
+  private pageAgentId: string | null = null;
+  private currentChannel: string | null = null;
+  private pausedChannels: Set<string> = new Set();
+
+  // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
+  // to prevent infinite loops from the relay-Cloudflare-Extension circle.
+  private processedMessageIds: Set<string> = new Set();
+
+  // FEDERATION IMPROVEMENT: Track pending requests for response correlation
+  private pendingRequests: Map<
+    string,
+    {
+      correlationId: string;
+      taskId?: string;
+      from: string;
+      timestamp: number;
+    }
+  > = new Map();
+
+  // FEDERATION IMPROVEMENT: Message Queue for delayed injection
+  private injectionQueue: Array<{
+    content: string;
+    metadata?: any;
+    timestamp: number;
+    attempts: number;
+  }> = [];
+  private isProcessingQueue = false;
+
+  constructor() {
+    this.init();
+  }
+
+  private async init(): Promise<void> {
+    // Wait for DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.setup());
+    } else {
+      this.setup();
+    }
+  }
+
+  private setup(): void {
+    if (this.isInitialized) return;
+    this.isInitialized = true;
+
+    console.debug('[GeminiBridge v7] Content script initialized (panel AUTO-OPEN disabled)');
+
+    // Auto-open panel disabled by default per user request
+    // try {
+    //   this.showPanel();
+    // } catch (e) {
+    //   console.error('[GeminiBridge v7] Failed to auto-open panel:', e);
+    // }
+
+    // Initialize the simple chat bridge with callbacks
+    simpleChatBridge.init({
+      onResponse: (content) => {
+        console.log('[GeminiBridge v7] AI Response received, length:', content.length);
+
+        // Forward to panel
+        if (this.panel) {
+          this.panel.handleMessage({
+            type: 'RESPONSE_COMPLETE',
+            content: content,
+          });
+        }
+
+        // FEDERATION IMPROVEMENT: Check for pending request to correlate response
+        const pendingRequest = this.getOldestPendingRequest();
+        if (!this.pageAgentId) {
+          console.warn(
+            '[GeminiBridge v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+          );
+        }
+
+        // Get current channel from panel for proper routing
+        const currentChannel = this.panel?.getCurrentChannel() || null;
+
+        const responseMetadata: any = {
+          agentId: this.pageAgentId,
+          responseType: 'ai-response',
+          timestamp: Date.now(),
+          channel: currentChannel, // Include channel for per-tab routing
+        };
+
+        if (pendingRequest) {
+          // Correlate this response with the original request
+          responseMetadata.correlationId = pendingRequest.correlationId;
+          responseMetadata.taskId = pendingRequest.taskId;
+          responseMetadata.inResponseTo = pendingRequest.from;
+          console.log(
+            '[GeminiBridge v7] 🔗 Correlating response to request:',
+            pendingRequest.correlationId
+          );
+          this.pendingRequests.delete(pendingRequest.correlationId);
+        }
+
+        // Forward to background for relay with correlation info
+        this.safeSendMessage({
+          type: 'RESPONSE_COMPLETE',
+          content: content.length > 50000 ? content.substring(0, 50000) : content,
+          channel: currentChannel, // Also pass at top level for easier access
+          metadata: responseMetadata,
+        });
+
+        // Trigger queue processing after response
+        this.processInjectionQueue();
+      },
+      onTranscriptEntry: (entry) => {
+        // Track the ID in our dedupe guard
+        if (entry.id) this.processedMessageIds.add(entry.id);
+
+        // Forward canonical transcript updates from Cloudflare DO to panel
+        if (this.panel) {
+          this.panel.handleMessage({
+            type: 'TRANSCRIPT_UPDATE',
+            entry: entry,
+          });
+        }
+      },
+      onError: (error) => {
+        console.error('[GeminiBridge v7] Chat bridge error:', error);
+      },
+    });
+
+    // Check for chat elements periodically
+    this.startChatDetection();
+
+    // Auto-detect CAPTCHA on page load (after short delay for iframes to load)
+    setTimeout(() => {
+      this.checkForCaptcha();
+    }, 2000);
+
+    // Setup debug utilities for console diagnostics
+    this.setupDebugUtils();
+
+    // Setup message handlers
+    this.setupMessageHandlers();
+
+    // Setup keyboard shortcuts
+    this.setupKeyboardShortcuts();
+
+    // Notify background that content script is ready
+    this.safeSendMessage({
+      type: 'CONTENT_SCRIPT_READY',
+      url: window.location.href,
+      hostname: window.location.hostname,
+    });
+  }
+
+  /**
+   * Periodically check for chat elements
+   */
+  private startChatDetection(): void {
+    const checkElements = () => {
+      const elements = simpleChatBridge.findElements();
+
+      if (elements.isReady && !this.chatReady) {
+        this.chatReady = true;
+        console.log('[GeminiBridge v7] Chat is ready!');
+
+        // Notify background
+        this.safeSendMessage(
+          {
+            type: 'CHAT_DETECTED',
+            elements: {
+              hasInput: !!elements.input,
+              hasSendButton: !!elements.sendButton,
+              confidence: 1,
+              isStreaming: false,
+            },
+          },
+          (response) => {
+            if (response?.agentId) {
+              this.pageAgentId = response.agentId;
+              console.log('[GeminiBridge v7] Assigned Page Agent ID:', this.pageAgentId);
+            }
+          }
+        );
+
+        // Update panel if exists
+        if (this.panel) {
+          this.panel.updateChatElements({
+            input: elements.input,
+            sendButton: elements.sendButton,
+            messageContainer: null,
+            lastMessage: null,
+            isStreaming: false,
+            confidence: 1,
+            detectedAt: Date.now(),
+          });
+        }
+
+        // Pass agent ID to panel if available
+        if (this.panel && this.pageAgentId) {
+          this.panel.setAgentId(this.pageAgentId);
+        }
+      }
+    };
+
+    // Check immediately and every 2 seconds
+    checkElements();
+    setInterval(checkElements, 2000);
+  }
+
+  /**
+   * Setup debug utilities accessible from browser console
+   */
+  private setupDebugUtils(): void {
+    window.__GEMINI_BRIDGE_DEBUG = {
+      getLastResponse: () => {
+        const response = simpleChatBridge.getLastResponse();
+        console.log('[GeminiBridge Debug] Last response:', response);
+        return response;
+      },
+
+      sendTestMessage: (msg: string) => {
+        console.log('[GeminiBridge Debug] Sending test message:', msg);
+        simpleChatBridge.sendMessage(msg);
+      },
+
+      checkExtensionContext: () => {
+        try {
+          const isValid = !!chrome.runtime?.id;
+          console.log('[GeminiBridge Debug] Extension context valid:', isValid);
+          return isValid;
+        } catch (e) {
+          console.error('[GeminiBridge Debug] Extension context check failed:', e);
+          return false;
+        }
+      },
+
+      findElements: () => {
+        const elements = simpleChatBridge.findElements();
+        console.log('[GeminiBridge Debug] Found elements:', elements);
+        return elements;
+      },
+    };
+
+    console.debug('[GeminiBridge v7] Debug utils available at window.__GEMINI_BRIDGE_DEBUG');
+  }
+
+  /**
+   * Show or create the floating panel
+   */
+  private showPanel(): void {
+    // SECURITY/UX: Never show floating panel in iframes (like YouTube embeds or ads)
+    if (window.self !== window.top) {
+      return;
+    }
+
+    if (!this.panel) {
+      this.panel = createEnhancedFloatingPanel();
+
+      // Update with current detection state
+      const elements = simpleChatBridge.findElements();
+      if (elements.isReady) {
+        this.panel.updateChatElements({
+          input: elements.input,
+          sendButton: elements.sendButton,
+          messageContainer: null,
+          lastMessage: null,
+          isStreaming: false,
+          confidence: 1,
+          detectedAt: Date.now(),
+        });
+      }
+
+      // Pass agent ID if we already have it
+      if (this.pageAgentId) {
+        this.panel.setAgentId(this.pageAgentId);
+      }
+    }
+
+    this.panel.show();
+    this.panelVisible = true;
+    console.log('[GeminiBridge v7] Panel shown');
+  }
+
+  /**
+   * Hide the floating panel
+   */
+  private hidePanel(): void {
+    if (this.panel) {
+      this.panel.hide();
+      this.panelVisible = false;
+      console.log('[GeminiBridge v7] Panel hidden');
+    }
+  }
+
+  /**
+   * Toggle panel visibility
+   */
+  private togglePanel(): void {
+    if (this.panelVisible) {
+      this.hidePanel();
+    } else {
+      this.showPanel();
+    }
+  }
+
+  private setupMessageHandlers(): void {
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      // CRITICAL: Check if extension context is still valid
+      if (!chrome.runtime?.id) {
+        return false;
+      }
+
+      // Safe wrapper for sendResponse to prevent "Extension context invalidated" errors
+      const safeSendResponse = (response: any) => {
+        try {
+          if (chrome.runtime?.id) {
+            sendResponse(response);
+          }
+        } catch (e) {
+          // Ignore context invalidation errors - expected during reloads
+          console.debug('[GeminiBridge] Context invalidated during response sending');
+        }
+      };
+
+      try {
+        switch (message.type) {
+          case 'PING':
+            // Used to check if content script is already injected
+            safeSendResponse({ pong: true, initialized: this.isInitialized });
+            return true;
+
+          case 'TOGGLE_PANEL':
+            this.togglePanel();
+            safeSendResponse({ success: true, visible: this.panelVisible });
+            return true;
+
+          case 'SHOW_PANEL':
+            try {
+              this.showPanel();
+              safeSendResponse({ success: true });
+            } catch (e: any) {
+              console.error('[GeminiBridge] Failed to show panel:', e);
+              safeSendResponse({ success: false, error: e.message });
+            }
+            return true;
+
+          case 'HIDE_PANEL':
+            this.hidePanel();
+            safeSendResponse({ success: true });
+            return true;
+
+          case 'GET_PANEL_STATUS':
+            safeSendResponse({ visible: this.panelVisible, exists: !!this.panel });
+            return true;
+
+          case 'INJECT_MESSAGE':
+            this.injectMessage(message.content).then((success) => {
+              safeSendResponse({ success });
+            });
+            return true;
+
+          case 'GET_LAST_RESPONSE': {
+            const response = simpleChatBridge.getLastResponse();
+            safeSendResponse({ response });
+            return true;
+          }
+
+          case 'GET_CHAT_STATUS': {
+            const elements = simpleChatBridge.findElements();
+            safeSendResponse({
+              detected: elements.isReady,
+              confidence: elements.isReady ? 1 : 0,
+              isStreaming: false,
+            });
+            return true;
+          }
+
+          // Accessibility tree commands
+          case 'GET_ACCESSIBILITY_TREE': {
+            const treeResult = accessibilityTree.generateTree({
+              filter: message.filter,
+              maxDepth: message.maxDepth,
+              refId: message.refId,
+            });
+            safeSendResponse(treeResult);
+            return true;
+          }
+
+          case 'CLICK_ELEMENT':
+            accessibilityTree.clickElement(message.refId).then((success) => {
+              safeSendResponse({ success });
+            });
+            return true;
+
+          case 'TYPE_INTO_ELEMENT':
+            accessibilityTree
+              .typeIntoElement(message.refId, message.text, {
+                clear: message.clear,
+              })
+              .then((success) => {
+                safeSendResponse({ success });
+              });
+            return true;
+
+          case 'GET_ELEMENT_BY_REF': {
+            const el = accessibilityTree.getElementByRefId(message.refId);
+            safeSendResponse({
+              found: !!el,
+              tagName: el?.tagName,
+              textContent: el?.textContent?.substring(0, 200),
+            });
+            return true;
+          }
+
+          // Human simulation commands
+          case 'HUMAN_TYPE': {
+            const typeElements = simpleChatBridge.findElements();
+            const typeTarget = message.refId
+              ? accessibilityTree.getElementByRefId(message.refId)
+              : typeElements.input;
+            if (typeTarget) {
+              humanSimulator
+                .humanType(typeTarget, message.text, {
+                  minDelay: message.minDelay || 50,
+                  maxDelay: message.maxDelay || 150,
+                  typoChance: message.typoChance || 0.02,
+                })
+                .then(() => safeSendResponse({ success: true }));
+            } else {
+              safeSendResponse({ success: false, error: 'No target element' });
+            }
+            return true;
+          }
+
+          case 'HUMAN_CLICK': {
+            const clickTarget = message.refId
+              ? accessibilityTree.getElementByRefId(message.refId)
+              : null;
+            if (clickTarget) {
+              humanSimulator
+                .humanClick(clickTarget)
+                .then(() => safeSendResponse({ success: true }));
+            } else {
+              safeSendResponse({ success: false, error: 'No target element' });
+            }
+            return true;
+          }
+
+          case 'HUMAN_SCROLL':
+            humanSimulator.humanScroll(message.target || message.y || 500).then(() => {
+              safeSendResponse({ success: true });
+            });
+            return true;
+
+          // CAPTCHA handling commands
+          case 'DETECT_CAPTCHA': {
+            const detection = captchaHandler.detectCaptcha();
+            safeSendResponse(detection);
+            return true;
+          }
+
+          case 'BYPASS_CAPTCHA':
+            captchaHandler.attemptBypass().then((result) => {
+              safeSendResponse(result);
+            });
+            return true;
+
+          case 'WAIT_FOR_CAPTCHA':
+            captchaHandler.waitForCaptchaSolved(message.timeout || 60000).then((solved) => {
+              safeSendResponse({ solved });
+            });
+            return true;
+
+          // Forward state updates to panel if it exists
+          case 'CONNECTION_STATUS':
+          case 'AGENTS_UPDATE':
+          case 'CHANNELS_UPDATE':
+          case 'JOINED_CHANNELS_UPDATE':
+          case 'CHANNEL_PAUSE_UPDATE':
+          case 'CHANNEL_SELECTED':
+          case 'NOTIFICATION':
+          case 'TASK_ASSIGN':
+            if (message.type === 'CHANNEL_SELECTED') {
+              this.currentChannel = message.channelId || null;
+            }
+            if (message.type === 'CHANNEL_PAUSE_UPDATE') {
+              const paused = Array.isArray(message.pausedChannels)
+                ? message.pausedChannels.map((id: unknown) => String(id))
+                : [];
+              this.pausedChannels = new Set(paused);
+            }
+            if (this.panel) {
+              this.panel.handleMessage(message);
+            }
+            safeSendResponse({ success: true });
+            return true;
+
+          case 'NEW_MESSAGE': {
+            if (message.message) {
+              const msg = message.message;
+
+              // DEDUPE GUARD: Never process the same message ID twice.
+              // This is vital for stopping feedback loops between Relay and Cloudflare.
+              if (msg.id && this.processedMessageIds.has(msg.id)) {
+                safeSendResponse({ success: true, reason: 'deduped' });
+                return true;
+              }
+              if (msg.id) this.processedMessageIds.add(msg.id);
+
+              const myChannel = this.panel?.getCurrentChannel();
+              const effectiveChannel = myChannel || this.currentChannel;
+              const messageChannel = msg.channel || msg.metadata?.channel;
+              const messageChannelId = messageChannel ? String(messageChannel) : '';
+
+              // Hard mute for paused channels on this tab:
+              // do not render into panel and do not auto-inject while paused.
+              if (
+                msg.to === 'broadcast' &&
+                messageChannelId &&
+                this.isChannelPaused(messageChannelId) &&
+                msg.metadata?.forceInject !== true
+              ) {
+                console.log('[GeminiBridge v7] ⏸️ Skipping paused-channel message', {
+                  messageChannel: messageChannelId,
+                  pausedChannels: Array.from(this.pausedChannels),
+                });
+                safeSendResponse({ success: true, reason: 'paused_channel' });
+                return true;
+              }
+
+              // CHANNEL FILTERING:
+              // Only process messages for OUR channel (or if no channel filtering needed)
+              // Direct messages (to specific agentId) always bypass channel filtering.
+              const isBroadcast = msg.to === 'broadcast';
+              const isForMyChannel =
+                !isBroadcast ||
+                !messageChannel ||
+                !effectiveChannel ||
+                messageChannel === effectiveChannel;
+
+              if (!isForMyChannel) {
+                console.log('[GeminiBridge v7] ⏭️ Skipping message for different channel:', {
+                  messageChannel,
+                  myChannel: effectiveChannel,
+                  contentPreview: msg.content?.substring(0, 30),
+                });
+                safeSendResponse({ success: true });
+                return true;
+              }
+
+              // Forward to panel for display if it exists
+              if (this.panel) {
+                this.panel.handleMessage(message);
+              }
+
+              // Handle message injection (works even if panel isn't open)
+              // TARGETED INJECTION: If addressed specifically to this page agent
+              if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
+                if (!this.canAutoInjectRelayMessage(msg)) {
+                  console.log(
+                    '[GeminiBridge v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
+                  );
+                  safeSendResponse({ success: true, reason: 'panel_hidden' });
+                  return true;
+                }
+                if (!this.shouldInjectRelayMessage(msg)) {
+                  console.log(
+                    '[GeminiBridge v7] ⏭️ Skipping non-conversational targeted message',
+                    msg.metadata?.eventType || msg.messageType || 'unknown'
+                  );
+                  safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                  return true;
+                }
+                console.log('[GeminiBridge v7] Injecting targeted message:', msg.content);
+                this.injectMessage(msg.content).then((success) => {
+                  if (success) console.log('[GeminiBridge v7] Injection successful');
+                  else console.warn('[GeminiBridge v7] Injection failed');
+                });
+              }
+              // CHANNEL BROADCAST INJECTION: If from external agent on same channel
+              else if (msg.to === 'broadcast' && msg.content && msg.from) {
+                if (!this.canAutoInjectRelayMessage(msg)) {
+                  console.log(
+                    '[GeminiBridge v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
+                  );
+                  safeSendResponse({ success: true, reason: 'panel_hidden' });
+                  return true;
+                }
+                if (!this.shouldInjectRelayMessage(msg)) {
+                  console.log(
+                    '[GeminiBridge v7] ⏭️ Skipping non-conversational broadcast message',
+                    msg.metadata?.eventType || msg.messageType || 'unknown'
+                  );
+                  safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                  return true;
+                }
+                // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
+                // The senderId in metadata is more reliable as it's set when the message originates
+                const senderFromMetadata = msg.metadata?.senderId;
+                const isStreaming = simpleChatBridge.isStreaming();
+
+                // NORMALIZE IDs for comparison (strip common prefixes)
+                const normalizeId = (id: string) =>
+                  id ? id.replace(/^(page-agent-|browser-|agent-)/, '') : '';
+
+                const myNormalizedId = normalizeId(this.pageAgentId || '');
+                const fromNormalizedId = normalizeId(msg.from || '');
+                const metaSenderNormalizedId = normalizeId(senderFromMetadata || '');
+
+                const isFromSelf =
+                  (myNormalizedId &&
+                    fromNormalizedId &&
+                    myNormalizedId.startsWith(fromNormalizedId) &&
+                    fromNormalizedId.length > 5) ||
+                  (myNormalizedId &&
+                    metaSenderNormalizedId &&
+                    myNormalizedId.startsWith(metaSenderNormalizedId) &&
+                    metaSenderNormalizedId.length > 5) ||
+                  msg.from === 'You';
+
+                const isFromYou = msg.from === 'You';
+
+                // Also check browser agent ID if we can get it from storage or background
+                // This is a safety margin against late pageAgentId assignment
+                const isExternalAgent = !isFromSelf;
+
+                // Debug logging to trace agent identification
+                console.log('[GeminiBridge v7] 📨 Message received:', {
+                  from: msg.from,
+                  senderId: senderFromMetadata,
+                  myAgentId: this.pageAgentId,
+                  isFromSelf,
+                  isExternalAgent,
+                  messageType: msg.messageType,
+                  channel: messageChannel,
+                });
+
+                // FIXED LOGIC:
+                // - Skip ONLY self-messages (already handled by isExternalAgent check)
+                // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
+                // - This enables true multi-AI conversation
+                if (!isExternalAgent) {
+                  console.log('[GeminiBridge v7] ⏭️ Skipping message:', {
+                    from: msg.from,
+                    senderId: senderFromMetadata,
+                    myAgentId: this.pageAgentId,
+                    reason: isFromYou ? 'from-you' : isFromSelf ? 'same-agent' : 'unknown',
+                  });
+                } else {
+                  // SAFETY CHECK: If AI is actively streaming, DO NOT INJECT IMMEDIATELY.
+                  // Instead, add to queue.
+                  if (isStreaming) {
+                    console.log(
+                      '[GeminiBridge v7] ⏳ AI is streaming, QUEUING message for later injection:',
+                      msg.content.substring(0, 50)
+                    );
+                    this.queueMessage(msg.content, msg.metadata);
+                    return;
+                  }
+
+                  // This is from an external agent - inject it!
+                  // (Even if it's an AI response - we WANT to inject other AIs' responses)
+                  console.log('[GeminiBridge v7] ✅ Injecting message from external agent:', {
+                    from: msg.from,
+                    isAIResponse: msg.messageType === 'ai-response' || msg.metadata?.isAIResponse,
+                    contentPreview: msg.content.substring(0, 50),
+                    channel: messageChannel,
+                  });
+
+                  // FEDERATION IMPROVEMENT: Track orchestrator tasks for response correlation
+                  const isOrchestratorTask =
+                    msg.metadata?.source === 'orchestrator' ||
+                    msg.metadata?.taskId ||
+                    msg.metadata?.requiresResponse;
+
+                  if (isOrchestratorTask) {
+                    console.log(
+                      '[GeminiBridge v7] 🎯 Orchestrator task detected:',
+                      msg.metadata?.taskId
+                    );
+                    // Register this as a pending request so we can correlate the AI response
+                    this.trackPendingRequest({
+                      correlationId: msg.metadata?.correlationId || msg.id || `req-${Date.now()}`,
+                      taskId: msg.metadata?.taskId,
+                      from: msg.from,
+                    });
+                  }
+
+                  this.injectMessage(msg.content).then((success) => {
+                    if (success) console.log('[GeminiBridge v7] ✅ Injection successful');
+                    else console.warn('[GeminiBridge v7] ⚠️ Injection failed');
+                  });
+                }
+              }
+            }
+
+            safeSendResponse({ success: true });
+            return true;
+          }
+        }
+      } catch (e: any) {
+        console.error('[GeminiBridge] Content script message handler error:', e);
+        // Don't call sendResponse here for async cases as it might be too late,
+        // but for sync cases it prevents the "closed prematurely" error.
+        try {
+          safeSendResponse({ success: false, error: e.message || 'Unknown error' });
+        } catch (ignore) {
+          // ignore if response sent already
+        }
+      }
+    });
+  }
+
+  /**
+   * Safely send message to background
+   */
+  private safeSendMessage(message: any, callback?: (response: any) => void): void {
+    if (!chrome.runtime?.id) return;
+    try {
+      chrome.runtime.sendMessage(message, (response) => {
+        // Access lastError to suppress "Unchecked runtime.lastError" warnings
+        const error = chrome.runtime.lastError;
+        if (callback && !error) {
+          callback(response);
+        }
+      });
+    } catch (e) {
+      // Ignore context invalidated errors
+    }
+  }
+
+  private setupKeyboardShortcuts(): void {
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Shift + F to toggle panel
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        this.togglePanel();
+      }
+
+      // Ctrl/Cmd + Shift + I to inject last clipboard as message
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+        navigator.clipboard.readText().then((text) => {
+          if (text) this.injectMessage(text);
+        });
+      }
+    });
+  }
+
+  /**
+   * Only conversational payloads should be auto-injected into page chat.
+   * Control-plane events (activity/wake/heartbeat) must stay out of model input.
+   */
+  private shouldInjectRelayMessage(msg: any): boolean {
+    const content = String(msg?.content || '').trim();
+    if (!content) return false;
+
+    const messageType = String(msg?.messageType || '').toLowerCase();
+    const eventType = String(msg?.metadata?.eventType || '').toLowerCase();
+    const lower = content.toLowerCase();
+
+    if (messageType === 'event') return false;
+
+    const blockedEventTypes = new Set([
+      'activity',
+      'wake_ping',
+      'wake_ack',
+      'monitor_idle',
+      'page_agent_registered',
+      'agent_registered',
+      'heartbeat',
+    ]);
+    if (blockedEventTypes.has(eventType)) return false;
+
+    if (
+      lower.startsWith('[activity]') ||
+      lower.startsWith('[wake_ping') ||
+      lower.startsWith('[wake_ack')
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private async injectMessage(content: string, metadata?: any): Promise<boolean> {
+    console.log('[GeminiBridge v7] Injecting message:', content.substring(0, 50));
+
+    const success = await simpleChatBridge.sendMessage(content);
+
+    if (success) {
+      console.log('[GeminiBridge v7] Message sent successfully');
+    } else {
+      console.error('[GeminiBridge v7] Message send failed');
+    }
+
+    return success;
+  }
+
+  /**
+   * FEDERATION IMPROVEMENT: Track a pending request for response correlation
+   */
+  private trackPendingRequest(request: {
+    correlationId: string;
+    taskId?: string;
+    from: string;
+  }): void {
+    this.pendingRequests.set(request.correlationId, {
+      ...request,
+      timestamp: Date.now(),
+    });
+    console.log('[GeminiBridge v7] 📝 Tracking pending request:', request.correlationId);
+
+    // Clean up old requests (older than 5 minutes)
+    const now = Date.now();
+    for (const [id, req] of this.pendingRequests) {
+      if (now - req.timestamp > 300000) {
+        this.pendingRequests.delete(id);
+      }
+    }
+  }
+
+  /**
+   * FEDERATION IMPROVEMENT: Get the oldest pending request for response matching
+   */
+  private getOldestPendingRequest(): {
+    correlationId: string;
+    taskId?: string;
+    from: string;
+    timestamp: number;
+  } | null {
+    let oldest: { correlationId: string; taskId?: string; from: string; timestamp: number } | null =
+      null;
+
+    for (const req of this.pendingRequests.values()) {
+      if (!oldest || req.timestamp < oldest.timestamp) {
+        oldest = req;
+      }
+    }
+
+    return oldest;
+  }
+
+  /**
+   * Check for CAPTCHA on page load and notify if found
+   */
+  private checkForCaptcha(): void {
+    const detection = captchaHandler.detectCaptcha();
+
+    if (detection.detected) {
+      console.log(
+        `[GeminiBridge v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
+      );
+
+      this.safeSendMessage({
+        type: 'CAPTCHA_DETECTED',
+        captcha: {
+          type: detection.type,
+          confidence: detection.confidence,
+          url: window.location.href,
+        },
+      });
+    }
+  }
+
+  /**
+   * Queue a message for injection
+   */
+  private queueMessage(content: string, metadata?: any): void {
+    this.injectionQueue.push({
+      content,
+      metadata,
+      timestamp: Date.now(),
+      attempts: 0,
+    });
+    // Try to process immediately (will fail if still streaming, but sets up interval)
+    this.processInjectionQueue();
+  }
+
+  /**
+   * Process the injection queue
+   */
+  private processInjectionQueue(): void {
+    if (this.isProcessingQueue) return;
+    this.isProcessingQueue = true;
+
+    const process = async () => {
+      if (!this.panelVisible) {
+        // Per-tab safety: never auto-inject relay queue while panel is hidden.
+        this.injectionQueue = [];
+        this.isProcessingQueue = false;
+        return;
+      }
+
+      if (this.injectionQueue.length === 0) {
+        this.isProcessingQueue = false;
+        return;
+      }
+
+      if (simpleChatBridge.isStreaming()) {
+        // Still streaming, wait and retry
+        console.debug('[GeminiBridge v7] Queue paused (AI streaming)...');
+        setTimeout(process, 1000);
+        return;
+      }
+
+      // Ready to inject
+      const item = this.injectionQueue.shift();
+      if (item) {
+        console.log(
+          '[GeminiBridge v7] 🚀 Processing queued message:',
+          item.content.substring(0, 30)
+        );
+
+        // If it's an orchestrator task, track it again (timestamp refresh)
+        const isOrchestratorTask =
+          item.metadata?.source === 'orchestrator' ||
+          item.metadata?.taskId ||
+          item.metadata?.requiresResponse;
+
+        if (isOrchestratorTask) {
+          this.trackPendingRequest({
+            correlationId: item.metadata?.correlationId || `queued-${Date.now()}`,
+            taskId: item.metadata?.taskId,
+            from: item.metadata?.senderId || 'unknown',
+          });
+        }
+
+        await this.injectMessage(item.content, item.metadata);
+
+        // Wait a bit before next injection to allow UI to update
+        // (Wait longer than the _sendingGuard in SimpleChatBridge to avoid self-blocking)
+        setTimeout(process, 3500);
+      } else {
+        this.isProcessingQueue = false;
+      }
+    };
+
+    process();
+  }
+
+  /**
+   * Auto relay injection is opt-in per tab: only when that tab's panel is open.
+   * Allows explicit override for system workflows by setting metadata.forceInject=true.
+   */
+  private canAutoInjectRelayMessage(msg: any): boolean {
+    if (msg?.metadata?.forceInject === true) return true;
+    const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
+    if (channelId && this.isChannelPaused(String(channelId))) return false;
+    return this.panelVisible;
+  }
+
+  private isChannelPaused(channelId: string): boolean {
+    if (!channelId) return false;
+    if (this.pausedChannels.has(channelId)) return true;
+    const normalized = channelId.trim().toLowerCase();
+    if (!normalized) return false;
+    for (const pausedId of this.pausedChannels) {
+      if (String(pausedId).trim().toLowerCase() === normalized) return true;
+    }
+    return false;
+  }
+}
+
+// Initialize with guard to prevent multiple instances
+if (shouldSkipForPage()) {
+  console.log('[GeminiBridge v7] Skipping content script on auth/challenge/IDE page');
+} else if (!window.__GEMINI_BRIDGE_INITIALIZED__) {
+  window.__GEMINI_BRIDGE_INITIALIZED__ = true;
+  new GeminiBridgeContentScript();
+} else {
+  console.log('[GeminiBridge v7] Content script already initialized, skipping duplicate');
+}

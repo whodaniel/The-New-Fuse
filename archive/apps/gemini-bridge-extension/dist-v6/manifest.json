@@ -1,0 +1,115 @@
+{
+  "manifest_version": 3,
+  "name": "TNF Gemini Sidebar Bridge",
+  "version": "7.2.0",
+  "description": "Bridge to connect the Gemini Sidebar Chat to the TNF Relay. Works alongside Fuse Connect without conflict.",
+
+  "key": "MIIBCgKCAQEAxhfUfSzmsn3yCEEJ2Z0lmTasqSARJUov0byaSmgaYxPl0UaLCgC40P0B4LIGnbWJSwkyQLdh3DqQIrJSe3iSfcJk8snhPbOmEEmUR+56lEqkehKIB6z8wEbLYvKvvXRLogYyXjfE3YLBoaMSxcLdWQbccMQLiDnn0gRmFoWhMCwYnrNogenSHDJBh7wgYf/dNfeEtYoEZ57Za6/oDYRDQbC5NBid+F9e7m79bKd+G7DGi/oDPEF5pGLLqMXlzLqEXUwi+RUjEj9jVagPKz1qAh1iuTlAhLpiHLhPZn39q5CZlmMHvFxROpfhPuGRQPBcZRc9Xlnt/r2sLutxBXU/xwIDAQAB",
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "TNF Gemini Bridge"
+  },
+
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://aistudio.google.com/*",
+        "https://gemini.google.com/*",
+        "https://*.google.com/*",
+        "http://localhost:*/*"
+      ],
+      "js": ["content/index.js"],
+      "css": [],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content/ai-studio-automation.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.usercontent.goog/*"],
+      "js": ["content/iframe-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs",
+    "notifications",
+    "nativeMessaging",
+    "scripting",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest"
+  ],
+
+  "oauth2": {
+    "client_id": "637776200146-pa5fs3eggfmh5gr92gvrp955keg0lrah.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/youtube",
+      "https://www.googleapis.com/auth/youtube.force-ssl",
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/drive.appdata",
+      "profile",
+      "email"
+    ]
+  },
+
+  "host_permissions": [
+    "https://aistudio.google.com/*",
+    "https://gemini.google.com/*",
+    "https://*.google.com/*",
+    "http://localhost:*/*",
+    "ws://localhost:*/*",
+    "wss://localhost:*/*",
+    "wss://relay.thenewfuse.com/*",
+    "https://www.googleapis.com/*",
+    "https://*.usercontent.goog/*"
+  ],
+
+  "commands": {
+    "toggle-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Toggle the Gemini Bridge panel"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "popup/*"],
+      "matches": [
+        "https://aistudio.google.com/*",
+        "https://gemini.google.com/*"
+      ]
+    }
+  ]
+}

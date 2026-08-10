@@ -1,13 +1,26 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: penetration-tester
-description:
-  Expert in offensive security, penetration testing, red team operations, and
-  vulnerability exploitation. Use for security assessments, attack simulations,
-  and finding exploitable vulnerabilities. Triggers on pentest, exploit, attack,
-  hack, breach, pwn, redteam, offensive.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
+description: Expert in offensive security, penetration testing, red team operations,
+  and vulnerability exploitation. Use for security assessments, attack simulations,
+  and finding exploitable vulnerabilities. Triggers on pentest, exploit, attack, hack,
+  breach, pwn, redteam, offensive.
 skills: clean-code, vulnerability-scanner, red-team-tactics, api-patterns
+model: inherit
 ---
 
 # Penetration Tester

@@ -3,10 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Complete node_modules rebuild for apps/api and verify
-api-local health
-
+**Current Directive:** Monitor full-auto daemon status
 <!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
@@ -830,6 +827,10 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-10T20:36:41.392Z handoff `096d6795-30a3-4fdf-b89d-9ee70a2c8411` head `dff09cd93e5f` project `TNF-SESSION` — Monitor full-auto daemon status
+
+- 2026-08-10T20:30:42.722Z handoff `c5a69078-fc51-475f-9678-d1a45ca41e1d` head `b3973402df64` project `TNF-SESSION` — Watch full-auto for ok=true instead of TIMED OUT on hung broadcast
+
 - 2026-08-10T19:05:03.371Z handoff `8066f785-ec83-43da-8c0e-ab9eec2ad5d4` head
   `0f34cf4157a0` project `TNF-SESSION` — Repair apps/api node_modules so
   api-local :3002 stays healthy
@@ -954,3 +955,5 @@ continuation
 
 - [✅] 2026-08-10T18:37:23.797Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T20:27:43.815Z Orchestrator: Completed: Goal: Run self-improvement cycle and capture learnings

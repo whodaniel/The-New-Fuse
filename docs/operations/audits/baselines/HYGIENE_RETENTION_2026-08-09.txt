@@ -1,0 +1,27 @@
+[swarm-disk-retention] root=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse retentionDays=14
+[swarm-disk-retention] heartbeat history capped at 200 files (was 281)
+[swarm-disk-retention] truncated terminal-heartbeat-history.jsonl to last 500 lines
+[swarm-disk-retention] tnf logs: removed 0 file(s) older than 14d (/Users/danielgoldberg/.tnf/logs)
+[swarm-disk-retention] wrapper logs: removed 0 file(s) older than 14d (/Users/danielgoldberg/.tnf/wrapper-logs)
+[swarm-disk-retention] relay monitor: removed 0 file(s) older than 14d (/Users/danielgoldberg/.tnf/relay-monitor)
+[swarm-disk-retention] poll jobs: removed 0 file(s) older than 14d (/Users/danielgoldberg/.tnf/poll-jobs)
+[swarm-disk-retention] runtime logs: removed 0 file(s) older than 14d (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/runtime-logs)
+[swarm-disk-retention] hermes cron output: removed 0 file(s) older than 14d (/Users/danielgoldberg/.hermes/cron/output)
+[swarm-disk-retention] hermes logs: removed 11 file(s) older than 14d (/Users/danielgoldberg/.hermes/logs)
+[swarm-disk-retention] truncated federation-watchdog-relay.log to last 1000 lines
+[swarm-disk-retention] truncated voice-watchdog.log to last 1000 lines
+[swarm-disk-retention] truncated tnf-full-auto-daemon.log to last 2000 lines
+[swarm-disk-retention] truncated factory-supervisor.log to last 2000 lines
+[swarm-disk-retention] swarm-context history ok (0 ≤ keep 0)
+[swarm-disk-retention] truncated subdirector-autopilot-history.jsonl to last 2000 lines
+[swarm-disk-retention] truncated audit.jsonl to last 2000 lines
+[swarm-disk-retention] heartbeat JSON has no PEM bodies
+[swarm-disk-retention] pnpm store prune complete
+[swarm-disk-retention] npm cache clean complete
+[hermes-state-retention] start dryRun=false freeMb=6456
+[hermes-state-retention] finalized 0 empty cron ghost session(s)
+[hermes-state-retention] cron prune: No sessions match (last active before 2026-08-06 21:39, source 'cron').
+[hermes-state-retention] sessions optimize complete
+[hermes-state-retention] complete freeMb=6457
+/dev/disk1s1  466Gi  440Gi  6.3Gi    99% 4247027 66123600    6%   /System/Volumes/Data
+[swarm-disk-retention] complete

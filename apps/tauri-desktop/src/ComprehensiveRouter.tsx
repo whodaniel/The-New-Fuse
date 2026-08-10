@@ -4,6 +4,7 @@ import TnfLogo from './components/brand/TnfLogo';
 import CommandPalette, { useCommandPaletteShortcut } from './components/layout/CommandPalette';
 import NavIcon from './components/layout/NavIcon';
 import SidebarAuth from './components/layout/SidebarAuth';
+import ThemeToggle from './components/layout/ThemeToggle';
 import { useRoute } from './components/route-context';
 import './ComprehensiveRouter.css';
 import { ROUTE_COMPONENTS } from './config/routeComponents';
@@ -102,7 +103,7 @@ const ComprehensiveRouter: React.FC = () => {
           <div className="mobile-logo">
             <TnfLogo size={28} compactWordmark onClick={goHome} />
           </div>
-          <div className="mobile-header-spacer"></div>
+          <ThemeToggle collapsed className="mobile-header-theme" />
         </header>
       )}
 
@@ -270,6 +271,7 @@ const ComprehensiveRouter: React.FC = () => {
         </nav>
 
         <div className="sidebar-footer">
+          <ThemeToggle collapsed={sidebarCollapsed} />
           <SidebarAuth collapsed={sidebarCollapsed} />
           {!sidebarCollapsed && (
             <>

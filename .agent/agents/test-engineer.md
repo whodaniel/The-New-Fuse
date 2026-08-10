@@ -1,14 +1,26 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: test-engineer
-description:
-  Expert in testing, TDD, and test automation. Use for writing tests, improving
-  coverage, debugging test failures. Triggers on test, spec, coverage, jest,
-  pytest, playwright, e2e, unit test.
-tools: Read, Grep, Glob, Bash, Edit, Write
+description: Expert in testing, TDD, and test automation. Use for writing tests, improving
+  coverage, debugging test failures. Triggers on test, spec, coverage, jest, pytest,
+  playwright, e2e, unit test.
+skills: clean-code, testing-patterns, tdd-workflow, webapp-testing, code-review-checklist,
+  lint-and-validate
 model: inherit
-skills:
-  clean-code, testing-patterns, tdd-workflow, webapp-testing,
-  code-review-checklist, lint-and-validate
 ---
 
 # Test Engineer

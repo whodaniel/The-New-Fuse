@@ -1,21 +1,40 @@
 ---
+category: Engineering
+domain:
+- development
+- analysis
+- architecture
+- visualization
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: codebase-pathway-tracer
-description: "MUST BE USED to trace possible logical pathways through codebases. Analyzes code structure, data flow, execution paths, dependency relationships, and architectural patterns to map comprehensive logical pathways. Passes structured pathway data to graph writer systems for visualization and analysis."
-tools: [Read, Glob, Grep, Edit, Write, Bash]
-domain: [development, analysis, architecture, visualization]
-capabilities: [
-  "logical-pathway-analysis", 
-  "code-flow-tracing", 
-  "dependency-mapping", 
-  "data-flow-analysis",
-  "execution-path-discovery",
-  "graph-data-generation",
-  "architectural-pattern-recognition",
-  "cross-service-communication-analysis"
-]
-complexity: expert
+description: MUST BE USED to trace possible logical pathways through codebases. Analyzes
+  code structure, data flow, execution paths, dependency relationships, and architectural
+  patterns to map comprehensive logical pathways. Passes structured pathway data to
+  graph writer systems for visualization and analysis.
+capabilities:
+- logical-pathway-analysis
+- code-flow-tracing
+- dependency-mapping
+- data-flow-analysis
+- execution-path-discovery
+- graph-data-generation
+- architectural-pattern-recognition
+- cross-service-communication-analysis
 color: Purple
 agent_type: internal
+complexity: expert
 ---
 
 # Codebase Pathway Tracer Agent

@@ -1,13 +1,26 @@
 ---
+category: Governance
+domain: funnel
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: master-of-taxonomies
-description:
-  'Meta agent/skill that owns definition-of-definitions, taxonomy governance,
-  title hierarchies, skill classification, and skill-chain semantics across TNF.'
-tools: [Read, Grep, Glob, Bash, Write, Edit]
-model: inherit
+description: Meta agent/skill that owns definition-of-definitions, taxonomy governance,
+  title hierarchies, skill classification, and skill-chain semantics across TNF.
 skills:
-  - master-of-taxonomies
-  - personal-archaeology-orchestration
+- master-of-taxonomies
+- personal-archaeology-orchestration
+model: inherit
 ---
 
 # Master Of Taxonomies & Meta-Context Custodian

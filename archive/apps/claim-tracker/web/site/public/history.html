@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Purchase History - ClaimTracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9c4fba",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#121212",
+                        "neutral-custom": "#1b151d",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-72 bg-neutral-custom border-r border-primary/10 flex flex-col shrink-0">
+<div class="p-6 flex flex-col h-full">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-10">
+<div class="size-10 rounded-full bg-gradient-to-br from-primary to-purple-900 flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white">layers</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-lg font-bold leading-none">ClaimTracker</h1>
+<p class="text-slate-400 text-xs mt-1">Mineral Collection Manager</p>
+</div>
+</div>
+<!-- Nav Links -->
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">visibility</span>
+<span class="text-sm font-medium">Watcher</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-lg shadow-lg shadow-primary/20" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-medium">History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">Invoices</span>
+</a>
+<div class="mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-8">
+<div class="max-w-6xl mx-auto space-y-8">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-4xl font-black tracking-tight text-white">Purchase History</h2>
+<p class="text-slate-400 mt-2 text-lg">Detailed log of your acquired mineral specimens</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold rounded-lg transition-all">
+<span class="material-symbols-outlined text-sm">csv</span>
+                            Export to CSV
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold rounded-lg transition-all">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+                            Export to PDF
+                        </button>
+</div>
+</header>
+<!-- Summary Analytics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-neutral-custom border border-white/5 p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 size-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+<p class="text-slate-400 text-sm font-medium">Lifetime Spend</p>
+<p class="text-3xl font-bold text-white mt-2">$1,240.50</p>
+<div class="mt-4 flex items-center text-emerald-400 text-xs font-semibold">
+<span class="material-symbols-outlined text-xs mr-1">trending_up</span>
+                            +12% from last month
+                        </div>
+</div>
+<div class="bg-neutral-custom border border-white/5 p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 size-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+<p class="text-slate-400 text-sm font-medium">Total Items</p>
+<p class="text-3xl font-bold text-white mt-2">28</p>
+<div class="mt-4 flex items-center text-slate-400 text-xs font-semibold">
+                            Unique mineral species
+                        </div>
+</div>
+<div class="bg-neutral-custom border border-white/5 p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 size-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+<p class="text-slate-400 text-sm font-medium">Avg. Item Price</p>
+<p class="text-3xl font-bold text-white mt-2">$44.30</p>
+<div class="mt-4 flex items-center text-slate-400 text-xs font-semibold">
+                            Consistent market value
+                        </div>
+</div>
+</div>
+<!-- Filters & Table -->
+<div class="bg-neutral-custom border border-white/5 rounded-xl overflow-hidden">
+<!-- Search Bar Area -->
+<div class="p-4 border-b border-white/5 flex flex-wrap gap-4 items-center justify-between">
+<div class="relative flex-1 min-w-[300px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-background-dark border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:ring-primary focus:border-primary" placeholder="Search by seller or item name..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-background-dark border border-white/10 hover:border-primary/50 text-white text-sm font-medium rounded-lg transition-all">
+<span class="material-symbols-outlined text-lg">tune</span>
+                            Filter
+                        </button>
+</div>
+<!-- Purchases Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5 text-slate-400 text-xs uppercase tracking-widest font-bold">
+<th class="px-6 py-4">Mineral Item</th>
+<th class="px-6 py-4">Seller</th>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Price</th>
+<th class="px-6 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="Macro photo of deep purple amethyst crystal cluster" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtKwGSGTknh39lEXMdl03kfiT685qGwIG-EXDsk5sdwSY32SZkAgRJ_omLBB5Z-mGe_KjyQqAVCGs3wFPXncq4-Z4-m2uPjzQ-kJ-7e5evnEHtd1Hw0Ot7aJ6FW4yChZRT2wcox3JoMgF8-SNR-qetO8kfxMWNd8koxJfcstHWyN_D56-M0J5WSeCu0PQaotQcXtl622J23uUleKPiW1RICAt1juB76V_Bav974Z6XhDwghMq5EhDGhdUNRXs_2qGY8jBzU59hpe2y')"></div>
+</div>
+<div>
+<p class="text-white font-semibold">Amethyst Cluster</p>
+<p class="text-slate-500 text-xs">V-Grade Brazilian</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 text-slate-300 text-sm">Jason Fulker</td>
+<td class="px-6 py-5 text-slate-400 text-sm font-mono">Oct 12, 2025</td>
+<td class="px-6 py-5 text-white font-bold">$45.00</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:text-primary/80 text-sm font-bold flex items-center gap-1 justify-end ml-auto group-hover:translate-x-[-4px] transition-all">
+                                            View Receipt
+                                            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="Close up of a vibrant golden citrine crystal point" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2biLhYbVTG_Wcp25LDCuPzMYIaDjPgtoGQNcxnQV1MuOa85qCmCtoZosIRSVifARnaLT6zTK1EJVL1ACiIAPM0BzB3wupLqMOOFgxLvt3ZNAlXVsUts92D8phFgtVPJA39PBK79qvzFyfdhzNWqsJE-mTI0dz1QKAcquElpmeEtOP8AWCOXQe2bHCPaUIDm_dTJ1UfOE4o9BNzB98sdp0d432LldPDydXT5bp-eInxPYDmlD0cV5hw2jOmuLb6FTScVZn0eh0MDVk')"></div>
+</div>
+<div>
+<p class="text-white font-semibold">Citrine Point</p>
+<p class="text-slate-500 text-xs">Polished Madagascar</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 text-slate-300 text-sm">Sarah Smith</td>
+<td class="px-6 py-5 text-slate-400 text-sm font-mono">Oct 10, 2025</td>
+<td class="px-6 py-5 text-white font-bold">$32.00</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:text-primary/80 text-sm font-bold flex items-center gap-1 justify-end ml-auto group-hover:translate-x-[-4px] transition-all">
+                                            View Receipt
+                                            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="Iridescent labradorite sphere showing blue and green flash" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBxqAGNoTEpHDZe-eU8d-7KhVQ9qsDPxkX1-bzFkgm4j0-hb1xEbFBVFgCAJbJoGYMDhHeIUv00rWJIGUM9mI5JLZ30M_dW3neHvwPPTdfJRjD2sJV1UaNX1qRw8VhiMK9ITwrBljJ3ZD2caWMS6yJ5KAC5hH8YfbOj4r7KSpI-85_ao1WUp9liMygfDy6GwDPt5mK6p_e38KBa_pXuhEWy7AejVrigrsecpXr-ZUuLp9w-bI6VhL0gHcoOZKxWm2ZI0NfvNVT9e8bC')"></div>
+</div>
+<div>
+<p class="text-white font-semibold">Labradorite Sphere</p>
+<p class="text-slate-500 text-xs">Spectrolite Quality</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 text-slate-300 text-sm">Luna Crystals</td>
+<td class="px-6 py-5 text-slate-400 text-sm font-mono">Oct 05, 2025</td>
+<td class="px-6 py-5 text-white font-bold">$68.00</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:text-primary/80 text-sm font-bold flex items-center gap-1 justify-end ml-auto group-hover:translate-x-[-4px] transition-all">
+                                            View Receipt
+                                            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination / Table Footer -->
+<div class="p-4 bg-white/[0.02] flex items-center justify-between text-xs text-slate-500">
+<p>Showing 1 to 3 of 28 acquisitions</p>
+<div class="flex gap-2">
+<button class="size-8 rounded border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="size-8 rounded bg-primary text-white flex items-center justify-center">1</button>
+<button class="size-8 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">2</button>
+<button class="size-8 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">3</button>
+<button class="size-8 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Collection Trends (Visual addition to enhance theme) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+<div class="bg-neutral-custom border border-white/5 p-6 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-white font-bold">Price Distribution</h3>
+<span class="text-xs text-slate-400">By Category</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="text-slate-300">Raw Clusters</span>
+<span class="text-white">45%</span>
+</div>
+<div class="h-1.5 w-full bg-background-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[45%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="text-slate-300">Polished Points</span>
+<span class="text-white">32%</span>
+</div>
+<div class="h-1.5 w-full bg-background-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary/60 w-[32%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-neutral-custom border border-white/5 p-6 rounded-xl flex items-center gap-6">
+<div class="size-24 rounded-full border-4 border-primary border-t-transparent animate-spin-slow flex items-center justify-center">
+<div class="size-16 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">diamond</span>
+</div>
+</div>
+<div>
+<h3 class="text-white font-bold">Rarity Score</h3>
+<p class="text-slate-400 text-sm mt-1">Your collection ranks in the top 15% of specialized curators.</p>
+<button class="mt-4 text-xs font-bold text-primary uppercase tracking-widest hover:underline">View Analytics</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

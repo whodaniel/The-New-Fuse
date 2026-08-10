@@ -52,17 +52,36 @@ const AGENT_COMMAND_HINTS = [
   'tnf',
 ];
 
+const DEFAULT_SIGNING_KEY_FILE = path.join(
+  os.homedir(),
+  '.tnf',
+  'local-subdirector',
+  'signing.pkcs8.pem'
+);
+const DEFAULT_ENCRYPTION_KEY_FILE = path.join(
+  os.homedir(),
+  '.tnf',
+  'local-subdirector',
+  'encryption.pkcs8.pem'
+);
+
+const signingKeyFile =
+  process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_FILE || DEFAULT_SIGNING_KEY_FILE;
+const encryptionKeyFile =
+  process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_FILE || DEFAULT_ENCRYPTION_KEY_FILE;
+
 const config = {
   actorId: process.env.LOCAL_SUBDIRECTOR_ACTOR_ID || 'tnf-local-subdirector',
   // Identity and Trust Protocol
   nftId: process.env.LOCAL_SUBDIRECTOR_NFT_ID || 'unregistered',
   walletAddress: process.env.LOCAL_SUBDIRECTOR_WALLET_ADDRESS || '0x0000000000000000000000000000000000000000',
+  // Keep PEM material in memory only — never persist into heartbeat JSON.
+  signingKeyFile,
+  encryptionKeyFile,
   signingPrivateKeyPem:
-    process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_PEM ||
-    readOptionalFile(process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_FILE),
+    process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_PEM || readOptionalFile(signingKeyFile),
   encryptionPrivateKeyPem:
-    process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_PEM ||
-    readOptionalFile(process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_FILE),
+    process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_PEM || readOptionalFile(encryptionKeyFile),
   intervalMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_INTERVAL_MS, 30000),
   stallThresholdMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_STALL_THRESHOLD_MS, 180000),
   idleThresholdMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_IDLE_THRESHOLD_MS, 300000),
@@ -84,6 +103,19 @@ const config = {
     process.env.LOCAL_SUBDIRECTOR_STATE_DIR ||
     path.join(os.homedir(), '.tnf', 'local-subdirector', 'state'),
 };
+
+function publicHeartbeatConfig() {
+  const {
+    signingPrivateKeyPem: _signingPrivateKeyPem,
+    encryptionPrivateKeyPem: _encryptionPrivateKeyPem,
+    ...safe
+  } = config;
+  return {
+    ...safe,
+    signingKeyConfigured: Boolean(_signingPrivateKeyPem),
+    encryptionKeyConfigured: Boolean(_encryptionPrivateKeyPem),
+  };
+}
 
 const state = new Map();
 let cycle = 0;
@@ -665,7 +697,7 @@ async function scanOnce() {
     status:
       summary.stalledSessions > 0 ? 'critical' : summary.agentSessions > 0 ? 'healthy' : 'warning',
     cycle,
-    config,
+    config: publicHeartbeatConfig(),
     summary,
     sessions,
     wakePings,

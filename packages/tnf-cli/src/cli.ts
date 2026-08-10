@@ -76,6 +76,10 @@ import {
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
+import {
+  resolvePostStepTimeoutMs,
+  tallyFullAutoRuns,
+} from './utils/full-auto-cycle.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
@@ -1556,6 +1560,21 @@ function readLastJsonLine(filePath: string): any | null {
   } catch {
     return null;
   }
+}
+
+function readAllJsonLines(filePath: string): any[] {
+  if (!fs.existsSync(filePath)) return [];
+  const out: any[] = [];
+  for (const line of fs.readFileSync(filePath, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      out.push(JSON.parse(trimmed));
+    } catch {
+      // skip corrupt lines
+    }
+  }
+  return out;
 }
 
 async function sleepMs(ms: number): Promise<void> {
@@ -10492,11 +10511,24 @@ fullAuto
         });
         await runSelfCli(cycleArgs);
 
+        // Mirror the loop: primary success is the cycle; broadcast/status are
+        // best-effort so a hung orchestrate cannot fail an already-good run.
+        const postWarnings: string[] = [];
+        const runPostStep = async (label: string, args: string[]) => {
+          try {
+            await runSelfCli(args, resolvePostStepTimeoutMs(Number.POSITIVE_INFINITY));
+          } catch (postErr: unknown) {
+            const message = postErr instanceof Error ? postErr.message : String(postErr);
+            postWarnings.push(`${label}: ${message}`);
+            console.error(
+              chalk.yellow(`[full-auto] once post-step "${label}" soft-failed: ${message}`)
+            );
+          }
+        };
         if (options.broadcast) {
-          await runSelfCli(['orchestrate', 'self-improvement']);
+          await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
         }
-
-        await runSelfCli(buildSelfImprovementStatusCliArgs(options));
+        await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
         const finishedAt = new Date();
         const event: FullAutoRunEvent = {
           cycle: 1,
@@ -10504,6 +10536,9 @@ fullAuto
           finishedAt: finishedAt.toISOString(),
           durationMs: finishedAt.getTime() - startedAt.getTime(),
           ok: true,
+          ...(postWarnings.length > 0
+            ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
+            : {}),
         };
 
         appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
@@ -10610,8 +10645,11 @@ fullAuto
         });
         const intervalMs = intervalMinutes * 60 * 1000;
         const cycleTimeoutMs = cycleTimeoutMinutes * 60 * 1000;
-        let completedCycles = 0;
-        let failedCycles = 0;
+        // Seed counters from the run log so daemon restarts don't report
+        // completedCycles=0 after successful historical cycles.
+        const historical = tallyFullAutoRuns(readAllJsonLines(FULL_AUTO_RUN_LOG_PATH));
+        let completedCycles = historical.completedCycles;
+        let failedCycles = historical.failedCycles;
 
         // Cycle numbers must stay monotonic across daemon restarts, otherwise the
         // run log reads `…7, 8, 1` and the cycle number is not a usable key.
@@ -10625,6 +10663,7 @@ fullAuto
           maxCycles,
           completedCycles,
           failedCycles,
+          lastRun: priorRun || undefined,
         });
 
         console.log(chalk.bold('\nTNF Full-Auto Loop Started\n'));
@@ -10632,6 +10671,10 @@ fullAuto
         console.log(`Cycle timeout: ${chalk.cyan(`${cycleTimeoutMinutes} minute(s)`)}`);
         console.log(`Max cycles: ${chalk.cyan(maxCycles === 0 ? 'unbounded' : String(maxCycles))}`);
         console.log(`Resuming from cycle: ${chalk.cyan(String(cycle))}`);
+        console.log(
+          `Historical tallies: ${chalk.cyan(String(completedCycles))} ok / ${chalk.cyan(String(failedCycles))} failed`
+        );
+        console.log(`Primary argv: ${chalk.dim(cycleArgs.join(' '))}`);
         console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
         console.log('');
 
@@ -10656,10 +10699,31 @@ fullAuto
 
           try {
             await runSelfCli(cycleArgs, remainingMs());
+
+            // Broadcast/status are best-effort after a successful primary run.
+            // A hung `orchestrate self-improvement` previously burned the
+            // remaining cycle budget and marked an otherwise-good cycle failed.
+            const postWarnings: string[] = [];
+            const runPostStep = async (label: string, args: string[]) => {
+              const budget = resolvePostStepTimeoutMs(remainingMs());
+              try {
+                await runSelfCli(args, budget);
+              } catch (postErr: unknown) {
+                const message =
+                  postErr instanceof Error ? postErr.message : String(postErr);
+                postWarnings.push(`${label}: ${message}`);
+                console.error(
+                  chalk.yellow(
+                    `[full-auto] cycle ${cycle} post-step "${label}" soft-failed: ${message}`
+                  )
+                );
+              }
+            };
+
             if (options.broadcast) {
-              await runSelfCli(['orchestrate', 'self-improvement'], remainingMs());
+              await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
             }
-            await runSelfCli(buildSelfImprovementStatusCliArgs(options), remainingMs());
+            await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
 
             const finishedAt = new Date();
             event = {
@@ -10668,11 +10732,15 @@ fullAuto
               finishedAt: finishedAt.toISOString(),
               durationMs: finishedAt.getTime() - startedAt.getTime(),
               ok: true,
+              ...(postWarnings.length > 0
+                ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
+                : {}),
             };
             completedCycles += 1;
             console.log(
               chalk.green(
-                `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s`
+                `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s` +
+                  (postWarnings.length > 0 ? ` (with ${postWarnings.length} post-step warning(s))` : '')
               )
             );
           } catch (err: any) {

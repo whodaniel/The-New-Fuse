@@ -3,7 +3,7 @@
 Human-friendly running record of **what people call an agent** vs **what it
 actually is**.
 
-_Last refreshed: **2026-07-25 20:49:40 EDT**_
+_Last refreshed: **2026-08-09 22:26:41 EDT**_
 
 Refresh anytime:
 
@@ -43,25 +43,19 @@ python3 scripts/system/tnf-agent-who-is-who.py --write
 
 | Name                        | Window (tty) | PID   | Note |
 | --------------------------- | ------------ | ----- | ---- |
-| **Cursor** (`cursor-agent`) | `ttys007`    | 23637 | —    |
-| **Pi** (`pi`)               | `ttys008`    | 32272 | —    |
-| **TNF** (`tnf-cli`)         | `ttys000`    | 2656  | boot |
-| **TNF** (`tnf-cli`)         | `ttys006`    | 15716 | TUI  |
+| **Claude** (`claude`)       | `ttys001`    | 61523 | —    |
+| **Cursor** (`cursor-agent`) | `ttys004`    | 56442 | —    |
+| **Hermes** (`hermes`)       | `ttys006`    | 89002 | —    |
+| **Kilo** (`kilo`)           | `ttys005`    | 22414 | —    |
+| **Pi** (`pi`)               | `ttys003`    | 48035 | —    |
+| **TNF** (`tnf-cli`)         | `ttys002`    | 10090 | —    |
 
 ## Voice beam anchor
 
-Speech inject goes to **`tnf-cli`** on **`ttys006`** (locked).
+Speech inject goes to **`tnf-cli`** on **`ttys002`** (locked).
 
 ## How to aim voice
 
 - **Cmd+Option+Click** a Terminal tab — retarget beam
 - `voice-target-agent --prefer claude|hermes|cursor-agent|tnf|…`
 - Ask Inky to move the anchor
-
-## Related category: Live Context
-
-**Live Context** is a separate TNF Voice category: per-turn situational
-awareness (beam anchor + live agents + thread hint) attached to ground input. It
-is not who-is-who identity, not chronicle sequencing alone, and not Inky.
-
-See `docs/protocols/VOICE_LIVE_CONTEXT.md`.

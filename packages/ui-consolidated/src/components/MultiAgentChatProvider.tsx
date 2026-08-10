@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Agent,
   ChatContextValue,
@@ -86,15 +86,15 @@ const SystemIcon = () => (
 
 // Provider details with icons
 const providerDetails = {
-  gemini: { icon: () => <span>✨</span>, name: 'Google Gemini' },
-  openai: { icon: () => <span>🤖</span>, name: 'OpenAI GPT' },
-  anthropic: { icon: () => <span>🧠</span>, name: 'Anthropic Claude' },
-  cohere: { icon: () => <span>🔮</span>, name: 'Cohere' },
-  sambanova: { icon: () => <span>⚡</span>, name: 'SambaNova' },
-  deepseek: { icon: () => <span>🔍</span>, name: 'DeepSeek' },
-  mistral: { icon: () => <span>🌪️</span>, name: 'Mistral' },
-  openrouter: { icon: () => <span>🛣️</span>, name: 'OpenRouter' },
-  'claude-code-cli': { icon: () => <span>💻</span>, name: 'Claude Code CLI (Local)' },
+  gemini: { icon: () => <span>{'\u2728'}</span>, name: 'Google Gemini' },
+  openai: { icon: () => <span>{'\u{1F916}'}</span>, name: 'OpenAI GPT' },
+  anthropic: { icon: () => <span>{'\u{1F9E0}'}</span>, name: 'Anthropic Claude' },
+  cohere: { icon: () => <span>{'\u{1F52E}'}</span>, name: 'Cohere' },
+  sambanova: { icon: () => <span>{'\u26A1'}</span>, name: 'SambaNova' },
+  deepseek: { icon: () => <span>{'\u{1F50D}'}</span>, name: 'DeepSeek' },
+  mistral: { icon: () => <span>{'\u{1F32A}\uFE0F'}</span>, name: 'Mistral' },
+  openrouter: { icon: () => <span>{'\u{1F6E3}\uFE0F'}</span>, name: 'OpenRouter' },
+  'claude-code-cli': { icon: () => <span>{'\u{1F4BB}'}</span>, name: 'Claude Code CLI (Local)' },
 };
 
 // Multi-Agent Chat Provider Component
@@ -111,6 +111,16 @@ export const MultiAgentChatProvider: React.FC<{
   const [messages, setMessages] = useState<Message[]>([]);
   const [rules, setRules] = useState<ConversationRule[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(userId || null);
+
+  // Ref to hold the latest messages to avoid stale closure in sendMessage
+  const messagesRef = useRef<Message[]>([]);
+  // Ref to hold the last speaking agent's ID (only updated when an agent speaks)
+  const lastSpeakerRef = useRef<string | null>(null);
+
+  // Update ref whenever messages state changes
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   // Initialize authentication and data subscriptions
   useEffect(() => {
@@ -160,6 +170,110 @@ export const MultiAgentChatProvider: React.FC<{
 
     initializeChat();
   }, [currentUserId, firebaseService]);
+
+  // Auto-mode turn-taking engine
+  useEffect(() => {
+    // Only run in auto mode
+    if (session?.state.mode !== 'auto') return;
+
+    // Skip if we're currently generating a response (to prevent multiple concurrent calls)
+    if (isGeneratingResponseRef.current) return;
+
+    // Check if we should trigger a response
+    let shouldTrigger = false;
+    let nextAgentId: string | null = null;
+
+    if (lastSpeakerRef.current === null) {
+      // No one has spoken yet in auto mode: start with the first agent
+      if (agents.length > 0) {
+        shouldTrigger = true;
+        nextAgentId = agents[0].id;
+      }
+    } else {
+      // Look for a rule from the last speaker
+      const rule = rules.find((r) => r.sourceId === lastSpeakerRef.current);
+      if (rule) {
+        shouldTrigger = true;
+        nextAgentId = rule.targetId;
+      }
+    }
+
+    if (shouldTrigger && nextAgentId) {
+      const respondingAgent = agents.find((a) => a.id === nextAgentId);
+      if (respondingAgent) {
+        isGeneratingResponseRef.current = true;
+
+        // Get the latest message to respond to
+        const latestMessage = messages[messages.length - 1];
+        if (latestMessage) {
+          try {
+            // Use ref to get latest messages to avoid stale closure
+            const history = messagesRef.current
+              .slice(-5)
+              .map((m) => `${m.sender}: ${m.text}`)
+              .join('\n');
+            const prompt = `Previous conversation:\n${history}\n\nNew message from ${latestMessage.sender}:\\n"${latestMessage.text}"\n\nYour turn, ${respondingAgent.name}. What is your response?`;
+
+            llmService
+              .callTextAPI(
+                prompt,
+                respondingAgent.systemPrompt,
+                respondingAgent.llm,
+                respondingAgent.model
+              )
+              .then((botText) => {
+                // Add the AI response
+                firebaseService
+                  .addMessage(currentUserId!, {
+                    text: botText || `(${respondingAgent.name} had no response)`,
+                    sender: respondingAgent.name,
+                    llm: respondingAgent.llm,
+                    agentId: respondingAgent.id,
+                  })
+                  .then(() => {
+                    // Update the last speaker to be the agent that just spoke
+                    lastSpeakerRef.current = respondingAgent.id;
+
+                    // Update session with incremented turn count
+                    setSession((prev) => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        state: {
+                          ...prev.state,
+                          turnCount: prev.state.turnCount + 1,
+                          lastActivity: new Date(),
+                        },
+                        updatedAt: new Date(),
+                      };
+                    });
+                  })
+                  .finally(() => {
+                    isGeneratingResponseRef.current = false;
+                  });
+              })
+              .catch((error) => {
+                console.error(`Error with ${respondingAgent.name}:`, error);
+                firebaseService
+                  .addMessage(currentUserId!, {
+                    text: `Error generating response for ${respondingAgent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    sender: 'system',
+                  })
+                  .finally(() => {
+                    isGeneratingResponseRef.current = false;
+                  });
+              });
+          } catch (error) {
+            console.error('Error in auto-mode turn-taking:', error);
+            isGeneratingResponseRef.current = false;
+          }
+        }
+      }
+    }
+  }, [session, agents, rules, lastSpeakerRef, currentUserId, firebaseService, llmService]);
+
+  // Ref to track if we're currently generating a response (to prevent race conditions)
+  const isGeneratingResponseRef = useRef(false);
 
   // Chat context value
   const contextValue: ChatContextValue = {
@@ -211,16 +325,42 @@ export const MultiAgentChatProvider: React.FC<{
           agentId: senderId !== 'You' ? senderId : undefined,
         });
 
+        // Determine the recipient for AI response
+        let finalRecipientId = recipientId;
+
+        // In auto mode, we override the recipientId based on the rules and last speaker
+        if (session?.state.mode === 'auto') {
+          let nextAgentId: string | null = null;
+          if (lastSpeakerRef.current === null) {
+            // No one has spoken yet: start with the first agent
+            if (agents.length > 0) {
+              nextAgentId = agents[0].id;
+            }
+          } else {
+            // Look for a rule from the last speaker
+            const rule = rules.find((r) => r.sourceId === lastSpeakerRef.current);
+            if (rule) {
+              nextAgentId = rule.targetId;
+            }
+          }
+
+          if (nextAgentId) {
+            finalRecipientId = nextAgentId;
+          }
+          // If no nextAgentId is found, we leave finalRecipientId as undefined (no AI response triggered)
+        }
+
         // Generate bot response if recipient is specified
-        if (recipientId) {
-          const respondingAgent = agents.find((a) => a.id === recipientId);
+        if (finalRecipientId) {
+          const respondingAgent = agents.find((a) => a.id === finalRecipientId);
           if (respondingAgent) {
             try {
-              const history = messages
+              // Use ref to get latest messages to avoid stale closure
+              const history = messagesRef.current
                 .slice(-5)
                 .map((m) => `${m.sender}: ${m.text}`)
                 .join('\n');
-              const prompt = `Previous conversation:\n${history}\n\nNew message from ${senderName}:\n"${text}"\n\nYour turn, ${respondingAgent.name}. What is your response?`;
+              const prompt = `Previous conversation:\n${history}\n\nNew message from ${senderName}:\\n"${text}"\n\nYour turn, ${respondingAgent.name}. What is your response?`;
 
               const botText = await llmService.callTextAPI(
                 prompt,
@@ -235,6 +375,9 @@ export const MultiAgentChatProvider: React.FC<{
                 llm: respondingAgent.llm,
                 agentId: respondingAgent.id,
               });
+
+              // Update the last speaker to be the agent that just spoke
+              lastSpeakerRef.current = respondingAgent.id;
             } catch (error) {
               console.error(`Error with ${respondingAgent.name}:`, error);
               await firebaseService.addMessage(currentUserId, {
@@ -245,7 +388,7 @@ export const MultiAgentChatProvider: React.FC<{
           }
         }
       },
-      [currentUserId, firebaseService, llmService, agents, messages]
+      [currentUserId, firebaseService, llmService, agents, session] // Note: messages removed from deps, using ref instead
     ),
 
     clearMessages: useCallback(async () => {
@@ -338,7 +481,7 @@ export const MultiAgentChatProvider: React.FC<{
 
       try {
         await firebaseService.addMessage(currentUserId, {
-          text: '🚀 Clearing previous session and starting full automation...',
+          text: '\u{1F680} Clearing previous session and starting full automation...',
           sender: 'system',
         });
 
@@ -462,6 +605,20 @@ export const MultiAgentChatProvider: React.FC<{
               sender: firstAgent.name,
               agentId: firstAgent.id,
               llm: firstAgent.llm,
+            });
+
+            // After the first agent's response, set up for auto-mode turn-taking
+            lastSpeakerRef.current = firstAgent.id;
+            // Update session mode to auto for turn-taking engine
+            setSession((prev) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                state: {
+                  ...prev.state,
+                  mode: 'auto',
+                },
+              };
             });
           } catch (error) {
             console.error('Failed to generate initial response:', error);

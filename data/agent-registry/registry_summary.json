@@ -1,15 +1,7 @@
 {
-  "generatedAt": "2026-07-25T13:59:45.455Z",
-  "totals": {
-    "agents": 136,
-    "capabilities": 461,
-    "relationships": 5,
-    "tags": 4698,
-    "byType": {
-      "api": 73,
-      "external": 5,
-      "local": 55,
-      "mcp": 3
-    }
-  }
+  "summary": "Agent registry summary — 136 active agents, 0 zombie duplicates in file (live swarm separate)",
+  "agentCount": 136,
+  "zombieLiveCount": 2072,
+  "lastUpdated": "2026-08-10T00:55:00Z",
+  "status": "needs_cleanup"
 }

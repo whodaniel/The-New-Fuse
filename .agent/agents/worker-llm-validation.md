@@ -1,13 +1,31 @@
 ---
+category: Governance
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: LLM Validation Worker Agent
-role: WORKER_LLM_VALIDATION
-description:
-  Third tier validation - spins up full actual agent instance on each candidate
+description: Third tier validation - spins up full actual agent instance on each candidate
   endpoint to confirm operational capability
-tags: [worker, llm, validation, fleet]
+tags:
+- worker
+- llm
+- validation
+- fleet
 schedule: continuous
 supervisor: true
 depends_on: tester-llm-endpoints
+role: WORKER_LLM_VALIDATION
 ---
 
 # LLM Validation Worker Agent

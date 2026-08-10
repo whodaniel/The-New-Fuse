@@ -211,6 +211,17 @@ function collectRelay() {
     }
   }
 
+  let bridgeProbe = null;
+  const probePath = path.join(ROOT, 'scripts/protocols/probe-a2a-bridge.cjs');
+  if (fs.existsSync(probePath)) {
+    const probe = run('node', [probePath], { timeoutMs: 3500 });
+    try {
+      bridgeProbe = probe.stdout ? JSON.parse(probe.stdout) : { ok: false, error: probe.stderr || probe.error || 'empty output' };
+    } catch (err) {
+      bridgeProbe = { ok: false, error: err.message };
+    }
+  }
+
   return {
     listening: listener.stdout ? listener.stdout.includes(':3000') : false,
     listener: listener.stdout ? listener.stdout.split('\n').slice(0, 6) : [],
@@ -221,6 +232,7 @@ function collectRelay() {
     masterClockProcessCount: masterClockRuntimeProcesses.length,
     wsChannelsMode,
     channelCheck,
+    bridgeProbe,
   };
 }
 
@@ -464,6 +476,12 @@ function analyze(snapshot) {
     addFinding(findings, 'warn', 'duplicate-master-clock', 'More than one master-clock process is live.', {
       count: relay.masterClockProcessCount,
       processes: relay.masterClockProcesses.slice(0, 8),
+    });
+  }
+
+  if (relay.bridgeProbe && !relay.bridgeProbe.ok) {
+    addFinding(findings, 'critical', 'a2a-bridge-unresponsive', 'A2A Bridge failed to respond to active ping probe.', {
+      error: relay.bridgeProbe.error
     });
   }
 

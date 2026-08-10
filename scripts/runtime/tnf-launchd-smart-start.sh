@@ -55,6 +55,22 @@ if [[ -n "${TNF_LAUNCHD_WAIT_TCP:-}" ]]; then
   fi
 fi
 
+# api-local previously crash-looped when incomplete nested packages under
+# apps/api/node_modules shadowed healthy hoisted deps (missing dist/).
+# Defer cleanly so KeepAlive does not thrash while the operator reseals installs.
+if [[ "$label" == "com.thenewfuse.api-local" ]]; then
+  nested_css="$work_dir/node_modules/@asamuzakjp/css-color"
+  if [[ -e "$nested_css" && ! -f "$nested_css/dist/esm/index.js" && ! -f "$nested_css/dist/cjs/index.cjs" ]]; then
+    defer "incomplete nested dependency: $nested_css (missing dist); run pnpm install from repo root"
+  fi
+  if ! (
+    cd "$work_dir"
+    "$node_bin" -e "require('@the-new-fuse/a2a-core')" >/dev/null 2>&1
+  ); then
+    defer "workspace package @the-new-fuse/a2a-core unresolved from $work_dir; run pnpm install"
+  fi
+fi
+
 cd "$work_dir"
 if ((${#env_args[@]} > 0)); then
   exec "$node_bin" "${env_args[@]}" "$entrypoint" "$@"

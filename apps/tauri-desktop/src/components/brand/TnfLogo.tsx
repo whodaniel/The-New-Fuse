@@ -6,8 +6,9 @@ import React from 'react';
  * Matches apps/frontend/src/components/brand/TnfLogo.tsx: local assets only.
  * Remote thenewfuse.com URLs break under Tauri CSP (`img-src 'self'`).
  */
-export const TNF_LOGO_SRC = '/assets/brand/tnf-logo-192.jpg';
-export const TNF_LOGO_MASTER_SRC = '/assets/brand/tnf-logo.png';
+// Relative paths required for packaged Tauri custom-protocol loading.
+export const TNF_LOGO_SRC = './assets/brand/tnf-logo-192.jpg';
+export const TNF_LOGO_MASTER_SRC = './assets/brand/tnf-logo.png';
 export const TNF_WORDMARK = 'The New Fuse';
 export const TNF_SHORT_MARK = 'TNF';
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T20:40:23.704Z",
+  "generatedAt": "2026-08-10T08:20:30.445Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,34 +12,26 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-08-08T20:40:22.835Z",
-    "totalTerminals": 2,
-    "returned": 2,
+    "lastScanAt": "2026-08-10T08:20:30.079Z",
+    "totalTerminals": 1,
+    "returned": 1,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 2,
-    "content_excerpts_captured": 2
+    "terminal_history_tabs": 1,
+    "content_excerpts_captured": 1
   },
   "summary": {
-    "totalTerminals": 2,
+    "totalTerminals": 1,
     "activeTerminals": 1,
-    "idleTerminals": 1,
-    "activeRatio": 0.5,
+    "idleTerminals": 0,
+    "activeRatio": 1,
     "topWorkExecutables": [
       {
-        "name": "codex",
-        "count": 1
-      },
-      {
         "name": "node",
-        "count": 1
-      },
-      {
-        "name": "npm",
         "count": 1
       }
     ],
@@ -48,23 +40,21 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 1369,
-        "processCount": 16,
+        "shellPid": 83202,
+        "processCount": 6,
         "multiplexer": "none",
         "workExecutables": [
-          "node",
-          "codex",
-          "npm"
+          "node"
         ],
-        "bypassApproval": true,
+        "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "› Summarize recent commits | gpt-5.5 high · ~",
+        "contextPreview": "❯ | ────────────────────────────────────────────────────────────────────────────────",
         "contextRedactions": 0,
         "hasContext": true
       }
     ],
     "safetySignals": {
-      "approvalsBypassTerminals": 1,
+      "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
       "contextCapturedTerminals": 1,
       "contextRedactions": 0
@@ -72,9 +62,17 @@
   },
   "delta": {
     "hasBaseline": true,
-    "terminalDelta": 0,
-    "activeDelta": 0,
+    "terminalDelta": -1,
+    "activeDelta": -1,
     "activeGained": [],
-    "activeLost": []
+    "activeLost": [
+      {
+        "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
+        "tty": "/dev/ttys001",
+        "workExecutables": [
+          "node"
+        ]
+      }
+    ]
   }
 }

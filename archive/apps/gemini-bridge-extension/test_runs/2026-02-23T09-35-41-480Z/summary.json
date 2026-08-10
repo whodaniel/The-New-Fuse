@@ -1,0 +1,15 @@
+{
+  "runId": "2026-02-23T09-35-41-480Z",
+  "createdAt": "2026-02-23T09:35:49.156Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "totals": {
+    "pass": 0,
+    "fail": 0,
+    "blocked": 0,
+    "total": 0
+  },
+  "checks": [],
+  "failures": [
+    "Fatal runner error: browserType.launchPersistentContext: Executable doesn't exist at /tmp/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝\n    at async main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:52:19)"
+  ]
+}

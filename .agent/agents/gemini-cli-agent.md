@@ -1,20 +1,35 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: gemini-cli-agent
-displayName: Gemini CLI Surface
-description:
-  Live CLI runtime surface for Google Gemini CLI, driven through its interactive
+description: Live CLI runtime surface for Google Gemini CLI, driven through its interactive
   slash-command interface.
-agentType: local
-tools: ['run_command', 'slash_command_dispatch', 'file_attach']
-capabilities:
-  [
-    'session_management',
-    'model_switching',
-    'context_attachment',
-    'multimodal_input',
-  ]
-tags: ['cli', 'runtime-surface', 'local', 'gemini']
 version: 1.0.0
+tags:
+- cli
+- runtime-surface
+- local
+- gemini
+capabilities:
+- session_management
+- model_switching
+- context_attachment
+- multimodal_input
+displayName: Gemini CLI Surface
+agentType: local
 ---
 
 # Gemini CLI Agent

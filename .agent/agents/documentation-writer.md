@@ -1,12 +1,24 @@
 ---
+category: Unclassified
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: documentation-writer
-description:
-  Expert in technical documentation. Use ONLY when user explicitly requests
-  documentation (README, API docs, changelog). DO NOT auto-invoke during normal
-  development.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
+description: Expert in technical documentation. Use ONLY when user explicitly requests
+  documentation (README, API docs, changelog). DO NOT auto-invoke during normal development.
 skills: clean-code, documentation-templates
+model: inherit
 ---
 
 # Documentation Writer

@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { safariMontereyCompatPlugin } from './vite-plugins/safariMontereyCompat';
 import { tnfBrowserBridgePlugin } from './vite-plugins/tnfBrowserBridge';
 
 export default defineConfig(({ mode }) => {
@@ -23,6 +24,19 @@ export default defineConfig(({ mode }) => {
   //   TNF_PRECOMPRESS=1 pnpm build      TNF_BUNDLE_ANALYZE=1 pnpm build
   const precompressAssets = process.env.TNF_PRECOMPRESS === '1';
   const emitBundleAnalysis = process.env.TNF_BUNDLE_ANALYZE === '1';
+
+  // Vite injects `crossorigin` on module/preload tags. Under Tauri's asset /
+  // tauri.localhost protocol that triggers a CORS failure so the main module
+  // never runs and index.html's splash spinner stays mounted forever.
+  const stripModuleCrossOrigin = {
+    name: 'tnf-strip-module-crossorigin',
+    enforce: 'post' as const,
+    transformIndexHtml(html: string) {
+      return html
+        .replace(/<script([^>]*?)\s+crossorigin(?:="[^"]*")?/g, '<script$1')
+        .replace(/<link([^>]*?)\s+crossorigin(?:="[^"]*")?/g, '<link$1');
+    },
+  };
 
   // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420`).
   // Do NOT default HMR to localhost:3000 — that opens a second WS listener on
@@ -45,10 +59,12 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tnfBrowserBridgePlugin(),
+      safariMontereyCompatPlugin(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
       }),
+      isProduction && stripModuleCrossOrigin,
       // Generate bundle analysis report (opt-in; see TNF_BUNDLE_ANALYZE above)
       isProduction &&
         emitBundleAnalysis &&
@@ -126,7 +142,9 @@ export default defineConfig(({ mode }) => {
         apiUrl: env.VITE_API_URL || '/api',
         wsUrl: env.VITE_WS_URL || '/ws',
         cdnUrl: env.VITE_CDN_URL || '',
-        basePath: env.VITE_BASE_PATH || '/',
+        // Relative base is required for packaged Tauri (asset:// / custom protocol).
+        // Absolute "/" asset URLs leave the HTML splash mounted forever in the .app/.dmg.
+        basePath: env.VITE_BASE_PATH || './',
       }),
       // Fix "process is not defined" error in browser
       'process.env': JSON.stringify({
@@ -134,7 +152,7 @@ export default defineConfig(({ mode }) => {
         ...env,
       }),
     },
-    base: env.VITE_BASE_PATH || '/',
+    base: env.VITE_BASE_PATH || './',
     publicDir: 'public',
     optimizeDeps: {
       include: [

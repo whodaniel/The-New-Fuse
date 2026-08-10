@@ -1,39 +1,50 @@
 ---
+category: Unclassified
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: tnf-cli-agent
-description:
-  'The canonical CLI-optimized agent for The New Fuse (TNF). Uses the
-  Antigravity *persona/platform surface* when configured that way, but
-  Antigravity is not the DACC baton. This agent may be assigned local
-  sub-director authority for lane coordination; the master-clock baton identity
-  remains ORCHESTRATOR-{timestamp}. Systemic, high-aesthetic, autonomous, and
-  rigorously planned. Use for coordinating multi-agent workflows
-  (workerAction/capabilities), managing system state, and executing complex
-  engineering tasks via the TNF CLI.'
-tools: [Bash, Read, Write, Edit, Grep, Glob, Agent]
-model: inherit
-capabilities:
-  - session-persistence
-  - plan-mode
-  - thinking-levels
-  - multi-provider-llm
-  - model-cycling
-  - extension-system
-  - context-discovery
-  - prompt-templates
-  - non-interactive-mode
-  - session-export
+description: The canonical CLI-optimized agent for The New Fuse (TNF). Uses the Antigravity
+  *persona/platform surface* when configured that way, but Antigravity is not the
+  DACC baton. This agent may be assigned local sub-director authority for lane coordination;
+  the master-clock baton identity remains ORCHESTRATOR-{timestamp}. Systemic, high-aesthetic,
+  autonomous, and rigorously planned. Use for coordinating multi-agent workflows (workerAction/capabilities),
+  managing system state, and executing complex engineering tasks via the TNF CLI.
 skills:
-  - framework-consciousness
-  - planning-with-files
-  - context-frontloader
-  - env-manager
-  - skill-builder
-  - tnf-cli-agent-interoperability
-  - tnf-full-auto-network-autopilot
-  - tnf-health-check
-  - webpilot
-  - sspdf
-  - sspdf-theme-generator
+- framework-consciousness
+- planning-with-files
+- context-frontloader
+- env-manager
+- skill-builder
+- tnf-cli-agent-interoperability
+- tnf-full-auto-network-autopilot
+- tnf-health-check
+- webpilot
+- sspdf
+- sspdf-theme-generator
+capabilities:
+- session-persistence
+- plan-mode
+- thinking-levels
+- multi-provider-llm
+- model-cycling
+- extension-system
+- context-discovery
+- prompt-templates
+- non-interactive-mode
+- session-export
+model: inherit
 ---
 
 # TNF CLI Agent - Antigravity Persona (Platform Surface)

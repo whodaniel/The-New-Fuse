@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crystal Sale Live - Jason Fulker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9c4fba",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#121212",
+                        "neutral-dark": "#1b151d",
+                        "accent-teal": "#6EACDA",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden h-screen">
+<div class="flex flex-col h-full">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-primary/20 bg-neutral-dark px-6 py-3 shrink-0">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined text-3xl">diamond</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-white text-lg font-bold leading-tight">Crystal Sale Live</h2>
+<p class="text-slate-400 text-xs">Jason Fulker: Amethyst Specialist</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-red-600 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-white">
+<span class="material-symbols-outlined text-sm leading-none">radio_button_checked</span>
+                    LIVE
+                </div>
+<div class="h-6 w-px bg-slate-700 mx-2"></div>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/20 text-primary border border-primary/30 transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-primary/30" data-alt="User profile avatar circle" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBfKNzztXfzmF75rMKV52_BR12JtNIpY6O0Jf7RCCHgQxeQ0MjNtrFQLbYAEPfkJGY6taitN1GeA266KHTb68thD8_hOcWhXnuCIGM979hr2txeqtcv0OxdUugTMn3Ppm2aqZ3WoeqDBTUUne6YxHtEWcqUF2pfyjDSFSgAPVeySk0vH749oAduMLDP01z-jFf0SrNkwSxkrt9uZgxo6DgEAnHprxhYq5KOj9Y2ajncXiYRtr_Ogp2zvVzCOHzLSQxyAV_Xtj5PgCf5");'></div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden">
+<!-- Left Panel: Large Video Player -->
+<div class="flex-1 flex flex-col bg-black relative">
+<div class="absolute top-4 left-4 z-10 flex gap-2">
+<div class="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-2 border border-white/10">
+<span class="material-symbols-outlined text-primary text-sm">visibility</span>
+<span class="text-xs font-bold text-white">1,248 watching</span>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-center relative group">
+<!-- Stream Placeholder -->
+<div class="w-full h-full bg-slate-900 flex items-center justify-center bg-cover bg-center" data-alt="High quality live stream video feed showing crystals" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADYPsxRqpY8WxUgg8xT3HrqfodzOkFbHPmEUsO1GZyfYgPcCcwjWY2ArqGgvTkUkTBxzlVxgUoSYYGtnFo5Kaehzeti0lHECCpA9hPdX2MOUrpQRFoKI7iqWUk_aNTz_Z0if8ttElGs7GCUbwlYrqTJA76AWuMLRRF9wnVpFVeVBGcNfzbtnDpL7lj7-xxN25v-MMKvPWazgLj72rwBFQwqombASIZd3GDv_52CEPt1g-shwGaz_Wrqdgxx--i03RhANj8oXRKgylH");'>
+<button class="flex shrink-0 items-center justify-center rounded-full size-20 bg-primary/80 text-white shadow-2xl transition-transform hover:scale-110">
+<span class="material-symbols-outlined text-4xl fill-1">play_arrow</span>
+</button>
+</div>
+<!-- Video Controls Overlay -->
+<div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white cursor-pointer">pause</span>
+<div class="flex-1 h-1.5 bg-white/20 rounded-full relative overflow-hidden">
+<div class="absolute left-0 top-0 h-full w-full bg-primary rounded-full"></div>
+</div>
+<span class="text-xs text-white font-medium">LIVE</span>
+<span class="material-symbols-outlined text-white cursor-pointer">volume_up</span>
+<span class="material-symbols-outlined text-white cursor-pointer">fullscreen</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Panel: Data & Interaction -->
+<aside class="w-[420px] flex flex-col bg-neutral-dark border-l border-primary/20">
+<!-- Current Item Card -->
+<div class="p-4 border-b border-primary/10">
+<p class="text-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-3">Currently Showing</p>
+<div class="bg-background-dark/50 border border-primary/30 rounded-xl p-3 flex gap-4">
+<div class="size-24 bg-center bg-cover rounded-lg border border-primary/20 shrink-0" data-alt="Close up of a large Amethyst Cluster" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPoXGfwOHFa7SGxEgYUwXjAqzLFZdloEmjCXtsFYMObL41aOkznUkpVLB4Www_NQp5eEFwLeVWLPf_1pP9GEQ6-rxiWkvxLRyQQcoGoXZ6PUDq_cqnDNcZRkRn-Bj-d0Bs8xn9BSdXDSONuRTXLRwT-lR0_pR6xWLwIsLEFd-mrbkFZiYQg7Bv1nr2MbWGONoYwTvMNsUTkoy32oMeMlPvwv2hjzISNe9UTHcH-B3On-sg8wemw4Yi6VxBsrPVeiQn43sNOxPpIW5x");'></div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<h3 class="text-white text-base font-bold leading-tight">Amethyst Cluster</h3>
+<p class="text-primary text-xl font-bold mt-1">$45.00</p>
+<p class="text-slate-400 text-xs mt-1">Grade AAA · Brazil</p>
+</div>
+<div class="flex gap-2 mt-2">
+<span class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded border border-primary/20">5 Left</span>
+<span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">SKU: AMY-042</span>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-3 gap-2 mt-4">
+<button class="col-span-2 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">front_hand</span>
+                            CLAIM ITEM
+                        </button>
+<button class="bg-slate-800 hover:bg-slate-700 text-white font-medium py-3 rounded-lg flex items-center justify-center transition-all">
+<span class="material-symbols-outlined">replay</span>
+</button>
+</div>
+</div>
+<!-- Chat Feed -->
+<div class="flex-1 flex flex-col min-h-0">
+<div class="px-4 py-2 border-b border-primary/10 flex justify-between items-center">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Chat</span>
+<div class="flex gap-1">
+<div class="size-1.5 rounded-full bg-accent-teal animate-pulse"></div>
+<span class="text-[10px] text-accent-teal font-medium">AI Guard Active</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Message -->
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-slate-400">Sarah M.</span>
+<p class="text-sm text-slate-200 bg-background-dark/30 p-2 rounded-lg">Wow, the purple on that cluster is insane! 😍</p>
+</div>
+<!-- Claim Message (Teal Highlighted) -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-accent-teal">David Wilson</span>
+<span class="text-[9px] bg-accent-teal/20 text-accent-teal px-1 rounded border border-accent-teal/20">CLAIM DETECTED</span>
+</div>
+<div class="text-sm bg-accent-teal/10 border-l-2 border-accent-teal p-2 rounded-r-lg text-slate-100 italic">
+                                "Claiming the amethyst cluster!"
+                            </div>
+</div>
+<!-- Message -->
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-slate-400">CrystalQueen22</span>
+<p class="text-sm text-slate-200 bg-background-dark/30 p-2 rounded-lg">Is this the last one available?</p>
+</div>
+<!-- Claim Message (Teal Highlighted) -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-accent-teal">Linda Rocks</span>
+<span class="text-[9px] bg-accent-teal/20 text-accent-teal px-1 rounded border border-accent-teal/20">CLAIM DETECTED</span>
+</div>
+<div class="text-sm bg-accent-teal/10 border-l-2 border-accent-teal p-2 rounded-r-lg text-slate-100 italic">
+                                "SOLD! I'll take it."
+                            </div>
+</div>
+<!-- Message -->
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-slate-400">Jason Fulker <span class="text-primary">(Host)</span></span>
+<p class="text-sm text-primary/80 bg-primary/5 p-2 rounded-lg">Almost out on these! 3 left now.</p>
+</div>
+</div>
+<!-- Chat Input -->
+<div class="p-4 border-t border-primary/10 bg-neutral-dark/80">
+<div class="relative flex items-center">
+<input class="w-full bg-background-dark border border-primary/20 rounded-lg py-2.5 px-4 text-sm text-white focus:outline-none focus:border-primary" placeholder="Say something..." type="text"/>
+<button class="absolute right-2 text-primary">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer / Cart Info -->
+<div class="bg-primary/5 border-t border-primary/20 p-4">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">shopping_bag</span>
+<span class="text-sm font-bold text-white">My Claims (2)</span>
+</div>
+<span class="text-lg font-bold text-primary">$82.50</span>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-background-dark border border-primary/20 text-slate-300 text-xs font-bold py-2 rounded-lg hover:bg-slate-800">
+                            VIEW CART
+                        </button>
+<button class="flex items-center justify-center size-8 text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">help</span>
+</button>
+</div>
+</div>
+</aside>
+</main>
+</div>
+</body></html>

@@ -1,12 +1,34 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: super-director
-displayName: TNF Super Director
-description: The singular cloud-resident authority driving global swarm orchestration via Authoritative Chain of Command.
-agentType: api
-tools: ["MasterClockAPI", "CloudRedisBridge", "get_terminal_access"]
-capabilities: ["global_orchestration", "prompt_injection", "master_clock_control"]
-tags: ["authority", "orchestration", "cloud", "master-clock"]
+description: The singular cloud-resident authority driving global swarm orchestration
+  via Authoritative Chain of Command.
 version: 1.0.0
+tags:
+- authority
+- orchestration
+- cloud
+- master-clock
+capabilities:
+- global_orchestration
+- prompt_injection
+- master_clock_control
+displayName: TNF Super Director
+agentType: api
 ---
 
 # Super Director Agent

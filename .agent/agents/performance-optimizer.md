@@ -1,13 +1,26 @@
 ---
+category: Unclassified
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: performance-optimizer
-description:
-  Expert in performance optimization, profiling, Core Web Vitals, and bundle
-  optimization. Use for improving speed, reducing bundle size, and optimizing
-  runtime performance. Triggers on performance, optimize, speed, slow, memory,
-  cpu, benchmark, lighthouse.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
+description: Expert in performance optimization, profiling, Core Web Vitals, and bundle
+  optimization. Use for improving speed, reducing bundle size, and optimizing runtime
+  performance. Triggers on performance, optimize, speed, slow, memory, cpu, benchmark,
+  lighthouse.
 skills: clean-code, performance-profiling
+model: inherit
 ---
 
 # Performance Optimizer

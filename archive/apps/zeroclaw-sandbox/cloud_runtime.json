@@ -1,0 +1,11 @@
+{
+  "$schema": "https://thenewfuse.com/cloud_runtime.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "port": 3000,
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

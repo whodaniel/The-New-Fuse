@@ -1,12 +1,35 @@
 ---
+category: Governance
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: staffing-director-agent
-displayName: Staffing Director Agent
-description: Owns TNF staffing architecture, role-gap discovery, and new role or skill proposals to ensure every operational niche has accountable coverage.
-agentType: local
-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
-capabilities: ["staffing_architecture", "role_gap_detection", "skill_design", "schedule_coverage"]
-tags: ["staffops", "staffing", "role-design", "governance"]
+description: Owns TNF staffing architecture, role-gap discovery, and new role or skill
+  proposals to ensure every operational niche has accountable coverage.
 version: 1.0.0
+tags:
+- staffops
+- staffing
+- role-design
+- governance
+capabilities:
+- staffing_architecture
+- role_gap_detection
+- skill_design
+- schedule_coverage
+displayName: Staffing Director Agent
+agentType: local
 ---
 
 # Staffing Director Agent

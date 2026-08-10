@@ -29,36 +29,16 @@ flowchart LR
   Scorecard --> Web
 
   subgraph Apps[Detected apps/*]
-    app_adk_gateway[adk-gateway]
-    app_ai_arcade[ai-arcade]
     app_api[api]
     app_api_gateway[api-gateway]
-    app_audio_trigger_kws_mvp[audio-trigger-kws-mvp]
     app_backend[backend]
-    app_browser_extension[browser-extension]
-    app_casin8_games[casin8-games]
     app_chrome_extension[chrome-extension]
-    app_claim_tracker[claim-tracker]
-    app_cloud_sandbox[cloud-sandbox]
-    app_demo_agent_extension[demo-agent-extension]
-    app_external[external]
+    app_extensions[extensions]
     app_frontend[frontend]
-    app_gemini_bridge_extension[gemini-bridge-extension]
     app_mcp_servers[mcp-servers]
-    app_myphoneremote_api[myphoneremote-api]
-    app_nexus_orchestrator[nexus-orchestrator]
-    app_openclaw[openclaw]
-    app_picoclaw_overseer[picoclaw-overseer]
-    app_poker_room[poker-room]
     app_relay_server[relay-server]
-    app_skideancer_ide[skideancer-ide]
-    app_stripe_provider_bridge[stripe-provider-bridge]
     app_tauri_desktop[tauri-desktop]
-    app_telegram_mcp[telegram-mcp]
-    app_virtual_library_blueprints[virtual-library-blueprints]
-    app_visualization_hub[visualization-hub]
     app_vscode_extension[vscode-extension]
-    app_zeroclaw_sandbox[zeroclaw-sandbox]
   end
   subgraph Packages[Detected packages/*]
     pkg_@the_new_fuse[@the-new-fuse]
@@ -82,6 +62,7 @@ flowchart LR
     pkg_build_optimization[build-optimization]
     pkg_cache[cache]
     pkg_claude_skills[claude-skills]
+    pkg_claw_skills[claw-skills]
     pkg_cli[cli]
     pkg_client[client]
     pkg_common[common]
@@ -191,36 +172,16 @@ flowchart LR
     wf_test_yml[test.yml]
     wf_traits_intelligence_nightly_yml[traits-intelligence-nightly.yml]
   end
-  Web -.maps.-> app_adk_gateway
-  Web -.maps.-> app_ai_arcade
   Web -.maps.-> app_api
   Web -.maps.-> app_api_gateway
-  Web -.maps.-> app_audio_trigger_kws_mvp
   Web -.maps.-> app_backend
-  Web -.maps.-> app_browser_extension
-  Web -.maps.-> app_casin8_games
   Web -.maps.-> app_chrome_extension
-  Web -.maps.-> app_claim_tracker
-  Web -.maps.-> app_cloud_sandbox
-  Web -.maps.-> app_demo_agent_extension
-  Web -.maps.-> app_external
+  Web -.maps.-> app_extensions
   Web -.maps.-> app_frontend
-  Web -.maps.-> app_gemini_bridge_extension
   Web -.maps.-> app_mcp_servers
-  Web -.maps.-> app_myphoneremote_api
-  Web -.maps.-> app_nexus_orchestrator
-  Web -.maps.-> app_openclaw
-  Web -.maps.-> app_picoclaw_overseer
-  Web -.maps.-> app_poker_room
   Web -.maps.-> app_relay_server
-  Web -.maps.-> app_skideancer_ide
-  Web -.maps.-> app_stripe_provider_bridge
   Web -.maps.-> app_tauri_desktop
-  Web -.maps.-> app_telegram_mcp
-  Web -.maps.-> app_virtual_library_blueprints
-  Web -.maps.-> app_visualization_hub
   Web -.maps.-> app_vscode_extension
-  Web -.maps.-> app_zeroclaw_sandbox
   Gateway -.depends on.-> pkg_@the_new_fuse
   Gateway -.depends on.-> pkg_a2a_core
   Gateway -.depends on.-> pkg_a2a_protocol
@@ -242,6 +203,7 @@ flowchart LR
   Gateway -.depends on.-> pkg_build_optimization
   Gateway -.depends on.-> pkg_cache
   Gateway -.depends on.-> pkg_claude_skills
+  Gateway -.depends on.-> pkg_claw_skills
   Gateway -.depends on.-> pkg_cli
   Gateway -.depends on.-> pkg_client
   Gateway -.depends on.-> pkg_common
