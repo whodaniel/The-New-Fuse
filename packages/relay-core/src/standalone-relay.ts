@@ -57,7 +57,24 @@ import type { RedisRelayBridge } from './redis-relay-bridge.js';
 import type { StallDetector } from './services/stall-detector.js';
 
 // Configuration
-const PORT = parseInt(process.env.RELAY_PORT || '3000', 10);
+function resolveRelayPort(argv: string[] = process.argv): number {
+  // CLI: `--port 3007` or `--port=3007` (ignored previously → false :3000 binds)
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--port' && argv[i + 1]) {
+      const n = Number.parseInt(argv[i + 1], 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    if (arg.startsWith('--port=')) {
+      const n = Number.parseInt(arg.slice('--port='.length), 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+  }
+  const fromEnv = Number.parseInt(process.env.RELAY_PORT || process.env.PORT || '3000', 10);
+  return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : 3000;
+}
+
+const PORT = resolveRelayPort();
 const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;

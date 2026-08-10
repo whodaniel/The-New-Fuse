@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Persist relay :3007 via launchd (current session-backed
+process)
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -44,6 +44,9 @@ must not be mass-deleted without verification evidence. See
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
 - [✅] 2026-08-10T02:51:16.876Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-10T04:24:36.115Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-10T16:56:08.732Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs
+
   generate-crontab-from-catalog.cjs
 
   tnf-autonomy-health-rollup.cjs
@@ -842,6 +845,14 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-10T17:02:11.896Z handoff `7e36d088-db3c-4e26-bd7c-2606d7854878` head
+  `c1ef9ca8d576` project `TNF-SESSION` — Persist relay :3007 via launchd
+  (current session-backed process)
+
+- 2026-08-10T10:30:00Z handoff `a7f3c2e1-9b4d-4a8e-8c3f-1a2b3c4d5e6f` head
+  `67d2d37cd850` project `TNF-SESSION` — Turn Zero completed: schema validation,
+  Tauri workflow builder verification, database rebuild, relay status check.
+
 - 2026-08-10T04:37:09.788Z handoff `ce8362a2-024a-4925-975d-ca4a72d2819b` head
   `67d2d37cd850` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
@@ -912,4 +923,13 @@ continuation
 ```
 
 - [✅] 2026-08-10T03:28:33.481Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T05:20:40.265Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T16:19:45.853Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:06:13.993Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

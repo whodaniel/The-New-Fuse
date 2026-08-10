@@ -3,7 +3,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-10T04:37:09.729Z** — handoff
+Updated: **2026-08-10T17:02:08.745Z** — handoff
+`7e36d088-db3c-4e26-bd7c-2606d7854878` (`c1ef9ca8d576`).
 `ce8362a2-024a-4925-975d-ca4a72d2819b` (`67d2d37cd850`).
 `07fc8a0e-f443-4459-9629-c17eec75345a` (`7f2a12a7785f`).
 `48478ace-f5aa-43c3-aed1-ae42646e1988` (`7f2a12a7785f`).
@@ -162,10 +163,12 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                  |
+| -------- | ----------------------------------------------------------------------- |
+| **P0**   | Persist relay :3007 via launchd (current session-backed process)        |
+| **P0**   | Keep SearXNG container healthy / recreate docker-compose.dev-simple.yml |
+| **P0**   | Monitor full-auto daemon first completed cycle                          |
+| **P0**   | Clear tip-drift in living-state vs handoff after this emit              |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -608,3 +611,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (ce8362a2-024a-4925-975d-ca4a72d2819b) | ✅ HANDOFF_READY |
+
+| 2026-08-10 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7e36d088-db3c-4e26-bd7c-2606d7854878) | ✅ HANDOFF_READY |

@@ -1,34 +1,30 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "a7f3c2e1-9b4d-4a8e-8c3f-1a2b3c4d5e6f",
-  "created_at": "2026-08-10T10:30:00.000Z",
+  "handoff_id": "7e36d088-db3c-4e26-bd7c-2606d7854878",
+  "created_at": "2026-08-10T17:02:08.745Z",
   "repository": "The-New-Fuse",
   "branch": "fix/honest-failure-reporting",
-  "head_sha": "67d2d37cd85061cc7f29cf450c066b3ca3cda014",
+  "head_sha": "c1ef9ca8d576a5b3d51555f811cbe8c70c44127a",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Turn Zero session completed: inspected environment, validated session handoff schema, verified Tauri workflow builder changes (pointer drag, drag ghost visual feedback, extras data transfer), reviewed api-gateway loopback rate-limit fix.",
-    "Database package rebuilt to emit dist folder.",
-    "apps/api typecheck debt acknowledged: corrupted @nestjs/swagger package installation in node_modules (missing ESM dist). Requires infrastructure cleanup: `pnpm install` at root or individual package reinstall.",
-    "Knowledge scout sprint error noted: searxng service unavailable at localhost:8080 (external infrastructure dependency). Process writes to correct output path.",
-    "Relay not running on port 3007; Redis healthy on port 6379.",
-    "Enhanced LiveAIAssist component in TNF Tauri desktop with AI relay integration (port 43120), model/provider selection, voice modes, configurable system prompt, SSE streaming, and fallback to TNF API."
+    "Autonomous recovery: apps/api typecheck PASS (swagger present); security.guard loopback skip already wired; relay health restored on :3007 (fixed --port CLI parsing); SearXNG container tnf-searxng on :8080; knowledge-scout ok=true; terminal-awareness ok=true; WorkflowBuilder pointer-drag contract PASS + tauri tsc 0; substrate resealed; full-auto daemon restarted."
   ],
   "changed_paths": [
-    "packages/database/dist/**/* (rebuilt from clean)",
-    "apps/api/src/guards/security.guard.ts (pending due to typecheck)",
-    "apps/api-gateway/src/proxy/proxy.service.ts (verified fixes)",
-    "apps/tauri-desktop/src/components/LiveAIAssist.tsx (new)",
-    "apps/tauri-desktop/src/components/LiveAIAssist.css (new)"
+    "packages/relay-core/src/standalone-relay.ts",
+    "docs/operations/tnf-substrate-seal.json",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Session handoff schema valid. Relay health check pending infrastructure recovery. LiveAIAssist enhancement complete and type-checked."
+    "notes": "Auto-verify 2026-08-10T17:02:11.842Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -37,25 +33,20 @@
       "librarian",
       "tenant-knowledge-scout-sprint"
     ],
-    "priority": "high",
+    "priority": "medium",
     "resume_checklist": [
-      "Fix corrupted @nestjs/swagger package installation in apps/api",
-      "Complete apps/api security.guard loopback skip integration",
-      "Restart relay service on port 3007",
-      "Verify Tauri desktop Workflow Builder drag-and-drop functionality",
-      "Run full type-check on apps/api",
-      "Emit fresh handoff after verification"
+      "Confirm relay survives shell session relaunch",
+      "Optionally add EXA/TAVILY keys for scout resilience",
+      "Verify api-gateway loads with relay :3007 clients"
     ]
   },
   "next_actions": [
-    "Fix corrupted nested @nestjs/swagger installation in apps/api node_modules",
-    "Complete apps/api security.guard loopback skip integration and verify typecheck",
-    "Restart relay service so loopback rate-limit fix in api-gateway is loaded",
-    "Verify Tauri desktop Workflow Builder add/connect/save operations work correctly",
-    "Emit fresh handoff after completing next critical verification unit"
+    "Persist relay :3007 via launchd (current session-backed process)",
+    "Keep SearXNG container healthy / recreate docker-compose.dev-simple.yml",
+    "Monitor full-auto daemon first completed cycle",
+    "Clear tip-drift in living-state vs handoff after this emit"
   ],
   "artifacts": {
-    "commits": ["67d2d37cd85061cc7f29cf450c066b3ca3cda014"],
-    "database_build": "2026-08-10T10:20:00Z"
+    "commits": ["c1ef9ca8d576a5b3d51555f811cbe8c70c44127a"]
   }
 }
