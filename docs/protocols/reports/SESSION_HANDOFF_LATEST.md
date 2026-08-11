@@ -1,48 +1,51 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-08-11T16:46:27.302Z` Handoff
-ID: `f540912b-a33d-4820-a086-c08a24854ae4`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-08-11T16:50:20.156Z`  
+Handoff ID: `dd662756-3e00-4152-bfd0-2f17b16f148c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `main`
-- Head SHA: `27bff8cedf4739eb09d2fb07dd5a043700331f11`
+- Branch: `fix/work-plane-frontload-wire`
+- Head SHA: `694dc7e3764113a3f735448d149d1fb1a71daf85`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Modified 8 file(s)
+- Wire Work Plane Separation into Turn Zero preflight, TUI context pack, and
+  onboard templates.
 
 ## Changed Paths
 
-- Dockerfile.api
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/tauri-desktop/src/lib/supabase.ts
-- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
-- docs/operations/tnf-master-reconciliation-report-latest.json
-- docs/operations/tnf-master-reconciliation-report-latest.md
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
-- docs/deployment/SUPABASE_OAUTH_SETUP.md
+- packages/tnf-cli/src/utils/work-plane.ts
+- packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts
+- packages/tnf-cli/src/cli.ts
+- scripts/tnf-onboard.cjs
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-**Targets:**
-
-- orchestrator
-
-**Resume Checklist:**
+### Resume Checklist
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
 
@@ -50,12 +53,3 @@ ID: `f540912b-a33d-4820-a086-c08a24854ae4`
   continuation.resume_checklist.
 - Emit a fresh handoff artifact immediately after completing the next critical
   work unit.
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
-## Artifacts
-
-**Commits:**
-
-- 27bff8cedf4739eb09d2fb07dd5a043700331f11

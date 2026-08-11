@@ -82,6 +82,7 @@ import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
 // Propagates to both open-source installable binary (packages/tnf-cli/dist/cli.js)
@@ -18516,6 +18517,8 @@ function loadTnfInteractiveContextPack(): string {
     `- ${path.join(repoRoot, 'docs/protocols/LIVING_STATE.md')}: ${fs.existsSync(path.join(repoRoot, 'docs/protocols/LIVING_STATE.md')) ? 'present' : 'missing'}`,
     `- ${path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md')}: ${fs.existsSync(path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md')) ? 'present' : 'missing'}`,
     `- ${path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json')}: ${fs.existsSync(path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json')) ? 'present' : 'missing'}`,
+    '',
+    formatWorkPlaneOrientationMarkdown(),
     '',
     '## Current Handoff',
     '',

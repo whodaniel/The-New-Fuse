@@ -1,55 +1,48 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "a7f9b242-c1e5-45d6-8f0a-9b1c2d3e4f5a",
-  "created_at": "2026-08-11T16:47:37.667Z",
+  "handoff_id": "dd662756-3e00-4152-bfd0-2f17b16f148c",
+  "created_at": "2026-08-11T16:50:20.156Z",
   "repository": "The-New-Fuse",
-  "branch": "main",
-  "head_sha": "24bf5d8db9a41ba433fa8be67338f2680778ce50",
+  "branch": "fix/work-plane-frontload-wire",
+  "head_sha": "694dc7e3764113a3f735448d149d1fb1a71daf85",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-REG"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Supabase OAuth fix applied (supabase.ts)",
-    "Dockerfile.api build order fixed for GCP Cloud Build",
-    "SUPABASE_OAUTH_SETUP.md documentation created",
-    "GCP build f9bd147a-in-progress deploying api-server to Cloud Run"
+    "Wire Work Plane Separation into Turn Zero preflight, TUI context pack, and onboard templates."
   ],
   "changed_paths": [
-    "Dockerfile.api",
-    "apps/tauri-desktop/src/lib/supabase.ts",
-    "docs/deployment/SUPABASE_OAUTH_SETUP.md"
+    "packages/tnf-cli/src/utils/work-plane.ts",
+    "packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "scripts/tnf-onboard.cjs",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
-    "supabase_rls_audit": "na"
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
   },
   "continuation": {
-    "owner": "autonomous-verify",
-    "targets": [
-      "guardian",
-      "live-deployment-monitor"
-    ],
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Verify GCP Cloud Build completes successfully",
-      "Confirm Cloud Run service URL updates",
-      "Run end-to-end verification on app.thenewfuse.com",
-      "Test OAuth flow with Google authentication"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "Monitor GCP deployment to completion",
-    "Verify API Gateway responds at api.thenewfuse.com",
-    "Test full-stack functionality",
-    "Confirm AI agents working with live SAAS"
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": [
-      "24bf5d8db9a41ba433fa8be67338f2680778ce50"
-    ]
+    "commits": ["694dc7e3764113a3f735448d149d1fb1a71daf85"]
   }
 }

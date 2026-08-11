@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { formatWorkPlaneOrientationConsole } from '../utils/work-plane.js';
 import { AssimilationEngine } from './AssimilationEngine.js';
 import { DirectiveConversionService } from './DirectiveConversionService.js';
 import { LivingStateService } from './LivingStateService.js';
@@ -145,6 +146,13 @@ export class ProtocolInterceptor {
       const activeDirective = this.livingState.getCurrentDirective();
       if (activeDirective) {
         log(chalk.cyan(`  Active Directive: ${activeDirective}`));
+      }
+    }
+
+    // Work-plane orientation (every interactive preflight — OSS vs tenant/personal)
+    if (!this.silent) {
+      for (const line of formatWorkPlaneOrientationConsole()) {
+        log(chalk.dim(line));
       }
     }
 
