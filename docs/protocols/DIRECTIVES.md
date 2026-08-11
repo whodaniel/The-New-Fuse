@@ -47,7 +47,14 @@ crawl→synthesize loop that keeps this file repeatable & evolvable.
 
 **System Boundary:** TNF is the primary autonomous control plane. OpenClaw (and
 any Claw-type agent) is an optional interoperability surface TNF may route
-through — never characterize TNF as a subset of OpenClaw.
+through — never characterize TNF as a subset of OpenClaw. Health and frontload
+gates must use live host enlistment (`ADAPTABLE_HOST_VERIFICATION.md`); do not
+degrade autonomy because an inactive optional host is missing or stale.
+
+**Work Plane Separation:** Core Super Admin / OSS harness work may improve the
+shared monorepo. Personal and tenant user work (destinations, secrets, private
+mirrors, per-account Supabase state) must not be committed to public `main`. See
+`ADAPTABLE_HOST_VERIFICATION.md` §Work Plane Separation and Turn Zero.
 
 ---
 

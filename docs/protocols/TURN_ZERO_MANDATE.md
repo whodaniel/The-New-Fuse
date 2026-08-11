@@ -22,10 +22,37 @@ Status: ACTIVE Protocol ID: TNF_TURN_ZERO_CANONICAL
 - TNF is the primary autonomous system and control plane.
 - OpenClaw is an optional interoperability surface TNF can route through.
 - Do not characterize TNF as a subset of OpenClaw.
+- Verification must follow live host discovery, not stale stack assumptions. See
+  `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md`.
+
+## Work Plane Separation (required orientation)
+
+Before coding or committing, classify the task:
+
+1. **Core / Super Admin plane** — shared OSS harness, protocols, generalized
+   CLI. Safe for public `main` after review when the change is
+   deployer-agnostic.
+2. **Deployer config plane** — env, keys, MCP endpoints. Never commit secrets or
+   machine-local paths into the OSS tree.
+3. **Tenant / personal plane** — one user's goals, Workspace targets, DB rows,
+   private mirrors of Living State. Stay in tenant Supabase (or equivalent) and
+   local-only stores — **not** open-source `main`.
+
+If a feature is only useful as one operator's personal scaffold, **do not** land
+it on OSS `main`. Sanitize it into an optional, env-gated adapter first (see
+`GEMINI_SPARK_INTEGRATION_SPEC.md` as the pattern).
 
 ## Operating Loop
 
 Always execute in this order: Inspect -> Act -> Verify.
+
+**Adaptable verification:** During Inspect, discover which hosts and handoff
+surfaces are actually enlisted. Verify only those surfaces. Do not fail health
+or autonomy gates on optional hosts that are inactive (for example OpenClaw
+`LATEST.md` when OpenClaw is not in use).
+
+**Work-plane check (Inspect):** Ask whether the pending change is core OSS,
+deployer config, or tenant/personal. Route commits accordingly.
 
 **Velocity-Integrity Mandate:** When utilizing experimental or cutting-edge
 logic, the `Verify` step MUST rely on a proven, legacy testing pathway to

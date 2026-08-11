@@ -1,25 +1,33 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T16:27:32.420Z`  
-Handoff ID: `651ce983-ec53-4b33-869a-610df8fdc03e`
+Created At: `2026-08-11T16:35:45.573Z`  
+Handoff ID: `3048df3e-eb22-4d2e-8ed0-d1c467a5c741`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/spark-optional-adapter`
-- Head SHA: `c951082620e9e34e546aaa3e850d51a50ac55af8`
+- Branch: `fix/oss-tenant-frontload-separation`
+- Head SHA: `5160774677c23807a99c73164890b520fe875690`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Sanitize tnf spark into optional env-driven adapter; OSS vs tenant separation
-  rubric.
+- Harden Turn Zero/frontload: adaptable hosts + OSS vs tenant/personal work
+  planes.
 
 ## Changed Paths
 
-- packages/tnf-cli/src/commands/spark.ts
-- docs/protocols/GEMINI_SPARK_INTEGRATION_SPEC.md
+- docs/protocols/ADAPTABLE_HOST_VERIFICATION.md
+- docs/protocols/CHALLENGE_RATIONALE_LOG.md
+- docs/protocols/DIRECTIVES.md
+- docs/protocols/TURN_ZERO_MANDATE.md
+- .skills/tnf-frontload-protocols/SKILL.md
+- .skills/tnf-frontload-protocols/references/frontload-contract.md
+- .skills/tnf-frontload-protocols/references/frontload-openclaw.md
+- .skills/tnf-frontload-protocols/scripts/verify_frontload_state.sh
+- .skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh
+- scripts/verify_frontload_state.sh
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json

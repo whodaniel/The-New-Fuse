@@ -508,3 +508,32 @@ with no dependency on the commit landing first. Existing entries with
   all missing TNF harness components (2026-08-10) plus authority-edit confirm
   for this commit.
 - ledger_event_id: c969bb39-07fe-4b96-8cbf-6ebad019e16c
+
+## 2026-08-11 — adaptable host verification (OpenClaw optional)
+
+- files: docs/protocols/ADAPTABLE_HOST_VERIFICATION.md,
+  docs/protocols/TURN_ZERO_MANDATE.md, docs/protocols/DIRECTIVES.md,
+  docs/protocols/LIVING_STATE.md,
+  .skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh,
+  scripts/verify_frontload_state.sh, .skills/tnf-frontload-protocols/\*\*
+- rationale: Operator stated OpenClaw is not in use and that TNF protocols must
+  stop encoding stale host expectations. Autonomy and frontload gates now enlist
+  hosts via opt-in env or live process discovery; inactive OpenClaw LATEST
+  staleness is advisory only. Canonical handoff remains TNF-native.
+- attributed_to: Daniel Goldberg (operator), explicit instruction that TNF is
+  not using OpenClaw and must refine protocols for real-time exploration and
+  adaptable verification (2026-08-11).
+
+## 2026-08-11 — work plane separation in Turn Zero / frontload
+
+- files: docs/protocols/ADAPTABLE_HOST_VERIFICATION.md,
+  docs/protocols/TURN_ZERO_MANDATE.md, docs/protocols/DIRECTIVES.md,
+  .skills/tnf-frontload-protocols/SKILL.md,
+  .skills/tnf-frontload-protocols/references/frontload-contract.md
+- rationale: Operator required clearer separation between core Super Admin / OSS
+  harness work and personal/tenant user work so user-specific features and data
+  never land on the open-source `main` branch. Generalized optional adapters
+  (env-gated) remain OK; personal destinations stay in tenant Supabase or local
+  config.
+- attributed_to: Daniel Goldberg (operator), 2026-08-11 chat guidance after
+  Spark sanitize / OSS-safety review.
