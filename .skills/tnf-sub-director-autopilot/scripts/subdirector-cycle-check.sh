@@ -112,6 +112,12 @@ push_action() {
   fi
 }
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SKILLS_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
+# Script lives at .skills/tnf-sub-director-autopilot/scripts → repo root is ../../..
+TNF_REPO_ROOT="${TNF_REPO_ROOT:-$(cd -- "$SCRIPT_DIR/../../.." 2>/dev/null && pwd || true)}"
+FRONTLOAD_VERIFY_SCRIPT="$SKILLS_ROOT/tnf-frontload-protocols/scripts/verify_frontload_state.sh"
+
 HOME_TNF="$HOME/.tnf"
 MASTER_HEARTBEAT_STATE="$HOME_TNF/master-heartbeat/state/master-heartbeat-latest.json"
 LOCAL_SUBDIRECTOR_STATE="$HOME_TNF/local-subdirector/state/local-subdirector-heartbeat.json"
@@ -119,11 +125,23 @@ TERMINAL_HEARTBEAT_STATE="$HOME_TNF/terminal-heartbeat/state/terminal-heartbeat-
 IDENTITY_REGISTRY="$HOME_TNF/session-discovery/terminal-identity-registry.json"
 ROLE_MAP="$HOME_TNF/session-discovery/terminal-role-map.json"
 FRONTLOAD_CACHE="$HOME_TNF/handoff-current.json"
+# Canonical TNF handoff (repo + ~/.tnf) is live authority. OpenClaw LATEST is
+# a legacy optional host surface — never a standing degrade when inactive.
 OPENCLAW_LATEST="$HOME/.openclaw/workspace/handoff/LATEST.md"
+TNF_CANONICAL_HANDOFF_JSON="${TNF_REPO_ROOT}/docs/protocols/reports/SESSION_HANDOFF_LATEST.json"
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-SKILLS_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
-FRONTLOAD_VERIFY_SCRIPT="$SKILLS_ROOT/tnf-frontload-protocols/scripts/verify_frontload_state.sh"
+openclaw_host_enlisted() {
+  # Opt-in via env, or live discovery of an OpenClaw runtime.
+  if [[ "${TNF_OPENCLAW_REQUIRED:-0}" == "1" || "${TNF_OPENCLAW_ACTIVE:-0}" == "1" ]]; then
+    return 0
+  fi
+  if command -v pgrep >/dev/null 2>&1; then
+    if pgrep -f '(^|[ /])openclaw([ /]|$)|openclaw-gateway|openclaw\.mjs' >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+  return 1
+}
 
 required_files=(
   "$MASTER_HEARTBEAT_STATE"
@@ -362,14 +380,34 @@ if [[ "$handoff_immediate_tasks_count" -lt 1 ]]; then
   push_action "refresh-frontload-immediate-tasks"
 fi
 
-if [[ "$openclaw_latest_age" -lt 0 ]]; then
-  push_reason "OpenClaw handoff source missing: $OPENCLAW_LATEST"
-  push_action "repair-openclaw-handoff-source"
-  set_degraded
-elif [[ "$openclaw_latest_age" -gt 86400 ]]; then
-  push_reason "OpenClaw handoff source is stale (>24h): $OPENCLAW_LATEST"
-  push_action "refresh-openclaw-handoff-source"
-  set_degraded
+# Live discovery: only enforce OpenClaw LATEST freshness when that host is
+# enlisted (env opt-in or active process). Otherwise TNF canonical handoff wins.
+openclaw_enlisted=0
+if openclaw_host_enlisted; then
+  openclaw_enlisted=1
+fi
+
+if (( openclaw_enlisted == 1 )); then
+  if [[ "$openclaw_latest_age" -lt 0 ]]; then
+    push_reason "OpenClaw host enlisted but handoff source missing: $OPENCLAW_LATEST"
+    push_action "repair-openclaw-handoff-source"
+    set_degraded
+  elif [[ "$openclaw_latest_age" -gt 86400 ]]; then
+    push_reason "OpenClaw host enlisted but handoff source is stale (>24h): $OPENCLAW_LATEST"
+    push_action "refresh-openclaw-handoff-source"
+    set_degraded
+  fi
+else
+  if [[ ! -f "$TNF_CANONICAL_HANDOFF_JSON" && ! -f "$FRONTLOAD_CACHE" ]]; then
+    push_reason "TNF canonical handoff missing (OpenClaw inactive; expected SESSION_HANDOFF_LATEST.json or ~/.tnf/handoff-current.json)"
+    push_action "emit-or-refresh-tnf-canonical-handoff"
+    set_degraded
+  fi
+  if [[ "$openclaw_latest_age" -lt 0 ]]; then
+    push_action "note-openclaw-not-enlisted"
+  elif [[ "$openclaw_latest_age" -gt 86400 ]]; then
+    push_action "note-openclaw-handoff-stale-optional-inactive"
+  fi
 fi
 
 state="healthy"
@@ -418,6 +456,7 @@ json_payload="$(
     --argjson frontloadWarnCount "$frontload_warn_count" \
     --argjson frontloadCacheAgeSeconds "$frontload_cache_age" \
     --argjson openclawLatestAgeSeconds "$openclaw_latest_age" \
+    --argjson openclawHostEnlisted "$openclaw_enlisted" \
     --argjson handoffHistoryCount "$handoff_history_count" \
     --argjson handoffIdMarkerOk "$handoff_id_marker_ok" \
     --argjson handoffTimestampPresent "$handoff_timestamp_present" \
@@ -443,6 +482,7 @@ json_payload="$(
         frontloadWarnCount: $frontloadWarnCount,
         frontloadCacheAgeSeconds: $frontloadCacheAgeSeconds,
         openclawLatestAgeSeconds: $openclawLatestAgeSeconds,
+        openclawHostEnlisted: ($openclawHostEnlisted == 1),
         handoffHistoryCount: $handoffHistoryCount,
         handoffIdMarkerOk: ($handoffIdMarkerOk == 1),
         handoffTimestampPresent: ($handoffTimestampPresent == 1),
