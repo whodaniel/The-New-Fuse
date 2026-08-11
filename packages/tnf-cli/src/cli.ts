@@ -13689,6 +13689,54 @@ agents
   .description('Alias for `tnf list`')
   .action(async () => runSelfCliWithExit(['list']));
 agents
+  .command('prune-stale')
+  .description('Remove offline/duplicate Redis swarm workers (especially tnf-thin-client zombies)')
+  .option('--name <name>', 'Only prune agents with this exact name', 'tnf-thin-client')
+  .option('--dry-run', 'Show what would be deleted without mutating Redis')
+  .option('--stale-ms <n>', 'Offline threshold in ms for non-thin agents', '3600000')
+  .option('--json', 'Machine-readable JSON result')
+  .action(
+    async (options: { name?: string; dryRun?: boolean; staleMs?: string; json?: boolean } = {}) => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { RedisAgentClient } = require(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
+        const client = new RedisAgentClient();
+        await client.initialize();
+        try {
+          const result = await client.pruneStaleAgents({
+            name: options.name,
+            dryRun: Boolean(options.dryRun),
+            staleMs: Number(options.staleMs || 3_600_000),
+          });
+          if (options.json) {
+            console.log(JSON.stringify(result, null, 2));
+          } else {
+            console.log(chalk.bold('\nTNF agents prune-stale\n'));
+            console.log(`  scanned : ${result.scanned}`);
+            console.log(`  scoped  : ${result.scoped}`);
+            console.log(`  deleted : ${result.deleted}${result.dryRun ? ' (dry-run)' : ''}`);
+            if (result.keptThinClientId) {
+              console.log(`  kept    : ${result.keptThinClientId}`);
+            }
+            if (result.deletedIds?.length) {
+              console.log(
+                chalk.dim(
+                  `  ids     : ${result.deletedIds.slice(0, 12).join(', ')}${result.deletedIds.length > 12 ? ' …' : ''}`
+                )
+              );
+            }
+            console.log('');
+          }
+        } finally {
+          await client.cleanup().catch(() => undefined);
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+agents
   .command('register')
   .description('Alias for `tnf register`')
   .argument('[name]', 'Agent name')

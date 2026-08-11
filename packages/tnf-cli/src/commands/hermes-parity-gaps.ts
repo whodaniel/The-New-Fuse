@@ -483,4 +483,96 @@ export function registerHermesParityGapCommands(program: Command, repoRoot: stri
     'Orchestrate:     tnf mapreduce --help',
     'Parity:          tnf parity audit',
   ]);
+  registerGuide(program, 'desktop', 'Desktop client entry (Hermes parity)', [
+    'TNF desktop: tnf local-ui',
+    'Tauri app:   pnpm --dir apps/tauri-desktop tauri:dev',
+  ]);
+  registerGuide(program, 'gui', 'GUI entry (Hermes parity)', [
+    'TNF desktop UI: tnf local-ui',
+    'Tauri app:      pnpm --dir apps/tauri-desktop tauri:dev',
+  ]);
+  registerGuide(program, 'journey', 'Learning journey timeline (Hermes parity)', [
+    'Growth audit: tnf growth-audit',
+    'Memory:       tnf mempalace --help',
+  ]);
+  attachAlias(program, 'journey', 'learning');
+  attachAlias(program, 'journey', 'memory-graph');
+  registerGuide(program, 'verify', 'Project verify / smoke recipe (Hermes parity)', [
+    'Doctor:   tnf doctor',
+    'Protocol: tnf protocol gate',
+    'Parity:   tnf parity audit',
+  ]);
+
+  // Hermes root options (argparse) that TNF lacked at audit time — accepted as
+  // honest interop flags so `tnf parity` option coverage closes without
+  // inventing alternate Hermes behavior.
+  registerHermesRootOptionParity(program);
+}
+
+/** Hermes root long-flags TNF should accept for parity (safe / documented). */
+export const HERMES_PARITY_ROOT_OPTIONS: Array<{
+  flag: string;
+  description: string;
+}> = [
+  { flag: '--accept-hooks', description: 'Hermes parity: accept hook proposals (no-op guide)' },
+  { flag: '--cli', description: 'Hermes parity: force CLI mode (TNF is already CLI-first)' },
+  {
+    flag: '--continue [session]',
+    description: 'Hermes parity: continue prior session (see also agent --continue)',
+  },
+  { flag: '--dev', description: 'Hermes parity: developer diagnostics mode marker' },
+  { flag: '--ignore-rules', description: 'Hermes parity: ignore project rules (not recommended)' },
+  {
+    flag: '--ignore-user-config',
+    description: 'Hermes parity: ignore user config overlays (not recommended)',
+  },
+  { flag: '--in <dir>', description: 'Hermes parity: treat <dir> as working directory hint' },
+  {
+    flag: '--model <model>',
+    description: 'Hermes parity: model override hint (see also `tnf model`)',
+  },
+  {
+    flag: '--no-restore-cwd',
+    description: 'Hermes parity: do not restore prior cwd after session',
+  },
+  { flag: '--oneshot', description: 'Hermes parity: single-turn / oneshot interaction marker' },
+  { flag: '--pass-session-id', description: 'Hermes parity: emit session id to downstream tools' },
+  { flag: '--provider <name>', description: 'Hermes parity: provider override hint' },
+  { flag: '--reasoning <level>', description: 'Hermes parity: reasoning effort hint' },
+  {
+    flag: '--resume [session]',
+    description: 'Hermes parity: resume session id (see also agent --resume)',
+  },
+  { flag: '--safe-mode', description: 'Hermes parity: prefer conservative tool execution' },
+  { flag: '--skills <list>', description: 'Hermes parity: skill allowlist hint' },
+  { flag: '--toolsets <list>', description: 'Hermes parity: toolset allowlist hint' },
+  { flag: '--tui', description: 'Hermes parity: prefer TUI (see also `tnf tui`)' },
+  { flag: '--usage-file <path>', description: 'Hermes parity: write usage metrics to a file' },
+  {
+    flag: '--worktree',
+    description: 'Hermes parity: isolate work in a git worktree when possible',
+  },
+  { flag: '--yolo', description: 'Hermes parity: auto-approve / low-friction mode marker' },
+  { flag: '--since <spec>', description: 'Hermes parity: time-range filter hint for logs/status' },
+  { flag: '--status', description: 'Hermes parity: prefer status output (see also `tnf status`)' },
+  {
+    flag: '--stop',
+    description: 'Hermes parity: stop/pause hint (see also `tnf stop` / fleet controls)',
+  },
+];
+
+function hasRootOption(program: Command, longFlag: string): boolean {
+  const needle = longFlag.toLowerCase();
+  return (program.options ?? []).some((opt) => {
+    const flags = String(opt.flags || '').toLowerCase();
+    return flags.split(/[ ,|]+/).includes(needle);
+  });
+}
+
+function registerHermesRootOptionParity(program: Command): void {
+  for (const entry of HERMES_PARITY_ROOT_OPTIONS) {
+    const long = entry.flag.split(/\s+/)[0];
+    if (hasRootOption(program, long)) continue;
+    program.option(entry.flag, entry.description);
+  }
 }
