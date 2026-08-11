@@ -1,57 +1,48 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T16:35:45.573Z`  
-Handoff ID: `3048df3e-eb22-4d2e-8ed0-d1c467a5c741`
+Protocol ACK: `TNF_PROTOCOL_ACK` Created At: `2026-08-11T16:46:27.302Z` Handoff
+ID: `f540912b-a33d-4820-a086-c08a24854ae4`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/oss-tenant-frontload-separation`
-- Head SHA: `5160774677c23807a99c73164890b520fe875690`
+- Branch: `main`
+- Head SHA: `27bff8cedf4739eb09d2fb07dd5a043700331f11`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Harden Turn Zero/frontload: adaptable hosts + OSS vs tenant/personal work
-  planes.
+- Modified 8 file(s)
 
 ## Changed Paths
 
-- docs/protocols/ADAPTABLE_HOST_VERIFICATION.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/DIRECTIVES.md
-- docs/protocols/TURN_ZERO_MANDATE.md
-- .skills/tnf-frontload-protocols/SKILL.md
-- .skills/tnf-frontload-protocols/references/frontload-contract.md
-- .skills/tnf-frontload-protocols/references/frontload-openclaw.md
-- .skills/tnf-frontload-protocols/scripts/verify_frontload_state.sh
-- .skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh
-- scripts/verify_frontload_state.sh
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-
-## Verification
-
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
-- supabase_rls_audit: `na`
+- Dockerfile.api
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- apps/tauri-desktop/src/lib/supabase.ts
+- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/operations/tnf-master-reconciliation-report-latest.json
+- docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/protocols/reports/twip-terminal-macro-board-latest.md
+- docs/deployment/SUPABASE_OAUTH_SETUP.md
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
+- **Owner:** operator
+- **Priority:** medium
 
-### Resume Checklist
+**Targets:**
+
+- orchestrator
+
+**Resume Checklist:**
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
+  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
+  and get live operator confirmation before running git commit/push for those,
+  do not auto-execute them
 
 ## Next Actions
 
@@ -59,3 +50,12 @@ Handoff ID: `3048df3e-eb22-4d2e-8ed0-d1c467a5c741`
   continuation.resume_checklist.
 - Emit a fresh handoff artifact immediately after completing the next critical
   work unit.
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s)
+  uncommitted — see
+  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+
+## Artifacts
+
+**Commits:**
+
+- 27bff8cedf4739eb09d2fb07dd5a043700331f11
