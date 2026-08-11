@@ -1,34 +1,35 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T13:12:40.853Z`  
-Handoff ID: `a535d786-f022-44ba-85d8-2e28923cc16d`
+Created At: `2026-08-11T13:48:54.685Z`  
+Handoff ID: `bb2f8da0-7e85-4cc9-969d-46c67f9887e8`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/l4l5-swarm-parity`
-- Head SHA: `2d75390d0df3eab7ad6c1ab76ede72a9af2d577e`
+- Branch: `fix/validators-peer-parity`
+- Head SHA: `e31dafec20b25306a274f3e6c141102388652cf0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- L4/L5 P0: pruned tnf-thin-client Redis zombies (347→1) via stable IDs +
-  prune-stale.
-- Hermes parity 0%→100% via argparse help parsing + option/command wrappers.
-- Mean cross-agent coverage 38%→52% (190→159 gaps).
+- Hardened handoff + architecture validators (SESSION_HANDOFF schema).
+- Raised Claude/Codex to 100% and Pi to 98% via peer-cli-parity-gaps.
+- Mean parity 52%→83%; open gaps 159→35.
 
 ## Changed Paths
 
-- scripts/tnf-agent-cli.cjs
+- packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
 - packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/commands/hermes-parity-gaps.ts
-- packages/tnf-cli/src/services/ParityService.ts
-- docs/operations/audits/lanes/L4L5_ACTION_2026-08-11.md
+- scripts/handoff-pre-validator.js
+- scripts/handoff-pre-validator.cjs
+- scripts/validation/validate-architecture.js
+- docs/operations/audits/lanes/VALIDATORS_PEER_PARITY_2026-08-11.md
+- docs/operations/parity/parity-ledger.json
+- docs/operations/parity/parity-ledger.md
+- docs/operations/parity/parity-runs.jsonl
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Verification
 
@@ -41,17 +42,15 @@ Handoff ID: `a535d786-f022-44ba-85d8-2e28923cc16d`
 
 - Owner: `cursor-agent`
 - Targets: `orchestrator`
-- Priority: `high`
+- Priority: `medium`
 
 ### Resume Checklist
 
-- Confirm redis thin-client count stays near 1 after cron cycles.
-- Re-run parity audit with published tnf-cli dist.
-- Merge L4/L5 PR.
+- Confirm validators: node scripts/handoff-pre-validator.js.
+- Confirm parity: pnpm exec tsx packages/tnf-cli/src/cli.ts parity audit.
+- Proceed Jules/cursor-agent gap closers.
 
 ## Next Actions
 
-- Push fix/l4l5-swarm-parity and open PR.
-- Close superseded PR #84 (tauri harden already in merged #81).
-- Optional follow-on: restore missing validator scripts; raise Claude/Pi/Codex
-  parity.
+- Push/open PR for fix/validators-peer-parity.
+- Raise Jules + cursor-agent CLI parity (Living State P0).

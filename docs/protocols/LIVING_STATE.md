@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push fix/l4l5-swarm-parity and open PR.
+**Current Directive:** Push/open PR for fix/validators-peer-parity.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -867,6 +867,14 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-11T13:48:56.789Z handoff `bb2f8da0-7e85-4cc9-969d-46c67f9887e8` head
+  `e31dafec20b2` project `L4-INTEROP` — Push/open PR for
+  fix/validators-peer-parity.
+
+- 2026-08-11T13:15:51.280Z handoff `183f346b-f693-4546-a878-3959e5556506` head
+  `e31dafec20b2` project `L4-INTEROP` — Select next P0: restore missing
+  validator scripts and/or raise Claude/Pi/Codex parity.
+
 - 2026-08-11T13:12:42.332Z handoff `a535d786-f022-44ba-85d8-2e28923cc16d` head
   `2d75390d0df3` project `L4-INTEROP` — Push fix/l4l5-swarm-parity and open PR.
 
@@ -1209,4 +1217,7 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-11T13:08:11.806Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T13:49:29.574Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings
