@@ -3,7 +3,8 @@
 `[CLASS:INTEL] [STATUS:VERIFIED-INTERACTIVE]`
 
 **Tip (original smoke):** `585f72e35f` on `fix/honest-failure-reporting`  
-**Landed on main via:** #81 (hardening) · #86 (Codex DNS/REST residuals) · follow-up P2 polish
+**Landed on main via:** #81 (hardening) · #86 (Codex DNS/REST residuals) ·
+follow-up P2 polish
 
 ## Scope
 
@@ -41,8 +42,12 @@ Command: `pnpm exec playwright test --config=playwright.smoke.config.ts`
 
 ## P2 polish notes (post-#86)
 
-- Dropped unused `tauri-plugin-fs` / `tauri-plugin-http` deps and conf scopes (opener-only).
-- CSP: removed `script-src 'unsafe-inline'` (boot surface → `/boot-surface.js`); stripped unused CDN font origins.
-- Platform Overview / Settings / Virtual Library health no longer treats `no-cors` opaque success as online.
-- Security-path unit tests expanded (`host_policy`, sandbox URL, Antigravity host deny, OAGI arming, `probeRestApiUrl`, `openExternal`).
+- Dropped unused `tauri-plugin-fs` / `tauri-plugin-http` deps and conf scopes
+  (opener-only).
+- CSP: removed `script-src 'unsafe-inline'` (boot surface → `/boot-surface.js`);
+  stripped unused CDN font origins.
+- Platform Overview / Settings / Virtual Library health no longer treats
+  `no-cors` opaque success as online.
+- Security-path unit tests expanded (`host_policy`, sandbox URL, Antigravity
+  host deny, OAGI arming, `probeRestApiUrl`, `openExternal`).
 - Removed resurrected duplicate `src/main.ts` (archive remains).

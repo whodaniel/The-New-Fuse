@@ -60,6 +60,19 @@ export const CODEX_PARITY_GAP_COMMANDS = [
   'unarchive',
 ] as const;
 
+/** Jules verbs TNF exposes as guides / thin entrypoints. */
+export const JULES_PARITY_GAP_COMMANDS = ['new', 'teleport'] as const;
+
+/** Cursor Agent verbs TNF exposes as guides / thin entrypoints. */
+export const CURSOR_AGENT_PARITY_GAP_COMMANDS = [
+  'about',
+  'bedrock',
+  'create-chat',
+  'generate-rule',
+  'install-shell-integration',
+  'uninstall-shell-integration',
+] as const;
+
 /** Claude root long-flags accepted for parity (honest interop markers). */
 export const CLAUDE_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: string }> = [
   { flag: '--add-dir <path>', description: 'Claude parity: extra working directory hint' },
@@ -200,6 +213,40 @@ export const CODEX_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: strin
   { flag: '--search <query>', description: 'Codex parity: search hint' },
 ];
 
+/** Jules root long-flags accepted for parity. */
+export const JULES_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: string }> = [
+  { flag: '--apply', description: 'Jules parity: apply suggestion/patch marker' },
+  { flag: '--assignee <name>', description: 'Jules parity: assignee hint' },
+  { flag: '--json', description: 'Jules parity: JSON output marker' },
+  { flag: '--limit <n>', description: 'Jules parity: result limit hint' },
+  { flag: '--parallel <n>', description: 'Jules parity: parallelism hint' },
+  { flag: '--repo <slug>', description: 'Jules parity: repository hint' },
+];
+
+/** Cursor Agent root long-flags accepted for parity. */
+export const CURSOR_AGENT_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: string }> = [
+  { flag: '--approve-mcps', description: 'Cursor Agent parity: approve MCP servers marker' },
+  { flag: '--auto-review', description: 'Cursor Agent parity: auto-review marker' },
+  { flag: '--endpoint <url>', description: 'Cursor Agent parity: API endpoint hint' },
+  { flag: '--force', description: 'Cursor Agent parity: force marker' },
+  { flag: '--header <value>', description: 'Cursor Agent parity: HTTP header hint' },
+  { flag: '--plan', description: 'Cursor Agent parity: plan mode marker' },
+  {
+    flag: '--skip-worktree-setup',
+    description: 'Cursor Agent parity: skip worktree setup marker',
+  },
+  {
+    flag: '--stream-partial-output',
+    description: 'Cursor Agent parity: stream partial output marker',
+  },
+  { flag: '--trust', description: 'Cursor Agent parity: trust workspace marker' },
+  { flag: '--workspace <path>', description: 'Cursor Agent parity: workspace path hint' },
+  {
+    flag: '--worktree-base <path>',
+    description: 'Cursor Agent parity: worktree base path hint',
+  },
+];
+
 export function registerPeerCliParityGapCommands(program: Command, _repoRoot: string): void {
   // --- Claude ---
   registerGuide(program, 'auto-mode', 'Claude parity: auto / unattended mode entry', [
@@ -268,7 +315,63 @@ export function registerPeerCliParityGapCommands(program: Command, _repoRoot: st
     'Authority must remain operator-gated.',
   ]);
 
+  // --- Jules ---
+  registerGuide(program, 'new', 'Jules parity: start a new task / session', [
+    'TNF session:  tnf session --help',
+    'Agent:        tnf agent --help',
+    'Onboard:      tnf onboard',
+  ]);
+  registerGuide(program, 'teleport', 'Jules/Claude parity: teleport / remote session entry', [
+    'Remote:   tnf remote-control',
+    'Relay:    tnf relay monitor',
+    'Gateway:  tnf gateway',
+  ]);
+
+  // --- Cursor Agent ---
+  registerGuide(program, 'about', 'Cursor Agent parity: about / version entry', [
+    'Version:  tnf --version',
+    'Doctor:   tnf doctor',
+    'Config:   tnf config resolved',
+  ]);
+  registerGuide(program, 'bedrock', 'Cursor Agent parity: AWS Bedrock entry', [
+    'Models:    tnf model / tnf ai models',
+    'Providers: tnf config resolved',
+    'Auth:      tnf auth --help',
+  ]);
+  registerGuide(program, 'create-chat', 'Cursor Agent parity: create chat entry', [
+    'Session:  tnf session --help',
+    'TUI:      tnf tui',
+    'Agent:    tnf agent --help',
+  ]);
+  registerGuide(program, 'generate-rule', 'Cursor Agent parity: generate rule entry', [
+    'Rules / skills:  tnf skill --help',
+    'Harness docs:    docs/core/AGENTS.md',
+    'Parity:          tnf parity audit',
+  ]);
+  registerGuide(
+    program,
+    'install-shell-integration',
+    'Cursor Agent parity: install shell integration',
+    [
+      'TNF CLI install:  bash scripts/install-tnf-cli.sh',
+      'Onboard:          tnf onboard',
+      'Shell path tip:   ensure ~/.local/bin is on PATH',
+    ]
+  );
+  registerGuide(
+    program,
+    'uninstall-shell-integration',
+    'Cursor Agent parity: uninstall shell integration',
+    [
+      'Remove the local `tnf` shim only with live operator confirmation.',
+      'Typical path: ~/.local/bin/tnf',
+      'Prefer `tnf doctor` before removing tooling.',
+    ]
+  );
+
   registerRootOptions(program, CLAUDE_PARITY_ROOT_OPTIONS);
   registerRootOptions(program, PI_PARITY_ROOT_OPTIONS);
   registerRootOptions(program, CODEX_PARITY_ROOT_OPTIONS);
+  registerRootOptions(program, JULES_PARITY_ROOT_OPTIONS);
+  registerRootOptions(program, CURSOR_AGENT_PARITY_ROOT_OPTIONS);
 }

@@ -1,44 +1,36 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "3fa6d984-16cd-403d-8a99-2cd685687d42",
-  "created_at": "2026-08-11T14:12:37.276Z",
-  "repository": "TNF-tauri-pr84-clean",
-  "branch": "fix/tauri-p2-polish",
-  "head_sha": "f8a9bcbe9273919460426f13f1bcd3007fbba15b",
+  "handoff_id": "54ca99ac-1a8b-4df4-94d2-09aa0f011a76",
+  "created_at": "2026-08-11T14:31:21.111Z",
+  "repository": "The-New-Fuse",
+  "branch": "fix/jules-cursor-parity",
+  "head_sha": "bd961dd5b30144fff297eae6a69851a97254f481",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-TAURI"
-  ],
+  "project_ids": ["TNF-REG"],
   "work_summary": [
-    "Merge main into fix/tauri-p2-polish; resolve protocol handoff conflicts for PR #88."
+    "Post-merge: land agents.registration gate matcher + Continuous Improver slug so autonomous verify passes."
   ],
   "changed_paths": [
-    "apps/tauri-desktop/src/services/api.ts",
-    "docs/operations/audits/lanes/VALIDATORS_PEER_PARITY_2026-08-11.md",
+    "docs/operations/tnf-action-receipts.jsonl",
+    "docs/operations/tnf-self-improvement-run-log.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts",
-    "scripts/handoff-pre-validator.cjs",
-    "scripts/handoff-pre-validator.js",
-    "scripts/validation/validate-architecture.js"
+    "scripts/check-agent-registration.cjs"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-11T14:12:40.086Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-08-11T14:31:23.273Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "cursor-agent",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -47,11 +39,10 @@
     ]
   },
   "next_actions": [
-    "Merge PR #88."
+    "Push fix/jules-cursor-parity.",
+    "Confirm autonomous verify gates pass."
   ],
   "artifacts": {
-    "commits": [
-      "f8a9bcbe9273919460426f13f1bcd3007fbba15b"
-    ]
+    "commits": ["bd961dd5b30144fff297eae6a69851a97254f481"]
   }
 }
