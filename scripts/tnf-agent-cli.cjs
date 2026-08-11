@@ -190,7 +190,19 @@ class RedisAgentClient {
    */
   async register(name, role, platform, capabilities = [], extra = {}) {
     const preferredId = String(process.env.AGENT_ID || process.env.TNF_AGENT_ID || '').trim();
-    const resolvedId = preferredId || `agent_${name}_${Date.now()}`;
+    const stableName = String(name || '').trim().toLowerCase();
+    // Ephemeral / one-shot workers (especially cron thin-clients) must not mint a
+    // unique Redis field every spawn — that polluted tnf list with 1000+ zombies.
+    const useStableId =
+      Boolean(preferredId) ||
+      /^(1|true|yes)$/i.test(String(process.env.TNF_STABLE_AGENT_ID || '')) ||
+      stableName === 'tnf-thin-client' ||
+      /thin-client/i.test(stableName);
+    const resolvedId =
+      preferredId ||
+      (useStableId
+        ? `agent_${String(name).replace(/[^\w.-]+/g, '_')}_${String(platform || 'tnf').replace(/[^\w.-]+/g, '_')}`
+        : `agent_${name}_${Date.now()}`);
 
     // Authority role is operator-owned (Phase 1). Operational role (orchestrator /
     // broker / worker / …) stays for Redis routing; privilege decisions must use
@@ -852,17 +864,28 @@ class RedisAgentClient {
     }
 
     if (this.agentInfo) {
-      this.agentInfo.status = 'offline';
-      await this.publisher.hset(
-        'tnf:agent-registry',
-        this.agentInfo.id,
-        JSON.stringify(this.agentInfo)
-      );
+      const ephemeral =
+        String(this.agentInfo.name || '')
+          .toLowerCase()
+          .includes('thin-client') ||
+        /^(1|true|yes)$/i.test(String(process.env.TNF_EPHEMERAL_AGENT || ''));
+
+      if (ephemeral) {
+        // Ephemeral workers should leave no offline residue in the live registry.
+        await this.publisher.hdel('tnf:agent-registry', this.agentInfo.id);
+      } else {
+        this.agentInfo.status = 'offline';
+        await this.publisher.hset(
+          'tnf:agent-registry',
+          this.agentInfo.id,
+          JSON.stringify(this.agentInfo)
+        );
+      }
 
       await this.broadcast({
         type: 'status',
         content: `Agent ${this.agentInfo.name} is going offline`,
-        metadata: { event: 'agent_offline' },
+        metadata: { event: 'agent_offline', ephemeral },
       });
     }
 
@@ -871,8 +894,68 @@ class RedisAgentClient {
 
     console.log('👋 Disconnected from Redis network');
   }
-}
 
+  /**
+   * Remove stale / offline duplicate workers from tnf:agent-registry.
+   * Thin-clients: delete all offline rows; keep at most one online (newest).
+   * Other agents (when name filter matches): keep newest per name+platform, drop rest if stale.
+   */
+  async pruneStaleAgents(options = {}) {
+    const staleMs = Number(options.staleMs || process.env.TNF_AGENT_STALE_MS || 60 * 60 * 1000);
+    const nameFilter = String(options.name || '').trim().toLowerCase();
+    const dryRun = Boolean(options.dryRun);
+    const agents = await this.listAgents();
+    const scoped = nameFilter
+      ? agents.filter((a) => String(a.name || '').toLowerCase() === nameFilter)
+      : agents;
+    const toDelete = [];
+
+    const thin = scoped.filter((a) => String(a.name || '').toLowerCase().includes('thin-client'));
+    const nonThin = scoped.filter((a) => !String(a.name || '').toLowerCase().includes('thin-client'));
+
+    const thinOnline = thin
+      .filter((a) => a.isOnline && a.status !== 'offline')
+      .sort((a, b) => (Date.parse(b.lastSeen || 0) || 0) - (Date.parse(a.lastSeen || 0) || 0));
+    const keepThin = thinOnline[0] || null;
+    for (const agent of thin) {
+      if (!keepThin || agent.id !== keepThin.id) toDelete.push(agent);
+    }
+
+    const byKey = new Map();
+    for (const agent of nonThin) {
+      const key = `${String(agent.name || '').toLowerCase()}::${String(agent.platform || '').toLowerCase()}`;
+      if (!byKey.has(key)) byKey.set(key, []);
+      byKey.get(key).push(agent);
+    }
+    for (const [, entries] of byKey) {
+      entries.sort(
+        (a, b) => (Date.parse(b.lastSeen || 0) || 0) - (Date.parse(a.lastSeen || 0) || 0)
+      );
+      for (let i = 0; i < entries.length; i += 1) {
+        const agent = entries[i];
+        const lastSeenMs = Date.parse(agent.lastSeen || 0) || 0;
+        const stale = Date.now() - lastSeenMs > staleMs || agent.status === 'offline' || !agent.isOnline;
+        if (i > 0 && stale) toDelete.push(agent);
+      }
+    }
+
+    const uniqueDeletes = [...new Map(toDelete.map((a) => [a.id, a])).values()];
+    if (!dryRun) {
+      for (const agent of uniqueDeletes) {
+        await this.publisher.hdel('tnf:agent-registry', agent.id);
+      }
+    }
+
+    return {
+      scanned: agents.length,
+      scoped: scoped.length,
+      deleted: uniqueDeletes.length,
+      dryRun,
+      deletedIds: uniqueDeletes.map((a) => a.id),
+      keptThinClientId: keepThin?.id || null,
+    };
+  }
+}
 // ============================================================================
 // CLI INTERFACE
 // ============================================================================
@@ -948,8 +1031,31 @@ async function main() {
             console.log('');
           });
         }
-
         await client.cleanup();
+        process.exit(0);
+        break;
+      }
+
+      case 'prune-stale': {
+        const dryRun = args.includes('--dry-run');
+        const json = args.includes('--json');
+        const nameIdx = args.indexOf('--name');
+        const name = nameIdx >= 0 ? args[nameIdx + 1] : 'tnf-thin-client';
+        const staleIdx = args.indexOf('--stale-ms');
+        const staleMs = staleIdx >= 0 ? Number(args[staleIdx + 1]) : undefined;
+        const result = await client.pruneStaleAgents({ dryRun, name, staleMs });
+        if (json) {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          console.log(
+            `\n🧹 prune-stale: scanned=${result.scanned} scoped=${result.scoped} deleted=${result.deleted}${dryRun ? ' (dry-run)' : ''}`
+          );
+          if (result.keptThinClientId) {
+            console.log(`   kept thin-client: ${result.keptThinClientId}`);
+          }
+        }
+        await client.cleanup();
+        process.exit(0);
         break;
       }
 

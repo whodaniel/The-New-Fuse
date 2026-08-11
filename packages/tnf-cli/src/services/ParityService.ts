@@ -236,10 +236,20 @@ export function parseHelpSurface(rawText: string, selfName?: string): CapturedSu
     }
 
     // Accept the common section spellings across help generators.
-    const isCommandSection = section.endsWith('commands');
-    const isOptionSection = section.endsWith('options') || section.endsWith('flags');
+    // Argparse (Hermes) uses "positional arguments" / "options" / "optional arguments".
+    const isCommandSection = section.endsWith('commands') || section === 'positional arguments';
+    const isOptionSection =
+      section.endsWith('options') || section.endsWith('flags') || section === 'optional arguments';
     if (isCommandSection) sawCommandSection = true;
-    if (!isCommandSection && !isOptionSection) continue;
+    if (!isCommandSection && !isOptionSection) {
+      // Hermes-style usage line embeds flags even before section headers.
+      const usageLongs = stripped.match(/--[a-zA-Z0-9][a-zA-Z0-9-]*/g) ?? [];
+      for (const flag of usageLongs) {
+        const normalized = flag.toLowerCase();
+        if (!UNIVERSAL_OPTIONS.has(normalized)) options.add(normalized);
+      }
+      continue;
+    }
     if (!line.startsWith(' ')) continue;
 
     const indent = line.length - line.trimStart().length;
@@ -262,6 +272,22 @@ export function parseHelpSurface(rawText: string, selfName?: string): CapturedSu
     if (!spec) continue;
 
     if (isCommandSection) {
+      // Argparse subparser: `{chat,model,moa,...}` or `{chat,model}` with nested aliases in parens.
+      const braceGroup = /\{([^{}]+)\}/.exec(stripped);
+      if (braceGroup) {
+        sawCommandSection = true;
+        for (const raw of braceGroup[1].split(',')) {
+          const token = raw
+            .replace(/\(.*?\)/g, '')
+            .trim()
+            .toLowerCase();
+          if (!token || UNIVERSAL_COMMANDS.has(token)) continue;
+          if (token.startsWith('<') || token.startsWith('[') || token.startsWith('-')) continue;
+          if (!entries.has(token)) entries.set(token, new Set([token]));
+        }
+        continue;
+      }
+
       const tokens = spec.split(/\s+/).filter(Boolean);
       // yargs/Cobra-style help repeats the binary on every row
       // ("opencode run [message..]", "pi install <source>"). The command is
