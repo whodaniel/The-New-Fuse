@@ -5,7 +5,7 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-11T13:12:40.853Z** — handoff
+Updated: **2026-08-11T13:19:05.897Z** — handoff `fa8020a4-7c1c-4256-9217-3d158814f7b9` (`76b3fef6cfef`).
 `a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
 `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` (`585f72e35f5e`).
 `b1e88931-7ddf-492d-a097-36efb9bd4628` (`585f72e35f5e`).
@@ -181,11 +181,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                               |
-| -------- | ------------------------------------------------------------------------------------ |
-| **P0**   | Push fix/l4l5-swarm-parity and open PR.                                              |
-| **P0**   | Close superseded PR #84 (tauri harden already in merged #81).                        |
-| **P0**   | Optional follow-on: restore missing validator scripts; raise Claude/Pi/Codex parity. |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -757,3 +756,5 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (a535d786-f022-44ba-85d8-2e28923cc16d) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST (fa8020a4-7c1c-4256-9217-3d158814f7b9) | ✅ HANDOFF_READY |

@@ -42,36 +42,84 @@ export async function probeRelayUrl(relayUrl: string, timeoutMs = 2500): Promise
   }
 }
 
+/** True when a health JSON body looks like the Nest REST API (not relay / WS gateway). */
+export function isRestApiHealthPayload(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+  const record = data as Record<string, unknown>;
+  if (isRelayHealthPayload(data)) return false;
+  // WS gateway health often reports connection counters without REST service identity.
+  if ('connectedClients' in record && !('service' in record) && !('name' in record)) {
+    return false;
+  }
+  return (
+    record.status === 'ok' ||
+    record.status === 'healthy' ||
+    record.ok === true ||
+    typeof record.service === 'string' ||
+    typeof record.name === 'string'
+  );
+}
+
 /**
- * REST liveness probe — use /health (not /api/agents).
- *
- * Hitting /api/agents during discovery burned the shared rate-limit budget
- * (StrictMode double-bootstrap × 4 candidates → easy 429s, then agent CRUD failed).
- * Relay vs API is already separated by different candidate ports; reject payloads
- * that advertise as a federation relay so a relay-on-API-port can't spoof us.
+ * REST API must expose Nest/REST surfaces — bare `/health` on a WS gateway is not enough.
+ * Prefer cheap `/api/v1/health` (and cousins), reject relay/gateway-shaped payloads, then
+ * fall back to a capability probe that tolerates auth walls without listing all agents.
  */
 export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise<boolean> {
   const base = apiUrl.replace(/\/$/, '');
-  for (const path of ['/health', '/api/health']) {
+  let sawRelayHealth = false;
+
+  for (const path of ['/api/v1/health', '/api/health', '/health']) {
     try {
       const res = await fetch(`${base}${path}`, {
         signal: AbortSignal.timeout(timeoutMs),
       });
-      if (!res.ok) {
-        if (res.status === 404) continue;
-        return false;
+      if (res.status === 404) continue;
+      if (!res.ok) continue;
+
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        if (isRelayHealthPayload(data)) {
+          sawRelayHealth = true;
+          continue;
+        }
+        if (isRestApiHealthPayload(data)) return true;
+        // Explicit REST health path with non-relay JSON is acceptable.
+        if (path.startsWith('/api/') && !isRelayHealthPayload(data)) return true;
+        continue;
       }
-      try {
-        const data = (await res.json()) as Record<string, unknown>;
-        if (data?.relay === 'running') return false;
-      } catch {
-        // Non-JSON 200 is acceptable for simple health endpoints.
-      }
-      return true;
+
+      // Non-JSON 200 on an `/api/*` health path is still REST evidence.
+      if (path.startsWith('/api/')) return true;
     } catch {
-      // try next path
+      continue;
     }
   }
+
+  // Definitive relay health on this host → do not trust a stray capability surface.
+  if (sawRelayHealth) return false;
+
+  // Capability proof without dumping the agent roster (avoids prior /api/agents rate-limit thrash).
+  try {
+    const res = await fetch(`${base}/api/agents?limit=1`, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (res.ok || res.status === 401 || res.status === 403 || res.status === 405) {
+      return true;
+    }
+    // Some servers reject HEAD — retry cheap GET and accept auth walls as "surface exists".
+    if (res.status === 404 || res.status === 501) {
+      const getRes = await fetch(`${base}/api/agents?limit=1`, {
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      return getRes.ok || getRes.status === 401 || getRes.status === 403;
+    }
+  } catch {
+    // fall through
+  }
+
   return false;
 }
 

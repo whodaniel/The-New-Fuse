@@ -170,12 +170,21 @@ async fn probe_service_url(raw_url: &str) -> bool {
     } else {
         host.to_string()
     };
+    // Resolve hostnames (localhost / FQDNs). SocketAddr::parse alone drops DNS hosts.
     let addr = format!("{}:{}", tcp_host, port);
     let tcp_ok = tokio::task::spawn_blocking(move || {
-        addr.parse::<std::net::SocketAddr>()
-            .ok()
-            .map(|a| TcpStream::connect_timeout(&a, Duration::from_millis(600)).is_ok())
-            .unwrap_or(false)
+        use std::net::ToSocketAddrs;
+        match addr.to_socket_addrs() {
+            Ok(addrs) => {
+                for socket in addrs.take(4) {
+                    if TcpStream::connect_timeout(&socket, Duration::from_millis(600)).is_ok() {
+                        return true;
+                    }
+                }
+                false
+            }
+            Err(_) => false,
+        }
     })
     .await
     .unwrap_or(false);

@@ -27,11 +27,14 @@ describe('endpointDiscovery', () => {
     expect(isRelayHealthPayload({ status: 'error' })).toBe(false);
   });
 
-  it('probes REST API via /health instead of /api/agents', async () => {
+  it('probes REST API via health paths ahead of /api/agents', async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url.endsWith('/health')) {
-        return new Response(JSON.stringify({ status: 'ok' }), { status: 200 });
+        return new Response(JSON.stringify({ status: 'ok' }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        });
       }
       return new Response('not found', { status: 404 });
     });
@@ -50,7 +53,10 @@ describe('endpointDiscovery', () => {
       'fetch',
       vi.fn(
         async () =>
-          new Response(JSON.stringify({ status: 'ok', relay: 'running' }), { status: 200 })
+          new Response(JSON.stringify({ status: 'ok', relay: 'running' }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          })
       )
     );
     await expect(probeRestApiUrl('http://127.0.0.1:3001')).resolves.toBe(false);
