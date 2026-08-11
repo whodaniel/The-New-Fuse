@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push/open PR for fix/pi-path-ghost-parity.
+**Current Directive:** Land rollup stall mapping.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -866,6 +866,16 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T15:10:50.923Z handoff `8fd0b360-3295-4456-9a86-afde42616d9f` head
+  `bc7d9f3541f5` project `TNF-AUTONOMY` — Land rollup stall mapping.
+
+- 2026-08-11T15:08:36.482Z handoff `05585161-7aa6-420f-97d5-29793ac329d4` head
+  `bc7d9f3541f5` project `TNF-AUTONOMY` — Land rollup stall mapping on branch.
+
+- 2026-08-11T15:07:48.343Z handoff `09a9ff57-bc65-4914-9e67-ca199deacd02` head
+  `bc7d9f3541f5` project `TNF-AUTONOMY` — Commit/push autonomy rollup stall
+  mapping.
 
 - 2026-08-11T15:06:39.263Z handoff `910875dd-a5eb-4217-abfd-1ad7b78d4980` head
   `9a05179b9278` project `L4-INTEROP` — Push/open PR for
