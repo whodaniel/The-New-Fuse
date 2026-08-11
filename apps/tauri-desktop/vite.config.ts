@@ -397,7 +397,7 @@ export default defineConfig(({ mode }) => {
               ws: true,
               changeOrigin: true,
             },
-            // Allow Electron file:// webview origins by not relying on Origin header
+            // Tauri Vite proxy: do not require Origin (webview / local asset loads)
             // Vite will proxy requests regardless of missing/unknown Origin
           }
         : undefined,

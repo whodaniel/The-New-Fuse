@@ -68,7 +68,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-11T14:07:56.763Z** — handoff
+Updated: **2026-08-11T14:12:37.276Z** — handoff `3fa6d984-16cd-403d-8a99-2cd685687d42` (`f8a9bcbe9273`).
 `5ae2b902-59e0-41bc-bc61-c210851490fb` (`e25a8a71b4f8`).
 `fe878158-2847-48f1-86e6-1731c8c0bdcc` (`e25a8a71b4f8`).
 `210e5ab1-ea04-47df-8fdd-89b21e22ccdd` (`0f5970ea1002`).
@@ -186,10 +186,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                  |
-| -------- | --------------------------------------- |
-| **P0**   | Merge PR #87 after conflict resolution. |
-| **P0**   | Raise Jules + cursor-agent CLI parity.  |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Merge PR #88. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -776,3 +775,5 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (5ae2b902-59e0-41bc-bc61-c210851490fb) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST (3fa6d984-16cd-403d-8a99-2cd685687d42) | ✅ HANDOFF_READY |

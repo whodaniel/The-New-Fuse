@@ -74,4 +74,31 @@ mod tests {
         ));
         assert!(cloud_control_plane_host_allowed("localhost"));
     }
+
+    #[test]
+    fn rejects_empty_and_trailing_dot_normalized_to_empty() {
+        assert!(!host_allowed("", &["localhost"], &[]));
+        assert!(!host_allowed("...", &["localhost"], &[]));
+        assert!(!host_allowed(".", &["localhost"], &[]));
+    }
+
+    #[test]
+    fn accepts_ipv6_loopback_forms() {
+        assert!(health_probe_host_allowed("[::1]"));
+        assert!(health_probe_host_allowed("::1"));
+        assert!(cloud_control_plane_host_allowed("[::1]"));
+    }
+
+    #[test]
+    fn ignores_leading_dot_on_domain_roots() {
+        assert!(host_allowed("api.thenewfuse.com", &[], &[".thenewfuse.com"]));
+        assert!(!host_allowed("notthenewfuse.com", &[], &[".thenewfuse.com"]));
+    }
+
+    #[test]
+    fn rejects_open_cloud_run_and_foreign_hosts() {
+        assert!(!cloud_control_plane_host_allowed("random-service-123.run.app"));
+        assert!(!cloud_control_plane_host_allowed("evil.example.com"));
+        assert!(!health_probe_host_allowed("evil.example.com"));
+    }
 }

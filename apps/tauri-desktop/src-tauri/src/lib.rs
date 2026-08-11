@@ -655,3 +655,30 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+#[cfg(test)]
+mod sandbox_url_tests {
+    use super::validate_sandbox_url;
+
+    #[test]
+    fn accepts_loopback_ws() {
+        assert!(validate_sandbox_url("ws://127.0.0.1:3007/ws").is_ok());
+        assert!(validate_sandbox_url("ws://localhost:3000/ws").is_ok());
+    }
+
+    #[test]
+    fn rejects_remote_ws_and_scripts() {
+        assert!(validate_sandbox_url("ws://evil.example.com/ws").is_err());
+        assert!(validate_sandbox_url("javascript:alert(1)").is_err());
+        assert!(validate_sandbox_url("http://127.0.0.1:3001").is_err());
+    }
+
+    #[test]
+    fn accepts_pinned_wss_and_rejects_open_cloud_run() {
+        assert!(validate_sandbox_url(
+            "wss://api-gateway-241337102384.us-central1.run.app/ws"
+        )
+        .is_ok());
+        assert!(validate_sandbox_url("wss://random-service.run.app/ws").is_err());
+    }
+}
