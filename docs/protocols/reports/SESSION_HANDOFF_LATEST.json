@@ -7,7 +7,9 @@
   "head_sha": "694dc7e3764113a3f735448d149d1fb1a71daf85",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
     "Wire Work Plane Separation into Turn Zero preflight, TUI context pack, and onboard templates."
   ],
@@ -19,7 +21,8 @@
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "scripts/runtime/local-subdirector-runtime.cjs"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -30,7 +33,10 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -43,6 +49,8 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["694dc7e3764113a3f735448d149d1fb1a71daf85"]
+    "commits": [
+      "694dc7e3764113a3f735448d149d1fb1a71daf85"
+    ]
   }
 }

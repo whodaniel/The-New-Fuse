@@ -695,7 +695,11 @@ async function scanOnce() {
       lane: 'local-terminal-runtime',
     },
     status:
-      summary.stalledSessions > 0 ? 'critical' : summary.agentSessions > 0 ? 'healthy' : 'warning',
+      summary.stalledSessions > 0
+        ? 'degraded'
+        : summary.agentSessions > 0
+          ? 'healthy'
+          : 'warning',
     cycle,
     config: publicHeartbeatConfig(),
     summary,
