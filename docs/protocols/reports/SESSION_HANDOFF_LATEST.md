@@ -1,33 +1,27 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T16:35:45.573Z`  
-Handoff ID: `3048df3e-eb22-4d2e-8ed0-d1c467a5c741`
+Created At: `2026-08-11T16:50:20.156Z`  
+Handoff ID: `dd662756-3e00-4152-bfd0-2f17b16f148c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/oss-tenant-frontload-separation`
-- Head SHA: `5160774677c23807a99c73164890b520fe875690`
+- Branch: `fix/work-plane-frontload-wire`
+- Head SHA: `694dc7e3764113a3f735448d149d1fb1a71daf85`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Harden Turn Zero/frontload: adaptable hosts + OSS vs tenant/personal work
-  planes.
+- Wire Work Plane Separation into Turn Zero preflight, TUI context pack, and
+  onboard templates.
 
 ## Changed Paths
 
-- docs/protocols/ADAPTABLE_HOST_VERIFICATION.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/DIRECTIVES.md
-- docs/protocols/TURN_ZERO_MANDATE.md
-- .skills/tnf-frontload-protocols/SKILL.md
-- .skills/tnf-frontload-protocols/references/frontload-contract.md
-- .skills/tnf-frontload-protocols/references/frontload-openclaw.md
-- .skills/tnf-frontload-protocols/scripts/verify_frontload_state.sh
-- .skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh
-- scripts/verify_frontload_state.sh
+- packages/tnf-cli/src/utils/work-plane.ts
+- packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts
+- packages/tnf-cli/src/cli.ts
+- scripts/tnf-onboard.cjs
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
