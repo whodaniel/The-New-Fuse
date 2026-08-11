@@ -68,10 +68,11 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-11T15:10:49.617Z** — handoff
-`8fd0b360-3295-4456-9a86-afde42616d9f` (`bc7d9f3541f5`).
-`09a9ff57-bc65-4914-9e67-ca199deacd02` (`bc7d9f3541f5`).
-`910875dd-a5eb-4217-abfd-1ad7b78d4980` (`9a05179b9278`).
+Updated: **2026-08-11T15:43:18.575Z** — handoff
+`f554300d-e0e1-4206-ab0c-9e72ce60bd0c` (`713e4f21f9e9`).
+`d08d4521-7085-4652-928b-9d572106cdea` (`713e4f21f9e9`).
+`f67ef4bf-0d0c-4f7d-bb5d-10a241afd88e` (`9a05179b9278`).
+`9c11d5d8-77df-4f40-aa85-19c46a3fd085` (`9a05179b9278`).
 `1db5d1f0-7728-43a6-b842-0bce7684fdd2` (`5553aa66b8c3`).
 `5c6eed3d-551f-4cc7-80ea-cd2e67b6ec87` (`5553aa66b8c3`).
 `39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7` (`f5ea4b1484e2`).
@@ -178,10 +179,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                        |
-| -------- | ----------------------------- |
-| **P0**   | Land rollup stall mapping.    |
-| **P0**   | Optional: clear stalled TTYs. |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -808,13 +809,13 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 (1db5d1f0-7728-43a6-b842-0bce7684fdd2) | ✅ HANDOFF_READY |
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(910875dd-a5eb-4217-abfd-1ad7b78d4980) | ✅ HANDOFF_READY |
+(9c11d5d8-77df-4f40-aa85-19c46a3fd085) | ✅ HANDOFF_READY |
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(09a9ff57-bc65-4914-9e67-ca199deacd02) | ✅ HANDOFF_READY |
+(f67ef4bf-0d0c-4f7d-bb5d-10a241afd88e) | ✅ HANDOFF_READY |
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(05585161-7aa6-420f-97d5-29793ac329d4) | ✅ HANDOFF_READY |
+(d08d4521-7085-4652-928b-9d572106cdea) | ✅ HANDOFF_READY |
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(8fd0b360-3295-4456-9a86-afde42616d9f) | ✅ HANDOFF_READY |
+(f554300d-e0e1-4206-ab0c-9e72ce60bd0c) | ✅ HANDOFF_READY |
