@@ -1,6 +1,7 @@
 /**
  * API Service - HTTP client for backend communication
  */
+import { probeRestApiUrl } from '../config/endpointDiscovery';
 import type {
   Agent,
   AnalyticsExportPayload,
@@ -12,7 +13,6 @@ import type {
   MCPServer,
   Workflow,
 } from '../types';
-import { probeRestApiUrl } from '../config/endpointDiscovery';
 
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';

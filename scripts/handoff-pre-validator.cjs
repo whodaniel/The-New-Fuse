@@ -7,6 +7,11 @@ const os = require('os');
 const TNF_ROOT = process.env.TNF_ROOT || process.env.TNF_ROOT_DIR || path.resolve(__dirname, '..');
 const HANDOFF_PATH = path.join(os.homedir(), '.tnf', 'handoff-current.json');
 const DIRECTOR_LOG = path.join(os.homedir(), '.tnf', 'director', 'logs', 'director.log');
+const SESSION_HANDOFF_JSON = path.join(TNF_ROOT, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
+const SESSION_HANDOFF_SCHEMA = path.join(
+  TNF_ROOT,
+  'docs/protocols/schemas/tnf-session-handoff.schema.json'
+);
 
 function log(message) {
   console.log(`[handoff-pre-validator] ${message}`);
@@ -46,6 +51,59 @@ if (!validationResult.valid) {
   log(`ERROR: Handoff packet validation failed: ${validationResult.error}`);
 } else {
   log('Handoff packet structure is valid.');
+}
+
+function validateSessionHandoff() {
+  if (!fs.existsSync(SESSION_HANDOFF_JSON)) {
+    return { valid: false, error: `missing ${SESSION_HANDOFF_JSON}` };
+  }
+  if (!fs.existsSync(SESSION_HANDOFF_SCHEMA)) {
+    return { valid: false, error: `missing schema ${SESSION_HANDOFF_SCHEMA}` };
+  }
+  let handoff;
+  let schema;
+  try {
+    handoff = JSON.parse(fs.readFileSync(SESSION_HANDOFF_JSON, 'utf8'));
+    schema = JSON.parse(fs.readFileSync(SESSION_HANDOFF_SCHEMA, 'utf8'));
+  } catch (e) {
+    return { valid: false, error: e.message };
+  }
+  try {
+    const Ajv2020 = require('ajv/dist/2020').default;
+    const addFormats = require('ajv-formats');
+    const ajv = new Ajv2020({ allErrors: true, strict: false });
+    addFormats(ajv);
+    const validate = ajv.compile(schema);
+    if (!validate(handoff)) {
+      const first = (validate.errors || [])[0];
+      return {
+        valid: false,
+        error: first
+          ? `${first.instancePath || '/'} ${first.message || 'invalid'}`.trim()
+          : 'schema invalid',
+      };
+    }
+    return { valid: true, error: '' };
+  } catch {
+    const required = Array.isArray(schema.required) ? schema.required : [];
+    for (const key of required) {
+      if (!(key in handoff)) return { valid: false, error: `missing required field: ${key}` };
+    }
+    if (handoff.spec !== 'tnf/session-handoff/0.1') {
+      return { valid: false, error: `bad spec: ${handoff.spec}` };
+    }
+    if (handoff.protocol_ack !== 'TNF_PROTOCOL_ACK') {
+      return { valid: false, error: 'bad protocol_ack' };
+    }
+    return { valid: true, error: '' };
+  }
+}
+
+const sessionResult = validateSessionHandoff();
+if (!sessionResult.valid) {
+  log(`ERROR: SESSION_HANDOFF schema validation failed: ${sessionResult.error}`);
+} else {
+  log('SESSION_HANDOFF_LATEST.json schema is valid.');
 }
 
 // 2. Check cycle completion enforcement by checking director log for recent success
@@ -125,10 +183,19 @@ packet.RECOVERY_METADATA.push({
   details: {
     packetValid: validationResult.valid,
     packetError: validationResult.error,
+    sessionHandoffValid: sessionResult.valid,
+    sessionHandoffError: sessionResult.error,
     cycleOk: cycleResult.ok,
     cycleMessage: cycleResult.message
   }
 });
+
+const sessionStateIdx = packet.STATE.findIndex((s) => String(s).includes('SESSION_HANDOFF schema'));
+const sessionStateLine = sessionResult.valid
+  ? 'SESSION_HANDOFF schema: valid'
+  : `SESSION_HANDOFF schema: invalid (${sessionResult.error})`;
+if (sessionStateIdx !== -1) packet.STATE[sessionStateIdx] = sessionStateLine;
+else packet.STATE.push(sessionStateLine);
 
 // Write back the updated packet
 try {
@@ -139,11 +206,13 @@ try {
   process.exit(1);
 }
 
-// Exit with success only if both checks passed
-if (validationResult.valid && cycleResult.ok) {
-  log('All checks passed.');
+// Packet + SESSION_HANDOFF must pass. Director cycle age is soft (warn-only) so
+// cold starts do not false-fail a restored validator.
+if (validationResult.valid && sessionResult.valid) {
+  if (!cycleResult.ok) log(`WARNING (non-fatal): ${cycleResult.message}`);
+  log('All required checks passed.');
   process.exit(0);
 } else {
-  log('One or more checks failed.');
+  log('One or more required checks failed.');
   process.exit(1);
 }
