@@ -1,17 +1,17 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "b7c9d2a5-3e8f-4b6a-9c1e-2d4f8a7b9e0c",
-  "created_at": "2026-08-11T10:47:00.000Z",
+  "handoff_id": "c8a1b2d3-e4f5-6a7b-8c9d-0e1f2a3b4c5d",
+  "created_at": "2026-08-11T10:50:00.000Z",
   "repository": "The-New-Fuse",
   "branch": "fix/opencode-kilo-parity",
-  "head_sha": "5a8c83e7e8f4a82b6765cbc72a2288f91f5f407d",
+  "head_sha": "80bbf55a26406a6a0cd3a99e96d0802dd0e06254",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-REG"],
   "work_summary": [
-    "Verified agent registration: all 15 operational agents registered in ledger",
-    "Agent registration check passes: node scripts/check-agent-registration.cjs exits with code 0",
-    "Updated session handoff artifacts to reflect current state"
+    "Verified agent registration: all 15 operational agents registered in .agent/agents/",
+    "Agent registration check passes (node scripts/check-agent-registration.cjs exits 0)",
+    "Updated SESSION_HANDOFF_LATEST to current HEAD commit"
   ],
   "changed_paths": [],
   "verification": {
@@ -32,6 +32,6 @@
     "All autonomous verify gates confirmed passing"
   ],
   "artifacts": {
-    "commits": ["5a8c83e7e8f4a82b6765cbc72a2288f91f5f407d"]
+    "commits": ["80bbf55a26406a6a0cd3a99e96d0802dd0e06254"]
   }
 }
