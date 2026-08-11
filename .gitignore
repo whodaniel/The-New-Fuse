@@ -522,3 +522,11 @@ docs/operations/parity/
 # and running both generators reproduces every file byte-identical to HEAD.
 apps/chrome-extension/icons/
 apps/gemini-bridge-extension/icons/
+
+# M&A paperwork — sensitive business material with operator's real name.
+# Authoritative copies live at ~/.tnf/legal/sale/ (operator-local).
+# Public repo keeps only an index; full paperwork requires counsel review
+# and a non-public exchange. Same untrack pattern as the tnf-browser bearer
+# token fix (PR #74) and the apps/api env leak fix (commit 41f6f4d6a7).
+docs/legal/sale/*.md
+!docs/legal/sale/README.md
