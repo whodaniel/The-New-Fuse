@@ -37,6 +37,7 @@ import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
+import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
@@ -17968,6 +17969,7 @@ workspaceCommand
   });
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
+registerSparkCommand(program);
 
 async function createNotesService(options: {
   vaultPath?: string;
