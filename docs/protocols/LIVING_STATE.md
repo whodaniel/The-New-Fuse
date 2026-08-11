@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Smoke-test TNF desktop on a quieter machine (cargo test
---lib, Chrome bootstrap, bridge connect, Start Runtime).
+**Current Directive:** Push fix/honest-failure-reporting with Tauri hardening
+commits.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -867,6 +867,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T03:15:02.752Z handoff `61f20f66-53f7-4794-b7d1-a8ca1e5782aa` head
+  `f779288314e9` project `TNF-TAURI` — Push fix/honest-failure-reporting with
+  Tauri hardening commits.
 
 - 2026-08-11T02:13:01.638Z handoff `97bc9dce-a547-45b8-a741-84df4ceda6c1` head
   `530e80682feb` project `TNF-TAURI` — Smoke-test TNF desktop on a quieter

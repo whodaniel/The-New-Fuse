@@ -45,9 +45,6 @@
     "externalBin": []
   },
   "plugins": {
-    "shell": {
-      "open": true
-    },
     "fs": {
       "scope": [
         "$HOME/.tnf-sandbox/**",

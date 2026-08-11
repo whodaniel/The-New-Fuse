@@ -5,7 +5,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-11T02:13:00.574Z** — handoff
+Updated: **2026-08-11T03:15:01.584Z** — handoff
+`61f20f66-53f7-4794-b7d1-a8ca1e5782aa` (`f779288314e9`).
 `97bc9dce-a547-45b8-a741-84df4ceda6c1` (`530e80682feb`).
 `d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` (`e1b4cb08ccb8`).
 `388ea49f-b91d-4889-86d3-2bbb43976e0a` (`e1b4cb08ccb8`).
@@ -176,11 +177,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                           |
-| -------- | ---------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Smoke-test TNF desktop on a quieter machine (cargo test --lib, Chrome bootstrap, bridge connect, Start Runtime). |
-| **P0**   | Optional: tighten shell/opener ACL drift if UI still relies on shell:allow-open.                                 |
-| **P0**   | Push fix/honest-failure-reporting when ready for remote review.                                                  |
+| Priority | Action                                                                 |
+| -------- | ---------------------------------------------------------------------- |
+| **P0**   | Push fix/honest-failure-reporting with Tauri hardening commits.        |
+| **P0**   | Operator smoke-test: external links, Chrome bootstrap, OAGI arming UI. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -719,3 +719,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (97bc9dce-a547-45b8-a741-84df4ceda6c1) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(61f20f66-53f7-4794-b7d1-a8ca1e5782aa) | ✅ HANDOFF_READY |
