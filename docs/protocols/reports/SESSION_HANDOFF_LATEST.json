@@ -1,28 +1,31 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "dd662756-3e00-4152-bfd0-2f17b16f148c",
-  "created_at": "2026-08-11T16:50:20.156Z",
-  "repository": "The-New-Fuse",
-  "branch": "fix/work-plane-frontload-wire",
-  "head_sha": "694dc7e3764113a3f735448d149d1fb1a71daf85",
+  "handoff_id": "a1e8cac3-dcdf-49e9-9825-cca03d5afb7f",
+  "created_at": "2026-08-11T17:40:43.234Z",
+  "repository": "fix-autonomy-heartbeat-root-and-soft-gates",
+  "branch": "fix/autonomy-heartbeat-root-and-soft-gates",
+  "head_sha": "7c67c6fc02182a2f5c75d4fef74bb934cb86fead",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
+  "sensitive_scope": "runtime autonomy health soft gates",
   "project_ids": [
     "TNF-SESSION"
   ],
   "work_summary": [
-    "Wire Work Plane Separation into Turn Zero preflight, TUI context pack, and onboard templates."
+    "Prefer live TNF monorepo root for master-heartbeat (reject ~/.tnf scaffold mirrors via live markers)",
+    "Skip missing perpetual watchdog successfully",
+    "Defer swarm-disk-retention/ram-audit off cycle 1 (APFS hang)",
+    "Treat master degraded + fresh cycle-running as advisory in subdirector-cycle-check",
+    "Treat local-subdirector degraded as advisory in cycle-check and autonomy-health-rollup",
+    "Forced sidecar miss under skipped-safe-mode is advisory only"
   ],
   "changed_paths": [
-    "packages/tnf-cli/src/utils/work-plane.ts",
-    "packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "scripts/tnf-onboard.cjs",
+    ".skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh",
+    "scripts/runtime/tnf-autonomy-health-rollup.cjs",
+    "scripts/runtime/tnf-master-heartbeat-loop.cjs",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "scripts/runtime/local-subdirector-runtime.cjs"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -32,25 +35,25 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "tnf-orchestrator",
+    "owner": "cursor-agent",
     "targets": [
       "story-architect",
       "librarian"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Confirm only three runtime/cycle-check files plus handoff artifacts in commit",
+      "PR description matches soft-gate + rootDir fix scope"
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Push branch and open PR against origin/main",
+    "Verify heartbeat rootDir resolution on live monorepo",
+    "Confirm autonomy health rollup no longer degrades on local-subdirector soft stalls"
   ],
   "artifacts": {
     "commits": [
-      "694dc7e3764113a3f735448d149d1fb1a71daf85"
+      "7c67c6fc02182a2f5c75d4fef74bb934cb86fead"
     ]
   }
 }

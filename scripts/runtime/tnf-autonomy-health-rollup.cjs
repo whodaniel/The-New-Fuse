@@ -129,8 +129,8 @@ function main() {
   ).toLowerCase();
 
   // Autopilot "critical" is fleet-blocking. Local-subdirector heartbeat often
-  // reports status=critical merely because one+ agent TTYs are stalled — that
-  // is coordination degraded, not autonomy-stack failure.
+  // reports status=critical/degraded merely because one+ agent TTYs are stalled —
+  // that is coordination noise, not autonomy-stack failure (PR #98).
   if (apStatus === 'critical') {
     status = 'critical';
     reasons.push('autopilot_critical');
@@ -140,6 +140,8 @@ function main() {
   } else if (apStatus === 'degraded') {
     if (status !== 'critical') status = 'degraded';
     reasons.push('autopilot_degraded');
+  } else if (localSub === 'degraded') {
+    // Advisory only — stalled/idle TTYs after severity remap.
   } else if (localSub && localSub !== 'healthy' && localSub !== 'unknown' && localSub !== '') {
     if (status !== 'critical') status = 'degraded';
     reasons.push(`local_subdirector_${localSub}`);

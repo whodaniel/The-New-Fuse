@@ -228,7 +228,23 @@ fi
 owner_observed_count="$(normalize_integer "$owner_observed_count" "0")"
 
 case "$master_status" in
-  healthy|skipped-locked)
+  healthy|skipped-locked|fleet-paused)
+    ;;
+  degraded)
+    # Heartbeat is writing; partial step failures are recovery actions, not a hard stack fault.
+    push_action "note-master-heartbeat-degraded-nonblocking"
+    ;;
+  cycle-running)
+    # In-flight is fine when fresh; stale cycle-running means the loop wedged.
+    master_age="$(file_age_seconds "$MASTER_HEARTBEAT_STATE")"
+    master_age="$(normalize_integer "$master_age" "-1")"
+    if [[ "$master_age" -lt 0 || "$master_age" -gt 600 ]]; then
+      push_reason "master-heartbeat status is stale cycle-running (${master_age}s)"
+      push_action "restart-master-heartbeat-service"
+      set_degraded
+    else
+      push_action "note-master-heartbeat-cycle-running"
+    fi
     ;;
   *)
     push_reason "master-heartbeat status is $master_status"
@@ -239,6 +255,10 @@ esac
 
 case "$local_subdirector_status" in
   healthy)
+    ;;
+  degraded)
+    # Stall/idle coordination noise — not autonomy-stack failure (see PR #98).
+    push_action "note-local-subdirector-degraded-nonblocking"
     ;;
   *)
     push_reason "local-subdirector status is $local_subdirector_status"
@@ -258,9 +278,13 @@ elif [[ "$owner_count" -gt 1 ]]; then
 fi
 
 if [[ "$owner_count" -ge 1 && "$owner_observed_count" -ge 1 && "${forced_targets%%.*}" -lt 1 ]]; then
-  push_reason "forced sidecar owner was not targeted in latest heartbeat pulse"
-  push_action "run-terminal-heartbeat-pulse"
-  set_degraded
+  if [[ "$terminal_heartbeat_status" == "skipped-safe-mode" ]]; then
+    push_action "note-forced-sidecar-skipped-interactive-safe-mode"
+  else
+    push_reason "forced sidecar owner was not targeted in latest heartbeat pulse"
+    push_action "run-terminal-heartbeat-pulse"
+    set_degraded
+  fi
 elif [[ "$owner_count" -ge 1 && "$owner_observed_count" -eq 0 ]]; then
   push_action "owner-terminal-not-currently-observed"
 fi
