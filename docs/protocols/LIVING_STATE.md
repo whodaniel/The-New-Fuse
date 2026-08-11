@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Use: tnf full-auto start --interval-minutes 15
+--max-cycles 0 (no --no-broadcast). Verify: tnf models.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -867,6 +867,16 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T15:51:25.054Z handoff `3adb5cf8-ac43-4b84-9825-ecfa3ce62e57` head
+  `7c3f1e893ee8` project `TNF-SESSION` — Use: tnf full-auto start
+  --interval-minutes 15 --max-cycles 0 (no --no-broadcast). Verify: tnf models.
+
+- 2026-08-11T15:48:47.813Z handoff `9b46e0f6-2a3b-41ad-b4d0-ad74907bb7d3` head
+  `7c3f1e893ee8` project `TNF-SESSION` — Use: tnf full-auto start
+  --interval-minutes 15 --max-cycles 0 (no --no-broadcast). Verify: tnf models.
+  If supabase breaks again, reinstall @supabase/\* 2.105.4 packages into
+  packages/tnf-cli/node_modules (do not commit node_modules).
 
 - 2026-08-11T15:43:18.622Z handoff `f554300d-e0e1-4206-ab0c-9e72ce60bd0c` head
   `713e4f21f9e9` project `TNF-SESSION` — Continue priority queue from
