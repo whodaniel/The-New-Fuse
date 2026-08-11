@@ -5,7 +5,8 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-11T13:13:46.778Z** — handoff `7ae3845c-8c67-4cf8-9a94-75ef2fb861d1` (`21def65baf7b`).
+Updated: **2026-08-11T13:19:05.897Z** — handoff `fa8020a4-7c1c-4256-9217-3d158814f7b9` (`76b3fef6cfef`).
+`a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
 `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` (`585f72e35f5e`).
 `b1e88931-7ddf-492d-a097-36efb9bd4628` (`585f72e35f5e`).
 `e741e4bc-030b-41fe-8200-e53a3050c429` (`585f72e35f5e`).
@@ -747,4 +748,13 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (cfbe965f-c10f-4ee0-9afa-d88b2904e90d) | ✅ HANDOFF_READY |
 
-| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST (7ae3845c-8c67-4cf8-9a94-75ef2fb861d1) | ✅ HANDOFF_READY |
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(bcec1d1a-0c9f-4647-85f0-f01d69962fe1) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c2f134d5-56eb-4bfd-83fe-b2c32d22a8c1) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a535d786-f022-44ba-85d8-2e28923cc16d) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST (fa8020a4-7c1c-4256-9217-3d158814f7b9) | ✅ HANDOFF_READY |
