@@ -4,9 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push/open PR for fix/jules-cursor-parity. **Project ID:**
-`L4-INTEROP` **Handoff:** `96a4d028-ed4a-4a2f-a24c-8b354785e6bd` **Head:**
-`b51820843f78`
+**Current Directive:** Push fix/jules-cursor-parity.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -868,6 +866,23 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T14:29:39.656Z handoff `9ec86f22-697b-4119-a7ac-7b5bf0f99e8c` head
+  `8c497d41d255` project `TNF-REG` — Push fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:51.239Z handoff `4243d4f1-547b-4809-87fd-91ad76e22d16` head
+  `8c497d41d255` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:17.143Z handoff `6afd5ec7-3029-410d-b5e6-f8d24b7016a1` head
+  `8c497d41d255` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:01.180Z handoff `c751fba1-6379-4f2e-b6cd-1794a2a96062` head
+  `8c497d41d255` project `TNF-REG` — Push/merge registration-gate fix.
+
+- 2026-08-11T14:12:40.143Z handoff `3fa6d984-16cd-403d-8a99-2cd685687d42` head
+  `f8a9bcbe9273` project `TNF-TAURI` — Merge PR #88.
 
 - 2026-08-11T14:07:58.288Z handoff `5ae2b902-59e0-41bc-bc61-c210851490fb` head
   `e25a8a71b4f8` project `L4-INTEROP` — Merge PR #87 after conflict resolution.

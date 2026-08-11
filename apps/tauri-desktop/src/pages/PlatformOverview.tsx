@@ -53,23 +53,30 @@ const PlatformOverview: React.FC = () => {
 
   useEffect(() => {
     let active = true;
+
+    const probeHttp = async (url: string): Promise<boolean> => {
+      try {
+        const response = await fetch(url, {
+          cache: 'no-store',
+          signal: AbortSignal.timeout(2500),
+        });
+        return response.ok;
+      } catch {
+        return false;
+      }
+    };
+
     const probe = async () => {
       if (!active) return;
-
-      // Check Voice Server
-      fetch('http://localhost:50005/mic_state', { mode: 'no-cors' })
-        .then(() => setVoiceHealth('online'))
-        .catch(() => setVoiceHealth('offline'));
-
-      // Check Virtual Library (Dev Server)
-      fetch('http://localhost:3000', { mode: 'no-cors' })
-        .then(() => setLibraryHealth('online'))
-        .catch(() => setLibraryHealth('offline'));
-
-      // Check API Gateway
-      fetch('http://localhost:3005/health', { mode: 'no-cors' })
-        .then(() => setGatewayHealth('online'))
-        .catch(() => setGatewayHealth('offline'));
+      const [voiceOk, libraryOk, gatewayOk] = await Promise.all([
+        probeHttp('http://127.0.0.1:50005/mic_state'),
+        probeHttp('http://127.0.0.1:3000/'),
+        probeHttp('http://127.0.0.1:3005/health'),
+      ]);
+      if (!active) return;
+      setVoiceHealth(voiceOk ? 'online' : 'offline');
+      setLibraryHealth(libraryOk ? 'online' : 'offline');
+      setGatewayHealth(gatewayOk ? 'online' : 'offline');
     };
 
     void probe();

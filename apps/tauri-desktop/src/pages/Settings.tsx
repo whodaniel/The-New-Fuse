@@ -4,6 +4,7 @@ import TnfLogo from '../components/brand/TnfLogo';
 import PageShell from '../components/layout/PageShell';
 import { useTheme } from '../providers/ThemeProvider';
 
+import { probeRestApiUrl } from '../config/endpointDiscovery';
 import { getVoicePort } from '../config/voiceBridge';
 import { resolveWebAppBaseUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
@@ -55,7 +56,10 @@ const Settings: React.FC = () => {
 
     const probeHttp = async (url: string): Promise<boolean> => {
       try {
-        const response = await fetch(url, { cache: 'no-store' });
+        const response = await fetch(url, {
+          cache: 'no-store',
+          signal: AbortSignal.timeout(2500),
+        });
         return response.ok;
       } catch {
         return false;
@@ -64,7 +68,7 @@ const Settings: React.FC = () => {
 
     const normalizedApiUrl = synergy.apiUrl.replace(/\/$/, '');
     const [apiOk, voiceOk] = await Promise.all([
-      normalizedApiUrl ? probeHttp(`${normalizedApiUrl}/health`) : Promise.resolve(false),
+      normalizedApiUrl ? probeRestApiUrl(normalizedApiUrl, 2500) : Promise.resolve(false),
       probeHttp(`http://127.0.0.1:${voicePort}/mic_state`),
     ]);
     const relayOk = synergy.relayConnected;
