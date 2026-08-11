@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push/open PR for fix/opencode-kilo-parity.
+**Current Directive:** Push rollup free-MB fix.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -866,6 +866,12 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T14:58:30.027Z handoff `1db5d1f0-7728-43a6-b842-0bce7684fdd2` head
+  `5553aa66b8c3` project `TNF-AUTONOMY` — Push rollup free-MB fix.
+
+- 2026-08-11T14:57:31.656Z handoff `5c6eed3d-551f-4cc7-80ea-cd2e67b6ec87` head
+  `5553aa66b8c3` project `TNF-AUTONOMY` — Commit/push rollup fix.
 
 - 2026-08-11T14:50:54.144Z handoff `39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7` head
   `f5ea4b1484e2` project `L4-INTEROP` — Push/open PR for

@@ -41,10 +41,21 @@ function diskStats() {
     const availK = Number(parts[3]);
     const capStr = parts[4] || '';
     const capacityPct = Number(String(capStr).replace('%', '')) || null;
-    const freeMb = availK / 1024;
-    return { freeMb, capacityPct, totalGb: totalK / 1024 / 1024 };
+    const freeMb = Number.isFinite(availK) ? availK / 1024 : null;
+    // APFS often reports Capacity 100% while Available is still multi-GB (purgeable /
+    // snapshots). Prefer free bytes for health decisions.
+    const usedPctFromAvail =
+      Number.isFinite(totalK) && totalK > 0 && freeMb != null
+        ? Math.round(((totalK - availK) / totalK) * 100)
+        : null;
+    return {
+      freeMb,
+      capacityPct,
+      usedPctFromAvail,
+      totalGb: Number.isFinite(totalK) ? totalK / 1024 / 1024 : null,
+    };
   } catch (e) {
-    return { freeMb: null, capacityPct: null, error: String(e.message || e) };
+    return { freeMb: null, capacityPct: null, usedPctFromAvail: null, error: String(e.message || e) };
   }
 }
 
@@ -124,12 +135,22 @@ function main() {
     reasons.push('autopilot_degraded');
   }
 
-  if (disk.capacityPct != null && disk.capacityPct >= 95) {
+  // Disk: free megabytes are authoritative. macOS APFS Capacity% can read 100%
+  // with multi-GB still Available — do not critical solely on Capacity%.
+  const DISK_CRITICAL_FREE_MB = Number(process.env.TNF_DISK_CRITICAL_FREE_MB || 1024);
+  const DISK_DEGRADED_FREE_MB = Number(process.env.TNF_DISK_DEGRADED_FREE_MB || 2048);
+  if (disk.freeMb != null && Number.isFinite(disk.freeMb)) {
+    if (disk.freeMb < DISK_CRITICAL_FREE_MB) {
+      status = 'critical';
+      reasons.push(`disk_free_mb_${Math.round(disk.freeMb)}`);
+    } else if (disk.freeMb < DISK_DEGRADED_FREE_MB) {
+      if (status !== 'critical') status = 'degraded';
+      reasons.push(`disk_free_mb_${Math.round(disk.freeMb)}`);
+    }
+  } else if (disk.capacityPct != null && disk.capacityPct >= 95) {
+    // Fallback only when df Available could not be parsed.
     status = 'critical';
     reasons.push(`disk_capacity_${disk.capacityPct}pct`);
-  } else if (disk.freeMb != null && disk.freeMb < 2048) {
-    if (status !== 'critical') status = 'degraded';
-    reasons.push(`disk_free_mb_${Math.round(disk.freeMb)}`);
   }
 
   if (!bridge.processAlive) {

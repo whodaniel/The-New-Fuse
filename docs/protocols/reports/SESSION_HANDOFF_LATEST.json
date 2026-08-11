@@ -1,44 +1,45 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-  "created_at": "2026-08-11T14:54:20.210Z",
+  "handoff_id": "1db5d1f0-7728-43a6-b842-0bce7684fdd2",
+  "created_at": "2026-08-11T14:58:29.051Z",
   "repository": "The-New-Fuse",
   "branch": "fix/opencode-kilo-parity",
-  "head_sha": "41defcfb1a3e769a4c7ea9d014475ea045032872",
+  "head_sha": "5553aa66b8c34bfe02ba4d0a05254033dde8e8df",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-REG"
-  ],
+  "project_ids": ["TNF-AUTONOMY"],
   "work_summary": [
-    "Verified agents.registration gate: all 15 operational agents registered",
-    "Agent registration check passes",
-    "Living State SYNCHRONIZED",
-    "Session handoff matches current HEAD"
+    "Fix autonomy health rollup to use free MB instead of APFS Capacity%% (avoids false disk_capacity_100pct with multi-GB free)."
   ],
-  "changed_paths": [],
+  "changed_paths": [
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "scripts/runtime/tnf-autonomy-health-rollup.cjs"
+  ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
-    "supabase_rls_audit": "na"
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-08-11T14:58:29.984Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
-    "owner": "autonomous-verify",
-    "targets": [
-      "guardian"
-    ],
-    "priority": "critical",
+    "owner": "cursor-agent",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
     "resume_checklist": [
-      "All verify gates pass"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "All autonomous verify gates pass"
+    "Push rollup free-MB fix.",
+    "Optional: recover a2a bridge / autopilot."
   ],
   "artifacts": {
-    "commits": [
-      "41defcfb1a3e769a4c7ea9d014475ea045032872"
-    ]
+    "commits": ["5553aa66b8c34bfe02ba4d0a05254033dde8e8df"]
   }
 }
