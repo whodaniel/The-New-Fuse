@@ -73,6 +73,15 @@ export const CURSOR_AGENT_PARITY_GAP_COMMANDS = [
   'uninstall-shell-integration',
 ] as const;
 
+/** OpenCode / Kilo shared top-level verbs TNF exposes as guides. */
+export const OPENCODE_KILO_PARITY_GAP_COMMANDS = [
+  'attach',
+  'github',
+  'pr',
+  'web',
+  'roll-call',
+] as const;
+
 /** Claude root long-flags accepted for parity (honest interop markers). */
 export const CLAUDE_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: string }> = [
   { flag: '--add-dir <path>', description: 'Claude parity: extra working directory hint' },
@@ -368,6 +377,33 @@ export function registerPeerCliParityGapCommands(program: Command, _repoRoot: st
       'Prefer `tnf doctor` before removing tooling.',
     ]
   );
+
+  // --- OpenCode / Kilo ---
+  registerGuide(program, 'attach', 'OpenCode/Kilo parity: attach to a session', [
+    'Session:  tnf session --help',
+    'TUI:      tnf tui',
+    'Agent:    tnf agent --help',
+  ]);
+  registerGuide(program, 'github', 'OpenCode/Kilo parity: GitHub entry', [
+    'Use `gh` with live operator confirmation for mutations.',
+    'TNF status:  tnf doctor',
+    'Parity:      tnf parity audit',
+  ]);
+  registerGuide(program, 'pr', 'OpenCode/Kilo parity: pull-request entry', [
+    'Create/view PRs with `gh pr` (operator-gated push/create).',
+    'TNF protocol:  tnf protocol gate',
+    'Handoff:       docs/protocols/reports/SESSION_HANDOFF_LATEST.md',
+  ]);
+  registerGuide(program, 'web', 'OpenCode/Kilo parity: web / UI entry', [
+    'Local UI:   tnf local-ui',
+    'Gateway:    tnf gateway',
+    'Tauri app:  pnpm --dir apps/tauri-desktop tauri:dev',
+  ]);
+  registerGuide(program, 'roll-call', 'Kilo parity: agent roll-call / roster', [
+    'Agents:     tnf agents --help',
+    'Specs:      tnf agents-specs',
+    'Status:     tnf status',
+  ]);
 
   registerRootOptions(program, CLAUDE_PARITY_ROOT_OPTIONS);
   registerRootOptions(program, PI_PARITY_ROOT_OPTIONS);

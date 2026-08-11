@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-11T14:29:36.542Z** — handoff
+Updated: **2026-08-11T14:50:52.360Z** — handoff
+`39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7` (`f5ea4b1484e2`).
 `9ec86f22-697b-4119-a7ac-7b5bf0f99e8c` (`8c497d41d255`).
 `96a4d028-ed4a-4a2f-a24c-8b354785e6bd` (`b51820843f78`). Updated:
 **2026-08-11T14:12:37.276Z** — handoff `3fa6d984-16cd-403d-8a99-2cd685687d42`
@@ -172,10 +173,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                |
-| -------- | ------------------------------------- |
-| **P0**   | Push fix/jules-cursor-parity.         |
-| **P0**   | Confirm autonomous verify gates pass. |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Push/open PR for fix/opencode-kilo-parity.                                              |
+| **P0**   | Repair tnf-cli boot (supabase-js) and confirm OpenCode/Kilo 100% via live parity audit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -791,3 +792,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (54ca99ac-1a8b-4df4-94d2-09aa0f011a76) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7) | ✅ HANDOFF_READY |
