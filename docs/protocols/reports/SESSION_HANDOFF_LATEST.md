@@ -1,20 +1,20 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T14:58:29.051Z`  
-Handoff ID: `1db5d1f0-7728-43a6-b842-0bce7684fdd2`
+Created At: `2026-08-11T15:10:49.617Z`  
+Handoff ID: `8fd0b360-3295-4456-9a86-afde42616d9f`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/opencode-kilo-parity`
-- Head SHA: `5553aa66b8c34bfe02ba4d0a05254033dde8e8df`
+- Branch: `fix/pi-path-ghost-parity`
+- Head SHA: `bc7d9f3541f5051714e71a84fa27e14664e4ecc8`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Fix autonomy health rollup to use free MB instead of APFS Capacity%% (avoids
-  false disk_capacity_100pct with multi-GB free).
+- A2A bridge online; autonomy rollup maps local-subdirector session stalls to
+  degraded (not critical).
 
 ## Changed Paths
 
@@ -46,5 +46,5 @@ Handoff ID: `1db5d1f0-7728-43a6-b842-0bce7684fdd2`
 
 ## Next Actions
 
-- Push rollup free-MB fix.
-- Optional: recover a2a bridge / autopilot.
+- Land rollup stall mapping.
+- Optional: clear stalled TTYs.

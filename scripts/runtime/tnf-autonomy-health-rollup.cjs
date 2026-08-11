@@ -122,17 +122,27 @@ function main() {
   const zombies = zombieSample();
 
   const apStatus = String(autopilot.status || autopilot.summary?.state || '').toLowerCase();
-  const localSub =
+  const localSub = String(
     autopilot.checkResult?.parsed?.checks?.localSubdirectorStatus ||
-    autopilot.summary?.localSubdirectorStatus ||
-    '';
+      autopilot.summary?.localSubdirectorStatus ||
+      ''
+  ).toLowerCase();
 
-  if (apStatus === 'critical' || String(localSub).toLowerCase() === 'critical') {
+  // Autopilot "critical" is fleet-blocking. Local-subdirector heartbeat often
+  // reports status=critical merely because one+ agent TTYs are stalled — that
+  // is coordination degraded, not autonomy-stack failure.
+  if (apStatus === 'critical') {
     status = 'critical';
-    reasons.push('autopilot_or_subdirector_critical');
+    reasons.push('autopilot_critical');
+  } else if (localSub === 'critical') {
+    if (status !== 'critical') status = 'degraded';
+    reasons.push('local_subdirector_stalled_or_unhealthy');
   } else if (apStatus === 'degraded') {
     if (status !== 'critical') status = 'degraded';
     reasons.push('autopilot_degraded');
+  } else if (localSub && localSub !== 'healthy' && localSub !== 'unknown' && localSub !== '') {
+    if (status !== 'critical') status = 'degraded';
+    reasons.push(`local_subdirector_${localSub}`);
   }
 
   // Disk: free megabytes are authoritative. macOS APFS Capacity% can read 100%

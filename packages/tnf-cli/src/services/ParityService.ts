@@ -65,6 +65,17 @@ export const REFERENCE_AGENTS: ReferenceAgent[] = [
 const UNIVERSAL_COMMANDS = new Set(['help', 'command', 'commands', 'version']);
 const UNIVERSAL_OPTIONS = new Set(['--help', '--version']);
 
+/**
+ * Reject help-example placeholders (e.g. Pi's `sessions/--path--/session.jsonl`)
+ * and other non-flag tokens the long-option regex can accidentally harvest.
+ */
+export function isPlausibleLongOption(flag: string): boolean {
+  const normalized = flag.toLowerCase();
+  if (!normalized.startsWith('--')) return false;
+  // Must be `--` + kebab tokens; no trailing dash, no internal `--` (placeholder ghosts).
+  return /^--[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(normalized);
+}
+
 /** One command as documented by a reference CLI, with every name it answers to. */
 export interface CapturedCommand {
   /** Canonical name, used for reporting. */
@@ -246,7 +257,9 @@ export function parseHelpSurface(rawText: string, selfName?: string): CapturedSu
       const usageLongs = stripped.match(/--[a-zA-Z0-9][a-zA-Z0-9-]*/g) ?? [];
       for (const flag of usageLongs) {
         const normalized = flag.toLowerCase();
-        if (!UNIVERSAL_OPTIONS.has(normalized)) options.add(normalized);
+        if (!UNIVERSAL_OPTIONS.has(normalized) && isPlausibleLongOption(normalized)) {
+          options.add(normalized);
+        }
       }
       continue;
     }
@@ -333,6 +346,7 @@ export function parseHelpSurface(rawText: string, selfName?: string): CapturedSu
     for (const flag of longs) {
       const normalized = flag.toLowerCase();
       if (UNIVERSAL_OPTIONS.has(normalized)) continue;
+      if (!isPlausibleLongOption(normalized)) continue;
       options.add(normalized);
     }
   }
