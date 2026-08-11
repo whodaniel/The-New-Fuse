@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Use: tnf full-auto start --interval-minutes 15
---max-cycles 0 (no --no-broadcast). Verify: tnf models.
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -867,6 +867,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T15:58:41.308Z handoff `df66e627-b3e7-45d0-8877-56ae752d6629` head
+  `e7f1c80cae43` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-11T15:51:25.054Z handoff `3adb5cf8-ac43-4b84-9825-ecfa3ce62e57` head
   `7c3f1e893ee8` project `TNF-SESSION` — Use: tnf full-auto start
