@@ -68,35 +68,14 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-<<<<<<< HEAD Updated: **2026-08-11T14:29:36.542Z** — handoff
+Updated: **2026-08-11T14:29:36.542Z** — handoff
 `9ec86f22-697b-4119-a7ac-7b5bf0f99e8c` (`8c497d41d255`).
-`96a4d028-ed4a-4a2f-a24c-8b354785e6bd` (`b51820843f78`). ======= Updated:
+`96a4d028-ed4a-4a2f-a24c-8b354785e6bd` (`b51820843f78`). Updated:
 **2026-08-11T14:12:37.276Z** — handoff `3fa6d984-16cd-403d-8a99-2cd685687d42`
 (`f8a9bcbe9273`).
 
-> > > > > > > origin/main `5ae2b902-59e0-41bc-bc61-c210851490fb`
-> > > > > > > (`e25a8a71b4f8`). `fe878158-2847-48f1-86e6-1731c8c0bdcc`
-> > > > > > > (`e25a8a71b4f8`). `210e5ab1-ea04-47df-8fdd-89b21e22ccdd`
-> > > > > > > (`0f5970ea1002`). `612fce9e-5ca0-4714-8135-2a35b2e3b7e3`
-> > > > > > > (`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Continued Hermes
-> > > > > > > session (`tnf-local-terminal-ttys005`, 2026-08-06):
-> > > > > > > operator-directed continuation of the build pipeline repair
-> > > > > > > session. Added channel integration test coverage
-> > > > > > > (`packages/tnf-cli/src/slack/slack.test.ts` 8/8 pass;
-> > > > > > > `packages/tnf-cli/src/whatsapp/whatsapp.test.ts` 21/21 pass) for
-> > > > > > > the existing Slack and WhatsApp services — env validation,
-> > > > > > > double-start guard, getStatus/sendMessage contracts on Slack; HMAC
-> > > > > > > signature verification (including constant-time compare via
-> > > > > > > `crypto.timingSafeEqual`), `extractMessages` resilience against
-> > > > > > > malformed payloads, and dry-run mode on WhatsApp. Both test files
-> > > > > > > wired into `packages/tnf-cli` test script. Added
-> > > > > > > `.env.tnf-whatsapp.example` (matching the existing
-> > > > > > > `.env.tnf-slack.example`) so both channels have discoverable
-> > > > > > > per-service config templates. No autonomous commits; all changes
-> > > > > > > staged for live operator confirmation per `docs/core/AGENTS.md`
-> > > > > > > section "Commits and Pushes Require Live Operator Confirmation".
-
-Updated: **2026-08-05T20:48:44.816Z** — handoff
+Updated: **2026-08-11T14:31:21.111Z** — handoff
+`54ca99ac-1a8b-4df4-94d2-09aa0f011a76` (`bd961dd5b301`).
 `da1afd4e-136e-43de-a2d6-72b4c6ef11aa`
 (`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Hermes session
 (`tnf-local-terminal-ttys005`, 2026-08-05): attended operator-driven session to
@@ -193,15 +172,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-<<<<<<< HEAD | Priority | Action | | -------- |
------------------------------------------------------------------- | | **P0** |
-Push/open PR for fix/jules-cursor-parity. | | **P0** | Close OpenCode/Kilo
-remaining command gaps (attach/github/pr/web). | ======= | Priority | Action | |
--------- |
-----------------------------------------------------------------------------------------------------------
-| | **P0** | Merge PR #88. |
-
-> > > > > > > origin/main
+| Priority | Action                                |
+| -------- | ------------------------------------- |
+| **P0**   | Push fix/jules-cursor-parity.         |
+| **P0**   | Confirm autonomous verify gates pass. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -280,7 +254,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | Agent               | Identity                                  | Status                                           |
 | ------------------- | ----------------------------------------- | ------------------------------------------------ |
-| Continuous Improver | `TNF:LOCAL:AGENT:CONTINUOUS IMPROVER:001` | **NEW** — registered at 2026-08-11T14:29:30.845Z |
+| Continuous Improver | `TNF:LOCAL:AGENT:CONTINUOUS-IMPROVER:001` | **NEW** — registered at 2026-08-11T14:29:30.845Z |
 
 ## Protocol Gaps (prioritized)
 
@@ -795,12 +769,10 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (5ae2b902-59e0-41bc-bc61-c210851490fb) | ✅ HANDOFF_READY |
 
-<<<<<<< HEAD | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(96a4d028-ed4a-4a2f-a24c-8b354785e6bd) | ✅ HANDOFF_READY | ======= | 2026-08-11
-| Orchestrator | Published SESSION_HANDOFF_LATEST
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(96a4d028-ed4a-4a2f-a24c-8b354785e6bd) | ✅ HANDOFF_READY | | 2026-08-11 |
+Orchestrator | Published SESSION_HANDOFF_LATEST
 (3fa6d984-16cd-403d-8a99-2cd685687d42) | ✅ HANDOFF_READY |
-
-> > > > > > > origin/main
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (c751fba1-6379-4f2e-b6cd-1794a2a96062) | ✅ HANDOFF_READY |
@@ -813,3 +785,9 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (9ec86f22-697b-4119-a7ac-7b5bf0f99e8c) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(894977a7-6956-45d6-8e65-b9d46385f2ee) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(54ca99ac-1a8b-4df4-94d2-09aa0f011a76) | ✅ HANDOFF_READY |

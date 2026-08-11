@@ -139,7 +139,8 @@ function extractRegisteredAgents(ledgerContent) {
   const agentIds = ledgerContent.match(/`TNF:[^`]+`/g);
   if (agentIds) {
     for (const id of agentIds) {
-      registered.add(id);
+      // Store bare identity tokens (matching uses TNF:... without markdown fences).
+      registered.add(id.replace(/^`|`$/g, ''));
     }
   }
 
@@ -156,6 +157,18 @@ function extractRegisteredAgents(ledgerContent) {
   return registered;
 }
 
+function identitySlug(name) {
+  return String(name || '')
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function agentIdentity(name) {
+  return `TNF:LOCAL:AGENT:${identitySlug(name)}:001`;
+}
+
 function appendToLedger(newAgents, ledgerPath) {
   if (!fs.existsSync(ledgerPath)) {
     console.error('Ledger file not found');
@@ -168,30 +181,27 @@ function appendToLedger(newAgents, ledgerPath) {
   const entries = [];
 
   for (const agent of newAgents) {
-    entries.push(`| ${agent.name} | \`TNF:LOCAL:AGENT:${agent.name.toUpperCase()}:001\` | **NEW** — registered at ${timestamp} |`);
+    entries.push(
+      `| ${agent.name} | \`${agentIdentity(agent.name)}\` | **NEW** — registered at ${timestamp} |`
+    );
   }
 
   if (entries.length === 0) {
     return true;
   }
 
-  const lastTableMatch = content.match(/\n## [^[\]]+(\n\|[^\n]+\|\n\|[^\n]+\|\n\|[^\n]+\|)+/g);
   let insertIndex = content.length;
-
-  if (lastTableMatch) {
-    const lastTable = lastTableMatch[lastTableMatch.length - 1];
-    insertIndex = content.indexOf(lastTable) + lastTable.length;
-  } else {
-    const headerMatch = content.match(/## Session Logs/);
-    if (headerMatch) {
-      insertIndex = headerMatch.index;
-    }
+  const headerMatch = content.match(/## Session Logs/);
+  if (headerMatch && typeof headerMatch.index === 'number') {
+    insertIndex = headerMatch.index;
   }
 
-  const newSection = '\n\n### Newly Registered (This Session)\n\n| Agent | Identity | Status |\n| ----- | -------- | ------ |\n';
-  const rows = entries.map((e) => `| ${e.split(' | ')[1]} | ${e.split(' | ')[2]} | ${e.split(' | ')[3]} |`).join('\n');
+  const newSection =
+    '\n\n### Newly Registered (This Session)\n\n| Agent | Identity | Status |\n| ----- | -------- | ------ |\n' +
+    entries.join('\n') +
+    '\n\n';
 
-  content = content.slice(0, insertIndex) + newSection + entries.join('\n') + content.slice(insertIndex);
+  content = content.slice(0, insertIndex) + newSection + content.slice(insertIndex);
 
   fs.writeFileSync(ledgerPath, content, 'utf8');
   console.log(`Auto-registered ${newAgents.length} agent(s) to ledger`);
@@ -269,7 +279,7 @@ function main() {
   for (const agent of agents) {
     let isRegistered = false;
 
-    const identity = `TNF:LOCAL:AGENT:${agent.name.toUpperCase()}:001`;
+    const identity = agentIdentity(agent.name);
     if (registeredAgents.has(identity)) {
       isRegistered = true;
     }

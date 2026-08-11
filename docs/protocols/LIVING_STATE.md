@@ -867,6 +867,13 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-11T14:31:23.327Z handoff `54ca99ac-1a8b-4df4-94d2-09aa0f011a76` head
+  `bd961dd5b301` project `TNF-REG` — Push fix/jules-cursor-parity.
+
+- 2026-08-11T14:31:12.095Z handoff `894977a7-6956-45d6-8e65-b9d46385f2ee` head
+  `bd961dd5b301` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
 - 2026-08-11T14:29:39.656Z handoff `9ec86f22-697b-4119-a7ac-7b5bf0f99e8c` head
   `8c497d41d255` project `TNF-REG` — Push fix/jules-cursor-parity.
 

@@ -7731,10 +7731,16 @@ async function runHarnessMasterCycle(): Promise<HarnessMasterCycleReport> {
 async function runAutonomousVerifyGates(): Promise<HarnessCheckResult[]> {
   const checks: HarnessCheckResult[] = [];
   const registration = runCommandCapture('node', ['scripts/check-agent-registration.cjs']);
+  const registrationDetail =
+    registration.code === 0
+      ? 'All agents registered'
+      : registration.stdout.trim().split('\n').filter(Boolean).slice(-8).join(' | ') ||
+        registration.stderr.trim() ||
+        'Agent registration check failed';
   checks.push({
     name: 'agents.registration',
     passed: registration.code === 0,
-    detail: registration.code === 0 ? 'All agents registered' : 'Agent registration check failed',
+    detail: registrationDetail,
   });
 
   try {
