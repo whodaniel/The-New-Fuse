@@ -1,39 +1,44 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7",
-  "created_at": "2026-08-11T14:51:20.741Z",
+  "handoff_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+  "created_at": "2026-08-11T14:54:20.210Z",
   "repository": "The-New-Fuse",
   "branch": "fix/opencode-kilo-parity",
-  "head_sha": "6a7d79e340dceaded1692d13f489a4ed5178169a",
+  "head_sha": "41defcfb1a3e769a4c7ea9d014475ea045032872",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-REG"],
+  "project_ids": [
+    "TNF-REG"
+  ],
   "work_summary": [
     "Verified agents.registration gate: all 15 operational agents registered",
-    "Agent registration check passes: node scripts/check-agent-registration.cjs exits 0",
+    "Agent registration check passes",
     "Living State SYNCHRONIZED",
-    "Session handoff artifacts updated with current HEAD SHA"
+    "Session handoff matches current HEAD"
   ],
   "changed_paths": [],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
-    "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-11T14:50:54.081Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "supabase_rls_audit": "na"
   },
   "continuation": {
     "owner": "autonomous-verify",
-    "targets": ["guardian"],
+    "targets": [
+      "guardian"
+    ],
     "priority": "critical",
     "resume_checklist": [
-      "Autonomous verify gates confirmed passing"
+      "All verify gates pass"
     ]
   },
   "next_actions": [
     "All autonomous verify gates pass"
   ],
   "artifacts": {
-    "commits": ["f5ea4b1484e2ea946d4a5e492879fb5c0a9edb00"]
+    "commits": [
+      "41defcfb1a3e769a4c7ea9d014475ea045032872"
+    ]
   }
 }
