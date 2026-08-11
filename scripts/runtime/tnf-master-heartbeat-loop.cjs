@@ -12,20 +12,45 @@ function parsePositiveInt(value, fallback) {
 }
 
 function resolveRootDir() {
-  const candidates = [
+  const envCandidates = [
     process.env.TNF_MASTER_HEARTBEAT_ROOT_DIR,
     process.env.TNF_REPO_ROOT,
+  ].filter(Boolean);
+
+  const looksLikeRepo = (candidate) => {
+    // Prefer the live monorepo, not a partial ~/.tnf script mirror.
+    const heartbeatLoop = path.join(
+      candidate,
+      'scripts',
+      'runtime',
+      'tnf-master-heartbeat-loop.cjs'
+    );
+    const packageJson = path.join(candidate, 'package.json');
+    const base = path.basename(path.resolve(candidate));
+    if (base === '.tnf') return false;
+    return fs.existsSync(heartbeatLoop) && fs.existsSync(packageJson);
+  };
+
+  for (const candidate of envCandidates) {
+    if (looksLikeRepo(candidate)) return path.resolve(candidate);
+  }
+
+  const discovered = [
+    // When running from repo checkout: scripts/runtime -> repo root
     path.resolve(__dirname, '../..'),
+    // When running from ~/.tnf/master-heartbeat/bin: go no further than env/discovery
     process.cwd(),
   ].filter(Boolean);
 
-  for (const candidate of candidates) {
-    const sentinel = path.join(candidate, 'scripts', 'runtime', 'tnf-perpetual-scaffold.sh');
-    if (fs.existsSync(sentinel)) {
-      return candidate;
-    }
+  for (const candidate of discovered) {
+    if (looksLikeRepo(candidate)) return path.resolve(candidate);
   }
 
+  for (const candidate of envCandidates) {
+    if (candidate && fs.existsSync(candidate)) return path.resolve(candidate);
+  }
+
+  // Last resort: keep prior behavior for unexpected layouts.
   return path.resolve(__dirname, '../..');
 }
 
@@ -269,7 +294,9 @@ function cycleCommands(cycle) {
     });
   }
 
-  if (cycle === 1 || cycle % config.resourceRetentionEveryCycles === 0) {
+  // Disk retention can hang on APFS when Capacity% is saturated — do not force
+  // it on cycle 1; run only on the configured interval.
+  if (cycle > 1 && cycle % config.resourceRetentionEveryCycles === 0) {
     commands.push({
       name: 'swarm-disk-retention',
       command: `cd ${repo} && bash scripts/operations/swarm-disk-retention.sh`,
@@ -305,10 +332,18 @@ function cycleCommands(cycle) {
   });
 
   if (cycle === 1 || cycle % config.watchdogEveryCycles === 0) {
-    commands.push({
-      name: 'watchdog-cycle',
-      command: `cd ${repo} && TNF_PERPETUAL_ROOT_DIR=${repo} scripts/runtime/tnf-perpetual-scaffold.sh run-watchdog`,
-    });
+    const perpetual = path.join(config.rootDir, 'scripts/runtime/tnf-perpetual-scaffold.sh');
+    if (fs.existsSync(perpetual)) {
+      commands.push({
+        name: 'watchdog-cycle',
+        command: `cd ${repo} && TNF_PERPETUAL_ROOT_DIR=${repo} scripts/runtime/tnf-perpetual-scaffold.sh run-watchdog`,
+      });
+    } else {
+      commands.push({
+        name: 'watchdog-cycle',
+        command: `echo "skip watchdog-cycle: scripts/runtime/tnf-perpetual-scaffold.sh not in repo"`,
+      });
+    }
   }
 
   return commands;
