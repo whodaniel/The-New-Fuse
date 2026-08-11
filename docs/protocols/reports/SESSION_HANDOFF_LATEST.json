@@ -1,32 +1,29 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "54ca99ac-1a8b-4df4-94d2-09aa0f011a76",
-  "created_at": "2026-08-11T14:31:21.111Z",
+  "handoff_id": "1db5d1f0-7728-43a6-b842-0bce7684fdd2",
+  "created_at": "2026-08-11T14:58:29.051Z",
   "repository": "The-New-Fuse",
-  "branch": "fix/jules-cursor-parity",
-  "head_sha": "bd961dd5b30144fff297eae6a69851a97254f481",
+  "branch": "fix/opencode-kilo-parity",
+  "head_sha": "5553aa66b8c34bfe02ba4d0a05254033dde8e8df",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-REG"],
+  "project_ids": ["TNF-AUTONOMY"],
   "work_summary": [
-    "Post-merge: land agents.registration gate matcher + Continuous Improver slug so autonomous verify passes."
+    "Fix autonomy health rollup to use free MB instead of APFS Capacity%% (avoids false disk_capacity_100pct with multi-GB free)."
   ],
   "changed_paths": [
-    "docs/operations/tnf-action-receipts.jsonl",
-    "docs/operations/tnf-self-improvement-run-log.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/tnf-cli/src/cli.ts",
-    "scripts/check-agent-registration.cjs"
+    "scripts/runtime/tnf-autonomy-health-rollup.cjs"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-11T14:31:23.273Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-08-11T14:58:29.984Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "cursor-agent",
@@ -39,10 +36,10 @@
     ]
   },
   "next_actions": [
-    "Push fix/jules-cursor-parity.",
-    "Confirm autonomous verify gates pass."
+    "Push rollup free-MB fix.",
+    "Optional: recover a2a bridge / autopilot."
   ],
   "artifacts": {
-    "commits": ["bd961dd5b30144fff297eae6a69851a97254f481"]
+    "commits": ["5553aa66b8c34bfe02ba4d0a05254033dde8e8df"]
   }
 }

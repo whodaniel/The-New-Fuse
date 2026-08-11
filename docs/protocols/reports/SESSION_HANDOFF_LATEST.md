@@ -1,31 +1,28 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T14:31:21.111Z`  
-Handoff ID: `54ca99ac-1a8b-4df4-94d2-09aa0f011a76`
+Created At: `2026-08-11T14:58:29.051Z`  
+Handoff ID: `1db5d1f0-7728-43a6-b842-0bce7684fdd2`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/jules-cursor-parity`
-- Head SHA: `bd961dd5b30144fff297eae6a69851a97254f481`
+- Branch: `fix/opencode-kilo-parity`
+- Head SHA: `5553aa66b8c34bfe02ba4d0a05254033dde8e8df`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Post-merge: land agents.registration gate matcher + Continuous Improver slug
-  so autonomous verify passes.
+- Fix autonomy health rollup to use free MB instead of APFS Capacity%% (avoids
+  false disk_capacity_100pct with multi-GB free).
 
 ## Changed Paths
 
-- docs/operations/tnf-action-receipts.jsonl
-- docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/cli.ts
-- scripts/check-agent-registration.cjs
+- scripts/runtime/tnf-autonomy-health-rollup.cjs
 
 ## Verification
 
@@ -49,5 +46,5 @@ Handoff ID: `54ca99ac-1a8b-4df4-94d2-09aa0f011a76`
 
 ## Next Actions
 
-- Push fix/jules-cursor-parity.
-- Confirm autonomous verify gates pass.
+- Push rollup free-MB fix.
+- Optional: recover a2a bridge / autopilot.
