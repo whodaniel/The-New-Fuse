@@ -34,6 +34,7 @@ import { registerDoctorCommand, registerStatusCommand } from './commands/health.
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
+import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
@@ -20097,6 +20098,8 @@ async function main(): Promise<void> {
   // Hermes-parity gap closers (aliases + thin wrappers) must run after every
   // incumbent top-level command is registered so attachAlias can find them.
   registerHermesParityGapCommands(program, repoRoot);
+  // Claude / Pi / Codex parity gap closers (guides + root option markers).
+  registerPeerCliParityGapCommands(program, repoRoot);
 
   // Fail fast and precisely on a duplicate registration. Commander's own
   // duplicate error is raised at module load with no context, which is how a
