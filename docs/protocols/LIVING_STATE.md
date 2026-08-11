@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push fix/honest-failure-reporting with Tauri hardening
-commits.
+**Current Directive:** Merge PR #81 after pushing smoke/unblock commit.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -868,6 +867,39 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-11T08:18:55.010Z handoff `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge PR #81 after pushing smoke/unblock
+  commit.
+
+- 2026-08-11T08:15:05.350Z handoff `b1e88931-7ddf-492d-a097-36efb9bd4628` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T08:09:30.087Z handoff `e741e4bc-030b-41fe-8200-e53a3050c429` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T08:09:08.697Z handoff `cc831890-dbe3-43f5-8b2b-4cca74e675a7` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T04:54:39.052Z handoff `cb337d2e-f305-4f05-a986-e72e996b3b3b` head
+  `585f72e35f5e` project `TNF-TAURI` — Interactive desktop smoke or merge
+  readiness on PR #81: click external link, Chrome bootstrap launch, OAGI
+  arm/disarm toggle.
+
+- 2026-08-11T04:46:21.470Z handoff `69e31d65-04bc-4986-a074-c4491cd43390` head
+  `585f72e35f5e` project `TNF-TAURI` — Interactive desktop smoke or merge
+  readiness on PR #81: click external link, Chrome bootstrap launch, OAGI
+  arm/disarm toggle.
+
+- 2026-08-11T04:44:40.141Z handoff `b836d7c3-6b45-444b-b50e-7fe083270b41` head
+  `585f72e35f5e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-08-11T03:15:02.752Z handoff `61f20f66-53f7-4794-b7d1-a8ca1e5782aa` head
   `f779288314e9` project `TNF-TAURI` — Push fix/honest-failure-reporting with
   Tauri hardening commits.
@@ -1121,4 +1153,25 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-11T01:27:40.937Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T03:30:55.698Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T04:11:01.621Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T04:51:12.495Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T05:31:16.809Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T06:11:22.696Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T06:51:27.963Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T07:31:34.137Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

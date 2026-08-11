@@ -104,9 +104,11 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
+        // Pin to source barrels/files — package exports point at CJS dist/, which breaks
+        // named ESM imports in the Vite browser graph (splash forever).
         '@the-new-fuse/shared/federation': path.resolve(
           __dirname,
-          '../../packages/shared/src/federation'
+          '../../packages/shared/src/federation/index.ts'
         ),
         '@the-new-fuse/shared/federation/FederationNodeClient': path.resolve(
           __dirname,
@@ -169,6 +171,11 @@ export default defineConfig(({ mode }) => {
         '@firebase/app-compat',
         '@types/d3',
         '@types/file-saver',
+        // Keep shared/federation on source aliases — prebundling hits CJS dist.
+        '@the-new-fuse/shared',
+        '@the-new-fuse/shared/federation',
+        '@the-new-fuse/shared/federation/protocol',
+        '@the-new-fuse/shared/federation/FederationNodeClient',
         // Exclude Node.js-only modules that break browser
         'winston',
         'winston-daily-rotate-file',

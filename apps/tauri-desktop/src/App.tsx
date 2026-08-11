@@ -33,7 +33,7 @@ const AppContent: React.FC = () => {
 export function App() {
   // Performance monitoring in development
   React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('🚀 Performance-optimized The New Fuse App starting...');
       console.log('📊 Bundle analysis: Run "pnpm build:analyze" to view detailed bundle analysis');
       console.log('🎯 Performance monitor: Press Ctrl+Shift+P to toggle performance monitor');

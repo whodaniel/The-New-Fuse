@@ -4,7 +4,7 @@
  * Monitors the live federated swarm via the shared FederationNodeService
  * (same protocol as Browser Control / Forefront federation panel).
  */
-import type { FederationAgent } from '@the-new-fuse/shared/federation/protocol';
+import type { FederationAgent } from '../lib/sharedFederation';
 import FederationNodeService from './FederationNodeService';
 
 export interface FederatedAgent {

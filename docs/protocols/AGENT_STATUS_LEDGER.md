@@ -5,7 +5,10 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-11T03:15:01.584Z** — handoff
+Updated: **2026-08-11T08:18:53.155Z** — handoff
+`cfbe965f-c10f-4ee0-9afa-d88b2904e90d` (`585f72e35f5e`).
+`b1e88931-7ddf-492d-a097-36efb9bd4628` (`585f72e35f5e`).
+`e741e4bc-030b-41fe-8200-e53a3050c429` (`585f72e35f5e`).
 `61f20f66-53f7-4794-b7d1-a8ca1e5782aa` (`f779288314e9`).
 `97bc9dce-a547-45b8-a741-84df4ceda6c1` (`530e80682feb`).
 `d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` (`e1b4cb08ccb8`).
@@ -177,10 +180,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                 |
-| -------- | ---------------------------------------------------------------------- |
-| **P0**   | Push fix/honest-failure-reporting with Tauri hardening commits.        |
-| **P0**   | Operator smoke-test: external links, Chrome bootstrap, OAGI arming UI. |
+| Priority | Action                                               |
+| -------- | ---------------------------------------------------- |
+| **P0**   | Merge PR #81 after pushing smoke/unblock commit.     |
+| **P0**   | Keep unrelated dirty tree churn out of this PR path. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -722,3 +725,24 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (61f20f66-53f7-4794-b7d1-a8ca1e5782aa) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b836d7c3-6b45-444b-b50e-7fe083270b41) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(69e31d65-04bc-4986-a074-c4491cd43390) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cb337d2e-f305-4f05-a986-e72e996b3b3b) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cc831890-dbe3-43f5-8b2b-4cca74e675a7) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e741e4bc-030b-41fe-8200-e53a3050c429) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b1e88931-7ddf-492d-a097-36efb9bd4628) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cfbe965f-c10f-4ee0-9afa-d88b2904e90d) | ✅ HANDOFF_READY |

@@ -2,10 +2,10 @@
  * Operator Synergy Service
  * Single orchestration plane for relay, federation, browser, and API surfaces.
  */
-import type { FederationChannel } from '@the-new-fuse/shared/federation/protocol';
-import { relayHealthUrl } from '@the-new-fuse/shared/federation/protocol';
 import { discoverLocalEndpoints } from '../config/endpointDiscovery';
 import { resolveEnvironmentEndpoints, resolveRelayUrlForEnvironment } from '../config/endpoints';
+import type { FederationChannel } from '../lib/sharedFederation';
+import { relayHealthUrl } from '../lib/sharedFederation';
 import { useAgentStore } from '../stores/agentStore';
 import type { Environment } from '../stores/settingsStore';
 import apiService from './api';

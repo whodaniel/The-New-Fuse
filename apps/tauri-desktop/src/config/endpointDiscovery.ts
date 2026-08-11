@@ -1,4 +1,4 @@
-import { relayHealthUrl } from '@the-new-fuse/shared/federation/protocol';
+import { relayHealthUrl } from '../lib/sharedFederation';
 import { deriveWsUrlFromApi } from './endpoints';
 
 /** Common local relay WebSocket URLs (inspect order: most likely dev ports first). */

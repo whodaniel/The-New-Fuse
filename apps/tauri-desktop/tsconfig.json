@@ -27,7 +27,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    // Allow browser shims to import packages/*/src for Vite ESM while typechecking.
+    "rootDir": "../..",
     "allowJs": true,
     "sourceMap": false, // Ensure TS doesn't try to generate source maps
     "inlineSourceMap": false // Ensure TS doesn't try to inline source maps

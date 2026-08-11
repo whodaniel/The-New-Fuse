@@ -280,6 +280,8 @@ test.describe('UX audit — Computer Use (screen automation)', () => {
     await expect(page.getByRole('heading', { name: 'Computer Use' })).toBeVisible();
     await page.getByRole('tab', { name: 'Screen automation' }).click();
     await page.getByRole('button', { name: 'Capture Now' }).click();
+    // Automation commands are fail-closed until armed.
+    await page.getByRole('button', { name: 'Arm computer-use' }).click();
     await page.getByRole('button', { name: 'Move & Left Click' }).click();
     await page.getByRole('button', { name: 'Scroll Up' }).click();
     await page.getByRole('button', { name: 'Scroll Down' }).click();
