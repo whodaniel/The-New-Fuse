@@ -81,18 +81,40 @@ Every adapter must output:
 4. Redact GUI/window-title metadata by default.
 5. Require signature + replay checks for production.
 
-## 5) TNF Implementation Anchors
+## 6) Hardened Terminal Window Identification & Submission Protocol
 
-Current TNF references:
+To eliminate window-indexing drift and unsubmitted prompt states during agent
+operations:
 
-1. Relay scan tool: `twip_scan_terminals`
-2. Relay resource: `tnf://twip/inventory`
-3. Backend mirror: `fuse://twip/inventory`
-4. Schemas: `docs/protocols/schemas/twip-*.schema.json`
-5. Runbooks:
-   - `docs/protocols/twip-universalization-playbook.md`
-   - `docs/protocols/twip-operator-runbook.md`
-6. Graph API/UI:
-   - `GET /api/terminals/graph`
-   - `/visualizations/terminals`
-   - `/terminals`
+### 6.1 Permanent Window ID Targeting Mandate
+
+- **Forbidden**: Target Terminal windows by ordinal index (`window 1`,
+  `window 2`, `item i of windows`). macOS Terminal reorders window array indices
+  dynamically whenever focus changes or a click occurs.
+- **Required**: Target Terminal windows strictly by permanent AppleScript `id`
+  (`window id N` or `(first window whose id is N)`).
+
+### 6.2 Hardware Virtual Key Code Submission Mandate
+
+- **Forbidden**: Relying on string-appended newlines or ambiguous
+  `keystroke return` commands without event confirmation.
+- **Required**:
+  - Prompt submission MUST explicitly send hardware virtual key code 36
+    (`key code 36` for Return/Enter) or `key code 76` (Numpad Enter).
+  - Interactive multi-select menu items MUST be toggled using `key code 49`
+    (Space bar) prior to submitting with `key code 36`.
+
+### 6.3 Three-Pass Window Verification Cycle
+
+Agents interacting with terminal UI surfaces MUST execute in three discrete
+phases:
+
+1. **Pass 1 (Pre-Target Inventory)**: Query all Terminal windows by permanent
+   `id`, process title, and tab history tail. Categorize state
+   (`AWAITING_PROMPT`, `INTERACTIVE_SELECT`, `OPERATOR_PAUSED`, `PROCESSING`,
+   `STALE`).
+2. **Pass 2 (Targeted Execution)**: Target `window id N` directly with explicit
+   `keystroke` text followed by `key code 36`.
+3. **Pass 3 (Post-Target Verification Sweep)**: Re-query `window id N` history
+   to confirm text was ingested and process state transitioned (e.g., to
+   `Thinking...` or prompt consumed).

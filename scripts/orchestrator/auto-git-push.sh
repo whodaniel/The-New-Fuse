@@ -51,30 +51,44 @@ if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
     exit 0
 fi
 
-# Stage all changes
-git add -A 2>/dev/null || true
+# --- REPORT ONLY. Does not stage, commit, or push. -------------------------
+#
+# This cycle previously ran `git add -A` + `git commit` + `git push origin HEAD`.
+# That path is currently unreachable — the opt-in guard above exits early while
+# ~/.tnf/flags/auto-git-push-confirmed is absent — so this is removing dormant
+# code, not fixing an active incident. It is removed anyway because it cannot
+# ever be correct if the flag is created:
+#
+#   1. Directive D1 requires explicit per-action operator confirmation for
+#      commits. This script has no operator and sets no TNF_OPERATOR_CONFIRM
+#      (correctly — that variable is not a script's to assert), so
+#      .husky/pre-commit would reject every commit it attempted.
+#   2. `git commit ... 2>/dev/null` swallowed that rejection, and the failure
+#      branch logged "nothing to commit or commit error" — conflating "the tree
+#      is clean" with "the authority gate refused me". Two opposite conditions,
+#      one message.
+#   3. `git add -A` ran BEFORE that doomed commit and its effect would persist,
+#      leaving the whole working tree staged for whoever committed next.
+#
+# That third point is the structural hazard, and it is not unique to this file:
+# several autonomous agents share this working tree (local-subdirector,
+# director-agent, cron cycles). Any `git add -A` races with any commit being
+# composed, capturing another actor's in-progress work under the wrong message
+# and the wrong authority — and it silently defeats the operator gate, which
+# reports `staged=N` at confirm time while the index can change before the
+# commit lands. On 2026-08-06 a 4-file commit landed carrying ~150 unrelated
+# files; the cause was never traced to a specific writer, which is precisely why
+# no agent should stage broadly on a shared tree.
+#
+# Reporting is the part that was ever useful. Keep that; drop the rest.
+DIRTY_COUNT=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+FILES=$(git status --porcelain 2>/dev/null | awk '{print $NF}' | head -15)
 
-# Generate commit message from changed files
-FILES=$(git diff --cached --name-only 2>/dev/null | head -20)
-COMMIT_MSG="auto: marketplace curation + swarm updates [$(stamp)]
-
-Files:
-$(echo "${FILES}" | head -15)"
-
-# Commit
-if git commit -m "${COMMIT_MSG}" 2>/dev/null; then
-    log "Commit created successfully."
-    
-    # Push if remote exists
-    if git remote -v 2>/dev/null | grep -q "origin"; then
-        if git push origin HEAD 2>&1; then
-            log "Push to origin successful."
-        else
-            log "Push failed (may need pull/rebase)"
-        fi
-    fi
-else
-    log "Commit failed (nothing to commit or commit error)"
-fi
+log "Uncommitted changes detected: ${DIRTY_COUNT} path(s). NOT staging or committing."
+log "Commits require live operator confirmation (D1); see docs/core/AGENTS.md."
+log "Files (first 15):"
+while IFS= read -r f; do
+    [ -n "$f" ] && log "  ${f}"
+done <<< "${FILES}"
 
 log "Auto git push cycle complete."

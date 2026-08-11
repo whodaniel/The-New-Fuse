@@ -37,6 +37,13 @@ export const NAV_GROUPS: NavGroup[] = [
   { id: 'system', label: 'System' },
 ];
 
+/** Groups shown only after "More" unless the active route lives inside them. */
+export const SECONDARY_NAV_GROUPS: NavGroupId[] = ['build', 'insights', 'bridge'];
+
+export function isSecondaryNavGroup(groupId: NavGroupId): boolean {
+  return SECONDARY_NAV_GROUPS.includes(groupId);
+}
+
 export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'platform', path: '/platform', label: 'Platform', group: 'home', badge: 'TNF' },
   {

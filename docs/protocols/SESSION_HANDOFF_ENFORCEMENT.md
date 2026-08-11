@@ -56,5 +56,8 @@ If the change set touches Supabase-sensitive paths (`supabase/**`,
 
 ## Operator Intent
 
-This eliminates silent continuity failures by making handoff artifacts a hard
-gate, not a best-effort guideline.
+Handoff artifacts must be emitted automatically upon completion of the next
+critical work unit (audit, mutation, verification). The emission is NOT gated by
+operator confirmation; confirmation is only required for destructive operations,
+secrets, or mutation-cycle start — not for artifact creation. This eliminates
+silent continuity failures without blocking progress.

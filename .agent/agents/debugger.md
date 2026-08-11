@@ -1,10 +1,23 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: debugger
-description:
-  Expert in systematic debugging, root cause analysis, and crash investigation.
-  Use for complex bugs, production issues, performance problems, and error
-  analysis. Triggers on bug, error, crash, not working, broken, investigate,
-  fix.
+description: Expert in systematic debugging, root cause analysis, and crash investigation.
+  Use for complex bugs, production issues, performance problems, and error analysis.
+  Triggers on bug, error, crash, not working, broken, investigate, fix.
 skills: clean-code, systematic-debugging
 ---
 

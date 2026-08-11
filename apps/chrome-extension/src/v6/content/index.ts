@@ -233,9 +233,12 @@ class FuseConnectContentScript {
             },
           },
           (response) => {
-            if (response?.agentId) {
-              this.pageAgentId = response.agentId;
+            if (response?.pageAgentId || response?.agentId) {
+              this.pageAgentId = response.pageAgentId || response.agentId;
               console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId);
+              if (this.panel) {
+                this.panel.setAgentId(this.pageAgentId);
+              }
             }
           }
         );
@@ -429,7 +432,10 @@ class FuseConnectContentScript {
 
           case 'INJECT_MESSAGE':
             this.injectMessage(message.content).then((success) => {
-              safeSendResponse({ success });
+              safeSendResponse({
+                success,
+                result: simpleChatBridge.getLastSendResult(),
+              });
             });
             return true;
 
@@ -822,6 +828,15 @@ class FuseConnectContentScript {
       chrome.runtime.sendMessage(message, (response) => {
         // Access lastError to suppress "Unchecked runtime.lastError" warnings
         const error = chrome.runtime.lastError;
+        if (error) {
+          const errorMessage = error.message || '';
+          callback?.({
+            success: false,
+            transient: errorMessage.includes('Receiving end does not exist'),
+            error: errorMessage,
+          });
+          return;
+        }
         if (callback && !error) {
           callback(response);
         }

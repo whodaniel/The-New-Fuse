@@ -10,6 +10,9 @@ Distilled principles for high-performance agent operations. Apply these when bui
 
 Never guess when you can read state first. Never assume an action succeeded without verifying. This applies to browser automation, API calls, database writes, and deployments. Read the DOM/query the state before acting. Confirm the result after.
 
+**The State-Freshness Axiom Suite (`docs/protocols/STATE_FRESHNESS_AXIOM_SUITE.md`):**
+No claim or cached state retains authority without empirical re-verification. All knowledge must be continuously validated for freshness against live runtime evidence and canonical ground truth.
+
 ## DOM Over Screenshots
 
 When programmatic access to structured data is available, use it. Screenshots are a fallback for visual/layout questions, not a primary interface. This principle extends beyond browsers: prefer structured APIs, logs, and query results over visual inspection.
@@ -79,3 +82,14 @@ Define module boundaries first, then implement. The user designs the boundaries;
 - **webpilot** — CDP-free browser automation via Chrome extension + WebSocket relay. Use for navigating, scraping, form-filling, any real browser task.
 - **sspdf** — Declarative PDF generation engine. JSON source + theme = PDF. Use for invoices, reports, articles, any printable document.
 - **sspdf-theme-generator** — Generate sspdf theme files from brand specs. Use when styling PDFs or creating visual identity for documents.
+- **tnf-fleet-delegation-governor** — Enforces Core Tenet 1 (Fleet Delegation). Target discovery (`tnf agents who`), multi-agent work partitioning, 3-pass terminal sweeps with AppleScript permanent window IDs and hardware Return (`key code 36`).
+- **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for harness framework compliance (Turn Zero mandate, local environment boundary, package exports, TS path mappings).
+- **tnf-autonomous-loop-topology** — Identifies, maps, and unrolls 4-tiered nested loops (Micro-Loop -> Cognitive Loop -> Swarm Director Loop -> Meta Flywheel) to enumerate all potential autonomous action paths while enforcing safety gates.
+- **tnf-proactive-goal-wizard** — Multi-step interactive wizarding framework to proactively engage users, extract goals, discover workspace context/assets, deconstruct milestones, and track autonomous task progress.
+- **tnf-ufte-federated-tag-governor** — Enforces cryptographic entity hashing (`federatedId`), mandatory document headers (`[CLASS] [STATUS] [DOC_TYPE] [DOMAIN_SCOPE]`), 5W1H context adaptation, and semantic graph indexing across all agent operations.
+
+--- [MUTATION 2026-08-06 FULL-TOP] ---
+Agent: audit-runner (autonomous full-feature/custom audit agent)
+Status: ACTIVE (FULL TOP-LEVEL authorization granted by Daniel Goldberg 2026-08-06)
+Scope: repair onboarder, restart relay/bridge, rebuild packages, edit skills/config, deploy services. NO D9. NO separate user identity. No git push made without separate confirmation.
+Verification: audit-2026-08-06-full-tnf.md; onboarder rebuilt; relay process started (PID verified); note-taking package skeleton restored.

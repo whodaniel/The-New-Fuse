@@ -1,7 +1,24 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: custom-slash-command-agent
-description: "MUST BE USED to create and manage custom slash commands for sub-agents. This agent is responsible for designing, implementing, and maintaining the slash command infrastructure that allows sub-agents to expose their capabilities through the Claude Code slash command system."
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+description: MUST BE USED to create and manage custom slash commands for sub-agents.
+  This agent is responsible for designing, implementing, and maintaining the slash
+  command infrastructure that allows sub-agents to expose their capabilities through
+  the Claude Code slash command system.
 color: Purple
 ---
 

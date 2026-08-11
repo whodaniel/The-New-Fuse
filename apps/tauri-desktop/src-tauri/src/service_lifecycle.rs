@@ -159,6 +159,47 @@ fn port_open(host: &str, port: u16) -> bool {
     TcpStream::connect_timeout(&addr, Duration::from_millis(400)).is_ok()
 }
 
+/// Poll until a local port accepts connections, or give up after `timeout_ms`.
+async fn wait_for_port(host: &str, port: u16, timeout_ms: u64) -> bool {
+    let deadline = std::time::Instant::now() + Duration::from_millis(timeout_ms);
+    while std::time::Instant::now() < deadline {
+        if port_open(host, port) {
+            return true;
+        }
+        tokio::time::sleep(Duration::from_millis(250)).await;
+    }
+    false
+}
+
+/// After a successful spawn, require the service port to open within the timeout.
+async fn result_after_spawn(
+    cmd_display: String,
+    port: u16,
+    label: &str,
+    timeout_ms: u64,
+) -> ServiceLifecycleResult {
+    if wait_for_port("127.0.0.1", port, timeout_ms).await {
+        ServiceLifecycleResult {
+            ok: true,
+            message: format!("{} ready on :{}", label, port),
+            command: cmd_display,
+            already_running: false,
+            port: Some(port),
+        }
+    } else {
+        ServiceLifecycleResult {
+            ok: false,
+            message: format!(
+                "{} spawned but :{} did not open within {}ms — check logs / process exit",
+                label, port, timeout_ms
+            ),
+            command: cmd_display,
+            already_running: false,
+            port: Some(port),
+        }
+    }
+}
+
 fn validate_project_root(project_root: &str) -> Result<PathBuf, String> {
     let trimmed = project_root.trim();
     if trimmed.is_empty() {
@@ -190,7 +231,7 @@ pub async fn delete_file(path: String) -> Result<(), String> {
             .canonicalize()
             .map_err(|e| format!("Path resolution failed: {}", e))?
     } else {
-        return Ok(());
+        return Err(format!("File not found: {}", path));
     };
 
     let mut allowed = Vec::new();
@@ -393,16 +434,35 @@ pub async fn start_voice_listen(
         .stderr(Stdio::null());
 
     match detach_spawn(child) {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: format!(
-                "Started listen STT for profile '{}' (same as `tnf voice listen`)",
-                profile
-            ),
-            command: cmd_display,
-            already_running: false,
-            port: None,
-        }),
+        Ok(_) => {
+            // Listen has no TCP port — confirm the process marker appears.
+            let deadline = std::time::Instant::now() + Duration::from_millis(4_000);
+            while std::time::Instant::now() < deadline {
+                if listen_process_running(&profile) {
+                    return Ok(ServiceLifecycleResult {
+                        ok: true,
+                        message: format!(
+                            "Listen STT ready for profile '{}' (same as `tnf voice listen`)",
+                            profile
+                        ),
+                        command: cmd_display,
+                        already_running: false,
+                        port: None,
+                    });
+                }
+                tokio::time::sleep(Duration::from_millis(200)).await;
+            }
+            Ok(ServiceLifecycleResult {
+                ok: false,
+                message: format!(
+                    "Listen STT spawned for profile '{}' but process did not stay up",
+                    profile
+                ),
+                command: cmd_display,
+                already_running: false,
+                port: None,
+            })
+        }
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start listen STT: {}", err),
@@ -535,13 +595,7 @@ pub async fn start_voice_server(
         .stderr(Stdio::null());
 
     match detach_spawn(child) {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: format!("Started voice server on :{}", port),
-            command: cmd_display,
-            already_running: false,
-            port: Some(port),
-        }),
+        Ok(_) => Ok(result_after_spawn(cmd_display, port, "Voice server", 10_000).await),
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start voice server: {}", err),
@@ -590,13 +644,7 @@ pub async fn start_tnf_api(app: AppHandle) -> Result<ServiceLifecycleResult, Str
     }
 
     match child.spawn() {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: "Started TNF API (dev:api) — wait a few seconds then rediscover".into(),
-            command: cmd_display,
-            already_running: false,
-            port: Some(3001),
-        }),
+        Ok(_) => Ok(result_after_spawn(cmd_display, 3001, "TNF API", 15_000).await),
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start TNF API: {}", err),
@@ -647,13 +695,39 @@ pub async fn start_local_relay(app: AppHandle) -> Result<ServiceLifecycleResult,
     }
 
     match child.spawn() {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: "Started local relay — wait a few seconds then rediscover".into(),
-            command: cmd_display,
-            already_running: false,
-            port: Some(3007),
-        }),
+        Ok(_) => {
+            let deadline = std::time::Instant::now() + Duration::from_millis(15_000);
+            let mut ready_port: Option<u16> = None;
+            while std::time::Instant::now() < deadline {
+                for port in [3007u16, 3000, 3010] {
+                    if port_open("127.0.0.1", port) {
+                        ready_port = Some(port);
+                        break;
+                    }
+                }
+                if ready_port.is_some() {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(250)).await;
+            }
+            match ready_port {
+                Some(port) => Ok(ServiceLifecycleResult {
+                    ok: true,
+                    message: format!("Local relay ready on :{}", port),
+                    command: cmd_display,
+                    already_running: false,
+                    port: Some(port),
+                }),
+                None => Ok(ServiceLifecycleResult {
+                    ok: false,
+                    message:
+                        "Relay spawned but ports 3007/3000/3010 did not open within 15s".into(),
+                    command: cmd_display,
+                    already_running: false,
+                    port: Some(3007),
+                }),
+            }
+        }
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start relay: {}", err),
@@ -755,13 +829,13 @@ pub async fn start_story_architect_relay(app: AppHandle) -> Result<ServiceLifecy
         .stderr(Stdio::null());
 
     match detach_spawn(child) {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: "Started Story Architect relay on :43120".into(),
-            command: cmd_display,
-            already_running: false,
-            port: Some(43120),
-        }),
+        Ok(_) => Ok(result_after_spawn(
+            cmd_display,
+            43120,
+            "Story Architect relay",
+            12_000,
+        )
+        .await),
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start Story Architect relay: {}", err),
@@ -806,13 +880,7 @@ pub async fn start_kws_server(app: AppHandle) -> Result<ServiceLifecycleResult, 
         .stderr(Stdio::null());
 
     match detach_spawn(child) {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: "Started KWS on :43110".into(),
-            command: cmd_display,
-            already_running: false,
-            port: Some(43110),
-        }),
+        Ok(_) => Ok(result_after_spawn(cmd_display, 43110, "KWS", 12_000).await),
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start KWS: {}", err),

@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+
+# --- tnf dependency preflight ------------------------------------------
+# cron's minimal PATH omits where this machine keeps its tooling. With no
+# 'set -e', a missing binary yields 'command not found', exit 0, and a
+# cycle cron records as successful while doing nothing. Fail loudly.
+for _tnf_bin in node pnpm; do
+  command -v "$_tnf_bin" >/dev/null 2>&1 || {
+    echo "FATAL: required binary '$_tnf_bin' not found. PATH=$PATH" >&2
+    exit 127
+  }
+done
+# --- end tnf dependency preflight -----------------------------------
+
 # TNF Whole-Codebase Logic Verification — ENTIRE monorepo
 # Isolated per-surface execution; never enables set -e.
 set +e

@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import {
   buildVirtualLibraryEmbedUrl,
   DEFAULT_VIRTUAL_LIBRARY_URL,
@@ -160,8 +159,6 @@ const VirtualLibraryHub: React.FC = () => {
         ) : null
       }
     >
-      <SynergyStatusBar />
-
       <div className="library-audio-strip" role="status" aria-label="Library audio dependencies">
         <div className={`lib-audio-chip ${storyOnline ? 'ok' : 'off'}`}>
           <span className="dot" aria-hidden />

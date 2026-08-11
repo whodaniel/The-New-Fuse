@@ -1,20 +1,36 @@
 ---
+category: Library
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: agent-registry-qa-agent
-displayName: TNF Agent Registry QA
-description:
-  Specialized QA agent that tests the TNF agent registry, capability catalog,
+description: Specialized QA agent that tests the TNF agent registry, capability catalog,
   and Agent Card / MCP schema discovery and drift.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities:
-  [
-    'registry_snapshot',
-    'capability_extraction',
-    'drift_check',
-    'agent_card_validation',
-  ]
-tags: ['qa', 'registry', 'capabilities', 'agent-card', 'drift']
 version: 1.1.0
+tags:
+- qa
+- registry
+- capabilities
+- agent-card
+- drift
+capabilities:
+- registry_snapshot
+- capability_extraction
+- drift_check
+- agent_card_validation
+displayName: TNF Agent Registry QA
+agentType: testing
 ---
 
 # Agent Registry QA Agent

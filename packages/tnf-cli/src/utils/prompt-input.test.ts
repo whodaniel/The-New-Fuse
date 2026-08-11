@@ -4,7 +4,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import { describe, it } from 'node:test';
-import { STDIN_TRUNCATION_MARKER, readStdinTask, resolvePrompt } from './prompt-input.js';
+import {
+  STDIN_TRUNCATION_MARKER,
+  readStdinTask,
+  resolvePrompt,
+  sanitizeUtf8Prompt,
+} from './prompt-input.js';
 
 /**
  * Builds a paused, non-TTY Readable that exposes `.emit('data', ...)` so the
@@ -115,5 +120,30 @@ describe('prompt-input', () => {
     const result = await resolvePrompt({ stdin, stdinIdleMs: 200 });
     assert.equal(result?.text, 'hello from stream');
     assert.equal(result?.source, 'stdin');
+  });
+
+  it('finishes partial buffer on post-data stall (no forever hang)', async () => {
+    const stdin = makeFakeStdin();
+    const started = Date.now();
+    const pending = readStdinTask(1024, 5_000, stdin, 40);
+    queueMicrotask(() => {
+      stdin.emit('data', Buffer.from('partial'));
+      // deliberately no 'end' — abandoned open FD
+    });
+    const text = await pending;
+    const elapsed = Date.now() - started;
+    assert.equal(text, 'partial');
+    assert.ok(elapsed < 500, `post-data stall should finish quickly (took ${elapsed}ms)`);
+  });
+
+  it('sanitizes lone UTF-16 surrogates without breaking valid surrogate pairs (emojis)', async () => {
+    assert.equal(sanitizeUtf8Prompt('ok\uD800bad'), 'ok\uFFFDbad');
+    assert.equal(sanitizeUtf8Prompt('valid 🤖 emoji'), 'valid 🤖 emoji');
+
+    const fromFlag = await resolvePrompt({ task: 'hello\uD800world' });
+    assert.equal(fromFlag?.text, 'hello\uFFFDworld');
+
+    const fromPos = await resolvePrompt({ positional: ['a\uDC00b', '🚀'] });
+    assert.equal(fromPos?.text, 'a\uFFFDb\n🚀');
   });
 });

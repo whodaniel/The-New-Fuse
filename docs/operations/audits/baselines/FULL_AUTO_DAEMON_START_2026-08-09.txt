@@ -1,0 +1,4 @@
+TNF full-auto daemon started.
+PID: 91293
+Command: tnf full-auto start --interval-minutes 30 --max-cycles 0 --cycle-timeout-minutes 90 --base-url https://thenewfuse.com --api-url https://api.thenewfuse.com --broadcast
+Log: docs/operations/tnf-full-auto-daemon.log

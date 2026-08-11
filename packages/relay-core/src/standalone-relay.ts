@@ -57,7 +57,24 @@ import type { RedisRelayBridge } from './redis-relay-bridge.js';
 import type { StallDetector } from './services/stall-detector.js';
 
 // Configuration
-const PORT = parseInt(process.env.RELAY_PORT || '3000', 10);
+function resolveRelayPort(argv: string[] = process.argv): number {
+  // CLI: `--port 3007` or `--port=3007` (ignored previously → false :3000 binds)
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--port' && argv[i + 1]) {
+      const n = Number.parseInt(argv[i + 1], 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    if (arg.startsWith('--port=')) {
+      const n = Number.parseInt(arg.slice('--port='.length), 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+  }
+  const fromEnv = Number.parseInt(process.env.RELAY_PORT || process.env.PORT || '3000', 10);
+  return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : 3000;
+}
+
+const PORT = resolveRelayPort();
 const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
@@ -245,6 +262,7 @@ export class TNFRelayServer extends EventEmitter {
   private bridgeAutoApprovePlatforms: Set<string>;
   private bridgeAutoApproveAgentIds: Set<string>;
   private socketRemoteAddresses: WeakMap<WebSocket, string | null> = new WeakMap();
+  private socketAgentIds: WeakMap<WebSocket, string> = new WeakMap();
   private authService: JWTAuthService | null;
   private stallDetector: StallDetector;
   private logger: Logger;
@@ -770,9 +788,10 @@ export class TNFRelayServer extends EventEmitter {
 
       // Handle disconnect
       ws.on('close', () => {
+        const resolvedAgentId = agentId || this.socketAgentIds.get(ws);
         this.socketRemoteAddresses.delete(ws);
-        if (agentId) {
-          this.handleAgentDisconnect(agentId);
+        if (resolvedAgentId && this.sockets.get(resolvedAgentId) === ws) {
+          this.handleAgentDisconnect(resolvedAgentId);
         }
       });
 
@@ -901,8 +920,22 @@ export class TNFRelayServer extends EventEmitter {
                 );
               } else {
                 console.warn(
-                  `[Relay] AGENT_REGISTER for ${requestedAgentId} deferred (Redis bridge not ready).`
+                  `[Relay] AGENT_REGISTER for ${requestedAgentId} has no Redis consumers; completing locally.`
                 );
+                const pending = this.pendingAgentRegistrations.get(requestedAgentId);
+                if (pending) {
+                  this.finalizeAgentRegistration(
+                    requestedAgentId,
+                    pending.ws,
+                    pending.registrationRequest,
+                    {
+                      authenticated: pending.authenticated,
+                      source: 'local_no_registry_consumer_fallback',
+                    }
+                  );
+                  clearTimeout(pending.timeout);
+                  this.pendingAgentRegistrations.delete(requestedAgentId);
+                }
               }
             })
             .catch((err) => {
@@ -910,6 +943,20 @@ export class TNFRelayServer extends EventEmitter {
                 `[Relay] AGENT_REGISTER publish failed for ${requestedAgentId}:`,
                 err instanceof Error ? err.message : err
               );
+              const pending = this.pendingAgentRegistrations.get(requestedAgentId);
+              if (pending) {
+                this.finalizeAgentRegistration(
+                  requestedAgentId,
+                  pending.ws,
+                  pending.registrationRequest,
+                  {
+                    authenticated: pending.authenticated,
+                    source: 'local_publish_failure_fallback',
+                  }
+                );
+                clearTimeout(pending.timeout);
+                this.pendingAgentRegistrations.delete(requestedAgentId);
+              }
             });
 
           const registrationTimeoutMs = isLoopbackAddress(remoteAddress) ? 1500 : 8000;
@@ -941,18 +988,16 @@ export class TNFRelayServer extends EventEmitter {
             timeout: pendingTimeout,
           });
         } else {
-          // Fallback if bridge is not connected (local mode)
+          // Local OSS/dev mode: the relay must still be usable when Redis or
+          // master-clock registration is temporarily unavailable.
           console.warn(
-            `[Relay] Redis bridge not connected. Cannot forward AGENT_REGISTER for ${requestedAgentId}.`
+            `[Relay] Redis bridge not connected. Completing AGENT_REGISTER locally for ${requestedAgentId}.`
           );
-          this.send(ws, {
-            type: 'REGISTRATION_ERROR',
-            payload: {
-              error: 'Relay bridge not connected, cannot register agent.',
-              code: 'RELAY_BRIDGE_ERROR',
-            },
+          this.finalizeAgentRegistration(requestedAgentId, ws, registrationRequest, {
+            authenticated: !!verifiedToken,
+            source: 'local_bridge_unavailable_fallback',
           });
-          return null;
+          return requestedAgentId;
         }
 
         // We will store minimal info locally just to map WS to an ID,
@@ -1616,6 +1661,12 @@ export class TNFRelayServer extends EventEmitter {
     }
   ): void {
     if (this.agents.has(agentId)) {
+      this.sockets.set(agentId, ws);
+      this.socketAgentIds.set(ws, agentId);
+      for (const channelId of registrationRequest.channels || []) {
+        this.syncAgentChannelMembership(agentId, channelId);
+      }
+      this.ensureBridgeSubscription(agentId);
       this.send(ws, {
         type: 'REGISTRATION_CONFIRMED',
         payload: {
@@ -1675,6 +1726,7 @@ export class TNFRelayServer extends EventEmitter {
 
     this.agents.set(agentId, agent);
     this.sockets.set(agentId, ws);
+    this.socketAgentIds.set(ws, agentId);
     this.agentChannels.set(agentId, new Set(agent.channels));
     this.ensureBridgeSubscription(agentId);
     for (const channelId of agent.channels) {

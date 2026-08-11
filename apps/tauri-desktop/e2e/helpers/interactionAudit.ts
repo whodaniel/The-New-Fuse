@@ -6,15 +6,45 @@ export const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
 /** Stub Tauri native invokes so preview-mode e2e can exercise OAGI / terminal UI. */
 export async function stubTauriNative(page: Page): Promise<void> {
   await page.addInitScript(() => {
+    let computerUseArmed = false;
+    const disarmedError =
+      'Computer-use is DISARMED. Operator must arm via set_computer_use_armed(true) before automation.';
+
+    const requireArmed = () => {
+      if (!computerUseArmed) {
+        throw new Error(disarmedError);
+      }
+      return null;
+    };
+
     const handlers: Record<string, (args?: Record<string, unknown>) => unknown> = {
       get_screen_size: () => [1920, 1080],
       get_mouse_position: () => [640, 360],
-      capture_screen: () => 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA//2Q==',
-      execute_click: () => null,
-      execute_scroll: () => null,
-      execute_type: () => null,
-      execute_hotkey: () => null,
-      wait_duration: () => null,
+      capture_screen: () =>
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA//2Q==',
+      get_computer_use_armed: () => computerUseArmed,
+      set_computer_use_armed: (args?: Record<string, unknown>) => {
+        computerUseArmed = Boolean(args?.armed);
+        return computerUseArmed;
+      },
+      execute_click: () => requireArmed(),
+      execute_scroll: () => requireArmed(),
+      execute_type: () => requireArmed(),
+      execute_hotkey: () => requireArmed(),
+      wait_duration: () => requireArmed(),
+      find_chrome_executable: () => '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      resolve_chrome_extension_path: () =>
+        '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7',
+      launch_chrome_with_extension: () => ({
+        launched: true,
+        chrome_path: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        extension_path:
+          '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7',
+        profile_dir: '/tmp/tnf-chrome-profile-smoke',
+        pid: 424242,
+        message: 'Chrome launched with TNF extension (stub)',
+      }),
+      write_file: () => null,
       write_to_shell: () => null,
       close_shell_session: () => null,
       antigravity_set_credentials: () => null,
@@ -34,6 +64,19 @@ export async function stubTauriNative(page: Page): Promise<void> {
     (window as unknown as { __TAURI__: { core: { invoke: typeof invoke } } }).__TAURI__ = {
       core: { invoke },
     };
+    (window as unknown as { __TAURI_INTERNALS__?: { invoke: typeof invoke } }).__TAURI_INTERNALS__ =
+      {
+        invoke,
+      };
+
+    // Track opener / fallback window.open for external-link smoke.
+    const opened: string[] = [];
+    (window as unknown as { __TNF_SMOKE_OPENED__?: string[] }).__TNF_SMOKE_OPENED__ = opened;
+    const originalOpen = window.open.bind(window);
+    window.open = ((url?: string | URL, ...rest: unknown[]) => {
+      if (url) opened.push(String(url));
+      return originalOpen(url as string, ...(rest as [string?, string?]));
+    }) as typeof window.open;
   });
 }
 
@@ -83,9 +126,7 @@ export async function exerciseVisibleButtons(
     if (disabled) continue;
 
     const label =
-      (await btn.getAttribute('aria-label')) ||
-      (await btn.innerText()).trim() ||
-      `button-${i}`;
+      (await btn.getAttribute('aria-label')) || (await btn.innerText()).trim() || `button-${i}`;
 
     if (skipLabels.some((re) => re.test(label))) {
       skipped.push(label);
@@ -162,7 +203,9 @@ export async function expectNoSevereConsoleErrors(page: Page): Promise<string[]>
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
       const text = msg.text();
-      if (!/favicon|ResizeObserver|Loading chunk|net::ERR|WebSocket|relay|API offline/i.test(text)) {
+      if (
+        !/favicon|ResizeObserver|Loading chunk|net::ERR|WebSocket|relay|API offline/i.test(text)
+      ) {
         errors.push(text);
       }
     }

@@ -1,14 +1,26 @@
 ---
+category: Library
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: primitive-master
-description:
-  Management of "LLM Primitives" and account-tier leverage. Use when you need to
-  coordinate switching between free-tier LLM accounts, manage model harnesses,
+description: Management of "LLM Primitives" and account-tier leverage. Use when you
+  need to coordinate switching between free-tier LLM accounts, manage model harnesses,
   or optimize cost-leverage strategies across providers.
-tools: Read, Grep, Bash, Write, Edit, Agent
+skills: llm-provider-management, harness-coordination, leverage-optimization, fallback-strategies,
+  status-monitoring
 model: inherit
-skills:
-  llm-provider-management, harness-coordination, leverage-optimization,
-  fallback-strategies, status-monitoring
 ---
 
 # Primitive Master - LLM Leverage & Harness Custodian

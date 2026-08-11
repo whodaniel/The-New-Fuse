@@ -1,14 +1,14 @@
 # Public Distribution vs Personal Runtime
 
-> **Goal:** Ship a clean `The-New-Fuse` for the public, while keeping your
-> Mac free of duplicate emergency copies and confusing legacy trees.
+> **Goal:** Ship a clean `The-New-Fuse` for the public, while keeping your Mac
+> free of duplicate emergency copies and confusing legacy trees.
 
 ## Two audiences, two surfaces
 
-| Audience           | What they get                                   | Where it lives                                |
-| ------------------ | ----------------------------------------------- | --------------------------------------------- |
+| Audience           | What they get                                   | Where it lives                           |
+| ------------------ | ----------------------------------------------- | ---------------------------------------- |
 | **Public**         | Open runtime (~90%), stubs at proprietary paths | `The-New-Fuse` via `pnpm run sync:repos` |
-| **You (operator)** | Full monorepo + local voice + `~/.tnf` runtime  | `The-New-Fuse` on disk                        |
+| **You (operator)** | Full monorepo + local voice + `~/.tnf` runtime  | `The-New-Fuse` on disk                   |
 
 Public users do **not** need voice bridge, `~/bin` copies, or emergency `~/apps`
 stubs.
@@ -28,6 +28,9 @@ stubs.
 
 - `apps/api`, `apps/api-gateway`, `apps/frontend`, `apps/relay-server`,
   `apps/backend` (stub orchestrator in OSS)
+- Supported app form factors: `apps/chrome-extension`, `apps/vscode-extension`,
+  `apps/tauri-desktop`
+- Local bridge form factors: `apps/mcp-servers`
 - `packages/*` (with proprietary files stubbed)
 - `scripts/system/` — optional operator voice tools (included in OSS; not
   required to run hosted app)
@@ -36,11 +39,17 @@ stubs.
 
 - `.env`, `.env.local`
 - `voice-bridge-package-20260325/` — removed from tree; was duplicate snapshot
+- Non-regular app surfaces are classified in
+  `data/distribution/oss-app-boundary.json` and enforced by
+  `node scripts/packaging/check-oss-app-boundary.cjs`.
 - Proprietary apps: `nexus-orchestrator`, `picoclaw-overseer`, orchestrator
   module, etc.
 
-**Optional in monorepo, not core product:** `apps/audio-trigger-kws-mvp`
-(pilot), `casin8-games`, `poker-room` (demos).
+**Optional satellites (not the regular OSS download):** live under sibling
+`TNF-Extensions/` (core redirect: `apps/extensions`). Includes
+`audio-trigger-kws-mvp` (pilot), `casin8-games`, `poker-room` (demos), legacy
+browser bridges, standalone products, vendor checkouts (`external`), and
+operator library intake surfaces. See `data/distribution/oss-app-boundary.json`.
 
 ---
 

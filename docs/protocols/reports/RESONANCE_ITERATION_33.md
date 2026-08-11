@@ -30,9 +30,9 @@
   7. **`SelfPromptService`**: Coordinates self-prompt triggers and cooldowns.
 - **Reports Generated:**
   - Workspace Report:
-    [refactoring_consensus_report.md](file://$TNF_ROOT/refactoring_consensus_report.md)
+    [refactoring_consensus_report.md](../../../refactoring_consensus_report.md)
   - Brain Artifact Report:
-    [refactoring_consensus_report.md](file://$HOME/.gemini/antigravity-cli/brain/55072091-cf08-4cac-aa57-13e87766a3f5/refactoring_consensus_report.md)
+    [refactoring_consensus_report.md](../../../refactoring_consensus_report.md)
 - **Verification:** Ran type checking
   (`pnpm --filter @the-new-fuse/relay-core run type-check`) and build validation
   (`pnpm --filter @the-new-fuse/relay-core run build`) to ensure build and API

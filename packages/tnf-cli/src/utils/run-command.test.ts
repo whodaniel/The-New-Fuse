@@ -72,6 +72,28 @@ async function main(): Promise<void> {
   const survivors = execSync(`pgrep -fl "${marker}" || true`, { encoding: 'utf8' }).trim();
   check('child process is actually reaped', survivors === '', `leftover: ${survivors}`);
 
+  // Nested children must die with the timed-out process group — otherwise
+  // hung orchestrate workers outlive the soft-failed post-step.
+  const nestedMarker = `tnf-timeout-nested-${Date.now()}`;
+  try {
+    await spawnWithTimeout(
+      'sh',
+      ['-c', `sh -c 'sleep 30 # ${nestedMarker}'`],
+      { ...opts, timeoutMs: 800 }
+    );
+  } catch {
+    /* expected */
+  }
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  const nestedSurvivors = execSync(`pgrep -fl "${nestedMarker}" || true`, {
+    encoding: 'utf8',
+  }).trim();
+  check(
+    'nested child process group is reaped',
+    nestedSurvivors === '',
+    `leftover: ${nestedSurvivors}`
+  );
+
   // Callers that pass no timeout keep the historical unbounded behaviour.
   await spawnWithTimeout('sh', ['-c', 'sleep 0.3'], opts);
   check('no timeoutMs => runs to completion', true);

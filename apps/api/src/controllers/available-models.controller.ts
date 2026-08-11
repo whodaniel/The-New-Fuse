@@ -124,6 +124,21 @@ async function fetchLiveModels(
   }
 }
 
+interface ProviderModel {
+  id: string;
+  name: string;
+  provider: string;
+}
+
+interface ProviderEntry {
+  id: string;
+  name: string;
+  priority: number;
+  configured: boolean;
+  source: 'verified' | 'live';
+  models: ProviderModel[];
+}
+
 @ApiTags('llm')
 @Controller('llm')
 export class AvailableModelsController {
@@ -138,7 +153,7 @@ export class AvailableModelsController {
           (a, b) => (PROVIDER_META[b]?.priority || 0) - (PROVIDER_META[a]?.priority || 0)
         );
 
-    const providers = [];
+    const providers: ProviderEntry[] = [];
     for (const id of providerIds) {
       const meta = PROVIDER_META[id];
       if (!meta) continue;

@@ -1,7 +1,3 @@
-> **⚠️ SNAPSHOT — Railway references in this archived skill are DEPRECATED.**
-> TNF migrated from Railway to GCP (Cloud Run) + Cloudflare + Supabase +
-> Upstash. See CLOUD_MIGRATION_BLUEPRINT.md.
-
 # Deployment Reference
 
 Infrastructure provisioning and deployment instructions for all supported
@@ -46,9 +42,10 @@ netlify deploy --prod
 netlify env:set VARIABLE_NAME value
 ```
 
-### Railway
+### Railway ⚠️ **DEPRECATED — Railway is no longer used.** TNF migrated to GCP Cloud Run + Cloudflare. See CLOUD_MIGRATION_BLUEPRINT.md.
 
 ```bash
+# ⚠️ DEPRECATED: Commands below are for historical Railway deployment only.
 # Install CLI
 npm i -g @railway/cli
 

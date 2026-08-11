@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useComputerUseEmbed } from '../contexts/ComputerUseEmbedContext';
 import { openExternal } from '../lib/openExternal';
 
@@ -16,10 +15,19 @@ const OAGIHub: React.FC = () => {
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [armed, setArmed] = useState(false);
 
   useEffect(() => {
     const loadInitData = async () => {
       try {
+        const isArmed = await invoke<boolean>('get_computer_use_armed');
+        setArmed(Boolean(isArmed));
+        addLog(
+          isArmed
+            ? 'Computer-use is ARMED (automation enabled).'
+            : 'Computer-use is DISARMED (automation blocked until you arm it).'
+        );
+
         // Rust returns (width, height) tuple — not { width, height }.
         const [width, height] = await invoke<[number, number]>('get_screen_size');
         if (typeof width === 'number' && typeof height === 'number') {
@@ -50,6 +58,21 @@ const OAGIHub: React.FC = () => {
 
   const addLog = (msg: string) => {
     setLogs((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 49)]);
+  };
+
+  const toggleArmed = async () => {
+    try {
+      const next = !armed;
+      const result = await invoke<boolean>('set_computer_use_armed', { armed: next });
+      setArmed(Boolean(result));
+      addLog(
+        result
+          ? 'ARMED — click/type/hotkey/drag/scroll are enabled.'
+          : 'DISARMED — OS automation commands will refuse until re-armed.'
+      );
+    } catch (e) {
+      addLog(`Arm toggle failed: ${e}`);
+    }
   };
 
   const handleCapture = async () => {
@@ -136,11 +159,26 @@ const OAGIHub: React.FC = () => {
     <>
       <button
         type="button"
+        className={armed ? 'danger-button' : 'primary-button'}
+        onClick={() => void toggleArmed()}
+        title={
+          armed
+            ? 'Disarm OS automation (click/type/hotkey)'
+            : 'Arm OS automation after you intend to drive the desktop'
+        }
+      >
+        {armed ? 'Disarm computer-use' : 'Arm computer-use'}
+      </button>
+      <button
+        type="button"
         className="secondary-button"
         onClick={() => void openExternal('https://thenewfuse.com/oagi')}
       >
         Web docs
       </button>
+      <span className={`env-badge ${armed ? 'cloud' : 'local'}`}>
+        Automation: {armed ? 'ARMED' : 'DISARMED'}
+      </span>
       <span className="env-badge local">
         Screen: {screenSize ? `${screenSize.width}×${screenSize.height}` : '—'}
       </span>
@@ -435,6 +473,23 @@ const OAGIHub: React.FC = () => {
           box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
 
+        .danger-button {
+          background: linear-gradient(135deg, #dc2626, #ea580c);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+        }
+
+        .danger-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
+        }
+
         .capture-btn {
           background: rgba(59, 130, 246, 0.1);
           color: #60a5fa;
@@ -627,7 +682,6 @@ const OAGIHub: React.FC = () => {
       subtitle="Visual computer use — screen capture, mouse/keyboard automation via native Tauri layer"
       actions={actions}
     >
-      <SynergyStatusBar />
       {body}
     </PageShell>
   );

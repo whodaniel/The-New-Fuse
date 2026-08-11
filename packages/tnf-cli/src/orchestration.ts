@@ -7,7 +7,19 @@ import {
   SelfImprovementTracker,
   WorkerDispatcher,
 } from './orchestration-enhancements.js';
+import {
+  REPORT_ONLY_GOAL_RE,
+  classifyOrchestrateIntent,
+  extractReportOutputPath,
+} from './orchestration-intent.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
+
+export {
+  REPORT_ONLY_GOAL_RE,
+  REPORT_ONLY_MUTATE_EXPLICIT_RE,
+  classifyOrchestrateIntent,
+  extractReportOutputPath,
+} from './orchestration-intent.js';
 
 // ============================================================================
 // TNF ENHANCED ORCHESTRATION SYSTEM v2.0
@@ -82,9 +94,17 @@ export interface SystemState {
 // ---------------------------------------------------------------------------
 // GoalPlanner: Decomposes natural language goals into task trees
 // ---------------------------------------------------------------------------
+/** @deprecated import from orchestration-intent — kept name surface via re-export above */
+
 export class GoalPlanner {
   private goalPatterns: Array<{ pattern: RegExp; skill: string; tasks: string[] }> = [];
   private static BUILT_IN_PATTERNS = [
+    {
+      // A2: must precede security/refactor patterns so "audit" never selects mutate tasks.
+      pattern: REPORT_ONLY_GOAL_RE,
+      skill: 'tnf-report-only',
+      tasks: ['classify-report-only', 'write-report-artifact', 'verify-report-output'],
+    },
     {
       pattern: /deploy|build|gcp|cloud.?build|docker|kubernetes/i,
       skill: 'tnf-full-auto-network-autopilot',
@@ -131,7 +151,8 @@ export class GoalPlanner {
       tasks: ['load-auth-state-if-needed', 'launch-browser', 'inspect-act-verify', 'close-browser'],
     },
     {
-      pattern: /security|threat|audit|vulnerability|pen.?test/i,
+      // "audit" reserved for REPORT_ONLY classifier above — keep security for threat/vuln only.
+      pattern: /security|threat|vulnerability|pen.?test/i,
       skill: 'security-threat-model',
       tasks: ['identify-assets', 'model-threats', 'assess-risks', 'plan-mitigations'],
     },
@@ -169,6 +190,7 @@ export class GoalPlanner {
    * Falls back to a generic single-task workflow if no pattern matches.
    */
   async plan(goal: string): Promise<Workflow> {
+    const classification = classifyOrchestrateIntent(goal);
     const workflow: Workflow = {
       id: `wf-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: `Goal: ${goal.slice(0, 60)}${goal.length > 60 ? '...' : ''}`,
@@ -176,11 +198,24 @@ export class GoalPlanner {
       tasks: [],
       status: 'planning',
       createdAt: new Date().toISOString(),
-      metadata: { planningStrategy: 'pattern-match' },
+      metadata: {
+        planningStrategy: 'pattern-match',
+        orchestrateIntent: classification.intent,
+        orchestrateIntentReason: classification.reason,
+      },
     };
 
     // Try pattern matching first
     for (const pattern of this.goalPatterns) {
+      if (pattern.skill === 'tnf-report-only' && classification.intent !== 'REPORT_ONLY') {
+        continue;
+      }
+      if (
+        classification.intent === 'REPORT_ONLY' &&
+        pattern.tasks.includes('execute-safe-refactors')
+      ) {
+        continue;
+      }
       if (pattern.pattern.test(goal)) {
         workflow.metadata.planningStrategy = `pattern:${pattern.skill}`;
         workflow.tasks = pattern.tasks.map((name, idx) =>
@@ -194,16 +229,28 @@ export class GoalPlanner {
     if (workflow.tasks.length === 0) {
       workflow.tasks.push({
         id: `task-${Date.now()}-0`,
-        name: 'exploratory-analysis',
+        name:
+          classification.intent === 'REPORT_ONLY'
+            ? 'write-report-artifact'
+            : 'exploratory-analysis',
         description: `Analyze goal: "${goal}" and determine best approach`,
         priority: 'high',
         status: 'pending',
         dependencies: [],
-        payload: { goal, strategy: 'exploratory' },
+        payload: {
+          goal,
+          strategy: classification.intent === 'REPORT_ONLY' ? 'report-only' : 'exploratory',
+        },
         attempts: 0,
         maxAttempts: 3,
       });
-      workflow.metadata.planningStrategy = 'exploratory';
+      workflow.metadata.planningStrategy =
+        classification.intent === 'REPORT_ONLY' ? 'report-only-fallback' : 'exploratory';
+    }
+
+    // Defensive: never schedule mutate tasks under REPORT_ONLY
+    if (classification.intent === 'REPORT_ONLY') {
+      workflow.tasks = workflow.tasks.filter((t) => t.name !== 'execute-safe-refactors');
     }
 
     // Add dependency chain
@@ -620,6 +667,9 @@ export class EnhancedOrchestrator {
 🎯 Processing goal: ${chalk.bold(goal)}`)
     );
 
+    const classification = classifyOrchestrateIntent(goal);
+    console.log(chalk.dim(`   🧭 Classifier: ${classification.intent} — ${classification.reason}`));
+
     // Phase 1: Plan - Decompose goal into tasks
     const workflow = await this.goalPlanner.plan(goal);
     this.activeWorkflows.set(workflow.id, workflow);
@@ -628,6 +678,41 @@ export class EnhancedOrchestrator {
         `   📋 Planned ${workflow.tasks.length} tasks (${workflow.metadata.planningStrategy})`
       )
     );
+
+    // A2 REPORT_ONLY: write named output path; never run mutate / execute-safe-refactors.
+    if (classification.intent === 'REPORT_ONLY') {
+      workflow.tasks = workflow.tasks.filter((t) => t.name !== 'execute-safe-refactors');
+      const outRel = extractReportOutputPath(goal);
+      if (!outRel) {
+        console.log(
+          chalk.red(
+            '   ❌ REPORT_ONLY requires an explicit output path (e.g. write docs/.../file.md)'
+          )
+        );
+        workflow.status = 'failed';
+        workflow.metadata.reportOnlyError = 'missing_output_path';
+        return workflow;
+      }
+      const abs = path.isAbsolute(outRel) ? outRel : path.join(this.repoRoot, outRel);
+      fs.mkdirSync(path.dirname(abs), { recursive: true });
+      const bodyMatch = goal.match(/\bwith\s+(.+)$/i);
+      const body = bodyMatch ? bodyMatch[1].trim() : `REPORT_ONLY ping ${new Date().toISOString()}`;
+      fs.writeFileSync(abs, `${body}\n`, 'utf8');
+      const ok = fs.existsSync(abs) && fs.statSync(abs).size > 0;
+      for (const task of workflow.tasks) {
+        task.status = ok ? 'completed' : 'failed';
+        task.completedAt = new Date().toISOString();
+      }
+      workflow.status = ok ? 'completed' : 'failed';
+      workflow.metadata.reportOnlyOutput = abs;
+      workflow.completedAt = new Date().toISOString();
+      console.log(
+        ok
+          ? chalk.green(`   ✅ REPORT_ONLY wrote ${path.relative(this.repoRoot, abs)}`)
+          : chalk.red(`   ❌ REPORT_ONLY failed to write ${abs}`)
+      );
+      return workflow;
+    }
 
     // Phase 2: Match - Find best skills for each task
     for (const task of workflow.tasks) {

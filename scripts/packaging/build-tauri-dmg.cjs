@@ -14,6 +14,17 @@ const RECEIPT_PATH = path.join(ROOT, '.agent', 'runtime-logs', 'tauri-dmg-packag
 function parseArgs(argv) {
   return {
     checkOnly: argv.includes('--check'),
+    // Rust target triple. Defaults to the host arch, which on an Intel Mac produces
+    // an x64-only DMG that Apple Silicon users cannot run natively. Pass
+    //   --target universal-apple-darwin
+    // for a build that runs on both (requires both x86_64- and aarch64-apple-darwin
+    // targets installed via rustup).
+    target: (() => {
+      const flag = argv.find((a) => a.startsWith('--target='));
+      if (flag) return flag.slice('--target='.length);
+      const idx = argv.indexOf('--target');
+      return idx !== -1 ? argv[idx + 1] : null;
+    })(),
     allowNonMacosCheck: argv.includes('--allow-non-macos-check'),
     install: argv.includes('--install'),
     skipInstall: argv.includes('--skip-install'),
@@ -67,12 +78,12 @@ function compareVersion(actual, minimum) {
   return 0;
 }
 
-function collectDmgs() {
-  if (!fs.existsSync(DMG_DIR)) return [];
+function collectDmgs(dir = DMG_DIR) {
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(DMG_DIR)
+    .readdirSync(dir)
     .filter((name) => name.endsWith('.dmg'))
-    .map((name) => path.join(DMG_DIR, name))
+    .map((name) => path.join(dir, name))
     .sort();
 }
 
@@ -140,23 +151,34 @@ function main() {
     sh('pnpm', ['install', '--no-frozen-lockfile', '--prefer-offline']);
   }
 
-  sh('pnpm', ['--dir', APP_DIR, 'exec', 'tauri', 'build', '--bundles', 'dmg'], {
+  const buildArgs = ['--dir', APP_DIR, 'exec', 'tauri', 'build', '--bundles', 'dmg'];
+  if (options.target) buildArgs.push('--target', options.target);
+
+  sh('pnpm', buildArgs, {
     env: {
       CI: process.env.CI || 'false',
     },
   });
 
-  const dmgs = collectDmgs();
+  // A targeted build writes to target/<triple>/release/... rather than
+  // target/release/..., so the default DMG_DIR would come up empty and the run
+  // would be reported as a failure even though the bundle exists.
+  const dmgDir = options.target
+    ? path.join(APP_DIR, 'src-tauri', 'target', options.target, 'release', 'bundle', 'dmg')
+    : DMG_DIR;
+
+  const dmgs = collectDmgs(dmgDir);
   if (dmgs.length === 0) {
-    throw new Error(`Tauri build completed but no DMG files were found in ${DMG_DIR}`);
+    throw new Error(`Tauri build completed but no DMG files were found in ${dmgDir}`);
   }
 
   const receipt = {
     status: 'packaged',
     platform: process.platform,
     arch: os.arch(),
+    target: options.target || null,
     appDir: path.relative(ROOT, APP_DIR),
-    dmgDir: path.relative(ROOT, DMG_DIR),
+    dmgDir: path.relative(ROOT, dmgDir),
     dmgs: dmgs.map((filePath) => path.relative(ROOT, filePath)),
     startedAt,
     completedAt: new Date().toISOString(),

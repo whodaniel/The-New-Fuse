@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { LIBRARY_KWS_BASE_URL, STORY_ARCHITECT_RELAY_URL } from '../../config/virtualLibrary';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
 import { useVoiceBridge } from '../../hooks/useVoiceBridge';
+import {
+  describePopulation,
+  selectAgentPopulations,
+} from '../../services/operatorSynergy/populations';
 import { useRoute } from '../route-context';
 
 const CHIP_ROUTES: Record<string, string> = {
@@ -34,6 +38,7 @@ async function probeLibraryAudioReady(): Promise<boolean> {
 /** Compact synergy plane status — use at top of operator pages */
 export const SynergyStatusBar: React.FC = () => {
   const { state } = useOperatorSynergy();
+  const population = selectAgentPopulations(state);
   const { snapshot: voice } = useVoiceBridge();
   const { navigate } = useRoute();
   const [libraryAudioReady, setLibraryAudioReady] = useState(false);
@@ -46,6 +51,7 @@ export const SynergyStatusBar: React.FC = () => {
     };
     void tick();
     const timer = window.setInterval(() => void tick(), 10000);
+
     return () => {
       cancelled = true;
       window.clearInterval(timer);
@@ -86,6 +92,7 @@ export const SynergyStatusBar: React.FC = () => {
           key={chip.label}
           type="button"
           className={`synergy-chip ${chip.ok ? 'ok' : 'off'}`}
+          data-route={CHIP_ROUTES[chip.label] || '/dashboard'}
           onClick={() => navigate(CHIP_ROUTES[chip.label] || '/dashboard')}
           title={
             'hint' in chip && chip.hint
@@ -98,9 +105,21 @@ export const SynergyStatusBar: React.FC = () => {
           {chip.label}
         </button>
       ))}
-      <span className="synergy-meta">
-        {state.unifiedAgents.length} agents · {state.channelCount} channels
-      </span>
+      <div className="synergy-meta">
+        <span
+          title={`${population.registered} registered · ${population.online} online · ${population.federated} reported by relay`}
+        >
+          {describePopulation(population)} · {population.channels} channels
+        </span>
+        {population.divergent ? (
+          <span
+            className="synergy-divergence"
+            title={`Local discovery sees ${population.registered}; the relay reports ${population.federated}. One side is stale.`}
+          >
+            relay reports {population.federated}
+          </span>
+        ) : null}
+      </div>
       <style>{`
         .synergy-status-bar {
           display: flex;
@@ -142,11 +161,33 @@ export const SynergyStatusBar: React.FC = () => {
           border-radius: 50%;
           background: currentColor;
         }
+        .synergy-chip[data-route^="/computer-use"] {
+          border-radius: 4px;
+        }
+        .synergy-chip[data-route^="/a2a"] {
+          border-style: dashed;
+        }
+        .synergy-chip[data-route^="/voice"] {
+          box-shadow: 0 0 8px rgba(16, 185, 129, 0.1);
+        }
         .synergy-meta {
           margin-left: auto;
+          display: flex;
+          align-items: center;
+          gap: 10px;
           font-size: 12px;
           color: var(--tnf-text-secondary, #cbd5e1);
           font-weight: 500;
+        }
+        /* Shown only when local discovery and the relay disagree, so a single
+           number never quietly hides a stale side. */
+        .synergy-divergence {
+          padding: 2px 8px;
+          border-radius: 999px;
+          border: 1px solid rgba(245, 158, 11, 0.45);
+          background: rgba(245, 158, 11, 0.1);
+          color: #fbbf24;
+          font-weight: 600;
         }
       `}</style>
     </div>

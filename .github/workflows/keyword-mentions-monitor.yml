@@ -3,7 +3,7 @@ name: Keyword Mentions Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 6 * * 1"  # Weekly on Monday at 6:30am UTC (was hourly — burned ~2k min/month)
+    - cron: "30 6 * * 1" # Weekly on Monday at 6:30am UTC (was hourly — burned ~2k min/month)
 
 concurrency:
   group: keyword-mentions-monitor
@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: ".nvmrc"
 
       - name: Build frontend+api grep snapshots
         run: |

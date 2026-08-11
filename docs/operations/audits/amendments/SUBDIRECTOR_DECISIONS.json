@@ -1,0 +1,60 @@
+[
+  {
+    "id": "A1",
+    "decision": "ACCEPT_WITH_CHANGES",
+    "rationale": "Matches Full Enchilada exec verdict (establish≠operate) and 2026-08-09 lesson; human_gate_required=false; observes dual full-auto without killing. Needs command pin + remove already-DONE retention file so federated implementers have a single concrete surface.",
+    "required_packet_edits": [
+      "solution.steps[2]: replace with exactly \"Wire `tnf autonomy health` (not fleet health alias) that prints rollup and exits non-zero when status=critical.\"",
+      "solution.files: remove \"scripts/operations/swarm-disk-retention.sh\" (hygiene ACCEPTED as DONE; out of A1 scope).",
+      "solution.steps: append \"Do not stop/kill full-auto loops based on rollup; rollup is observe/fail-closed for inspect only.\""
+    ]
+  },
+  {
+    "id": "A2",
+    "decision": "ACCEPT_WITH_CHANGES",
+    "rationale": "Directly codifies orchestrate false-SUCCESS lesson; autonomous refuse+artifact gate is federated-safe. File globs/`or` paths block one-shot autonomous implementation — must pin modules.",
+    "required_packet_edits": [
+      "solution.files: replace entire array with [\"packages/tnf-cli/src/orchestration.ts\", \"packages/tnf-cli/src/orchestration-enhancements.ts\", \"packages/tnf-cli/src/cli.ts\"].",
+      "solution.files: remove \"docs/operations/audits/amendments/packets/A2_verify.md\"; add fixture path \"packages/tnf-cli/src/__tests__/orchestrate-report-only.test.ts\" (or nearest existing test harness path under packages/tnf-cli).",
+      "solution.steps[0]: replace locate prose with \"Patch Orchestrator.executeGoal / pattern table in orchestration.ts (+ orchestration-enhancements.ts) to add intent class REPORT_ONLY when goal matches /\\\\b(audit|report-only|report only|synthesis|what makes sense|full enchilada)\\\\b/i.\"",
+      "solution.verify: append \"rm -f docs/operations/audits/amendments/_orchestrate_smoke.md after successful smoke (keep tree clean).\""
+    ]
+  },
+  {
+    "id": "A3",
+    "decision": "ACCEPT",
+    "rationale": "Aligned with operator/higher directive that dual full-auto loops are an intentional adversarial contention test. Packet is observe-only by default, forbids auto-kill, keeps human_gate_required=false, and provides PID-stable verify probes. --resolve-kill only behind explicit policy ticket is an acceptable dual path, not a collapse recommendation.",
+    "required_packet_edits": []
+  },
+  {
+    "id": "A4",
+    "decision": "ACCEPT_WITH_CHANGES",
+    "rationale": "Codifies reflect/edge-flywheel hang lesson with timeout + skip flag; fully agent-writable under ~/.agents and autonomous. Tighten absolute verify paths and authoritative skill location so workers do not block on missing repo mirror.",
+    "required_packet_edits": [
+      "solution.files[0]: keep \"~/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh\" as authoritative target.",
+      "solution.files[1]: change to optional note — \"repo .agents mirror only if that path exists; do not block if absent\".",
+      "solution.verify[0]: replace with \"SKIP_EDGE_FLYWHEEL=1 bash ~/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh completes <60s and writes ~/.tnf/reports/self-improvement/reflect-*.md\".",
+      "solution.steps: append \"Export REFLECT_FLYWHEEL_TIMEOUT_SEC=120 as default; timeout wrapper must not require GNU timeout on macOS.\""
+    ]
+  },
+  {
+    "id": "A5",
+    "decision": "ACCEPT_WITH_CHANGES",
+    "rationale": "Addresses P0 tip-align / SYNCHRONIZED-vs-HEAD false green from audit; marker replace + DRIFT downgrade is federated-autonomous. Collapse handoff globs to concrete scripts and default tip-align to artifact write (no commit gate) to keep human_gate_required=false enforceable.",
+    "required_packet_edits": [
+      "solution.files: replace \"scripts/protocols/*handoff*\" with concrete [\"scripts/protocols/emit-session-handoff.cjs\", \"scripts/protocols/enforce-session-handoff.cjs\", \"scripts/protocols/validate-handoff-source-drift.cjs\"].",
+      "solution.steps[4]: replace with \"Autonomous tip-align: call emit-session-handoff (+ Living State marker rewrite) writing artifacts only; do not require git commit for packet success. STATUS:SYNCHRONIZED only when handoff head_sha == git rev-parse HEAD; else STATUS:DRIFT.\"",
+      "solution.verify[1]: replace with \"tnf state show --full | rg -n 'CURRENT_DIRECTIVE:(START|END)' (or equivalent marker assertion) proves single fenced Current Directive slot.\""
+    ]
+  },
+  {
+    "id": "A6",
+    "decision": "ACCEPT_WITH_CHANGES",
+    "rationale": "Fixes dual PASS-then-FAIL protocol gate narrative called out as L1/P0-B in audit; autonomous UX+exit-code alignment with feature-flag rollback. Pin interceptor module and forbid kill/collapse coupling.",
+    "required_packet_edits": [
+      "solution.files: replace with [\"packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts\", \"packages/tnf-cli/src/cli.ts\", \"scripts/protocols/enforce-session-handoff.cjs\"].",
+      "solution.steps: append \"Single VERDICT must not recommend stopping full-auto loops; gate reports baton/health ceremony only.\"",
+      "conflicts: set to [\"None with adversarial dual full-auto — verdict UX only.\"]"
+    ]
+  }
+]

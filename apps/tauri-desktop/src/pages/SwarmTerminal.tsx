@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useRef, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 
 /**
@@ -103,7 +102,6 @@ const SwarmTerminal: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
       <div className="terminal-hub">
         <div className="hub-content">
           {/* Terminal Grid */}

@@ -250374,7 +250374,7 @@
         "label": "Agent Matrix & Personas",
         "kind": "premium",
         "parentId": "TNF",
-        "childCount": 14,
+        "childCount": 19,
         "authRequired": true,
         "description": null
       },
@@ -250483,7 +250483,7 @@
       "id": "AGENT_SKILL_6",
       "type": "class",
       "data": {
-        "label": "Data",
+        "label": "tnf-fleet-delegation-governor",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250499,7 +250499,7 @@
       "id": "AGENT_SKILL_7",
       "type": "class",
       "data": {
-        "label": "Cloud",
+        "label": "tnf-harness-integrity-auditor",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250515,7 +250515,7 @@
       "id": "AGENT_SKILL_8",
       "type": "class",
       "data": {
-        "label": "Scripts",
+        "label": "tnf-autonomous-loop-topology",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250531,7 +250531,7 @@
       "id": "AGENT_SKILL_9",
       "type": "class",
       "data": {
-        "label": "Generator",
+        "label": "tnf-proactive-goal-wizard",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250547,7 +250547,7 @@
       "id": "AGENT_SKILL_10",
       "type": "class",
       "data": {
-        "label": "Outputs",
+        "label": "tnf-ufte-federated-tag-governor",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250563,7 +250563,7 @@
       "id": "AGENT_SKILL_11",
       "type": "class",
       "data": {
-        "label": "System",
+        "label": "Data",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250579,7 +250579,7 @@
       "id": "AGENT_SKILL_12",
       "type": "class",
       "data": {
-        "label": "User",
+        "label": "Cloud",
         "kind": "cls",
         "parentId": "DOMAIN_AGENTS",
         "childCount": 0,
@@ -250593,6 +250593,86 @@
     },
     {
       "id": "AGENT_SKILL_13",
+      "type": "class",
+      "data": {
+        "label": "Scripts",
+        "kind": "cls",
+        "parentId": "DOMAIN_AGENTS",
+        "childCount": 0,
+        "authRequired": true,
+        "description": "Agent Skill definition."
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "AGENT_SKILL_14",
+      "type": "class",
+      "data": {
+        "label": "Generator",
+        "kind": "cls",
+        "parentId": "DOMAIN_AGENTS",
+        "childCount": 0,
+        "authRequired": true,
+        "description": "Agent Skill definition."
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "AGENT_SKILL_15",
+      "type": "class",
+      "data": {
+        "label": "Outputs",
+        "kind": "cls",
+        "parentId": "DOMAIN_AGENTS",
+        "childCount": 0,
+        "authRequired": true,
+        "description": "Agent Skill definition."
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "AGENT_SKILL_16",
+      "type": "class",
+      "data": {
+        "label": "System",
+        "kind": "cls",
+        "parentId": "DOMAIN_AGENTS",
+        "childCount": 0,
+        "authRequired": true,
+        "description": "Agent Skill definition."
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "AGENT_SKILL_17",
+      "type": "class",
+      "data": {
+        "label": "User",
+        "kind": "cls",
+        "parentId": "DOMAIN_AGENTS",
+        "childCount": 0,
+        "authRequired": true,
+        "description": "Agent Skill definition."
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "AGENT_SKILL_18",
       "type": "class",
       "data": {
         "label": "Skill",
@@ -250614,7 +250694,7 @@
         "label": "Core Protocols & Directives",
         "kind": "premium",
         "parentId": "TNF",
-        "childCount": 70,
+        "childCount": 78,
         "authRequired": false,
         "description": null
       },
@@ -250899,6 +250979,22 @@
       "id": "PROTO_17",
       "type": "file",
       "data": {
+        "label": "LIVE_AGENT_WORK_CHECK",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: LIVE_AGENT_WORK_CHECK.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_18",
+      "type": "file",
+      "data": {
         "label": "LIVING_DIRECTIVES_CARD",
         "kind": "file",
         "parentId": "DOMAIN_PROTOCOLS",
@@ -250912,7 +251008,7 @@
       }
     },
     {
-      "id": "PROTO_18",
+      "id": "PROTO_19",
       "type": "file",
       "data": {
         "label": "LIVING_STATE",
@@ -250928,7 +251024,7 @@
       }
     },
     {
-      "id": "PROTO_19",
+      "id": "PROTO_20",
       "type": "file",
       "data": {
         "label": "MCP-COMPLETE-GUIDE",
@@ -250944,7 +251040,7 @@
       }
     },
     {
-      "id": "PROTO_20",
+      "id": "PROTO_21",
       "type": "file",
       "data": {
         "label": "MEMPALACE_META_CHART",
@@ -250960,7 +251056,7 @@
       }
     },
     {
-      "id": "PROTO_21",
+      "id": "PROTO_22",
       "type": "file",
       "data": {
         "label": "MULTI_AGENT_INTEGRATION_PROTOCOL",
@@ -250976,7 +251072,23 @@
       }
     },
     {
-      "id": "PROTO_22",
+      "id": "PROTO_23",
+      "type": "file",
+      "data": {
+        "label": "PROTOCOL_MAP",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: PROTOCOL_MAP.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_24",
       "type": "file",
       "data": {
         "label": "SESSION_HANDOFF_ENFORCEMENT",
@@ -250992,7 +251104,7 @@
       }
     },
     {
-      "id": "PROTO_23",
+      "id": "PROTO_25",
       "type": "file",
       "data": {
         "label": "SESSION_HANDOFF_TEMPLATE",
@@ -251008,7 +251120,7 @@
       }
     },
     {
-      "id": "PROTO_24",
+      "id": "PROTO_26",
       "type": "file",
       "data": {
         "label": "THE_VELOCITY_INTEGRITY_BALANCE",
@@ -251024,7 +251136,7 @@
       }
     },
     {
-      "id": "PROTO_25",
+      "id": "PROTO_27",
       "type": "file",
       "data": {
         "label": "TNF_AGENT_ROSTER_CLEANUP",
@@ -251040,7 +251152,7 @@
       }
     },
     {
-      "id": "PROTO_26",
+      "id": "PROTO_28",
       "type": "file",
       "data": {
         "label": "TNF_AGENT_SHELL_HYGIENE",
@@ -251056,7 +251168,23 @@
       }
     },
     {
-      "id": "PROTO_27",
+      "id": "PROTO_29",
+      "type": "file",
+      "data": {
+        "label": "TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_30",
       "type": "file",
       "data": {
         "label": "TNF_ARTIFACTS_LIFECYCLE_PROTOCOL",
@@ -251072,7 +251200,7 @@
       }
     },
     {
-      "id": "PROTO_28",
+      "id": "PROTO_31",
       "type": "file",
       "data": {
         "label": "TNF_AUTONOMOUS_CONTINUITY_PROTOCOL",
@@ -251088,7 +251216,7 @@
       }
     },
     {
-      "id": "PROTO_29",
+      "id": "PROTO_32",
       "type": "file",
       "data": {
         "label": "TNF_BOOK_OF_AXIOMS",
@@ -251104,7 +251232,23 @@
       }
     },
     {
-      "id": "PROTO_30",
+      "id": "PROTO_33",
+      "type": "file",
+      "data": {
+        "label": "TNF_COLLISION_PROVISION",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_COLLISION_PROVISION.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_34",
       "type": "file",
       "data": {
         "label": "TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL",
@@ -251120,7 +251264,23 @@
       }
     },
     {
-      "id": "PROTO_31",
+      "id": "PROTO_35",
+      "type": "file",
+      "data": {
+        "label": "TNF_CONTEXTUAL_GROUNDING_MARKERS_SPEC",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_CONTEXTUAL_GROUNDING_MARKERS_SPEC.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_36",
       "type": "file",
       "data": {
         "label": "TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL",
@@ -251136,7 +251296,7 @@
       }
     },
     {
-      "id": "PROTO_32",
+      "id": "PROTO_37",
       "type": "file",
       "data": {
         "label": "TNF_DIRECTIVES",
@@ -251152,7 +251312,7 @@
       }
     },
     {
-      "id": "PROTO_33",
+      "id": "PROTO_38",
       "type": "file",
       "data": {
         "label": "TNF_DOCUMENT_TAGGING_PROTOCOL",
@@ -251168,7 +251328,7 @@
       }
     },
     {
-      "id": "PROTO_34",
+      "id": "PROTO_39",
       "type": "file",
       "data": {
         "label": "TNF_DOCUMENT_VETTING_PROCEDURE",
@@ -251184,7 +251344,7 @@
       }
     },
     {
-      "id": "PROTO_35",
+      "id": "PROTO_40",
       "type": "file",
       "data": {
         "label": "TNF_ENVIRONMENT_ADAPTER",
@@ -251200,7 +251360,23 @@
       }
     },
     {
-      "id": "PROTO_36",
+      "id": "PROTO_41",
+      "type": "file",
+      "data": {
+        "label": "TNF_FEDERATED_TAG_SYNERGY_SPEC",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_FEDERATED_TAG_SYNERGY_SPEC.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_42",
       "type": "file",
       "data": {
         "label": "TNF_FLEET_HEALTH_PROBE_PROTOCOL",
@@ -251216,7 +251392,7 @@
       }
     },
     {
-      "id": "PROTO_37",
+      "id": "PROTO_43",
       "type": "file",
       "data": {
         "label": "TNF_FRONTEND_IA_CANON",
@@ -251232,7 +251408,7 @@
       }
     },
     {
-      "id": "PROTO_38",
+      "id": "PROTO_44",
       "type": "file",
       "data": {
         "label": "TNF_GOVERNANCE_SYNTHESIS_v2.0",
@@ -251248,7 +251424,7 @@
       }
     },
     {
-      "id": "PROTO_39",
+      "id": "PROTO_45",
       "type": "file",
       "data": {
         "label": "TNF_GOVERNANCE_TENETS",
@@ -251264,7 +251440,7 @@
       }
     },
     {
-      "id": "PROTO_40",
+      "id": "PROTO_46",
       "type": "file",
       "data": {
         "label": "TNF_INFORMATION_INGESTION_PIPELINE",
@@ -251280,7 +251456,7 @@
       }
     },
     {
-      "id": "PROTO_41",
+      "id": "PROTO_47",
       "type": "file",
       "data": {
         "label": "TNF_MODULE_DEPENDENCY_AWARENESS",
@@ -251296,7 +251472,7 @@
       }
     },
     {
-      "id": "PROTO_42",
+      "id": "PROTO_48",
       "type": "file",
       "data": {
         "label": "TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL",
@@ -251312,7 +251488,7 @@
       }
     },
     {
-      "id": "PROTO_43",
+      "id": "PROTO_49",
       "type": "file",
       "data": {
         "label": "TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL",
@@ -251328,7 +251504,23 @@
       }
     },
     {
-      "id": "PROTO_44",
+      "id": "PROTO_50",
+      "type": "file",
+      "data": {
+        "label": "TNF_PROACTIVE_GOAL_WIZARDING_PROTOCOL",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_PROACTIVE_GOAL_WIZARDING_PROTOCOL.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_51",
       "type": "file",
       "data": {
         "label": "TNF_RESOURCE_STRATEGY",
@@ -251344,7 +251536,7 @@
       }
     },
     {
-      "id": "PROTO_45",
+      "id": "PROTO_52",
       "type": "file",
       "data": {
         "label": "TNF_SELF_HEALING_PROTOCOL",
@@ -251360,7 +251552,7 @@
       }
     },
     {
-      "id": "PROTO_46",
+      "id": "PROTO_53",
       "type": "file",
       "data": {
         "label": "TNF_SELF_SUFFICIENCY",
@@ -251376,7 +251568,7 @@
       }
     },
     {
-      "id": "PROTO_47",
+      "id": "PROTO_54",
       "type": "file",
       "data": {
         "label": "TNF_SYSTEM_LEXICON",
@@ -251392,7 +251584,23 @@
       }
     },
     {
-      "id": "PROTO_48",
+      "id": "PROTO_55",
+      "type": "file",
+      "data": {
+        "label": "TNF_SYSTEM_LOGICAL_COHESION_MANUAL",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_SYSTEM_LOGICAL_COHESION_MANUAL.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_56",
       "type": "file",
       "data": {
         "label": "TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL",
@@ -251408,7 +251616,7 @@
       }
     },
     {
-      "id": "PROTO_49",
+      "id": "PROTO_57",
       "type": "file",
       "data": {
         "label": "TS_FIRST_CONTRACT_MIGRATION_PLAN_2026-05-17",
@@ -251424,7 +251632,7 @@
       }
     },
     {
-      "id": "PROTO_50",
+      "id": "PROTO_58",
       "type": "file",
       "data": {
         "label": "TURN_END_MANDATE",
@@ -251440,7 +251648,7 @@
       }
     },
     {
-      "id": "PROTO_51",
+      "id": "PROTO_59",
       "type": "file",
       "data": {
         "label": "TURN_ZERO_MANDATE",
@@ -251456,7 +251664,7 @@
       }
     },
     {
-      "id": "PROTO_52",
+      "id": "PROTO_60",
       "type": "file",
       "data": {
         "label": "UTP_SPEC_v1.0",
@@ -251472,7 +251680,7 @@
       }
     },
     {
-      "id": "PROTO_53",
+      "id": "PROTO_61",
       "type": "file",
       "data": {
         "label": "VOICE_LIVE_CONTEXT",
@@ -251488,7 +251696,7 @@
       }
     },
     {
-      "id": "PROTO_54",
+      "id": "PROTO_62",
       "type": "file",
       "data": {
         "label": "aca-usage",
@@ -251504,7 +251712,7 @@
       }
     },
     {
-      "id": "PROTO_55",
+      "id": "PROTO_63",
       "type": "file",
       "data": {
         "label": "agent-self-edit-protocol-v0.1",
@@ -251520,7 +251728,7 @@
       }
     },
     {
-      "id": "PROTO_56",
+      "id": "PROTO_64",
       "type": "file",
       "data": {
         "label": "draft-sgp-0001",
@@ -251536,7 +251744,7 @@
       }
     },
     {
-      "id": "PROTO_57",
+      "id": "PROTO_65",
       "type": "file",
       "data": {
         "label": "draft-twip-0001",
@@ -251552,7 +251760,7 @@
       }
     },
     {
-      "id": "PROTO_58",
+      "id": "PROTO_66",
       "type": "file",
       "data": {
         "label": "mcp-nestjs-integration",
@@ -251568,7 +251776,7 @@
       }
     },
     {
-      "id": "PROTO_59",
+      "id": "PROTO_67",
       "type": "file",
       "data": {
         "label": "resource-search-protocol-bridge",
@@ -251584,7 +251792,7 @@
       }
     },
     {
-      "id": "PROTO_60",
+      "id": "PROTO_68",
       "type": "file",
       "data": {
         "label": "resource-search-revision-implementation-plan",
@@ -251600,7 +251808,7 @@
       }
     },
     {
-      "id": "PROTO_61",
+      "id": "PROTO_69",
       "type": "file",
       "data": {
         "label": "tnf-cron-governance-protocol-v0.1",
@@ -251616,7 +251824,7 @@
       }
     },
     {
-      "id": "PROTO_62",
+      "id": "PROTO_70",
       "type": "file",
       "data": {
         "label": "tnf-log-to-dom-protocol",
@@ -251632,7 +251840,7 @@
       }
     },
     {
-      "id": "PROTO_63",
+      "id": "PROTO_71",
       "type": "file",
       "data": {
         "label": "twip-federation-state-2026-03-18",
@@ -251648,7 +251856,7 @@
       }
     },
     {
-      "id": "PROTO_64",
+      "id": "PROTO_72",
       "type": "file",
       "data": {
         "label": "twip-operator-runbook",
@@ -251664,7 +251872,7 @@
       }
     },
     {
-      "id": "PROTO_65",
+      "id": "PROTO_73",
       "type": "file",
       "data": {
         "label": "twip-orchestration-extension-v0.1",
@@ -251680,7 +251888,7 @@
       }
     },
     {
-      "id": "PROTO_66",
+      "id": "PROTO_74",
       "type": "file",
       "data": {
         "label": "twip-terminal-graph-api",
@@ -251696,7 +251904,7 @@
       }
     },
     {
-      "id": "PROTO_67",
+      "id": "PROTO_75",
       "type": "file",
       "data": {
         "label": "twip-terminal-identification-surfaces",
@@ -251712,7 +251920,7 @@
       }
     },
     {
-      "id": "PROTO_68",
+      "id": "PROTO_76",
       "type": "file",
       "data": {
         "label": "twip-terminal-macro-board",
@@ -251728,7 +251936,7 @@
       }
     },
     {
-      "id": "PROTO_69",
+      "id": "PROTO_77",
       "type": "file",
       "data": {
         "label": "twip-universalization-playbook",
@@ -345719,428 +345927,506 @@
     },
     {
       "id": "e-15662",
+      "source": "DOMAIN_AGENTS",
+      "target": "AGENT_SKILL_14",
+      "animated": true
+    },
+    {
+      "id": "e-15663",
+      "source": "DOMAIN_AGENTS",
+      "target": "AGENT_SKILL_15",
+      "animated": true
+    },
+    {
+      "id": "e-15664",
+      "source": "DOMAIN_AGENTS",
+      "target": "AGENT_SKILL_16",
+      "animated": true
+    },
+    {
+      "id": "e-15665",
+      "source": "DOMAIN_AGENTS",
+      "target": "AGENT_SKILL_17",
+      "animated": true
+    },
+    {
+      "id": "e-15666",
+      "source": "DOMAIN_AGENTS",
+      "target": "AGENT_SKILL_18",
+      "animated": true
+    },
+    {
+      "id": "e-15667",
       "source": "TNF",
       "target": "DOMAIN_PROTOCOLS",
       "animated": true
     },
     {
-      "id": "e-15663",
+      "id": "e-15668",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_0",
       "animated": true
     },
     {
-      "id": "e-15664",
+      "id": "e-15669",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_1",
       "animated": true
     },
     {
-      "id": "e-15665",
+      "id": "e-15670",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_2",
       "animated": true
     },
     {
-      "id": "e-15666",
+      "id": "e-15671",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_3",
       "animated": true
     },
     {
-      "id": "e-15667",
+      "id": "e-15672",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_4",
       "animated": true
     },
     {
-      "id": "e-15668",
+      "id": "e-15673",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_5",
       "animated": true
     },
     {
-      "id": "e-15669",
+      "id": "e-15674",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_6",
       "animated": true
     },
     {
-      "id": "e-15670",
+      "id": "e-15675",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_7",
       "animated": true
     },
     {
-      "id": "e-15671",
+      "id": "e-15676",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_8",
       "animated": true
     },
     {
-      "id": "e-15672",
+      "id": "e-15677",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_9",
       "animated": true
     },
     {
-      "id": "e-15673",
+      "id": "e-15678",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_10",
       "animated": true
     },
     {
-      "id": "e-15674",
+      "id": "e-15679",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_11",
       "animated": true
     },
     {
-      "id": "e-15675",
+      "id": "e-15680",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_12",
       "animated": true
     },
     {
-      "id": "e-15676",
+      "id": "e-15681",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_13",
       "animated": true
     },
     {
-      "id": "e-15677",
+      "id": "e-15682",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_14",
       "animated": true
     },
     {
-      "id": "e-15678",
+      "id": "e-15683",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_15",
       "animated": true
     },
     {
-      "id": "e-15679",
+      "id": "e-15684",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_16",
       "animated": true
     },
     {
-      "id": "e-15680",
+      "id": "e-15685",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_17",
       "animated": true
     },
     {
-      "id": "e-15681",
+      "id": "e-15686",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_18",
       "animated": true
     },
     {
-      "id": "e-15682",
+      "id": "e-15687",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_19",
       "animated": true
     },
     {
-      "id": "e-15683",
+      "id": "e-15688",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_20",
       "animated": true
     },
     {
-      "id": "e-15684",
+      "id": "e-15689",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_21",
       "animated": true
     },
     {
-      "id": "e-15685",
+      "id": "e-15690",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_22",
       "animated": true
     },
     {
-      "id": "e-15686",
+      "id": "e-15691",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_23",
       "animated": true
     },
     {
-      "id": "e-15687",
+      "id": "e-15692",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_24",
       "animated": true
     },
     {
-      "id": "e-15688",
+      "id": "e-15693",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_25",
       "animated": true
     },
     {
-      "id": "e-15689",
+      "id": "e-15694",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_26",
       "animated": true
     },
     {
-      "id": "e-15690",
+      "id": "e-15695",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_27",
       "animated": true
     },
     {
-      "id": "e-15691",
+      "id": "e-15696",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_28",
       "animated": true
     },
     {
-      "id": "e-15692",
+      "id": "e-15697",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_29",
       "animated": true
     },
     {
-      "id": "e-15693",
+      "id": "e-15698",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_30",
       "animated": true
     },
     {
-      "id": "e-15694",
+      "id": "e-15699",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_31",
       "animated": true
     },
     {
-      "id": "e-15695",
+      "id": "e-15700",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_32",
       "animated": true
     },
     {
-      "id": "e-15696",
+      "id": "e-15701",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_33",
       "animated": true
     },
     {
-      "id": "e-15697",
+      "id": "e-15702",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_34",
       "animated": true
     },
     {
-      "id": "e-15698",
+      "id": "e-15703",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_35",
       "animated": true
     },
     {
-      "id": "e-15699",
+      "id": "e-15704",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_36",
       "animated": true
     },
     {
-      "id": "e-15700",
+      "id": "e-15705",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_37",
       "animated": true
     },
     {
-      "id": "e-15701",
+      "id": "e-15706",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_38",
       "animated": true
     },
     {
-      "id": "e-15702",
+      "id": "e-15707",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_39",
       "animated": true
     },
     {
-      "id": "e-15703",
+      "id": "e-15708",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_40",
       "animated": true
     },
     {
-      "id": "e-15704",
+      "id": "e-15709",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_41",
       "animated": true
     },
     {
-      "id": "e-15705",
+      "id": "e-15710",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_42",
       "animated": true
     },
     {
-      "id": "e-15706",
+      "id": "e-15711",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_43",
       "animated": true
     },
     {
-      "id": "e-15707",
+      "id": "e-15712",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_44",
       "animated": true
     },
     {
-      "id": "e-15708",
+      "id": "e-15713",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_45",
       "animated": true
     },
     {
-      "id": "e-15709",
+      "id": "e-15714",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_46",
       "animated": true
     },
     {
-      "id": "e-15710",
+      "id": "e-15715",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_47",
       "animated": true
     },
     {
-      "id": "e-15711",
+      "id": "e-15716",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_48",
       "animated": true
     },
     {
-      "id": "e-15712",
+      "id": "e-15717",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_49",
       "animated": true
     },
     {
-      "id": "e-15713",
+      "id": "e-15718",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_50",
       "animated": true
     },
     {
-      "id": "e-15714",
+      "id": "e-15719",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_51",
       "animated": true
     },
     {
-      "id": "e-15715",
+      "id": "e-15720",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_52",
       "animated": true
     },
     {
-      "id": "e-15716",
+      "id": "e-15721",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_53",
       "animated": true
     },
     {
-      "id": "e-15717",
+      "id": "e-15722",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_54",
       "animated": true
     },
     {
-      "id": "e-15718",
+      "id": "e-15723",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_55",
       "animated": true
     },
     {
-      "id": "e-15719",
+      "id": "e-15724",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_56",
       "animated": true
     },
     {
-      "id": "e-15720",
+      "id": "e-15725",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_57",
       "animated": true
     },
     {
-      "id": "e-15721",
+      "id": "e-15726",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_58",
       "animated": true
     },
     {
-      "id": "e-15722",
+      "id": "e-15727",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_59",
       "animated": true
     },
     {
-      "id": "e-15723",
+      "id": "e-15728",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_60",
       "animated": true
     },
     {
-      "id": "e-15724",
+      "id": "e-15729",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_61",
       "animated": true
     },
     {
-      "id": "e-15725",
+      "id": "e-15730",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_62",
       "animated": true
     },
     {
-      "id": "e-15726",
+      "id": "e-15731",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_63",
       "animated": true
     },
     {
-      "id": "e-15727",
+      "id": "e-15732",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_64",
       "animated": true
     },
     {
-      "id": "e-15728",
+      "id": "e-15733",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_65",
       "animated": true
     },
     {
-      "id": "e-15729",
+      "id": "e-15734",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_66",
       "animated": true
     },
     {
-      "id": "e-15730",
+      "id": "e-15735",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_67",
       "animated": true
     },
     {
-      "id": "e-15731",
+      "id": "e-15736",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_68",
       "animated": true
     },
     {
-      "id": "e-15732",
+      "id": "e-15737",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_69",
+      "animated": true
+    },
+    {
+      "id": "e-15738",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_70",
+      "animated": true
+    },
+    {
+      "id": "e-15739",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_71",
+      "animated": true
+    },
+    {
+      "id": "e-15740",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_72",
+      "animated": true
+    },
+    {
+      "id": "e-15741",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_73",
+      "animated": true
+    },
+    {
+      "id": "e-15742",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_74",
+      "animated": true
+    },
+    {
+      "id": "e-15743",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_75",
+      "animated": true
+    },
+    {
+      "id": "e-15744",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_76",
+      "animated": true
+    },
+    {
+      "id": "e-15745",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_77",
       "animated": true
     }
   ]

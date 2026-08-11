@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# --- tnf dependency preflight ------------------------------------------
+# cron runs with a minimal PATH. These scripts have no 'set -e', so a
+# missing binary previously produced 'command not found', an exit code of
+# 0, and a cycle that cron recorded as successful while doing nothing.
+# Fail loudly at the top instead.
+for _tnf_bin in curl jq redis-cli; do
+  command -v "$_tnf_bin" >/dev/null 2>&1 || {
+    echo "FATAL: required binary '$_tnf_bin' not found. PATH=$PATH" >&2
+    exit 127
+  }
+done
+# --- end tnf dependency preflight -----------------------------------
+
 # TNF Frontend Tester — one cycle.
 # Native replacement for the legacy OpenClaw `tnf-continuous-test.sh`
 # that ran as a launchd KeepAlive loop under
@@ -60,17 +74,43 @@ report_issue() {
 
 probe() {
   local label="$1" url="$2" method="${3:-GET}" expected_status="${4:-200}" expected_body_substr="${5:-}"
-  local tmp status_code time_total body
+  local tmp errf status_code time_total body curl_exit=0 err
   tmp=$(mktemp)
-  status_code=$(curl -sS -m 10 -o "$tmp" -w '%{http_code}|%{time_total}' -X "$method" "$url" 2>/dev/null || echo "000|0.0")
+  errf=$(mktemp)
+  # Capture curl's exit code and stderr. Previously both were discarded
+  # (`2>/dev/null || echo "000|0.0"`), which collapsed DNS failure, connection
+  # refused, timeout, TLS handshake failure and certificate-verification
+  # failure into one indistinguishable `000` reported as "endpoint
+  # unreachable". Between 2026-07-25 and 2026-08-05 that mislabelled a local
+  # TLS-interception problem as a production outage 386 times: the site was up
+  # the whole time (it answers 403 when verification is skipped), but the chain
+  # was being re-signed by a Fortinet appliance. A failure wearing the wrong
+  # label is the same defect class as `catch { return [] }` — it cannot be
+  # routed around because it cannot be told apart.
+  status_code=$(curl -sS -m 10 -o "$tmp" -w '%{http_code}|%{time_total}' -X "$method" "$url" 2>"$errf") || curl_exit=$?
+  [ -n "$status_code" ] || status_code="000|0.0"
   body=$(cat "$tmp" 2>/dev/null || echo "")
-  rm -f "$tmp"
+  err=$(tr '\n' ' ' <"$errf" 2>/dev/null | sed 's/  */ /g' | cut -c1-160)
+  rm -f "$tmp" "$errf"
   local code="${status_code%%|*}"
   local tt="${status_code##*|}"
 
   # ok / degraded / critical classifier
   if [ "$code" = "000" ]; then
-    report_issue "$label" "critical" "endpoint unreachable" "code=$code ttime=${tt}s"
+    # Map curl's exit code to a specific, actionable diagnosis. See
+    # `man curl` EXIT CODES. Each stays critical — all of them block real
+    # traffic — but the description must name the actual fault so the alert
+    # is de-duplicable and points at the right remediation.
+    local why
+    case "$curl_exit" in
+      60|51) why="TLS certificate verification failed" ;;
+      35)    why="TLS handshake failed" ;;
+      6)     why="DNS resolution failed" ;;
+      7)     why="connection refused" ;;
+      28)    why="request timed out" ;;
+      *)     why="endpoint unreachable" ;;
+    esac
+    report_issue "$label" "critical" "$why" "curl_exit=$curl_exit code=$code ttime=${tt}s detail=${err:-none}"
     return 1
   fi
   if [ "$code" != "$expected_status" ]; then

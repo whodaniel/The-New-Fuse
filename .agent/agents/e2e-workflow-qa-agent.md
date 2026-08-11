@@ -1,15 +1,36 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: e2e-workflow-qa-agent
-displayName: TNF E2E Workflow QA
-description:
-  Specialized QA agent that runs end-to-end TNF workflows across the stack —
-  chrome-extension, crawler, timeline, and cross-app integration specs.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities:
-  ['e2e_run', 'cross_app_trace', 'fixture_setup', 'integration_probe']
-tags: ['qa', 'e2e', 'integration', 'workflow', 'cross-app']
+description: Specialized QA agent that runs end-to-end TNF workflows across the stack
+  — chrome-extension, crawler, timeline, and cross-app integration specs.
 version: 1.1.0
+tags:
+- qa
+- e2e
+- integration
+- workflow
+- cross-app
+capabilities:
+- e2e_run
+- cross_app_trace
+- fixture_setup
+- integration_probe
+displayName: TNF E2E Workflow QA
+agentType: testing
 ---
 
 # E2E Workflow QA Agent

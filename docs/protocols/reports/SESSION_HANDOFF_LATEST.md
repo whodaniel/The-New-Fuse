@@ -1,58 +1,73 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-03T22:48:19.924Z`  
-Handoff ID: `169cd0cf-4cf8-4947-ae0a-f373a62bb236`
+Created At: `2026-08-11T08:18:53.155Z`  
+Handoff ID: `cfbe965f-c10f-4ee0-9afa-d88b2904e90d`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `main`
-- Head SHA: `e3db3e5816f9c9dee943711d99cd92dad3ee6d49`
+- Branch: `fix/honest-failure-reporting`
+- Head SHA: `585f72e35f5e2d3346d02b74ab0025531b336d60`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Peeled Living State Active Steps cron spam (~82 duplicates) on main after PR
-  #77 merge.
-- Hardened turn-end.cjs to never log steady-state crontab as completed Active
-  Steps; require.main guard prevents accidental require() re-runs.
-- Refreshed handoff so IMMEDIATE_TASKS are actionable work, not commit-gate
-  notices or stale parity-PR open actions.
+- Interactive Tauri hardening smoke PASS (3/3 Playwright): external Web docs
+  link, OAGI arm/disarm gate, Chrome bootstrap invokes.
+- Unblocked desktop Vite splash via src/lib/sharedFederation.ts shim +
+  import.meta.env fixes + widened tsconfig rootDir.
+- Updated smoke receipt TAURI_HARDENING_SMOKE_2026-08-11.md.
 
 ## Changed Paths
 
+- apps/tauri-desktop/package.json
+- apps/tauri-desktop/src-tauri/Cargo.lock
+- apps/tauri-desktop/src-tauri/Cargo.toml
+- apps/tauri-desktop/src-tauri/capabilities/default.json
+- apps/tauri-desktop/src-tauri/tauri.conf.json
+- apps/tauri-desktop/src/components/QuickActionsDashboard.tsx
+- apps/tauri-desktop/src/lib/openExternal.ts
+- apps/tauri-desktop/e2e/full-interaction.spec.ts
+- apps/tauri-desktop/e2e/helpers/interactionAudit.ts
+- apps/tauri-desktop/e2e/tauri-hardening-smoke.spec.ts
+- apps/tauri-desktop/playwright.smoke.config.ts
+- apps/tauri-desktop/src/lib/sharedFederation.ts
+- apps/tauri-desktop/src/services/FederationNodeService.ts
+- apps/tauri-desktop/src/services/OperatorSynergyService.ts
+- apps/tauri-desktop/src/services/RelaySwarmService.ts
+- apps/tauri-desktop/src/config/endpointDiscovery.ts
+- apps/tauri-desktop/src/hooks/useTnfApi.ts
+- apps/tauri-desktop/src/App.tsx
+- apps/tauri-desktop/vite.config.ts
+- apps/tauri-desktop/tsconfig.json
+- packages/shared/package.json
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/reports/TAURI_HARDENING_SMOKE_2026-08-11.md
 
 ## Verification
 
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
 
-- Owner: `operator`
+- Owner: `cursor-agent`
 - Targets: `orchestrator`
-- Priority: `medium`
+- Priority: `high`
 
 ### Resume Checklist
 
-- Read docs/protocols/LIVING_STATE.md Current Directive + Cleared block
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Work through next_actions — NEEDS LIVE OPERATOR CONFIRMATION items are
-  notices, not standing commands
+- Read SESSION_HANDOFF_LATEST + TAURI_HARDENING_SMOKE_2026-08-11.md.
+- Confirm playwright.smoke.config suite still green.
+- Merge PR #81.
 
 ## Next Actions
 
-- Execute the actionable work queue — Hermes CLI surface/noun parity is complete
-  (PR #77 MERGED); prefer product work (optional real Slack/WhatsApp channels)
-  over protocol notice churn.
-- Authority residual (relaunch-workers → confirm-isolation) remains
-  operator-gated — PR #70 MERGED; not a standing autonomous P0.
-- Keep commits/pushes operator-gated; items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices only (OPERATOR_NOTICES in handoff cache), never the
-  sole IMMEDIATE_TASKS.
+- Merge PR #81 after pushing smoke/unblock commit.
+- Keep unrelated dirty tree churn out of this PR path.

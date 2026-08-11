@@ -223,7 +223,11 @@ start_redis() {
     if check_redis; then
         echo -e "  ${GREEN}✓${NC} Redis is already running"
     else
-        redis-server --daemonize yes
+        if [[ -x "scripts/runtime/redis-local-bootstrap.sh" ]]; then
+            bash scripts/runtime/redis-local-bootstrap.sh start
+        else
+            redis-server --daemonize yes
+        fi
         sleep 1
         if check_redis; then
             echo -e "  ${GREEN}✓${NC} Redis started on port $REDIS_PORT"

@@ -251,6 +251,23 @@ function updateLedger(handoffId) {
   fs.writeFileSync(ledgerPath, `${content.trimEnd()}\n\n${row}\n`, 'utf8');
 }
 
+function tipAligned(handoffPayload) {
+  let head = '';
+  try {
+    head = run('git rev-parse HEAD');
+  } catch {
+    head = '';
+  }
+  const handoffSha = String(handoffPayload.head_sha || '');
+  return Boolean(
+    head &&
+      handoffSha &&
+      (head === handoffSha ||
+        head.startsWith(handoffSha) ||
+        handoffSha.startsWith(head.slice(0, 12)))
+  );
+}
+
 function syncLivingState(handoffPayload) {
   if (!fs.existsSync(livingStatePath)) {
     console.warn('[emit-session-handoff] LIVING_STATE.md not found; skipping sync.');
@@ -265,17 +282,45 @@ function syncLivingState(handoffPayload) {
     leadAction = leadAction.slice(absRoot.length);
   }
   leadAction = leadAction.split(repoRoot).join('.');
+  // Fenced slot stays short — no UUID / Project ID sludge (A5).
+  leadAction = String(leadAction).replace(/\s+/g, ' ').trim().slice(0, 400);
   const handoffId = handoffPayload.handoff_id;
   const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
-  const directiveLine =
-    `**Current Directive:** ${leadAction} **Project ID:** \`${projectId}\` **Handoff:** \`${handoffId}\` **Head:** \`${headShort}\``;
+  const aligned = tipAligned(handoffPayload);
+  const statusMarker = aligned ? '[STATUS:SYNCHRONIZED]' : '[STATUS:DRIFT]';
+  const fence = [
+    '<!-- CURRENT_DIRECTIVE:START -->',
+    `**Current Directive:** ${leadAction}`,
+    '<!-- CURRENT_DIRECTIVE:END -->',
+  ].join('\n');
+  const historyLine = `- ${new Date().toISOString()} handoff \`${handoffId}\` head \`${headShort}\` project \`${projectId}\` — ${leadAction}`;
 
   let content = fs.readFileSync(livingStatePath, 'utf8');
-  if (/^\*\*Current Directive:\*\*/m.test(content)) {
-    content = content.replace(/^\*\*Current Directive:\*\*.*$/m, directiveLine);
-  } else {
-    content = `${directiveLine}\n\n${content}`;
+  content = content.replace(/\[STATUS:(?:SYNCHRONIZED|DRIFT)\]/g, statusMarker);
+  if (!content.includes(statusMarker)) {
+    content = content.replace(/^`?\[CLASS:PRIME\][^\n]*/m, `[CLASS:PRIME] ${statusMarker}`);
   }
+
+  const fenceRe =
+    /<!--\s*CURRENT_DIRECTIVE:START\s*-->[\s\S]*?<!--\s*CURRENT_DIRECTIVE:END\s*-->/;
+  if (fenceRe.test(content)) {
+    content = content.replace(fenceRe, fence);
+  } else if (/\*\*Current Directive:\*\*/.test(content)) {
+    // Collapse legacy multi-line sludge into a single fenced slot.
+    content = content.replace(
+      /\*\*Current Directive:\*\*[\s\S]*?(?=\n\n\*\*[A-Z]|\n\n## |\n---)/,
+      `${fence}\n`
+    );
+  } else {
+    content = `${fence}\n\n${content}`;
+  }
+
+  if (/## History\b/.test(content)) {
+    content = content.replace(/## History\b/, `## History\n\n${historyLine}`);
+  } else {
+    content = `${content.trimEnd()}\n\n## History\n\n${historyLine}\n`;
+  }
+
   fs.writeFileSync(livingStatePath, content, 'utf8');
 }
 

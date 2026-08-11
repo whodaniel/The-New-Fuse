@@ -1,9 +1,10 @@
-import { FederationNodeClient, type FederationNodeEvent } from '@the-new-fuse/shared/federation';
 import {
+  FederationNodeClient,
   generateFederationId,
   type FederationChannel,
   type FederationChannelMessage,
-} from '@the-new-fuse/shared/federation/protocol';
+  type FederationNodeEvent,
+} from '../lib/sharedFederation';
 import { EventEmitter } from './EventEmitter';
 
 export type FederationNodeServiceEvent = FederationNodeEvent;

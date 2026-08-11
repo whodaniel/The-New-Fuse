@@ -77,13 +77,13 @@ policy.
 Every open task in TNF MUST be visible in **at least one canonical surface** and
 that surface MUST be queryable without grep archaeology.
 
-| Surface                                   | Used for                                              | Owner               |
-| ----------------------------------------- | ----------------------------------------------------- | ------------------- |
-| `handoff-current.json::IMMEDIATE_TASKS`   | Operator-blocking tasks (commits, secrets, pushes)    | Operator            |
-| `handoff-current.json::next_actions`      | Non-blocking work the next agent should pick up       | Next agent          |
-| `~/.tnf/lessons-learned.md` (Verified: N) | Lessons learned but not yet validated across sessions | Anyone              |
-| `*.ledger.md` and `reports/*`             | Audit-visible tasks (CI failures, run outcomes)       | Continuous Improver |
-| `[STATUS:PENDING]` doc headers            | Docs awaiting vetting                                 | Doc vetting loop    |
+| Surface                                   | Used for                                               | Owner               |
+| ----------------------------------------- | ------------------------------------------------------ | ------------------- |
+| `handoff-current.json::IMMEDIATE_TASKS`   | Operator-blocking tasks (secrets, destructive actions) | Operator            |
+| `handoff-current.json::next_actions`      | Non-blocking work the next agent should pick up        | Next agent          |
+| `~/.tnf/lessons-learned.md` (Verified: N) | Lessons learned but not yet validated across sessions  | Anyone              |
+| `*.ledger.md` and `reports/*`             | Audit-visible tasks (CI failures, run outcomes)        | Continuous Improver |
+| `[STATUS:PENDING]` doc headers            | Docs awaiting vetting                                  | Doc vetting loop    |
 
 If a task does not appear in one of these, it is not an open task — it is a
 local note. Local notes are fine but they MUST NOT block other agents.

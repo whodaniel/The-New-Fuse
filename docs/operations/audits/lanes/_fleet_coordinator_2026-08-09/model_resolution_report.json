@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-08-10T01:25:00Z",
+  "cycle": "full-enchilada-audit-L2-L5",
+  "tierPolicy": "local-prefer",
+  "prelaunchDefault": "local-first",
+  "cloudEscalation": "requires-explicit-operator-approval",
+  "resolutions": [
+    {
+      "task": "L2 harness/runtime live audit",
+      "tier": "local-only",
+      "provider": "cursor-agent/fleet-coordinator-embodiment",
+      "model": "inherit-session",
+      "rationale": "Inspect launchd/cron/redis/CLI; no cloud inference required"
+    },
+    {
+      "task": "L5 agent swarm/registry live audit",
+      "tier": "local-only",
+      "provider": "cursor-agent/fleet-coordinator-embodiment",
+      "model": "inherit-session",
+      "rationale": "Redis registry + worker logs are local"
+    }
+  ],
+  "notes": [
+    "harness inspect referenced nvidia-nemotron live loop — treated as environmental fact, not escalation",
+    "cloud Super Director bridge deferred (no cloud Redis URL) — federation remains local island"
+  ]
+}

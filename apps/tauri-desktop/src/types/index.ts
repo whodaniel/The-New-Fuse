@@ -6,7 +6,17 @@
 export interface Agent {
   id: string;
   name: string;
-  type: 'claude' | 'gemini' | 'gpt' | 'perplexity' | 'custom' | 'local';
+  type:
+    | 'nvidia'
+    | 'groq'
+    | 'sambanova'
+    | 'cerebras'
+    | 'deepseek'
+    | 'gemini'
+    | 'openai'
+    | 'openrouter'
+    | 'custom'
+    | 'local';
   status: 'active' | 'idle' | 'error' | 'offline';
   description: string;
   capabilities: string[];

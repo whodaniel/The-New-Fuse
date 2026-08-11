@@ -914,6 +914,20 @@ async function main() {
   }
 
   console.log(JSON.stringify(result, null, 2));
+  } finally {
+    // Completes the `try {` opened above, which was left dangling — a
+    // SyntaxError that broke every command in this file and took three
+    // scheduled processes (master-loop, investigator-pulse, blocker-watch)
+    // down with it.
+    //
+    // The release also has to live here: `guard` is a const scoped to main(),
+    // so the module-scope `.finally(() => guard.release())` that previously sat
+    // below was a ReferenceError waiting behind the SyntaxError. Releasing in
+    // `finally` frees the single-instance lock on both success and failure —
+    // otherwise one crash leaves a stale lock and every later cycle skips with
+    // "already-running", which looks healthy and does nothing.
+    guard.release();
+  }
 }
 
 main().catch((error) => {
@@ -928,6 +942,4 @@ main().catch((error) => {
     )
   );
   process.exit(1);
-}).finally(() => {
-  guard.release();
 });

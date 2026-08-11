@@ -49,6 +49,18 @@ const FRONTLOAD_CHECKLIST = [
   'docs/protocols/LIVING_STATE.md',
   'docs/protocols/AGENT_STATUS_LEDGER.md',
   CANONICAL_SESSION_HANDOFF_JSON,
+  'docs/core/FRONTLOAD_MANIFEST.md',
+  'docs/core/SOUL.md',
+  'docs/core/IDENTITY.md',
+  'docs/core/USER.md',
+  'docs/core/TOOLS.md',
+  'docs/core/HEARTBEAT.md',
+  'docs/core/SECURITY.md',
+  'docs/core/MEMORY.md',
+  'docs/core/BOOTSTRAP.md',
+  'docs/core/ENGINEERING_PRINCIPLES.md',
+  'docs/protocols/HARNESS_CONFIG.md',
+  'data/harness/harness-config.json',
   'data/mcp_config.json',
 ];
 const FRONTLOAD_BUDGET_PROFILE = [
@@ -56,10 +68,14 @@ const FRONTLOAD_BUDGET_PROFILE = [
   { path: CANONICAL_TURN_ZERO_MANDATE, stage: 'eager' },
   { path: 'docs/protocols/LIVING_STATE.md', stage: 'eager' },
   { path: CANONICAL_SESSION_HANDOFF_JSON, stage: 'eager' },
+  { path: 'docs/core/FRONTLOAD_MANIFEST.md', stage: 'defer' },
   { path: '.agent/context/agent-onboarding.md', stage: 'defer' },
   { path: '.agent/workflows/frontload.md', stage: 'defer' },
   { path: '.agent/context/resource-map.md', stage: 'defer' },
   { path: 'docs/protocols/AGENT_STATUS_LEDGER.md', stage: 'defer' },
+  { path: 'docs/core/SOUL.md', stage: 'defer' },
+  { path: 'docs/core/MEMORY.md', stage: 'defer' },
+  { path: 'docs/core/BOOTSTRAP.md', stage: 'defer' },
   { path: 'data/mcp_config.json', stage: 'metadata' },
 ];
 const MCP_CONFIG_PATHS = [
@@ -757,6 +773,27 @@ function repairOnboardingAssets() {
   if (ensureTextFile('.agent/workflows/frontload.md', frontloadWorkflowTemplate())) {
     changes.push({ path: '.agent/workflows/frontload.md', status: 'created' });
   }
+  // Core harness pack — only create stubs if a checkout is missing them.
+  // Prefer the committed docs/core templates; do not overwrite curated MEMORY.
+  const corePointers = [
+    [
+      'docs/core/FRONTLOAD_MANIFEST.md',
+      '# FRONTLOAD_MANIFEST.md\n\nRun `tnf onboard --repair` from a full checkout so this manifest is restored.\n',
+    ],
+    [
+      'docs/core/MEMORY.md',
+      '# MEMORY.md\n\nCurated long-term facts. Restore from repo template if this stub remains.\n',
+    ],
+    [
+      'docs/core/BOOTSTRAP.md',
+      '# BOOTSTRAP.md\n\n`[BOOTSTRAP_STATUS:PENDING]`\n\nComplete the ritual in the repo template, then stamp COMPLETE.\n',
+    ],
+  ];
+  for (const [rel, body] of corePointers) {
+    if (ensureTextFile(rel, body)) {
+      changes.push({ path: rel, status: 'created' });
+    }
+  }
   const baseMcp = baseMcpConfigTemplate();
   const mcpConfigStatus = upsertGeneratedJsonFile('data/mcp_config.json', baseMcp);
   if (mcpConfigStatus !== 'preserved') {
@@ -1131,7 +1168,7 @@ function ensureVoiceKwsAlwaysOnFromOnboard() {
       env: {
         ...process.env,
         VOICE_KWS_ALWAYS_ON: process.env.VOICE_KWS_ALWAYS_ON || '1',
-        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '1',
+        VOICE_RESPONSE_AUDIO_DEFAULT_ON: process.env.VOICE_RESPONSE_AUDIO_DEFAULT_ON || '0',
         MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
         REQUIRE_INGEST_AUTH: process.env.REQUIRE_INGEST_AUTH || 'false',
       },
@@ -1208,6 +1245,48 @@ async function main() {
   printHeader('Frontload Checklist');
   FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
+  printHeader('Harness Completeness (UNU)');
+  try {
+    const harnessArgs = parsed.repair
+      ? ['scripts/harness/verify-harness-completeness.cjs', '--provision']
+      : ['scripts/harness/verify-harness-completeness.cjs'];
+    const harness = require('node:child_process').spawnSync(process.execPath, harnessArgs, {
+      cwd: ROOT,
+      encoding: 'utf8',
+      env: process.env,
+    });
+    const lines = String(harness.stdout || '')
+      .trim()
+      .split('\n')
+      .filter(Boolean);
+    const summary = lines.slice(-3);
+    if (harness.status === 0) {
+      console.log('- status: PASS');
+    } else {
+      console.log('- status: FAIL (run: node scripts/harness/verify-harness-completeness.cjs --provision)');
+    }
+    summary.forEach((line) => console.log(`  ${line}`));
+    // Light dynamic recall for continuity — not Stage A dump
+    const recall = require('node:child_process').spawnSync(
+      process.execPath,
+      ['scripts/harness/memory-layer.cjs', 'recall', '--query', 'harness redis relay', '--limit', '3', '--json'],
+      { cwd: ROOT, encoding: 'utf8' }
+    );
+    if (recall.status === 0) {
+      try {
+        const parsedRecall = JSON.parse(recall.stdout || '{}');
+        const n = Array.isArray(parsedRecall.matches) ? parsedRecall.matches.length : 0;
+        console.log(`- dynamic memory recall hits: ${n} (scripts/harness/memory-layer.cjs)`);
+      } catch {
+        console.log('- dynamic memory recall: unavailable');
+      }
+    } else {
+      console.log('- dynamic memory recall: skipped');
+    }
+  } catch (err) {
+    console.log(`- WARN harness completeness check failed: ${err.message}`);
+  }
+
   printHeader('Frontload Token Budget');
   const { budget: resolvedBudget, provenance: budgetProvenance } = resolveAdaptiveBudget(parsed.frontloadBudgetWords);
   printFrontloadBudget(resolvedBudget, budgetProvenance);
@@ -1235,9 +1314,30 @@ async function main() {
     }
   }
 
-  printHeader('Turn Zero Authority');
+  printHeader('Turn Zero Authority & Central Tenets');
   console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
   console.log('- external mirrors (for example ~/GEMINI.md) are non-authoritative');
+  console.log('- Core Tenet 1 (Fleet Delegation): Maximize compute by delegating to specialized fleet peers (tnf agents who / tnf send).');
+  console.log('- Core Tenet 2 (Assimilation): Parody & assimilate best patterns from external agents into native TNF skills.');
+  console.log('- Core Tenet 3 (Attribution Cornerstone): Human & scientific source attribution overrules AI distillation.');
+  console.log('- Core Tenet 4 (Operating Loop): Inspect -> Act -> Verify. Never assume action succeeded without empirical proof.');
+  console.log('- Core Tenet 5 (Anti-Lobotomy): Never delete or prune .agent/, .gemini/, .claude/, .tnf/ state trees.');
+
+  printHeader('Fleet Delegation & Peer Target Discovery');
+  try {
+    const regSnapshotPath = path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json');
+    if (fs.existsSync(regSnapshotPath)) {
+      const snapshot = JSON.parse(fs.readFileSync(regSnapshotPath, 'utf8'));
+      const activeCount = Array.isArray(snapshot) ? snapshot.length : Object.keys(snapshot || {}).length;
+      console.log(`- registered fleet targets: ${activeCount} agents`);
+    } else {
+      console.log('- registered fleet targets: active (discover via: tnf agents who --json)');
+    }
+    console.log('- dispatch routes: tnf send "<msg>" --to <agentId> | tnf handoff emit | Redis LPUSH tnf:master:tasks:realtime');
+    console.log('- available channels: Slack (tnf slack), WhatsApp (tnf whatsapp), Telegram (tnf telegram), Relay (ws://127.0.0.1:3000/ws)');
+  } catch {
+    console.log('- fleet dispatch ready: discover targets via tnf agents who');
+  }
 
   printHeader('Canonical Session Handoff');
   const handoff = resolveCanonicalSessionHandoff();
@@ -1340,6 +1440,31 @@ async function main() {
 
   printHeader('Voice Beam + KWS Always-On');
   ensureVoiceKwsAlwaysOnFromOnboard();
+
+  printHeader('Core Federated Fleet (Local Sub-Director default)');
+  if (process.env.TNF_SKIP_CORE_FLEET === '1' || process.env.TNF_SKIP_CORE_FLEET === 'true') {
+    console.log('- skipped (TNF_SKIP_CORE_FLEET=1)');
+  } else {
+    const establishScript = path.join(ROOT, 'scripts/runtime/establish-core-federated-fleet.cjs');
+    if (!fs.existsSync(establishScript)) {
+      console.log(`- missing: ${establishScript}`);
+    } else {
+      const { spawnSync } = require('node:child_process');
+      const result = spawnSync(process.execPath, [establishScript], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        stdio: 'inherit',
+        env: process.env,
+      });
+      if (result.status === 0) {
+        console.log('- established: Local Sub-Director identity + core OSS fleet');
+        console.log('- receipt: ~/.tnf/core-fleet-latest.json');
+      } else {
+        console.log(`- WARN: establish exited ${result.status}; install remains usable`);
+        console.log('- retry: node scripts/runtime/establish-core-federated-fleet.cjs');
+      }
+    }
+  }
 
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(

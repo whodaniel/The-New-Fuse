@@ -312,9 +312,28 @@ class FederationRelayClient extends EventEmitter {
         break;
       }
       case 'CHANNEL_MESSAGE':
-      case 'MESSAGE_RECEIVE':
-        this.emit('channel_message', message.payload || {});
+      case 'MESSAGE_RECEIVE': {
+        const payload = message.payload || {};
+        if (
+          (payload.messageType === 'A2A_BRIDGE_PING' || payload.metadata?.eventType === 'A2A_BRIDGE_PING') &&
+          payload.from !== this.identity.id
+        ) {
+          this.sendEnvelope('MESSAGE_SEND', {
+            to: payload.from || 'broadcast',
+            channel: payload.channel || 'fuse-activity-log',
+            content: `[A2A_BRIDGE_PONG] from ${this.identity.id}`,
+            messageType: 'event',
+            metadata: {
+              eventType: 'A2A_BRIDGE_PONG',
+              correlationId: payload.metadata?.correlationId,
+              agentId: this.identity.id,
+              timestamp: Date.now()
+            }
+          });
+        }
+        this.emit('channel_message', payload);
         break;
+      }
       default:
         break;
     }

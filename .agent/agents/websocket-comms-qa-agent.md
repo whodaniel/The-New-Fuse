@@ -1,20 +1,35 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: websocket-comms-qa-agent
-displayName: TNF WebSocket Comms QA
-description:
-  Specialized QA agent that tests TNF websocket infrastructure — connection
+description: Specialized QA agent that tests TNF websocket infrastructure — connection
   lifecycle, heartbeat, backpressure, and broadcast scaling.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities:
-  [
-    'ws_lifecycle_probe',
-    'heartbeat_check',
-    'backpressure_trace',
-    'broadcast_scale',
-  ]
-tags: ['qa', 'websocket', 'comms', 'realtime']
 version: 1.1.0
+tags:
+- qa
+- websocket
+- comms
+- realtime
+capabilities:
+- ws_lifecycle_probe
+- heartbeat_check
+- backpressure_trace
+- broadcast_scale
+displayName: TNF WebSocket Comms QA
+agentType: testing
 ---
 
 # WebSocket Comms QA Agent

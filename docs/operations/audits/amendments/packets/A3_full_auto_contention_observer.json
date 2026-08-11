@@ -1,0 +1,37 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A3",
+  "title": "Dual full-auto contention observer (do not collapse)",
+  "priority": "P1",
+  "owner_role": "local-subdirector",
+  "implementer_roles": [
+    "fleet-coordinator",
+    "state-governor",
+    "hermes-infra-worker"
+  ],
+  "human_gate_required": false,
+  "problem": "Default agent instinct kills one of two concurrent full-auto loops; operator framed dual loops as adversarial contention test.",
+  "solution": {
+    "summary": "Add observer that detects ≥2 full-auto start processes, records contention metrics, NEVER kills unless --resolve-kill explicitly set by policy ticket.",
+    "files": [
+      "scripts/operations/tnf-full-auto-contention-observe.cjs",
+      "docs/operations/tnf-full-auto-contention.jsonl",
+      "packages/tnf-cli/src/cli.ts (full-auto contend status)"
+    ],
+    "steps": [
+      "Enumerate PIDs matching 'full-auto start'; if count≥2 write contention sample: pids, cmdline, state.json mtime, runs.jsonl last lines, daemon.pid freshness.",
+      "Wire `tnf full-auto contend status` read-only.",
+      "Patch daemon status and full-auto status to print CONTENTION: N loops when N≥2 without recommending kill.",
+      "Add lesson pointer in autonomous agent prompts / staff review signals: adversarial dual-loop = observe only."
+    ],
+    "verify": [
+      "With dual loops running: tnf full-auto contend status --json | jq -e '.loopCount >= 2'",
+      "Observer process does not change PIDs (before/after pgrep identical)"
+    ],
+    "rollback": "Remove contend command; no process impact."
+  },
+  "acceptance_probe": "Observer reports loopCount≥2 while both PIDs remain alive.",
+  "conflicts": [
+    "Must not conflict with pause/fleet-pause which is explicit policy — only auto-kill is forbidden."
+  ]
+}

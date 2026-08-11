@@ -4,9 +4,11 @@ import {
   DESKTOP_ROUTES,
   LEGACY_ROUTE_REDIRECTS,
   ROUTE_STORAGE_KEY,
+  SECONDARY_NAV_GROUPS,
   desktopNativeOnlyRoutes,
   getRouteByPath,
   isKnownRoute,
+  isSecondaryNavGroup,
   persistRoute,
   resolveBootRoute,
   resolveLegacyRedirect,
@@ -64,6 +66,12 @@ describe('routes registry', () => {
     const agents = routesForGroup('agents');
     expect(agents.map((r) => r.path)).not.toContain('/computer-use');
     expect(agents.map((r) => r.path)).toContain('/agents');
+  });
+
+  it('marks build/insights/bridge as secondary nav groups', () => {
+    expect(isSecondaryNavGroup('home')).toBe(false);
+    expect(isSecondaryNavGroup('build')).toBe(true);
+    expect(SECONDARY_NAV_GROUPS).toEqual(['build', 'insights', 'bridge']);
   });
 
   it('lists desktop-native bridge routes', () => {

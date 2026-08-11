@@ -903,10 +903,10 @@ See the `<repo-root>/examples/` directory for complete example implementations:
 ## Additional Resources
 
 - [Agent Communication
-  Architecture](<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
+  Architecture](./AGENT_COMMUNICATION_ARCHITECTURE.md)
 - [Agent Framework
-  Protocols](<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
-- [MCP Complete Guide](<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md)
+  Protocols](./AGENT_FRAMEWORK_PROTOCOLS.md)
+- [MCP Complete Guide](../protocols/MCP-COMPLETE-GUIDE.md)
 - [API Documentation](<repo-root>/docs/api/)
 
 ---

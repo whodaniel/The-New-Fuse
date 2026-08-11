@@ -1,16 +1,35 @@
 ---
+category: Unified Orchestration
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: qa-orchestrator-agent
-displayName: TNF QA Orchestrator
-description:
-  Master QA agent that coordinates all TNF specialty testing agents, fans out
-  per-domain test runs, aggregates verdicts, and produces a unified health
-  report.
-agentType: orchestrator
-tools: ['Bash', 'Read', 'Grep', 'glob', 'tnf']
-capabilities:
-  ['qa_fanout', 'verdict_aggregation', 'health_report', 'blocker_triage']
-tags: ['qa', 'orchestrator', 'coordination', 'reporting']
+description: Master QA agent that coordinates all TNF specialty testing agents, fans
+  out per-domain test runs, aggregates verdicts, and produces a unified health report.
 version: 1.1.0
+tags:
+- qa
+- orchestrator
+- coordination
+- reporting
+capabilities:
+- qa_fanout
+- verdict_aggregation
+- health_report
+- blocker_triage
+displayName: TNF QA Orchestrator
+agentType: orchestrator
 ---
 
 # QA Orchestrator Agent

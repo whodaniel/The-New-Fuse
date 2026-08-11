@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import {
   getVoicePort,
   getVoiceProfile,
@@ -90,8 +89,6 @@ const VoiceHub: React.FC = () => {
         </button>
       }
     >
-      <SynergyStatusBar />
-
       {bootNote ? <p className="voice-muted voice-boot-note">{bootNote}</p> : null}
 
       <p className="voice-muted voice-cli-hint">

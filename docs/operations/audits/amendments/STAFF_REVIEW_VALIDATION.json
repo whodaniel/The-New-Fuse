@@ -1,0 +1,216 @@
+{
+  "schema": "tnf.amendment.staff_review_validation.v1",
+  "generatedAt": "2026-08-10T02:35:00.000Z",
+  "authority": "Staff Review / StaffOps validation (staff-review-agent embodiment)",
+  "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "intake": "docs/operations/audits/amendments/00_INTAKE.md",
+  "subdirector_intake_decision": {
+    "path": "docs/operations/audits/amendments/01_SUBDIRECTOR_INTAKE_DECISION.md",
+    "exists": false,
+    "effect": "validate_packets_directly"
+  },
+  "staff_cycle_context": {
+    "source": "docs/operations/audits/amendments/staff-review-cycle-raw.json",
+    "highPriorityBlockers": 6,
+    "staffingGapCount": 1,
+    "bearing_on_amendments": "Context only — blockers/staffing gap do not reject packets; gaps track in parallel via staffing-director / growth-blocker remediation; amendment owners remain role-based."
+  },
+  "doctrine": {
+    "coc_acceptance": "AI chain-of-command via review/validation — not human OK",
+    "autonomy_rule": "Accepted items require human_gate_required=false and concrete files/steps/verify/rollback",
+    "dual_full_auto": "Adversarial observe-only; never recommend kill"
+  },
+  "packets": [
+    {
+      "id": "A1",
+      "title": "Autonomy health gate — establish≠operate",
+      "validation": "pass",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "local-subdirector",
+      "implementer_roles": [
+        "hermes-infra-worker",
+        "tnf-cli-agent",
+        "fleet-coordinator"
+      ],
+      "coc_level": "L3",
+      "coc_link": "L5 proposal → L3 local-subdirector ownership → Staff Review accept → federated queue",
+      "priority": "P0",
+      "conditions": [],
+      "notes": "Fail-closed rollup observes; does not kill dual full-auto loops. Target dirs/files present (scripts/runtime, packages/tnf-cli/src/cli.ts).",
+      "decision": "ACCEPT"
+    },
+    {
+      "id": "A2",
+      "title": "Orchestrate audit/report-only classifier",
+      "validation": "pass_with_conditions",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "orchestrator",
+      "implementer_roles": ["tnf-cli-agent", "hermes-codegen-worker"],
+      "coc_level": "L2/L3",
+      "coc_link": "L5 proposal → orchestrator owner (L2 harness/orchestration) with L3 intake visibility → Staff Review conditional accept",
+      "priority": "P0",
+      "conditions": [
+        "Pin exact executeGoal / pattern-matcher module path before coding (packages/tnf-cli/src/orchestration.ts or sibling — packet currently uses locate wildcard).",
+        "Ship docs/operations/audits/amendments/packets/A2_verify.md (or equivalent fixture) as part of implement, not deferred.",
+        "Negative assert: audit goals must not schedule execute-safe-refactors (log/JSON check in verify)."
+      ],
+      "notes": "REPORT_ONLY classifier is fully agent-implementable; path ambiguity is a condition, not a human gate.",
+      "decision": "ACCEPT_WITH_CONDITIONS"
+    },
+    {
+      "id": "A3",
+      "title": "Dual full-auto contention observer (do not collapse)",
+      "validation": "pass",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "local-subdirector",
+      "implementer_roles": [
+        "fleet-coordinator",
+        "state-governor",
+        "hermes-infra-worker"
+      ],
+      "coc_level": "L3",
+      "coc_link": "L5 proposal → L3 local-subdirector ownership → Staff Review accept (doctrine-aligned)",
+      "priority": "P1",
+      "conditions": [],
+      "notes": "Doctrine-compliant: observe-only; NEVER kill unless --resolve-kill via explicit policy ticket. Explicitly must not conflict with pause/fleet-pause. StaffOps forbids any recommend-kill language in status UX.",
+      "decision": "ACCEPT"
+    },
+    {
+      "id": "A4",
+      "title": "Reflect non-blocking — edge-flywheel timeout",
+      "validation": "pass_with_conditions",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "state-governor",
+      "implementer_roles": ["hermes-infra-worker", "tnf-cli-agent"],
+      "coc_level": "L7/L3",
+      "coc_link": "L5 proposal → state-governor (L7) owner with L3 intake visibility → Staff Review conditional accept",
+      "priority": "P1",
+      "conditions": [
+        "Repo mirror .agents/skills/tnf-self-improvement-loop/scripts/reflect.sh is ABSENT; implement on ~/.agents skill SoT OR sync mirror into repo first and declare SoT.",
+        "Timeout wrapper must be macOS-safe (perl/python alarm 120s as packet states).",
+        "SKIP_EDGE_FLYWHEEL=1 path must complete and write reflect-*.md without blocking lesson append."
+      ],
+      "notes": "Home skill path verified present. Outside-repo edit remains federated-autonomous for agents with home access.",
+      "decision": "ACCEPT_WITH_CONDITIONS"
+    },
+    {
+      "id": "A5",
+      "title": "Living State Current Directive slot + tip-align handoff",
+      "validation": "pass_with_conditions",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "state-governor",
+      "implementer_roles": ["hermes-codegen-worker", "tnf-cli-agent"],
+      "coc_level": "L7/L1",
+      "coc_link": "L5 proposal → state-governor (L7) + protocol/authority (L1) touchpoints → Staff Review conditional accept",
+      "priority": "P0",
+      "conditions": [
+        "Enumerate concrete handoff writers (e.g. scripts/protocols/emit-session-handoff.cjs, enforce-session-handoff.cjs) — replace scripts/protocols/*handoff* wildcard before merge.",
+        "If agent commit policy is gated, tip-align writes artifacts only (already stated); do not invent a human OK step."
+      ],
+      "notes": "LIVING_STATE.md, turn-end.cjs, protocols dir verified. SYNCHRONIZED⇔tip match is fail-closed truthfulness.",
+      "decision": "ACCEPT_WITH_CONDITIONS"
+    },
+    {
+      "id": "A6",
+      "title": "Protocol gate single final verdict",
+      "validation": "pass",
+      "autonomous_ok": true,
+      "verify_probe_ok": true,
+      "human_gate_required": false,
+      "owner": "local-subdirector",
+      "implementer_roles": ["tnf-cli-agent", "hermes-codegen-worker"],
+      "coc_level": "L1/L3",
+      "coc_link": "L5 proposal → L1 protocol surface under L3 local-subdirector ownership → Staff Review accept",
+      "priority": "P0",
+      "conditions": [],
+      "notes": "ProtocolInterceptor.ts present. Single VERDICT + matching exit code ends dual-narrative override training.",
+      "decision": "ACCEPT"
+    }
+  ],
+  "hygiene": {
+    "items": ["swarm-context prune", "PEM scrub", "retention"],
+    "decision": "ACCEPTED_AS_DONE",
+    "queue": false
+  },
+  "rejected": [],
+  "escalations": [],
+  "IMPLEMENTATION_QUEUE": {
+    "ordering_rationale": "P0 truthfulness rails first (gate verdict → health → tip-align → orchestrate classifier), then P1 observe/non-block (contention observer → reflect timeout). Dual-loop observer never kills.",
+    "queue": [
+      {
+        "order": 1,
+        "id": "A6",
+        "priority": "P0",
+        "owner": "local-subdirector",
+        "why": "Single VERDICT makes subsequent probe exits trustworthy"
+      },
+      {
+        "order": 2,
+        "id": "A1",
+        "priority": "P0",
+        "owner": "local-subdirector",
+        "why": "establish≠operate before claiming ready"
+      },
+      {
+        "order": 3,
+        "id": "A5",
+        "priority": "P0",
+        "owner": "state-governor",
+        "why": "Living State / handoff tip truth for SYNCHRONIZED"
+      },
+      {
+        "order": 4,
+        "id": "A2",
+        "priority": "P0",
+        "owner": "orchestrator",
+        "why": "Stop false SUCCESS on audit/report-only goals",
+        "requires_conditions_met": true
+      },
+      {
+        "order": 5,
+        "id": "A3",
+        "priority": "P1",
+        "owner": "local-subdirector",
+        "why": "Encode observe-only dual full-auto contention policy"
+      },
+      {
+        "order": 6,
+        "id": "A4",
+        "priority": "P1",
+        "owner": "state-governor",
+        "why": "Unblock reflect/lesson flywheel hangs",
+        "requires_conditions_met": true
+      }
+    ]
+  },
+  "parallel_ops_not_on_queue": [
+    {
+      "from_staff_cycle": true,
+      "title": "Close high-priority growth blockers (count=6)",
+      "ownerSuggestion": "tnf-growth-blocker-auditor"
+    },
+    {
+      "from_staff_cycle": true,
+      "title": "Address staffing architecture gap (count=1)",
+      "ownerSuggestion": "tnf-staffops-staffing-director-01"
+    }
+  ],
+  "summary": {
+    "validated": 6,
+    "pass": 3,
+    "pass_with_conditions": 3,
+    "fail": 0,
+    "accepted_for_queue": 6,
+    "rejected": 0
+  }
+}

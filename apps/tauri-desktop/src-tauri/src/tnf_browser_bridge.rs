@@ -476,7 +476,19 @@ pub async fn tnf_browser_connect(
                     .into(),
             );
         }
+        let live = crate::agent_browser_backend::agent_browser_session_live(Some(&app));
         let mut inner = bridge.inner.lock().await;
+        if !live {
+            inner.connected = false;
+            inner.runtime_connected = false;
+            inner.last_error = Some(
+                "No live agent-browser session (get url failed). Use Start Runtime, then connect."
+                    .into(),
+            );
+            return Err(
+                "No live agent-browser session. Start Runtime before connecting.".into(),
+            );
+        }
         inner.connected = true;
         inner.runtime_connected = true;
         inner.last_error = None;

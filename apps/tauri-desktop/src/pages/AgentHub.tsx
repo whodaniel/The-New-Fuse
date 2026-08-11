@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
 import {
   VERIFIED_PROVIDER_CATALOG,
@@ -52,10 +51,14 @@ const AgentHub: React.FC = () => {
 
   const getTypeIcon = (type: Agent['type']) => {
     const icons: Record<string, string> = {
-      claude: '🧠',
+      nvidia: '⚡',
+      groq: '🚀',
+      sambanova: '💠',
+      cerebras: '🧠',
+      deepseek: '🌊',
       gemini: '💎',
-      gpt: '🤖',
-      perplexity: '🔍',
+      openai: '🤖',
+      openrouter: '🔗',
       custom: '⚙️',
       local: '🏠',
     };
@@ -111,7 +114,11 @@ const AgentHub: React.FC = () => {
           >
             Computer Use
           </button>
-          <button type="button" className="secondary-button" onClick={() => fetchAgents()}>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => fetchAgents({ force: true })}
+          >
             Refresh
           </button>
           <button type="button" className="primary-button" onClick={() => setShowCreateModal(true)}>
@@ -144,8 +151,6 @@ const AgentHub: React.FC = () => {
         ) : null
       }
     >
-      <SynergyStatusBar />
-
       {/* Filter Tabs */}
       <div className="filter-tabs">
         {(['all', 'active', 'idle', 'error'] as const).map((f) => (

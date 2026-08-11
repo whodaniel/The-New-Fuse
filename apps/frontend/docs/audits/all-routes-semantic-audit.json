@@ -1,13 +1,13 @@
 {
   "summary": {
-    "startedAt": "2026-07-27T06:10:06.471Z",
-    "generatedAt": "2026-07-27T06:18:37.464Z",
+    "startedAt": "2026-08-10T18:54:26.406Z",
+    "generatedAt": "2026-08-10T19:01:42.030Z",
     "baseUrl": "https://app.thenewfuse.com",
     "totalRoutes": 224,
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 12,
+    "duplicateFingerprintGroups": 13,
     "rootHasAppRoot": true
   },
   "rows": [
@@ -21,7 +21,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -34,8 +34,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
       "hasAppRoot": true,
-      "fingerprint": "7370626f066a9c486a632e558d3bd73623816b58",
-      "textPreview": "something went wrongcannot read properties of undefined (reading 'reactcurrentbatchconfig')try again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> "
+      "fingerprint": "061b47ec89e8010b0f639d511779de4f2c3e280b",
+      "textPreview": "something went wrongcannot read properties of undefined (reading 'x')try again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application r"
     },
     {
       "route": "/404",
@@ -47,7 +47,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "404",
       "hasAppRoot": true,
-      "fingerprint": "a8dc45d05425d0db30039fb8608c81eba8e422ed",
+      "fingerprint": "255d7b6ac704dc104f14f8c559ca143372eb3dbf",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -60,7 +60,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -268,7 +268,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -411,7 +411,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -424,7 +424,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -437,7 +437,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -450,7 +450,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -463,7 +463,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -476,7 +476,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -489,7 +489,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -502,7 +502,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -528,7 +528,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -541,7 +541,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -554,7 +554,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -567,7 +567,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -580,7 +580,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -593,7 +593,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -606,7 +606,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -632,7 +632,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -645,7 +645,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -658,7 +658,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -684,7 +684,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -697,7 +697,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -723,7 +723,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "7fd77028db237ff68c6865499f02c024db16e699",
+      "fingerprint": "af90db84746289e131a6ca218ed692841d1f971e",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -736,7 +736,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -762,7 +762,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -775,7 +775,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -788,7 +788,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -801,7 +801,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -814,7 +814,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
       "hasAppRoot": true,
-      "fingerprint": "ffb66a5b5fba082142e81ef41684c75dda67e9ae",
+      "fingerprint": "9a48e480c4e1611aea6a8518455eeac86d0e4644",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -853,7 +853,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -918,7 +918,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -931,7 +931,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -944,7 +944,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e9e1cf14138e9f0d5bfe9211163aa14545b1eebe",
+      "fingerprint": "5c9212d65ca2b0c25b4cad8718abe14952a3700c",
       "textPreview": "tnf ecosystem maprootthe new fuse ecosystemmove up architecturethe new fuse ecosystempkg113 units@the-new-fusepkga2a-corepkg9 unitsa2a-protocolpkg1 unitsa2a-reactpkgag-ui-corepkg5 unitsagentpkg42 unitsagent-coordinationp"
     },
     {
@@ -983,7 +983,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -996,7 +996,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1022,7 +1022,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1061,7 +1061,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1074,7 +1074,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1087,7 +1087,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1100,7 +1100,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1113,7 +1113,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1126,7 +1126,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1139,7 +1139,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1165,7 +1165,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1178,7 +1178,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1191,7 +1191,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1204,7 +1204,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1217,7 +1217,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1230,7 +1230,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1243,7 +1243,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1308,7 +1308,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1360,7 +1360,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1373,7 +1373,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1386,7 +1386,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1399,7 +1399,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1412,7 +1412,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1490,7 +1490,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1503,7 +1503,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1594,7 +1594,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1620,7 +1620,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1646,7 +1646,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1659,7 +1659,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1672,7 +1672,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1750,7 +1750,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "7fd77028db237ff68c6865499f02c024db16e699",
+      "fingerprint": "af90db84746289e131a6ca218ed692841d1f971e",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1776,7 +1776,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1789,7 +1789,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1802,7 +1802,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
+      "fingerprint": "445ddcf9cd5c0f8e798f4fe9e63269f8a0be7edb",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1815,7 +1815,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1841,7 +1841,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1854,7 +1854,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1880,7 +1880,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1893,8 +1893,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "404",
       "hasAppRoot": true,
-      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
-      "textPreview": "404page not foundreturn to home"
+      "fingerprint": "e74b2446d1a027af312a1335175f3fc4a9f55145",
+      "textPreview": "the new fuse404we couldn't find that page.homedashboardsign in"
     },
     {
       "route": "/observatory",
@@ -1906,7 +1906,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -1945,7 +1945,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2023,7 +2023,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2062,8 +2062,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
       "hasAppRoot": true,
-      "fingerprint": "305bae8efa624a4571c4de22e0d8f950944ce23c",
-      "textPreview": "loading onboarding preview..."
+      "fingerprint": "6070a1037352fdc4bafe417ab3f24db91aa97163",
+      "textPreview": "something went wrongusewizard must be used within a wizardprovidertry again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requ"
     },
     {
       "route": "/pricing",
@@ -2114,7 +2114,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2127,7 +2127,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
       "hasAppRoot": true,
-      "fingerprint": "c41c14b2b32025dae63e0dd542bedf9f7152c5e1",
+      "fingerprint": "b21fa42cf70b2146f7edc892f629ab2e53c85070",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2140,7 +2140,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2153,7 +2153,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2166,7 +2166,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2179,7 +2179,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2192,7 +2192,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2205,7 +2205,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2218,7 +2218,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2231,7 +2231,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2244,7 +2244,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2257,7 +2257,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2270,7 +2270,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2283,7 +2283,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2309,7 +2309,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2322,7 +2322,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2335,8 +2335,8 @@
       "title": "",
       "h1": "",
       "hasAppRoot": false,
-      "fingerprint": "8133c5e8c70b8ef00fc2fa795916801a6bb29c6f",
-      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-07-27t06:16:37.297z\"}"
+      "fingerprint": "a47c6b86ebf9040f49df36f2d94a227e3a2db180",
+      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-08-10t18:59:52.056z\"}"
     },
     {
       "route": "/suggestions",
@@ -2348,7 +2348,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2361,7 +2361,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2387,8 +2387,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "2da20b00d5579cf30c25d8329e9527fa323838f5",
-      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 02:16:46 ampublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
+      "fingerprint": "ea0f1f80ec072ae4d3f519079d456d914096ccdb",
+      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 02:59:59 pmpublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
     },
     {
       "route": "/tasks",
@@ -2400,7 +2400,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2413,7 +2413,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2426,7 +2426,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2439,7 +2439,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2491,7 +2491,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2504,7 +2504,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2517,7 +2517,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2530,7 +2530,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2556,7 +2556,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2569,7 +2569,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2582,7 +2582,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e80bd13e16ebe4750f6ab18bc8bbab9b0c0e34f6",
+      "fingerprint": "73dce034689238bbed156a291945d162dc4936ca",
       "textPreview": "back to tnf homemaster clock visualizationturn tnf chron jobs into a living watch movement.drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect exact producer intervals with last-run and nex"
     },
     {
@@ -2621,7 +2621,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "3276fd4141128703f65ec82a11ad20957c2831a5",
+      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
       "textPreview": "back to visualizationsterminal graphholistic twip projection of terminal identities, process topology, and runtime ownership hints for tnf agent orchestration.safety defaultcommands remain redacted unless explicitly requ"
     },
     {
@@ -2634,7 +2634,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2647,7 +2647,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2660,7 +2660,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2673,7 +2673,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2686,7 +2686,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2699,7 +2699,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2712,7 +2712,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2725,7 +2725,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2738,7 +2738,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2751,7 +2751,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2764,7 +2764,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2777,7 +2777,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2790,7 +2790,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2803,7 +2803,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2816,7 +2816,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2829,7 +2829,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2842,7 +2842,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2855,7 +2855,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2868,7 +2868,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2881,7 +2881,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2894,7 +2894,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2907,7 +2907,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     },
     {
@@ -2920,7 +2920,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
       "hasAppRoot": true,
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
     }
   ],
@@ -2929,7 +2929,7 @@
   "sameAsRoot": [],
   "duplicateFingerprintGroups": [
     {
-      "fingerprint": "823ebb2a91b2a320032c7881ebf8000ea4510a07",
+      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "routes": [
         "/",
         "/a2a-control",
@@ -3114,44 +3114,84 @@
       ]
     },
     {
-      "fingerprint": "7fd77028db237ff68c6865499f02c024db16e699",
-      "routes": ["/auth", "/login"]
+      "fingerprint": "af90db84746289e131a6ca218ed692841d1f971e",
+      "routes": [
+        "/auth",
+        "/login"
+      ]
     },
     {
       "fingerprint": "0fdb296356f6da7940ac08348b6a34dd8ec6ef1a",
-      "routes": ["/auth/forgot-password", "/forgot-password"]
+      "routes": [
+        "/auth/forgot-password",
+        "/forgot-password"
+      ]
     },
     {
       "fingerprint": "ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a",
-      "routes": ["/brand", "/design-system"]
+      "routes": [
+        "/brand",
+        "/design-system"
+      ]
     },
     {
       "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
-      "routes": ["/capabilities", "/marketplace", "/platform", "/product-map"]
+      "routes": [
+        "/capabilities",
+        "/platform",
+        "/product-map"
+      ]
     },
     {
       "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
-      "routes": ["/community", "/help/community"]
+      "routes": [
+        "/community",
+        "/help/community"
+      ]
     },
     {
       "fingerprint": "261b16762e5c4fa16a6d757ebfb8e3741ea8f5d8",
-      "routes": ["/connect", "/integrations"]
+      "routes": [
+        "/connect",
+        "/integrations"
+      ]
     },
     {
       "fingerprint": "7010ea1eda456f60ca76fa9cd61df236deab8ff2",
-      "routes": ["/docs", "/help/documentation", "/help/faq", "/help/tutorials"]
+      "routes": [
+        "/docs",
+        "/help/documentation",
+        "/help/faq",
+        "/help/tutorials"
+      ]
     },
     {
       "fingerprint": "59214064dd6c6e73bda58e2d641c0d3bbca1dc1e",
-      "routes": ["/help/support", "/support"]
+      "routes": [
+        "/help/support",
+        "/support"
+      ]
     },
     {
       "fingerprint": "71e5bff5fc86dd4e76d04c524966ac39c3a9a464",
-      "routes": ["/legal/privacy", "/privacy"]
+      "routes": [
+        "/legal/privacy",
+        "/privacy"
+      ]
     },
     {
       "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
-      "routes": ["/legal/terms", "/terms"]
+      "routes": [
+        "/legal/terms",
+        "/terms"
+      ]
+    },
+    {
+      "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
+      "routes": [
+        "/terminals",
+        "/visualizations/terminals"
+      ]
     }
   ]
 }

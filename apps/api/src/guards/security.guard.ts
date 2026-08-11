@@ -95,6 +95,15 @@ export class SecurityGuard implements CanActivate {
       return;
     }
 
+    // Loopback operator traffic (desktop + full-auto daemon) shares one subject.
+    // Keep public limits intact; only relax when explicitly not in enforce mode.
+    if (
+      process.env.API_RATE_LIMIT_LOOPBACK !== 'enforce' &&
+      this.isLoopbackSubject(this.getRateLimitSubject(request))
+    ) {
+      return;
+    }
+
     const now = Date.now();
     const bucket = this.resolveRateLimitBucket(request.method, path);
     const subject = this.getRateLimitSubject(request);
@@ -109,12 +118,7 @@ export class SecurityGuard implements CanActivate {
             1_000_000
           )
         : bucket === 'ai'
-          ? this.resolvePositiveInteger(
-              process.env.API_AI_RATE_LIMIT_REQUESTS,
-              120,
-              1,
-              1_000_000
-            )
+          ? this.resolvePositiveInteger(process.env.API_AI_RATE_LIMIT_REQUESTS, 120, 1, 1_000_000)
           : this.resolvePositiveInteger(
               process.env.API_RATE_LIMIT_REQUESTS,
               options.requests,
@@ -226,6 +230,16 @@ export class SecurityGuard implements CanActivate {
       path === '/system/health' ||
       path.startsWith('/docs')
     );
+  }
+
+  private isLoopbackSubject(subject: string): boolean {
+    if (!subject.startsWith('ip:')) return false;
+    const ip = subject
+      .slice(3)
+      .trim()
+      .toLowerCase()
+      .replace(/^::ffff:/, '');
+    return ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' || ip === '0:0:0:0:0:0:0:1';
   }
 
   private isPollPath(path: string): boolean {

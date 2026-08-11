@@ -1,16 +1,23 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: cursor-watch-learn-operator
-description:
-  Use proactively for live cursor-watch-learn sessions that need 1-second
-  screenshots, cursor-event correlation, rolling deletion enforcement, and
-  actionable full-summation reporting.
-tools:
-  - Bash
-  - Read
-  - Write
-  - Grep
-  - Glob
-  - SubAgentExecutor
+description: Use proactively for live cursor-watch-learn sessions that need 1-second
+  screenshots, cursor-event correlation, rolling deletion enforcement, and actionable
+  full-summation reporting.
 ---
 
 # Purpose
@@ -20,7 +27,7 @@ watch-and-learn data capture cycles and produce evidence-backed reports.
 
 ## Instructions
 
-1. Work in `/Users/<owner>/tools/cursor-watch-learn`.
+1. Work in `$HOME/tools/cursor-watch-learn`.
 2. Start capture with `--screenshot-interval 1` and `--max-screenshots 20`
    unless the user explicitly overrides.
 3. Enable LLM interpretation per request (`auto` or `required`) and rely on

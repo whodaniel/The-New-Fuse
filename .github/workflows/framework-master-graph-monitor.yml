@@ -3,7 +3,7 @@ name: Framework Master Graph Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * 1"  # Weekly on Monday at 6am UTC (was every 15min — burned ~14k min/month)
+    - cron: "0 6 * * 1" # Weekly on Monday at 6am UTC (was every 15min — burned ~14k min/month)
 
 concurrency:
   group: framework-master-graph-monitor
@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: ".nvmrc"
 
       - name: Build master framework graph
         run: ./tools/framework-master-graph/rebuild_framework_master_graph.sh

@@ -1,0 +1,134 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-119045a15a49f4b4",
+  "generated_at": "2026-08-09T04:36:29+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6409",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6409",
+    "source_title": "tnf hermes is working on it. What I need from you is to work on what\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:29+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6409",
+    "source_digest_sha256": "06e4c2a100a26f51efe631bdca81743679aeb087e0c0c22263cee90c2c622e04"
+  },
+  "taxonomy": {
+    "procedural": [
+      "What I need from you is to work on what happens in situations like this where multiple agents are working on the same related and overlaping tasks so that you and others in similar situation in the future will have and understanding of the situation,environment,state, and have proceedure and guides to follow that allow any active fleet/swarm to find direction via TNF herness/framework:",
+      "What I need from you is to work on what happens in situations like this where multiple agents are working on the same related and overlapping tasks so that you and others in similar situations in the future will have an understanding of the situation, environment, state, and have procedure and guides to follow that allow any active fleet/swarm to find direction via TNF harness/framework.\"",
+      "- So any active fleet/swarm can find direction via TNF harness/framework.",
+      "This is about multi-agent coordination / conflict avoidance when agents overlap on related tasks.",
+      "- Governance synthesis: federation patterns, orchestrator authority, agent lifecycle.",
+      "- AGENTS.md: Tri-Fold, OpenClaw policy, agent bank.",
+      "Then write the protocol.",
+      "Then I'll write a new protocol doc: docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md with:",
+      "- Detection (how an agent knows it's overlapping with another).",
+      "- Coordination primitives provided by TNF (swarm-context.md, agent registry, handoff packets, change ownership ledger, conflict tier classifier, integration train, don't-die supervisor).",
+      "Let me also consider: the user says \"allow any active fleet/swarm to find direction via TNF harness/framework.\" So it should be discoverable",
+      "I'll create the protocol and reference it.",
+      "Let me first grep for existing coordination content and read AGENT_STATUS_LEDGER.md and the swarm-context concept (check if a swarm-context.md exists).",
+      "Let me be efficient: grep first.",
+      "Let me run a grep for coordination/overlap/concurrent/conflict/race in docs/protocols and docs/orchestrator and a few key spots",
+      "You want a coordination protocol for when multiple agents overlap on the same related tasks: so any future agent/fleet understands the situation, state, and has procedures/guides to find direction via the TNF harness.",
+      "Let me ground this in what TNF already provides for coordination (so I extend, not duplicate), then write the guide.",
+      "- AGENT_STATUS_LEDGER.md: roster, \"Next Agent Focus\", \"Next Agent Focus\" P0, protocol gaps, session logs, director/active channel.",
+      "The existing protocols cover concurrent edits to the repo (git-level) but not the higher-level \"two agents independently pick up the same conceptual task\" coordination, including: how an agent detects overlap, how it claims/coordinates, how the operator directs, and how the fleet finds direction.",
+      "State & discovery primitives (what TNF provides to detect/coordinate): swarm-context.md, AGENT_STATUS_LEDGER \"Next Agent Focus\", Agent Registry, Change Ownership Ledger, handoff packets, conflict-tier classifier, integration train, green coordinator, don't-die supervisor."
+    ],
+    "strategic": [
+      "What I need from you is to work on what happens in situations like this where multiple agents are working on the same related and overlaping tasks so that you and others in similar situation in the future will have and understanding of the situation,environment,state, and have proceedure and guides to follow that allow any active fleet/swarm to find direction via TNF herness/framework:",
+      "What I need from you is to work on what happens in situations like this where multiple agents are working on the same related and overlapping tasks so that you and others in similar situations in the future will have an understanding of the situation, environment, state, and have procedure and guides to follow that allow any active fleet/swarm to find direction via TNF harness/framework.\"",
+      "- So any active fleet/swarm can find direction via TNF harness/framework.",
+      "There IS already relevant material: MULTI_AGENT_INTEGRATION_PROTOCOL.md (change ownership ledger, conflict tiers, integration train), AGENT_TARGETED_HANDOFF_V1.md, the governance synthesis federation patterns, the \"Operator Rule\" about not force-rewriting shared branches.",
+      "Lets any fleet/swarm find direction via TNF harness.",
+      "- MULTI_AGENT_INTEGRATION_PROTOCOL.md: Change Ownership Ledger, Local vs CI gates, Integration train, Gitlink reachability, Conflict Policy Tiers (isolate / merge-with-attribution / escalate), Operator Rule.",
+      "- DIRECTIVES.md D21 (integration train discipline), D7 (anti-lobotomy), D6 (radical transparency / ledger).",
+      "The user wants a procedure so that in the future, when agents work on overlapping tasks, they (a) understand the situation, (b) have procedure/guides, (c) any fleet can find direction via TNF.",
+      "- Coordination primitives provided by TNF (swarm-context.md, agent registry, handoff packets, change ownership ledger, conflict tier classifier, integration train, don't-die supervisor).",
+      "Let me also consider: the user says \"allow any active fleet/swarm to find direction via TNF harness/framework.\" So it should be discoverable",
+      "Also read one or two bridges that deal with orchestration/conflict to ground the procedure.",
+      "You want a coordination protocol for when multiple agents overlap on the same related tasks: so any future agent/fleet understands the situation, state, and has procedures/guides to find direction via the TNF harness.",
+      "Grep \"coordinat|overlap|concurrent|conflict tier|double.book|race condition|swarm-context|claim|ownership\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs (822 matches)",
+      "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md",
+      "- MULTI_AGENT_INTEGRATION_PROTOCOL.md: Change Ownership Ledger, conflict tiers (isolate / merge-with-attribution / escalate), integration train, Operator Rule.",
+      "The existing protocols cover concurrent edits to the repo (git-level) but not the higher-level \"two agents independently pick up the same conceptual task\" coordination, including: how an agent detects overlap, how it claims/coordinates, how the operator directs, and how the fleet finds direction.",
+      "State & discovery primitives (what TNF provides to detect/coordinate): swarm-context.md, AGENT_STATUS_LEDGER \"Next Agent Focus\", Agent Registry, Change Ownership Ledger, handoff packets, conflict-tier classifier, integration train, green coordinator, don't-die supervisor.",
+      "Fleet direction: how any active agent finds direction via TNF harness",
+      "6 Fleet Direction via TNF Harness (how any agent finds direction: the read-order).",
+      "- Integration train: integration/*"
+    ],
+    "governance": [
+      "This is essentially a coordination protocol.",
+      "There IS already relevant material: MULTI_AGENT_INTEGRATION_PROTOCOL.md (change ownership ledger, conflict tiers, integration train), AGENT_TARGETED_HANDOFF_V1.md, the governance synthesis federation patterns, the \"Operator Rule\" about not force-rewriting shared branches.",
+      "So I should produce a protocol/guide document: something like docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION.md (or similar) that:",
+      "- MULTI_AGENT_INTEGRATION_PROTOCOL.md: Change Ownership Ledger, Local vs CI gates, Integration train, Gitlink reachability, Conflict Policy Tiers (isolate / merge-with-attribution / escalate), Operator Rule.",
+      "- Governance synthesis: federation patterns, orchestrator authority, agent lifecycle.",
+      "- AGENTS.md: Tri-Fold, OpenClaw policy, agent bank.",
+      "The user describes a real incident: Hermes and I (Kilo) both worked on the directives task, overlapping.",
+      "So I should produce a coordination protocol.",
+      "Then write the protocol.",
+      "Then I'll write a new protocol doc: docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md with:",
+      "- Resolution procedure (claim via ownership ledger, classify tier, handoff, escalate).",
+      "- Coordination primitives provided by TNF (swarm-context.md, agent registry, handoff packets, change ownership ledger, conflict tier classifier, integration train, don't-die supervisor).",
+      "I'll create the protocol and reference it.",
+      "You want a coordination protocol for when multiple agents overlap on the same related tasks: so any future agent/fleet understands the situation, state, and has procedures/guides to find direction via the TNF harness.",
+      "Grep \"coordinat|overlap|concurrent|conflict tier|double.book|race condition|swarm-context|claim|ownership\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs (822 matches)",
+      "- MULTI_AGENT_INTEGRATION_PROTOCOL.md: Change Ownership Ledger, conflict tiers (isolate / merge-with-attribution / escalate), integration train, Operator Rule.",
+      "- AGENT_STATUS_LEDGER.md: roster, \"Next Agent Focus\", \"Next Agent Focus\" P0, protocol gaps, session logs, director/active channel.",
+      "So I'll write a focused protocol: docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md (or similar name).",
+      "State & discovery primitives (what TNF provides to detect/coordinate): swarm-context.md, AGENT_STATUS_LEDGER \"Next Agent Focus\", Agent Registry, Change Ownership Ledger, handoff packets, conflict-tier classifier, integration train, green coordinator, don't-die supervisor.",
+      "Claim via ownership ledger / emit a coordination note."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Low",
+    "implementation_density": 0.046,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6409"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 20 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 29983,
+    "unit_count": 431
+  }
+}

@@ -1,9 +1,10 @@
 {
-  "timestamp": "2026-07-23T22:04:10.460Z",
-  "passed": 1,
-  "failed": 4,
+  "timestamp": "2026-08-08T21:13:45.653Z",
+  "passed": 0,
+  "failed": 5,
   "warnings": 2,
   "errors": [
+    "TypeScript compilation failed: Command failed: pnpm run type-check\n• turbo 2.9.10\n ERROR  @the-new-fuse/agent-coordination#type-check: command (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/agent-coordination) /opt/tnf-node/bin/pnpm run type-check exited (2)\n WARNING  no output files found for task eslint-config-custom#build. Please check your `outputs` key in `turbo.json`\n ERROR  run failed: command  exited (2)\n",
     "Tests failed: Command failed: pnpm test -- --passWithNoTests\nError: node exited with code 1\n",
     "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/external/gemini-cli-source/bundle/docs/CONTRIBUTING.md'",
     "Required tool not found: bun",

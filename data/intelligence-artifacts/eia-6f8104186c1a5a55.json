@@ -1,0 +1,85 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-6f8104186c1a5a55",
+  "generated_at": "2026-08-09T04:36:15+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6464",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6464",
+    "source_title": "I want you to allow the agents in the system to perform all level\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:15+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6464",
+    "source_digest_sha256": "e4f7db3c0fa4e80652a9920708c5f8a5fb95f287b21fe1791ca30fe276609978"
+  },
+  "taxonomy": {
+    "procedural": [
+      "and updated to the live site or codebase then this must be exposed to the user",
+      "and allowed to be a configurable setting in the user level config.",
+      "full agent autonomy",
+      "/codebase exist, expose to user and make it a configurable user-level config setting",
+      "add config option.",
+      "I need to confirm my understanding and ask specifically about the config mechanism",
+      "(existing config.yaml?",
+      "the user isn't overriding that, they're authorizing agent autonomy within",
+      "I should not invent a config mechanism without confirming the file/format",
+      ", expose blockers as requested, and clarify the config mechanism briefly (without"
+    ],
+    "strategic": [
+      "developer of TNF to allow the system to be fully agentic and fully hands free",
+      "\"As Super Admin and core developer of TNF, allow system to be fully agentic, hands"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.286,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6464"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 10 procedural, 2 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2070,
+    "unit_count": 35
+  }
+}

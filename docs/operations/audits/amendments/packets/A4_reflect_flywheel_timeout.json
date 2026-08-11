@@ -1,0 +1,31 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A4",
+  "title": "Reflect non-blocking — edge-flywheel timeout",
+  "priority": "P1",
+  "owner_role": "state-governor",
+  "implementer_roles": ["hermes-infra-worker", "tnf-cli-agent"],
+  "human_gate_required": false,
+  "problem": "reflect.sh blocks on edge-flywheel detect-dirty-scope under dirty trees; piping to tail hides progress; lesson append wrongly waited on flywheel.",
+  "solution": {
+    "summary": "Make edge-flywheel post-hook best-effort with timeout; always finish reflect report; document lesson-append independence.",
+    "files": [
+      "~/.agents/skills/tnf-self-improvement-loop/scripts/reflect.sh",
+      ".agents/skills/tnf-self-improvement-loop/scripts/reflect.sh (repo mirror if present)",
+      "~/.agents/skills/tnf-desktop-rebuild/scripts/edge-flywheel.sh"
+    ],
+    "steps": [
+      "Wrap edge-flywheel invocation in timeout (perl/python alarm 120s on macOS) ; on timeout append aborted note and exit 0 for reflect.",
+      "Echo progress lines to stderr so tee|tail does not silence mid-run forever if using `stdbuf` or unbuffered writes before flywheel.",
+      "Add `tnf reflect --skip-flywheel` flag or SKIP_EDGE_FLYWHEEL=1.",
+      "Update skill text: lesson append independent of reflect completion."
+    ],
+    "verify": [
+      "SKIP_EDGE_FLYWHEEL=1 bash reflect.sh completes <60s and writes new reflect-*.md",
+      "Forced hang simulation: timeout path writes aborted note"
+    ],
+    "rollback": "Remove timeout wrapper."
+  },
+  "acceptance_probe": "reflect exits 0 within 60s with SKIP_EDGE_FLYWHEEL=1; lessons appendable without flywheel.",
+  "conflicts": []
+}

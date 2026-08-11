@@ -149,20 +149,39 @@ pub fn agent_browser_available(app: Option<&AppHandle>) -> bool {
     matches!(run_agent_browser(app, &["--version"]), Ok((0, _, _)))
 }
 
+/// True when a live agent-browser session answers `get url` (not merely `--version`).
+pub fn agent_browser_session_live(app: Option<&AppHandle>) -> bool {
+    match run_agent_browser(app, &["get", "url", "--json"]) {
+        Ok((0, stdout, _)) => !stdout.trim().is_empty(),
+        _ => false,
+    }
+}
+
+fn session_marker_path() -> PathBuf {
+    dirs_home().join(".tnf").join("agent-browser-session")
+}
+
+/// Validate navigations for agent-browser. Allows `about:blank` only when `allow_blank`.
+fn validate_agent_browser_url(url: &str, allow_blank: bool) -> Result<String, String> {
+    let trimmed = url.trim();
+    if allow_blank && (trimmed.is_empty() || trimmed.eq_ignore_ascii_case("about:blank")) {
+        return Ok("about:blank".into());
+    }
+    crate::browser_webview::validate_external_webview_url(trimmed).map(|u| u.to_string())
+}
+
 pub fn status_agent_browser(last_error: Option<String>, app: Option<&AppHandle>) -> AgentBrowserStatus {
     let available = agent_browser_available(app);
+    let live = available && agent_browser_session_live(app);
+    let marker = session_marker_path();
     AgentBrowserStatus {
         listening: available,
-        has_token: true,
-        connected: available,
-        runtime_connected: available,
+        has_token: marker.is_file() || live,
+        connected: live,
+        runtime_connected: live,
         last_error,
         port: 0,
-        token_path: dirs_home()
-            .join(".tnf")
-            .join("agent-browser-session")
-            .display()
-            .to_string(),
+        token_path: marker.display().to_string(),
     }
 }
 
@@ -235,12 +254,13 @@ pub fn run_mapped_command(
 
     match action {
         "tabs.navigate" => {
-            let url = params
+            let raw = params
                 .get("url")
                 .and_then(|v| v.as_str())
                 .ok_or_else(|| "url required".to_string())?;
+            let url = validate_agent_browser_url(raw, false)?;
             let (code, stdout, stderr) =
-                run_agent_browser(Some(app), &["open", url, "--json"])?;
+                run_agent_browser(Some(app), &["open", &url, "--json"])?;
             if code != 0 {
                 return Err(if !stderr.is_empty() {
                     stderr
@@ -292,14 +312,30 @@ pub fn run_mapped_command(
             }]))
         }
         "tabs.create" => {
-            let url = params
+            let raw = params
                 .get("url")
                 .and_then(|v| v.as_str())
                 .unwrap_or("about:blank");
-            run_mapped_command(app, "tabs.navigate", Some(json!({ "url": url })))?;
+            let url = validate_agent_browser_url(raw, true)?;
+            if url == "about:blank" {
+                let (code, stdout, stderr) =
+                    run_agent_browser(Some(app), &["open", "about:blank", "--json"])?;
+                if code != 0 {
+                    return Err(if !stderr.is_empty() { stderr } else { stdout });
+                }
+            } else {
+                run_mapped_command(app, "tabs.navigate", Some(json!({ "url": url.clone() })))?;
+            }
             Ok(json!({ "id": 1, "url": url, "title": "", "active": true, "index": 0 }))
         }
-        "tabs.close" | "tabs.activate" => Ok(json!({ "ok": true })),
+        "tabs.close" => Err(
+            "tabs.close is not supported by the agent-browser backend — refuse silent success"
+                .into(),
+        ),
+        "tabs.activate" => Err(
+            "tabs.activate is not supported by the agent-browser backend — refuse silent success"
+                .into(),
+        ),
         "tabs.screenshot" => {
             let millis = SystemTime::now()
                 .duration_since(UNIX_EPOCH)

@@ -1,9 +1,10 @@
 import React, { Suspense, lazy, useState } from 'react';
+import TnfLogo from '../components/brand/TnfLogo';
 import ForefrontOperatorPanel from '../components/ForefrontOperatorPanel';
 import ConfirmDialog from '../components/layout/ConfirmDialog';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
+import { useRoute } from '../components/route-context';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import FederationNodeService from '../services/FederationNodeService';
 
@@ -13,13 +14,16 @@ const NetworkGraph = lazy(() =>
 const Terminal = lazy(() => import('../components/Terminal'));
 
 /**
- * Dashboard Page - System Console Edition
- * Focused on "Under the Hood" visibility for the AI Engineer
+ * Dashboard Page — branded home + system console
  */
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'monitor' | 'controls'>('monitor');
   const [confirmStopOpen, setConfirmStopOpen] = useState(false);
   const { state: synergy } = useOperatorSynergy();
+  const { navigate } = useRoute();
+  const showFirstRun = !synergy.relayConnected && !synergy.apiOnline;
+  const agentCount = synergy.unifiedAgents.length;
+  const channelCount = synergy.relayHealth?.channels ?? 0;
 
   const handleEmergencyStop = () => {
     FederationNodeService.disconnect();
@@ -28,12 +32,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <PageShell
-      title="System Console"
+      title="The New Fuse"
       subtitle={
         synergy.relayConnected
-          ? 'Synergy plane online'
-          : 'Synergy plane offline — connect relay from Forefront panel'
+          ? 'Desktop operator surface — synergy plane online'
+          : 'Desktop operator surface — connect relay to go live'
       }
+      showBack={false}
       actions={
         <>
           <button
@@ -54,7 +59,42 @@ const Dashboard: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
+      <div
+        className={`dashboard-home-hero ${showFirstRun ? 'is-first-run' : 'is-live'}`}
+        role="status"
+      >
+        <TnfLogo size={56} />
+        <div className="dashboard-home-hero-copy">
+          <strong>{showFirstRun ? 'Welcome to The New Fuse' : 'Ready to operate'}</strong>
+          <span>
+            {showFirstRun
+              ? 'First run looks quiet until relay and API are up. Point the desktop at your local runtime, then return here for live topology.'
+              : `Federation is active${agentCount ? ` · ${agentCount} agents` : ''}${
+                  channelCount ? ` · ${channelCount} channels` : ''
+                }. Jump into Mission Control or keep monitoring below.`}
+          </span>
+        </div>
+        <div className="dashboard-home-hero-actions">
+          {showFirstRun ? (
+            <button type="button" className="primary-button" onClick={() => navigate('/settings')}>
+              Open Settings
+            </button>
+          ) : (
+            <>
+              <button type="button" className="primary-button" onClick={() => navigate('/mission')}>
+                Mission Control
+              </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => navigate('/agents')}
+              >
+                Agent Hub
+              </button>
+            </>
+          )}
+        </div>
+      </div>
       <div className="tab-switcher-row">
         <div className="tab-switcher">
           <button

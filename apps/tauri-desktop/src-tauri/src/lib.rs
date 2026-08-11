@@ -8,10 +8,14 @@ mod browser_webview;
 mod agent_browser_backend;
 mod tnf_browser_bridge;
 mod service_lifecycle;
+mod chrome_extension;
+mod host_policy;
 
 // HashMap imported on demand via bridge module
+use std::net::TcpStream;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::sync::Mutex;
 use tauri::{Manager, State};
 use serde::{Deserialize, Serialize};
@@ -117,7 +121,7 @@ fn validate_sandbox_url(url: &str) -> Result<(), String> {
     match parsed.scheme() {
         "ws" => {
             let host = parsed.host_str().unwrap_or("");
-            if host == "localhost" || host == "127.0.0.1" || host == "[::1]" {
+            if host_policy::host_allowed(host, &["localhost", "127.0.0.1", "[::1]", "::1"], &[]) {
                 Ok(())
             } else {
                 Err(format!("ws:// connections only allowed to localhost, got: {}", host))
@@ -125,21 +129,79 @@ fn validate_sandbox_url(url: &str) -> Result<(), String> {
         }
         "wss" => {
             let host = parsed.host_str().unwrap_or("");
-            let allowed_suffixes = [
-                "thenewfuse.com",
-                ".run.app",
-                ".workers.dev",
-                ".supabase.co",
-                "localhost",
-                "127.0.0.1",
-            ];
-            if allowed_suffixes.iter().any(|s| host == *s || host.ends_with(s)) {
+            if host_policy::cloud_control_plane_host_allowed(host) {
                 Ok(())
             } else {
                 Err(format!("wss:// host not in allowlist: {}", host))
             }
         }
         other => Err(format!("Unsupported scheme: {}", other)),
+    }
+}
+
+/// Probe a service URL with a short TCP (and optional HTTP) check.
+/// Rejects non-allowlisted hosts so this command cannot be used as an SSRF oracle.
+async fn probe_service_url(raw_url: &str) -> bool {
+    let parsed = match url::Url::parse(raw_url) {
+        Ok(u) => u,
+        Err(_) => return false,
+    };
+
+    let host = match parsed.host_str() {
+        Some(h) => h,
+        None => return false,
+    };
+
+    if !host_policy::health_probe_host_allowed(host) {
+        return false;
+    }
+
+    let port = match parsed.port_or_known_default() {
+        Some(p) => p,
+        None => match parsed.scheme() {
+            "ws" | "http" => 80,
+            "wss" | "https" => 443,
+            _ => return false,
+        },
+    };
+
+    let tcp_host = if host.contains(':') && !host.starts_with('[') {
+        format!("[{}]", host)
+    } else {
+        host.to_string()
+    };
+    let addr = format!("{}:{}", tcp_host, port);
+    let tcp_ok = tokio::task::spawn_blocking(move || {
+        addr.parse::<std::net::SocketAddr>()
+            .ok()
+            .map(|a| TcpStream::connect_timeout(&a, Duration::from_millis(600)).is_ok())
+            .unwrap_or(false)
+    })
+    .await
+    .unwrap_or(false);
+
+    if !tcp_ok {
+        return false;
+    }
+
+    // Prefer an HTTP(S) status probe when the URL is http(s); TCP open alone is enough for ws(s).
+    match parsed.scheme() {
+        "http" | "https" => {
+            let client = match reqwest::Client::builder()
+                .timeout(Duration::from_millis(900))
+                .redirect(reqwest::redirect::Policy::none())
+                .build()
+            {
+                Ok(c) => c,
+                Err(_) => return tcp_ok,
+            };
+            match client.get(parsed.clone()).send().await {
+                Ok(resp) => resp.status().as_u16() < 500,
+                Err(_) => tcp_ok,
+            }
+        }
+        "ws" | "wss" => tcp_ok,
+        _ => false,
     }
 }
 
@@ -406,11 +468,12 @@ async fn file_exists(path: String) -> Result<bool, String> {
 
 #[tauri::command]
 async fn check_service_status(services: Vec<ServiceStatus>) -> Vec<ServiceStatus> {
-    // In a real implementation, this would ping each service
-    services.into_iter().map(|mut s| {
-        s.online = false; // Default to offline
-        s
-    }).collect()
+    let mut out = Vec::with_capacity(services.len());
+    for mut service in services {
+        service.online = probe_service_url(&service.url).await;
+        out.push(service);
+    }
+    out
 }
 
 // ============================================================================
@@ -427,8 +490,7 @@ async fn antigravity_set_credentials(
     client.set_credentials(AntigravityCredentials {
         csrf_token,
         server_address,
-    });
-    Ok(())
+    })
 }
 
 #[tauri::command]
@@ -531,6 +593,10 @@ pub fn run() {
             service_lifecycle::ensure_library_audio_stack,
             // Services
             check_service_status,
+            // Chrome extension bootstrap
+            chrome_extension::find_chrome_executable,
+            chrome_extension::resolve_chrome_extension_path,
+            chrome_extension::launch_chrome_with_extension,
             // Antigravity
             antigravity_set_credentials,
             antigravity_get_status,
@@ -540,7 +606,9 @@ pub fn run() {
             antigravity_cancel_cascade,
             antigravity_validate_cascade_overlay,
             antigravity_save_recording,
-            // OAGI/Lux Computer Use
+            // OAGI/Lux Computer Use (automation commands require arming)
+            oagi::get_computer_use_armed,
+            oagi::set_computer_use_armed,
             oagi::capture_screen,
             oagi::execute_click,
             oagi::execute_drag,

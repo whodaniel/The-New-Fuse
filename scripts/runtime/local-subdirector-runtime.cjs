@@ -25,6 +25,16 @@ const { promisify } = require('util');
 const execFileAsync = promisify(execFile);
 const WebSocket = globalThis.WebSocket || require('ws');
 
+function readOptionalFile(filePath) {
+  if (!filePath) return '';
+  try {
+    if (!fs.existsSync(filePath)) return '';
+    return fs.readFileSync(filePath, 'utf8');
+  } catch {
+    return '';
+  }
+}
+
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
 const AGENT_COMMAND_HINTS = [
   'agy',
@@ -42,13 +52,36 @@ const AGENT_COMMAND_HINTS = [
   'tnf',
 ];
 
+const DEFAULT_SIGNING_KEY_FILE = path.join(
+  os.homedir(),
+  '.tnf',
+  'local-subdirector',
+  'signing.pkcs8.pem'
+);
+const DEFAULT_ENCRYPTION_KEY_FILE = path.join(
+  os.homedir(),
+  '.tnf',
+  'local-subdirector',
+  'encryption.pkcs8.pem'
+);
+
+const signingKeyFile =
+  process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_FILE || DEFAULT_SIGNING_KEY_FILE;
+const encryptionKeyFile =
+  process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_FILE || DEFAULT_ENCRYPTION_KEY_FILE;
+
 const config = {
   actorId: process.env.LOCAL_SUBDIRECTOR_ACTOR_ID || 'tnf-local-subdirector',
   // Identity and Trust Protocol
   nftId: process.env.LOCAL_SUBDIRECTOR_NFT_ID || 'unregistered',
   walletAddress: process.env.LOCAL_SUBDIRECTOR_WALLET_ADDRESS || '0x0000000000000000000000000000000000000000',
-  signingPrivateKeyPem: process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_PEM || '',
-  encryptionPrivateKeyPem: process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_PEM || '',
+  // Keep PEM material in memory only — never persist into heartbeat JSON.
+  signingKeyFile,
+  encryptionKeyFile,
+  signingPrivateKeyPem:
+    process.env.LOCAL_SUBDIRECTOR_SIGNING_KEY_PEM || readOptionalFile(signingKeyFile),
+  encryptionPrivateKeyPem:
+    process.env.LOCAL_SUBDIRECTOR_ENCRYPTION_KEY_PEM || readOptionalFile(encryptionKeyFile),
   intervalMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_INTERVAL_MS, 30000),
   stallThresholdMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_STALL_THRESHOLD_MS, 180000),
   idleThresholdMs: parsePositiveInt(process.env.LOCAL_SUBDIRECTOR_IDLE_THRESHOLD_MS, 300000),
@@ -70,6 +103,19 @@ const config = {
     process.env.LOCAL_SUBDIRECTOR_STATE_DIR ||
     path.join(os.homedir(), '.tnf', 'local-subdirector', 'state'),
 };
+
+function publicHeartbeatConfig() {
+  const {
+    signingPrivateKeyPem: _signingPrivateKeyPem,
+    encryptionPrivateKeyPem: _encryptionPrivateKeyPem,
+    ...safe
+  } = config;
+  return {
+    ...safe,
+    signingKeyConfigured: Boolean(_signingPrivateKeyPem),
+    encryptionKeyConfigured: Boolean(_encryptionPrivateKeyPem),
+  };
+}
 
 const state = new Map();
 let cycle = 0;
@@ -187,20 +233,36 @@ function resolvePath(fileName) {
 }
 
 async function writeHeartbeat(payload) {
-  await fsp.writeFile(resolvePath('local-subdirector-heartbeat.json'), JSON.stringify(payload, null, 2));
-  await fsp.writeFile(resolvePath('local-subdirector-heartbeat.md'), buildMarkdown(payload));
+  const jsonPath = resolvePath('local-subdirector-heartbeat.json');
+  const mdPath = resolvePath('local-subdirector-heartbeat.md');
+  const tmp = `${jsonPath}.${process.pid}.tmp`;
+  await fsp.writeFile(tmp, `${JSON.stringify(payload, null, 2)}\n`);
+  await fsp.rename(tmp, jsonPath);
+  await fsp.writeFile(mdPath, buildMarkdown(payload));
 }
 
 /**
  * Signal Trust Protocol Integration
  */
 async function syncWithSuperDirector() {
-  if (config.nftId === 'unregistered') {
+  if (config.nftId === 'unregistered' || !config.nftId) {
     console.warn('[local-subdirector] cloud sync disabled: NFT identity not configured.');
     return;
   }
-  // This is where the Local Sub-Director would connect to the Cloud Redis Bridge
-  // and subscribe to Master Clock signals.
+  // Local OSS installs get a machine-local NFT identity. Cloud Super Director
+  // bridge activation still requires reachable cloud Redis credentials; until
+  // then we mark sync as "local-ready" rather than failing closed every cycle.
+  const cloudConfigured = Boolean(
+    process.env.TNF_CLOUD_REDIS_URL ||
+      process.env.CLOUD_REDIS_URL ||
+      process.env.TNF_SUPER_DIRECTOR_REDIS_URL
+  );
+  if (!cloudConfigured) {
+    console.log(
+      `[local-subdirector] identity ready for NFT ${config.nftId}; cloud Super Director bridge deferred (no cloud Redis URL).`
+    );
+    return;
+  }
   console.log(`[local-subdirector] cloud sync initialized for NFT: ${config.nftId}`);
 }
 
@@ -635,7 +697,7 @@ async function scanOnce() {
     status:
       summary.stalledSessions > 0 ? 'critical' : summary.agentSessions > 0 ? 'healthy' : 'warning',
     cycle,
-    config,
+    config: publicHeartbeatConfig(),
     summary,
     sessions,
     wakePings,

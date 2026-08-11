@@ -114,5 +114,5 @@ Run it with:
 
 ## Additional Resources
 
-- [MCP Specification Document](/MCP_SPECIFICATION.md)
-- [MCP Guide](/docs/MCP-GUIDE.md)
+- [MCP Specification Document](../../specifications/_archive/MCP_SPECIFICATION.md)
+- [MCP Guide](./MCP-GUIDE.md)

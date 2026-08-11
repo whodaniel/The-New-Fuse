@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "authority": [
+    "docs/protocols/USER_CONFIRMATION_PROTOCOL.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/HARNESS_PERMISSION_BERM.md"
+  ],
+  "defaultDecision": "allow_with_audit",
+  "rules": [
+    {
+      "id": "financial-forbidden",
+      "match": {
+        "actionClass": ["purchase", "payment", "transfer_funds", "financial"]
+      },
+      "decision": "deny",
+      "directive": "D9",
+      "reason": "Financial autonomy is forbidden."
+    },
+    {
+      "id": "secrets-confirm",
+      "match": {
+        "actionClass": ["credential_write", "secret_export", "env_secret"]
+      },
+      "decision": "require_confirmation",
+      "directive": "D1",
+      "reason": "Credential handling requires live operator confirmation."
+    },
+    {
+      "id": "git-push-confirm",
+      "match": { "actionClass": ["git_push", "git_force_push", "commit_push"] },
+      "decision": "require_confirmation",
+      "directive": "D1",
+      "reason": "Commits/pushes require operator confirmation unless standing auth explicitly covers them."
+    },
+    {
+      "id": "hard-delete-confirm",
+      "match": {
+        "actionClass": ["hard_delete", "rm_rf", "destructive_cleanup"]
+      },
+      "decision": "require_confirmation",
+      "directive": "D1",
+      "reason": "Hard deletes require confirmation."
+    },
+    {
+      "id": "process-kill-confirm",
+      "match": { "actionClass": ["process_kill", "kill_all"] },
+      "decision": "require_confirmation",
+      "directive": "D1",
+      "reason": "Process kills require confirmation."
+    },
+    {
+      "id": "untrusted-exec-sandbox",
+      "match": {
+        "actionClass": [
+          "untrusted_code_exec",
+          "eval_remote",
+          "download_and_run"
+        ]
+      },
+      "decision": "require_sandbox",
+      "directive": "D11",
+      "reason": "Untrusted code execution only inside isolated sandbox."
+    },
+    {
+      "id": "locked-doc-gate",
+      "match": {
+        "actionClass": ["edit_locked_protocol"],
+        "pathGlob": ["docs/protocols/**"]
+      },
+      "decision": "require_confirmation",
+      "directive": "D16",
+      "reason": "LOCKED protocol bodies are gated."
+    },
+    {
+      "id": "read-allow",
+      "match": { "actionClass": ["read", "inspect", "query"] },
+      "decision": "allow",
+      "directive": "D8",
+      "reason": "Read/inspect is in autonomous standing authorization."
+    },
+    {
+      "id": "routine-mutation-allow",
+      "match": {
+        "actionClass": ["write_workspace", "repair", "verify", "handoff_emit"]
+      },
+      "decision": "allow_with_audit",
+      "directive": "D8",
+      "reason": "Routine workspace mutations under standing autonomy with audit trail."
+    }
+  ]
+}

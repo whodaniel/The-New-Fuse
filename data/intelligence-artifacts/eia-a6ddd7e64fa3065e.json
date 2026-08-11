@@ -1,0 +1,133 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-a6ddd7e64fa3065e",
+  "generated_at": "2026-08-09T04:36:26+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6422",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6422",
+    "source_title": "\ud83d\udee1\ufe0f  TNF SYSTEM STATUS\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-09T04:36:26+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6422",
+    "source_digest_sha256": "ecfe4bae29df9d61b8293efb6f6ca4148bc7e4a91472467a392836bca0cfcd22"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Run check-agent-registration.cjs to verify agent ledger is current",
+      "Use 'tnf' as the entrypoint for OpenClaw and other Claw-type agent",
+      "Prefer native 'tnf <command>' routes first, then 'tnf openclaw ...' or 'tnf",
+      "TURN ZERO ONBOARDING PROMPT (Copy/Paste for new agent sessions):",
+      "Launch raw AI CLIs from the TNF repository root so ./docs/...",
+      "or 'cat ~/.tnf/handoff-current.json' for raw JSON",
+      "Step 1: Reading state files...",
+      "Step 2: Reading frontload policy files...",
+      ".agent/SYSTEM_PROMPT.md",
+      ".agent/context/resource-map.md",
+      ".agent/context/agent-onboarding.md",
+      "Step 3: Reading session handoff...",
+      "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+      "Step 4: Verifying integrity...",
+      "KNOWLEDGE_TREE.json present",
+      "Step 5: Repository synchronization...",
+      "@the-new-fuse/api missing modules; await live Daniel handshake before",
+      "docs/protocols/agent-self-edit-protocol-v0.1.md: [CLASS:INTEL]",
+      "docs/protocols/twip-terminal-graph-api.md: [CLASS:INTEL] [STATUS:PENDING]",
+      "error: unknown command 'pi'"
+    ],
+    "strategic": [
+      "docs/protocols/mcp-nestjs-integration.md: [CLASS:INTEL] [STATUS:PENDING]",
+      "docs/protocols/twip-orchestration-extension-v0.1.md: [CLASS:INTEL]",
+      "Protocol: Integration Verification",
+      "always-on interactive LLM session",
+      "persistent LLM-powered relay",
+      "register [options] [name] [role] [platform] Register and listen as an agent",
+      "(provider-routed; local default)",
+      "compat Compatibility and migration",
+      "traits Role/platform and command",
+      "orchestrate [options] [workflow] Run agent orchestration",
+      "models [options] [provider] List all available models",
+      "stats [options] Show token usage and cost",
+      "story Story Architect utilities and",
+      "goals Strategic goals and roadmap",
+      "assimilate Manage integration and routing",
+      "telegram TNF Telegram bot integration",
+      "memory Memory provider management",
+      "Which direction are you going?",
+      "that while tnf exists to fasilitate the harnessed orchestration of the AI"
+    ],
+    "governance": [
+      "OPERATOR POLICY:",
+      "TNF Protocol Pre-Flight Checks",
+      "Protocol: Turn Zero Mandate",
+      "Step 2: Reading frontload policy files...",
+      "Step 4: Verifying integrity...",
+      "Protocol references validated",
+      "Protocol: Living State Sync",
+      "Protocol: Procedural Disclosure",
+      "[Procedural Disclosure] Checking protocol alignment...",
+      "docs/protocols/agent-self-edit-protocol-v0.1.md: [CLASS:INTEL]",
+      "docs/protocols/resource-search-protocol-bridge.md: [CLASS:INTEL]",
+      "docs/protocols/tnf-cron-governance-protocol-v0.1.md: [CLASS:INTEL]",
+      "docs/protocols/tnf-log-to-dom-protocol.md: [CLASS:INTEL] [STATUS:PENDING]",
+      "Protocol: Session Handoff",
+      "Protocol: Knowledge Tree Integrity",
+      "Protocol: Integration Verification",
+      "Protocol Check Summary",
+      "Core Protocols: 61 protocol files",
+      "protocol Validate TNF framework",
+      "growth-audit [options] Inventory AI/runtime data"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.043,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6422"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 19 strategic, and 20 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 21618,
+    "unit_count": 464
+  }
+}

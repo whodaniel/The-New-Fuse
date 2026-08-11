@@ -13,14 +13,22 @@ cat ./docs/protocols/TURN_ZERO_MANDATE.md
 cat ./docs/protocols/LIVING_STATE.md
 cat ./docs/protocols/reports/SESSION_HANDOFF_LATEST.json 2>/dev/null || true
 node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000
+node scripts/verify-repo-frontload.cjs
+node scripts/harness/verify-harness-completeness.cjs --provision
 ```
 
 If an onboarding artifact is missing, use repair mode:
 
 ```bash
 node scripts/tnf-onboard.cjs --repair --runtime-timeout-ms 1000
+node scripts/harness/provision-injection-surfaces.cjs --repair
 ```
 
+First time for this runtime (or after cache wipe): complete
+`docs/core/BOOTSTRAP.md` and stamp `[BOOTSTRAP_STATUS:COMPLETE]`.
+
+Harness inventory (UNU 8 layers): `docs/protocols/HARNESS_CONFIG.md`.
+Dynamic memory ≠ `docs/core/MEMORY.md` — use `scripts/harness/memory-layer.cjs`.
 ## Orientation Summary Contract
 
 After boot, report:
@@ -31,6 +39,7 @@ After boot, report:
 - missing startup artifacts, if any
 - whether relay/runtime endpoints are local defaults or environment-provided
 - verification command you will run before claiming completion
+- bootstrap status (`PENDING` / `COMPLETE` from `docs/core/BOOTSTRAP.md`)
 
 Do not start implementation until the operator confirms, unless the operator's
 latest request already asks for implementation.
@@ -44,6 +53,7 @@ Canonical:
 - `docs/protocols/AGENT_STATUS_LEDGER.md`
 - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
 - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
+- `docs/core/FRONTLOAD_MANIFEST.md` (injection order)
 
 Runtime support:
 
@@ -52,6 +62,15 @@ Runtime support:
 - `.agent/workflows/frontload.md`
 - `.agent/runtime-state.json`
 - `.agent/runtime-logs/`
+- `docs/core/MEMORY.md` (curated long-term; private sessions)
+
+## Alias Map (informal → TNF)
+
+| Informal | Canonical |
+| --- | --- |
+| `soul.md` | `docs/core/SOUL.md` |
+| `agent.md` | `.agent/agents/<id>.md` + `docs/core/IDENTITY.md` |
+| `brain.md` | `docs/core/MEMORY.md` + Living State + session handoff |
 
 Legacy compatibility only:
 
@@ -62,6 +81,7 @@ Legacy compatibility only:
 
 Never create or update legacy compatibility files unless the operator explicitly
 requests that workflow.
+
 
 ## Runtime Configuration
 

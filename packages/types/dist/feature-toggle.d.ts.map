@@ -1,1 +1,0 @@
-{"version":3,"file":"feature-toggle.d.ts","sourceRoot":"","sources":["../src/feature-toggle.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,wBAAwB;IACvC,eAAe,EAAE,MAAM,EAAE,CAAC;IAC1B,SAAS,CAAC,OAAO,EAAE,MAAM,GAAG,OAAO,CAAC;CACrC;AAED,eAAO,MAAM,oBAAoB,mDAG/B,CAAC"}

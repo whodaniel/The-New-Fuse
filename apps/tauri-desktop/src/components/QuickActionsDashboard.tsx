@@ -8,8 +8,8 @@
  */
 
 import { invoke } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-shell';
 import React, { useCallback, useState } from 'react';
+import { openExternal } from '../lib/openExternal';
 
 // ============================================================================
 // TYPES
@@ -185,7 +185,7 @@ export const QuickActionsDashboard: React.FC = () => {
     try {
       if (action.url) {
         // Open URL
-        await open(action.url);
+        await openExternal(action.url);
         setResults((prev) =>
           new Map(prev).set(action.id, {
             success: true,

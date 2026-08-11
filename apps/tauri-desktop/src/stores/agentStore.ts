@@ -7,6 +7,28 @@ import { safeStorage } from '../lib/safeStorage';
 import { apiService } from '../services/api';
 import type { Agent } from '../types';
 
+/** Coalesce StrictMode / multi-surface bootstraps so we don't 429 /api/agents. */
+const FETCH_TTL_MS = 15_000;
+const RATE_LIMIT_HOLD_MS = 20_000;
+let lastSuccessfulFetchAt = 0;
+let rateLimitedUntil = 0;
+let inflightFetch: Promise<void> | null = null;
+
+function isRateLimitedError(error?: string): boolean {
+  return Boolean(error && /429|too many requests|rate.?limit/i.test(error));
+}
+
+function retryHoldMsFromError(error?: string): number {
+  const match = error?.match(/retry after (\d+)/i);
+  if (match) {
+    const seconds = Number(match[1]);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      return Math.min(120_000, Math.max(1_000, Math.ceil(seconds * 1000)));
+    }
+  }
+  return RATE_LIMIT_HOLD_MS;
+}
+
 interface AgentState {
   agents: Agent[];
   loading: boolean;
@@ -15,7 +37,7 @@ interface AgentState {
   selectedAgentId: string | null;
 
   // Actions
-  fetchAgents: () => Promise<void>;
+  fetchAgents: (opts?: { force?: boolean }) => Promise<void>;
   selectAgent: (id: string | null) => void;
   createAgent: (agent: Partial<Agent>) => Promise<void>;
   updateAgent: (id: string, agent: Partial<Agent>) => Promise<void>;
@@ -27,28 +49,70 @@ interface AgentState {
 
 export const useAgentStore = create<AgentState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       agents: [],
       loading: false,
       error: null,
       apiOffline: false,
       selectedAgentId: null,
 
-      fetchAgents: async () => {
-        set({ loading: true, error: null });
-        const response = await apiService.getAgents();
-        if (response.success && response.data) {
-          set({ agents: response.data, loading: false, apiOffline: false, error: null });
-        } else {
+      fetchAgents: async (opts) => {
+        const force = Boolean(opts?.force);
+        const now = Date.now();
+
+        if (!force && inflightFetch) {
+          return inflightFetch;
+        }
+
+        if (!force && now < rateLimitedUntil) {
+          return;
+        }
+
+        if (
+          !force &&
+          get().agents.length > 0 &&
+          !get().apiOffline &&
+          now - lastSuccessfulFetchAt < FETCH_TTL_MS
+        ) {
+          return;
+        }
+
+        const run = (async () => {
+          set({ loading: true, error: null });
+          const response = await apiService.getAgents();
+          if (response.success && response.data) {
+            lastSuccessfulFetchAt = Date.now();
+            rateLimitedUntil = 0;
+            set({ agents: response.data, loading: false, apiOffline: false, error: null });
+            return;
+          }
+
+          if (isRateLimitedError(response.error)) {
+            rateLimitedUntil = Date.now() + retryHoldMsFromError(response.error);
+            // Keep any cached agents so the workflow palette stays usable.
+            set({
+              loading: false,
+              apiOffline: get().agents.length === 0,
+              error:
+                'Agent list rate-limited (429). Using cached/federated agents — retry shortly.',
+            });
+            return;
+          }
+
           set({
-            agents: [],
+            agents: force ? [] : get().agents,
             loading: false,
             apiOffline: true,
             error:
               response.error ||
               'REST API unavailable at localhost:3001. Use Federated Swarm below or start the TNF API.',
           });
-        }
+        })().finally(() => {
+          inflightFetch = null;
+        });
+
+        inflightFetch = run;
+        return run;
       },
 
       selectAgent: (id) => {

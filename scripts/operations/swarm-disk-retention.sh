@@ -71,6 +71,70 @@ truncate_log "${TNF_HOME}/voice-watchdog.log" 1000
 truncate_log "${ROOT_DIR}/docs/operations/tnf-full-auto-daemon.log" 2000
 truncate_log "${ROOT_DIR}/.agent/runtime-logs/factory-supervisor.log" 2000
 
+# --- Full Enchilada hygiene (2026-08-09): swarm-context flood + fat journals ---
+SWARM_CONTEXT_HISTORY_KEEP="${TNF_SWARM_CONTEXT_HISTORY_KEEP:-0}"
+SWARM_CONTEXT_CANONICAL="${TNF_SWARM_CONTEXT_PATH:-${TNF_HOME}/swarm-context.md}"
+SWARM_CONTEXT_DIR="$(dirname "${SWARM_CONTEXT_CANONICAL}")"
+SWARM_CONTEXT_BASE="$(basename "${SWARM_CONTEXT_CANONICAL}" .md)"
+AUTOPILOT_HISTORY_LINES="${TNF_AUTOPILOT_HISTORY_LINES:-2000}"
+AUTHORITY_AUDIT_LINES="${TNF_AUTHORITY_AUDIT_LINES:-2000}"
+
+# Cap timestamped swarm-context-*.md history (canonical file is never deleted)
+if [[ -d "${SWARM_CONTEXT_DIR}" ]]; then
+  _sc_count="$(find "${SWARM_CONTEXT_DIR}" -maxdepth 1 -type f -name "${SWARM_CONTEXT_BASE}-*.md" 2>/dev/null | wc -l | tr -d ' ')"
+  if [[ "${_sc_count}" -gt "${SWARM_CONTEXT_HISTORY_KEEP}" ]]; then
+    if [[ "${SWARM_CONTEXT_HISTORY_KEEP}" -eq 0 ]]; then
+      find "${SWARM_CONTEXT_DIR}" -maxdepth 1 -type f -name "${SWARM_CONTEXT_BASE}-*.md" -delete 2>/dev/null || true
+      echo "[swarm-disk-retention] swarm-context history removed (${_sc_count} file(s); keep=0)"
+    else
+      find "${SWARM_CONTEXT_DIR}" -maxdepth 1 -type f -name "${SWARM_CONTEXT_BASE}-*.md" -print0 2>/dev/null \
+        | xargs -0 ls -t 2>/dev/null \
+        | tail -n +"$((SWARM_CONTEXT_HISTORY_KEEP + 1))" \
+        | xargs rm -f 2>/dev/null || true
+      echo "[swarm-disk-retention] swarm-context history capped at ${SWARM_CONTEXT_HISTORY_KEEP} (was ${_sc_count})"
+    fi
+  else
+    echo "[swarm-disk-retention] swarm-context history ok (${_sc_count} ≤ keep ${SWARM_CONTEXT_HISTORY_KEEP})"
+  fi
+fi
+
+truncate_log "${TNF_HOME}/subdirector-autopilot/state/subdirector-autopilot-history.jsonl" "${AUTOPILOT_HISTORY_LINES}"
+truncate_log "${TNF_HOME}/authority/audit.jsonl" "${AUTHORITY_AUDIT_LINES}"
+
+# Scrub PEM bodies from Sub-Director heartbeat if an older runtime leaked them
+HB_JSON="${TNF_HOME}/local-subdirector/state/local-subdirector-heartbeat.json"
+if [[ -f "${HB_JSON}" ]] && command -v python3 >/dev/null 2>&1; then
+  python3 - "${HB_JSON}" <<'PY' || echo "[swarm-disk-retention] heartbeat PEM scrub warning (non-fatal)"
+import json, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+try:
+    data = json.loads(p.read_text())
+except Exception as e:
+    print(f"[swarm-disk-retention] heartbeat scrub skip: {e}")
+    raise SystemExit(0)
+cfg = data.get("config")
+if not isinstance(cfg, dict):
+    raise SystemExit(0)
+changed = False
+for key in ("signingPrivateKeyPem", "encryptionPrivateKeyPem"):
+    val = cfg.get(key)
+    if isinstance(val, str) and "BEGIN" in val:
+        configured = bool(val.strip())
+        cfg.pop(key, None)
+        flag = "signingKeyConfigured" if key.startswith("signing") else "encryptionKeyConfigured"
+        cfg[flag] = configured
+        changed = True
+if changed:
+    tmp = p.with_suffix(p.suffix + ".scrub.tmp")
+    tmp.write_text(json.dumps(data, indent=2) + "\n")
+    tmp.replace(p)
+    print("[swarm-disk-retention] scrubbed PEM bodies from local-subdirector-heartbeat.json")
+else:
+    print("[swarm-disk-retention] heartbeat JSON has no PEM bodies")
+PY
+fi
+
 # Package caches (deduped; safe to prune unused)
 if command -v pnpm >/dev/null 2>&1; then
   pnpm store prune >/dev/null 2>&1 || true

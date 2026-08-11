@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# --- tnf dependency preflight ------------------------------------------
+# cron runs with a minimal PATH. These scripts have no 'set -e', so a
+# missing binary previously produced 'command not found', an exit code of
+# 0, and a cycle that cron recorded as successful while doing nothing.
+# Fail loudly at the top instead.
+for _tnf_bin in curl jq python3 redis-cli; do
+  command -v "$_tnf_bin" >/dev/null 2>&1 || {
+    echo "FATAL: required binary '$_tnf_bin' not found. PATH=$PATH" >&2
+    exit 127
+  }
+done
+# --- end tnf dependency preflight -----------------------------------
+
 # tnf-registry-anchored-reconciler.sh — TNF Registry Drift Anchorer
 #
 # PURPOSE

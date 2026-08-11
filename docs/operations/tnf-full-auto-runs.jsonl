@@ -258,3 +258,14 @@
 {"cycle":21,"startedAt":"2026-08-02T06:41:45.098Z","finishedAt":"2026-08-02T06:41:49.917Z","durationMs":4819,"ok":true}
 {"cycle":22,"startedAt":"2026-08-03T00:47:21.561Z","finishedAt":"2026-08-03T00:47:26.388Z","durationMs":4827,"ok":true}
 {"cycle":23,"startedAt":"2026-08-03T20:24:25.860Z","finishedAt":"2026-08-03T20:25:07.318Z","durationMs":41458,"ok":true}
+{"cycle":25,"startedAt":"2026-08-03T22:44:45.717Z","finishedAt":"2026-08-03T22:59:15.470Z","durationMs":869753,"ok":false,"error":"/Users/danielgoldberg/.hermes/node/bin/node exited with code 1"}
+{"cycle":1,"startedAt":"2026-08-09T19:18:02.407Z","finishedAt":"2026-08-09T19:35:48.283Z","durationMs":1065876,"ok":true}
+{"cycle":2,"startedAt":"2026-08-10T02:51:51.299Z","finishedAt":"2026-08-10T04:21:51.438Z","durationMs":5400139,"ok":false,"error":"/Users/danielgoldberg/.hermes/node/bin/node timed out after 3203s and was killed","timedOut":true}
+{"cycle":3,"startedAt":"2026-08-10T04:51:51.497Z","finishedAt":"2026-08-10T06:21:51.640Z","durationMs":5400143,"ok":false,"error":"/Users/danielgoldberg/.hermes/node/bin/node timed out after 3679s and was killed","timedOut":true}
+{"cycle":1,"startedAt":"2026-08-10T16:12:07.797Z","finishedAt":"2026-08-10T16:15:59.983Z","durationMs":232186,"ok":true}
+{"cycle":2,"startedAt":"2026-08-10T17:25:23.882Z","finishedAt":"2026-08-10T17:25:48.438Z","durationMs":24556,"ok":false,"error":"/Users/danielgoldberg/.hermes/node/bin/node exited with code 1"}
+{"cycle":1,"startedAt":"2026-08-10T17:30:59.115Z","finishedAt":"2026-08-10T17:32:04.910Z","durationMs":65795,"ok":true}
+{"cycle":2,"startedAt":"2026-08-10T18:36:16.722Z","finishedAt":"2026-08-10T20:06:16.834Z","durationMs":5400112,"ok":false,"error":"/Users/danielgoldberg/.hermes/node/bin/node timed out after 5348s and was killed","timedOut":true}
+{"cycle":3,"startedAt":"2026-08-10T20:26:38.664Z","finishedAt":"2026-08-10T20:37:41.989Z","durationMs":663325,"ok":true,"error":"post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"}
+{"cycle":4,"startedAt":"2026-08-10T20:40:03.083Z","finishedAt":"2026-08-10T20:40:35.626Z","durationMs":32543,"ok":true}
+{"cycle":5,"startedAt":"2026-08-10T20:41:09.408Z","finishedAt":"2026-08-10T20:41:26.851Z","durationMs":17443,"ok":true}

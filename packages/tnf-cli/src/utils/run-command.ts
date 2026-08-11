@@ -38,6 +38,24 @@ export type SpawnWithTimeoutOptions = {
  * sent SIGTERM so it can flush state, then SIGKILL after KILL_GRACE_MS if it
  * ignores that. The promise settles exactly once in every path.
  */
+function signalProcessTree(pid: number | undefined, signal: NodeJS.Signals): void {
+  if (!pid || !Number.isFinite(pid) || pid <= 0) return;
+  // Prefer the process group so nested CLI children (orchestrate workers,
+  // pnpm/tsx wrappers) do not outlive a timed-out parent. Falls back to the
+  // direct child when the group signal is not available.
+  try {
+    process.kill(-pid, signal);
+    return;
+  } catch {
+    /* group kill unavailable — fall through */
+  }
+  try {
+    process.kill(pid, signal);
+  } catch {
+    /* already reaped */
+  }
+}
+
 export async function spawnWithTimeout(
   cmd: string,
   args: string[],
@@ -45,11 +63,14 @@ export async function spawnWithTimeout(
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const stdio = options.stdio ?? (options.isBackground ? 'ignore' : 'inherit');
+    // Timed foreground work gets its own process group so timeout can SIGTERM
+    // the whole tree. Background jobs stay detached + unref'd as before.
+    const useTimeoutGroup = Boolean(options.timeoutMs && options.timeoutMs > 0);
     const child = spawn(cmd, args, {
       cwd: options.cwd,
       env: { ...process.env, ...(options.env || {}) },
       stdio,
-      detached: options.isBackground,
+      detached: options.isBackground || useTimeoutGroup,
     });
 
     if (options.isBackground) {
@@ -66,11 +87,11 @@ export async function spawnWithTimeout(
       if (killTimer) clearTimeout(killTimer);
     };
 
-    if (options.timeoutMs && options.timeoutMs > 0) {
+    if (useTimeoutGroup) {
       timer = setTimeout(() => {
         timedOut = true;
-        child.kill('SIGTERM');
-        killTimer = setTimeout(() => child.kill('SIGKILL'), KILL_GRACE_MS);
+        signalProcessTree(child.pid, 'SIGTERM');
+        killTimer = setTimeout(() => signalProcessTree(child.pid, 'SIGKILL'), KILL_GRACE_MS);
         killTimer.unref?.();
       }, options.timeoutMs);
     }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { GoogleDriveWizard } from '../components/mcp/GoogleDriveWizard';
 import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
 import { useModalA11y } from '../hooks/useModalA11y';
@@ -174,8 +173,6 @@ const MCPMarketplace: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
-
       {/* Search and Filter */}
       <div className="search-bar">
         <input

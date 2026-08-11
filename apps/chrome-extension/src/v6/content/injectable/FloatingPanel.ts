@@ -201,6 +201,11 @@ export class EnhancedFloatingPanel {
    */
   private requestConnectionState(): void {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn('[FuseConnect] GET_STATE unavailable:', chrome.runtime.lastError.message);
+        return;
+      }
+      if (!response) return;
       this.connectionStatus = response.connectionStatus || 'disconnected';
       this.agents = response.agents || [];
       this.channels = response.channels || [];
@@ -216,8 +221,8 @@ export class EnhancedFloatingPanel {
         (this as any).browserAgentId = response.browserAgentId;
       }
 
-      if (response.agentId) {
-        this.myAgentId = response.agentId;
+      if (response.pageAgentId || response.agentId) {
+        this.myAgentId = response.pageAgentId || response.agentId;
       }
       this.update();
     });
@@ -1483,6 +1488,26 @@ export class EnhancedFloatingPanel {
               // Shorten ID for display
               const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
 
+              // Prefer the federated tokens: a truncated raw id cannot be addressed,
+              // whereas `@ID#:<base58>` pasted into the composer resolves to this exact
+              // agent on any channel. Fall back to the short id when the sender predates
+              // federated identity.
+              const senderAgent = this.agents.find((a) => a.id === senderId);
+              const senderIdNumber =
+                (typeof msg.metadata?.idNumber === 'string' && msg.metadata.idNumber) ||
+                senderAgent?.idNumber ||
+                '';
+              const senderHandle =
+                (typeof msg.metadata?.operationalHandle === 'string' &&
+                  msg.metadata.operationalHandle) ||
+                senderAgent?.operationalHandle ||
+                '';
+              const addressChip = senderIdNumber ? `@${senderIdNumber}` : `#${shortId}`;
+              const addressCopyValue = senderIdNumber ? `@${senderIdNumber} ` : senderId;
+              const addressTitle = senderHandle
+                ? `${senderHandle} (${senderId}) — copy to address this agent`
+                : `Agent ID: ${senderId}`;
+
               return `
             <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
@@ -1491,10 +1516,10 @@ export class EnhancedFloatingPanel {
                   ${this.escapeHtml(senderName)}
                 </span>
                 <div style="display: flex; align-items: center; gap: 4px;">
-                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="Click copy to get full ID: ${this.escapeHtml(senderId)}">
-                    #${this.escapeHtml(shortId)}
+                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="${this.escapeHtml(addressTitle)}">
+                    ${this.escapeHtml(addressChip)}
                   </span>
-                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(senderId)}" title="Copy Agent ID" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">
+                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(addressCopyValue)}" title="${this.escapeHtml(addressTitle)}" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">
                     📋
                   </button>
                 </div>
@@ -1558,6 +1583,36 @@ export class EnhancedFloatingPanel {
   /**
    * Render agents tab
    */
+  /**
+   * Show the tokens an agent can actually be addressed by.
+   *
+   * `@ID#:<base58>` and `/to <HANDLE>` are resolved by resolveMessageTarget() in the
+   * background service, but they are unusable if the operator cannot see what to
+   * type — the panel previously showed only a truncated raw agent id, which is not
+   * an addressable token. Click either chip to copy it.
+   */
+  private renderAgentAddressLine(agent: Agent): string {
+    const handle = agent.operationalHandle || '';
+    const idNumber = agent.idNumber || '';
+    if (!handle && !idNumber) return '';
+
+    const chip = (value: string, title: string) => `
+      <button
+        class="fcp6-btn fcp6-address-chip"
+        data-action="copy-to-clipboard"
+        data-value="${this.escapeHtml(value)}"
+        title="${this.escapeHtml(title)}"
+        style="width:auto; height:auto; padding:1px 6px; font-size:9px; font-family:monospace;
+               background:rgba(0,217,255,0.1); color:#00D9FF; border:1px solid rgba(0,217,255,0.2);"
+      >${this.escapeHtml(value)}</button>`;
+
+    return `
+      <div class="fcp6-agent-address" style="display:flex; gap:4px; margin-top:3px; flex-wrap:wrap;">
+        ${handle ? chip(`/to ${handle}`, `Address ${handle} directly — click to copy`) : ''}
+        ${idNumber ? chip(`@${idNumber}`, `Federated ID# — click to copy`) : ''}
+      </div>`;
+  }
+
   private renderAgentsTab(): string {
     return `
       <div class="fcp6-section-title">Connected Agents (${this.agents.length})</div>
@@ -1575,6 +1630,7 @@ export class EnhancedFloatingPanel {
                 ${agent.id === this.myAgentId ? '<span class="fcp6-badge" style="position:static; display:inline-block; margin-left:6px; background:rgba(0,217,255,0.2); color:#00D9FF;">YOU</span>' : ''}
               </div>
               <div class="fcp6-agent-platform">${agent.platform} • ${agent.status}</div>
+              ${this.renderAgentAddressLine(agent)}
             </div>
           </div>
         `
@@ -2087,16 +2143,22 @@ export class EnhancedFloatingPanel {
 
     try {
       chrome.runtime.sendMessage(message, (response) => {
-        // Check for runtime.lastError which indicates context invalidation
+        // Check for runtime.lastError and distinguish fatal reloads from MV3 listener misses.
         if (chrome.runtime.lastError) {
           const errorMessage = chrome.runtime.lastError.message || '';
-          if (
-            errorMessage.includes('Extension context invalidated') ||
-            errorMessage.includes('Receiving end does not exist')
-          ) {
+          if (errorMessage.includes('Extension context invalidated')) {
             console.error('[FuseConnect] Extension context invalidated:', errorMessage);
             this.isContextValid = false;
             this.showContextInvalidatedWarning();
+            return;
+          }
+          if (errorMessage.includes('Receiving end does not exist')) {
+            console.warn(
+              '[FuseConnect] Background listener unavailable; will retry state:',
+              errorMessage
+            );
+            window.setTimeout(() => this.requestConnectionState(), 500);
+            callback?.({ success: false, transient: true, error: errorMessage });
             return;
           }
           console.warn('[FuseConnect] Chrome runtime error:', errorMessage);

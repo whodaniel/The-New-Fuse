@@ -1,0 +1,39 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A1",
+  "title": "Autonomy health gate — establish≠operate",
+  "priority": "P0",
+  "owner_role": "local-subdirector",
+  "implementer_roles": [
+    "hermes-infra-worker",
+    "tnf-cli-agent",
+    "fleet-coordinator"
+  ],
+  "human_gate_required": false,
+  "problem": "Agents treat fleet core-status ok / harness inspect PASS / SYNCHRONIZED / ONLINE as healthy while autopilot critical, disk near-full, zombies, false bridge ONLINE.",
+  "solution": {
+    "summary": "Add a single autonomous health rollup command and fail-close inspect when rollup is critical.",
+    "files": [
+      "scripts/runtime/tnf-autonomy-health-rollup.cjs",
+      "packages/tnf-cli/src/cli.ts",
+      "scripts/operations/swarm-disk-retention.sh"
+    ],
+    "steps": [
+      "Create tnf-autonomy-health-rollup.cjs reading: core-fleet-latest.json, subdirector-autopilot-latest.json, df free+capacity%, bridge process+ttl, thin-client zombie ratio from redis/list sample, handoff head_sha vs git HEAD.",
+      "Emit JSON + one-line status: healthy|degraded|critical with reason codes.",
+      "Wire `tnf autonomy health` (or `tnf fleet health`) that prints rollup.",
+      "Change harness inspect to call rollup; if critical, overall FAIL (fail-closed) while still listing individual checks.",
+      "Document in tnf menu Day-1 / Core Ops: after alive, run autonomy health before claiming ready."
+    ],
+    "verify": [
+      "node scripts/runtime/tnf-autonomy-health-rollup.cjs --json | jq -e '.status'",
+      "tnf autonomy health --no-splash; expect non-zero exit when status=critical",
+      "When disk restored and autopilot healthy, exit 0"
+    ],
+    "rollback": "Feature-flag TNF_AUTONOMY_HEALTH_FAIL_CLOSED=0 restores prior inspect PASS behavior."
+  },
+  "acceptance_probe": "Rollup critical ⇒ harness inspect fails; rollup healthy ⇒ inspect can pass rails checks.",
+  "conflicts": [
+    "None with adversarial dual full-auto — health gate observes, does not kill loops."
+  ]
+}

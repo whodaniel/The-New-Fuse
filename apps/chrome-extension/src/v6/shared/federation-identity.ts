@@ -5,8 +5,7 @@
 
 import type { Agent } from './types';
 
-const FEDERATED_BASE58_ALPHABET =
-  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const FEDERATED_BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
 const IDENTITY_CATEGORIES = new Set([
   'AGENT',
@@ -106,13 +105,55 @@ function encodeBase58(num: number): string {
 }
 
 /** Deterministic bridge-style ID# until master-clock assigns sequential idNumber. */
+/**
+ * PROVISIONAL local ID# — not a Phase 9 federated identifier.
+ *
+ * ROLE_DEFINITIONS.md Phase 9 names exactly one source of truth for `idNumber`:
+ * `FederatedIdentityService`, which allocates SEQUENTIALLY via Redis
+ * `INCR tnf:identity:seq:<agentId>`. A browser content script cannot reach
+ * Redis, so this hash exists purely to give an unregistered edge agent a stable
+ * handle until the registry assigns the real one. Whenever a server-supplied
+ * `idNumber` is available, it wins — never overwrite one with this.
+ *
+ * The old space was `5000 + (h % 10000)` — 10,000 values. Measured against the
+ * live 194-agent roster on 2026-08-09 that produced TWO real collisions:
+ *
+ *   ID#:4gV  <-  brand-outreach-agent || temporal-agent-reclassifier
+ *   ID#:3Ub  <-  interoperability-protocol-agent || research-agent
+ *
+ * `resolveMessageTarget` routes on `@ID#:…`, so a collision is an ambiguous
+ * address, not a cosmetic clash. Expected collisions grow as n²/2N, so the
+ * fleet was already past the point where this was survivable.
+ *
+ * Band allocation (Phase 9, revised 2026-08-09) — an ID#'s provenance should be
+ * readable from its value:
+ *
+ *   1 – 999,999,999   production sequential (Redis INCR)
+ *   1,000 – 9,999     seeder (legacy; overlaps production — known, see Phase 9)
+ *   1e9 – 2e9         PROVISIONAL: this function and its three mirrors
+ *
+ * The old 5,000–14,999 band failed at both jobs: it overlapped the seeder band
+ * at 5,000–9,999, and 10,000 values put collision probability near 90% at fleet
+ * scale. The new band is disjoint and puts it near 1e-5.
+ *
+ * Fourth mirror: `packages/relay-core/src/agent-registry-bridge.ts`
+ * (`deterministicBridgeIdNumber`) — on the live registration path.
+ */
+const PROVISIONAL_ID_FLOOR = 1_000_000_000;
+const PROVISIONAL_ID_SPACE = 1_000_000_000;
+
 export function deterministicIdNumber(agentId: string): string {
   let h = 0x811c9dc5;
-  for (let i = 0; i < agentId.length; i += 1) {
-    h ^= agentId.charCodeAt(i);
+  // Must match scripts/lib/federation-protocol.cjs and
+  // packages/relay-core/src/contracts/recovery-federation.ts exactly, including
+  // the empty/nullish fallback — a divergence here yields a different ID# on the
+  // browser edge than the relay computes for the same agent.
+  const id = String(agentId || 'agent');
+  for (let i = 0; i < id.length; i += 1) {
+    h ^= id.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
+  return `ID#:${encodeBase58(PROVISIONAL_ID_FLOOR + (h % PROVISIONAL_ID_SPACE))}`;
 }
 
 export function buildMcidEnvelope(input: {
@@ -148,6 +189,7 @@ function platformProvider(platform: string): string {
   if (p.includes('claude')) return 'ANTHROPIC_CLAUDE';
   if (p.includes('glm') || p.includes('z.ai')) return 'ZHIPU_GLM';
   if (p.includes('qwen')) return 'ALIBABA_QWEN';
+  if (p.includes('kimi') || p.includes('moonshot')) return 'MOONSHOT_KIMI';
   if (p.includes('perplexity')) return 'PERPLEXITY';
   if (p.includes('copilot')) return 'MICROSOFT_COPILOT';
   if (p.includes('chrome')) return 'FUSE_BROWSER';
@@ -290,7 +332,11 @@ export function enrichOutboundMetadata(
     inResponseTo: options.inResponseTo || null,
     conversationId: options.conversationId || options.channel || null,
     mcid,
-    federation: { mcid, canonicalEntityId: identity.canonicalEntityId, idNumber: identity.idNumber },
+    federation: {
+      mcid,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+    },
     audit: {
       source: 'fuse-connect-v7',
       actor: identity.operationalHandle,
@@ -329,6 +375,7 @@ const PLATFORM_ALIASES: Record<string, string[]> = {
   chatgpt: ['chatgpt', 'gpt', 'openai'],
   claude: ['claude', 'anthropic'],
   qwen: ['qwen'],
+  kimi: ['kimi', 'moonshot'],
   copilot: ['copilot'],
 };
 
@@ -361,9 +408,7 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
     }
   }
 
-  const pageAgentMatch = working.match(
-    /@((?:page-agent|browser-agent|agent|AGENT)-[\w-]+)/i
-  );
+  const pageAgentMatch = working.match(/@((?:page-agent|browser-agent|agent|AGENT)-[\w-]+)/i);
   if (pageAgentMatch) {
     const agent = findAgentByAlias(agents, pageAgentMatch[1]);
     if (agent) {
@@ -375,13 +420,16 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
   }
 
   if (to === 'broadcast') {
-    const platformMatch = working.match(/@(GLM|Gemini|ChatGPT|Claude|Qwen|Copilot)\b/i);
+    const platformMatch = working.match(/@(GLM|Gemini|ChatGPT|Claude|Qwen|Kimi|Copilot)\b/i);
     if (platformMatch) {
       const key = platformMatch[1].toLowerCase();
       const aliases = PLATFORM_ALIASES[key] || [key];
       const agent = agents.find((a) => {
-        const platform = String(a.metadata?.node?.platform || a.platform || a.name || '').toLowerCase();
-        return aliases.some((alias) => platform.includes(alias) || normalizeAlias(a.name).includes(alias));
+        const node = a.metadata?.node as { platform?: unknown } | undefined;
+        const platform = String(node?.platform || a.platform || a.name || '').toLowerCase();
+        return aliases.some(
+          (alias) => platform.includes(alias) || normalizeAlias(a.name).includes(alias)
+        );
       });
       if (agent) {
         to = agent.id;
@@ -400,10 +448,7 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
   };
 }
 
-export function mergeRegistrationPayload(
-  agent: Agent,
-  payload: Record<string, unknown>
-): Agent {
+export function mergeRegistrationPayload(agent: Agent, payload: Record<string, unknown>): Agent {
   const federation =
     payload.federation && typeof payload.federation === 'object'
       ? (payload.federation as Record<string, unknown>)
@@ -423,10 +468,7 @@ export function mergeRegistrationPayload(
       (typeof payload.runtimeSessionId === 'string' && payload.runtimeSessionId) ||
       agent.runtimeSessionId ||
       null,
-    idNumber:
-      (typeof payload.idNumber === 'string' && payload.idNumber) ||
-      agent.idNumber ||
-      null,
+    idNumber: (typeof payload.idNumber === 'string' && payload.idNumber) || agent.idNumber || null,
     metadata: {
       ...(agent.metadata || {}),
       federation: {

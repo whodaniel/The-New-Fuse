@@ -1,7 +1,33 @@
 @import 'tailwindcss';
 @import './design-system.css';
 @import './landing-animations.css';
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+/* Fonts are bundled, not fetched.
+   This was a remote @import of the Google Fonts CDN, which meant a local-first desktop
+   app made a network round-trip to Google on every launch, blocked first paint on
+   it (a remote @import at the top of the main stylesheet is render-blocking), and
+   silently changed typeface when offline. These are the latin subsets of the same
+   variable faces, 59 KB total. */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  /* Bundled via Vite so relative base works in both dev and packaged Tauri. */
+  src: url('../assets/fonts/outfit-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../assets/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 @config "../../tailwind.config.ts";
 

@@ -67,35 +67,40 @@ class FuseConnectPopup {
   }
 
   async init() {
-    // Setup tab navigation
+    // Setup tabs synchronously
     this.setupTabs();
 
-    // Setup event handlers
+    // Setup event handlers synchronously (must be before UI update)
     this.setupEventHandlers();
 
-    // Load initial state from background
-    await this.loadState();
-
-    // Listen for updates
+    // Setup message listener for background updates
     this.setupMessageListener();
 
-    // Load settings
-    await this.loadSettings();
-
-    // Check native host
-    await this.checkNativeHost();
-
-    // Check relay health and show helper if needed
-    await this.checkRelayAndUpdateHelper();
-    await this.refreshAutonomyStatus();
-
-    // Update UI
+    // Show initial UI immediately with default state
     this.updateUI();
+
+    // Load settings asynchronously (non-blocking)
+    this.loadSettings().catch(console.error);
+
+    // Check native host (non-blocking)
+    this.checkNativeHost().catch(console.error);
+
+    // Load state from background in background
+    this.loadState().then(() => {
+      this.updateUI();
+      // Check relay health after state is loaded
+      this.checkRelayAndUpdateHelper().catch(console.error);
+      // Refresh autonomy status
+      this.refreshAutonomyStatus().catch(console.error);
+    }).catch(console.error);
   }
 
   async checkRelayAndUpdateHelper() {
     const helper = document.getElementById('quick-start-helper');
     if (!helper) return;
+
+    // Set initial state - assume relay not running until proven otherwise
+    helper.style.display = 'block';
 
     try {
       const relayUrl = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay).trim();
@@ -103,19 +108,24 @@ class FuseConnectPopup {
         .replace(/^ws:/, 'http:')
         .replace(/^wss:/, 'https:')
         .replace(/\/ws$/, '/health');
+      
       const response = await fetch(healthUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(2000),
-      });
-      const data = await response.json();
-      if (data?.status === 'ok' && data?.relay === 'running') {
-        helper.style.display = 'none';
-      } else {
-        helper.style.display = 'block';
+        signal: AbortSignal.timeout(1000),
+      }).catch(() => null);
+      
+      if (response && response.ok) {
+        try {
+          const data = await response.json();
+          if (data?.status === 'ok' && data?.relay === 'running') {
+            helper.style.display = 'none';
+          }
+        } catch {
+          // Keep helper visible on JSON parse error
+        }
       }
     } catch (e) {
-      // Relay not running, show helper
-      helper.style.display = 'block';
+      // Relay not running, keep helper visible
     }
   }
 
@@ -778,7 +788,8 @@ class FuseConnectPopup {
     } catch (e) {
       this.state.nativeHostAvailable = false;
     }
-    this.updateNativeHostIndicator();
+    // Defer UI update to avoid blocking
+    setTimeout(() => this.updateNativeHostIndicator(), 0);
   }
 
   async sendNativeMessage(message) {
@@ -829,8 +840,8 @@ class FuseConnectPopup {
         this.state.autonomy.masterClockRunning = !!response.masterClock?.running;
         this.state.autonomy.autoWakePing = !!response.settings?.autoWakePing;
         this.state.autonomy.source = 'background';
-        await this.refreshLastWakePingTime();
-        this.updateAutonomyStatusUI();
+        // Update UI asynchronously
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
         return;
       }
     } catch (e) {
@@ -847,12 +858,14 @@ class FuseConnectPopup {
         this.state.autonomy.masterClockRunning = !!masterClock?.running;
         this.state.autonomy.autoWakePing = !!this.state.settings.autoWakePing;
         this.state.autonomy.source = 'native-host-fallback';
-        await this.refreshLastWakePingTime();
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
       } catch (e) {
-        // Keep existing values
+        // Keep existing values, update UI with default
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
       }
+    } else {
+      setTimeout(() => this.updateAutonomyStatusUI(), 0);
     }
-    this.updateAutonomyStatusUI();
   }
 
   async refreshLastWakePingTime() {
@@ -2001,44 +2014,51 @@ class FuseConnectPopup {
             this.state.settings.relayUrl = runtimeRelayUrl;
           }
 
-          // Update UI
-          const relayUrl = document.getElementById('relay-url');
-          if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
+          // Defer UI updates to next tick to avoid blocking
+          setTimeout(() => {
+            // Update relay URL field
+            const relayUrl = document.getElementById('relay-url');
+            if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
 
-          const autoReconnect = document.getElementById('auto-reconnect');
-          if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
+            // Update toggles
+            const autoReconnect = document.getElementById('auto-reconnect');
+            if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
 
-          const showPanel = document.getElementById('show-panel');
-          if (showPanel) showPanel.checked = this.state.settings.showPanel;
+            const showPanel = document.getElementById('show-panel');
+            if (showPanel) showPanel.checked = this.state.settings.showPanel;
 
-          const debugMode = document.getElementById('debug-mode');
-          if (debugMode) debugMode.checked = this.state.settings.debugMode;
+            const debugMode = document.getElementById('debug-mode');
+            if (debugMode) debugMode.checked = this.state.settings.debugMode;
 
-          const autoMonitor = document.getElementById('auto-monitor');
-          if (autoMonitor) autoMonitor.checked = !!this.state.settings.autoMonitor;
+            const autoMonitor = document.getElementById('auto-monitor');
+            if (autoMonitor) autoMonitor.checked = !!this.state.settings.autoMonitor;
 
-          const autoMasterClock = document.getElementById('auto-master-clock');
-          if (autoMasterClock) autoMasterClock.checked = !!this.state.settings.autoMasterClock;
+            const autoMasterClock = document.getElementById('auto-master-clock');
+            if (autoMasterClock) autoMasterClock.checked = !!this.state.settings.autoMasterClock;
 
-          const autoWakePing = document.getElementById('auto-wake-ping');
-          if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
+            const autoWakePing = document.getElementById('auto-wake-ping');
+            if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
 
-          if (!this.state.selectedChannel && this.state.settings.popupSelectedChannel) {
-            this.state.selectedChannel = this.state.settings.popupSelectedChannel;
-          }
+            // AI Video settings
+            const aiviSegmentDuration = document.getElementById('aivi-segment-duration-settings');
+            if (aiviSegmentDuration)
+              aiviSegmentDuration.value = String(this.state.settings.aiviSegmentDuration || 45);
+            const aiviConcurrent = document.getElementById('aivi-concurrent-processes');
+            if (aiviConcurrent)
+              aiviConcurrent.value = String(this.state.settings.aiviConcurrentProcesses || 1);
+            const aiviAutoOpen = document.getElementById('aivi-auto-open-notebook');
+            if (aiviAutoOpen) aiviAutoOpen.checked = !!this.state.settings.aiviAutoOpenNotebook;
+            const aiviAutoAudio = document.getElementById('aivi-auto-audio-overview');
+            if (aiviAutoAudio) aiviAutoAudio.checked = !!this.state.settings.aiviAutoAudioOverview;
 
-          const aiviSegmentDuration = document.getElementById('aivi-segment-duration-settings');
-          if (aiviSegmentDuration)
-            aiviSegmentDuration.value = String(this.state.settings.aiviSegmentDuration || 45);
-          const aiviConcurrent = document.getElementById('aivi-concurrent-processes');
-          if (aiviConcurrent)
-            aiviConcurrent.value = String(this.state.settings.aiviConcurrentProcesses || 1);
-          const aiviAutoOpen = document.getElementById('aivi-auto-open-notebook');
-          if (aiviAutoOpen) aiviAutoOpen.checked = !!this.state.settings.aiviAutoOpenNotebook;
-          const aiviAutoAudio = document.getElementById('aivi-auto-audio-overview');
-          if (aiviAutoAudio) aiviAutoAudio.checked = !!this.state.settings.aiviAutoAudioOverview;
+            // Update selected channel if needed
+            if (!this.state.selectedChannel && this.state.settings.popupSelectedChannel) {
+              this.state.selectedChannel = this.state.settings.popupSelectedChannel;
+            }
 
-          this.updateManagedSitesList();
+            // Update managed sites list
+            this.updateManagedSitesList();
+          }, 0);
         }
         resolve();
       });
@@ -2123,13 +2143,13 @@ class FuseConnectPopup {
           break;
 
         case 'AGENTS_UPDATE':
-          this.state.agents = message.agents;
+          this.state.agents = Array.isArray(message.agents) ? message.agents : [];
           this.updateAgentsList();
           this.updateStats();
           break;
 
         case 'NEW_MESSAGE':
-          this.state.messages.unshift(message.message);
+          this.state.messages.unshift(this.normalizeRelayMessage(message.message || message));
           if (this.state.messages.length > 120) {
             this.state.messages = this.state.messages.slice(0, 120);
           }
@@ -2138,13 +2158,15 @@ class FuseConnectPopup {
           break;
 
         case 'CHANNELS_UPDATE':
-          this.state.channels = message.channels || [];
+          this.state.channels = Array.isArray(message.channels) ? message.channels : [];
           this.reconcileSelectedChannel();
           this.updateCentralControlPanel();
           break;
 
         case 'JOINED_CHANNELS_UPDATE':
-          this.state.joinedChannels = message.joinedChannels || [];
+          this.state.joinedChannels = Array.isArray(message.joinedChannels)
+            ? message.joinedChannels
+            : [];
           this.updateCentralControlPanel();
           break;
 
@@ -2388,7 +2410,9 @@ class FuseConnectPopup {
     const container = document.getElementById('message-list');
     if (!container) return;
 
-    if (this.state.messages.length === 0) {
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+
+    if (messages.length === 0) {
       container.innerHTML = `
         <div class="empty-state small">
           <p>No recent messages</p>
@@ -2397,16 +2421,16 @@ class FuseConnectPopup {
       return;
     }
 
-    container.innerHTML = this.state.messages
+    container.innerHTML = messages
       .slice(0, 10)
       .map(
         (msg) => `
       <div class="message-item">
         <div class="message-item-header">
-          <span class="message-item-from">${msg.from}</span>
+          <span class="message-item-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
           <span class="message-item-time">${this.formatTime(msg.timestamp)}</span>
         </div>
-        <div class="message-item-content">${this.truncate(msg.content, 80)}</div>
+        <div class="message-item-content">${this.escapeHtml(this.truncate(msg.content, 80))}</div>
       </div>
     `
       )
@@ -2698,7 +2722,8 @@ class FuseConnectPopup {
       return;
     }
 
-    const filtered = this.state.messages
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+    const filtered = messages
       .filter((msg) => msg?.channel === selectedChannel)
       .slice(0, 25)
       .reverse();
@@ -2717,10 +2742,10 @@ class FuseConnectPopup {
         (msg) => `
         <div class="central-chat-message">
           <div class="central-chat-message-header">
-            <span class="central-chat-from">${msg.from || 'Unknown'}</span>
+            <span class="central-chat-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
             <span class="central-chat-meta">${this.formatTime(msg.timestamp)}</span>
           </div>
-          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content || '', 500))}</div>
+          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content, 500))}</div>
         </div>
       `
       )
@@ -2736,6 +2761,29 @@ class FuseConnectPopup {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  normalizeRelayMessage(message = {}) {
+    const source = message && typeof message === 'object' ? message : { content: message };
+    const metadata = source.metadata && typeof source.metadata === 'object' ? source.metadata : {};
+    const content =
+      source.content ??
+      source.text ??
+      source.body ??
+      source.message ??
+      metadata.content ??
+      metadata.text ??
+      '';
+
+    return {
+      ...source,
+      content: this.toDisplayText(content),
+      from: this.toDisplayText(
+        source.from || source.sender || source.senderId || metadata.senderId || 'Unknown'
+      ),
+      timestamp: source.timestamp || source.ts || metadata.timestamp || Date.now(),
+      channel: source.channel || source.channelId || metadata.channel || metadata.channelId || null,
+    };
   }
 
   showDirectMessagePrompt(agentId) {
@@ -2812,14 +2860,23 @@ class FuseConnectPopup {
   }
 
   formatTime(timestamp) {
-    return new Date(timestamp).toLocaleTimeString([], {
+    const date = new Date(timestamp || Date.now());
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
   }
 
+  toDisplayText(value) {
+    if (value === null || value === undefined) return '';
+    return typeof value === 'string' ? value : String(value);
+  }
+
   truncate(text, length) {
-    return text.length > length ? text.substring(0, length) + '...' : text;
+    const safeText = this.toDisplayText(text);
+    const maxLength = Number.isFinite(Number(length)) ? Number(length) : 0;
+    return safeText.length > maxLength ? safeText.substring(0, maxLength) + '...' : safeText;
   }
 }
 

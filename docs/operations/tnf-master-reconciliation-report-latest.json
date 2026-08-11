@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-08-10T20:47:43.169Z",
+  "user": "danielgoldberg",
+  "hostname": "Daniels-MacBook-Pro",
+  "steps": {
+    "environment": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 84,
+      "data": {
+        "branch": "fix/honest-failure-reporting",
+        "commit": "156ecbfca4",
+        "platform": "darwin",
+        "node": "v22.22.3"
+      }
+    },
+    "schemaIntegrity": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 137,
+      "data": {
+        "output": "[protocol-schema-gate] OK"
+      }
+    },
+    "selfEvolution": {
+      "ok": false,
+      "verdict": "unresolved",
+      "durationMs": 1,
+      "data": {
+        "status": "skipped"
+      }
+    },
+    "codebaseLineage": {
+      "ok": false,
+      "verdict": "unresolved",
+      "durationMs": 0,
+      "data": {
+        "status": "skipped"
+      }
+    },
+    "processHealth": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 152,
+      "data": {
+        "findings": 0,
+        "healthy": 30,
+        "detail": []
+      }
+    },
+    "goalReconciliation": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 0,
+      "data": {
+        "goalsConfigFile": false
+      }
+    }
+  },
+  "passed": false,
+  "totalDurationMs": 378,
+  "summary": {
+    "clean": 4,
+    "findings": 0,
+    "unresolved": 2,
+    "errored": 0,
+    "totalFindings": 0
+  }
+}

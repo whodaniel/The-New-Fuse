@@ -1,20 +1,36 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: relay-server-qa-agent
-displayName: TNF Relay Server QA
-description:
-  Specialized QA agent that tests the TNF relay server and relay-core messaging
+description: Specialized QA agent that tests the TNF relay server and relay-core messaging
   fabric — message delivery, fan-out, ordering, and reconnection.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob', 'tnf']
-capabilities:
-  [
-    'relay_health',
-    'message_delivery_probe',
-    'fanout_verification',
-    'reconnect_trace',
-  ]
-tags: ['qa', 'relay', 'comms', 'messaging', 'fanout']
 version: 1.1.0
+tags:
+- qa
+- relay
+- comms
+- messaging
+- fanout
+capabilities:
+- relay_health
+- message_delivery_probe
+- fanout_verification
+- reconnect_trace
+displayName: TNF Relay Server QA
+agentType: testing
 ---
 
 # Relay Server QA Agent

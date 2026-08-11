@@ -2,10 +2,10 @@
  * Operator Synergy Service
  * Single orchestration plane for relay, federation, browser, and API surfaces.
  */
-import type { FederationChannel } from '@the-new-fuse/shared/federation/protocol';
-import { relayHealthUrl } from '@the-new-fuse/shared/federation/protocol';
 import { discoverLocalEndpoints } from '../config/endpointDiscovery';
 import { resolveEnvironmentEndpoints, resolveRelayUrlForEnvironment } from '../config/endpoints';
+import type { FederationChannel } from '../lib/sharedFederation';
+import { relayHealthUrl } from '../lib/sharedFederation';
 import { useAgentStore } from '../stores/agentStore';
 import type { Environment } from '../stores/settingsStore';
 import apiService from './api';
@@ -41,6 +41,7 @@ const INITIAL: OperatorSynergySnapshot = {
 class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
   private snapshot: OperatorSynergySnapshot = { ...INITIAL };
   private bootstrapped = false;
+  private bootstrapPromise: Promise<void> | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private boundHandlers: Array<{
     target: object;
@@ -114,6 +115,18 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
   }
 
   async bootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
+    // Collapse StrictMode double-mount + rapid env flips into one in-flight bootstrap.
+    if (this.bootstrapPromise) {
+      return this.bootstrapPromise;
+    }
+
+    this.bootstrapPromise = this.runBootstrap(environment, customApiUrl).finally(() => {
+      this.bootstrapPromise = null;
+    });
+    return this.bootstrapPromise;
+  }
+
+  private async runBootstrap(environment: Environment, customApiUrl = ''): Promise<void> {
     let endpoints = resolveEnvironmentEndpoints(environment, customApiUrl);
     let relayUrl = resolveRelayUrlForEnvironment(environment, customApiUrl);
 

@@ -29,6 +29,14 @@ export interface ChatBridgeCallbacks {
   }) => void;
 }
 
+export interface ChatSendResult {
+  success: boolean;
+  injected: boolean;
+  submitted: boolean;
+  method?: string;
+  error?: string;
+}
+
 import { DEFAULT_NODES } from '../../shared/constants';
 import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
@@ -51,6 +59,12 @@ class SimpleChatBridge {
   private cacheValidUntil: number = 0;
   private readonly CACHE_DURATION = 10000; // 10 seconds
   private lastSentText = '';
+  private lastSendResult: ChatSendResult = {
+    success: false,
+    injected: false,
+    submitted: false,
+    error: 'No send attempted yet',
+  };
 
   // Supported AI chat platforms for element detection logging
   // NOTE: Only include actual AI chat interfaces - thenewfuse.com is NOT a chat interface
@@ -65,6 +79,9 @@ class SimpleChatBridge {
     'aistudio.google.com',
     'chat.qwen.ai',
     'qwen.ai',
+    'kimi.com',
+    'kimi.moonshot.cn',
+    'moonshot.cn',
     'openclaw-gateway.workers.dev',
     'localhost:3000',
     'localhost:3001',
@@ -89,6 +106,45 @@ class SimpleChatBridge {
         '.fcp6-input-row',
       ].join(', ')
     );
+  }
+
+  private isTextControl(el: Element | null): el is HTMLInputElement | HTMLTextAreaElement {
+    return el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement;
+  }
+
+  private isEditableElement(el: Element | null): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    return (
+      this.isTextControl(el) ||
+      el.isContentEditable ||
+      el.getAttribute('contenteditable') === 'true'
+    );
+  }
+
+  /**
+   * Some AI UIs expose placeholder children inside a real editor, e.g.
+   * Gemini `rich-textarea p[data-placeholder]`. Mutating that child can create
+   * a fake `.value` without touching the page composer. Resolve those matches
+   * back to the actual editable control before injection.
+   */
+  private resolveEditableTarget(candidate: HTMLElement): HTMLElement | null {
+    if (this.isEditableElement(candidate)) return candidate;
+
+    const descendant = candidate.querySelector(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"]'
+    );
+    if (this.isEditableElement(descendant)) return descendant as HTMLElement;
+
+    const ancestor = candidate.closest(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"], .ql-editor[contenteditable="true"], .ProseMirror[contenteditable="true"]'
+    );
+    if (this.isEditableElement(ancestor)) return ancestor as HTMLElement;
+
+    const richTextarea = candidate.closest('rich-textarea');
+    const richEditable = richTextarea?.querySelector('[contenteditable="true"]');
+    if (this.isEditableElement(richEditable)) return richEditable as HTMLElement;
+
+    return null;
   }
 
   /**
@@ -235,6 +291,13 @@ class SimpleChatBridge {
 
     const hostname = window.location.hostname.toLowerCase();
     const isQwenHost = hostname === 'chat.qwen.ai' || hostname.endsWith('.qwen.ai');
+    const isKimiHost =
+      hostname === 'kimi.com' ||
+      hostname.endsWith('.kimi.com') ||
+      hostname === 'kimi.moonshot.cn' ||
+      hostname.endsWith('.kimi.moonshot.cn') ||
+      hostname === 'moonshot.cn' ||
+      hostname.endsWith('.moonshot.cn');
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
@@ -296,9 +359,27 @@ class SimpleChatBridge {
       '#prompt-textarea',
       'textarea[data-id="root"]',
       'textarea[placeholder*="Message" i]',
+      // Kimi / Moonshot
+      ...(isKimiHost
+        ? [
+            '.ProseMirror[contenteditable="true"]',
+            'div[class*="ProseMirror"][contenteditable="true"]',
+            'div[class*="chat-input" i][contenteditable="true"]',
+            'div[class*="input" i] [contenteditable="true"]',
+            'main [contenteditable="true"][role="textbox"]',
+            'main [contenteditable="true"]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Send" i]',
+          ]
+        : []),
+      'textarea[placeholder*="Kimi" i]',
+      'textarea[aria-label*="Kimi" i]',
+      'div[contenteditable="true"][aria-label*="Kimi" i]',
       // Claude-specific
       'div[contenteditable="true"][aria-label*="Message" i]',
       // Generic fallbacks
+      '.ProseMirror[contenteditable="true"]',
+      'div[class*="ProseMirror"][contenteditable="true"]',
       'div[contenteditable="true"][role="textbox"]',
       'p[contenteditable="true"]',
       'div[contenteditable="true"][data-placeholder]',
@@ -396,8 +477,10 @@ class SimpleChatBridge {
         const candidates = this.queryAllIncludingShadow(selector);
         for (const el of candidates) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el)) {
-            input = el;
+          const target = this.resolveEditableTarget(el);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target)) {
+            input = target;
             break;
           }
         }
@@ -414,7 +497,9 @@ class SimpleChatBridge {
           const candidates = this.queryAllIncludingShadow(selector);
           for (const el of candidates) {
             if (this.isExtensionUiElement(el)) continue;
-            input = el;
+            const target = this.resolveEditableTarget(el);
+            if (!target || this.isExtensionUiElement(target)) continue;
+            input = target;
             if (DEBUG) {
               console.log(
                 '[SimpleChatBridge] Using fallback input (no visibility check):',
@@ -477,8 +562,10 @@ class SimpleChatBridge {
       const allTextareas = this.queryAllIncludingShadow('textarea');
       for (const el of allTextareas) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el) && !(el as HTMLTextAreaElement).disabled) {
-          input = el;
+        const target = this.resolveEditableTarget(el);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+          input = target;
           break;
         }
       }
@@ -491,12 +578,14 @@ class SimpleChatBridge {
       const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
       for (const el of allEditable) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el as HTMLElement)) {
-          input = el as HTMLElement;
+        const target = this.resolveEditableTarget(el as HTMLElement);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target)) {
+          input = target;
           console.warn('[SimpleChatBridge] Ultra fallback input found:', {
-            tag: el.tagName,
-            classes: el.className,
-            parent: el.parentElement?.tagName,
+            tag: target.tagName,
+            classes: target.className,
+            parent: target.parentElement?.tagName,
           });
           break;
         }
@@ -507,8 +596,10 @@ class SimpleChatBridge {
         const allTextareas = Array.from(document.querySelectorAll('textarea'));
         for (const el of allTextareas) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el as HTMLElement) && !(el as HTMLTextAreaElement).disabled) {
-            input = el as HTMLElement;
+          const target = this.resolveEditableTarget(el as HTMLElement);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+            input = target;
             console.warn('[SimpleChatBridge] Ultra fallback textarea found');
             break;
           }
@@ -803,7 +894,10 @@ class SimpleChatBridge {
    */
   isStreaming(): boolean {
     if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
+    return this.isPageStreaming();
+  }
 
+  private isPageStreaming(): boolean {
     // Qwen can keep generic "loading/thinking" classes mounted even after completion.
     // Use stricter indicators there to avoid permanent streaming=true.
     if (this.isQwenHost()) {
@@ -846,10 +940,112 @@ class SimpleChatBridge {
     return false;
   }
 
+  getLastSendResult(): ChatSendResult {
+    return { ...this.lastSendResult };
+  }
+
+  private setLastSendResult(result: ChatSendResult): boolean {
+    this.lastSendResult = result;
+    return result.success;
+  }
+
+  private getInputText(input: HTMLElement): string {
+    if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+      return (input.textContent || '').trim();
+    }
+    const value = (input as HTMLInputElement | HTMLTextAreaElement).value;
+    return typeof value === 'string' ? value.trim() : (input.textContent || '').trim();
+  }
+
+  private inputContainsText(input: HTMLElement, text: string): boolean {
+    const expected = text.trim();
+    if (!expected) return false;
+    return this.getInputText(input).includes(expected);
+  }
+
+  private dispatchInputEvents(input: HTMLElement, text: string): void {
+    const inputInit = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      inputType: 'insertText',
+      data: text,
+    } as InputEventInit;
+
+    try {
+      input.dispatchEvent(new InputEvent('beforeinput', inputInit));
+    } catch {
+      input.dispatchEvent(
+        new Event('beforeinput', { bubbles: true, cancelable: true, composed: true })
+      );
+    }
+
+    try {
+      input.dispatchEvent(new InputEvent('input', inputInit));
+    } catch {
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    }
+
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  }
+
+  private setNativeTextValue(input: HTMLElement, text: string): void {
+    const prototype = Object.getPrototypeOf(input);
+    const ownValueSetter = Object.getOwnPropertyDescriptor(input, 'value')?.set;
+    const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+
+    if (prototypeValueSetter && ownValueSetter !== prototypeValueSetter) {
+      prototypeValueSetter.call(input, text);
+    } else if (ownValueSetter) {
+      ownValueSetter.call(input, text);
+    } else {
+      (input as HTMLInputElement | HTMLTextAreaElement).value = text;
+    }
+
+    this.dispatchInputEvents(input, text);
+  }
+
+  private setContentEditableText(input: HTMLElement, text: string): void {
+    input.focus();
+
+    try {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(input);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      document.execCommand('delete', false);
+      const inserted = document.execCommand('insertText', false, text);
+      if (inserted && this.inputContainsText(input, text)) {
+        this.dispatchInputEvents(input, text);
+        return;
+      }
+    } catch {
+      // Fall through to direct DOM update below.
+    }
+
+    input.textContent = text;
+    this.dispatchInputEvents(input, text);
+  }
+
+  private async verifyInjectedText(input: HTMLElement, text: string): Promise<boolean> {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      if (this.inputContainsText(input, text)) return true;
+      await this.delay(100);
+    }
+    return false;
+  }
+
   /**
    * Send a message to the AI - Enhanced with button re-fetch and robust clicking
    */
   async sendMessage(text: string): Promise<boolean> {
+    this.lastSendResult = {
+      success: false,
+      injected: false,
+      submitted: false,
+      error: 'Send in progress',
+    };
     this.lastSentText = text.trim();
     let initialElements = this.findElements();
 
@@ -866,7 +1062,12 @@ class SimpleChatBridge {
     if (!initialElements.input) {
       console.error('[SimpleChatBridge] Chat elements not ready');
       this.callbacks.onError?.('Chat elements not found');
-      return false;
+      return this.setLastSendResult({
+        success: false,
+        injected: false,
+        submitted: false,
+        error: 'Chat input not found',
+      });
     }
 
     // Activate Sending Guard (reduced from 10s to 3s for faster federation)
@@ -878,27 +1079,6 @@ class SimpleChatBridge {
 
     const input = initialElements.input;
 
-    // React Scheduler Hack: Get the native setter to bypass React's virtual DOM blocking
-    // This is required for Perplexity, ChatGPT, and other React-heavy apps
-    const setNativeValue = (element: HTMLElement, value: string) => {
-      const { set: valueSetter } =
-        Object.getOwnPropertyDescriptor(element, 'value') ||
-        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'value') ||
-        {};
-      const prototype = Object.getPrototypeOf(element);
-      const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
-
-      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
-        prototypeValueSetter.call(element, value);
-      } else if (valueSetter) {
-        valueSetter.call(element, value);
-      } else {
-        (element as any).value = value;
-      }
-
-      element.dispatchEvent(new Event('input', { bubbles: true }));
-    };
-
     try {
       // Focus and clear the input
       input.focus();
@@ -909,48 +1089,31 @@ class SimpleChatBridge {
 
       // Input simulation
       if (isContentEditable) {
-        // Use document.execCommand for reliable Rich Text Editor interaction
-        // This simulates actual user typing events better than setting textContent
-
-        // 1. Clear existing content
-        // Try native clear first if safe, otherwise select-all-delete
-        if (input.textContent && input.textContent.length > 0) {
-          document.execCommand('selectAll', false);
-          document.execCommand('delete', false);
-        }
-
-        // 2. Insert new text
-        const success = document.execCommand('insertText', false, text);
-
-        // Fallback if execCommand failed (or was blocked)
-        if (!success || (input.textContent || '').trim() !== text.trim()) {
-          console.warn(
-            '[SimpleChatBridge] execCommand insertText failed, falling back to direct manipulation'
-          );
-          input.textContent = text;
-          input.dispatchEvent(
-            new InputEvent('input', {
-              bubbles: true,
-              cancelable: true,
-              inputType: 'insertText',
-              data: text,
-            })
-          );
-        }
+        this.setContentEditableText(input, text);
       } else {
-        // Textarea/Input handling
-        // Use native setter for React-controlled inputs (ChatGPT, Perplexity, etc.)
-        setNativeValue(input, text);
-        input.dispatchEvent(
-          new InputEvent('input', {
-            bubbles: true,
-            cancelable: true,
-            inputType: 'insertText',
-            data: text,
-          })
-        );
-        // Also dispatch change for form listeners
-        input.dispatchEvent(new Event('change', { bubbles: true }));
+        this.setNativeTextValue(input, text);
+      }
+
+      if (!(await this.verifyInjectedText(input, text))) {
+        console.warn('[SimpleChatBridge] Text injection verification failed; retrying once');
+        if (isContentEditable) {
+          this.setContentEditableText(input, text);
+        } else {
+          this.setNativeTextValue(input, text);
+        }
+      }
+
+      if (!(await this.verifyInjectedText(input, text))) {
+        const observed = this.getInputText(input).slice(0, 120);
+        const error = `Chat input did not accept injected text; observed="${observed}"`;
+        console.error('[SimpleChatBridge]', error);
+        this.callbacks.onError?.(error);
+        return this.setLastSendResult({
+          success: false,
+          injected: false,
+          submitted: false,
+          error,
+        });
       }
 
       // Wait for UI to react to the text input
@@ -1007,6 +1170,7 @@ class SimpleChatBridge {
         which: 13,
         bubbles: true,
         cancelable: true,
+        composed: true,
       };
 
       input.dispatchEvent(new KeyboardEvent('keydown', enterKeyInit));
@@ -1029,7 +1193,7 @@ class SimpleChatBridge {
       await this.delay(1000);
 
       let wasCleared = inputWasCleared();
-      let isNowStreaming = this.isStreaming();
+      let isNowStreaming = this.isPageStreaming();
 
       if (wasCleared || isNowStreaming) {
         console.log('[SimpleChatBridge] Message sent via Enter key', {
@@ -1037,7 +1201,12 @@ class SimpleChatBridge {
           isNowStreaming,
         });
         this.startWatchingForResponse(responsesBefore);
-        return true;
+        return this.setLastSendResult({
+          success: true,
+          injected: true,
+          submitted: true,
+          method: 'enter',
+        });
       }
 
       // Method 2: Direct button click (if Enter didn't work)
@@ -1051,12 +1220,17 @@ class SimpleChatBridge {
         await this.delay(1000);
 
         wasCleared = inputWasCleared();
-        isNowStreaming = this.isStreaming();
+        isNowStreaming = this.isPageStreaming();
 
         if (wasCleared || isNowStreaming) {
           console.log('[SimpleChatBridge] Message sent via button click');
           this.startWatchingForResponse(responsesBefore);
-          return true;
+          return this.setLastSendResult({
+            success: true,
+            injected: true,
+            submitted: true,
+            method: 'button-click',
+          });
         }
       }
 
@@ -1075,25 +1249,36 @@ class SimpleChatBridge {
 
         console.log('[SimpleChatBridge] Dispatched MouseEvent click sequence on button');
         await this.delay(500);
-        if (inputWasCleared() || this.isStreaming()) {
+        if (inputWasCleared() || this.isPageStreaming()) {
           console.log('[SimpleChatBridge] Message sent via MouseEvent');
           this.startWatchingForResponse(responsesBefore);
-          return true;
+          return this.setLastSendResult({
+            success: true,
+            injected: true,
+            submitted: true,
+            method: 'mouse-event',
+          });
         }
       }
 
-      // If we get here, none of the methods worked but we'll start watching anyway
-      console.warn('[SimpleChatBridge] All send methods attempted, input may not have cleared');
-      console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
-
-      // Start watching for response
+      console.warn('[SimpleChatBridge] Submission not confirmed after Enter/button fallbacks');
       this.startWatchingForResponse(responsesBefore);
-
-      return true;
+      return this.setLastSendResult({
+        success: false,
+        injected: true,
+        submitted: false,
+        method: 'unconfirmed-submit',
+        error: 'Injected text was verified, but submit was not confirmed',
+      });
     } catch (error) {
       console.error('[SimpleChatBridge] Error sending message:', error);
       this.callbacks.onError?.(`Send failed: ${error}`);
-      return false;
+      return this.setLastSendResult({
+        success: false,
+        injected: false,
+        submitted: false,
+        error: `Send failed: ${error}`,
+      });
     }
   }
 
@@ -1270,6 +1455,15 @@ class SimpleChatBridge {
    */
   destroy(): void {
     this.stopWatching();
+    this.cachedElements = null;
+    this.cacheValidUntil = 0;
+    this.lastSentText = '';
+    this.lastSendResult = {
+      success: false,
+      injected: false,
+      submitted: false,
+      error: 'No send attempted yet',
+    };
     if (this.responseObserver) {
       this.responseObserver.disconnect();
       this.responseObserver = null;

@@ -51,8 +51,8 @@ create_plist() {
   </dict>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
+  <key>StartInterval</key>
+  <integer>60</integer>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -78,7 +78,7 @@ start() {
   fi
   launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
-  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 

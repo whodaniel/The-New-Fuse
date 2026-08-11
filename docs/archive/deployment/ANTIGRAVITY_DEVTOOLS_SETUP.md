@@ -144,7 +144,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 ### 1. Console Debugger (`/console-debug`)
 
 **File**:
-[`.agent/skills/chrome-devtools/console-debugger.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/console-debugger.md)
+[`.agent/skills/chrome-devtools/console-debugger.md`](../../../.agent/skills/chrome-devtools/console-debugger.md)
 
 ```markdown
 # Example prompts:
@@ -163,7 +163,7 @@ from the last page load"
 ### 2. Performance Monitor (`/performance-trace`)
 
 **File**:
-[`.agent/skills/chrome-devtools/performance-monitor.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/performance-monitor.md)
+[`.agent/skills/chrome-devtools/performance-monitor.md`](../../../.agent/skills/chrome-devtools/performance-monitor.md)
 
 ```markdown
 # Example prompts:
@@ -182,7 +182,7 @@ from the last page load"
 ### 3. Network Analyzer (`/network-debug`)
 
 **File**:
-[`.agent/skills/chrome-devtools/network-analyzer.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/network-analyzer.md)
+[`.agent/skills/chrome-devtools/network-analyzer.md`](../../../.agent/skills/chrome-devtools/network-analyzer.md)
 
 ```markdown
 # Example prompts:
@@ -200,7 +200,7 @@ returning 401"
 ### 4. Browser Automation (`/browser-automate`)
 
 **File**:
-[`.agent/skills/chrome-devtools/browser-automation.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/browser-automation.md)
+[`.agent/skills/chrome-devtools/browser-automation.md`](../../../.agent/skills/chrome-devtools/browser-automation.md)
 
 ```markdown
 # Example prompts:
@@ -433,7 +433,7 @@ Socket.IO broadcasting.
 - **Master Guide**:
   [`.agent/skills/chrome-devtools/README.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)
 - **Quick Fix Explanation**:
-  [`QUICK_FIX_LIVE_VIEW.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/QUICK_FIX_LIVE_VIEW.md)
+  [`QUICK_FIX_LIVE_VIEW.md`](./QUICK_FIX_LIVE_VIEW.md)
 - **Full Integration Plan**:
   [`apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md)
 

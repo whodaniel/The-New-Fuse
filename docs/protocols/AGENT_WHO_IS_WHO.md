@@ -1,9 +1,8 @@
 # Agent Who-Is-Who
 
-Human-friendly running record of **what people call an agent** vs **what it
-actually is**.
+Human-friendly running record of **what people call an agent** vs **what it actually is**.
 
-_Last refreshed: **2026-07-25 20:49:40 EDT**_
+_Last refreshed: **2026-08-10 17:01:49 EDT**_
 
 Refresh anytime:
 
@@ -14,43 +13,44 @@ python3 scripts/system/tnf-agent-who-is-who.py --write
 
 ## Name cheat sheet
 
-| When you say… | Also called                 | Family       | What it is                                                   |
-| ------------- | --------------------------- | ------------ | ------------------------------------------------------------ |
-| **Inky**      | Enki, front door            | TNF Voice    | Audio front door / TTS persona — not a coding agent tty      |
-| **Cursor**    | Cursor Agent, cursor-agent  | Cursor       | Cursor’s terminal agent (this chat when voice-anchored here) |
-| **Claude**    | Claude Code, claude-code    | Anthropic    | Claude Code CLI coding agent                                 |
-| **Hermes**    | Hermes Agent                | Hermes       | Hermes Agent CLI (tools, sessions, optional TNF boot step)   |
-| **OpenClaw**  | Open Claw, Claw, openclaw   | OpenClaw     | Optional OpenClaw operator surface routed through TNF        |
-| **TNF**       | TNF CLI, TNF TUI, TNF Agent | The New Fuse | Native TNF interactive agent (`tnf tui` / `tnf boot` attach) |
-| **Codex**     | codex CLI                   | OpenAI       | OpenAI Codex CLI coding agent                                |
-| **Gemini**    | Gemini CLI                  | Google       | Gemini CLI coding agent                                      |
-| **Pi**        | pi coding agent             | Pi           | Pi terminal coding agent                                     |
-| **Aider**     | —                           | Aider        | Aider pair-programming CLI                                   |
-| **Kilo**      | kilo-cli                    | Kilo         | Kilo CLI agent                                               |
-| **OpenCode**  | opencode                    | OpenCode     | OpenCode CLI agent                                           |
+| When you say… | Also called | Family | What it is |
+|---|---|---|---|
+| **Inky** | Enki, front door | TNF Voice | Audio front door / TTS persona — not a coding agent tty |
+| **Cursor** | Cursor Agent, cursor-agent | Cursor | Cursor’s terminal agent (this chat when voice-anchored here) |
+| **Claude** | Claude Code, claude-code | Anthropic | Claude Code CLI coding agent |
+| **Hermes** | Hermes Agent | Hermes | Hermes Agent CLI (tools, sessions, optional TNF boot step) |
+| **OpenClaw** | Open Claw, Claw, openclaw | OpenClaw | Optional OpenClaw operator surface routed through TNF |
+| **TNF** | TNF CLI, TNF TUI, TNF Agent | The New Fuse | Native TNF interactive agent (`tnf tui` / `tnf boot` attach) |
+| **Codex** | codex CLI | OpenAI | OpenAI Codex CLI coding agent |
+| **Gemini** | Gemini CLI | Google | Gemini CLI coding agent |
+| **Pi** | pi coding agent | Pi | Pi terminal coding agent |
+| **Aider** | — | Aider | Aider pair-programming CLI |
+| **Kilo** | kilo-cli | Kilo | Kilo CLI agent |
+| **OpenCode** | opencode | OpenCode | OpenCode CLI agent |
 
 ### Easy mix-ups
 
-- **Claude** ≠ **OpenClaw** — Claude is Anthropic’s coding CLI; OpenClaw is a
-  separate operator surface.
-- **Hermes** ≠ **Claude** / **OpenClaw** — Hermes is its own agent runtime
-  (`hermes`).
-- **TNF TUI** ≠ **Cursor Agent** — both can take voice, but they are different
-  windows/ttys.
+- **Claude** ≠ **OpenClaw** — Claude is Anthropic’s coding CLI; OpenClaw is a separate operator surface.
+- **Hermes** ≠ **Claude** / **OpenClaw** — Hermes is its own agent runtime (`hermes`).
+- **TNF TUI** ≠ **Cursor Agent** — both can take voice, but they are different windows/ttys.
 - **Inky** is the voice front door / speaker, not a coding agent.
 
 ## Live right now
 
-| Name                        | Window (tty) | PID   | Note |
-| --------------------------- | ------------ | ----- | ---- |
-| **Cursor** (`cursor-agent`) | `ttys007`    | 23637 | —    |
-| **Pi** (`pi`)               | `ttys008`    | 32272 | —    |
-| **TNF** (`tnf-cli`)         | `ttys000`    | 2656  | boot |
-| **TNF** (`tnf-cli`)         | `ttys006`    | 15716 | TUI  |
+| Name | Window (tty) | PID | Note |
+|---|---|---|---|
+| **Cursor** (`cursor-agent`) | `ttys005` | 51475 | — |
+| **Cursor** (`cursor-agent`) | `ttys007` | 85033 | — |
+| **Hermes** (`hermes`) | `ttys015` | 92119 | — |
+| **Kilo** (`kilo`) | `ttys000` | 22259 | — |
+| **Pi** (`pi`) | `ttys002` | 46963 | — |
+| **TNF** (`tnf-cli`) | `ttys001` | 34774 | boot |
+| **TNF** (`tnf-cli`) | `ttys008` | 4449 | boot |
+| **TNF** (`tnf-cli`) | `ttys015` | 91670 | — |
 
 ## Voice beam anchor
 
-Speech inject goes to **`tnf-cli`** on **`ttys006`** (locked).
+Speech inject goes to **`tnf-cli`** on **`ttys004`** (locked).
 
 ## How to aim voice
 
@@ -58,10 +58,3 @@ Speech inject goes to **`tnf-cli`** on **`ttys006`** (locked).
 - `voice-target-agent --prefer claude|hermes|cursor-agent|tnf|…`
 - Ask Inky to move the anchor
 
-## Related category: Live Context
-
-**Live Context** is a separate TNF Voice category: per-turn situational
-awareness (beam anchor + live agents + thread hint) attached to ground input. It
-is not who-is-who identity, not chronicle sequencing alone, and not Inky.
-
-See `docs/protocols/VOICE_LIVE_CONTEXT.md`.

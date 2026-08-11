@@ -18,7 +18,8 @@
  *                                non-TTY stdin from agent runners cannot hang
  *                                when the operator already supplied a prompt)
  *   4. implicit stdin            when piped (stdin.isTTY === false), with a
- *                                short idle timeout so hung FDs fail soft
+ *                                first-byte idle timeout + post-data stall so
+ *                                hung FDs fail soft without waiting forever
  *   5. `undefined`               caller renders its own usage error
  *
  * NOTES for callers:
@@ -27,8 +28,8 @@
  *   - Stdin reads are bounded (8 MiB) and drain-on-overflow so producers don't
  *     EPIPE. The runner is told about truncation via a terminal marker, never
  *     silently dropped.
- *   - UTF-8 is hard-coded. Real TNF prompts are always UTF-8; if a future
- *     command needs something else it should opt in explicitly here.
+ *   - Decoded text is UTF-8 with surrogate pairs replaced (history / CLI
+ *     transports that reject lone surrogates stay safe).
  */
 
 import * as fs from 'fs';
@@ -41,8 +42,18 @@ export const STDIN_PROMPT_MAX_BYTES = 8 * 1024 * 1024; // 8 MiB
  * Max time to wait for the first byte (or EOF) on an open non-TTY stdin.
  * Agent runners often leave stdin open without data; blocking forever would
  * starve positional prompts and hang the CLI.
+ *
+ * Bumped from 100ms → 500ms so slow pipe producers (shell redirects, large
+ * paste proxies) still beat the empty-idle path without feeling hung.
  */
-export const STDIN_PROMPT_IDLE_MS = 100;
+export const STDIN_PROMPT_IDLE_MS = 500;
+
+/**
+ * After at least one byte has arrived, if the stream stalls (no further data
+ * and no `end`) for this long, finish with the partial buffer instead of
+ * waiting forever on an abandoned open FD.
+ */
+export const STDIN_PROMPT_STALL_MS = 2000;
 
 /** Marker spliced onto the prompt if stdin was truncated by the byte cap. */
 export const STDIN_TRUNCATION_MARKER = '\n[tnf: stdin truncated to 8 MiB cap]';
@@ -68,10 +79,15 @@ export interface ResolvePromptOptions {
    */
   positional?: string[];
   /**
-   * Override the idle timeout for stdin reads (ms). Tests inject a tiny
-   * value; production keeps STDIN_PROMPT_IDLE_MS.
+   * Override the first-byte idle timeout for stdin reads (ms). Tests inject a
+   * tiny value; production keeps STDIN_PROMPT_IDLE_MS.
    */
   stdinIdleMs?: number;
+  /**
+   * Override the post-data stall timeout (ms). After bytes have been seen,
+   * silence lasting this long finishes the read with the partial buffer.
+   */
+  stdinStallMs?: number;
   /** Injectable readable for tests. Defaults to process.stdin. */
   stdin?: NodeJS.ReadableStream;
 }
@@ -94,13 +110,35 @@ function positionalText(positional?: string[]): string {
 }
 
 /**
+ * Replace lone UTF-16 surrogates so downstream CLIs and history stores never
+ * hit `surrogates not allowed` encode failures (prompt_toolkit, JSON, etc.).
+ */
+export function sanitizeUtf8Prompt(text: string): string {
+  if (!text) return text;
+  return text.replace(
+    /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g,
+    '\uFFFD'
+  );
+}
+
+function decodePromptBuffer(buf: Buffer): string {
+  // Node's utf8 decoder replaces invalid byte sequences with U+FFFD.
+  return sanitizeUtf8Prompt(buf.toString('utf8'));
+}
+
+/**
  * Read stdin up to maxBytes. Returns '' on TTY, already-ended streams, idle
  * timeout with no bytes, or empty EOF. Never hangs forever on an open FD.
+ *
+ * Two timers:
+ *   - first-byte idle: empty open FD → ''
+ *   - post-data stall: partial content without `end` → finish with what we have
  */
 function readStdinTask(
   maxBytes: number = STDIN_PROMPT_MAX_BYTES,
   idleMs: number = STDIN_PROMPT_IDLE_MS,
-  stdin: StdinLike = process.stdin as StdinLike
+  stdin: StdinLike = process.stdin as StdinLike,
+  stallMs: number = STDIN_PROMPT_STALL_MS
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     if (stdin.isTTY) {
@@ -118,6 +156,7 @@ function readStdinTask(
     let settled = false;
     let sawData = false;
     let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    let stallTimer: ReturnType<typeof setTimeout> | null = null;
 
     const finish = (text: string) => {
       if (settled) return;
@@ -138,9 +177,26 @@ function readStdinTask(
         clearTimeout(idleTimer);
         idleTimer = null;
       }
+      if (stallTimer) {
+        clearTimeout(stallTimer);
+        stallTimer = null;
+      }
       stdin.removeListener('data', onData);
       stdin.removeListener('end', onEnd);
       stdin.removeListener('error', onError);
+    };
+
+    const armStall = () => {
+      if (stallTimer) {
+        clearTimeout(stallTimer);
+        stallTimer = null;
+      }
+      const wait = Math.max(0, stallMs);
+      if (wait === 0) return;
+      stallTimer = setTimeout(() => {
+        if (settled || !sawData) return;
+        finish(decodePromptBuffer(Buffer.concat(chunks)));
+      }, wait);
     };
 
     const onData = (chunk: Buffer | string) => {
@@ -160,14 +216,15 @@ function readStdinTask(
         stdin.removeListener('data', onData);
         if (typeof stdin.resume === 'function') stdin.resume();
         stdin.on('data', () => {});
-        finish(Buffer.concat(chunks).toString('utf8') + STDIN_TRUNCATION_MARKER);
+        finish(decodePromptBuffer(Buffer.concat(chunks)) + STDIN_TRUNCATION_MARKER);
         return;
       }
       chunks.push(buf);
+      armStall();
     };
 
     const onEnd = () => {
-      finish(Buffer.concat(chunks).toString('utf8'));
+      finish(decodePromptBuffer(Buffer.concat(chunks)));
     };
 
     const onError = (err: Error) => fail(err);
@@ -205,7 +262,7 @@ function readStdinTask(
  * commands want different lists of valid channels).
  */
 export async function resolvePrompt(opts: ResolvePromptOptions): Promise<PromptResolution | null> {
-  const flagText = (opts.task ?? '').trim();
+  const flagText = sanitizeUtf8Prompt((opts.task ?? '').trim());
   if (flagText) {
     return { text: flagText, source: 'flag' };
   }
@@ -213,16 +270,17 @@ export async function resolvePrompt(opts: ResolvePromptOptions): Promise<PromptR
   const filePath = opts.taskFile;
   const wantsStdinFile = filePath !== undefined && (filePath === '' || filePath === '-');
   const idleMs = opts.stdinIdleMs ?? STDIN_PROMPT_IDLE_MS;
+  const stallMs = opts.stdinStallMs ?? STDIN_PROMPT_STALL_MS;
   const stdin = getStdin(opts);
 
   if (wantsStdinFile) {
-    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin);
+    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin, stallMs);
     return text ? { text, source: 'stdin', filePath: '<stdin>' } : null;
   }
   if (filePath !== undefined) {
     try {
       const abs = path.resolve(filePath);
-      const text = fs.readFileSync(abs, 'utf8');
+      const text = sanitizeUtf8Prompt(fs.readFileSync(abs, 'utf8'));
       return { text, source: 'file', filePath: abs };
     } catch (err: any) {
       throw new Error(`--task-file "${filePath}" could not be read: ${err?.message ?? err}`);
@@ -231,13 +289,13 @@ export async function resolvePrompt(opts: ResolvePromptOptions): Promise<PromptR
 
   // Prefer positional over implicit stdin so open non-TTY FDs cannot hang
   // when the operator already supplied a prompt on the argv.
-  const fromPositional = positionalText(opts.positional);
+  const fromPositional = sanitizeUtf8Prompt(positionalText(opts.positional));
   if (fromPositional) {
     return { text: fromPositional, source: 'positional' };
   }
 
   if (!stdin.isTTY) {
-    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin);
+    const text = await readStdinTask(STDIN_PROMPT_MAX_BYTES, idleMs, stdin, stallMs);
     if (text) return { text, source: 'stdin' };
   }
 

@@ -1,15 +1,36 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: voice-bridge-qa-agent
-displayName: TNF Voice Bridge QA
-description:
-  Specialized QA agent that tests the TNF voice bridge — audio capture,
+description: Specialized QA agent that tests the TNF voice bridge — audio capture,
   transcription round-trip, watchdog recovery, and consecutive-failure handling.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities:
-  ['voice_health', 'transcribe_roundtrip', 'watchdog_probe', 'failover_trace']
-tags: ['qa', 'voice', 'audio', 'watchdog', 'bridge']
 version: 1.1.0
+tags:
+- qa
+- voice
+- audio
+- watchdog
+- bridge
+capabilities:
+- voice_health
+- transcribe_roundtrip
+- watchdog_probe
+- failover_trace
+displayName: TNF Voice Bridge QA
+agentType: testing
 ---
 
 # Voice Bridge QA Agent

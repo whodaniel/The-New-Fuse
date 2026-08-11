@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FederationChannelPanel from '../components/federation/FederationChannelPanel';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useFederationNode } from '../hooks/useFederationNode';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import FederationNodeService from '../services/FederationNodeService';
@@ -120,7 +119,6 @@ const A2AControl: React.FC = () => {
         ) : null
       }
     >
-      <SynergyStatusBar />
       <div className="a2a-layout">
         <div className="tnf-card a2a-channels">
           <FederationChannelPanel

@@ -214,10 +214,21 @@ async function pruneMasterHistory() {
 }
 
 async function writePayload(payload) {
-  await fsp.writeFile(paths.latest, JSON.stringify(payload, null, 2));
+  const body = `${JSON.stringify(payload, null, 2)}\n`;
+  const tmp = `${paths.latest}.${process.pid}.${Date.now()}.tmp`;
+  await fsp.writeFile(tmp, body);
+  await fsp.rename(tmp, paths.latest);
   await fsp.appendFile(paths.history, `${JSON.stringify(payload)}\n`);
   await fsp.writeFile(paths.signal, `${payload.generatedAt}\n`);
   await pruneMasterHistory();
+  // Keep lock mtime fresh so a concurrent start does not treat us as stale
+  // while a long cycle is in flight.
+  try {
+    const now = new Date();
+    fs.utimesSync(paths.lockDir, now, now);
+  } catch {
+    /* ignore */
+  }
 }
 
 function cycleCommands(cycle) {
@@ -381,7 +392,14 @@ async function main() {
       // see it's running), but skip all autonomous command dispatch when paused.
       // This is the root scheduler — pausing it effectively pauses everything
       // it orchestrates (terminal-heartbeat-pulse, director-cron, etc.).
-      const { isFleetPaused } = require(path.join(__dirname, '..', 'lib', 'tnf-fleet-mode.cjs'));
+      // Prefer the mirrored service lib; fall back to repo scripts/lib when the
+      // LaunchAgent home was only partially synced.
+      let isFleetPaused;
+      try {
+        ({ isFleetPaused } = require(path.join(__dirname, '..', 'lib', 'tnf-fleet-mode.cjs')));
+      } catch {
+        ({ isFleetPaused } = require(path.join(config.rootDir, 'scripts', 'lib', 'tnf-fleet-mode.cjs')));
+      }
       if (isFleetPaused()) {
         const pausedPayload = {
           generatedAt: nowIso(),

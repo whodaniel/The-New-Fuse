@@ -1,0 +1,30 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A6",
+  "title": "Protocol gate single final verdict",
+  "priority": "P0",
+  "owner_role": "local-subdirector",
+  "implementer_roles": ["tnf-cli-agent", "hermes-codegen-worker"],
+  "human_gate_required": false,
+  "problem": "tnf protocol gate prints ALL PROTOCOLS PASSED then CI session-handoff BLOCKED exit 1 — dual narrative trains overrides.",
+  "solution": {
+    "summary": "Defer overall PASS/FAIL until all subgates finish; print provisional section results; one final verdict line + exit code.",
+    "files": [
+      "packages/tnf-cli/src/cli.ts (protocol gate)",
+      "scripts/protocols/ProtocolInterceptor or enforce-session-handoff.cjs callers"
+    ],
+    "steps": [
+      "Locate ProtocolInterceptor success banner; change to 'Preflight sections OK (provisional)'.",
+      "After CI subgates, print exactly one of: VERDICT: PASS or VERDICT: FAIL with reasons.",
+      "Exit code must match VERDICT.",
+      "Add regression test fixture simulating preflight ok + handoff gate block → must not contain 'ALL PROTOCOLS PASSED' as final banner."
+    ],
+    "verify": [
+      "tnf protocol gate --no-splash; if fail, stdout contains VERDICT: FAIL and does not end with ALL PROTOCOLS PASSED",
+      "CI unit/fixture for dual-verdict regression"
+    ],
+    "rollback": "TNF_PROTOCOL_GATE_LEGACY_BANNER=1"
+  },
+  "acceptance_probe": "Single VERDICT line; exit code agrees; no premature ALL PASSED finality.",
+  "conflicts": []
+}

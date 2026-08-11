@@ -15,6 +15,12 @@ without verifying. This applies to browser automation, API calls, database
 writes, and deployments. Read the DOM/query the state before acting. Confirm the
 result after.
 
+**The State-Freshness Axiom Suite
+(`docs/protocols/STATE_FRESHNESS_AXIOM_SUITE.md`):** No claim or cached state
+retains authority without empirical re-verification. All knowledge must be
+continuously validated for freshness against live runtime evidence and canonical
+ground truth.
+
 ## DOM Over Screenshots
 
 When programmatic access to structured data is available, use it. Screenshots
@@ -35,6 +41,23 @@ unit** defined by the triad:
 3.  **The Capability (The Tools/MCP):** The "Senses" and "Limbs" (Native
     Vision/Audio/Relay Synapses). This is how the agent interacts with the
     Merkle Tree.
+
+### Harness Completeness (UNU-aligned)
+
+TNF harness config is first-class: `docs/protocols/HARNESS_CONFIG.md` +
+`data/harness/harness-config.json`. File presence under `docs/core` is **not**
+the same as host injection. Verify:
+
+```bash
+node scripts/harness/verify-harness-completeness.cjs --provision
+```
+
+| Layer concern                     | Entry point                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| Permissions outside the model     | `scripts/harness/permission-berm.cjs`                        |
+| Dynamic memory retain/recall      | `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
+| Trajectories / compaction records | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`    |
+| Sandbox materialization (D11)     | `scripts/harness/materialize-sandbox-profile.cjs`            |
 
 ### Core Tenet (CORRECTED 2026-07-22)
 
@@ -192,6 +215,24 @@ implementation — determines whether the system becomes brittle.
   occurrences across 8,904 source files. Query identifier frequencies, power
   phrases, communication patterns. MCP server at
   `packages/mcp-concordance-server/`.
+- **tnf-fleet-delegation-governor** — Enforces Core Tenet 1 (Fleet Delegation).
+  Target discovery (`tnf agents who`), multi-agent work partitioning, 3-pass
+  terminal sweeps with AppleScript permanent window IDs and hardware Return
+  (`key code 36`).
+- **tnf-harness-integrity-auditor** — Pre-flight quality gate auditor for
+  harness framework compliance (Turn Zero mandate, local environment boundary,
+  package exports, TS path mappings).
+- **tnf-autonomous-loop-topology** — Identifies, maps, and unrolls 4-tiered
+  nested loops (Micro-Loop -> Cognitive Loop -> Swarm Director Loop -> Meta
+  Flywheel) to enumerate all potential autonomous action paths while enforcing
+  safety gates.
+- **tnf-proactive-goal-wizard** — Multi-step interactive wizarding framework to
+  proactively engage users, extract goals, discover workspace context/assets,
+  deconstruct milestones, and track autonomous task progress.
+- **tnf-ufte-federated-tag-governor** — Enforces cryptographic entity hashing
+  (`federatedId`), mandatory document headers
+  (`[CLASS] [STATUS] [DOC_TYPE] [DOMAIN_SCOPE]`), 5W1H context adaptation, and
+  semantic graph indexing across all agent operations.
 
 ## Concordance System
 

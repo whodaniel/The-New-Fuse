@@ -1,0 +1,233 @@
+=== HARNESS INSPECT ===
+
+[TNF Harness Inspect]
+
+✓ protocol.turnZero: Turn Zero artifacts present
+✓ protocol.livingState: Living state synchronized
+✓ protocol.disclosure: Procedural disclosure ready
+✓ agents.registration: All agents registered
+✓ harness.agentLoopModule: Agent loop module present with live-provider contract
+✓ handoff.nextActions: 2 pending action(s) in handoff
+✓ harness.agentLoopLive: Live loop via nvidia-nemotron-3-ultra/nemotron-3-ultra-550b-a55b
+
+Overall: PASS
+
+=== DOCTOR ===
+    docs/protocols/THE_VELOCITY_INTEGRITY_BALANCE.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/TNF_AGENT_ROSTER_CLEANUP.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_AGENT_SHELL_HYGIENE.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_BOOK_OF_AXIOMS.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_COLLISION_PROVISION.md: [CLASS:PRIME] [STATUS:null]
+    docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md: [CLASS:PRIME] [STATUS:null]
+    docs/protocols/TNF_CONTEXTUAL_GROUNDING_MARKERS_SPEC.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_DIRECTIVES.md: [CLASS:PRIME] [STATUS:ARCHIVED]
+    docs/protocols/TNF_DOCUMENT_TAGGING_PROTOCOL.md: [CLASS:PRIME] [STATUS:LOCKED]
+    docs/protocols/TNF_DOCUMENT_VETTING_PROCEDURE.md: [CLASS:PRIME] [STATUS:LOCKED]
+    docs/protocols/TNF_ENVIRONMENT_ADAPTER.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_FEDERATED_TAG_SYNERGY_SPEC.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_FLEET_HEALTH_PROBE_PROTOCOL.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_FRONTEND_IA_CANON.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_GOVERNANCE_SYNTHESIS_v2.0.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_GOVERNANCE_TENETS.md: [CLASS:PRIME] [STATUS:null]
+    docs/protocols/TNF_INFORMATION_INGESTION_PIPELINE.md: [CLASS:PRIME] [STATUS:LOCKED]
+    docs/protocols/TNF_MODULE_DEPENDENCY_AWARENESS.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_PROACTIVE_GOAL_WIZARDING_PROTOCOL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_RESOURCE_STRATEGY.md: [CLASS:PRIME] [STATUS:null]
+    docs/protocols/TNF_SELF_HEALING_PROTOCOL.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_SELF_SUFFICIENCY.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_SYSTEM_LEXICON.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TNF_SYSTEM_LOGICAL_COHESION_MANUAL.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL.md: [CLASS:PRIME] [STATUS:PENDING]
+    docs/protocols/TS_FIRST_CONTRACT_MIGRATION_PLAN_2026-05-17.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/TURN_END_MANDATE.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/TURN_ZERO_MANDATE.md: [CLASS:PRIME] [STATUS:ACTIVE]
+    docs/protocols/UTP_SPEC_v1.0.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/aca-usage.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/agent-self-edit-protocol-v0.1.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/draft-sgp-0001.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/draft-twip-0001.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/mcp-nestjs-integration.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/resource-search-protocol-bridge.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/resource-search-revision-implementation-plan.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/tnf-cron-governance-protocol-v0.1.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/tnf-log-to-dom-protocol.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-federation-state-2026-03-18.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-operator-runbook.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-orchestration-extension-v0.1.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-terminal-graph-api.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-terminal-identification-surfaces.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-terminal-macro-board.md: [CLASS:INTEL] [STATUS:PENDING]
+    docs/protocols/twip-universalization-playbook.md: [CLASS:INTEL] [STATUS:PENDING]
+  ✓ Current directive: Continue priority queue from SESSION_HANDOFF_LATEST.json
+
+[Procedural Disclosure] Complete
+  ✓ Ready for action sequence
+
+▶ Protocol: Session Handoff
+
+▶ Protocol: Knowledge Tree Integrity
+
+▶ Protocol: Integration Verification
+
+▶ Protocol: Substrate Attestation
+
+═══════════════════════════════════════
+  Protocol Check Summary
+═══════════════════════════════════════
+
+✓ Turn Zero Mandate: 3 state files, 2 handoff artifacts, 1 step(s) skipped
+✓ Living State Sync: STATUS:SYNCHRONIZED confirmed
+✓ Procedural Disclosure: 75 flags detected, context loaded
+✓ Session Handoff: Handoff a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9 from 2026-08-09T18:16:11.985Z
+✓ Knowledge Tree: Present
+✓ Core Protocols: 78 protocol files
+✓ Substrate Attestation: install + runtime probes clean
+
+Result:
+  ALL PROTOCOLS PASSED
+[turn-zero-authority] OK (ci): canonical Turn Zero authority and references are aligned
+[protocol-schema-gate] OK
+=== METASKILLS ===
+TNF Meta-Skills Audit
+Workspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+
+=== Readiness ===
+- Procedures: READY
+- Skills/Agents Catalog: READY
+- Distribution Layer: READY
+- Meta-Skill Coverage: GAPS
+
+=== Counts ===
+- .agent skills (SKILL.md): 581
+- .claude skills: 15
+- .agent agent definitions: 194
+- .claude agent definitions: 138
+- .claude commands: 21
+
+=== Procedure Files ===
+- .agent/SYSTEM_PROMPT.md: present
+- .agent/context/resource-map.md: present
+- .agent/context/agent-onboarding.md: present
+- .agent/workflows/frontload.md: present
+- .agent/META_SKILLS_GUIDE.md: present
+- AGENTS.md: present
+
+=== Distribution ===
+- data/mcp_config.json: present
+- generated mcp clients: 3/3
+- packages/mcp-skills-server: present
+- packages/resource-registry: present
+- packages/claude-skills: present
+
+=== Meta-Skills ===
+- context-frontloader: .agent/skills/context-frontloader/SKILL.md
+- context-frontloader: .claude/skills/context-frontloader.md
+- framework-consciousness: .agent/skills/framework-consciousness/SKILL.md
+- framework-consciousness: .claude/skills/framework-consciousness.md
+- library-of-living-knowledge: .agent/skills/library-of-living-knowledge/SKILL.md
+- library-of-living-knowledge: .claude/skills/library-of-living-knowledge.md
+- skill-builder: .agent/skills/skill-builder/SKILL.md
+- skill-builder: .claude/skills/skill-builder.md
+
+=== Meta-Skill Coverage ===
+- context-frontloader: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- context-frontloader: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- framework-consciousness: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- framework-consciousness: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- library-of-living-knowledge: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- library-of-living-knowledge: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- skill-builder: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+- skill-builder: 3/4 (trigger=Y, deps=Y, tests=N, dist=Y)
+=== GROWTH ===
+
+TNF Growth Audit
+============================================================
+Time:     2026-08-10T01:22:27.886Z
+Disk:     756.7 MB free (96% used) — OK
+Snapshot: /Users/danielgoldberg/.tnf/growth-audit/last-snapshot.json
+History:  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/runtime-logs/growth-audit.jsonl
+
+Top targets by size:
+      5.0 GB  pnpm-store (+0.0% since last) [large]
+             /Users/danielgoldberg/Library/pnpm/store
+      2.1 GB  tnf-home (+1.0% since last) [large]
+             /Users/danielgoldberg/.tnf
+      1.9 GB  cursor-chats (+0.7% since last) [large]
+             /Users/danielgoldberg/.cursor/chats
+    545.0 MB  opencode-store (+0.0% since last) [large]
+             /Users/danielgoldberg/.local/share/opencode
+    267.8 MB  turbo-cache (+0.0% since last)
+             /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.turbo
+
+
+=== PARITY STATUS ===
+
+  TNF Cross-Agent Parity
+
+  TNF surface : 281 commands, 1 root options
+  Agents      : 8 tracked, 5 unreachable
+  Coverage    : 38% mean, 190 open gaps
+  --------------------------------------------------------------------
+  ● hermes           0%   21 gaps  Hermes Agent v0.20.0 (2026.8.3) (options only)
+  ● claude          13%   66 gaps  2.1.226 (Claude Code)
+  ● pi              16%   37 gaps  0.84.1
+  ● cursor-agent    27%   30 gaps  2026.08.04-aaa8809
+  ● codex           39%   19 gaps  codex-cli 0.147.0
+  ● jules           67%    2 gaps  Error: unknown flag: --version
+  ● opencode        71%    7 gaps  1.14.48
+  ● kilo            73%    8 gaps  7.3.46
+  ○ gemini         not installed
+  ○ openclaw       not installed
+  ○ amp            not installed
+  ○ crush          not installed
+  ○ aider          not installed
+
+  Generated: 2026-08-09T19:35:40.866Z
+
+=== ORCHESTRATE STATUS ===
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)

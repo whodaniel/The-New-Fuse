@@ -52,8 +52,18 @@ Running `tnf` with no arguments is a harness-compliant agent entrypoint:
    excerpts into the interactive agent context.
 3. Start the TNF interactive agent from the canonical workspace root.
 
-Set `TNF_SKIP_TURN_ZERO_ONBOARD=1` only for CI or tests that must bypass the
-interactive Turn Zero surface.
+Set `TNF_SKIP_TURN_ZERO_ONBOARD=1` for CI or tests that must bypass the
+interactive Turn Zero surface. This env var skips _both_ the interactive
+onboarding surface (when running `tnf` with no arguments) and the unconditional
+protocol preflight that runs before every CLI invocation, so scripts in
+`scripts/agents/*.sh` that export it get a clean stdout and no Turn Zero Mandate
+noise (regression-tested in `src/utils/preflight-skip.test.ts`).
+
+Set `TNF_SKIP_PREFLIGHT=1` for the narrower opt-out that skips only the protocol
+preflight without touching the interactive onboarding surface.
+
+`tnf protocol gate` (the explicit "run the checks now" verb) is never suppressed
+by either env var — it is always honoured when invoked.
 
 OpenCode compatibility remains available explicitly:
 

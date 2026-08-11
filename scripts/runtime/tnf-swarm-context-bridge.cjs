@@ -352,6 +352,39 @@ function buildSwarmContext(heartbeat, livingState, handoff) {
   };
 }
 
+async function pruneSwarmContextHistory(canonicalPath, keep) {
+  const dir = path.dirname(canonicalPath);
+  const base = path.basename(canonicalPath, '.md');
+  let entries = [];
+  try {
+    entries = await fsp.readdir(dir);
+  } catch {
+    return;
+  }
+  const history = entries
+    .filter((name) => name.startsWith(`${base}-`) && name.endsWith('.md'))
+    .map((name) => path.join(dir, name));
+  if (history.length <= keep) return;
+  const stamped = await Promise.all(
+    history.map(async (filePath) => {
+      try {
+        const st = await fsp.stat(filePath);
+        return { filePath, mtimeMs: st.mtimeMs };
+      } catch {
+        return { filePath, mtimeMs: 0 };
+      }
+    })
+  );
+  stamped.sort((a, b) => b.mtimeMs - a.mtimeMs);
+  for (const item of stamped.slice(keep)) {
+    try {
+      await fsp.unlink(item.filePath);
+    } catch {
+      // best-effort
+    }
+  }
+}
+
 async function main() {
   const heartbeat = readJson(path.join(config.heartbeatStateDir, 'terminal-heartbeat-latest.json'));
   const livingState = readMarkdown(config.livingStatePath);
@@ -361,11 +394,23 @@ async function main() {
 
   await fsp.writeFile(config.swarmContextPath, swarmContext.markdown);
 
-  const historyPath = config.swarmContextPath.replace('.md', `-${nowIso().replace(/[:.]/g, '-')}.md`);
-  await fsp.writeFile(historyPath, swarmContext.markdown);
+  // History copies were unbounded (~77k files / ENOSPC class). Default keep=0
+  // (canonical swarm-context.md only). Cap with TNF_SWARM_CONTEXT_HISTORY_KEEP.
+  const historyKeep = Math.max(
+    0,
+    Number.parseInt(String(process.env.TNF_SWARM_CONTEXT_HISTORY_KEEP || '0'), 10) || 0
+  );
+  if (historyKeep > 0) {
+    const historyPath = config.swarmContextPath.replace(
+      '.md',
+      `-${nowIso().replace(/[:.]/g, '-')}.md`
+    );
+    await fsp.writeFile(historyPath, swarmContext.markdown);
+    await pruneSwarmContextHistory(config.swarmContextPath, historyKeep);
+  }
 
   console.log(
-    `[swarm-context-bridge] coherence=${swarmContext.coherenceScore} terminals=${swarmContext.terminalCount} agents=${swarmContext.agentCount} directives=${swarmContext.activeDirectives.length}`
+    `[swarm-context-bridge] coherence=${swarmContext.coherenceScore} terminals=${swarmContext.terminalCount} agents=${swarmContext.agentCount} directives=${swarmContext.activeDirectives.length} historyKeep=${historyKeep}`
   );
 
   await publishContextUpdate(heartbeat, swarmContext);

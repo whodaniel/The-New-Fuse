@@ -1,16 +1,34 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: tnf-fleet-health-probe
-description:
-  Periodic GET on every TNF-managed service endpoint (GCP/Cloudflare/Supabase).
-  Replaces legacy OpenClaw agents `com.openclaw.picoclaw-fleet` and
-  `com.openclaw.mesh-health`. Reads endpoint list from a config file — never
-  hardcodes Railway (Railway is deprecated). Alerts via native Telegram bus
-  using credentials sourced at runtime from .env.tnf-telegram.
-tags: [health, fleet, probe, tnf-native, native-cron]
+description: Periodic GET on every TNF-managed service endpoint (GCP/Cloudflare/Supabase).
+  Replaces legacy OpenClaw agents `com.openclaw.picoclaw-fleet` and `com.openclaw.mesh-health`.
+  Reads endpoint list from a config file — never hardcodes Railway (Railway is deprecated).
+  Alerts via native Telegram bus using credentials sourced at runtime from .env.tnf-telegram.
+tags:
+- health
+- fleet
+- probe
+- tnf-native
+- native-cron
 schedule: every 15 minutes (system cron)
-runtime: system cron `*/15 * * * *` (sidesteps Hermes cron interpreter bug)
 supervisor: false
 depends_on: []
+runtime: system cron `*/15 * * * *` (sidesteps Hermes cron interpreter bug)
 ---
 
 # TNF Fleet Health Probe

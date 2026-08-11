@@ -300,6 +300,33 @@ export class TurnZeroService {
     );
   }
 
+  private renderSystemSurface(log: (line: string) => void): void {
+    const user = os.userInfo().username;
+    const hostname = os.hostname();
+    const platform = os.platform();
+    const nodeVer = process.version;
+    const freeMem = (os.freemem() / (1024 * 1024 * 1024)).toFixed(1);
+    const totalMem = (os.totalmem() / (1024 * 1024 * 1024)).toFixed(1);
+
+    let branch = 'unknown';
+    let commit = 'unknown';
+    try {
+      branch = this.git(['rev-parse', '--abbrev-ref', 'HEAD']);
+      commit = this.git(['rev-parse', '--short', 'HEAD']);
+    } catch {
+      /* ignore */
+    }
+
+    log(chalk.cyan('=== TNF System & Environment Surface ==='));
+    log(
+      `  ${chalk.bold('User & Host:')}   ${chalk.green(user)} @ ${hostname} (${platform}, Node ${nodeVer})`
+    );
+    log(`  ${chalk.bold('Workspace:')}     ${this.repoRoot}`);
+    log(`  ${chalk.bold('Git Lineage:')}   ${chalk.yellow(branch)} (${commit})`);
+    log(`  ${chalk.bold('Host Memory:')}   ${freeMem}GB free / ${totalMem}GB total`);
+    log(chalk.cyan('=========================================\n'));
+  }
+
   async execute(options: { silent?: boolean } = {}): Promise<TurnZeroResult> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -314,6 +341,8 @@ export class TurnZeroService {
           /* silenced */
         }
       : (line: string) => console.log(line);
+
+    this.renderSystemSurface(log);
 
     const render = (label: string, check: TurnZeroCheck) => {
       const mark =

@@ -1085,6 +1085,6 @@ Week 1:
 
 **Next Steps:**
 1. Review full plan: [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
-2. Read summary: [CONSOLIDATION_SUMMARY.md](./CONSOLIDATION_SUMMARY.md)
+2. Read summary: [CONSOLIDATION_SUMMARY.md](../../_archives/2024-migration/CONSOLIDATION_SUMMARY.md)
 3. Get team approval
 4. Begin execution!

@@ -151,9 +151,9 @@ curl http://localhost:8080/api/monitoring/database/slow-queries
 
 ## 📚 Full Documentation
 
-- [Performance Monitoring Setup](docs/performance/PERFORMANCE_MONITORING_SETUP.md)
-- [Performance Optimization](docs/performance/PERFORMANCE_OPTIMIZATION.md)
-- [Performance Overview](docs/performance/README.md)
+- [Performance Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md)
+- [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md)
+- [Performance Overview](./README.md)
 
 ## ✅ Verification Checklist
 

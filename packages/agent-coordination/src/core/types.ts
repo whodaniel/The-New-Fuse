@@ -116,6 +116,7 @@ export interface TaskAssignment {
   agentId: string;
   assignedAt: Date;
   expiresAt?: Date;
+  metadata?: Record<string, any>;
 }
 
 /**

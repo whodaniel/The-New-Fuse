@@ -58,9 +58,31 @@ function getGatewayClientIp(req: any): string {
   return req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown';
 }
 
+function isLoopbackIp(ip: string | undefined | null): boolean {
+  if (!ip) return false;
+  const normalized = ip
+    .trim()
+    .toLowerCase()
+    .replace(/^::ffff:/, '');
+  return (
+    normalized === '127.0.0.1' ||
+    normalized === '::1' ||
+    normalized === 'localhost' ||
+    normalized === '0:0:0:0:0:0:0:1'
+  );
+}
+
 function shouldSkipHttpRateLimit(req: any): boolean {
   if (req.method === 'OPTIONS') {
     return true;
+  }
+
+  // Local operator / full-auto clients share one IP and routinely exceed a
+  // public-facing window; do not starve desktop + daemon on loopback.
+  if (process.env.API_GATEWAY_RATE_LIMIT_LOOPBACK !== 'enforce') {
+    if (isLoopbackIp(getGatewayClientIp(req))) {
+      return true;
+    }
   }
 
   const path = req.path || req.url || '/';
@@ -100,7 +122,8 @@ function attachHttpRateLimit(app: any): void {
   );
   const maxRequests = parsePositiveInteger(
     process.env.API_GATEWAY_RATE_LIMIT_REQUESTS,
-    2_000,
+    // Local full-auto + desktop share one IP; 600/min was starving /api/agents.
+    10_000,
     1,
     1_000_000
   );
@@ -160,7 +183,7 @@ function buildWebSocketProxyRoutes(): WebSocketProxyRoute[] {
     process.env.TNF_RELAY_URL ||
     process.env.RELAY_WS_URL ||
     process.env.RELAY_URL ||
-    'ws://127.0.0.1:3000/ws';
+    'ws://127.0.0.1:3007/ws';
   const bridgeTarget =
     process.env.API_GATEWAY_REDIS_BRIDGE_WS_TARGET ||
     `ws://127.0.0.1:${process.env.WS_BRIDGE_PORT || '3005'}/redis-bridge`;

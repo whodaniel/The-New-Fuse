@@ -1,14 +1,36 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: auth-flow-qa-agent
-displayName: TNF Auth Flow QA
-description:
-  Specialized QA agent that tests TNF authentication and authorization — JWT
-  issuance/validation, session lifecycle, and API gateway auth middleware.
-agentType: testing
-tools: ['Bash', 'Read', 'Grep', 'glob']
-capabilities: ['auth_health', 'jwt_verify', 'session_lifecycle', 'rbac_check']
-tags: ['qa', 'auth', 'jwt', 'session', 'security']
+description: Specialized QA agent that tests TNF authentication and authorization
+  — JWT issuance/validation, session lifecycle, and API gateway auth middleware.
 version: 1.1.0
+tags:
+- qa
+- auth
+- jwt
+- session
+- security
+capabilities:
+- auth_health
+- jwt_verify
+- session_lifecycle
+- rbac_check
+displayName: TNF Auth Flow QA
+agentType: testing
 ---
 
 # Auth Flow QA Agent

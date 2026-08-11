@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useRoute } from '../components/route-context';
 import { openExternal } from '../lib/openExternal';
 
@@ -8,7 +7,7 @@ const FEATURES = [
   {
     icon: '🔌',
     title: 'Universal MCP & A2A',
-    body: 'Orchestrate Claude, GPT, Gemini, and federated agents via the Redis Synaptic Bus.',
+    body: 'Orchestrate NVIDIA NIM, Groq, SambaNova, Cerebras, DeepSeek, Gemini, OpenAI, OpenRouter, and federated agents via the Redis Synaptic Bus.',
     route: '/a2a',
   },
   {
@@ -113,8 +112,6 @@ const PlatformOverview: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
-
       <section className="tnf-section">
         <h2 className="tnf-section-title">System Health Matrix</h2>
         <div className="health-grid">

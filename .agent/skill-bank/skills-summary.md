@@ -1,37 +1,40 @@
 # Skill Bank Summary
 
-Generated: 2026-03-03T01:33:44.537Z Discovered skill files: 324 Unique skills:
-272
+Generated: 2026-08-09T20:10:47.314Z
+Discovered skill files: 2170
+Unique skills: 804
 
 ## By LLM
-
-- codex: 22
-- project-agent: 271
-- openclaw: 7
-- picoclaw: 13
-- claude: 9
-- gemini: 1
-- kilo: 1
+- codex: 162
+- claude: 184
+- gemini: 139
+- opencode: 156
+- cursor: 21
+- kilo: 158
+- augment: 139
+- tnf: 141
+- hermes: 489
+- project-agent: 581
 
 ## Top Duplicated Skills
+- tnf-full-auto-network-autopilot: 20 variants
+- cursor-watch-learn-operator: 10 variants
+- ab-testing-optimizer-agent: 9 variants
+- ad-network-manager-agent: 9 variants
+- affiliate-link-manager-agent: 9 variants
+- agent-registry-manager: 9 variants
+- agent-registry-qa-agent: 9 variants
+- agent-relationship-grapher: 9 variants
+- agent-search-engine: 9 variants
+- agent-tagger: 9 variants
+- algorithm-adaptation-agent: 9 variants
+- analytics-and-reporting-agent: 9 variants
+- asset-sourcer-agent: 9 variants
+- audience-growth-agent: 9 variants
+- audience-persona-architect-agent: 9 variants
+- audience-segmentation-agent: 9 variants
+- audio-recording-agent: 9 variants
+- auth-flow-qa-agent: 9 variants
+- brand-identity-agent: 9 variants
+- brand-outreach-agent: 9 variants
 
-- openclaw-universal-knowledge: 6 variants
-- context-frontloader: 5 variants
-- framework-consciousness: 5 variants
-- library-of-living-knowledge: 5 variants
-- skill-builder: 5 variants
-- skill-creator: 5 variants
-- continuous-improvement: 4 variants
-- brand-guidelines: 3 variants
-- internal-comms: 3 variants
-- pdf: 3 variants
-- algorithmic-art: 2 variants
-- browser-automation: 2 variants
-- canvas-design: 2 variants
-- design-md: 2 variants
-- doc-coauthoring: 2 variants
-- docx: 2 variants
-- frontend-design: 2 variants
-- mcp-builder: 2 variants
-- notebooklm: 2 variants
-- planning-with-files: 2 variants

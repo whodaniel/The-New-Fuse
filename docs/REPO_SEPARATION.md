@@ -31,11 +31,11 @@ The flagship name `The-New-Fuse` now belongs to the **public** publication repo,
 because that is the artifact the world should find. The private development
 monorepo is `whodaniel/tnf-monorepo`.
 
-| Name                          | Before 2026-07-25         | After                         |
-| ----------------------------- | ------------------------- | ----------------------------- |
-| `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime       |
+| Name                     | Before 2026-07-25         | After                         |
+| ------------------------ | ------------------------- | ----------------------------- |
+| `whodaniel/The-New-Fuse` | private combined monorepo | **public** open runtime       |
 | `whodaniel/The-New-Fuse` | public open runtime       | _(name retired)_              |
-| `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo |
+| `whodaniel/tnf-monorepo` | _(did not exist)_         | **private** combined monorepo |
 
 **Any remote still pointing at `whodaniel/The-New-Fuse` for monorepo work is now
 aimed at the PUBLIC repo.** Pushing the monorepo there publishes proprietary
@@ -87,7 +87,8 @@ tnf-monorepo/
 │   ├── tauri-desktop/         # 🟢
 │   ├── vscode-extension/       # 🟢
 │   ├── chrome-extension/       # 🟢
-│   └── ...                     # 🟢 (all others are open)
+│   ├── mcp-servers/            # 🟢
+│   └── ...                     # ⚪ everything else — see app boundary below
 ├── packages/
 │   ├── relay-core/
 │   │   └── src/
@@ -141,6 +142,38 @@ fuse-control-plane/
 ├── scripts/                    # Utility scripts
 └── .github/workflows/          # CI/CD for each service
 ```
+
+---
+
+## App Boundary — What Ships in the Regular OSS Download
+
+Proprietary and "not in the download" are **two different axes**, and conflating
+them routes code to the wrong repo.
+
+| Bucket                                                       | Where it goes                                                     | Mechanism                        |
+| ------------------------------------------------------------ | ----------------------------------------------------------------- | -------------------------------- |
+| Core runtime + form factors                                  | Public `The-New-Fuse`                                             | default (not excluded)           |
+| Proprietary control plane                                    | Private `fuse-control-plane` (extracted)                          | `PROPRIETARY_FILES/DIRS/SCRIPTS` |
+| Satellites, demos, standalone products, personal/vendor apps | Stay in the monorepo; separate publication lanes if ever released | `ALWAYS_EXCLUDE`                 |
+
+The regular open-source download is **9 apps**:
+
+`api`, `api-gateway`, `backend`, `chrome-extension`, `frontend`, `mcp-servers`,
+`relay-server`, `tauri-desktop`, `vscode-extension`.
+
+The full three-bucket classification lives in
+[`data/distribution/oss-app-boundary.json`](../data/distribution/oss-app-boundary.json)
+and is enforced by `ALWAYS_EXCLUDE` in `scripts/sync-repos.sh`.
+
+> **Do not add non-shipping apps to `PROPRIETARY_DIRS`.** That array _extracts_
+> to `fuse-control-plane`, so listing e.g. `apps/poker-room` there would copy a
+> game into the proprietary control-plane repo. Withholding from the public
+> download is `ALWAYS_EXCLUDE`; extraction to the control plane is
+> `PROPRIETARY_*`.
+
+Until 2026-08-09 only `nexus-orchestrator` and `picoclaw-overseer` were withheld
+— every other app under `apps/`, including the payment services, published by
+default.
 
 ---
 

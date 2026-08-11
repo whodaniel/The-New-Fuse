@@ -1,7 +1,7 @@
 # TNF Canonical ID Schema v1.0.0
 
 > **See Also**:
-> [TNF Entity ID Taxonomy V2]($TNF_ROOT/docs/TNF_ENTITY_ID_TAXONOMY_V2.md) -
+> [TNF Entity ID Taxonomy V2](../../TNF_ENTITY_ID_TAXONOMY_V2.md) -
 > Database schema documentation **Runtime Note (2026-05-17)**: TNF
 > frontload/onboarding now evaluates both this v1 schema and Taxonomy v2 through
 > `configs/tnf-trait-policy.json`.

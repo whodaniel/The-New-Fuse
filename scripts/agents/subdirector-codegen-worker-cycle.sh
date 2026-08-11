@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+
+# --- tnf dependency preflight ------------------------------------------
+# cron's minimal PATH omits where this machine keeps its tooling. With no
+# 'set -e', a missing binary yields 'command not found', exit 0, and a
+# cycle cron records as successful while doing nothing. Fail loudly.
+for _tnf_bin in python3 redis-cli; do
+  command -v "$_tnf_bin" >/dev/null 2>&1 || {
+    echo "FATAL: required binary '$_tnf_bin' not found. PATH=$PATH" >&2
+    exit 127
+  }
+done
+# --- end tnf dependency preflight -----------------------------------
+
 # Auto-generated 2026-06-25 by Sub-Director.
 # Cron-bound wrapper: hermes-codegen-worker
 # - Refreshes its registry HSET row in tnf:agent-registry (idempotent)
@@ -18,7 +31,7 @@ if tnf_fleet_paused; then
   exit 0
 fi
 
-REPO_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 REGISTRY_ID="agent_hermes-codegen-worker_1782364000001"
 LOG="$HOME/.tnf/poll-jobs/tnf-subdirector-codegen-worker/cron.log"
 ART_DIR="$HOME/.tnf/sub-director/run-artifacts"

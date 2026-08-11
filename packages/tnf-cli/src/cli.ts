@@ -1,5 +1,5 @@
 import { PackageReconnectHub, type PackageProbeResult } from '@the-new-fuse/tnf-core';
-import { NoteService } from '@the-new-fuse/tnf-note-taking';
+import type { NoteService } from '@the-new-fuse/tnf-note-taking';
 import chalk from 'chalk';
 import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
@@ -10,8 +10,7 @@ import os from 'os';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import type { AgentMessage } from './RedisAgentClient.js';
-import { RedisAgentClient } from './RedisAgentClient.js';
+import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
 import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
 import {
   createBootPipeline,
@@ -27,14 +26,19 @@ import { registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
+import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
+import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerSlackCommands } from './commands/slack/index.js';
+import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
+import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import { CronService } from './services/CronService.js';
@@ -63,6 +67,7 @@ import {
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
+import { resolvePostStepTimeoutMs, tallyFullAutoRuns } from './utils/full-auto-cycle.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -71,9 +76,10 @@ import {
   persistOperatorWindowMs,
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
-import { resolvePrompt } from './utils/prompt-input.js';
+import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
+import { createTuiInputCollector } from './utils/tui-input-collector.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
 // Propagates to both open-source installable binary (packages/tnf-cli/dist/cli.js)
@@ -206,9 +212,38 @@ async function runCommand(
     /** Kill the child and reject with CommandTimeoutError after this long.
      *  Omit for the historical unbounded behaviour. */
     timeoutMs?: number;
+    intent?: string;
   } = {}
 ): Promise<void> {
-  await spawnWithTimeout(cmd, args, { ...options, cwd: options.cwd || repoRoot });
+  const { assertNotEscalationHalted, recordCommandOutcome } =
+    await import('./utils/action-receipt.js');
+  if (!options.isBackground) {
+    assertNotEscalationHalted(repoRoot);
+  }
+  const started = Date.now();
+  const cwd = options.cwd || repoRoot;
+  try {
+    await spawnWithTimeout(cmd, args, { ...options, cwd });
+    recordCommandOutcome(repoRoot, {
+      intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
+      cmd,
+      args,
+      cwd,
+      ok: true,
+      durationMs: Date.now() - started,
+    });
+  } catch (err: any) {
+    recordCommandOutcome(repoRoot, {
+      intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
+      cmd,
+      args,
+      cwd,
+      ok: false,
+      durationMs: Date.now() - started,
+      error: err?.message || String(err),
+    });
+    throw err;
+  }
 }
 
 async function runTnfCliEntrypoint(args: string[]): Promise<void> {
@@ -284,39 +319,123 @@ function resolveProvidedSuperAdminToken(options?: { superAdminToken?: string }):
   return candidates.find((candidate) => Boolean(candidate.token)) ?? {};
 }
 
-function requireSuperAdmin(
+async function requireSuperAdmin(
   options: { superAdminToken?: string } | undefined,
   commandLabel: string
-): void {
-  const expected = normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]);
-  const provided = resolveProvidedSuperAdminToken(options);
+): Promise<void> {
+  let expected = normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]);
+  let provided = resolveProvidedSuperAdminToken(options);
 
-  if (!expected) {
-    throw new Error(
-      `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment (e.g. ~/.zshrc or .env).`
-    );
+  if (expected && provided.token && provided.token === expected) {
+    if (!process.env[SUPER_ADMIN_INPUT_ENV_KEY]) {
+      process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token;
+    }
+    return;
   }
 
-  if (!provided.token) {
-    throw new Error(
-      `Super Admin authentication required for '${commandLabel}'.\n` +
-        `No token provided. Ways to authenticate:\n` +
-        ` 1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
-        ` 2. Env Var: export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
-        ` 3. CI Secret: Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.\n` +
-        ` 4. Env Var: export ${SUPER_ADMIN_ENV_KEY}=YOUR_TOKEN`
+  const readline = await import('readline/promises');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  console.log(chalk.yellow(`\n⚠️  Super Admin authentication required for '${commandLabel}'.`));
+
+  if (expected) {
+    const action = await rl.question(
+      'Choose an action:\n' +
+        '  1. Provide existing token to authenticate\n' +
+        '  2. Release existing token & generate a new one\n' +
+        '  3. Cancel\n' +
+        '> '
     );
+
+    if (action.trim() === '2') {
+      const auth = await rl.question(
+        'Are you sure? This will invalidate the old token everywhere (y/N): '
+      );
+      if (auth.trim().toLowerCase() !== 'y') {
+        rl.close();
+        throw new Error('Cancelled token generation.');
+      }
+
+      const crypto = await import('crypto');
+      const newToken = crypto.randomBytes(32).toString('base64');
+      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
+
+      const fs = await import('fs');
+      const path = await import('path');
+      const envPath = path.join(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        envContent = envContent.replace(
+          new RegExp(expected.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'g'),
+          newToken
+        );
+        fs.writeFileSync(envPath, envContent);
+        console.log(chalk.green(`Updated .env with the new token.`));
+      }
+      console.log(
+        chalk.cyan(
+          `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
+        )
+      );
+
+      expected = newToken;
+      process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      provided = { token: newToken, source: 'interactive' };
+    } else if (action.trim() === '1') {
+      const token = await rl.question(`Enter ${SUPER_ADMIN_ENV_KEY}: `);
+      if (token.trim() !== expected) {
+        rl.close();
+        throw new Error(`Super Admin authentication failed. Token does not match.`);
+      }
+      provided = { token: token.trim(), source: 'interactive' };
+    } else {
+      rl.close();
+      throw new Error(`Super Admin authentication cancelled.`);
+    }
+  } else {
+    const action = await rl.question(
+      'No Super Admin token is configured.\n' + '  1. Generate a new token\n' + '  2. Exit\n' + '> '
+    );
+    if (action.trim() === '1') {
+      const crypto = await import('crypto');
+      const newToken = crypto.randomBytes(32).toString('base64');
+      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
+
+      const fs = await import('fs');
+      const path = await import('path');
+      const envPath = path.join(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        fs.appendFileSync(
+          envPath,
+          `\n${SUPER_ADMIN_ENV_KEY}=${newToken}\n${SUPER_ADMIN_INPUT_ENV_KEY}=${newToken}\n`
+        );
+        console.log(chalk.green(`Appended new token to .env.`));
+      }
+      console.log(
+        chalk.cyan(
+          `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
+        )
+      );
+
+      expected = newToken;
+      process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      provided = { token: newToken, source: 'interactive' };
+    } else {
+      rl.close();
+      throw new Error('Super Admin auth is not configured.');
+    }
   }
 
-  if (provided.token !== expected) {
-    throw new Error(
-      `Super Admin authentication failed for '${commandLabel}'. Token from ${provided.source || 'unknown source'} does not match ${SUPER_ADMIN_ENV_KEY}.`
-    );
-  }
+  rl.close();
 
-  // Normalize downstream command behavior to the input token channel.
-  if (!process.env[SUPER_ADMIN_INPUT_ENV_KEY]) {
-    process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token;
+  if (
+    !process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] !== provided.token
+  ) {
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token as string;
   }
 }
 
@@ -524,8 +643,8 @@ function removeVoiceSession(profileInput?: string): void {
   if (fs.existsSync(file)) fs.rmSync(file, { force: true });
 }
 
-function parseProcessTable(): Array<{ pid: number; cmd: string }> {
-  const result = spawnSync('ps', ['-Ao', 'pid=,command='], {
+function parseProcessTable(): Array<{ pid: number; ppid: number; cmd: string }> {
+  const result = spawnSync('ps', ['-Ao', 'pid=,ppid=,command='], {
     encoding: 'utf8',
     env: process.env,
   });
@@ -535,14 +654,21 @@ function parseProcessTable(): Array<{ pid: number; cmd: string }> {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const firstWhitespace = line.search(/\s/);
-      if (firstWhitespace <= 0) return { pid: Number.NaN, cmd: '' };
-      const pidText = line.slice(0, firstWhitespace).trim();
-      const cmd = line.slice(firstWhitespace).trim();
-      const pid = Number.parseInt(pidText, 10);
-      return { pid, cmd };
+      const parts = line.match(/^(\d+)\s+(\d+)\s+(.*)$/);
+      if (!parts) return { pid: Number.NaN, ppid: Number.NaN, cmd: '' };
+      return {
+        pid: Number.parseInt(parts[1], 10),
+        ppid: Number.parseInt(parts[2], 10),
+        cmd: parts[3].trim(),
+      };
     })
-    .filter((entry) => Number.isFinite(entry.pid) && entry.pid > 0 && entry.cmd.length > 0);
+    .filter(
+      (entry) =>
+        Number.isFinite(entry.pid) &&
+        entry.pid > 0 &&
+        Number.isFinite(entry.ppid) &&
+        entry.cmd.length > 0
+    );
 }
 
 function matchesVoiceProfileProcess(cmd: string, profileInput?: string): boolean {
@@ -1034,6 +1160,8 @@ type SelfImprovementRunCliOptions = {
   skipScorecard?: boolean;
   skipMermaid?: boolean;
   skipParity?: boolean;
+  /** Record audit findings without aborting the self-improvement / full-auto cycle. */
+  softFailAudits?: boolean;
   note?: string;
   superAdminToken?: string;
 };
@@ -1073,6 +1201,8 @@ const DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES = 90;
 const FULL_AUTO_STATE_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-state.json');
 const FULL_AUTO_RUN_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-runs.jsonl');
 const FULL_AUTO_DAEMON_LOG_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.log');
+const FULL_AUTO_DAEMON_PID_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto-daemon.pid');
+const FULL_AUTO_LOOP_PID_PATH = path.join(repoRoot, 'docs/operations/tnf-full-auto.pid');
 
 const SELF_IMPROVEMENT_ARTIFACTS: SelfImprovementArtifactsIndex = {
   liveLinkCrawlJson: path.join(repoRoot, 'apps/frontend/docs/audits/live-link-crawl.json'),
@@ -1189,6 +1319,20 @@ async function runFileScript(file: FileScriptEntry, args: string[]): Promise<voi
 }
 
 async function runFastHarnessProtocolGate(label: string): Promise<void> {
+  // `runFastHarnessProtocolGate` is invoked by explicit commands like
+  // `tnf doctor`. It is *not* a user-invoked protocol gate (those go through
+  // `tnf protocol gate` further down). Honour the TNF_SKIP_TURN_ZERO_ONBOARD /
+  // TNF_SKIP_PREFLIGHT env vars here too — otherwise scripts that export the
+  // env var (scripts/agents/*.sh) still pay the Turn Zero cost on every
+  // `tnf doctor` call, defeating the onboard-skip contract. Verified live
+  // 2026-08-04: `TNF_SKIP_TURN_ZERO_ONBOARD=1 tnf doctor` still emits the full
+  // Turn Zero Mandate output here because this path was un-gated.
+  if (
+    isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD) ||
+    isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT)
+  ) {
+    return;
+  }
   console.log(chalk.dim(`[TNF Harness] Protocol gate before ${label}`));
   new ProtocolInterceptor(repoRoot).runPreFlightChecks();
   await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
@@ -1368,8 +1512,10 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
   if (options.skipScorecard) args.push('--skip-scorecard');
   if (options.skipMermaid) args.push('--skip-mermaid');
   if (options.skipParity) args.push('--skip-parity');
+  if (options.softFailAudits) args.push('--soft-fail-audits');
   if (options.note) args.push('--note', options.note);
-  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  // Never put the super-admin token on argv — it leaks via `ps`, daemon status,
+  // and Primary argv logs. Nested CLIs inherit TNF_SUPER_ADMIN_INPUT_TOKEN.
   return args;
 }
 
@@ -1414,6 +1560,21 @@ function readLastJsonLine(filePath: string): any | null {
   }
 }
 
+function readAllJsonLines(filePath: string): any[] {
+  if (!fs.existsSync(filePath)) return [];
+  const out: any[] = [];
+  for (const line of fs.readFileSync(filePath, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      out.push(JSON.parse(trimmed));
+    } catch {
+      // skip corrupt lines
+    }
+  }
+  return out;
+}
+
 async function sleepMs(ms: number): Promise<void> {
   await new Promise<void>((resolve) => {
     setTimeout(resolve, ms);
@@ -1446,6 +1607,16 @@ const HOOK_RUN_LOG_PATH =
   (process.env.HOME
     ? path.join(process.env.HOME, '.tnf', 'hooks', 'runs.jsonl')
     : path.join(repoRoot, '.tnf', 'hooks', 'runs.jsonl'));
+/**
+ * Home-relative rendering for help text only. The absolute path above is
+ * correct at runtime, but help strings are captured into the committed
+ * command-surface snapshot, which leaked the operator's home directory into
+ * the repository and tripped the local-runtime-boundary gate.
+ */
+const HOOK_RUN_LOG_DISPLAY =
+  process.env.HOME && HOOK_RUN_LOG_PATH.startsWith(`${process.env.HOME}/`)
+    ? `~${HOOK_RUN_LOG_PATH.slice(process.env.HOME.length)}`
+    : HOOK_RUN_LOG_PATH;
 
 type HookDiagnosticLevel = 'error' | 'warning';
 type HookDiagnostic = {
@@ -3858,10 +4029,57 @@ async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
 }
 
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
-  return parseProcessTable().filter((entry) => {
+  // Collapse wrapper trees (pnpm/tsx/node) into a single loop root so status
+  // does not report false CONTENTION for one detached daemon lineage.
+  // Match the real CLI loop only — not shells/checkers that merely mention
+  // "full-auto start" in argv (e.g. `pgrep -fl 'full-auto start'`).
+  const loopCmd =
+    /(?:packages\/tnf-cli\/src\/cli\.ts|packages\/tnf-cli\/dist\/cli\.js|[\/\s]tnf(?:\.js)?)\s+full-auto\s+start\b/;
+  const table = parseProcessTable();
+  const matches = table.filter((entry) => {
     if (entry.pid === process.pid) return false;
-    return /\bfull-auto\s+start\b/.test(entry.cmd);
+    if (!loopCmd.test(entry.cmd)) return false;
+    if (/\bfull-auto\s+daemon\b/.test(entry.cmd)) return false;
+    if (/tnf-full-auto-contention-observe/.test(entry.cmd)) return false;
+    if (/\b(pgrep|grep|rg|awk)\b/.test(entry.cmd)) return false;
+    return true;
   });
+  if (matches.length === 0) return [];
+  const matchPids = new Set(matches.map((m) => m.pid));
+  const roots = matches.filter((entry) => !matchPids.has(entry.ppid));
+  // Prefer the leaf CLI process when present under a root's descendants.
+  const byPid = new Map(table.map((e) => [e.pid, e]));
+  const children = new Map<number, number[]>();
+  for (const entry of table) {
+    const list = children.get(entry.ppid) || [];
+    list.push(entry.pid);
+    children.set(entry.ppid, list);
+  }
+  const collectDescendants = (rootPid: number): number[] => {
+    const out: number[] = [];
+    const stack = [rootPid];
+    while (stack.length) {
+      const pid = stack.pop()!;
+      out.push(pid);
+      for (const child of children.get(pid) || []) stack.push(child);
+    }
+    return out;
+  };
+  const collapsed: Array<{ pid: number; cmd: string }> = [];
+  for (const root of roots) {
+    const descendants = collectDescendants(root.pid)
+      .map((pid) => byPid.get(pid))
+      .filter((e): e is { pid: number; ppid: number; cmd: string } => Boolean(e))
+      .filter((e) => matchPids.has(e.pid));
+    const leaf =
+      descendants.find(
+        (e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd) && !/\/tsx\s/.test(e.cmd)
+      ) ||
+      descendants.find((e) => /cli\.ts\s+full-auto\s+start/.test(e.cmd)) ||
+      root;
+    collapsed.push({ pid: leaf.pid, cmd: leaf.cmd });
+  }
+  return collapsed;
 }
 
 function buildFullAutoStartArgs(
@@ -3872,6 +4090,7 @@ function buildFullAutoStartArgs(
     broadcast?: boolean;
     strict?: boolean;
     skipStrictStatus?: boolean;
+    skipPreflight?: boolean;
   }
 ): string[] {
   const args = ['full-auto', 'start'];
@@ -3891,10 +4110,12 @@ function buildFullAutoStartArgs(
   if (options.skipAuth) args.push('--skip-auth');
   if (options.skipScorecard) args.push('--skip-scorecard');
   if (options.skipMermaid) args.push('--skip-mermaid');
+  if (options.skipParity) args.push('--skip-parity');
   if (options.skipStrictStatus) args.push('--skip-strict-status');
+  if (options.skipPreflight) args.push('--skip-preflight');
   if (options.broadcast) args.push('--broadcast');
   if (options.strict) args.push('--strict');
-  if (options.superAdminToken) args.push('--super-admin-token', options.superAdminToken);
+  // Auth stays in TNF_SUPER_ADMIN_INPUT_TOKEN (daemon spawn env), never argv.
   return args;
 }
 
@@ -4074,6 +4295,18 @@ function resolveImplicitPassthroughArgs(
   const subcommand = argv[2];
   const tnfCommands = getTnfTopLevelCommands();
   const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor', 'claude', 'pi'];
+
+  // A leading flag is never another CLI's subcommand, so there is nothing to
+  // resolve. Without this guard `tnf --help` fell through to the loop below and
+  // probed all six passthrough targets by running each one's `--help` through
+  // spawnSync — six full external CLI startups to ask whether any of them has a
+  // subcommand literally named "--help".
+  //
+  // Measured 2026-08-05 with --cpu-prof: spawnSync was 35.4s of the 46.5s
+  // `tnf --help` runtime (76%), entirely under this call path. Discovering what
+  // the CLI can do cost more than any command it can run, and every agent
+  // calling `tnf capabilities` to discover TNF paid the same toll.
+  if (subcommand?.startsWith('-')) return null;
 
   if (!subcommand || subcommand === 'help') {
     const helpTarget = argv[3];
@@ -4841,7 +5074,7 @@ program
           return;
         }
 
-        requireSuperAdmin(options, 'boot');
+        await requireSuperAdmin(options, 'boot');
         console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
         if (options.nonInteractive) {
           console.log(chalk.dim('Boot mode: non-interactive'));
@@ -5968,19 +6201,52 @@ capabilitiesCommand
     }
   });
 
+function loadDefaultAgentIdentity(): {
+  name: string;
+  role: string;
+  platform: string;
+  directorTier?: string;
+} {
+  const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
+  const defaults = {
+    name: process.env.AGENT_NAME || 'tnf-local-subdirector',
+    role: process.env.AGENT_ROLE || 'director',
+    platform: process.env.AGENT_PLATFORM || 'tnf',
+    directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
+  };
+  try {
+    if (!fs.existsSync(identityPath)) return defaults;
+    const text = fs.readFileSync(identityPath, 'utf8');
+    const pick = (key: string): string | undefined => {
+      const match = text.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?\\s*$`, 'm'));
+      return match?.[1]?.trim();
+    };
+    return {
+      name: process.env.AGENT_NAME || pick('name') || defaults.name,
+      role: process.env.AGENT_ROLE || pick('role') || pick('dacc_role') || defaults.role,
+      platform: process.env.AGENT_PLATFORM || pick('platform') || defaults.platform,
+      directorTier: process.env.TNF_DIRECTOR_TIER || pick('director_tier') || defaults.directorTier,
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
+
 program
   .command('register')
   .description('Register and listen as an agent')
-  .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
+  .argument('[name]', 'Agent name', DEFAULT_AGENT_IDENTITY.name)
   .argument(
     '[role]',
     `Agent role (${EFFECTIVE_AGENT_ROLE_TRAITS.join(', ')})`,
-    process.env.AGENT_ROLE || 'worker'
+    DEFAULT_AGENT_IDENTITY.role
   )
   .argument(
     '[platform]',
     `Agent platform (${EFFECTIVE_PLATFORM_TAXONOMY.join(', ')})`,
-    process.env.AGENT_PLATFORM || 'vscode'
+    DEFAULT_AGENT_IDENTITY.platform
   )
   .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
   .option(
@@ -5989,7 +6255,8 @@ program
   )
   .option(
     '--director-tier <tier>',
-    `Director authority tier when role/dacc-role is director (${DIRECTOR_TIER_TRAITS.join(', ')})`
+    `Director authority tier when role/dacc-role is director (${DIRECTOR_TIER_TRAITS.join(', ')})`,
+    DEFAULT_AGENT_IDENTITY.directorTier
   )
   .option(
     '--worker-action <action>',
@@ -5997,7 +6264,7 @@ program
   )
   .option('--dacc-role-from-config', 'Read dacc_role from ~/.tnf/agent.yaml', false)
   .action(async (name, role, platform, options) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       // Phase 8: validate role and platform are in canonical taxonomy.
@@ -6021,7 +6288,8 @@ program
           )
         );
       }
-      const directorTier: string | undefined = options.directorTier;
+      const directorTier: string | undefined =
+        options.directorTier || DEFAULT_AGENT_IDENTITY.directorTier;
       if (directorTier && !DIRECTOR_TIER_TRAITS.includes(directorTier)) {
         console.error(
           chalk.yellow(
@@ -6036,10 +6304,19 @@ program
       if (directorTier && DIRECTOR_TIER_TRAITS.includes(directorTier)) {
         extra.directorTier = directorTier;
       }
+      if (role === 'director' && !extra.daccRole) {
+        extra.daccRole = 'director';
+      }
+      if (role === 'director' && extra.directorTier === 'sub') {
+        extra.embodiment = 'sub-director';
+      }
       const agentInfo = await client.register(name, role, platform, [], extra);
       console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
       console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
       console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
+      if (extra.directorTier) {
+        console.log(`   Director tier: ${chalk.dim(String(extra.directorTier))}`);
+      }
 
       if (options.daemon) {
         console.log(chalk.cyan('\n🚀 Daemon mode: Agent registered and running in background'));
@@ -6253,42 +6530,88 @@ protocol
   .description('Run all protocol gates: Turn Zero, handoff source drift, session handoff')
   .option('--mode <mode>', 'Gate mode (ci, pre-push, pre-commit)', 'ci')
   .action(async (options: { mode?: string }) => {
+    const mode = options.mode || 'ci';
+    const reasons: string[] = [];
+    let preflightOk = true;
+    let ciOk = true;
+
     try {
       const interceptor = new ProtocolInterceptor(repoRoot);
       const checks = await interceptor.runPreFlightChecks();
 
       console.log(chalk.bold.cyan('\n[TNF Protocol Gate]\n'));
-      console.log(`Mode: ${chalk.yellow(options.mode || 'ci')}`);
+      console.log(`Mode: ${chalk.yellow(mode)}`);
 
-      if (!checks.allPassed) {
-        console.warn(
-          chalk.yellow(`Pre-flight: ${checks.checks.filter((c) => !c.passed).length} issue(s)`)
-        );
-        for (const check of checks.checks.filter((c) => !c.passed)) {
+      preflightOk = !!checks.allPassed;
+      if (!preflightOk) {
+        const failed = checks.checks.filter((c) => !c.passed);
+        console.warn(chalk.yellow(`Pre-flight: ${failed.length} issue(s) (provisional)`));
+        for (const check of failed) {
           console.warn(chalk.dim(`  - ${check.name}: ${check.details}`));
+          reasons.push(`preflight:${check.name}`);
         }
       } else {
-        console.log(chalk.green('Pre-flight: OK'));
+        console.log(chalk.cyan('Pre-flight: OK (provisional)'));
       }
 
-      await runCommand('node', [
-        'scripts/protocols/validate-turn-zero-authority.cjs',
-        `--mode=${options.mode || 'ci'}`,
-      ]);
-      await runCommand('node', [
-        'scripts/protocols/validate-handoff-source-drift.cjs',
-        '--mode=ci',
-      ]);
-      await runCommand('node', [
-        'scripts/protocols/enforce-session-handoff.cjs',
-        `--mode=${options.mode || 'ci'}`,
-      ]);
+      const ciGates: Array<{ name: string; args: string[] }> = [
+        {
+          name: 'turn-zero-authority',
+          args: ['scripts/protocols/validate-turn-zero-authority.cjs', `--mode=${mode}`],
+        },
+        {
+          name: 'handoff-source-drift',
+          args: ['scripts/protocols/validate-handoff-source-drift.cjs', '--mode=ci'],
+        },
+        {
+          name: 'living-state-directive',
+          args: ['scripts/protocols/validate-living-state-directive.cjs', `--mode=${mode}`],
+        },
+        {
+          name: 'session-handoff',
+          args: ['scripts/protocols/enforce-session-handoff.cjs', `--mode=${mode}`],
+        },
+      ];
 
-      console.log(chalk.green('\n[TNF Protocol Gate] All checks passed.\n'));
+      for (const gate of ciGates) {
+        try {
+          await runCommand('node', gate.args);
+          console.log(chalk.dim(`[${gate.name}] OK (${mode})`));
+        } catch (gateErr: any) {
+          ciOk = false;
+          const msg = String(gateErr?.message || gateErr);
+          reasons.push(`${gate.name}: ${msg}`);
+          console.error(chalk.red(`[${gate.name}] FAIL (${mode}): ${msg}`));
+        }
+      }
     } catch (err: any) {
-      console.error(chalk.red(`Protocol gate failed: ${err.message}`));
-      process.exit(1);
+      ciOk = false;
+      reasons.push(String(err?.message || err));
+      console.error(chalk.red(`Protocol gate infrastructure error: ${err.message}`));
     }
+
+    // Single final verdict — never claim ALL PROTOCOLS PASSED before CI subgates finish.
+    // Verdict reports ceremony/baton health only; it must not recommend stopping full-auto loops.
+    const legacy = ['1', 'true', 'yes', 'on'].includes(
+      String(process.env.TNF_PROTOCOL_GATE_LEGACY_BANNER || '')
+        .trim()
+        .toLowerCase()
+    );
+    const passed = preflightOk && ciOk;
+    if (passed) {
+      if (legacy) {
+        console.log(chalk.green('\n[TNF Protocol Gate] All checks passed.\n'));
+      }
+      console.log(chalk.green('\nVERDICT: PASS\n'));
+      process.exit(0);
+    }
+
+    console.log(chalk.red('\nVERDICT: FAIL'));
+    for (const reason of reasons) {
+      console.log(chalk.red(`  - ${reason}`));
+    }
+    console.log('');
+    process.exit(1);
   });
 
 program
@@ -6849,7 +7172,8 @@ handoff
   });
 
 handoff
-  .command('emit')
+  .command('generate')
+  .alias('emit')
   .description('Emit SESSION_HANDOFF_LATEST.json and markdown mirror')
   .option('--owner <owner>', 'Handoff owner')
   .option('--targets <targets>', 'Comma-separated target agents')
@@ -7133,6 +7457,65 @@ function collectHarnessInspectChecks(): HarnessCheckResult[] {
       : 'No handoff next_actions found',
   });
 
+  // A1: establish ≠ operate — fail-closed rollup (observe only; never kills full-auto).
+  const failClosedAutonomy = !['0', 'false', 'no', 'off'].includes(
+    String(process.env.TNF_AUTONOMY_HEALTH_FAIL_CLOSED || '1')
+      .trim()
+      .toLowerCase()
+  );
+  const rollup = runCommandCapture('node', [
+    'scripts/runtime/tnf-autonomy-health-rollup.cjs',
+    '--json',
+  ]);
+  let autonomyStatus = 'unknown';
+  let autonomyReasons: string[] = [];
+  try {
+    const parsed = JSON.parse(rollup.stdout || '{}') as {
+      status?: string;
+      reasons?: string[];
+    };
+    autonomyStatus = String(parsed.status || 'unknown');
+    autonomyReasons = Array.isArray(parsed.reasons) ? parsed.reasons.map(String) : [];
+  } catch {
+    autonomyStatus = rollup.code === 0 ? 'healthy' : 'critical';
+    autonomyReasons = ['rollup_parse_failed'];
+  }
+  const autonomyOk = failClosedAutonomy
+    ? autonomyStatus === 'healthy'
+    : autonomyStatus !== 'critical';
+  checks.push({
+    name: 'autonomy.health',
+    passed: autonomyOk,
+    detail: autonomyOk
+      ? `rollup=${autonomyStatus}`
+      : `rollup=${autonomyStatus}${autonomyReasons.length ? ` (${autonomyReasons.join(', ')})` : ''}`,
+  });
+
+  const harnessCompleteness = runCommandCapture('node', [
+    'scripts/harness/verify-harness-completeness.cjs',
+    '--json',
+  ]);
+  let harnessCompletenessOk = harnessCompleteness.code === 0;
+  let harnessCompletenessDetail = 'harness completeness pass';
+  try {
+    const parsed = JSON.parse(harnessCompleteness.stdout || '{}') as {
+      ok?: boolean;
+      failed?: number;
+    };
+    harnessCompletenessOk = harnessCompleteness.code === 0 && parsed.ok === true;
+    harnessCompletenessDetail = harnessCompletenessOk
+      ? 'UNU layers + injection surfaces ok'
+      : `failed=${parsed.failed ?? '?'} (run verify-harness-completeness --provision)`;
+  } catch {
+    harnessCompletenessOk = false;
+    harnessCompletenessDetail = 'harness completeness parse failed';
+  }
+  checks.push({
+    name: 'harness.completeness',
+    passed: harnessCompletenessOk,
+    detail: harnessCompletenessDetail,
+  });
+
   return checks;
 }
 
@@ -7252,13 +7635,86 @@ function deriveHarnessActFocus(inspect: HarnessCheckResult[]): {
 
 async function runHarnessMasterCycle(): Promise<HarnessMasterCycleReport> {
   const startedAt = new Date().toISOString();
+  const trajStart = runCommandCapture('node', [
+    'scripts/harness/trajectory.cjs',
+    'start',
+    '--task',
+    'tnf harness cycle',
+  ]);
+  let runId = '';
+  try {
+    runId = String((JSON.parse(trajStart.stdout || '{}') as { runId?: string }).runId || '');
+  } catch {
+    runId = '';
+  }
+
   const inspect = await collectHarnessInspectChecksAsync();
   const act = deriveHarnessActFocus(inspect);
+  if (runId) {
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'append',
+      '--run',
+      runId,
+      '--type',
+      'inspect_act',
+      '--payload',
+      JSON.stringify({
+        failed: inspect.filter((c) => !c.passed).map((c) => c.name),
+        focus: act.focus,
+      }),
+    ]);
+  }
+
+  // Berm gate for cycle act focus when it smells like a mutation class
+  const berm = runCommandCapture('node', [
+    'scripts/harness/permission-berm.cjs',
+    'evaluate',
+    '--action-class',
+    'verify',
+    '--json',
+  ]);
 
   const verify = await collectHarnessInspectChecksAsync();
   const passed = verify.every((check) => check.passed);
+  if (runId) {
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'append',
+      '--run',
+      runId,
+      '--type',
+      'verify',
+      '--payload',
+      JSON.stringify({
+        passed,
+        bermExit: berm.code,
+        failed: verify.filter((c) => !c.passed).map((c) => c.name),
+      }),
+    ]);
+    runCommandCapture('node', [
+      'scripts/harness/trajectory.cjs',
+      'end',
+      '--run',
+      runId,
+      '--status',
+      passed ? 'ok' : 'degraded',
+    ]);
+    runCommandCapture('node', [
+      'scripts/harness/compaction-record.cjs',
+      'write',
+      '--run',
+      runId,
+      '--stage',
+      'cheap_clearance',
+      '--summary',
+      `Harness master cycle ${passed ? 'PASS' : 'DEGRADED'}; inspect/verify tallies retained in trajectory ${runId}`,
+      '--tnf-owned',
+    ]);
+  }
+
   const report: HarnessMasterCycleReport = {
-    cycleId: `harness-${Date.now()}`,
+    cycleId: runId ? `harness-${runId}` : `harness-${Date.now()}`,
     startedAt,
     completedAt: new Date().toISOString(),
     phase: 'verify',
@@ -7467,6 +7923,32 @@ harness
     }
   });
 
+// A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
+{
+  const autonomy = program
+    .command('autonomy')
+    .description('Autonomy health surfaces (establish ≠ operate)');
+  autonomy
+    .command('health')
+    .description(
+      'Print autonomy health rollup (healthy|degraded|critical); non-zero on critical when fail-closed'
+    )
+    .option('--json', 'Machine-readable JSON')
+    .action(async (options: { json?: boolean }) => {
+      try {
+        const args = ['scripts/runtime/tnf-autonomy-health-rollup.cjs'];
+        if (options.json) args.push('--json');
+        const result = runCommandCapture('node', args);
+        if (result.stdout) process.stdout.write(result.stdout);
+        if (result.stderr) process.stderr.write(result.stderr);
+        process.exit(result.code);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    });
+}
+
 harness
   .command('inspect')
   .description('Inspect harness health: protocol, agents, and live agent loop')
@@ -7542,13 +8024,35 @@ harness
     try {
       const report = options.skipLiveLoop
         ? (() => {
+            const traj = runCommandCapture('node', [
+              'scripts/harness/trajectory.cjs',
+              'start',
+              '--task',
+              'tnf harness cycle --skip-live-loop',
+            ]);
+            let runId = '';
+            try {
+              runId = String((JSON.parse(traj.stdout || '{}') as { runId?: string }).runId || '');
+            } catch {
+              runId = '';
+            }
             const startedAt = new Date().toISOString();
             const inspect = collectHarnessInspectChecks();
             const act = deriveHarnessActFocus(inspect);
             const verify = collectHarnessInspectChecks();
             const passed = verify.every((check) => check.passed);
+            if (runId) {
+              runCommandCapture('node', [
+                'scripts/harness/trajectory.cjs',
+                'end',
+                '--run',
+                runId,
+                '--status',
+                passed ? 'ok' : 'degraded',
+              ]);
+            }
             const cycle: HarnessMasterCycleReport = {
-              cycleId: `harness-${Date.now()}`,
+              cycleId: runId ? `harness-${runId}` : `harness-${Date.now()}`,
               startedAt,
               completedAt: new Date().toISOString(),
               phase: 'verify',
@@ -7580,13 +8084,108 @@ harness
         const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
         console.log(`  ${icon} ${check.name}: ${check.detail}`);
       }
-      console.log(`\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')}`);
+      console.log(
+        `\nCycle: ${report.passed ? chalk.green('PASS') : chalk.yellow('DEGRADED')} (${report.cycleId})`
+      );
       console.log(chalk.dim(`Logged to docs/operations/tnf-harness-cycle.jsonl\n`));
       if (!report.passed) process.exitCode = 1;
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }
+  });
+
+function runHarnessScript(rel: string, args: string[]): number {
+  const result = spawnSync(process.execPath, [path.join(repoRoot, rel), ...args], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    env: process.env,
+  });
+  return result.status ?? 1;
+}
+
+harness
+  .command('completeness')
+  .description('Verify UNU-aligned harness completeness (layers + injection + berm/memory)')
+  .option('--provision', 'Repair injection surfaces before verify')
+  .option('--json', 'JSON output')
+  .action((options: { provision?: boolean; json?: boolean }) => {
+    const args: string[] = [];
+    if (options.provision) args.push('--provision');
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/harness/verify-harness-completeness.cjs', args);
+  });
+
+harness
+  .command('provision')
+  .description('Provision or verify per-runtime harness injection surfaces')
+  .option('--repair', 'Write/repair surfaces')
+  .option('--json', 'JSON output')
+  .action((options: { repair?: boolean; json?: boolean }) => {
+    const args: string[] = [options.repair ? '--repair' : '--verify'];
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/harness/provision-injection-surfaces.cjs', args);
+  });
+
+harness
+  .command('memory')
+  .description('Dynamic memory layer (retain/recall/pin/status) — not MEMORY.md')
+  .allowUnknownOption(true)
+  .argument('<action>', 'retain | recall | pin | status')
+  .argument('[args...]', 'passthrough flags for memory-layer.cjs')
+  .action((action: string, args: string[] = []) => {
+    process.exitCode = runHarnessScript('scripts/harness/memory-layer.cjs', [action, ...args]);
+  });
+
+harness
+  .command('berm')
+  .description('Permission berm evaluate (outside the model)')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: evaluate)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['evaluate'];
+    process.exitCode = runHarnessScript('scripts/harness/permission-berm.cjs', passthrough);
+  });
+
+harness
+  .command('trajectory')
+  .description('Trajectory retention start/append/end/list')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: list)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['list'];
+    process.exitCode = runHarnessScript('scripts/harness/trajectory.cjs', passthrough);
+  });
+
+harness
+  .command('supply-chain')
+  .description('MCP/skills supply-chain attestation inventory')
+  .option('--json', 'JSON output')
+  .option('--strict', 'Fail closed on missing entrypoints')
+  .action((options: { json?: boolean; strict?: boolean }) => {
+    const args: string[] = [];
+    if (options.json) args.push('--json');
+    if (options.strict) args.push('--strict');
+    process.exitCode = runHarnessScript('scripts/harness/mcp-supply-chain-attest.cjs', args);
+  });
+
+harness
+  .command('host-compaction')
+  .description('Record/import host (Cursor/Claude) compaction boundaries')
+  .allowUnknownOption(true)
+  .argument('[args...]', 'passthrough args (default: list)')
+  .action((args: string[] = []) => {
+    const passthrough = args.length ? args : ['list'];
+    process.exitCode = runHarnessScript('scripts/harness/host-compaction-adapter.cjs', passthrough);
+  });
+
+harness
+  .command('sandbox')
+  .description('Materialize macOS seatbelt profile for D11 untrusted execution')
+  .option('--out <path>', 'Output .sb path')
+  .action((options: { out?: string }) => {
+    const args = options.out ? ['--out', options.out] : [];
+    process.exitCode = runHarnessScript('scripts/harness/materialize-sandbox-profile.cjs', args);
   });
 
 program
@@ -8465,7 +9064,7 @@ relay
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'relay start');
+      await requireSuperAdmin(options, 'relay start');
       await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'relay']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8495,7 +9094,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules loop');
+      await requireSuperAdmin(options, 'jules loop');
       await runCommand('bash', ['scripts/jules-autonomous-loop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8511,7 +9110,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor');
+      await requireSuperAdmin(options, 'jules supervisor');
       await runCommand('bash', ['scripts/jules-followup-supervisor.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8527,7 +9126,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-start');
+      await requireSuperAdmin(options, 'jules supervisor-start');
       await runCommand('bash', ['scripts/jules-followup-start.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8543,7 +9142,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-stop');
+      await requireSuperAdmin(options, 'jules supervisor-stop');
       await runCommand('bash', ['scripts/jules-followup-stop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8570,7 +9169,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
+      await requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
       await runCommand('bash', ['scripts/jules-followup-migrate-from-cron.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8586,7 +9185,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules merge-open');
+      await requireSuperAdmin(options, 'jules merge-open');
       await runCommand('bash', ['scripts/jules-merge-open-prs.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8602,7 +9201,7 @@ jules
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'jules cron-install');
+      await requireSuperAdmin(options, 'jules cron-install');
       await runCommand('bash', ['scripts/install-jules-cron.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -8766,7 +9365,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock start');
+        await requireSuperAdmin(options, 'master-clock start');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
@@ -8809,7 +9408,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock logs');
+        await requireSuperAdmin(options, 'master-clock logs');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           const logDir = resolveMasterClockLogDir();
@@ -8861,7 +9460,7 @@ masterClock
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'master-clock status');
+        await requireSuperAdmin(options, 'master-clock status');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           const logDir = resolveMasterClockLogDir();
@@ -8950,7 +9549,7 @@ superCycle
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'super-cycle event');
+        await requireSuperAdmin(options, 'super-cycle event');
         const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
         const baseArgs = [
           '--filter',
@@ -9427,7 +10026,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor');
+      await requireSuperAdmin(options, 'skills bank supervisor');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9443,7 +10042,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor-start');
+      await requireSuperAdmin(options, 'skills bank supervisor-start');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor-start.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9459,7 +10058,7 @@ skillsBank
   )
   .action(async (options: { superAdminToken?: string }) => {
     try {
-      requireSuperAdmin(options, 'skills bank supervisor-stop');
+      await requireSuperAdmin(options, 'skills bank supervisor-stop');
       await runCommand('bash', ['scripts/skills/skill-bank-supervisor-stop.sh']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9500,7 +10099,7 @@ superCycle
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'super-cycle status');
+        await requireSuperAdmin(options, 'super-cycle status');
         const provider = resolveControlPlaneProvider(options, [SUPER_CYCLE_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
           await runCommand('pnpm', [
@@ -9547,7 +10146,7 @@ program
       options: { superAdminToken?: string; skipProtocolGate?: boolean }
     ) => {
       try {
-        requireSuperAdmin(options, 'run');
+        await requireSuperAdmin(options, 'run');
         if (!options.skipProtocolGate) {
           await runFastHarnessProtocolGate(`tnf run ${script}`);
         }
@@ -9748,6 +10347,10 @@ selfImprovement
   .option('--skip-scorecard', 'Skip self-improvement scorecard generation stage')
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
+  .option(
+    '--soft-fail-audits',
+    'Write audit artifacts without failing the run on broken links / semantic / auth / scorecard issues'
+  )
   .option('--note <text>', 'Override protocol run-log note')
   .option('--json', 'Output machine-readable JSON summary')
   .option(
@@ -9770,13 +10373,14 @@ selfImprovement
         skipScorecard?: boolean;
         skipMermaid?: boolean;
         skipParity?: boolean;
+        softFailAudits?: boolean;
         note?: string;
         json?: boolean;
         superAdminToken?: string;
       } = {}
     ) => {
       try {
-        requireSuperAdmin(options, 'self-improvement run');
+        await requireSuperAdmin(options, 'self-improvement run');
         const startedAt = new Date();
         const startedAtMs = startedAt.getTime();
         const baseUrl = resolveSelfImprovementBaseUrl(options.baseUrl);
@@ -9787,6 +10391,10 @@ selfImprovement
         const maxExternal = parsePositiveIntegerOption(options.maxExternal, 400, '--max-external');
         const frontendCwd = path.join(repoRoot, 'apps/frontend');
         const expectedArtifacts: string[] = [];
+        // Soft-fail keeps writing audit artifacts but does not abort the cycle.
+        // Used by full-auto when --skip-strict-status / --soft-fail-audits is set
+        // so live broken links report honestly without killing the autopilot.
+        const failFlag = options.softFailAudits ? '0' : '1';
 
         if (!options.skipBuild) {
           await runCommand('pnpm', ['--filter', '@the-new-fuse/frontend-app', 'run', 'build']);
@@ -9798,7 +10406,7 @@ selfImprovement
               LIVE_AUDIT_MAX_DEPTH: String(maxDepth),
               LIVE_AUDIT_MAX_PAGES: String(maxPages),
               LIVE_AUDIT_MAX_EXTERNAL: String(maxExternal),
-              FAIL_ON_BROKEN: '1',
+              FAIL_ON_BROKEN: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.liveLinkCrawlJson);
@@ -9810,7 +10418,7 @@ selfImprovement
               // Router paths are served by the SPA on the app domain, not the
               // static landing domain used by the live-link crawl.
               SEMANTIC_AUDIT_BASE_URL: appUrl,
-              FAIL_ON_SEMANTIC_ISSUES: '1',
+              FAIL_ON_SEMANTIC_ISSUES: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.semanticAuditJson);
@@ -9821,7 +10429,7 @@ selfImprovement
             env: {
               AUTH_AUDIT_PUBLIC_BASE_URL: baseUrl,
               AUTH_AUDIT_API_BASE_URL: apiUrl,
-              FAIL_ON_AUTH_ISSUES: '1',
+              FAIL_ON_AUTH_ISSUES: failFlag,
             },
           });
           expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.authPathAuditJson);
@@ -9830,7 +10438,7 @@ selfImprovement
           await runCommand('pnpm', ['run', 'audit:self-improvement-scorecard'], {
             cwd: frontendCwd,
             env: {
-              FAIL_ON_SCORECARD: '1',
+              FAIL_ON_SCORECARD: failFlag,
             },
           });
           expectedArtifacts.push(
@@ -9839,29 +10447,41 @@ selfImprovement
           );
         }
         if (!options.skipMermaid) {
-          await runCommand('python3', [
-            'scripts/architecture/generate_tnf_master_mermaid.py',
-            '--repo',
-            repoRoot,
-            '--out',
-            SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
-          ]);
-          expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+          try {
+            await runCommand('python3', [
+              'scripts/architecture/generate_tnf_master_mermaid.py',
+              '--repo',
+              repoRoot,
+              '--out',
+              SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid,
+            ]);
+            expectedArtifacts.push(SELF_IMPROVEMENT_ARTIFACTS.architectureMermaid);
+          } catch (err: unknown) {
+            if (!options.softFailAudits) throw err;
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(chalk.yellow(`[self-improvement] mermaid soft-failed: ${message}`));
+          }
         }
         if (!options.skipParity) {
           // Cross-agent parity: measure TNF against every reachable agent CLI
           // and refresh the gap ledger. Runs in-process (no subprocess) so the
           // audit sees the exact live command tree.
-          const parityService = new ParityService(repoRoot);
-          const ledger = await parityService.audit(program);
-          const written = parityService.write(ledger);
-          console.log(
-            chalk.dim(
-              `[parity] ${ledger.totals.agentsAvailable}/${ledger.totals.agentsTracked} agents reachable, ` +
-                `${ledger.totals.totalGaps} gaps, ${ledger.totals.meanCoverage}% mean coverage`
-            )
-          );
-          expectedArtifacts.push(written.json, written.markdown);
+          try {
+            const parityService = new ParityService(repoRoot);
+            const ledger = await parityService.audit(program);
+            const written = parityService.write(ledger);
+            console.log(
+              chalk.dim(
+                `[parity] ${ledger.totals.agentsAvailable}/${ledger.totals.agentsTracked} agents reachable, ` +
+                  `${ledger.totals.totalGaps} gaps, ${ledger.totals.meanCoverage}% mean coverage`
+              )
+            );
+            expectedArtifacts.push(written.json, written.markdown);
+          } catch (err: unknown) {
+            if (!options.softFailAudits) throw err;
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(chalk.yellow(`[self-improvement] parity soft-failed: ${message}`));
+          }
         }
 
         const runNote =
@@ -10090,6 +10710,7 @@ fullAuto
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail the full-auto cycle on self-improvement status')
+  .option('--skip-preflight', 'Skip structural and process health checks before execution')
   .option('--note <text>', 'Override protocol run-log note')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after loop completion')
   .option('--json', 'Output machine-readable JSON summary')
@@ -10103,20 +10724,45 @@ fullAuto
         broadcast?: boolean;
         json?: boolean;
         skipStrictStatus?: boolean;
+        skipPreflight?: boolean;
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto once');
+        await requireSuperAdmin(options, 'full-auto once');
+        const { runFullAutoPreflight } = await import('./utils/preflight.js');
+        await runFullAutoPreflight({
+          repoRoot,
+          skipPreflight: options.skipPreflight,
+          requireDoctor: true,
+        });
 
         const startedAt = new Date();
-        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        // --skip-strict-status implies soft audit failure so findings still land
+        // while the unattended cycle completes.
+        const cycleArgs = buildSelfImprovementRunCliArgs({
+          ...options,
+          softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
+        });
         await runSelfCli(cycleArgs);
 
+        // Mirror the loop: primary success is the cycle; broadcast/status are
+        // best-effort so a hung orchestrate cannot fail an already-good run.
+        const postWarnings: string[] = [];
+        const runPostStep = async (label: string, args: string[]) => {
+          try {
+            await runSelfCli(args, resolvePostStepTimeoutMs(Number.POSITIVE_INFINITY));
+          } catch (postErr: unknown) {
+            const message = postErr instanceof Error ? postErr.message : String(postErr);
+            postWarnings.push(`${label}: ${message}`);
+            console.error(
+              chalk.yellow(`[full-auto] once post-step "${label}" soft-failed: ${message}`)
+            );
+          }
+        };
         if (options.broadcast) {
-          await runSelfCli(['orchestrate', 'self-improvement']);
+          await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
         }
-
-        await runSelfCli(buildSelfImprovementStatusCliArgs(options));
+        await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
         const finishedAt = new Date();
         const event: FullAutoRunEvent = {
           cycle: 1,
@@ -10124,6 +10770,9 @@ fullAuto
           finishedAt: finishedAt.toISOString(),
           durationMs: finishedAt.getTime() - startedAt.getTime(),
           ok: true,
+          ...(postWarnings.length > 0
+            ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
+            : {}),
         };
 
         appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
@@ -10182,6 +10831,7 @@ fullAuto
   .option('--skip-mermaid', 'Skip architecture mermaid generation stage')
   .option('--skip-parity', 'Skip cross-agent CLI parity audit stage')
   .option('--skip-strict-status', 'Do not fail cycles on self-improvement status')
+  .option('--skip-preflight', 'Skip structural and process health checks before execution')
   .option('--broadcast', 'Also run `tnf orchestrate self-improvement` after each cycle')
   .option('--strict', 'Stop loop on first cycle failure')
   .option(
@@ -10197,10 +10847,17 @@ fullAuto
         broadcast?: boolean;
         strict?: boolean;
         skipStrictStatus?: boolean;
+        skipPreflight?: boolean;
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto start');
+        await requireSuperAdmin(options, 'full-auto start');
+        const { runFullAutoPreflight } = await import('./utils/preflight.js');
+        await runFullAutoPreflight({
+          repoRoot,
+          skipPreflight: options.skipPreflight,
+          requireDoctor: true,
+        });
 
         const intervalMinutes = parsePositiveIntegerOption(
           options.intervalMinutes,
@@ -10216,11 +10873,17 @@ fullAuto
           DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES,
           '--cycle-timeout-minutes'
         );
-        const cycleArgs = buildSelfImprovementRunCliArgs(options);
+        const cycleArgs = buildSelfImprovementRunCliArgs({
+          ...options,
+          softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
+        });
         const intervalMs = intervalMinutes * 60 * 1000;
         const cycleTimeoutMs = cycleTimeoutMinutes * 60 * 1000;
-        let completedCycles = 0;
-        let failedCycles = 0;
+        // Seed counters from the run log so daemon restarts don't report
+        // completedCycles=0 after successful historical cycles.
+        const historical = tallyFullAutoRuns(readAllJsonLines(FULL_AUTO_RUN_LOG_PATH));
+        let completedCycles = historical.completedCycles;
+        let failedCycles = historical.failedCycles;
 
         // Cycle numbers must stay monotonic across daemon restarts, otherwise the
         // run log reads `…7, 8, 1` and the cycle number is not a usable key.
@@ -10234,6 +10897,7 @@ fullAuto
           maxCycles,
           completedCycles,
           failedCycles,
+          lastRun: priorRun || undefined,
         });
 
         console.log(chalk.bold('\nTNF Full-Auto Loop Started\n'));
@@ -10241,6 +10905,10 @@ fullAuto
         console.log(`Cycle timeout: ${chalk.cyan(`${cycleTimeoutMinutes} minute(s)`)}`);
         console.log(`Max cycles: ${chalk.cyan(maxCycles === 0 ? 'unbounded' : String(maxCycles))}`);
         console.log(`Resuming from cycle: ${chalk.cyan(String(cycle))}`);
+        console.log(
+          `Historical tallies: ${chalk.cyan(String(completedCycles))} ok / ${chalk.cyan(String(failedCycles))} failed`
+        );
+        console.log(`Primary argv: ${chalk.dim(cycleArgs.join(' '))}`);
         console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
         console.log('');
 
@@ -10265,10 +10933,30 @@ fullAuto
 
           try {
             await runSelfCli(cycleArgs, remainingMs());
+
+            // Broadcast/status are best-effort after a successful primary run.
+            // A hung `orchestrate self-improvement` previously burned the
+            // remaining cycle budget and marked an otherwise-good cycle failed.
+            const postWarnings: string[] = [];
+            const runPostStep = async (label: string, args: string[]) => {
+              const budget = resolvePostStepTimeoutMs(remainingMs());
+              try {
+                await runSelfCli(args, budget);
+              } catch (postErr: unknown) {
+                const message = postErr instanceof Error ? postErr.message : String(postErr);
+                postWarnings.push(`${label}: ${message}`);
+                console.error(
+                  chalk.yellow(
+                    `[full-auto] cycle ${cycle} post-step "${label}" soft-failed: ${message}`
+                  )
+                );
+              }
+            };
+
             if (options.broadcast) {
-              await runSelfCli(['orchestrate', 'self-improvement'], remainingMs());
+              await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
             }
-            await runSelfCli(buildSelfImprovementStatusCliArgs(options), remainingMs());
+            await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
 
             const finishedAt = new Date();
             event = {
@@ -10277,11 +10965,17 @@ fullAuto
               finishedAt: finishedAt.toISOString(),
               durationMs: finishedAt.getTime() - startedAt.getTime(),
               ok: true,
+              ...(postWarnings.length > 0
+                ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
+                : {}),
             };
             completedCycles += 1;
             console.log(
               chalk.green(
-                `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s`
+                `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s` +
+                  (postWarnings.length > 0
+                    ? ` (with ${postWarnings.length} post-step warning(s))`
+                    : '')
               )
             );
           } catch (err: any) {
@@ -10419,7 +11113,7 @@ fullAutoDaemon
       }
     ) => {
       try {
-        requireSuperAdmin(options, 'full-auto daemon start');
+        await requireSuperAdmin(options, 'full-auto daemon start');
 
         const existing = findFullAutoStartProcesses();
         if (existing.length > 0 && !options.force) {
@@ -10462,12 +11156,17 @@ fullAutoDaemon
         child.unref();
         fs.closeSync(outFd);
         fs.closeSync(errFd);
+        if (child.pid) {
+          ensureParentDir(FULL_AUTO_DAEMON_PID_PATH);
+          fs.writeFileSync(FULL_AUTO_DAEMON_PID_PATH, `${child.pid}\n`, 'utf8');
+        }
 
         const payload = {
           started: true,
           pid: child.pid,
           command: ['tnf', ...args],
           logPath: path.relative(repoRoot, FULL_AUTO_DAEMON_LOG_PATH),
+          pidPath: path.relative(repoRoot, FULL_AUTO_DAEMON_PID_PATH),
         };
         if (options.json) {
           console.log(JSON.stringify(payload, null, 2));
@@ -10494,9 +11193,12 @@ fullAutoDaemon
       const state = readFullAutoState();
       const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
       const processes = findFullAutoStartProcesses();
+      const loopCount = processes.length;
       const payload = {
         running: processes.length > 0,
         processes,
+        loopCount,
+        contention: loopCount >= 2,
         state,
         lastRun,
         statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
@@ -10513,6 +11215,9 @@ fullAutoDaemon
       console.log(`Running: ${payload.running ? chalk.green('yes') : chalk.yellow('no')}`);
       for (const proc of processes) {
         console.log(`- pid=${chalk.cyan(String(proc.pid))} ${chalk.dim(proc.cmd)}`);
+      }
+      if (loopCount >= 2) {
+        console.log(chalk.yellow(`CONTENTION: ${loopCount} loops (observe-only — do not kill)`));
       }
       if (state) {
         console.log(
@@ -10537,6 +11242,109 @@ fullAutoDaemon
     }
   });
 
+fullAutoDaemon
+  .command('stop')
+  .description(
+    'Stop the detached full-auto daemon using the recorded pid file (process-tree aware)'
+  )
+  .option('--json', 'Output machine-readable JSON')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
+  .action(async (options: { json?: boolean; superAdminToken?: string } = {}) => {
+    try {
+      await requireSuperAdmin(options, 'full-auto daemon stop');
+      const readPid = (p: string): number | null => {
+        try {
+          const n = Number.parseInt(fs.readFileSync(p, 'utf8').trim(), 10);
+          return Number.isFinite(n) && n > 0 ? n : null;
+        } catch {
+          return null;
+        }
+      };
+      const daemonPid = readPid(FULL_AUTO_DAEMON_PID_PATH);
+      const loopPid = readPid(FULL_AUTO_LOOP_PID_PATH);
+      const processes = findFullAutoStartProcesses();
+      const targets = new Set<number>();
+      if (daemonPid) targets.add(daemonPid);
+      if (loopPid) targets.add(loopPid);
+      for (const proc of processes) targets.add(proc.pid);
+
+      const signaled: number[] = [];
+      for (const pid of targets) {
+        try {
+          process.kill(pid, 'SIGTERM');
+          signaled.push(pid);
+        } catch {
+          /* already gone */
+        }
+      }
+
+      // Best-effort clear stale lock files after stop request.
+      for (const p of [FULL_AUTO_DAEMON_PID_PATH, FULL_AUTO_LOOP_PID_PATH]) {
+        try {
+          if (fs.existsSync(p)) fs.unlinkSync(p);
+        } catch {
+          /* ignore */
+        }
+      }
+
+      const state = readFullAutoState();
+      if (state && state.mode === 'running') {
+        writeFullAutoState({
+          ...state,
+          mode: 'idle',
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      const payload = {
+        stopped: true,
+        signaled,
+        previousProcessCount: processes.length,
+      };
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+      console.log(chalk.green('TNF full-auto daemon stop requested.'));
+      console.log(
+        signaled.length
+          ? `Signaled: ${signaled.map((p) => chalk.cyan(String(p))).join(', ')}`
+          : chalk.yellow('No live full-auto start processes found.')
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+{
+  const contend = fullAuto
+    .command('contend')
+    .description('Observe dual full-auto contention (never kills by default)');
+  contend
+    .command('status')
+    .description('Read-only contention sample (≥2 full-auto start loops)')
+    .option('--json', 'Machine-readable JSON')
+    .option('--append', 'Append sample to docs/operations/tnf-full-auto-contention.jsonl')
+    .action(async (options: { json?: boolean; append?: boolean } = {}) => {
+      try {
+        const args = ['scripts/operations/tnf-full-auto-contention-observe.cjs'];
+        if (options.json) args.push('--json');
+        if (options.append) args.push('--append');
+        const result = runCommandCapture('node', args);
+        if (result.stdout) process.stdout.write(result.stdout);
+        if (result.stderr) process.stderr.write(result.stderr);
+        process.exit(result.code);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    });
+}
+
 fullAuto
   .command('status')
   .description('Show persisted full-auto loop state and latest cycle result')
@@ -10545,9 +11353,14 @@ fullAuto
     try {
       const state = readFullAutoState();
       const lastRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH);
+      const processes = findFullAutoStartProcesses();
+      const loopCount = processes.length;
       const payload = {
         state,
         lastRun,
+        loopCount,
+        contention: loopCount >= 2,
+        processes,
         statePath: path.relative(repoRoot, FULL_AUTO_STATE_PATH),
         runLogPath: path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH),
       };
@@ -10573,6 +11386,10 @@ fullAuto
         console.log(
           `Failed cycles: ${state.failedCycles > 0 ? chalk.yellow(String(state.failedCycles)) : chalk.green('0')}`
         );
+      }
+
+      if (loopCount >= 2) {
+        console.log(chalk.yellow(`\nCONTENTION: ${loopCount} loops (observe-only — do not kill)`));
       }
 
       if (lastRun) {
@@ -10618,7 +11435,7 @@ zeroTurnCommand
       superAdminToken?: string;
     }) => {
       try {
-        requireSuperAdmin(options, 'zero-turn boot');
+        await requireSuperAdmin(options, 'zero-turn boot');
 
         console.log(chalk.bold.cyan('\n🚀 TNF Zero-Turn Autonomous Boot\n'));
         console.log(chalk.dim(`Profile: ${options.profile}`));
@@ -12162,7 +12979,7 @@ hooks
   .option('--event <path>', 'Event fixture file (JSON/YAML)')
   .option('--strict', 'Fail when warnings are present')
   .option('--render-plan', 'Include compiled node/edge render plan')
-  .option('--record', `Append this dry-run result to ${HOOK_RUN_LOG_PATH}`)
+  .option('--record', `Append this dry-run result to ${HOOK_RUN_LOG_DISPLAY}`)
   .option('--json', 'Output machine-readable JSON')
   .option('--tenant <id>', 'Override tenant/workspace scope')
   .option('--trace-id <uuid>', 'Attach correlation ID')
@@ -13077,7 +13894,7 @@ program
   .command('list')
   .description('List all registered agents')
   .action(async () => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       const agents = await client.listAgents();
@@ -13570,7 +14387,7 @@ program
   .option('-t, --to <agentId>', 'Recipient agent ID')
   .option('-n, --name <name>', 'Sender name', process.env.AGENT_NAME || 'cli-sender')
   .action(async (message, options) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       await client.register(options.name, 'participant', 'vscode');
@@ -13613,7 +14430,7 @@ program
       workflow: string | undefined,
       options: { path?: string; goal?: boolean; status?: boolean; suggest?: boolean } = {}
     ) => {
-      const client = new RedisAgentClient();
+      const client = new (await loadRedisAgentClient())();
       try {
         await client.initialize();
         await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
@@ -13692,7 +14509,7 @@ program
   .argument('<action>', 'Action (start, join)')
   .argument('[param]', 'Topic for start, ID for join')
   .action(async (action, param) => {
-    const client = new RedisAgentClient();
+    const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       await client.register('convo-cli', 'participant', 'vscode');
@@ -14273,7 +15090,7 @@ async function runAcpExternalAgent(
 
   try {
     if (plan.register) {
-      client = new RedisAgentClient();
+      client = new (await loadRedisAgentClient())();
       await client.initialize();
       const agentInfo = await client.register(`${plan.agent}-acp`, 'worker', plan.agent, [
         'agent_client_protocol',
@@ -17097,8 +17914,12 @@ workspaceCommand
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 
-function createNotesService(options: { vaultPath?: string; userId?: string }): NoteService {
-  return new NoteService({
+async function createNotesService(options: {
+  vaultPath?: string;
+  userId?: string;
+}): Promise<NoteService> {
+  const { NoteService: NoteServiceImpl } = await import('@the-new-fuse/tnf-note-taking');
+  return new NoteServiceImpl({
     vaultPath: options.vaultPath,
     userId: options.userId,
   });
@@ -17129,7 +17950,7 @@ notesCommand
   .option('--json', 'Output JSON')
   .action(async (options: { vaultPath?: string; userId?: string; json?: boolean }) => {
     try {
-      const service = createNotesService(options);
+      const service = await createNotesService(options);
       const status = await service.getStatus();
       if (options.json) {
         console.log(JSON.stringify(status, null, 2));
@@ -17156,7 +17977,7 @@ notesCommand
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
   .action(
-    (options: {
+    async (options: {
       tag?: string;
       limit?: string;
       vaultPath?: string;
@@ -17164,7 +17985,7 @@ notesCommand
       json?: boolean;
     }) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const limit = parsePositiveIntOption(options.limit, 50, '--limit');
         const notes = options.tag ? service.getNotesByTag(options.tag) : service.getAllNotes();
         const sorted = [...notes]
@@ -17196,32 +18017,34 @@ notesCommand
   .option('--vault-path <path>', 'Base vault path (default: ~/.tnf/vault)')
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
-  .action((idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
-    try {
-      const service = createNotesService(options);
-      const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
-      if (!note) {
-        throw new Error(`Note not found: ${idOrTitle}`);
-      }
+  .action(
+    async (idOrTitle: string, options: { vaultPath?: string; userId?: string; json?: boolean }) => {
+      try {
+        const service = await createNotesService(options);
+        const note = service.getNoteById(idOrTitle) || service.getNoteByTitle(idOrTitle);
+        if (!note) {
+          throw new Error(`Note not found: ${idOrTitle}`);
+        }
 
-      if (options.json) {
-        console.log(JSON.stringify(note, null, 2));
-        return;
-      }
+        if (options.json) {
+          console.log(JSON.stringify(note, null, 2));
+          return;
+        }
 
-      console.log(chalk.bold(`\n${note.title}\n`));
-      console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
-      if (note.tags?.length) {
-        console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+        console.log(chalk.bold(`\n${note.title}\n`));
+        console.log(chalk.dim(`id=${note.id} updated=${note.updatedAt}`));
+        if (note.tags?.length) {
+          console.log(chalk.dim(`tags=${note.tags.join(', ')}`));
+        }
+        console.log('');
+        console.log(note.content);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      console.log('');
-      console.log(note.content);
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 notesCommand
   .command('search')
@@ -17232,12 +18055,12 @@ notesCommand
   .option('--user-id <id>', 'Vault user id (default: OS user)')
   .option('--json', 'Output JSON')
   .action(
-    (
+    async (
       query: string,
       options: { limit?: string; vaultPath?: string; userId?: string; json?: boolean }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const limit = parsePositiveIntOption(options.limit, 20, '--limit');
         const results = service.searchNotes(query, limit);
 
@@ -17284,7 +18107,7 @@ notesCommand
       }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const result = await service.createNote({
           id: options.id,
           title,
@@ -17321,7 +18144,7 @@ notesCommand
       options: { vaultPath?: string; userId?: string; json?: boolean }
     ) => {
       try {
-        const service = createNotesService(options);
+        const service = await createNotesService(options);
         const result = await service.createDailyNote(templateName);
         if (!result.success) {
           throw new Error(result.error || 'Failed to create daily note');
@@ -17386,6 +18209,9 @@ cronCommand
 registerAssimilateCommand(program, repoRoot);
 registerBrowserCommand(program, repoRoot);
 registerTelegramCommands(program, repoRoot);
+registerSlackCommands(program, repoRoot);
+registerWhatsappCommands(program, repoRoot);
+registerChannelCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
 registerAgentsSpecsCommand(program, repoRoot);
@@ -17399,6 +18225,8 @@ registerParityCommand(program, repoRoot);
 registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
+registerStaffingCommands(program);
+registerFleetCommands(program);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
@@ -17560,11 +18388,23 @@ function getHandoffDivergence(repoHandoff: any, homeHandoff: any): string | null
 
 function summarizeHandoffPacket(handoff: any, source: string): string {
   if (!handoff) return `- ${source}: unavailable`;
-  const nextActions = Array.isArray(handoff.next_actions)
-    ? handoff.next_actions.length
+
+  const tasksArray: any[] = Array.isArray(handoff.next_actions)
+    ? handoff.next_actions
     : Array.isArray(handoff.immediate_tasks)
-      ? handoff.immediate_tasks.length
-      : 0;
+      ? handoff.immediate_tasks
+      : [];
+
+  const nextActionsCount = tasksArray.length;
+
+  // Format the actual tasks to inject into context (up to 5)
+  const taskDetails = tasksArray.slice(0, 5).map((t: any, i: number) => {
+    const text = typeof t === 'string' ? t : t.description || t.task || JSON.stringify(t);
+    return `    ${i + 1}. ${text}`;
+  });
+
+  const tasksContext = taskDetails.length > 0 ? `\n  - Tasks:\n${taskDetails.join('\n')}` : '';
+
   const batch = handoff.batch || handoff.phase7?.batch || handoff.current_batch;
   const batchSummary = batch
     ? `\n- ${source} batch: ${batch.batchId || batch.id || 'unknown'} state=${batch.state || 'unknown'} size=${batch.size ?? batch.records?.length ?? 'unknown'}`
@@ -17574,7 +18414,7 @@ function summarizeHandoffPacket(handoff: any, source: string): string {
       `- ${source}: ${handoff.handoff_id || handoff.session || handoff.session_id || 'unknown'}`,
       `- ${source} created_at: ${handoff.created_at || handoff.generatedAt || handoff.updated || 'unknown'}`,
       `- ${source} priority: ${handoff?.continuation?.priority || handoff.priority || 'unknown'}`,
-      `- ${source} next actions: ${nextActions}`,
+      `- ${source} next actions count: ${nextActionsCount}${tasksContext}`,
     ].join('\n') + batchSummary
   );
 }
@@ -17582,8 +18422,8 @@ function summarizeHandoffPacket(handoff: any, source: string): string {
 function loadTnfInteractiveContextPack(): string {
   const handoff = readJsonFileIfPresent('docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
   const homeHandoff = readAbsoluteJsonFileIfPresent(getHomeHandoffPath());
-  const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 1200);
-  const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 900);
+  const livingState = readTextFileIfPresent('docs/protocols/LIVING_STATE.md', 3000);
+  const ledger = readTextFileIfPresent('docs/protocols/AGENT_STATUS_LEDGER.md', 2000);
   const runtimeState = readJsonFileIfPresent('.agent/runtime-state.json');
   const repoMemory = readTextFileIfPresent('MEMORY.md', 900);
   const homeMemory = readAbsoluteTextFileIfPresent(
@@ -18168,9 +19008,22 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     completer: createSlashCompleter(repoRoot),
   });
   const slashDropdown = attachSlashCommandDropdown(rl, repoRoot);
+  const stallTimeoutMs = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
+  const inputCollector = createTuiInputCollector({
+    rl,
+    stallTimeoutMs: Number.isFinite(stallTimeoutMs) && stallTimeoutMs > 0 ? stallTimeoutMs : 0,
+    stallFallbackPrompt:
+      process.env.TNF_STALL_DEFENSE_PROMPT ||
+      'Continue autonomous execution. Follow your overarching directive.',
+  });
   let rlClosed = false;
   rl.on('close', () => {
     rlClosed = true;
+    try {
+      inputCollector.dispose();
+    } catch {
+      /* best-effort */
+    }
   });
 
   const systemPrompt = await loadTnfSystemPrompt();
@@ -18236,7 +19089,8 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   console.log(
     chalk.dim(
       ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
-        ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n'
+        ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n' +
+        ' Prefer this `tnf tui` session for interactive TNF (paste-safe). `tnf hermes` is external passthrough.\n'
     )
   );
   if (voiceTty) {
@@ -18363,39 +19217,16 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     new Promise((resolve, reject) => {
       if (rlClosed) return reject(new Error('stdin closed'));
       operatorInputActive = true;
-
-      const finish = (answer: string) => {
-        operatorInputActive = false;
-        resolve(answer);
-      };
-
-      const timeoutSec = parseInt(process.env.TNF_STALL_DEFENSE_TIMEOUT || '0', 10);
-
-      if (timeoutSec > 0) {
-        const ac = new AbortController();
-        let answered = false;
-
-        const timer = setTimeout(() => {
-          if (answered) return;
-          answered = true;
-          ac.abort();
+      inputCollector
+        .waitForIdleCommit(prompt)
+        .then((answer) => {
           operatorInputActive = false;
-          console.log(chalk.yellow('\n⏳ Stall timeout reached. Self-prompting to continue...'));
-          resolve(
-            process.env.TNF_STALL_DEFENSE_PROMPT ||
-              'Continue autonomous execution. Follow your overarching directive.'
-          );
-        }, timeoutSec * 1000);
-
-        (rl as any).question(prompt, { signal: ac.signal }, (answer: string) => {
-          if (answered) return;
-          answered = true;
-          clearTimeout(timer);
-          finish(answer);
+          resolve(answer);
+        })
+        .catch((err) => {
+          operatorInputActive = false;
+          reject(err);
         });
-      } else {
-        rl.question(prompt, finish);
-      }
     });
 
   // Operator-priority window (operator report 2026-07-22 / 2026-07-25):
@@ -18428,6 +19259,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
 
   // Optional seed prompt from --task / --task-file / positional (peer CLI parity).
   let pendingInitialPrompt: string | null = null;
+  let pendingQueuedPrompt: string | null = null;
   try {
     const seed = await resolvePrompt({
       task: options?.task || options?.initialPrompt,
@@ -18467,11 +19299,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = false;
     }
 
-    // Consume one-shot seed prompt before operator/autonomous input paths.
+    // Consume one-shot seed prompt / busy-queued paste before operator/autonomous paths.
     if (pendingInitialPrompt) {
       trimmed = pendingInitialPrompt;
       pendingInitialPrompt = null;
       console.log(chalk.green('\n❯ ') + trimmed);
+    } else if (pendingQueuedPrompt) {
+      trimmed = pendingQueuedPrompt;
+      pendingQueuedPrompt = null;
+      console.log(chalk.dim(`  Queued paste: ${trimmed.length} chars`));
+      console.log(
+        chalk.green('\n❯ ') + trimmed.split('\n')[0] + (trimmed.includes('\n') ? '…' : '')
+      );
     } else {
       let operatorTakeover = false;
       if (
@@ -18483,8 +19322,8 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           operatorWindowMs,
           autonomousState.consecutiveNoBashTurns
         );
-        if (String((rl as any).line || '').trim()) {
-          // Operator is mid-keystroke — never continue over a half-typed line.
+        if (String((rl as any).line || '').trim() || inputCollector.hasIdlePending()) {
+          // Operator is mid-keystroke or paste already landed — never continue over it.
           operatorTakeover = true;
         } else if (windowMs > 0 && process.stdin.isTTY) {
           console.log(
@@ -18498,6 +19337,10 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           operatorInputActive = true;
           operatorTakeover = await waitForOperatorInterrupt(windowMs);
           if (!operatorTakeover) operatorInputActive = false;
+          // Paste can land during the window without keypress race winning — park as takeover.
+          if (!operatorTakeover && inputCollector.hasIdlePending()) {
+            operatorTakeover = true;
+          }
         }
         if (operatorTakeover) {
           console.log(
@@ -18596,9 +19439,11 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = true;
     }
 
+    outbound = sanitizeUtf8Prompt(outbound);
     messages.push({ role: 'user', content: outbound });
 
     try {
+      inputCollector.setMode('busy');
       startProcessingIndicator('Thinking');
       const useStreaming = process.env.TNF_USE_STREAMING === '1';
       // Native tool calling is the default autonomous execution path
@@ -18787,6 +19632,13 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (slashContext.autonomousMode && !autonomousState.operatorHold) {
         autonomousState.continuePending = true;
       }
+    } finally {
+      inputCollector.setMode('idle');
+      const queuedPaste = inputCollector.takeBusyQueue();
+      if (queuedPaste) {
+        pendingQueuedPrompt = sanitizeUtf8Prompt(queuedPaste);
+        console.log(chalk.dim(`\n  Queued paste: ${pendingQueuedPrompt.length} chars (next turn)`));
+      }
     }
   }
 
@@ -18794,6 +19646,11 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   clearInterval(heartbeatInterval);
   clearInterval(contextRefreshInterval);
 
+  try {
+    inputCollector.dispose();
+  } catch {
+    /* already disposed on rl close */
+  }
   rl.close();
   console.log(chalk.cyan('\n  TNF Agent session ended.\n'));
 }
@@ -19017,6 +19874,25 @@ function normalizeEntrypointArgv(argv: string[]): string[] {
 const HELP_OR_VERSION_ARGS = new Set(['--help', '-h', 'help', '--version', '-v']);
 
 /**
+ * Load RedisAgentClient on first use rather than at module load.
+ *
+ * It is the single heaviest import in this CLI: it pulls
+ * `@the-new-fuse/infrastructure` (including its NestJS console logger) and
+ * `ioredis`, measured at ~3.3s of the ~3.9s total import cost. Only six command
+ * handlers construct one, all of them async, so nothing that runs `tnf --help`
+ * or any non-Redis command needs it resolved, parsed, or evaluated.
+ */
+let redisAgentClientCtor: typeof import('./RedisAgentClient.js').RedisAgentClient | null = null;
+async function loadRedisAgentClient(): Promise<
+  typeof import('./RedisAgentClient.js').RedisAgentClient
+> {
+  if (!redisAgentClientCtor) {
+    ({ RedisAgentClient: redisAgentClientCtor } = await import('./RedisAgentClient.js'));
+  }
+  return redisAgentClientCtor;
+}
+
+/**
  * Decide whether ProtocolInterceptor cosmetic output should be suppressed.
  * Checks still RUN; failures route to stderr via ProtocolInterceptor.
  *
@@ -19037,8 +19913,44 @@ function wantsSilentPreflight(argv: string[]): boolean {
   return false;
 }
 
+/**
+ * Serialize the fully-registered commander tree: every command, alias, option
+ * and description, at every depth.
+ *
+ * This is the oracle for the cli.ts restructure (see
+ * docs/operations/tnf-cli-restructure-scope.md). Moving 296 action handlers out
+ * of a 19k-line file needs something that can prove the surface did not change,
+ * and 141 separate `--help` invocations would cost minutes. Walking the tree
+ * in-process costs one startup.
+ *
+ * Deterministic ordering so an unrelated registration order change never looks
+ * like a surface change.
+ */
+function dumpCommandSurface(root: Command): unknown {
+  const walk = (cmd: Command): unknown => ({
+    name: cmd.name(),
+    aliases: [...cmd.aliases()].sort(),
+    description: cmd.description() || '',
+    options: cmd.options
+      .map((o) => ({ flags: o.flags, description: o.description || '' }))
+      .sort((a, b) => a.flags.localeCompare(b.flags)),
+    commands: cmd.commands
+      .map((c) => walk(c as Command))
+      .sort((a, b) => (a as { name: string }).name.localeCompare((b as { name: string }).name)),
+  });
+  return walk(root);
+}
+
 async function main(): Promise<void> {
   const argv = normalizeEntrypointArgv(process.argv);
+
+  // Emit the command surface and exit, before the splash, preflight, or any
+  // command resolution. Must stay first: the point is to observe registration,
+  // not to execute anything.
+  if (argv.includes('--dump-command-surface')) {
+    console.log(JSON.stringify(dumpCommandSurface(program), null, 2));
+    return;
+  }
 
   // Render the TNF wordmark at the very top of every CLI invocation so the
   // brand is the first thing an operator sees — before the protocol pre-flight.
@@ -19058,8 +19970,43 @@ async function main(): Promise<void> {
     }
   }
 
-  const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
-  await interceptor.runPreFlightChecks();
+  // Preflight runs on every normal CLI invocation so protocol drift surfaces
+  // before a command mutates state. Two gates exist:
+  //   1. `TNF_SKIP_TURN_ZERO_ONBOARD=1` — operator/CI opt-out documented in
+  //      packages/tnf-cli/README.md and used by scripts/agents/*.sh. Honoured
+  //      by `ensureTurnZeroForAgentEntrypoint()` for the interactive path, but
+  //      historically NOT for this preflight — causing scripts that export the
+  //      env var to still emit Turn Zero noise on every `tnf` call (verified
+  //      live 2026-08-04 with `TNF_SKIP_TURN_ZERO_ONBOARD=1 tnf doctor`). Skip
+  //      the unconditional preflight here too so the env var's contract holds
+  //      for non-interactive invocations as well.
+  //   2. `TNF_SKIP_PREFLIGHT=1` — narrower opt-out that skips the whole
+  //      preflight without touching the interactive onboarding surface.
+  // Explicit user-invoked gates (`tnf protocol gate`, `runFastHarnessProtocolGate`)
+  // always run preflight regardless of env vars.
+  //   3. Help and version are read-only. The rationale above is explicitly
+  //      "before a command mutates state" — `--help` mutates nothing, yet it
+  //      paid the full preflight on every invocation. Measured 2026-08-05:
+  //      `--help` took 47.1s, of which 16.4s was this gate. Discovering what a
+  //      CLI can do must not cost more than doing it, and an agent calling
+  //      `tnf capabilities` to discover TNF pays this same toll. `firstArgIsHelp`
+  //      is already computed above for the splash; it simply was not applied here.
+  //      Explicit user-invoked gates (`tnf protocol gate`,
+  //      runFastHarnessProtocolGate) are unaffected — they call preflight directly.
+  const skipOnboard = isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD);
+  const skipPreflight = isTruthyEnv(process.env.TNF_SKIP_PREFLIGHT);
+  if (!skipOnboard && !skipPreflight && !firstArgIsHelp) {
+    const interceptor = new ProtocolInterceptor(repoRoot, { silent: silentPreflight });
+    const summary = await interceptor.runPreFlightChecks();
+    if (summary.substrateBlocked) {
+      console.error(
+        chalk.red(
+          '[TNF] Substrate attestation blocked this command (TNF_REQUIRE_SUBSTRATE=1). Remediations: rebuild CLI package dists, start Redis, set TNF_GATE_POLICY_TOKEN, or TNF_SKIP_SUBSTRATE=1 for an explicit HITL override.'
+        )
+      );
+      process.exit(1);
+    }
+  }
 
   if (argv.length <= 2) {
     await ensureTurnZeroForAgentEntrypoint();

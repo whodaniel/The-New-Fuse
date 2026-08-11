@@ -1,8 +1,9 @@
-`[CLASS:PRIME] [STATUS:ACTIVE]` `[DOC_AUDIT_BACKFILL:2026-07-14-RESOLVED-2026-07-21]` — header
-restored; autonomous continuous execution for long-running TNF tasks authorized
-by operator Daniel Goldberg, confirmed in chat with Claude Code 2026-07-21
-(see DIRECTIVES.md D1). Note: an earlier, uncommitted edit to this file made
-the same claim without a real operator confirmation behind it — that edit was
+`[CLASS:PRIME] [STATUS:ACTIVE]`
+`[DOC_AUDIT_BACKFILL:2026-07-14-RESOLVED-2026-07-21]` — header restored;
+autonomous continuous execution for long-running TNF tasks authorized by
+operator Daniel Goldberg, confirmed in chat with Claude Code 2026-07-21 (see
+DIRECTIVES.md D1). Note: an earlier, uncommitted edit to this file made the same
+claim without a real operator confirmation behind it — that edit was
 reverted/replaced by this one after being flagged.
 
 # TNF Turn Zero Mandate
@@ -49,6 +50,14 @@ utilization to prevent friction)_. Any agent that discovers a better way to
 inspect, act, verify, recover, route, or self-improve must convert that learning
 into durable TNF code, docs, skills, prompts, tests, or runbooks before treating
 the improvement as complete.
+
+**Fleet Delegation Mandate (Cornerstone Tenet):** Agents MUST NOT attempt heavy
+multi-stage work strictly in single-threaded isolation when capable peer agents
+or subagent runtimes are available. "Act" includes dispatching sub-tasks to
+specialized fleet peers (`tnf agents who`, `tnf send`, `tnf handoff emit`, or
+subagents). Agents MUST evaluate available fleet targets during Turn Zero and
+delegate parallelizable or specialized domain work to maximize total compute
+efficiency.
 
 **Tri-Fold Domain Protocol Awareness:** Agents must implicitly determine and
 acknowledge the current execution domain:
@@ -98,6 +107,14 @@ When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
    - `.agent/context/resource-map.md`
    - `.agent/context/agent-onboarding.md`
    - `.agent/workflows/frontload.md`
+   - `docs/core/FRONTLOAD_MANIFEST.md` (ordered injection Stages A–C)
+   - `docs/protocols/HARNESS_CONFIG.md` (harness inventory; file presence ≠ host
+     injection — verify surfaces)
+   - `docs/core/MEMORY.md` (curated long-term facts; skip in shared/group
+     contexts)
+   - `docs/core/BOOTSTRAP.md` when status is `PENDING` (complete + stamp)
+   - Optional dynamic recall:
+     `node scripts/harness/memory-layer.cjs recall --query "<task>"`
 3. Read the canonical session handoff:
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred)
    - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)
@@ -115,8 +132,8 @@ When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
 6. Synchronize repo:
    - **Measure by default; do not mutate.** Report branch, upstream, and
      ahead/behind counts, and raise a warning when an in-progress
-     merge/rebase/cherry-pick is detected (an interrupted merge sat unnoticed
-     in this repo for three days; Turn Zero must surface it at session start).
+     merge/rebase/cherry-pick is detected (an interrupted merge sat unnoticed in
+     this repo for three days; Turn Zero must surface it at session start).
    - Set `TNF_TURN_ZERO_AUTOPULL=1` to opt into `git pull --rebase --autostash`.
      Pulling unconditionally at session start is unsafe: rebasing into a
      half-resolved merge compounds the damage rather than reporting it.

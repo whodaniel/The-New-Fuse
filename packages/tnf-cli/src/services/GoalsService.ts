@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -24,8 +25,10 @@ export interface ParityRef {
   feature: string;
 }
 
-interface Goal {
+export interface Goal {
   id: string;
+  /** UFTE Base58/Sha256 Federated Entity Hash */
+  federatedId?: string;
   slug: string;
   title: string;
   description: string;
@@ -62,8 +65,6 @@ export interface GoalCreateInput {
   hermesFeature?: string;
   tags?: string[];
 }
-
-export type { Goal };
 
 export class GoalsService {
   private goalsDir: string;
@@ -127,9 +128,22 @@ export class GoalsService {
    * Lift those into the `parity` shape so every consumer can assume it, while
    * leaving the legacy key in place for anything still reading it.
    */
+  private generateFederatedId(title: string, category: string, tags: string[]): string {
+    const hash = crypto
+      .createHash('sha256')
+      .update(`tnf:ufte:${title}:${category}:${(tags || []).join(',')}`)
+      .digest('hex')
+      .substring(0, 16);
+    return `tnf:ufte:goal:${hash}`;
+  }
+
   private migrateGoal(goal: Goal): Goal {
-    if (goal.parity || !goal.hermesFeature) return goal;
-    return { ...goal, parity: { agent: 'hermes', feature: goal.hermesFeature } };
+    const federatedId =
+      goal.federatedId || this.generateFederatedId(goal.title, goal.category, goal.tags);
+    if (goal.parity || !goal.hermesFeature) {
+      return { ...goal, federatedId };
+    }
+    return { ...goal, federatedId, parity: { agent: 'hermes', feature: goal.hermesFeature } };
   }
 
   private saveGoals(goals: Goal[]): void {
@@ -263,8 +277,11 @@ export class GoalsService {
 
   private createGoalFromInput(input: GoalCreateInput): Goal {
     const now = new Date().toISOString();
+    const tags = input.tags || [];
+    const category = input.category || 'general';
     return {
       id: this.generateId(),
+      federatedId: this.generateFederatedId(input.title, category, tags),
       slug: this.generateSlug(input.title),
       title: input.title,
       description: input.description || '',

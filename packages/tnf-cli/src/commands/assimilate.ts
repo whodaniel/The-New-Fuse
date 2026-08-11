@@ -40,4 +40,34 @@ export function registerAssimilateCommand(program: Command, repoRoot: string): v
         process.exit(1);
       }
     });
+
+  assimilate
+    .command('scan')
+    .description('Run the Self-Evolution Flywheel to discover & weigh network agent patterns.')
+    .action(async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const flywheel: any = await import(
+          // @ts-ignore
+          '../../../../scripts/protocols/tnf-self-evolution-flywheel.cjs'
+        );
+        const report = flywheel.scanAgentPatterns
+          ? flywheel.scanAgentPatterns()
+          : flywheel.default
+            ? flywheel.default.scanAgentPatterns()
+            : null;
+        if (report) {
+          console.log(
+            `[Self-Evolution Flywheel] Scanned ${report.discovered_skills} skills across network surfaces.`
+          );
+          console.log(
+            `[Self-Evolution Flywheel] Telemetry written to docs/operations/tnf-self-evolution-telemetry.json`
+          );
+        }
+      } catch (error: any) {
+        console.error(`[Self-Evolution Flywheel] Error: ${error.message}`);
+        process.exit(1);
+      }
+    });
 }

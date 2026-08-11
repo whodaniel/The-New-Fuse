@@ -1,12 +1,25 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: mobile-developer
-description:
-  Expert in React Native and Flutter mobile development. Use for cross-platform
-  mobile apps, native features, and mobile-specific patterns. Triggers on
-  mobile, react native, flutter, ios, android, app store, expo.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
+description: Expert in React Native and Flutter mobile development. Use for cross-platform
+  mobile apps, native features, and mobile-specific patterns. Triggers on mobile,
+  react native, flutter, ios, android, app store, expo.
 skills: clean-code, mobile-design
+model: inherit
 ---
 
 # Mobile Developer

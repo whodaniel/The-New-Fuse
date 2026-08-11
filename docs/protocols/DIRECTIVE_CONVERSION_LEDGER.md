@@ -179,3 +179,6 @@ because the thread exits before writing state.
 5. Switch back to Hermes-native cron after fix verified
 
 _Last updated: 2026-06-23T22:58:00Z_
+
+- 2026-08-07: Registry-sync protocol gap reconciled. CLI surfaces and .claude
+  agents integrated into the native TNF agent registry.

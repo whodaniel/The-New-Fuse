@@ -1,41 +1,59 @@
 ---
-name: qodercli
-displayName: Qoder CLI
-description: |
-  'MUST BE USED for terminal-native AI coding tasks with Qoder's agentic platform.
-  Qoder CLI is a terminal-native AI coding partner and agent engine that enables
-  AI to understand, plan, execute, and iterate on real-world tasks through
-  multi-agent collaboration, long-horizon execution, memory, and deep codebase
-  integration—until delivery is complete.'
-agentType: external
-tools: [Bash, Read, Write, Edit, Grep, Glob, Find]
-skills:
-  - code-generation
-  - code-refactoring
-  - code-review
-  - project-architecture
-  - task-execution
-  - research
-capabilities:
-  - CODE_GENERATION
-  - CODE_REVIEW
-  - CODE_REFACTORING
-  - ARCHITECTURE_DESIGN
-  - PROJECT_MANAGEMENT
-  - TASK_EXECUTION
-  - RESEARCH
-  - FILE_MANAGEMENT
-  - DEBUGGING
+category: Engineering
 domain:
-  - coding
-  - software-development
-  - agentic-platform
-category: external-cli
-status: active
-version: '1.0.0'
-provider: qoder
-platform: cli
+- coding
+- software-development
+- agentic-platform
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
+name: qodercli
+description: '''MUST BE USED for terminal-native AI coding tasks with Qoder''s agentic
+  platform.
+
+  Qoder CLI is a terminal-native AI coding partner and agent engine that enables
+
+  AI to understand, plan, execute, and iterate on real-world tasks through
+
+  multi-agent collaboration, long-horizon execution, memory, and deep codebase
+
+  integration—until delivery is complete.''
+
+  '
+version: 1.0.0
+skills:
+- code-generation
+- code-refactoring
+- code-review
+- project-architecture
+- task-execution
+- research
+capabilities:
+- CODE_GENERATION
+- CODE_REVIEW
+- CODE_REFACTORING
+- ARCHITECTURE_DESIGN
+- PROJECT_MANAGEMENT
+- TASK_EXECUTION
+- RESEARCH
+- FILE_MANAGEMENT
+- DEBUGGING
+displayName: Qoder CLI
 color: Blue
+platform: cli
+agentType: external
+status: active
+provider: qoder
 ---
 
 # Qoder CLI Agent

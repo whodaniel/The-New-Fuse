@@ -1,14 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
   Connection,
   Controls,
   Edge,
+  Handle,
   MarkerType,
   MiniMap,
   Node,
+  OnSelectionChangeParams,
   Panel,
+  Position,
   ReactFlowProvider,
   addEdge,
   useEdgesState,
@@ -17,20 +20,54 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useAuth } from '../hooks/useAuth';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { safeStorage } from '../lib/safeStorage';
 import { apiService } from '../services/api';
+import { useAgentStore } from '../stores/agentStore';
 
 /**
- * Enhanced Workflow Builder - Tauri Desktop
- * Merges best of SaaS design with responsive Tauri optimizations
+ * Workflow Builder — Tauri Desktop
+ * Visual canvas for agent / MCP / flow / output graphs with local draft + API sync.
  */
 
-// Custom Node Components
-const AgentNode = ({ data }: { data: any }) => (
+type WorkflowNodeData = {
+  label: string;
+  provider?: string;
+  prompt?: string;
+  agentId?: string;
+  tool?: string;
+  parameters?: string;
+  controlType?: string;
+  config?: string;
+  outputType?: string;
+  onChange?: (field: string, value: string) => void;
+};
+
+const ProviderSelect: React.FC<{
+  value: string;
+  onChange: (value: string) => void;
+}> = ({ value, onChange }) => (
+  <select
+    className="nodrag nopan"
+    value={value || 'nvidia'}
+    onChange={(e) => onChange(e.target.value)}
+  >
+    <option value="nvidia">NVIDIA NIM</option>
+    <option value="groq">Groq</option>
+    <option value="sambanova">SambaNova</option>
+    <option value="cerebras">Cerebras</option>
+    <option value="deepseek">DeepSeek</option>
+    <option value="gemini">Gemini</option>
+    <option value="openai">OpenAI</option>
+    <option value="openrouter">OpenRouter</option>
+    <option value="local">Local LLM</option>
+  </select>
+);
+
+const AgentNode = ({ data }: { data: WorkflowNodeData }) => (
   <div className="workflow-node agent-node">
+    <Handle type="target" position={Position.Left} id="in" className="wf-handle wf-handle-in" />
     <div className="node-header">
       <span className="node-icon">🤖</span>
       <span className="node-title">{data.label}</span>
@@ -38,20 +75,15 @@ const AgentNode = ({ data }: { data: any }) => (
     <div className="node-body">
       <div className="node-field">
         <label>Provider</label>
-        <select
-          value={data.provider || 'claude'}
-          onChange={(e) => data.onChange?.('provider', e.target.value)}
-        >
-          <option value="claude">Claude AI</option>
-          <option value="gemini">Gemini</option>
-          <option value="gpt">ChatGPT</option>
-          <option value="perplexity">Perplexity</option>
-          <option value="local">Local LLM</option>
-        </select>
+        <ProviderSelect
+          value={data.provider || 'nvidia'}
+          onChange={(v) => data.onChange?.('provider', v)}
+        />
       </div>
       <div className="node-field">
         <label>Prompt</label>
         <textarea
+          className="nodrag nopan"
           value={data.prompt || ''}
           onChange={(e) => data.onChange?.('prompt', e.target.value)}
           placeholder="Enter your prompt..."
@@ -59,15 +91,13 @@ const AgentNode = ({ data }: { data: any }) => (
         />
       </div>
     </div>
-    <div className="node-handles">
-      <span className="handle-label input">In</span>
-      <span className="handle-label output">Out</span>
-    </div>
+    <Handle type="source" position={Position.Right} id="out" className="wf-handle wf-handle-out" />
   </div>
 );
 
-const MCPToolNode = ({ data }: { data: any }) => (
+const MCPToolNode = ({ data }: { data: WorkflowNodeData }) => (
   <div className="workflow-node mcp-node">
+    <Handle type="target" position={Position.Left} id="in" className="wf-handle wf-handle-in" />
     <div className="node-header">
       <span className="node-icon">🔧</span>
       <span className="node-title">{data.label}</span>
@@ -75,7 +105,11 @@ const MCPToolNode = ({ data }: { data: any }) => (
     <div className="node-body">
       <div className="node-field">
         <label>Tool</label>
-        <select value={data.tool || ''} onChange={(e) => data.onChange?.('tool', e.target.value)}>
+        <select
+          className="nodrag nopan"
+          value={data.tool || ''}
+          onChange={(e) => data.onChange?.('tool', e.target.value)}
+        >
           <option value="">Select tool...</option>
           <option value="screenshot">Screenshot</option>
           <option value="browser">Browser Automation</option>
@@ -88,6 +122,7 @@ const MCPToolNode = ({ data }: { data: any }) => (
       <div className="node-field">
         <label>Parameters (JSON)</label>
         <textarea
+          className="nodrag nopan"
           value={data.parameters || ''}
           onChange={(e) => data.onChange?.('parameters', e.target.value)}
           placeholder='{"action": "read", "path": "..."}'
@@ -95,11 +130,13 @@ const MCPToolNode = ({ data }: { data: any }) => (
         />
       </div>
     </div>
+    <Handle type="source" position={Position.Right} id="out" className="wf-handle wf-handle-out" />
   </div>
 );
 
-const FlowControlNode = ({ data }: { data: any }) => (
+const FlowControlNode = ({ data }: { data: WorkflowNodeData }) => (
   <div className="workflow-node flow-node">
+    <Handle type="target" position={Position.Left} id="in" className="wf-handle wf-handle-in" />
     <div className="node-header">
       <span className="node-icon">⚡</span>
       <span className="node-title">{data.label}</span>
@@ -108,6 +145,7 @@ const FlowControlNode = ({ data }: { data: any }) => (
       <div className="node-field">
         <label>Type</label>
         <select
+          className="nodrag nopan"
           value={data.controlType || 'condition'}
           onChange={(e) => data.onChange?.('controlType', e.target.value)}
         >
@@ -121,6 +159,7 @@ const FlowControlNode = ({ data }: { data: any }) => (
       <div className="node-field">
         <label>Config</label>
         <textarea
+          className="nodrag nopan"
           value={data.config || ''}
           onChange={(e) => data.onChange?.('config', e.target.value)}
           placeholder="Configuration..."
@@ -128,11 +167,26 @@ const FlowControlNode = ({ data }: { data: any }) => (
         />
       </div>
     </div>
+    <Handle
+      type="source"
+      position={Position.Right}
+      id="out"
+      className="wf-handle wf-handle-out"
+      style={{ top: '40%' }}
+    />
+    <Handle
+      type="source"
+      position={Position.Right}
+      id="alt"
+      className="wf-handle wf-handle-out wf-handle-alt"
+      style={{ top: '70%' }}
+    />
   </div>
 );
 
-const OutputNode = ({ data }: { data: any }) => (
+const OutputNode = ({ data }: { data: WorkflowNodeData }) => (
   <div className="workflow-node output-node">
+    <Handle type="target" position={Position.Left} id="in" className="wf-handle wf-handle-in" />
     <div className="node-header">
       <span className="node-icon">📤</span>
       <span className="node-title">{data.label}</span>
@@ -141,6 +195,7 @@ const OutputNode = ({ data }: { data: any }) => (
       <div className="node-field">
         <label>Output Type</label>
         <select
+          className="nodrag nopan"
           value={data.outputType || 'display'}
           onChange={(e) => data.onChange?.('outputType', e.target.value)}
         >
@@ -154,6 +209,7 @@ const OutputNode = ({ data }: { data: any }) => (
   </div>
 );
 
+/** Stable identity — keep outside the component to avoid React Flow warning #002. */
 const nodeTypes = {
   agent: AgentNode,
   mcpTool: MCPToolNode,
@@ -161,10 +217,21 @@ const nodeTypes = {
   output: OutputNode,
 };
 
+const edgeTypes = {};
+
 const defaultEdgeOptions = {
   animated: true,
   style: { stroke: '#6366f1', strokeWidth: 2 },
   markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' },
+};
+
+const startNodeStyle: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #10b981, #059669)',
+  color: 'white',
+  border: 'none',
+  borderRadius: '12px',
+  padding: '16px 24px',
+  fontWeight: 600,
 };
 
 const initialNodes: Node[] = [
@@ -173,23 +240,31 @@ const initialNodes: Node[] = [
     type: 'input',
     position: { x: 100, y: 200 },
     data: { label: '🚀 Start' },
-    style: {
-      background: 'linear-gradient(135deg, #10b981, #059669)',
-      color: 'white',
-      border: 'none',
-      borderRadius: '12px',
-      padding: '16px 24px',
-      fontWeight: 600,
-    },
+    style: startNodeStyle,
   },
 ];
 
 const WORKFLOW_DRAFT_KEY = 'tnf.workflow.draft';
 const WORKFLOW_API_ID_KEY = 'tnf.workflow.apiId';
 
+const NODE_LABELS: Record<string, string> = {
+  agent: 'AI Agent',
+  mcpTool: 'MCP Tool',
+  flowControl: 'Flow Control',
+  output: 'Output',
+};
+
+type PaletteAgent = {
+  id: string;
+  name: string;
+  provider?: string;
+  source: 'api' | 'federation';
+};
+
 const WorkflowBuilderContent: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const { state: synergy } = useOperatorSynergy();
+  const { state: synergy, unifiedAgents } = useOperatorSynergy();
+  const { agents, loading: agentsLoading, error: agentsError, fetchAgents } = useAgentStore();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
@@ -198,18 +273,40 @@ const WorkflowBuilderContent: React.FC = () => {
   const [executionLog, setExecutionLog] = useState<string[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [remoteWorkflows, setRemoteWorkflows] = useState<Array<{ id: string; name: string }>>([]);
+  const [remoteLoadError, setRemoteLoadError] = useState<string | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { screenToFlowPosition } = useReactFlow();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { screenToFlowPosition, getViewport, fitView } = useReactFlow();
 
   const canUseWorkflowApi = isAuthenticated && synergy.apiOnline;
 
-  // Reattach the editable-field handler to nodes that arrive without it (drafts
-  // and templates serialize without functions). Without this, restored node
-  // fields would be read-only no-ops because data.onChange is undefined.
+  const paletteAgents: PaletteAgent[] = useMemo(() => {
+    const fromApi = agents.map((a) => ({
+      id: a.id,
+      name: a.name,
+      provider: a.config?.provider || a.type,
+      source: 'api' as const,
+    }));
+    if (fromApi.length > 0) return fromApi;
+
+    return (unifiedAgents || []).slice(0, 24).map((a) => ({
+      id: a.id,
+      name: a.name || a.id,
+      provider: a.platform || 'custom',
+      source: 'federation' as const,
+    }));
+  }, [agents, unifiedAgents]);
+
+  const selectedNode = useMemo(
+    () => nodes.find((n) => n.id === selectedNodeId) || null,
+    [nodes, selectedNodeId]
+  );
+
   const attachHandlers = useCallback(
     (list: Node[]): Node[] =>
       list.map((node) => {
-        // Decorative start/input nodes have no editable fields.
         if (node.type === 'input') return node;
         return {
           ...node,
@@ -233,6 +330,67 @@ const WorkflowBuilderContent: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    void fetchAgents();
+  }, [fetchAgents]);
+
+  useEffect(() => {
+    if (!canUseWorkflowApi) {
+      setRemoteWorkflows([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const response = await apiService.getWorkflows();
+      if (cancelled) return;
+      if (response.success && Array.isArray(response.data)) {
+        setRemoteWorkflows(
+          response.data.map((w) => ({
+            id: w.id,
+            name: w.name || w.id,
+          }))
+        );
+        setRemoteLoadError(null);
+      } else {
+        setRemoteWorkflows([]);
+        setRemoteLoadError(response.error || 'Could not list remote workflows.');
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [canUseWorkflowApi]);
+
+  const loadRemoteWorkflow = async (id: string) => {
+    const response = await apiService.getWorkflow(id);
+    if (!response.success || !response.data) {
+      setSaveNotice(`Failed to load workflow: ${response.error || 'unknown error'}`);
+      return;
+    }
+    const definition = (response.data as { definition?: { nodes?: Node[]; edges?: Edge[] } })
+      .definition;
+    const nodesFromApi =
+      definition?.nodes ||
+      ((response.data as { nodes?: Node[] }).nodes as Node[] | undefined) ||
+      [];
+    const edgesFromApi =
+      definition?.edges ||
+      ((response.data as { edges?: Edge[] }).edges as Edge[] | undefined) ||
+      [];
+    if (!nodesFromApi.length) {
+      setSaveNotice('Remote workflow had no canvas nodes.');
+      return;
+    }
+    setWorkflowName(response.data.name || 'Loaded Workflow');
+    setSavedWorkflowId(response.data.id);
+    safeStorage.setItem(WORKFLOW_API_ID_KEY, response.data.id);
+    setNodes(attachHandlers(nodesFromApi));
+    setEdges(edgesFromApi);
+    setSelectedNodeId(null);
+    setSaveNotice(`Loaded remote workflow ${response.data.id.slice(0, 8)}…`);
+    requestAnimationFrame(() => fitView({ padding: 0.2 }));
+  };
+
+  useEffect(() => {
     try {
       const raw = safeStorage.getItem(WORKFLOW_DRAFT_KEY);
       if (!raw) return;
@@ -254,8 +412,66 @@ const WorkflowBuilderContent: React.FC = () => {
   }, [attachHandlers, setEdges, setNodes]);
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ ...params, ...defaultEdgeOptions }, eds)),
+    (params: Connection) => {
+      if (!params.source || !params.target || params.source === params.target) return;
+      setEdges((eds) => addEdge({ ...params, ...defaultEdgeOptions }, eds));
+    },
     [setEdges]
+  );
+
+  const onSelectionChange = useCallback(({ nodes: selected }: OnSelectionChangeParams) => {
+    setSelectedNodeId(selected[0]?.id ?? null);
+  }, []);
+
+  const createNode = useCallback(
+    (
+      type: string,
+      position: { x: number; y: number },
+      extras: Partial<WorkflowNodeData> = {}
+    ): Node => {
+      const id = `${type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      return {
+        id,
+        type,
+        position,
+        data: {
+          label: extras.label || NODE_LABELS[type] || 'New Node',
+          ...extras,
+          onChange: (field: string, value: string) => {
+            setNodes((nds) =>
+              nds.map((node) =>
+                node.id === id ? { ...node, data: { ...node.data, [field]: value } } : node
+              )
+            );
+          },
+        },
+      };
+    },
+    [setNodes]
+  );
+
+  const addNodeAt = useCallback(
+    (
+      type: string,
+      clientPosition?: { x: number; y: number },
+      extras?: Partial<WorkflowNodeData>
+    ) => {
+      let position = { x: 280, y: 180 };
+      if (clientPosition) {
+        position = screenToFlowPosition(clientPosition);
+      } else {
+        const vp = getViewport();
+        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+        const cx = (bounds?.width || 600) / 2;
+        const cy = (bounds?.height || 400) / 2;
+        position = {
+          x: (cx - vp.x) / vp.zoom - 120,
+          y: (cy - vp.y) / vp.zoom - 40,
+        };
+      }
+      setNodes((nds) => nds.concat(createNode(type, position, extras)));
+    },
+    [createNode, getViewport, screenToFlowPosition, setNodes]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -268,52 +484,155 @@ const WorkflowBuilderContent: React.FC = () => {
       event.preventDefault();
       const type = event.dataTransfer.getData('application/reactflow');
       if (!type) return;
-
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      const nodeLabels: Record<string, string> = {
-        agent: 'AI Agent',
-        mcpTool: 'MCP Tool',
-        flowControl: 'Flow Control',
-        output: 'Output',
-      };
-
-      const newNode: Node = {
-        id: `${type}-${Date.now()}`,
-        type,
-        position,
-        data: {
-          label: nodeLabels[type] || 'New Node',
-          onChange: (field: string, value: string) => {
-            setNodes((nds) =>
-              nds.map((node) =>
-                node.id === newNode.id ? { ...node, data: { ...node.data, [field]: value } } : node
-              )
-            );
-          },
-        },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
+      let extras: Partial<WorkflowNodeData> | undefined;
+      const rawExtras = event.dataTransfer.getData('application/tnf-node-extras');
+      if (rawExtras) {
+        try {
+          extras = JSON.parse(rawExtras) as Partial<WorkflowNodeData>;
+        } catch {
+          extras = undefined;
+        }
+      }
+      addNodeAt(type, { x: event.clientX, y: event.clientY }, extras);
     },
-    [screenToFlowPosition, setNodes]
+    [addNodeAt]
   );
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+  const onDragStart = (
+    event: React.DragEvent,
+    nodeType: string,
+    extras?: Partial<WorkflowNodeData>
+  ) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
+    if (extras) {
+      event.dataTransfer.setData('application/tnf-node-extras', JSON.stringify(extras));
+    }
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  // Push the CURRENT canvas to the workflow API and return the persisted id.
-  // Shared by Save and Run so a run never executes a stale server copy.
+  // WKWebView / Tauri often breaks HTML5 DnD. Pointer drag works reliably.
+  type PaletteDragPayload = {
+    type: string;
+    extras?: Partial<WorkflowNodeData>;
+    label: string;
+    icon: string;
+    color: string;
+  };
+
+  const [paletteGhost, setPaletteGhost] = useState<
+    (PaletteDragPayload & { x: number; y: number }) | null
+  >(null);
+  const pointerPayloadRef = useRef<PaletteDragPayload | null>(null);
+  const pointerOriginRef = useRef<{ x: number; y: number } | null>(null);
+  const pointerDraggingRef = useRef(false);
+  const suppressClickRef = useRef(false);
+
+  const endPointerDrag = useCallback(
+    (clientX: number, clientY: number) => {
+      const payload = pointerPayloadRef.current;
+      const wasDragging = pointerDraggingRef.current;
+      pointerPayloadRef.current = null;
+      pointerOriginRef.current = null;
+      pointerDraggingRef.current = false;
+      setPaletteGhost(null);
+
+      if (!payload || !wasDragging) return;
+      suppressClickRef.current = true;
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 0);
+
+      const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+      if (
+        bounds &&
+        clientX >= bounds.left &&
+        clientX <= bounds.right &&
+        clientY >= bounds.top &&
+        clientY <= bounds.bottom
+      ) {
+        addNodeAt(payload.type, { x: clientX, y: clientY }, payload.extras);
+      }
+    },
+    [addNodeAt]
+  );
+
+  useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      const payload = pointerPayloadRef.current;
+      const origin = pointerOriginRef.current;
+      if (!payload || !origin) return;
+      const dx = event.clientX - origin.x;
+      const dy = event.clientY - origin.y;
+      if (!pointerDraggingRef.current) {
+        if (dx * dx + dy * dy < 36) return;
+        pointerDraggingRef.current = true;
+      }
+      setPaletteGhost({
+        ...payload,
+        x: event.clientX,
+        y: event.clientY,
+      });
+    };
+    const onUp = (event: PointerEvent) => {
+      if (!pointerPayloadRef.current) return;
+      endPointerDrag(event.clientX, event.clientY);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [endPointerDrag]);
+
+  const beginPointerDrag = (event: React.PointerEvent, payload: PaletteDragPayload) => {
+    if (event.button !== 0) return;
+    pointerPayloadRef.current = payload;
+    pointerOriginRef.current = { x: event.clientX, y: event.clientY };
+    pointerDraggingRef.current = false;
+  };
+
+  const handleLibraryActivate = (type: string, extras?: Partial<WorkflowNodeData>) => {
+    if (suppressClickRef.current) return;
+    addNodeAt(type, undefined, extras);
+  };
+
+  const deleteSelected = useCallback(() => {
+    if (!selectedNodeId) return;
+    if (selectedNodeId === 'start') {
+      setSaveNotice('The Start node cannot be deleted.');
+      return;
+    }
+    setNodes((nds) => nds.filter((n) => n.id !== selectedNodeId));
+    setEdges((eds) =>
+      eds.filter((e) => e.source !== selectedNodeId && e.target !== selectedNodeId)
+    );
+    setSelectedNodeId(null);
+  }, [selectedNodeId, setEdges, setNodes]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedNodeId) {
+        event.preventDefault();
+        deleteSelected();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [deleteSelected, selectedNodeId]);
+
   const syncCanvasToApi = async (): Promise<string | null> => {
     const response = await apiService.saveWorkflowCanvas({
       id: savedWorkflowId || undefined,
       name: workflowName,
-      nodes,
+      nodes: nodes.map(({ data, ...rest }) => {
+        const { onChange: _onChange, ...safeData } = (data || {}) as WorkflowNodeData;
+        return { ...rest, data: safeData };
+      }),
       edges,
     });
     if (response.success && response.data?.id) {
@@ -329,7 +648,16 @@ const WorkflowBuilderContent: React.FC = () => {
   };
 
   const saveWorkflow = async () => {
-    const workflow = { name: workflowName, nodes, edges, savedAt: new Date().toISOString() };
+    const serializableNodes = nodes.map(({ data, ...rest }) => {
+      const { onChange: _onChange, ...safeData } = (data || {}) as WorkflowNodeData;
+      return { ...rest, data: safeData };
+    });
+    const workflow = {
+      name: workflowName,
+      nodes: serializableNodes,
+      edges,
+      savedAt: new Date().toISOString(),
+    };
     try {
       safeStorage.setItem(WORKFLOW_DRAFT_KEY, JSON.stringify(workflow));
     } catch {
@@ -360,8 +688,6 @@ const WorkflowBuilderContent: React.FC = () => {
 
     if (canUseWorkflowApi) {
       setIsExecuting(true);
-      // Always persist the current canvas first so we execute exactly what's on
-      // screen, not whatever was last saved.
       setExecutionLog(['▶ Saving current canvas before execution…']);
       const id = await syncCanvasToApi();
       if (!id) {
@@ -387,7 +713,7 @@ const WorkflowBuilderContent: React.FC = () => {
     setExecutionLog(['[preview] Simulating workflow — sign in + API required for real execution.']);
 
     for (let i = 0; i < nodes.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 400));
       setExecutionLog((prev) => [...prev, `[preview] Step ${i + 1}: ${nodes[i].data.label}`]);
     }
 
@@ -404,14 +730,7 @@ const WorkflowBuilderContent: React.FC = () => {
             type: 'input',
             position: { x: 100, y: 200 },
             data: { label: '🚀 Start' },
-            style: {
-              background: 'linear-gradient(135deg, #10b981, #059669)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '16px 24px',
-              fontWeight: 600,
-            },
+            style: startNodeStyle,
           },
           {
             id: 'research',
@@ -419,7 +738,7 @@ const WorkflowBuilderContent: React.FC = () => {
             position: { x: 350, y: 150 },
             data: {
               label: 'Research Agent',
-              provider: 'perplexity',
+              provider: 'nvidia',
               prompt: 'Research the given topic',
             },
           },
@@ -427,7 +746,7 @@ const WorkflowBuilderContent: React.FC = () => {
             id: 'analyze',
             type: 'agent',
             position: { x: 600, y: 150 },
-            data: { label: 'Analysis Agent', provider: 'claude', prompt: 'Analyze the research' },
+            data: { label: 'Analysis Agent', provider: 'openai', prompt: 'Analyze the research' },
           },
           {
             id: 'report',
@@ -449,14 +768,7 @@ const WorkflowBuilderContent: React.FC = () => {
             type: 'input',
             position: { x: 100, y: 200 },
             data: { label: '🚀 Start' },
-            style: {
-              background: 'linear-gradient(135deg, #10b981, #059669)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '16px 24px',
-              fontWeight: 600,
-            },
+            style: startNodeStyle,
           },
           {
             id: 'browser',
@@ -468,7 +780,7 @@ const WorkflowBuilderContent: React.FC = () => {
             id: 'process',
             type: 'agent',
             position: { x: 600, y: 150 },
-            data: { label: 'Process Data', provider: 'claude', prompt: 'Process the scraped data' },
+            data: { label: 'Process Data', provider: 'openai', prompt: 'Process the scraped data' },
           },
           {
             id: 'save',
@@ -490,14 +802,130 @@ const WorkflowBuilderContent: React.FC = () => {
       setNodes(attachHandlers(template.nodes));
       setEdges(template.edges);
       setWorkflowName(`${templateName.charAt(0).toUpperCase() + templateName.slice(1)} Workflow`);
+      setSelectedNodeId(null);
+      requestAnimationFrame(() => fitView({ padding: 0.2 }));
     }
   };
 
-  const nodeLibrary = [
-    { type: 'agent', icon: '🤖', label: 'AI Agent', color: '#8b5cf6' },
-    { type: 'mcpTool', icon: '🔧', label: 'MCP Tool', color: '#10b981' },
-    { type: 'flowControl', icon: '⚡', label: 'Flow Control', color: '#f59e0b' },
-    { type: 'output', icon: '📤', label: 'Output', color: '#06b6d4' },
+  const exportWorkflow = () => {
+    const serializableNodes = nodes.map(({ data, ...rest }) => {
+      const { onChange: _onChange, ...safeData } = (data || {}) as WorkflowNodeData;
+      return { ...rest, data: safeData };
+    });
+    const payload = {
+      name: workflowName,
+      nodes: serializableNodes,
+      edges,
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${workflowName.replace(/\s+/g, '-').toLowerCase() || 'workflow'}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setSaveNotice('Exported workflow JSON.');
+  };
+
+  const importWorkflow = async (file: File) => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as {
+        name?: string;
+        nodes?: Node[];
+        edges?: Edge[];
+      };
+      if (!parsed.nodes?.length) {
+        setSaveNotice('Import failed — no nodes in file.');
+        return;
+      }
+      if (parsed.name) setWorkflowName(parsed.name);
+      setNodes(attachHandlers(parsed.nodes));
+      setEdges(parsed.edges || []);
+      setSelectedNodeId(null);
+      setSaveNotice(`Imported ${parsed.nodes.length} nodes from ${file.name}.`);
+      requestAnimationFrame(() => fitView({ padding: 0.2 }));
+    } catch {
+      setSaveNotice('Import failed — invalid JSON.');
+    }
+  };
+
+  const clearCanvas = () => {
+    setNodes(initialNodes);
+    setEdges([]);
+    setSelectedNodeId(null);
+    setSaveNotice('Canvas cleared.');
+  };
+
+  const nodeLibrary: Array<{
+    id: string;
+    type: string;
+    icon: string;
+    label: string;
+    color: string;
+    extras?: Partial<WorkflowNodeData>;
+  }> = [
+    { id: 'agent', type: 'agent', icon: '🤖', label: 'AI Agent', color: '#8b5cf6' },
+    {
+      id: 'research-agent',
+      type: 'agent',
+      icon: '🔎',
+      label: 'Research Agent',
+      color: '#8b5cf6',
+      extras: {
+        label: 'Research Agent',
+        provider: 'nvidia',
+        prompt: 'Research the given topic thoroughly',
+      },
+    },
+    {
+      id: 'analysis-agent',
+      type: 'agent',
+      icon: '🧪',
+      label: 'Analysis Agent',
+      color: '#8b5cf6',
+      extras: {
+        label: 'Analysis Agent',
+        provider: 'openai',
+        prompt: 'Analyze the upstream result',
+      },
+    },
+    { id: 'mcp', type: 'mcpTool', icon: '🔧', label: 'MCP Tool', color: '#10b981' },
+    {
+      id: 'mcp-browser',
+      type: 'mcpTool',
+      icon: '🌐',
+      label: 'Browser Action',
+      color: '#10b981',
+      extras: { label: 'Browser Action', tool: 'browser', parameters: '{}' },
+    },
+    {
+      id: 'mcp-fs',
+      type: 'mcpTool',
+      icon: '📁',
+      label: 'File System',
+      color: '#10b981',
+      extras: { label: 'File System', tool: 'filesystem', parameters: '{}' },
+    },
+    { id: 'flow', type: 'flowControl', icon: '⚡', label: 'Flow Control', color: '#f59e0b' },
+    {
+      id: 'flow-condition',
+      type: 'flowControl',
+      icon: '⎇',
+      label: 'Condition',
+      color: '#f59e0b',
+      extras: { label: 'Condition', controlType: 'condition' },
+    },
+    {
+      id: 'flow-loop',
+      type: 'flowControl',
+      icon: '🔁',
+      label: 'Loop',
+      color: '#f59e0b',
+      extras: { label: 'Loop', controlType: 'loop' },
+    },
+    { id: 'output', type: 'output', icon: '📤', label: 'Output', color: '#06b6d4' },
   ];
 
   return (
@@ -514,7 +942,9 @@ const WorkflowBuilderContent: React.FC = () => {
           <div className="info-banner">
             {canUseWorkflowApi
               ? 'Signed in with API online — Save syncs canvas to /workflows; Run executes saved workflow on server.'
-              : 'Save always stores a local draft. Sign in (sidebar) and start REST API on :3001 to sync and run for real.'}
+              : 'Save always stores a local draft. Sign in (sidebar) and start REST API on :3001 to sync and run for real.'}{' '}
+            Tip: drag library components onto the canvas (pointer drag works in desktop WebView), or
+            click to place. Connect nodes via the blue/green handles.
           </div>
           {saveNotice && (
             <div className="info-banner" role="status">
@@ -529,6 +959,7 @@ const WorkflowBuilderContent: React.FC = () => {
             type="button"
             className="ghost-button"
             onClick={() => setShowSidebar(!showSidebar)}
+            aria-label={showSidebar ? 'Hide library' : 'Show library'}
           >
             {showSidebar ? 'Hide library' : 'Show library'}
           </button>
@@ -541,6 +972,27 @@ const WorkflowBuilderContent: React.FC = () => {
             <option value="research">AI Research</option>
             <option value="automation">Browser Automation</option>
           </select>
+          <button type="button" className="ghost-button" onClick={exportWorkflow}>
+            Export
+          </button>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Import
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            hidden
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void importWorkflow(file);
+              e.target.value = '';
+            }}
+          />
           <button type="button" className="secondary-button" onClick={saveWorkflow}>
             Save
           </button>
@@ -555,7 +1007,6 @@ const WorkflowBuilderContent: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
       <div className="page-fill-body">
         <div className="workflow-builder-container">
           <div className="workflow-toolbar">
@@ -566,41 +1017,175 @@ const WorkflowBuilderContent: React.FC = () => {
               className="workflow-name-input"
               aria-label="Workflow name"
             />
-            <div className="status-badge">
-              <span className={`status-dot ${isExecuting ? 'executing' : 'ready'}`}></span>
-              <span>{isExecuting ? 'Executing...' : 'Ready'}</span>
+            <div className="toolbar-actions">
+              <button type="button" className="ghost-button" onClick={clearCanvas}>
+                Clear
+              </button>
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={deleteSelected}
+                disabled={!selectedNodeId || selectedNodeId === 'start'}
+              >
+                Delete node
+              </button>
+              <div className="status-badge">
+                <span className={`status-dot ${isExecuting ? 'executing' : 'ready'}`}></span>
+                <span>{isExecuting ? 'Executing...' : 'Ready'}</span>
+              </div>
             </div>
           </div>
 
           <div className="workflow-content">
-            {/* Sidebar */}
             {showSidebar && (
               <aside className="workflow-sidebar">
                 <div className="sidebar-section">
                   <h3>📦 Node Library</h3>
-                  <p className="sidebar-hint">Drag nodes to the canvas</p>
+                  <p className="sidebar-hint">Drag onto canvas · or click to place</p>
                   <div className="node-library">
-                    {nodeLibrary.map((node) => (
-                      <div
-                        key={node.type}
-                        className="library-node"
-                        draggable
-                        onDragStart={(e) => onDragStart(e, node.type)}
-                        style={{ borderLeftColor: node.color }}
-                      >
-                        <span className="node-icon">{node.icon}</span>
-                        <span className="node-label">{node.label}</span>
-                      </div>
-                    ))}
+                    {nodeLibrary.map((node) => {
+                      const payload = {
+                        type: node.type,
+                        extras: node.extras,
+                        label: node.label,
+                        icon: node.icon,
+                        color: node.color,
+                      };
+                      return (
+                        <div
+                          key={node.id}
+                          className="library-node"
+                          draggable
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleLibraryActivate(node.type, node.extras)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleLibraryActivate(node.type, node.extras);
+                            }
+                          }}
+                          onPointerDown={(e) => beginPointerDrag(e, payload)}
+                          onDragStart={(e) => onDragStart(e, node.type, node.extras)}
+                          style={{ borderLeftColor: node.color }}
+                        >
+                          <span className="node-icon">{node.icon}</span>
+                          <span className="node-label">{node.label}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
+
+                <div className="sidebar-section">
+                  <div className="section-row">
+                    <h3>🤖 Agents</h3>
+                    <button
+                      type="button"
+                      className="ghost-button compact"
+                      onClick={() => void fetchAgents({ force: true })}
+                      disabled={agentsLoading}
+                    >
+                      {agentsLoading ? '…' : 'Refresh'}
+                    </button>
+                  </div>
+                  {agentsError && <p className="sidebar-hint warn">{agentsError}</p>}
+                  {!agentsError && paletteAgents.length === 0 && (
+                    <p className="sidebar-hint">
+                      No agents yet — open Agent Hub or wait for federation.
+                    </p>
+                  )}
+                  <div className="agent-palette">
+                    {paletteAgents.map((agent) => {
+                      const extras: Partial<WorkflowNodeData> = {
+                        label: agent.name,
+                        agentId: agent.id,
+                        provider: agent.provider || 'nvidia',
+                        prompt: `Run as ${agent.name}`,
+                      };
+                      const payload = {
+                        type: 'agent',
+                        extras,
+                        label: agent.name,
+                        icon: '🤖',
+                        color: '#8b5cf6',
+                      };
+                      return (
+                        <button
+                          key={`${agent.source}-${agent.id}`}
+                          type="button"
+                          className="agent-chip"
+                          title={`Drag or click to add ${agent.name}`}
+                          onClick={() => handleLibraryActivate('agent', extras)}
+                          onPointerDown={(e) => beginPointerDrag(e, payload)}
+                          draggable
+                          onDragStart={(e) => onDragStart(e, 'agent', extras)}
+                        >
+                          <span className="agent-chip-name">{agent.name}</span>
+                          <span className="agent-chip-meta">
+                            {agent.provider || 'agent'} · {agent.source}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {canUseWorkflowApi && (
+                  <div className="sidebar-section">
+                    <h3>☁️ Saved workflows</h3>
+                    {remoteLoadError && <p className="sidebar-hint warn">{remoteLoadError}</p>}
+                    {!remoteLoadError && remoteWorkflows.length === 0 && (
+                      <p className="sidebar-hint">No remote workflows yet — Save to create one.</p>
+                    )}
+                    <div className="agent-palette">
+                      {remoteWorkflows.slice(0, 12).map((wf) => (
+                        <button
+                          key={wf.id}
+                          type="button"
+                          className="agent-chip"
+                          onClick={() => void loadRemoteWorkflow(wf.id)}
+                        >
+                          <span className="agent-chip-name">{wf.name}</span>
+                          <span className="agent-chip-meta">{wf.id.slice(0, 8)}…</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedNode && selectedNode.type !== 'input' && (
+                  <div className="sidebar-section">
+                    <h3>🎛️ Selected</h3>
+                    <p className="sidebar-hint">
+                      {String(selectedNode.data?.label || selectedNode.id)}
+                    </p>
+                    <div className="node-field">
+                      <label>Label</label>
+                      <input
+                        className="nodrag"
+                        value={String(selectedNode.data?.label || '')}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setNodes((nds) =>
+                            nds.map((n) =>
+                              n.id === selectedNode.id
+                                ? { ...n, data: { ...n.data, label: value } }
+                                : n
+                            )
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {executionLog.length > 0 && (
                   <div className="sidebar-section">
                     <h3>📋 Execution Log</h3>
                     <div className="execution-log">
                       {executionLog.map((log, i) => (
-                        <div key={i} className="log-entry">
+                        <div key={`${i}-${log.slice(0, 12)}`} className="log-entry">
                           {log}
                         </div>
                       ))}
@@ -624,7 +1209,6 @@ const WorkflowBuilderContent: React.FC = () => {
               </aside>
             )}
 
-            {/* Canvas */}
             <div className="workflow-canvas" ref={reactFlowWrapper}>
               <ReactFlow
                 nodes={nodes}
@@ -634,9 +1218,12 @@ const WorkflowBuilderContent: React.FC = () => {
                 onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+                onSelectionChange={onSelectionChange}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
                 defaultEdgeOptions={defaultEdgeOptions}
                 fitView
+                deleteKeyCode={null}
                 proOptions={{ hideAttribution: true }}
               >
                 <Background variant={BackgroundVariant.Dots} color="#334155" gap={24} />
@@ -662,6 +1249,21 @@ const WorkflowBuilderContent: React.FC = () => {
             </div>
           </div>
 
+          {paletteGhost ? (
+            <div
+              className="palette-drag-ghost"
+              style={{
+                left: paletteGhost.x + 12,
+                top: paletteGhost.y + 12,
+                borderLeftColor: paletteGhost.color,
+              }}
+              aria-hidden
+            >
+              <span className="node-icon">{paletteGhost.icon}</span>
+              <span className="node-label">{paletteGhost.label}</span>
+            </div>
+          ) : null}
+
           <style>{`
         .workflow-builder-container {
           height: 100%;
@@ -669,11 +1271,35 @@ const WorkflowBuilderContent: React.FC = () => {
           flex-direction: column;
           background: var(--tnf-obsidian, #020617);
           color: var(--tnf-text-primary, #f8fafc);
+          position: relative;
         }
 
-        /* Toolbar (name + status below PageShell header) */
-        .workflow-toolbar,
-        .workflow-header {
+        .palette-drag-ghost {
+          position: fixed;
+          z-index: 9999;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: var(--tnf-surface-card, rgba(15, 23, 42, 0.92));
+          border: 1px solid var(--tnf-border);
+          border-left-width: 4px;
+          border-radius: 10px;
+          box-shadow: var(--tnf-shadow-md);
+          color: var(--tnf-text-primary);
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .library-node,
+        .agent-chip {
+          -webkit-user-drag: element;
+          user-select: none;
+          touch-action: none;
+        }
+
+        .workflow-toolbar {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -682,19 +1308,11 @@ const WorkflowBuilderContent: React.FC = () => {
           flex-wrap: wrap;
         }
 
-        .header-left, .header-right {
+        .toolbar-actions {
           display: flex;
           align-items: center;
-          gap: 12px;
-        }
-
-        .toggle-sidebar-btn {
-          background: transparent;
-          border: 1px solid var(--tnf-border);
-          color: var(--tnf-text-primary);
-          padding: 8px 12px;
-          border-radius: 8px;
-          cursor: pointer;
+          gap: 8px;
+          flex-wrap: wrap;
         }
 
         .workflow-name-input {
@@ -736,51 +1354,15 @@ const WorkflowBuilderContent: React.FC = () => {
           50% { opacity: 0.5; }
         }
 
-        .template-select {
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-          color: var(--tnf-text-primary);
-          padding: 8px 12px;
-          border-radius: 8px;
-          cursor: pointer;
-        }
-
-        .btn {
-          padding: 8px 16px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          border: none;
-          transition: all 0.2s;
-        }
-
-        .btn-primary {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
-          color: white;
-        }
-
-        .btn-secondary {
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-          color: var(--tnf-text-primary);
-        }
-
-        .btn:hover { transform: translateY(-1px); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        /* Content Layout */
         .workflow-content {
           display: flex;
           flex: 1;
           overflow: hidden;
+          min-height: 0;
         }
 
-        /* Sidebar */
         .workflow-sidebar {
-          width: 280px;
+          width: 300px;
           background: var(--tnf-surface);
           border-right: 1px solid var(--tnf-border);
           padding: 16px;
@@ -807,10 +1389,28 @@ const WorkflowBuilderContent: React.FC = () => {
           color: var(--tnf-primary-light, #8b5cf6);
         }
 
+        .section-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .section-row h3 { margin: 0; }
+
+        .ghost-button.compact {
+          padding: 4px 8px;
+          font-size: 11px;
+        }
+
         .sidebar-hint {
           font-size: 12px;
           color: var(--tnf-text-muted);
           margin: 0 0 12px;
+        }
+
+        .sidebar-hint.warn {
+          color: #fbbf24;
         }
 
         .node-library {
@@ -841,6 +1441,41 @@ const WorkflowBuilderContent: React.FC = () => {
 
         .node-icon { font-size: 20px; }
         .node-label { font-weight: 500; }
+
+        .agent-palette {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          max-height: 220px;
+          overflow-y: auto;
+        }
+
+        .agent-chip {
+          text-align: left;
+          background: rgba(139, 92, 246, 0.12);
+          border: 1px solid rgba(139, 92, 246, 0.35);
+          border-radius: 8px;
+          padding: 8px 10px;
+          color: var(--tnf-text-primary);
+          cursor: pointer;
+        }
+
+        .agent-chip:hover {
+          background: rgba(139, 92, 246, 0.22);
+        }
+
+        .agent-chip-name {
+          display: block;
+          font-size: 12px;
+          font-weight: 600;
+        }
+
+        .agent-chip-meta {
+          display: block;
+          font-size: 10px;
+          color: var(--tnf-text-muted);
+          margin-top: 2px;
+        }
 
         .execution-log {
           max-height: 150px;
@@ -879,10 +1514,10 @@ const WorkflowBuilderContent: React.FC = () => {
           color: var(--tnf-text-muted);
         }
 
-        /* Canvas */
         .workflow-canvas {
           flex: 1;
           position: relative;
+          min-width: 0;
         }
 
         .canvas-info {
@@ -895,13 +1530,13 @@ const WorkflowBuilderContent: React.FC = () => {
           color: var(--tnf-text-muted);
         }
 
-        /* Node Styles */
         .workflow-node {
           background: rgba(15, 23, 42, 0.95);
           border: 2px solid var(--tnf-border);
           border-radius: 12px;
           min-width: 240px;
           font-family: var(--tnf-font-body);
+          position: relative;
         }
 
         .workflow-node.agent-node { border-color: #8b5cf6; }
@@ -946,7 +1581,8 @@ const WorkflowBuilderContent: React.FC = () => {
         }
 
         .node-field select,
-        .node-field textarea {
+        .node-field textarea,
+        .node-field input {
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid var(--tnf-border);
           border-radius: 6px;
@@ -956,7 +1592,8 @@ const WorkflowBuilderContent: React.FC = () => {
         }
 
         .node-field select:focus,
-        .node-field textarea:focus {
+        .node-field textarea:focus,
+        .node-field input:focus {
           outline: none;
           border-color: var(--tnf-primary);
         }
@@ -966,21 +1603,34 @@ const WorkflowBuilderContent: React.FC = () => {
           min-height: 50px;
         }
 
-        .node-handles {
-          display: flex;
-          justify-content: space-between;
-          padding: 6px 14px;
-          font-size: 10px;
-          color: var(--tnf-text-muted);
+        .wf-handle {
+          width: 12px !important;
+          height: 12px !important;
+          border: 2px solid #fff !important;
         }
 
-        /* ReactFlow Overrides */
+        .wf-handle-in {
+          background: #3b82f6 !important;
+        }
+
+        .wf-handle-out {
+          background: #22c55e !important;
+        }
+
+        .wf-handle-alt {
+          background: #f59e0b !important;
+        }
+
         .react-flow__node {
           cursor: grab;
         }
 
         .react-flow__node:active {
           cursor: grabbing;
+        }
+
+        .react-flow__node.selected .workflow-node {
+          box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.7);
         }
 
         .react-flow__controls {

@@ -511,16 +511,16 @@ def ensure_background_bridge():
         if click_anchor_enabled and not click_pids:
             daemon_bin = voice_system_path("voice-target-click-daemon")
             daemon_script = voice_system_path("voice-target-click-daemon.swift")
-            use_swift = os.environ.get("VOICE_CLICK_USE_SWIFT", "1").strip().lower() not in {
+            use_swift = os.environ.get("VOICE_CLICK_USE_SWIFT", "0").strip().lower() not in {
                 "0",
                 "false",
                 "no",
                 "off",
             }
-            if use_swift and os.path.exists(daemon_script):
-                cmd = ["swift", daemon_script]
-            elif os.path.exists(daemon_bin):
+            if os.path.exists(daemon_bin) and os.access(daemon_bin, os.X_OK):
                 cmd = [daemon_bin]
+            elif use_swift and os.path.exists(daemon_script):
+                cmd = ["swift", daemon_script]
             else:
                 cmd = ["swift", daemon_script]
             spawn_background_process(cmd, CLICK_DAEMON_LOG)

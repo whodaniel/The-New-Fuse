@@ -1,0 +1,34 @@
+{
+  "schema": "tnf.amendment.packet.v1",
+  "id": "A5",
+  "title": "Living State Current Directive slot + tip-align handoff",
+  "priority": "P0",
+  "owner_role": "state-governor",
+  "implementer_roles": ["hermes-codegen-worker", "tnf-cli-agent"],
+  "human_gate_required": false,
+  "problem": "Living State Current Directive is append-sludge; STATUS:SYNCHRONIZED while handoff SHA lags HEAD.",
+  "solution": {
+    "summary": "Enforce fenced Current Directive block; writers replace slot not concat; auto-downgrade to DRIFT when head_sha≠HEAD; emit tip-aligned handoff via existing turn-end/handoff scripts.",
+    "files": [
+      "docs/protocols/LIVING_STATE.md",
+      "scripts/turn-end.cjs",
+      "scripts/protocols/*handoff*",
+      "scripts/protocols/validate-living-state-directive.cjs (new)"
+    ],
+    "steps": [
+      "Define schema: <!-- CURRENT_DIRECTIVE:START --> ... <!-- CURRENT_DIRECTIVE:END --> single paragraph; history under ## History only.",
+      "Add validator script used by tnf protocol gate profile.",
+      "Find Living State writers that concat into Current Directive; change to replace-between-markers.",
+      "When emitting handoff, set STATUS DRIFT if head_sha≠git rev-parse HEAD; SYNCHRONIZED only when equal.",
+      "Autonomous one-shot: run tip-align emit after validator using existing handoff writer (no human confirm when TNF_AGENT autonomous commit rules already allow agent commits — if commit gated, write handoff artifacts only)."
+    ],
+    "verify": [
+      "node scripts/protocols/validate-living-state-directive.cjs",
+      "tnf state show shows single Current Directive line",
+      "After tip-align, handoff head_sha == git rev-parse HEAD OR Living State STATUS:DRIFT"
+    ],
+    "rollback": "Validator warn-only via --mode=warn."
+  },
+  "acceptance_probe": "No UUID sludge in Current Directive slot; SYNCHRONIZED implies tip match.",
+  "conflicts": []
+}

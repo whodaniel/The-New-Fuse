@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-12T02:40:02.787Z",
+  "generatedAt": "2026-08-10T20:50:37.295Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-05-12T02:40:01.477Z",
+    "lastScanAt": "2026-08-10T20:50:35.265Z",
     "totalTerminals": 6,
     "returned": 6,
     "source": "ps+tmux+capture+terminal-history",
@@ -26,46 +26,42 @@
   },
   "summary": {
     "totalTerminals": 6,
-    "activeTerminals": 4,
-    "idleTerminals": 2,
-    "activeRatio": 0.667,
+    "activeTerminals": 6,
+    "idleTerminals": 0,
+    "activeRatio": 1,
     "topWorkExecutables": [
       {
         "name": "node",
+        "count": 3
+      },
+      {
+        "name": "cursor-agent",
         "count": 2
       },
       {
-        "name": "npm",
-        "count": 2
-      },
-      {
-        "name": "codex",
+        "name": ".kilo",
         "count": 1
       },
       {
-        "name": "opencode",
-        "count": 1
-      },
-      {
-        "name": "python3",
+        "name": "pi",
         "count": 1
       }
     ],
     "activeSessions": [
       {
-        "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
-        "tty": "/dev/ttys001",
-        "paneId": "tty:ttys001",
-        "shellPid": 45119,
-        "processCount": 18,
+        "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
+        "tty": "/dev/ttys000",
+        "paneId": "tty:ttys000",
+        "shellPid": 21243,
+        "processCount": 4,
         "multiplexer": "none",
         "workExecutables": [
           "node",
-          "npm"
+          ".kilo"
         ],
         "bypassApproval": false,
-        "usesRemoteMcp": true,
-        "contextPreview": "│   3. No, suggest changes (esc)                                               │ | ╰──────────────────────────────────────────────────────────────────────────────╯",
+        "usesRemoteMcp": false,
+        "contextPreview": "┃  Code  · Poolside: Laguna XS 2.1 (free) Kilo Gateway | ⬝■■■■■■⬝  esc interrupt                       212.9K (81%)  ctrl+p commands",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -73,65 +69,131 @@
         "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
         "tty": "/dev/ttys002",
         "paneId": "tty:ttys002",
-        "shellPid": 511,
+        "shellPid": 46624,
         "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
-          "opencode"
+          "pi"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "● Tip Press Ctrl+Alt+G or End to jump to the most recent message | ~                                                                    1.14.41",
+        "contextPreview": "~ | ↑600k ↓11k R480k CH91.5% 8.8%/1.0M (auto)        thinkingmachines/inkling • high",
         "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "paneId": "tty:ttys005",
+        "shellPid": 50743,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "cursor-agent"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Auto · 47.2% · 13 files edited                                Run Everything | ~",
+        "contextRedactions": 2,
         "hasContext": true
       },
       {
         "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
         "tty": "/dev/ttys007",
         "paneId": "tty:ttys007",
-        "shellPid": 56470,
-        "processCount": 15,
+        "shellPid": 82493,
+        "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
-          "node",
-          "codex",
-          "npm"
+          "cursor-agent"
         ],
-        "bypassApproval": true,
+        "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "› Improve documentation in @filename | gpt-5.3-codex xhigh · ~",
+        "contextPreview": "Auto · 31.4% · 10 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       },
       {
-        "twid": "fa5c5912-b359-5546-953b-08858c4d0e18",
-        "tty": "/dev/ttys133",
-        "paneId": "tty:ttys133",
-        "shellPid": 20086,
-        "processCount": 3,
+        "twid": "52ddb7d8-03c5-54f4-a936-6b66a9d0dcb3",
+        "tty": "/dev/ttys008",
+        "paneId": "tty:ttys008",
+        "shellPid": 4449,
+        "processCount": 10,
         "multiplexer": "none",
         "workExecutables": [
-          "python3"
+          "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "❯ | ────────────────────────────────────────────────────────────────────────────────",
+        "contextPreview": "2:09:27 PM [vite] (client) page reload src-tauri/target/release/build/tnf-desktop-2b40938c485a7f02/out/tauri-codegen-assets/a7c7bf01771c1e9559f1033266f8ccbbe1aff8f5af5e1eb3281d68941cbd1fce.html | 2:09:27 PM [vite] (clien",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "c79a578f-ef04-58d1-a4de-2dde9caa3a31",
+        "tty": "/dev/ttys015",
+        "paneId": "tty:ttys015",
+        "shellPid": 91124,
+        "processCount": 6,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "⚕ ❯ msg=interrupt · /queue · /bg · /steer · Ctrl+C cancel | ───────────────────────────────────────────────────────────────────────────────────────────────",
         "contextRedactions": 0,
         "hasContext": true
       }
     ],
     "safetySignals": {
-      "approvalsBypassTerminals": 1,
-      "remoteMcpTerminals": 1,
-      "contextCapturedTerminals": 4,
-      "contextRedactions": 0
+      "approvalsBypassTerminals": 0,
+      "remoteMcpTerminals": 0,
+      "contextCapturedTerminals": 6,
+      "contextRedactions": 2
     }
   },
   "delta": {
     "hasBaseline": true,
-    "terminalDelta": 0,
-    "activeDelta": 0,
-    "activeGained": [],
+    "terminalDelta": 5,
+    "activeDelta": 5,
+    "activeGained": [
+      {
+        "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
+        "tty": "/dev/ttys002",
+        "workExecutables": [
+          "pi"
+        ]
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "workExecutables": [
+          "cursor-agent"
+        ]
+      },
+      {
+        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
+        "tty": "/dev/ttys007",
+        "workExecutables": [
+          "cursor-agent"
+        ]
+      },
+      {
+        "twid": "52ddb7d8-03c5-54f4-a936-6b66a9d0dcb3",
+        "tty": "/dev/ttys008",
+        "workExecutables": [
+          "node"
+        ]
+      },
+      {
+        "twid": "c79a578f-ef04-58d1-a4de-2dde9caa3a31",
+        "tty": "/dev/ttys015",
+        "workExecutables": [
+          "node"
+        ]
+      }
+    ],
     "activeLost": []
   }
 }

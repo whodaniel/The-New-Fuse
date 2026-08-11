@@ -29,6 +29,30 @@ touch .tnf.local.env
 pnpm run dev
 ```
 
+### TNF CLI as Local Sub-Director (default)
+
+After OSS install / onboard / boot, TNF endows the local CLI as **Local
+Sub-Director** and establishes the core federated fleet (Redis, harness
+heartbeats, Subdirector workers, launchd agents). Cloud Super Director sync
+stays optional until a cloud Redis URL is configured.
+
+```bash
+# Recommended install path
+bash scripts/install-tnf-cli.sh --from-local
+
+# Or explicitly
+pnpm run tnf:onboard
+# / node scripts/runtime/establish-core-federated-fleet.cjs
+# / tnf fleet establish
+
+# Verify
+tnf fleet core-status
+bash scripts/runtime/local-subdirector-service.sh status
+```
+
+Skip with `TNF_SKIP_CORE_FLEET=1`. Identity lands in `~/.tnf/agent.yaml` and
+`~/.tnf/local-subdirector/identity.env`.
+
 Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.

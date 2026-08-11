@@ -1,0 +1,183 @@
+{
+  "$schema": "./harness-config.schema.json",
+  "id": "tnf-harness",
+  "version": "1.0.0",
+  "updatedAt": "2026-08-10T22:30:00.000Z",
+  "authorities": [
+    "docs/protocols/HARNESS_CONFIG.md",
+    "docs/protocols/TURN_ZERO_MANDATE.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/USER_CONFIRMATION_PROTOCOL.md",
+    "docs/protocols/HARNESS_AGENT_MODES.md"
+  ],
+  "sources": [
+    {
+      "name": "UNU Engineering and Governing the Agent Harness (2026)",
+      "url": "https://unu.edu/publication/engineering-and-governing-agent-harness-technology-and-policy-framework-runtime-layer"
+    },
+    {
+      "name": "BeConfident Labs Harness Engineering Survey",
+      "url": "https://labs.beconfident.app/papers/harness-engineering-survey"
+    },
+    {
+      "name": "Hindsight — Missing Memory Layer",
+      "url": "https://hindsight.vectorize.io/blog/2026/05/04/agent-harness-needs-memory"
+    },
+    {
+      "name": "OpenClaw workspace bootstrap injection",
+      "url": "https://docs.openclaw.ai/concepts/agent"
+    },
+    {
+      "name": "AGENTS.md standard",
+      "url": "https://agents.md/"
+    }
+  ],
+  "role": "control-plane",
+  "definition": "Agent = Model + Harness. TNF is the protocol-neutral control plane; Cursor/Claude/Codex/Hermes/OpenClaw are optional host harness surfaces.",
+  "layers": {
+    "interface_override": {
+      "status": "implemented",
+      "evidence": [
+        "docs/protocols/TURN_ZERO_MANDATE.md",
+        "docs/protocols/HARNESS_AGENT_MODES.md",
+        "tnf harness pause|resume"
+      ]
+    },
+    "provider_routing": {
+      "status": "partial",
+      "evidence": [
+        "scripts/runtime/resolve-harness-context.cjs",
+        ".agent/assimilation-routes.json",
+        "tnf assimilate"
+      ],
+      "gap": "Not every host provider is abstracted behind one failover policy."
+    },
+    "context_assembly_compaction": {
+      "status": "partial",
+      "evidence": [
+        "docs/core/FRONTLOAD_MANIFEST.md",
+        "scripts/tnf-onboard.cjs",
+        "scripts/harness/compaction-record.cjs",
+        "scripts/harness/host-compaction-adapter.cjs",
+        "data/harness/compaction/"
+      ],
+      "gap": "Host LLM compaction remains vendor-owned; TNF host-compaction-adapter records control-plane boundaries and optional transcript imports."
+    },
+    "sandbox_isolation": {
+      "status": "partial",
+      "evidence": [
+        "scripts/forge_sandbox.sb",
+        "scripts/harness/materialize-sandbox-profile.cjs",
+        "DIRECTIVES.md D11"
+      ],
+      "gap": "Default interactive Cursor sessions are not seatbelt-enclosed; untrusted code path must opt into materialized sandbox."
+    },
+    "permissions_approvals_hooks": {
+      "status": "implemented",
+      "evidence": [
+        "scripts/harness/permission-berm.cjs",
+        "data/harness/permission-policy.json",
+        "docs/protocols/USER_CONFIRMATION_PROTOCOL.md",
+        "docs/protocols/HARNESS_PERMISSION_BERM.md",
+        "scripts/protocols/agent-self-edit-gate.cjs"
+      ]
+    },
+    "orchestration_budgets": {
+      "status": "implemented",
+      "evidence": [
+        "tnf harness cycle|loop",
+        "tnf full-auto",
+        "DIRECTIVES.md D10",
+        "packages/tnf-cli/src/utils/full-auto-cycle.ts"
+      ]
+    },
+    "memory_session_trajectories": {
+      "status": "implemented",
+      "evidence": [
+        "docs/core/MEMORY.md",
+        "docs/protocols/HARNESS_MEMORY_LAYER.md",
+        "scripts/harness/memory-layer.cjs",
+        "data/harness/memory/",
+        "scripts/harness/trajectory.cjs",
+        "data/harness/trajectories/",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json"
+      ],
+      "notes": "MEMORY.md = static procedural curated facts. memory-layer.cjs = retain/recall dynamic layer. Do not conflate."
+    },
+    "tools_mcp_supply_chain": {
+      "status": "partial",
+      "evidence": [
+        "data/mcp_config.json",
+        "data/harness/mcp.memory.server.json",
+        "scripts/install-agent-frontload.cjs",
+        "scripts/harness/verify-harness-completeness.cjs",
+        "scripts/harness/mcp-supply-chain-attest.cjs",
+        "scripts/harness/memory-mcp-server.cjs"
+      ],
+      "gap": "Soft inventory + entrypoint hashes land; cryptographic publisher attestation for every third-party skill remains soft."
+    }
+  },
+  "injectionSurfaces": {
+    "repo_cursor_rules": {
+      "path": ".cursor/rules/tnf-harness.mdc",
+      "mechanism": "alwaysApply Cursor project rule",
+      "required": true
+    },
+    "repo_claude_md": {
+      "path": "CLAUDE.md",
+      "mechanism": "Claude Code / compatible project always-on",
+      "required": true
+    },
+    "repo_agents_md": {
+      "path": "AGENTS.md",
+      "mechanism": "AGENTS.md industry standard",
+      "required": true
+    },
+    "global_frontload_installer": {
+      "path": "scripts/install-agent-frontload.cjs",
+      "mechanism": "fenced TNF-FRONTLOAD pointers into host context files",
+      "required": true
+    },
+    "openclaw_workspace": {
+      "path": "~/.openclaw/workspace",
+      "mechanism": "OpenClaw injects workspace bootstrap md into Project Context",
+      "required": false,
+      "managedFiles": [
+        "AGENTS.md",
+        "SOUL.md",
+        "IDENTITY.md",
+        "USER.md",
+        "TOOLS.md",
+        "HEARTBEAT.md",
+        "MEMORY.md",
+        "BOOTSTRAP.md"
+      ],
+      "policy": "pointer-or-symlink-to-docs/core; never silent overwrite of operator-authored SOUL without backup"
+    },
+    "hermes_soul": {
+      "path": "~/.hermes/SOUL.md",
+      "mechanism": "global Hermes identity (via install-agent-frontload)",
+      "required": false
+    }
+  },
+  "patterns": [
+    "bounded_iteration",
+    "controlled_writes",
+    "two_stage_compaction_records",
+    "persist_large_tool_outputs",
+    "resumable_sessions",
+    "trajectory_retention",
+    "scoped_tool_permissions",
+    "lifecycle_hooks",
+    "provider_abstraction",
+    "progressive_disclosure"
+  ],
+  "verify": {
+    "commands": [
+      "node scripts/verify-repo-frontload.cjs",
+      "node scripts/harness/verify-harness-completeness.cjs",
+      "node scripts/install-agent-frontload.cjs --verify",
+      "node scripts/harness/provision-injection-surfaces.cjs --verify"
+    ]
+  }
+}

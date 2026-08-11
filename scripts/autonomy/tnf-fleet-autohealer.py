@@ -60,7 +60,7 @@ def ensure_redis():
             return True
     except:
         log("Redis DOWN — attempting restart", "WARN")
-        os.system("redis-server --daemonize yes 2>/dev/null || brew services restart redis 2>/dev/null")
+        os.system("bash scripts/runtime/redis-local-bootstrap.sh start 2>/dev/null || brew services restart redis 2>/dev/null || redis-server --daemonize yes 2>/dev/null")
         time.sleep(3)
         try:
             r = redis.Redis(host="localhost", port=6379, socket_timeout=3)

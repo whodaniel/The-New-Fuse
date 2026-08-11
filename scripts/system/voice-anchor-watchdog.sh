@@ -22,6 +22,14 @@ is_daemon_running() {
     || pgrep -f "$DAEMON_BIN$" >/dev/null 2>&1
 }
 
+daemon_command() {
+  if [[ -x "$DAEMON_BIN" ]]; then
+    printf '%s\n' "$DAEMON_BIN"
+  else
+    printf '%s\n' "swift $DAEMON_SCRIPT"
+  fi
+}
+
 touch "$CLICK_LOG" "$WATCHDOG_LOG"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] voice-anchor-watchdog started" >> "$WATCHDOG_LOG"
 
@@ -32,8 +40,10 @@ while true; do
     continue
   fi
 
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] daemon missing; starting swift anchor daemon" >> "$WATCHDOG_LOG"
-  nohup swift "$DAEMON_SCRIPT" >> "$CLICK_LOG" 2>&1 &
+  cmd="$(daemon_command)"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] daemon missing; starting anchor daemon: $cmd" >> "$WATCHDOG_LOG"
+  # shellcheck disable=SC2086
+  nohup $cmd >> "$CLICK_LOG" 2>&1 &
   CANDIDATE_PID=$!
   sleep 1
 
