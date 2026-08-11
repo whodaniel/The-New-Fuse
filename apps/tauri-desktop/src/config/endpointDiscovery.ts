@@ -68,6 +68,7 @@ export function isRestApiHealthPayload(data: unknown): boolean {
 export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise<boolean> {
   const base = apiUrl.replace(/\/$/, '');
   let sawRelayHealth = false;
+  let sawNonRestHealthJson = false;
 
   for (const path of ['/api/v1/health', '/api/health', '/health']) {
     try {
@@ -85,8 +86,16 @@ export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise
           continue;
         }
         if (isRestApiHealthPayload(data)) return true;
-        // Explicit REST health path with non-relay JSON is acceptable.
-        if (path.startsWith('/api/') && !isRelayHealthPayload(data)) return true;
+        // Explicit REST health path with non-relay / non-gateway JSON is acceptable.
+        if (
+          path.startsWith('/api/') &&
+          !isRelayHealthPayload(data) &&
+          !(typeof data === 'object' && data !== null && 'connectedClients' in data)
+        ) {
+          return true;
+        }
+        // Parsed health JSON that is neither relay nor REST (e.g. WS gateway).
+        sawNonRestHealthJson = true;
         continue;
       }
 
@@ -97,8 +106,8 @@ export async function probeRestApiUrl(apiUrl: string, timeoutMs = 2500): Promise
     }
   }
 
-  // Definitive relay health on this host → do not trust a stray capability surface.
-  if (sawRelayHealth) return false;
+  // Definitive relay / non-REST health on this host → do not trust a stray capability surface.
+  if (sawRelayHealth || sawNonRestHealthJson) return false;
 
   // Capability proof without dumping the agent roster (avoids prior /api/agents rate-limit thrash).
   try {

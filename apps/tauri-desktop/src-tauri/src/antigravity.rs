@@ -357,4 +357,23 @@ mod tests {
         assert!(json.contains("connected"));
         assert!(json.contains("200"));
     }
+
+    #[test]
+    fn rejects_disallowed_server_hosts() {
+        assert!(AntigravityClient::validate_server_address("https://evil.example.com").is_err());
+        assert!(AntigravityClient::validate_server_address("ws://127.0.0.1:3000").is_err());
+        assert!(AntigravityClient::validate_server_address(
+            "https://random-service-123.run.app"
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn accepts_allowlisted_server_hosts() {
+        assert!(AntigravityClient::validate_server_address("http://127.0.0.1:3000").is_ok());
+        assert!(AntigravityClient::validate_server_address(
+            "https://api-gateway-241337102384.us-central1.run.app"
+        )
+        .is_ok());
+    }
 }

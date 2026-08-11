@@ -3,7 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+**Current Directive:** Open/merge PR for fix/tauri-p2-polish.
 <!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
@@ -864,6 +864,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T13:49:22.810Z handoff `cdce5268-0b75-48e9-bcd1-8e7d3c44ba55` head `cf79a8e1bcac` project `TNF-TAURI` — Open/merge PR for fix/tauri-p2-polish.
 
 - 2026-08-11T13:19:05.952Z handoff `fa8020a4-7c1c-4256-9217-3d158814f7b9` head `76b3fef6cfef` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 

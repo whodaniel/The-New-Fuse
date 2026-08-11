@@ -30,7 +30,8 @@ describe('endpointDiscovery', () => {
   it('probes REST API via health paths ahead of /api/agents', async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
-      if (url.endsWith('/health')) {
+      // Prefer exact bare /health — avoid `/api/v1/health`.endsWith('/health') false positive.
+      if (url === 'http://127.0.0.1:3001/health') {
         return new Response(JSON.stringify({ status: 'ok' }), {
           status: 200,
           headers: { 'content-type': 'application/json' },
@@ -60,6 +61,49 @@ describe('endpointDiscovery', () => {
       )
     );
     await expect(probeRestApiUrl('http://127.0.0.1:3001')).resolves.toBe(false);
+  });
+
+  it('rejects websocket-gateway health shaped payloads', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify({ status: 'ok', connectedClients: 3 }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          })
+      )
+    );
+    await expect(probeRestApiUrl('http://127.0.0.1:3001')).resolves.toBe(false);
+  });
+
+  it('prefers /api/v1/health before other candidates', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith('/api/v1/health')) {
+        return new Response(JSON.stringify({ status: 'healthy', service: 'tnf-api' }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        });
+      }
+      throw new Error(`unexpected probe ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(probeRestApiUrl('http://127.0.0.1:3001')).resolves.toBe(true);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('http://127.0.0.1:3001/api/v1/health');
+  });
+
+  it('accepts auth-walled /api/agents capability when health is absent', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes('/health')) return new Response('missing', { status: 404 });
+      if (url.includes('/api/agents') && init?.method === 'HEAD') {
+        return new Response(null, { status: 401 });
+      }
+      return new Response('nope', { status: 500 });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(probeRestApiUrl('http://127.0.0.1:3001')).resolves.toBe(true);
   });
 
   it('caches discoverLocalEndpoints within TTL', async () => {

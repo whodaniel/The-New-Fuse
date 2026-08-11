@@ -358,3 +358,23 @@ pub fn wait_duration(seconds: f32) -> Result<(), String> {
 // screenshots = "0.8"
 // image = "0.24"
 // base64 = "0.21"
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn computer_use_defaults_disarmed_and_gates_actions() {
+        // Reset in case another test armed the process-global flag.
+        set_computer_use_armed(false);
+        assert!(!get_computer_use_armed());
+        assert!(require_computer_use_armed().is_err());
+
+        set_computer_use_armed(true);
+        assert!(get_computer_use_armed());
+        assert!(require_computer_use_armed().is_ok());
+
+        set_computer_use_armed(false);
+        assert!(require_computer_use_armed().is_err());
+    }
+}

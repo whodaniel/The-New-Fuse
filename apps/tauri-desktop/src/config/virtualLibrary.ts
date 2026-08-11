@@ -72,19 +72,14 @@ export async function probeLibraryAudioDependencies(
   return Promise.all(
     targets.map(async (target) => {
       try {
-        if (target.healthPath) {
-          const res = await fetch(`${target.url.replace(/\/$/, '')}${target.healthPath}`, {
-            cache: 'no-store',
-            signal: AbortSignal.timeout(2500),
-          });
-          return { ...target, online: res.ok };
-        }
-        await fetch(target.url, {
-          mode: 'no-cors',
+        const url = target.healthPath
+          ? `${target.url.replace(/\/$/, '')}${target.healthPath}`
+          : target.url;
+        const res = await fetch(url, {
           cache: 'no-store',
           signal: AbortSignal.timeout(2500),
         });
-        return { ...target, online: true };
+        return { ...target, online: res.ok };
       } catch {
         return { ...target, online: false };
       }
