@@ -215,6 +215,11 @@ async function runCommand(
     /** Kill the child and reject with CommandTimeoutError after this long.
      *  Omit for the historical unbounded behaviour. */
     timeoutMs?: number;
+    /**
+     * Tee the child's stderr so a non-zero exit reports what actually went
+     * wrong. Without this a failure surfaces only as "<cmd> exited with code N".
+     */
+    captureStderr?: boolean;
     intent?: string;
   } = {}
 ): Promise<void> {
@@ -4022,13 +4027,27 @@ async function printCommandMenu(
   console.log(chalk.dim('Run `tnf --help` for complete command reference.\n'));
 }
 
+/**
+ * Re-invoke this CLI as a child process.
+ *
+ * When the entry is TypeScript (./tnf → `pnpm exec tsx .../cli.ts`), spawning
+ * bare `process.execPath` + execArgv only works if tsx loader flags remain.
+ * Match runTnfCliEntrypoint so detached/full-auto parents don't get
+ * ERR_MODULE_NOT_FOUND.
+ */
 async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
   // Nested CLI re-entries must not re-dump Turn Zero / ProtocolInterceptor
   // banners onto stdout (breaks JSON consumers and floods full-auto logs).
-  await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], {
+  const common = {
     env: { TNF_SILENT_PREFLIGHT: '1' },
     timeoutMs,
-  });
+    captureStderr: true,
+  } as const;
+  if (cliEntryPath.endsWith('.ts')) {
+    await runCommand('pnpm', ['exec', 'tsx', cliEntryPath, ...args], common);
+    return;
+  }
+  await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], common);
 }
 
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {

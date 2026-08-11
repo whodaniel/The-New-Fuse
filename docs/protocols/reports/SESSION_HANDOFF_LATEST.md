@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T19:16:06.931Z`  
-Handoff ID: `afebe93a-4f9e-4463-b67a-c98f64b9f215`
+Created At: `2026-08-11T19:22:31.377Z`  
+Handoff ID: `6f250b5a-e984-4f07-a339-5e69f17e1dfb`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `security/untrack-legal-sale-docs`
-- Head SHA: `dd1b2ecd8cef569c4e1877d59611d96121f9500a`
+- Branch: `fix/full-auto-tsx-spawn`
+- Head SHA: `80ae0ce4ff1db93c8b9113a4ecbfbcb65ae07513`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,8 +19,8 @@ Handoff ID: `afebe93a-4f9e-4463-b67a-c98f64b9f215`
 
 ## Changed Paths
 
-- .gitignore
-- docs/legal/sale/README.md
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/utils/run-command.ts
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/AGENT_STATUS_LEDGER.md

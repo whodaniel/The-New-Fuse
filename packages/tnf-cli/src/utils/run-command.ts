@@ -27,8 +27,13 @@ export type SpawnWithTimeoutOptions = {
   /** Kill the child and reject with CommandTimeoutError after this long.
    *  Omit (or pass 0) for unbounded execution. */
   timeoutMs?: number;
+  /**
+   * Tee stderr so a non-zero exit reports child output instead of only
+   * `"<cmd> exited with code N"`. stdout still inherits when enabled.
+   */
+  captureStderr?: boolean;
   /** Overridable for tests; defaults to inheriting the parent's stdio. */
-  stdio?: 'inherit' | 'ignore' | 'pipe';
+  stdio?: 'inherit' | 'ignore' | 'pipe' | Array<'inherit' | 'ignore' | 'pipe'>;
 };
 
 /**
@@ -62,14 +67,20 @@ export async function spawnWithTimeout(
   options: SpawnWithTimeoutOptions
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    const stdio = options.stdio ?? (options.isBackground ? 'ignore' : 'inherit');
+    const stdio =
+      options.stdio ??
+      (options.isBackground
+        ? 'ignore'
+        : options.captureStderr
+          ? (['inherit', 'inherit', 'pipe'] as const)
+          : 'inherit');
     // Timed foreground work gets its own process group so timeout can SIGTERM
     // the whole tree. Background jobs stay detached + unref'd as before.
     const useTimeoutGroup = Boolean(options.timeoutMs && options.timeoutMs > 0);
     const child = spawn(cmd, args, {
       cwd: options.cwd,
       env: { ...process.env, ...(options.env || {}) },
-      stdio,
+      stdio: stdio as any,
       detached: options.isBackground || useTimeoutGroup,
     });
 
@@ -81,11 +92,21 @@ export async function spawnWithTimeout(
     let timer: NodeJS.Timeout | undefined;
     let killTimer: NodeJS.Timeout | undefined;
     let timedOut = false;
+    const MAX_STDERR_CHARS = 4000;
+    let stderrTail = '';
 
     const clearTimers = () => {
       if (timer) clearTimeout(timer);
       if (killTimer) clearTimeout(killTimer);
     };
+
+    if (options.captureStderr && child.stderr) {
+      child.stderr.on('data', (chunk: Buffer) => {
+        const text = chunk.toString();
+        process.stderr.write(text);
+        stderrTail = (stderrTail + text).slice(-MAX_STDERR_CHARS);
+      });
+    }
 
     if (useTimeoutGroup) {
       timer = setTimeout(() => {
@@ -109,7 +130,12 @@ export async function spawnWithTimeout(
       clearTimers();
       if (timedOut) return reject(new CommandTimeoutError(cmd, options.timeoutMs!));
       if (code === 0) return resolve();
-      reject(new Error(`${cmd} exited with code ${code}`));
+      const detail = stderrTail.trim();
+      reject(
+        new Error(
+          `${cmd} exited with code ${code}` + (detail ? `\n--- child stderr ---\n${detail}` : '')
+        )
+      );
     });
   });
 }
