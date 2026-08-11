@@ -3,6 +3,7 @@
 // Includes gRPC-like communication with Antigravity servers
 
 use serde::{Deserialize, Serialize};
+use std::path::Path;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -73,8 +74,26 @@ impl AntigravityClient {
         }
     }
 
-    pub fn set_credentials(&mut self, credentials: AntigravityCredentials) {
+    pub fn set_credentials(&mut self, credentials: AntigravityCredentials) -> Result<(), String> {
+        Self::validate_server_address(&credentials.server_address)?;
+        if credentials.csrf_token.trim().is_empty() {
+            return Err("CSRF token is required".into());
+        }
         self.credentials = Some(credentials);
+        Ok(())
+    }
+
+    fn validate_server_address(address: &str) -> Result<(), String> {
+        let parsed = url::Url::parse(address).map_err(|e| format!("Invalid server address: {}", e))?;
+        match parsed.scheme() {
+            "http" | "https" => {}
+            other => return Err(format!("Antigravity server must be http(s), got {}", other)),
+        }
+        let host = parsed.host_str().unwrap_or("");
+        if !crate::host_policy::cloud_control_plane_host_allowed(host) {
+            return Err(format!("Antigravity host not in allowlist: {}", host));
+        }
+        Ok(())
     }
 
     pub async fn get_status(&self) -> Result<AntigravityStatus, String> {
@@ -151,8 +170,7 @@ impl AntigravityClient {
                 .await
                 .map_err(|e| format!("Failed to parse pages: {}", e))
         } else {
-            // Return empty list instead of error for graceful degradation
-            Ok(vec![])
+            Err(format!("Server returned error listing pages: {}", response.status()))
         }
     }
 
@@ -244,17 +262,34 @@ impl AntigravityClient {
         let credentials = self.credentials.as_ref()
             .ok_or("No credentials configured")?;
 
+        // Basename only — block path traversal / odd control chars in multipart metadata.
+        let safe_name = Path::new(filename)
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("")
+            .chars()
+            .filter(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_'))
+            .collect::<String>();
+        if safe_name.is_empty() || safe_name == "." || safe_name == ".." {
+            return Err("Invalid recording filename".into());
+        }
+        if conversation_id.trim().is_empty()
+            || conversation_id.chars().any(|c| !(c.is_ascii_alphanumeric() || matches!(c, '-' | '_')))
+        {
+            return Err("Invalid conversation_id".into());
+        }
+
         let url = format!("{}/api/recording/save", credentials.server_address);
 
         // Create multipart form
         let part = reqwest::multipart::Part::bytes(data.to_vec())
-            .file_name(filename.to_string())
+            .file_name(safe_name.clone())
             .mime_str("video/webm")
             .map_err(|e| format!("Failed to create form part: {}", e))?;
 
         let form = reqwest::multipart::Form::new()
             .text("conversation_id", conversation_id.to_string())
-            .text("filename", filename.to_string())
+            .text("filename", safe_name)
             .part("file", part);
 
         let response = self.http_client.post(&url)

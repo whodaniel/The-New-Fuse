@@ -161,7 +161,10 @@ pub fn launch_chrome_with_extension(
         });
     }
 
-    let landing_url = start_url.unwrap_or_else(|| "https://thenewfuse.com".to_string());
+    let landing_url = match start_url {
+        Some(raw) => crate::browser_webview::validate_external_webview_url(&raw)?.to_string(),
+        None => "https://thenewfuse.com".to_string(),
+    };
 
     let child = Command::new(&chrome_path)
         .arg(format!("--user-data-dir={}", profile.display()))

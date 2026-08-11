@@ -10,9 +10,38 @@
 use base64::{engine::general_purpose, Engine as _};
 use enigo::{Enigo, Keyboard, Mouse, Settings};
 use screenshots::Screen;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::time::Duration;
 use tauri::command;
+
+/// Fail-closed arming gate for OS automation (click/type/hotkey/drag/scroll).
+/// Observation helpers (capture / screen size / mouse position) stay available.
+static COMPUTER_USE_ARMED: AtomicBool = AtomicBool::new(false);
+
+fn require_computer_use_armed() -> Result<(), String> {
+    if COMPUTER_USE_ARMED.load(Ordering::SeqCst) {
+        Ok(())
+    } else {
+        Err(
+            "Computer-use is DISARMED. Operator must arm via set_computer_use_armed(true) before automation."
+                .into(),
+        )
+    }
+}
+
+/// Query whether OS automation commands are currently armed.
+#[command]
+pub fn get_computer_use_armed() -> bool {
+    COMPUTER_USE_ARMED.load(Ordering::SeqCst)
+}
+
+/// Arm or disarm OS automation. Default is disarmed on every process start.
+#[command]
+pub fn set_computer_use_armed(armed: bool) -> bool {
+    COMPUTER_USE_ARMED.store(armed, Ordering::SeqCst);
+    armed
+}
 
 // ============================================================================
 // TYPES
@@ -86,6 +115,7 @@ pub fn capture_screen(
 /// Execute a click at the specified coordinates
 #[command]
 pub fn execute_click(x: i32, y: i32, button: String) -> Result<(), String> {
+    require_computer_use_armed()?;
     let mut enigo = Enigo::new(&Settings::default()).map_err(|e| e.to_string())?;
 
     // Move to position
@@ -113,6 +143,8 @@ pub fn execute_drag(
     end_y: i32,
     duration: f32,
 ) -> Result<(), String> {
+    require_computer_use_armed()?;
+    let duration = duration.clamp(0.05, 30.0);
     let mut enigo = Enigo::new(&Settings::default()).map_err(|e| e.to_string())?;
 
     // Move to start position
@@ -144,6 +176,7 @@ pub fn execute_drag(
 /// Execute a scroll action
 #[command]
 pub fn execute_scroll(amount: i32, x: i32, y: i32) -> Result<(), String> {
+    require_computer_use_armed()?;
     let mut enigo = Enigo::new(&Settings::default()).map_err(|e| e.to_string())?;
 
     // Move to position if specified
@@ -164,6 +197,11 @@ pub fn execute_scroll(amount: i32, x: i32, y: i32) -> Result<(), String> {
 /// Type text with optional delay between characters
 #[command]
 pub fn execute_type(text: String, delay: u32) -> Result<(), String> {
+    require_computer_use_armed()?;
+    if text.chars().count() > 10_000 {
+        return Err("Refusing to type >10000 characters in one invoke".into());
+    }
+    let delay = delay.min(200);
     let mut enigo = Enigo::new(&Settings::default()).map_err(|e| e.to_string())?;
 
     if delay > 0 {
@@ -183,9 +221,13 @@ pub fn execute_type(text: String, delay: u32) -> Result<(), String> {
 /// Execute a hotkey combination
 #[command]
 pub fn execute_hotkey(keys: Vec<String>, interval: f32) -> Result<(), String> {
+    require_computer_use_armed()?;
+    if keys.is_empty() || keys.len() > 8 {
+        return Err("Hotkey chord must contain 1–8 keys".into());
+    }
     let mut enigo = Enigo::new(&Settings::default()).map_err(|e| e.to_string())?;
 
-    let interval_duration = Duration::from_secs_f32(interval.max(0.05));
+    let interval_duration = Duration::from_secs_f32(interval.clamp(0.05, 1.0));
 
     // Press all keys
     for key_str in &keys {
@@ -281,9 +323,11 @@ pub fn get_mouse_position() -> Result<(i32, i32), String> {
     Ok(enigo.location().map_err(|e| e.to_string())?)
 }
 
-/// Wait for specified duration (in seconds)
+/// Wait for specified duration (in seconds). Capped to avoid DoS of the worker thread.
 #[command]
 pub fn wait_duration(seconds: f32) -> Result<(), String> {
+    require_computer_use_armed()?;
+    let seconds = seconds.clamp(0.0, 30.0);
     thread::sleep(Duration::from_secs_f32(seconds));
     Ok(())
 }

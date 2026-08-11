@@ -4,13 +4,18 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optional: update tnf-harness-master-loop skill with
-one-line completeness pointer
+**Current Directive:** Smoke-test TNF desktop on a quieter machine (cargo test
+--lib, Chrome bootstrap, bridge connect, Start Runtime).
 
 <!-- CURRENT_DIRECTIVE:END -->
 
 **Cleared / no longer P0:**
 
+- **2026-08-10 Operator clearance — disk / autonomy-health noise is NOT a
+  task.** Data-volume utilization and rollup reasons `disk_capacity_*`,
+  `autopilot_or_subdirector_critical`, and `handoff_tip_drift` must not be
+  queued as agent work or listed as outstanding session blockers. Operator
+  confirmed adequate disk headroom; treat as accepted operating background.
 - PR #70 authority layer — **MERGED**
   (https://github.com/whodaniel/tnf-monorepo/pull/70). Residual authority ops
   remain operator-gated.
@@ -73,6 +78,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] **2026-08-08 Live agent work cohesion guard** — Added
 - [✅] 2026-08-10T17:45:54.079Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
+  bounded-loop-evaluator.cjs, progressive-disclosure-loader.cjs,
+  todo-provider.cjs
+
   generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs
 
   generate-crontab-from-catalog.cjs, relay-service.sh
@@ -859,6 +868,14 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-11T02:13:01.638Z handoff `97bc9dce-a547-45b8-a741-84df4ceda6c1` head
+  `530e80682feb` project `TNF-TAURI` — Smoke-test TNF desktop on a quieter
+  machine (cargo test --lib, Chrome bootstrap, bridge connect, Start Runtime).
+
+- 2026-08-10T23:28:49.056Z handoff `a899d31a-ace5-48db-8e32-18b69a89f165` head
+  `530e80682feb` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
+
 - 2026-08-10T23:08:27.357Z handoff `d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` head
   `e1b4cb08ccb8` project `TNF-SESSION` — Optional: update
   tnf-harness-master-loop skill with one-line completeness pointer
@@ -901,7 +918,7 @@ and generated refactoring_consensus_report.md.
 
 - 2026-08-10T21:20:01.230Z handoff `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` head
   `f3eb9042fe26` project `TNF-SESSION` — Free more disk on Data volume (outside
-  TNF logs)
+  TNF logs) — **CLEARED 2026-08-10 by operator (adequate disk; do not requeue)**
 
 - 2026-08-10T21:10:46.868Z handoff `4051ab6a-9617-48fc-b4b0-930f31a5cb4f` head
   `f3eb9042fe26` project `TNF-SESSION` — Reattach Redis under launchd without
@@ -1088,4 +1105,16 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-10T22:15:54.611Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T23:26:51.026Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T00:06:52.469Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T00:47:39.151Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T01:27:40.937Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

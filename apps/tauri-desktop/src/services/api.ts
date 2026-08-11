@@ -342,7 +342,8 @@ class ApiService {
         // 404 means this deployment names it differently; try the next candidate.
         if (response.status !== 404) return false;
       } catch {
-        return false;
+        // Network/timeout: try the next candidate path before declaring offline.
+        continue;
       }
     }
     return false;
