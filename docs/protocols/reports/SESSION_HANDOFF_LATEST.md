@@ -1,39 +1,40 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T15:10:49.617Z`  
-Handoff ID: `8fd0b360-3295-4456-9a86-afde42616d9f`
+Created At: `2026-08-11T15:43:18.575Z`  
+Handoff ID: `f554300d-e0e1-4206-ab0c-9e72ce60bd0c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/pi-path-ghost-parity`
-- Head SHA: `bc7d9f3541f5051714e71a84fa27e14664e4ecc8`
+- Branch: `fix/cursor-agent-toplevel-guides`
+- Head SHA: `713e4f21f9e988969ad39faa6bd9e11bb370b16d`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- A2A bridge online; autonomy rollup maps local-subdirector session stalls to
-  degraded (not critical).
+- Rebase cursor-agent ls/worker guides onto main after Pi parity (#91).
 
 ## Changed Paths
 
+- docs/operations/audits/lanes/CURSOR_AGENT_TOPLEVEL_GUIDES_2026-08-11.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/runtime/tnf-autonomy-health-rollup.cjs
+- packages/tnf-cli/scripts/cursor-parity-verify.mts
+- packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
 
 ## Verification
 
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
 
-- Owner: `cursor-agent`
+- Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
@@ -46,5 +47,7 @@ Handoff ID: `8fd0b360-3295-4456-9a86-afde42616d9f`
 
 ## Next Actions
 
-- Land rollup stall mapping.
-- Optional: clear stalled TTYs.
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

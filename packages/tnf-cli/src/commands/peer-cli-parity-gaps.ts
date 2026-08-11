@@ -70,7 +70,9 @@ export const CURSOR_AGENT_PARITY_GAP_COMMANDS = [
   'create-chat',
   'generate-rule',
   'install-shell-integration',
+  'ls',
   'uninstall-shell-integration',
+  'worker',
 ] as const;
 
 /** OpenCode / Kilo shared top-level verbs TNF exposes as guides. */
@@ -251,9 +253,14 @@ export const CURSOR_AGENT_PARITY_ROOT_OPTIONS: Array<{ flag: string; description
   { flag: '--trust', description: 'Cursor Agent parity: trust workspace marker' },
   { flag: '--workspace <path>', description: 'Cursor Agent parity: workspace path hint' },
   {
-    flag: '--worktree-base <path>',
-    description: 'Cursor Agent parity: worktree base path hint',
+    flag: '--worktree [name]',
+    description: 'Cursor Agent parity: isolated git worktree marker',
   },
+  {
+    flag: '--worktree-base <branch>',
+    description: 'Cursor Agent parity: worktree base branch/ref hint',
+  },
+  { flag: '--yolo', description: 'Cursor Agent parity: alias for --force marker' },
 ];
 
 export function registerPeerCliParityGapCommands(program: Command, _repoRoot: string): void {
@@ -377,6 +384,18 @@ export function registerPeerCliParityGapCommands(program: Command, _repoRoot: st
       'Prefer `tnf doctor` before removing tooling.',
     ]
   );
+  registerGuide(program, 'ls', 'Cursor Agent parity: list / resume chat sessions', [
+    'Sessions:  tnf session list',
+    'Resume:    tnf resume  |  tnf --continue',
+    'TUI:       tnf tui',
+    'Nested:    tnf mcp ls  (MCP server list alias)',
+  ]);
+  registerGuide(program, 'worker', 'Cursor Agent parity: private/cloud worker entry', [
+    'Authority workers:  tnf authority workers',
+    'Relaunch:           tnf authority relaunch-workers',
+    'Fleet:              tnf fleet --help',
+    'Agent:              tnf agent --help',
+  ]);
 
   // --- OpenCode / Kilo ---
   registerGuide(program, 'attach', 'OpenCode/Kilo parity: attach to a session', [

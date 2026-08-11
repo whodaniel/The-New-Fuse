@@ -1,32 +1,34 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "8fd0b360-3295-4456-9a86-afde42616d9f",
-  "created_at": "2026-08-11T15:10:49.617Z",
+  "handoff_id": "f554300d-e0e1-4206-ab0c-9e72ce60bd0c",
+  "created_at": "2026-08-11T15:43:18.575Z",
   "repository": "The-New-Fuse",
-  "branch": "fix/pi-path-ghost-parity",
-  "head_sha": "bc7d9f3541f5051714e71a84fa27e14664e4ecc8",
+  "branch": "fix/cursor-agent-toplevel-guides",
+  "head_sha": "713e4f21f9e988969ad39faa6bd9e11bb370b16d",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-AUTONOMY"],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "A2A bridge online; autonomy rollup maps local-subdirector session stalls to degraded (not critical)."
+    "Rebase cursor-agent ls/worker guides onto main after Pi parity (#91)."
   ],
   "changed_paths": [
+    "docs/operations/audits/lanes/CURSOR_AGENT_TOPLEVEL_GUIDES_2026-08-11.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "scripts/runtime/tnf-autonomy-health-rollup.cjs"
+    "packages/tnf-cli/scripts/cursor-parity-verify.mts",
+    "packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-11T15:10:50.874Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": ""
   },
   "continuation": {
-    "owner": "cursor-agent",
+    "owner": "tnf-orchestrator",
     "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
@@ -36,10 +38,10 @@
     ]
   },
   "next_actions": [
-    "Land rollup stall mapping.",
-    "Optional: clear stalled TTYs."
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["bc7d9f3541f5051714e71a84fa27e14664e4ecc8"]
+    "commits": ["713e4f21f9e988969ad39faa6bd9e11bb370b16d"]
   }
 }
