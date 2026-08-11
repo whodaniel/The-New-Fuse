@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-11T14:58:29.051Z** — handoff
+Updated: **2026-08-11T15:06:37.711Z** — handoff
+`910875dd-a5eb-4217-abfd-1ad7b78d4980` (`9a05179b9278`).
 `1db5d1f0-7728-43a6-b842-0bce7684fdd2` (`5553aa66b8c3`).
 `5c6eed3d-551f-4cc7-80ea-cd2e67b6ec87` (`5553aa66b8c3`).
 `39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7` (`f5ea4b1484e2`).
@@ -175,10 +176,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                    |
-| -------- | ----------------------------------------- |
-| **P0**   | Push rollup free-MB fix.                  |
-| **P0**   | Optional: recover a2a bridge / autopilot. |
+| Priority | Action                                                           |
+| -------- | ---------------------------------------------------------------- |
+| **P0**   | Push/open PR for fix/pi-path-ghost-parity.                       |
+| **P0**   | Select next non-parity P0 (installed peer CLI cliffs are clear). |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -803,3 +804,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (1db5d1f0-7728-43a6-b842-0bce7684fdd2) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(910875dd-a5eb-4217-abfd-1ad7b78d4980) | ✅ HANDOFF_READY |

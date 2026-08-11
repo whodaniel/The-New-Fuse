@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push rollup free-MB fix.
+**Current Directive:** Push/open PR for fix/pi-path-ghost-parity.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -866,6 +866,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-11T15:06:39.263Z handoff `910875dd-a5eb-4217-abfd-1ad7b78d4980` head
+  `9a05179b9278` project `L4-INTEROP` — Push/open PR for
+  fix/pi-path-ghost-parity.
 
 - 2026-08-11T14:58:30.027Z handoff `1db5d1f0-7728-43a6-b842-0bce7684fdd2` head
   `5553aa66b8c3` project `TNF-AUTONOMY` — Push rollup free-MB fix.
