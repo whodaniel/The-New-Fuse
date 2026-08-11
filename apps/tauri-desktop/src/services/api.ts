@@ -1,6 +1,7 @@
 /**
  * API Service - HTTP client for backend communication
  */
+import { probeRestApiUrl } from '../config/endpointDiscovery';
 import type {
   Agent,
   AnalyticsExportPayload,
@@ -321,32 +322,9 @@ class ApiService {
     return this.request<unknown>('/api/local-runtime/terminal-mirror');
   }
 
-  // Health check
+  // Health check — REST capability, not gateway-only /health.
   async healthCheck(): Promise<boolean> {
-    /**
-     * Liveness only — must stay cheap.
-     *
-     * This used to fetch the full /api/agents list every 5s and throw the body
-     * away. That self-inflicted a rate limit: /api/agents then answered 429 after
-     * ~2.5s, so apiOnline flipped to false and the operator surface reported
-     * "API: OFFLINE" while the API was in fact healthy (/health: 200 in 2ms).
-     * The fluctuating agent counts had the same origin.
-     */
-    const base = this.baseUrl.replace(/\/$/, '');
-    for (const path of ['/health', '/api/health']) {
-      try {
-        const response = await fetch(`${base}${path}`, {
-          signal: AbortSignal.timeout(2500),
-        });
-        if (response.ok) return true;
-        // 404 means this deployment names it differently; try the next candidate.
-        if (response.status !== 404) return false;
-      } catch {
-        // Network/timeout: try the next candidate path before declaring offline.
-        continue;
-      }
-    }
-    return false;
+    return probeRestApiUrl(this.baseUrl, 2500);
   }
 
   /** Dynamic LLM catalog for Create Agent (NVIDIA-first verified + optional live). */
