@@ -1,30 +1,27 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T14:07:56.763Z`  
-Handoff ID: `5ae2b902-59e0-41bc-bc61-c210851490fb`
+Created At: `2026-08-11T14:21:51.344Z`  
+Handoff ID: `96a4d028-ed4a-4a2f-a24c-8b354785e6bd`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/validators-peer-parity`
-- Head SHA: `e25a8a71b4f84bd47fc445868322bda8d52d1b64`
+- Branch: `fix/jules-cursor-parity`
+- Head SHA: `b51820843f7881f3f1b0c7bb7ae18979654d5c72`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Resolved main merge conflicts for PR #87 (protocol docs + absorb #86 tauri
-  mainline).
-- Validators + Claude/Pi/Codex peer parity ready to merge.
+- Merged PR #87.
+- Raised Jules and cursor-agent CLI parity to 100% (mean ~96%).
 
 ## Changed Paths
 
-- apps/tauri-desktop/src-tauri/src/lib.rs
-- apps/tauri-desktop/src/config/endpointDiscovery.test.ts
-- apps/tauri-desktop/src/config/endpointDiscovery.ts
-- apps/tauri-desktop/src/services/api.ts
-- docs/protocols/AGENT_STATUS_LEDGER.md
+- packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
+- docs/operations/audits/lanes/JULES_CURSOR_PARITY_2026-08-11.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
@@ -39,14 +36,14 @@ Handoff ID: `5ae2b902-59e0-41bc-bc61-c210851490fb`
 
 - Owner: `cursor-agent`
 - Targets: `orchestrator`
-- Priority: `high`
+- Priority: `medium`
 
 ### Resume Checklist
 
-- Confirm PR #87 mergeable.
-- On merge: Jules/cursor parity from main.
+- Confirm Jules/cursor 100% via parity audit.
+- On merge: OpenCode/Kilo gap closers.
 
 ## Next Actions
 
-- Merge PR #87 after conflict resolution.
-- Raise Jules + cursor-agent CLI parity.
+- Push/open PR for fix/jules-cursor-parity.
+- Close OpenCode/Kilo remaining command gaps (attach/github/pr/web).

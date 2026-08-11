@@ -4,7 +4,9 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Merge PR #87 after conflict resolution.
+**Current Directive:** Push/open PR for fix/jules-cursor-parity. **Project ID:**
+`L4-INTEROP` **Handoff:** `96a4d028-ed4a-4a2f-a24c-8b354785e6bd` **Head:**
+`b51820843f78`
 
 <!-- CURRENT_DIRECTIVE:END -->
 
