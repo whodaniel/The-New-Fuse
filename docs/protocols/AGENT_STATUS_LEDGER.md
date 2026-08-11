@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-06T18:04:19.622Z** — handoff
+Updated: **2026-08-11T13:53:46.690Z** — handoff
+`210e5ab1-ea04-47df-8fdd-89b21e22ccdd` (`0f5970ea1002`).
 `612fce9e-5ca0-4714-8135-2a35b2e3b7e3`
 (`7a03f2f4ea4a5c1a3d97d39917c7759445d6b1bc`). Continued Hermes session
 (`tnf-local-terminal-ttys005`, 2026-08-06): operator-directed continuation of
@@ -185,7 +186,7 @@ commit/push this session (operator-gated). Handoff
 
 | Priority | Action                                                   |
 | -------- | -------------------------------------------------------- |
-| **P0**   | Push/open PR for fix/validators-peer-parity.             |
+| **P0**   | Merge PR #87 after checks.                               |
 | **P0**   | Raise Jules + cursor-agent CLI parity (Living State P0). |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
@@ -764,3 +765,6 @@ SESSION_HANDOFF_LATEST (eaaf0c4d-1f33-4080-871c-351f9a86e28f) | ✅ HANDOFF_READ
 
 | 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (bb2f8da0-7e85-4cc9-969d-46c67f9887e8) | ✅ HANDOFF_READY |
+
+| 2026-08-11 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(210e5ab1-ea04-47df-8fdd-89b21e22ccdd) | ✅ HANDOFF_READY |
