@@ -1,24 +1,24 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T15:58:41.260Z`  
-Handoff ID: `df66e627-b3e7-45d0-8877-56ae752d6629`
+Created At: `2026-08-11T16:27:32.420Z`  
+Handoff ID: `651ce983-ec53-4b33-869a-610df8fdc03e`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `main`
-- Head SHA: `e7f1c80cae43663eb47e676fc62cd9e188a7b9fb`
+- Branch: `fix/spark-optional-adapter`
+- Head SHA: `c951082620e9e34e546aaa3e850d51a50ac55af8`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Add tnf spark CLI surface and Gemini Spark integration spec.
+- Sanitize tnf spark into optional env-driven adapter; OSS vs tenant separation
+  rubric.
 
 ## Changed Paths
 
 - packages/tnf-cli/src/commands/spark.ts
-- packages/tnf-cli/src/cli.ts
 - docs/protocols/GEMINI_SPARK_INTEGRATION_SPEC.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
