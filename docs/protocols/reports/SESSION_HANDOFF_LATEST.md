@@ -1,31 +1,217 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T17:40:43.234Z`  
-Handoff ID: `a1e8cac3-dcdf-49e9-9825-cca03d5afb7f`
+Created At: `2026-08-11T19:13:29.953Z`  
+Handoff ID: `ea0635b2-1cc7-4210-a5e9-3fefcb0928fa`
 
 ## Scope
-- Repository: `fix-autonomy-heartbeat-root-and-soft-gates`
-- Branch: `fix/autonomy-heartbeat-root-and-soft-gates`
-- Head SHA: `7c67c6fc02182a2f5c75d4fef74bb934cb86fead`
-- Sensitive Scope: `runtime autonomy health soft gates`
+- Repository: `The-New-Fuse`
+- Branch: `HEAD`
+- Head SHA: `72f38dad3559f248e23cf27cfcfadc29ed5d49fd`
+- Sensitive Scope: `internal`
 
 ## Work Summary
-- Prefer live TNF monorepo root for master-heartbeat (reject ~/.tnf scaffold mirrors via live markers)
-- Skip missing perpetual watchdog successfully
-- Defer swarm-disk-retention/ram-audit off cycle 1 (APFS hang)
-- Treat master degraded + fresh cycle-running as advisory in subdirector-cycle-check
-- Treat local-subdirector degraded as advisory in cycle-check and autonomy-health-rollup
-- Forced sidecar miss under skipped-safe-mode is advisory only
+- Protocol enforcement layer implemented for mandatory session handoff continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
-- .skills/tnf-sub-director-autopilot/scripts/subdirector-cycle-check.sh
-- scripts/runtime/tnf-autonomy-health-rollup.cjs
-- scripts/runtime/tnf-master-heartbeat-loop.cjs
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
+- packages/tnf-cli/package.json
+- pnpm-lock.yaml
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- packages/tnf-cli/node_modules/.bin/uuid
+- packages/tnf-cli/node_modules/@supabase/auth-js/LICENSE
+- packages/tnf-cli/node_modules/@supabase/auth-js/README.md
+- packages/tnf-cli/node_modules/@supabase/auth-js/package.json
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/AuthAdminApi.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/AuthClient.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/GoTrueAdminApi.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/GoTrueClient.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/base64url.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/constants.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/error-codes.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/errors.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/fetch.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/helpers.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/local-storage.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/locks.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/polyfills.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/types.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/version.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/web3/ethereum.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/web3/solana.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/webauthn.dom.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/webauthn.errors.ts
+- packages/tnf-cli/node_modules/@supabase/auth-js/src/lib/webauthn.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/README.md
+- packages/tnf-cli/node_modules/@supabase/functions-js/package.json
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/FunctionsClient.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/edge-runtime.d.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/helper.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/types.ts
+- packages/tnf-cli/node_modules/@supabase/functions-js/src/version.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/LICENSE.md
+- packages/tnf-cli/node_modules/@supabase/phoenix/README.md
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/ajax.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/channel.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/constants.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/index.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/longpoll.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/presence.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/push.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/serializer.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/socket.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/timer.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/types.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/assets/js/phoenix/utils.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/package.json
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/favicon.ico
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix-orange.png
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.cjs.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.cjs.js.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.min.js
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.mjs
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.mjs.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/phoenix.png
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/ajax.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/ajax.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/channel.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/channel.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/constants.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/constants.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/index.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/index.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/longpoll.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/longpoll.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/presence.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/presence.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/push.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/push.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/serializer.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/serializer.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/socket.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/socket.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/timer.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/timer.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/types.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/types.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/utils.d.ts
+- packages/tnf-cli/node_modules/@supabase/phoenix/priv/static/types/utils.d.ts.map
+- packages/tnf-cli/node_modules/@supabase/phoenix/tsconfig.json
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/README.md
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/package.json
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestClient.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestError.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestFilterBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestQueryBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/PostgrestTransformBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/constants.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/select-query-parser/parser.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/select-query-parser/result.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/select-query-parser/types.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/select-query-parser/utils.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/types/common/common.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/types/common/rpc.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/types/feature-flags.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/types/types.ts
+- packages/tnf-cli/node_modules/@supabase/postgrest-js/src/version.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/README.md
+- packages/tnf-cli/node_modules/@supabase/realtime-js/package.json
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/RealtimeChannel.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/RealtimeClient.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/RealtimePresence.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/constants.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/normalizeChannelError.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/serializer.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/transformers.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/version.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/lib/websocket-factory.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/phoenix/channelAdapter.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/phoenix/presenceAdapter.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/phoenix/socketAdapter.ts
+- packages/tnf-cli/node_modules/@supabase/realtime-js/src/phoenix/types.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/README.md
+- packages/tnf-cli/node_modules/@supabase/storage-js/package.json
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/StorageClient.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/common/BaseApiClient.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/common/errors.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/common/fetch.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/common/headers.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/common/helpers.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/constants.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/types.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/lib/version.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/BlobDownloadBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/StorageAnalyticsClient.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/StorageBucketApi.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/StorageFileApi.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/StorageVectorsClient.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/StreamDownloadBuilder.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/VectorBucketApi.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/VectorDataApi.ts
+- packages/tnf-cli/node_modules/@supabase/storage-js/src/packages/VectorIndexApi.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/README.md
+- packages/tnf-cli/node_modules/@supabase/supabase-js/package.json
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/SupabaseClient.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/cors.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/index.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/SupabaseAuthClient.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/constants.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/fetch.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/helpers.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/rest/types/common/common.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/rest/types/common/rpc.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/types.ts
+- packages/tnf-cli/node_modules/@supabase/supabase-js/src/lib/version.ts
+- packages/tnf-cli/node_modules/@the-new-fuse/infrastructure
+- packages/tnf-cli/node_modules/@the-new-fuse/tnf-core
+- packages/tnf-cli/node_modules/@the-new-fuse/tnf-note-taking
+- packages/tnf-cli/node_modules/@types/uuid/LICENSE
+- packages/tnf-cli/node_modules/@types/uuid/README.md
+- packages/tnf-cli/node_modules/@types/uuid/index.d.mts
+- packages/tnf-cli/node_modules/@types/uuid/index.d.ts
+- packages/tnf-cli/node_modules/@types/uuid/package.json
+- packages/tnf-cli/node_modules/chalk/license
+- packages/tnf-cli/node_modules/chalk/package.json
+- packages/tnf-cli/node_modules/chalk/readme.md
+- packages/tnf-cli/node_modules/chalk/source/index.d.ts
+- packages/tnf-cli/node_modules/chalk/source/index.js
+- packages/tnf-cli/node_modules/chalk/source/utilities.js
+- packages/tnf-cli/node_modules/chalk/source/vendor/ansi-styles/index.d.ts
+- packages/tnf-cli/node_modules/chalk/source/vendor/ansi-styles/index.js
+- packages/tnf-cli/node_modules/chalk/source/vendor/supports-color/browser.d.ts
+- packages/tnf-cli/node_modules/chalk/source/vendor/supports-color/browser.js
+- packages/tnf-cli/node_modules/chalk/source/vendor/supports-color/index.d.ts
+- packages/tnf-cli/node_modules/chalk/source/vendor/supports-color/index.js
+- packages/tnf-cli/node_modules/commander/LICENSE
+- packages/tnf-cli/node_modules/commander/Readme.md
+- packages/tnf-cli/node_modules/commander/esm.mjs
+- packages/tnf-cli/node_modules/commander/index.js
+- packages/tnf-cli/node_modules/commander/lib/argument.js
+- packages/tnf-cli/node_modules/commander/lib/command.js
+- packages/tnf-cli/node_modules/commander/lib/error.js
+- packages/tnf-cli/node_modules/commander/lib/help.js
+- packages/tnf-cli/node_modules/commander/lib/option.js
+- packages/tnf-cli/node_modules/commander/lib/suggestSimilar.js
+- packages/tnf-cli/node_modules/commander/package-support.json
+- packages/tnf-cli/node_modules/commander/package.json
+- packages/tnf-cli/node_modules/commander/typings/esm.d.mts
+- packages/tnf-cli/node_modules/commander/typings/index.d.ts
+- packages/tnf-cli/node_modules/uuid/CHANGELOG.md
+- packages/tnf-cli/node_modules/uuid/CONTRIBUTING.md
+- packages/tnf-cli/node_modules/uuid/LICENSE.md
+- packages/tnf-cli/node_modules/uuid/README.md
+- packages/tnf-cli/node_modules/uuid/package.json
+- packages/tnf-cli/node_modules/uuid/wrapper.mjs
 
 ## Verification
 - privacy_guard: `na`
@@ -34,15 +220,15 @@ Handoff ID: `a1e8cac3-dcdf-49e9-9825-cca03d5afb7f`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `cursor-agent`
+- Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
-- Confirm only three runtime/cycle-check files plus handoff artifacts in commit
-- PR description matches soft-gate + rootDir fix scope
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Push branch and open PR against origin/main
-- Verify heartbeat rootDir resolution on live monorepo
-- Confirm autonomy health rollup no longer degrades on local-subdirector soft stalls
+- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical work unit.

@@ -24,7 +24,12 @@
   "dependencies": {
     "@slack/bolt": "^5.0.0",
     "@slack/web-api": "^8.0.0",
-    "@supabase/supabase-js": "^2.105.4",
+    "@supabase/auth-js": "2.105.4",
+    "@supabase/functions-js": "2.105.4",
+    "@supabase/postgrest-js": "2.105.4",
+    "@supabase/realtime-js": "2.105.4",
+    "@supabase/storage-js": "2.105.4",
+    "@supabase/supabase-js": "2.105.4",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/shared": "workspace:*",
     "@the-new-fuse/tnf-browser": "workspace:*",
