@@ -17,14 +17,25 @@ const {
   resolveMessageTarget,
 } = require('./federation-protocol.cjs');
 
+/**
+ * The federation mesh listens on :3007. The plain agent relay on :3000 speaks a
+ * different protocol and hosts no federation clients, so anything that hardcodes
+ * :3000 will connect, register, and then wait forever for a peer that is not
+ * there — which is exactly how the A2A bridge probe reported CRITICAL against a
+ * healthy bridge. Import this constant instead of restating the URL.
+ */
+const DEFAULT_FEDERATION_RELAY_URL = 'ws://127.0.0.1:3007/ws';
+
+function resolveFederationRelayUrl(explicit) {
+  return (
+    explicit || process.env.RELAY_URL || process.env.TNF_RELAY_URL || DEFAULT_FEDERATION_RELAY_URL
+  );
+}
+
 class FederationRelayClient extends EventEmitter {
   constructor(options = {}) {
     super();
-    this.relayUrl =
-      options.relayUrl ||
-      process.env.RELAY_URL ||
-      process.env.TNF_RELAY_URL ||
-      'ws://127.0.0.1:3007/ws';
+    this.relayUrl = resolveFederationRelayUrl(options.relayUrl);
     this.reconnectMs = options.reconnectMs || 5000;
     this.heartbeatMs = options.heartbeatMs || 30000;
     this.autoReconnect = options.autoReconnect !== false;
@@ -359,4 +370,8 @@ class FederationRelayClient extends EventEmitter {
   }
 }
 
-module.exports = { FederationRelayClient };
+module.exports = {
+  FederationRelayClient,
+  DEFAULT_FEDERATION_RELAY_URL,
+  resolveFederationRelayUrl,
+};

@@ -4,9 +4,37 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push commits when operator requests
+**Current Directive:** Operator: approve the held-back TURN_ZERO_MANDATE.md
+ASSIMILATE_CHECK scan-path fix (authority surface, agents may not
+self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is referenced but
+never existed, so command-surface.test.ts has never run (20 missing / 1 changed
+vs snapshot)|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds
+174G|Hermes cron output tree holds only 1 fi
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-12 Silent-gate remediation (Claude Code, Turn Zero)** — Four
+  health gates were reporting the opposite of the truth; all four fixed with
+  regression tests. (1) `full-auto` evaluated its quarantine gate only in
+  preflight, never inside the cycle loop — the daemon rode a **212-cycle
+  unbroken failure streak** (224/274 logged cycles failed) while `mode` stayed
+  `running`; now self-quarantines per cycle. (2)
+  `validate-substrate-attestation.cjs` gated on the cumulative `failedCycles`
+  counter plus a `!lastRun.ok` escape hatch, so it could latch permanently or
+  never fire; now counts trailing failures. (3) `probe-a2a-bridge.cjs` defaulted
+  to relay `:3000` while its own client library defaults to `:3007` — the
+  `CRITICAL a2a-bridge-unresponsive` was **false**; the bridge answers `ok:true`
+  from `BROKER-Fuse-activity-log`. (4) The same probe wrote
+  `console.log("Connected!")` onto its JSON stdout, so
+  `JSON.parse(probe.stdout)` in `live-agent-work-check.cjs` threw on every run —
+  an independent defect that would have survived the port fix. Also corrected
+  the ASSIMILATE_CHECK scan path (`~/.hermes/cron/output/*.jsonl` matched
+  nothing; runs live at `<job-hash>/<timestamp>.md`). **Live agent work check:
+  BLOCK → CAUTION.** Detail: `AGENT_STATUS_LEDGER.md` §Protocol Gaps,
+  `DIRECTIVE_CONVERSION_LEDGER.md` Batch 012. **Open for operator:** `tnf-cli`
+  `test` script chains a `src/whatsapp/whatsapp.test.ts` that has never existed,
+  so the suite dies there and `command-surface.test.ts` has never run; running
+  it directly shows 20 missing / 1 changed command vs. snapshot.
 
 - [✅] **2026-08-12 Boot triage autonomous remediation (Cursor)** — Restored
   missing harness protocols `HARNESS_AGENT_MODES.md` +
@@ -877,6 +905,18 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T05:29:17.312Z handoff `c8911029-d187-40a8-9544-55a0cae17c2c` head
+  `6cff2cc8e860` project `TNF-SESSION` — Operator: approve the held-back
+  TURN_ZERO_MANDATE.md ASSIMILATE_CHECK scan-path fix (authority surface, agents
+  may not self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is
+  referenced but never existed, so command-surface.test.ts has never run (20
+  missing / 1 changed vs snapshot)|Disk hit 100% full mid-session (79MiB free);
+  /Users/Shared holds 174G|Hermes cron output tree holds only 1 fi
+
+- 2026-08-12T05:24:11.194Z handoff `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` head
+  `6cff2cc8e860` project `TNF-SESSION` — Optional: wire provider-failover into
+  model-watchdog boot
 
 - 2026-08-12T04:48:17.461Z handoff `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae` head
   `d9404e41cc1f` project `TNF-SESSION` — Push commits when operator requests

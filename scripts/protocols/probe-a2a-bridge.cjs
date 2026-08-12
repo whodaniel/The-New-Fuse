@@ -1,5 +1,8 @@
 const { v4: uuidv4 } = require('uuid');
-const { FederationRelayClient } = require('../lib/federation-relay-client.cjs');
+const {
+  FederationRelayClient,
+  resolveFederationRelayUrl,
+} = require('../lib/federation-relay-client.cjs');
 
 async function probeA2ABridge(relayUrl, timeoutMs = 10000) {
   return new Promise(async (resolve) => {
@@ -36,7 +39,12 @@ async function probeA2ABridge(relayUrl, timeoutMs = 10000) {
     });
 
     client.on('registered', () => {
-      console.log("Connected!"); client.joinChannel('fuse-activity-log');
+      // stderr, not stdout: stdout is this probe's machine-readable contract and
+      // live-agent-work-check.cjs does JSON.parse(probe.stdout). A bare
+      // console.log here made every parse throw ("Unexpected token 'C'"), so the
+      // checker reported a2a-bridge-unresponsive even on a successful probe.
+      console.error('[a2a-probe] registered with relay');
+      client.joinChannel('fuse-activity-log');
       client.sendChannelMessage('fuse-activity-log', '[A2A_BRIDGE_PING] probe', {
         messageType: 'A2A_BRIDGE_PING',
         metadata: {
@@ -51,9 +59,13 @@ async function probeA2ABridge(relayUrl, timeoutMs = 10000) {
 }
 
 if (require.main === module) {
-  const url = process.env.RELAY_URL || 'ws://127.0.0.1:3000/ws';
+  // Was hardcoded to :3000 — the agent relay, which hosts no federation clients.
+  // The probe therefore reported "Timeout waiting for A2A_BRIDGE_PONG" against a
+  // perfectly healthy bridge on :3007 for as long as the check existed. Share the
+  // client library's resolution so the two can never drift apart again.
+  const url = resolveFederationRelayUrl();
   probeA2ABridge(url).then(res => {
-    console.log(JSON.stringify(res));
+    console.log(JSON.stringify({ ...res, relayUrl: url }));
     process.exit(res.ok ? 0 : 1);
   });
 }

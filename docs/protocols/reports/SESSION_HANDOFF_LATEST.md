@@ -1,37 +1,40 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T04:48:17.413Z`  
-Handoff ID: `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae`
+Created At: `2026-08-12T05:29:17.269Z`  
+Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `d9404e41cc1f06fc252063f4d232d3a52712d26f`
+- Head SHA: `6cff2cc8e860e3251f874829effbfe61765f7e8b`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Harness layer hardening: shared provider-failover policy+resolver; sandbox-run
-  wrapper; MCP entrypoint hash lock (--write-lock/--check-lock)
-- Provider routing marked implemented in harness-config; completeness still PASS
+- Silent-gate remediation: armed the full-auto circuit breaker inside the cycle
+  loop (212-cycle streak went undetected); replaced lifetime-counter quarantine
+  gate with trailing-streak count; fixed two independent defects in
+  probe-a2a-bridge (wrong relay port :3000 vs :3007, and debug output corrupting
+  its JSON stdout contract) that produced a FALSE CRITICAL against a healthy
+  bridge. Live agent work check BLOCK -> CAUTION.
 
 ## Changed Paths
 
-- .licenses/opentargets_database_LICENSE.txt
-- apps/tauri-desktop/vite.config.ts
+- .agent/agents/continuous-improver.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/HARNESS_AGENT_MODES.md
+- docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/USER_CONFIRMATION_PROTOCOL.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- package.json
-- scripts/protocols/emit-session-handoff.cjs
-- scripts/tnf-generate-mcp-clients.cjs
-- scripts/transcribe_audio.py
-- scripts/verify-progressive-disclosure.mjs
+- docs/protocols/TNF_DIRECTIVES.md
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/utils/full-auto-cycle.test.ts
+- packages/tnf-cli/src/utils/full-auto-cycle.ts
+- scripts/lib/federation-relay-client.cjs
+- scripts/protocols/probe-a2a-bridge.cjs
+- scripts/protocols/validate-substrate-attestation.cjs
+- scripts/protocols/validate-substrate-attestation.test.cjs
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - .learnings/SUCCESSES.md
@@ -55,19 +58,24 @@ Handoff ID: `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/HARNESS_CONFIG.md
+- docs/protocols/TURN_ZERO_MANDATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/src/telegram/TelegramService.ts
 - pnpm-lock.yaml
-- scripts/harness/mcp-supply-chain-attest.cjs
+- scripts/harness/provider-failover.cjs
 - scripts/harness/tnf-harness.cjs
-- .cursor/rules/tnf-harness.mdc.tnf-bak
-- CLAUDE.md.tnf-bak
+- scripts/runtime/resolve-harness-context.cjs
+- scripts/start-agent-network.sh
 - data/harness/mcp-supply-chain.lock.json
 - data/harness/provider-failover-policy.json
-- scripts/harness/provider-failover.cjs
+- docs/protocols/HARNESS_CONFIG.md
+- scripts/harness/mcp-supply-chain-attest.cjs
 - scripts/harness/sandbox-run.cjs
+- .cursor/rules/tnf-harness.mdc.tnf-bak
+- CLAUDE.md.tnf-bak
 
 ## Verification
 
@@ -78,7 +86,7 @@ Handoff ID: `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae`
 
 ## Continuation
 
-- Owner: `orchestrator`
+- Owner: `claude-code`
 - Targets: `orchestrator`
 - Priority: `high`
 
@@ -91,6 +99,9 @@ Handoff ID: `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae`
 
 ## Next Actions
 
-- Push commits when operator requests
-- Optional: wire provider-failover into model-watchdog boot path
-- Publisher/sigstore attestation for third-party skills remains soft
+- Operator: approve the held-back TURN_ZERO_MANDATE.md ASSIMILATE_CHECK
+  scan-path fix (authority surface, agents may not self-approve)|Decide on
+  tnf-cli test suite: whatsapp.test.ts is referenced but never existed, so
+  command-surface.test.ts has never run (20 missing / 1 changed vs
+  snapshot)|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds
+  174G|Hermes cron output tree holds only 1 file - scheduler needs attention

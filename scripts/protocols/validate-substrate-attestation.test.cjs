@@ -106,30 +106,88 @@ test('full-auto with unparseable updatedAt is not treated as live', () => {
   );
 });
 
-test('apply-quarantine marks streaking full-auto state', () => {
+/**
+ * The gate reads the run log, not the lifetime `failedCycles` counter, so these
+ * fixtures must stage both. Backs up and restores each file.
+ */
+function withFullAutoFixture(state, runEvents, args, fn) {
   const repo = path.resolve(__dirname, '..', '..');
   const statePath = path.join(repo, 'docs/operations/tnf-full-auto-state.json');
-  const backup = fs.existsSync(statePath) ? fs.readFileSync(statePath, 'utf8') : null;
-  const tmpState = {
-    mode: 'running',
-    failedCycles: 9,
-    completedCycles: 0,
-    updatedAt: new Date().toISOString(),
-    lastRun: { cycle: 99, ok: false, error: 'synthetic' },
-  };
+  const logPath = path.join(repo, 'docs/operations/tnf-full-auto-runs.jsonl');
+  const stateBackup = fs.existsSync(statePath) ? fs.readFileSync(statePath, 'utf8') : null;
+  const logBackup = fs.existsSync(logPath) ? fs.readFileSync(logPath, 'utf8') : null;
   try {
     fs.mkdirSync(path.dirname(statePath), { recursive: true });
-    fs.writeFileSync(statePath, `${JSON.stringify(tmpState, null, 2)}\n`);
-    const result = run(['--mode=warn', '--json', '--apply-quarantine']);
+    fs.writeFileSync(statePath, `${JSON.stringify(state, null, 2)}\n`);
+    fs.writeFileSync(logPath, runEvents.map((e) => JSON.stringify(e)).join('\n') + '\n');
+    const result = run(args);
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const summary = JSON.parse(result.stdout);
-    const q = summary.checks.find((c) => c.id === 'full-auto-quarantine');
-    assert.ok(q);
-    assert.equal(q.ok, false);
-    const written = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-    assert.equal(written.mode, 'quarantined');
+    fn(
+      summary.checks.find((c) => c.id === 'full-auto-quarantine'),
+      () => JSON.parse(fs.readFileSync(statePath, 'utf8')),
+    );
   } finally {
-    if (backup != null) fs.writeFileSync(statePath, backup);
+    if (stateBackup != null) fs.writeFileSync(statePath, stateBackup);
     else if (fs.existsSync(statePath)) fs.unlinkSync(statePath);
+    if (logBackup != null) fs.writeFileSync(logPath, logBackup);
+    else if (fs.existsSync(logPath)) fs.unlinkSync(logPath);
   }
+}
+
+const liveState = (extra = {}) => ({
+  mode: 'running',
+  intervalMinutes: 60,
+  failedCycles: 9,
+  completedCycles: 0,
+  updatedAt: new Date().toISOString(),
+  ...extra,
+});
+
+test('apply-quarantine marks streaking full-auto state', () => {
+  withFullAutoFixture(
+    liveState({ lastRun: { cycle: 99, ok: false, error: 'synthetic' } }),
+    Array.from({ length: 9 }, (_, i) => ({ cycle: 91 + i, ok: false, error: 'synthetic' })),
+    ['--mode=warn', '--json', '--apply-quarantine'],
+    (q, readState) => {
+      assert.ok(q);
+      assert.equal(q.ok, false);
+      assert.equal(readState().mode, 'quarantined');
+    },
+  );
+});
+
+/**
+ * The bug this replaced: `failedCycles` is cumulative, so `failed >= 5` latched
+ * true forever, and the `!lastOk` escape hatch meant a single passing cycle at
+ * the tail cleared the gate no matter how bad the history. This repo rode a
+ * 212-cycle unbroken failure streak with the loop still marked healthy.
+ */
+test('lifetime failures with a recovered tail do not quarantine', () => {
+  withFullAutoFixture(
+    liveState({ failedCycles: 200, completedCycles: 2, lastRun: { cycle: 202, ok: true } }),
+    [...Array.from({ length: 200 }, (_, i) => ({ cycle: i + 1, ok: false })), { cycle: 201, ok: true }],
+    ['--mode=warn', '--json'],
+    (q) => {
+      assert.ok(q);
+      assert.equal(q.ok, true, 'a recovered loop must not be gated on ancient failures');
+      assert.match(q.detail, /consecutiveFailures=0/);
+    },
+  );
+});
+
+test('an active streak is flagged even when the tail once passed', () => {
+  withFullAutoFixture(
+    liveState({ failedCycles: 6, completedCycles: 50, lastRun: { cycle: 56, ok: false } }),
+    [
+      ...Array.from({ length: 50 }, (_, i) => ({ cycle: i + 1, ok: true })),
+      ...Array.from({ length: 6 }, (_, i) => ({ cycle: 51 + i, ok: false, error: 'synthetic' })),
+    ],
+    ['--mode=warn', '--json'],
+    (q) => {
+      assert.ok(q);
+      assert.equal(q.ok, false, '6 consecutive failures must trip the breaker');
+      assert.match(q.detail, /consecutiveFailures=6/);
+    },
+  );
 });

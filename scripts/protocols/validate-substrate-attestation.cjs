@@ -30,6 +30,8 @@ const { spawnSync } = require('node:child_process');
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const SEAL_REL = 'docs/operations/tnf-substrate-seal.json';
 const FULL_AUTO_STATE_REL = 'docs/operations/tnf-full-auto-state.json';
+const FULL_AUTO_RUN_LOG_REL = 'docs/operations/tnf-full-auto-runs.jsonl';
+/** Must match FULL_AUTO_FAIL_STREAK in packages/tnf-cli/src/utils/full-auto-cycle.ts. */
 const FULL_AUTO_FAIL_STREAK = 5;
 /**
  * A loop that dies (crashed supervisor, unloaded LaunchAgent, removed crontab
@@ -355,6 +357,35 @@ function clearEscalationHalt() {
   };
 }
 
+/**
+ * Consecutive failed cycles at the tail of the run log. A missing or unreadable
+ * log yields 0: absence of evidence must not synthesize a quarantine.
+ */
+function countTrailingFailures() {
+  const logPath = abs(FULL_AUTO_RUN_LOG_REL);
+  if (!fs.existsSync(logPath)) return 0;
+  let lines;
+  try {
+    lines = fs.readFileSync(logPath, 'utf8').trim().split('\n');
+  } catch {
+    return 0;
+  }
+  let streak = 0;
+  for (let i = lines.length - 1; i >= 0; i -= 1) {
+    const raw = lines[i].trim();
+    if (!raw) continue;
+    let event;
+    try {
+      event = JSON.parse(raw);
+    } catch {
+      continue;
+    }
+    if (event.ok) break;
+    streak += 1;
+  }
+  return streak;
+}
+
 function checkFullAutoQuarantine(applyQuarantine) {
   const statePath = abs(FULL_AUTO_STATE_REL);
   if (!fs.existsSync(statePath)) {
@@ -385,7 +416,12 @@ function checkFullAutoQuarantine(applyQuarantine) {
     };
   }
   const failed = Number(state.failedCycles || 0);
-  const lastOk = state.lastRun && state.lastRun.ok === true;
+  // `failedCycles` is a lifetime counter, so `failed >= N` latches true forever
+  // after the fifth failure this repo ever had. Pairing it with `!lastOk` then
+  // made the gate collapse the other way: one passing cycle at the tail cleared
+  // it regardless of history. Neither answers "is the loop failing now" — count
+  // the trailing streak in the run log instead.
+  const streakLength = countTrailingFailures();
 
   // Liveness before health: a frozen state file is not a passing one.
   if (state.mode === 'running') {
@@ -416,14 +452,13 @@ function checkFullAutoQuarantine(applyQuarantine) {
     }
   }
 
-  const streak =
-    failed >= FULL_AUTO_FAIL_STREAK && state.mode === 'running' && !lastOk;
+  const streak = streakLength >= FULL_AUTO_FAIL_STREAK && state.mode === 'running';
   if (!streak) {
     return {
       id: 'full-auto-quarantine',
       severity: 'soft',
       ok: true,
-      detail: `full-auto ok (mode=${state.mode}; failedCycles=${failed})`,
+      detail: `full-auto ok (mode=${state.mode}; consecutiveFailures=${streakLength}; lifetimeFailed=${failed})`,
     };
   }
   if (applyQuarantine) {
@@ -431,7 +466,7 @@ function checkFullAutoQuarantine(applyQuarantine) {
       ...state,
       mode: 'quarantined',
       quarantinedAt: new Date().toISOString(),
-      quarantineReason: `failedCycles>=${FULL_AUTO_FAIL_STREAK} without successful lastRun`,
+      quarantineReason: `${streakLength} consecutive failed cycles (>= ${FULL_AUTO_FAIL_STREAK})`,
       updatedAt: new Date().toISOString(),
     };
     fs.writeFileSync(statePath, `${JSON.stringify(next, null, 2)}\n`);
@@ -439,14 +474,14 @@ function checkFullAutoQuarantine(applyQuarantine) {
       id: 'full-auto-quarantine',
       severity: 'hard',
       ok: false,
-      detail: `applied quarantine: failedCycles=${failed}; mode→quarantined`,
+      detail: `applied quarantine: ${streakLength} consecutive failures; mode→quarantined`,
     };
   }
   return {
     id: 'full-auto-quarantine',
     severity: 'hard',
     ok: false,
-    detail: `stale fail streak: mode=${state.mode} failedCycles=${failed} lastOk=false — re-run with --apply-quarantine or remediate then reset state`,
+    detail: `active fail streak: mode=${state.mode} consecutiveFailures=${streakLength} (lifetimeFailed=${failed}) — re-run with --apply-quarantine or remediate then reset state`,
   };
 }
 

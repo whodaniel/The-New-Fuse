@@ -182,3 +182,51 @@ _Last updated: 2026-06-23T22:58:00Z_
 
 - 2026-08-07: Registry-sync protocol gap reconciled. CLI surfaces and .claude
   agents integrated into the native TNF agent registry.
+
+---
+
+## Batch 012: Silent-Gate Remediation (Turn Zero 2026-08-12)
+
+**Batch ID**: `turn-zero-2026-08-12-silent-gates` **Objective**: Convert four
+ASSIMILATE_CHECK findings — all cases of a health gate reporting the opposite of
+the truth — into landed code with regression tests **Owner**: Claude Code
+(interactive Turn Zero, operator Daniel Goldberg) **Handoff**:
+`0151b397-7eb3-40a1-ba8d-a24e2cb70290` **Claimed / Executed**: 2026-08-12
+
+### Directive States
+
+| ID          | Title                                                        | State       | Evidence                                                                                                         |
+| ----------- | ------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| directive-1 | Arm the full-auto circuit breaker inside the cycle loop      | ✅ verified | `full-auto-cycle.test.ts` (5 new streak assertions); 212-cycle streak reproduced from `tnf-full-auto-runs.jsonl` |
+| directive-2 | Gate quarantine on a trailing streak, not a lifetime counter | ✅ verified | `validate-substrate-attestation.test.cjs` 8/8 pass, incl. 2 new cases covering both failure directions           |
+| directive-3 | Point the A2A probe at the federation relay                  | ✅ verified | probe returns `ok:true`, responder `BROKER-Fuse-activity-log`; live check BLOCK → CAUTION                        |
+| directive-4 | Keep probe diagnostics off the JSON stdout contract          | ✅ verified | `JSON.parse(probe.stdout)` succeeds; was throwing `Unexpected token 'C'` on every run                            |
+| directive-5 | Correct the ASSIMILATE_CHECK scan path                       | ✅ verified | mandate + directives + continuous-improver updated to recurse `<job-hash>/<timestamp>.md`                        |
+| directive-6 | Repair the `tnf-cli` test suite (missing `whatsapp.test.ts`) | ⚠️ blocked  | operator decision required: author the test or drop the reference + refresh a 21-entry-stale snapshot            |
+
+### Root Cause — shared across directives 1–4
+
+Every one of these gates failed **toward "healthy"**. A gate that can only ever
+report green is indistinguishable from a system that is actually green, and
+nothing in CI could tell them apart because none of the four had a test
+exercising the failure path. Directives 1–4 each ship with a regression test
+that fails if the gate stops working.
+
+Corollary worth keeping: two of the four (directives 3 and 4) were independent
+defects in the **same 60-line probe**, either of which alone was sufficient to
+produce the CRITICAL. Fixing the obvious one would have left the check broken
+and looked like a fix. Verify a repair against the actual consumer, not the
+symptom.
+
+### KPI Summary
+
+| Metric                       | Value                         |
+| ---------------------------- | ----------------------------- |
+| Findings raised              | 6                             |
+| Landed with regression test  | 5 (83%)                       |
+| Blocked on operator decision | 1                             |
+| False CRITICALs eliminated   | 1 (`a2a-bridge-unresponsive`) |
+| Live check verdict           | BLOCK → CAUTION               |
+| Undetected failure window    | 212 cycles / ~7 weeks         |
+
+_Last updated: 2026-08-12_

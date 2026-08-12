@@ -13,6 +13,13 @@ export type FullAutoRunEventLike = {
 export const DEFAULT_FULL_AUTO_POST_STEP_TIMEOUT_MS = 10 * 60 * 1000;
 
 /**
+ * Consecutive failed cycles that trip the in-loop circuit breaker.
+ * Mirrors FULL_AUTO_FAIL_STREAK in scripts/protocols/validate-substrate-attestation.cjs;
+ * both must agree or the daemon and the attestor disagree about what "streaking" means.
+ */
+export const FULL_AUTO_FAIL_STREAK = 5;
+
+/**
  * After a successful primary self-improvement run, post-steps (broadcast,
  * status) must not consume the entire remaining cycle budget — a hung
  * orchestrate previously marked an otherwise-good cycle as TIMED OUT.
@@ -38,4 +45,22 @@ export function tallyFullAutoRuns(events: FullAutoRunEventLike[]): {
     else failedCycles += 1;
   }
   return { completedCycles, failedCycles };
+}
+
+/**
+ * Consecutive failures at the tail of the run log.
+ *
+ * The lifetime `failedCycles` counter cannot answer "is the loop broken right
+ * now" — once it passes the threshold it stays past it forever, so gates built
+ * on it are either permanently tripped or (when paired with a `lastRun.ok`
+ * escape hatch) never tripped at all. A trailing streak is the question the
+ * circuit breaker actually wants answered.
+ */
+export function countTrailingFailures(events: FullAutoRunEventLike[]): number {
+  let streak = 0;
+  for (let i = events.length - 1; i >= 0; i -= 1) {
+    if (events[i]?.ok) break;
+    streak += 1;
+  }
+  return streak;
 }

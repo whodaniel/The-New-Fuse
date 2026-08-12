@@ -69,7 +69,12 @@ import {
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
-import { resolvePostStepTimeoutMs, tallyFullAutoRuns } from './utils/full-auto-cycle.js';
+import {
+  countTrailingFailures,
+  FULL_AUTO_FAIL_STREAK,
+  resolvePostStepTimeoutMs,
+  tallyFullAutoRuns,
+} from './utils/full-auto-cycle.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -1179,19 +1184,27 @@ type FullAutoRunEvent = {
   finishedAt: string;
   durationMs: number;
   ok: boolean;
+  /** Only ever set when the cycle itself failed (ok === false). */
   error?: string;
+  /** Best-effort post-step failures on an otherwise-successful cycle. Kept
+   *  separate from `error` so a record can never claim success and failure at
+   *  once — readers that gate on `error` used to treat a soft broadcast
+   *  timeout as a dead cycle, and readers that gate on `ok` ignored it. */
+  warnings?: string[];
   /** Set when the cycle was killed for exceeding --cycle-timeout-minutes,
    *  as opposed to failing on its own. */
   timedOut?: boolean;
 };
 type FullAutoState = {
-  mode: 'running' | 'idle';
+  mode: 'running' | 'idle' | 'quarantined';
   updatedAt: string;
   intervalMinutes: number;
   maxCycles: number;
   completedCycles: number;
   failedCycles: number;
   lastRun?: FullAutoRunEvent;
+  quarantinedAt?: string;
+  quarantineReason?: string;
 };
 
 const CONTROL_PLANE_PROVIDER_ENV_KEY = 'TNF_CONTROL_PLANE_PROVIDER';
@@ -10798,9 +10811,7 @@ fullAuto
           finishedAt: finishedAt.toISOString(),
           durationMs: finishedAt.getTime() - startedAt.getTime(),
           ok: true,
-          ...(postWarnings.length > 0
-            ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
-            : {}),
+          ...(postWarnings.length > 0 ? { warnings: postWarnings } : {}),
         };
 
         appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
@@ -10909,9 +10920,13 @@ fullAuto
         const cycleTimeoutMs = cycleTimeoutMinutes * 60 * 1000;
         // Seed counters from the run log so daemon restarts don't report
         // completedCycles=0 after successful historical cycles.
-        const historical = tallyFullAutoRuns(readAllJsonLines(FULL_AUTO_RUN_LOG_PATH));
+        const historicalEvents = readAllJsonLines(FULL_AUTO_RUN_LOG_PATH);
+        const historical = tallyFullAutoRuns(historicalEvents);
         let completedCycles = historical.completedCycles;
         let failedCycles = historical.failedCycles;
+        // Seed the streak too, so restarting the daemon cannot be used (or
+        // accidentally act) as a way to walk away from an in-progress failure run.
+        let consecutiveFailures = countTrailingFailures(historicalEvents);
 
         // Cycle numbers must stay monotonic across daemon restarts, otherwise the
         // run log reads `…7, 8, 1` and the cycle number is not a usable key.
@@ -10993,9 +11008,7 @@ fullAuto
               finishedAt: finishedAt.toISOString(),
               durationMs: finishedAt.getTime() - startedAt.getTime(),
               ok: true,
-              ...(postWarnings.length > 0
-                ? { error: `post-steps soft-failed: ${postWarnings.join(' | ')}` }
-                : {}),
+              ...(postWarnings.length > 0 ? { warnings: postWarnings } : {}),
             };
             completedCycles += 1;
             console.log(
@@ -11039,15 +11052,45 @@ fullAuto
           // (once in the catch, once here), double-counting every failed cycle
           // in the run log.
           appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
+
+          // Circuit breaker. Preflight evaluates the quarantine gate exactly
+          // once, before this loop starts, so a daemon that boots healthy used
+          // to keep cycling no matter how badly it degraded: this repo logged a
+          // 212-cycle unbroken failure streak between 2026-06 and 2026-07 while
+          // mode stayed "running" and nothing re-checked. Re-evaluate per cycle.
+          consecutiveFailures = event.ok ? 0 : consecutiveFailures + 1;
+          const tripped = consecutiveFailures >= FULL_AUTO_FAIL_STREAK;
+
           writeFullAutoState({
-            mode: options.strict && !event.ok ? 'idle' : 'running',
+            mode: tripped ? 'quarantined' : options.strict && !event.ok ? 'idle' : 'running',
             updatedAt: new Date().toISOString(),
             intervalMinutes,
             maxCycles,
             completedCycles,
             failedCycles,
             lastRun: event,
+            ...(tripped
+              ? {
+                  quarantinedAt: new Date().toISOString(),
+                  quarantineReason: `${consecutiveFailures} consecutive failed cycles (>= ${FULL_AUTO_FAIL_STREAK})`,
+                }
+              : {}),
           });
+
+          if (tripped) {
+            console.error(
+              chalk.red(
+                `[full-auto] QUARANTINED after ${consecutiveFailures} consecutive failed cycles. ` +
+                  `Last error: ${event.error ?? 'unknown'}`
+              )
+            );
+            console.error(
+              chalk.yellow(
+                '[full-auto] Loop halted. Remediate, then clear with: tnf protocol substrate --clear-quarantine'
+              )
+            );
+            break;
+          }
 
           if (options.strict && cycleError) {
             throw cycleError;
@@ -11063,15 +11106,19 @@ fullAuto
           await sleepMs(intervalMs);
         }
 
-        writeFullAutoState({
-          mode: 'idle',
-          updatedAt: new Date().toISOString(),
-          intervalMinutes,
-          maxCycles,
-          completedCycles,
-          failedCycles,
-          lastRun: readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) || undefined,
-        });
+        // A quarantine written inside the loop must survive loop exit; demoting
+        // it back to `idle` here would silently re-arm the next daemon start.
+        if (consecutiveFailures < FULL_AUTO_FAIL_STREAK) {
+          writeFullAutoState({
+            mode: 'idle',
+            updatedAt: new Date().toISOString(),
+            intervalMinutes,
+            maxCycles,
+            completedCycles,
+            failedCycles,
+            lastRun: readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) || undefined,
+          });
+        }
 
         console.log(chalk.bold('\nTNF Full-Auto Loop Complete\n'));
         console.log(`Completed cycles: ${chalk.green(String(completedCycles))}`);

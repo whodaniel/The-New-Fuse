@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T04:48:17.413Z** — handoff
+Updated: **2026-08-12T05:29:17.269Z** — handoff
+`c8911029-d187-40a8-9544-55a0cae17c2c` (`6cff2cc8e860`).
+`d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` (`6cff2cc8e860`).
 `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae` (`d9404e41cc1f`).
 `0151b397-7eb3-40a1-ba8d-a24e2cb70290` (`318ded426b36`).
 `6f250b5a-e984-4f07-a339-5e69f17e1dfb` (`80ae0ce4ff1d`).
@@ -189,11 +191,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                             |
-| -------- | ------------------------------------------------------------------ |
-| **P0**   | Push commits when operator requests                                |
-| **P0**   | Optional: wire provider-failover into model-watchdog boot path     |
-| **P0**   | Publisher/sigstore attestation for third-party skills remains soft |
+| Priority | Action                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Operator: approve the held-back TURN_ZERO_MANDATE.md ASSIMILATE_CHECK scan-path fix (authority surface, agents may not self-approve)\|Decide on tnf-cli test suite: whatsapp.test.ts is referenced but never existed, so command-surface.test.ts has never run (20 missing / 1 changed vs snapshot)\|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds 174G\|Hermes cron output tree holds only 1 file - scheduler needs attention |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -275,6 +275,67 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | Continuous Improver | `TNF:LOCAL:AGENT:CONTINUOUS-IMPROVER:001` | **NEW** — registered at 2026-08-11T14:29:30.845Z |
 
 ## Protocol Gaps (prioritized)
+
+### known-failure entries (2026-08-12 Turn Zero, Claude Code)
+
+Four gates were reporting the opposite of the truth. All four are fixed; the
+pattern they share is the durable lesson: **every one of them failed silently in
+the direction of "looks fine", and none had a test that could tell the
+difference.** Prefer gates that fail loud and are exercised by a test that would
+notice if the gate stopped working.
+
+1. **`known-failure: full-auto circuit breaker never armed`** —
+   `full-auto start` evaluated its quarantine gate exactly once, in preflight,
+   before entering the cycle loop. Nothing re-checked inside the loop, so the
+   daemon rode a **212-cycle unbroken failure streak (2026-06-03 → 2026-07-20)**
+   with `mode: "running"`, and 224 of 274 logged cycles failed. Fixed: per-cycle
+   streak evaluation with self-quarantine at `FULL_AUTO_FAIL_STREAK`
+   (`packages/tnf-cli/src/cli.ts`). Watch for: any gate whose only evaluation is
+   at process start.
+2. **`known-failure: lifetime counter used as a streak`** —
+   `validate-substrate-attestation.cjs` gated on
+   `failedCycles >= 5 && !lastRun.ok`. `failedCycles` is cumulative, so the left
+   side latched true permanently after this repo's fifth-ever failure, and the
+   `!lastOk` escape hatch then cleared the gate whenever a single cycle passed.
+   The gate could therefore never fire during a real streak that happened to end
+   on a pass. Fixed: count trailing failures in the run log.
+3. **`known-failure: A2A bridge probe pointed at the wrong relay`** —
+   `probe-a2a-bridge.cjs` defaulted to `ws://127.0.0.1:3000/ws` (the agent
+   relay) while `federation-relay-client.cjs` — the library the probe itself
+   instantiates — defaults to `:3007` (the federation mesh). The probe
+   connected, registered, and waited for a peer that is not on that port,
+   reporting `CRITICAL a2a-bridge-unresponsive` against a **healthy** bridge.
+   Verified: the same probe against `:3007` returns `ok: true`, responder
+   `BROKER-Fuse-activity-log`. Fixed via a shared `resolveFederationRelayUrl()`.
+   Note `:3007` was already the documented health URL in gap 2 below — the
+   contradiction sat in this file unnoticed.
+4. **`known-failure: debug output on a machine-readable stdout`** — the same
+   probe wrote `console.log("Connected!")` to stdout, which is its JSON
+   contract. `live-agent-work-check.cjs` does `JSON.parse(probe.stdout)`, so
+   **every** invocation threw `Unexpected token 'C'` and was reported as an
+   unresponsive bridge — independently of gap 3, and it would have survived the
+   port fix alone. Fixed: diagnostics to stderr. Watch for: any script whose
+   stdout is parsed by a caller.
+
+**Open (not fixed — needs an owner):**
+
+- **`tnf-cli` test suite is red on a file that never existed.** `package.json`
+  `test` chains `tsx src/whatsapp/whatsapp.test.ts`; there is no such file and
+  no commit ever added one. The `&&` chain therefore dies there, so
+  `command-surface.test.ts` has **never executed** in the suite. Running it
+  directly reports 20 missing and 1 changed command versus
+  `command-surface.snapshot.json` — pre-existing drift, unrelated to any current
+  change. Decide: write the WhatsApp test, or drop the reference and refresh the
+  snapshot.
+- **ASSIMILATE_CHECK scanned a path shape that does not exist.** The mandate
+  prescribed `~/.hermes/cron/output/*.jsonl`; Hermes writes
+  `<job-hash>/<timestamp>.md`. The glob matched nothing, so the check reported
+  clean against an unread tree. Instruction corrected in `TURN_ZERO_MANDATE.md`,
+  `TNF_DIRECTIVES.md`, and `.agent/agents/continuous-improver.md`; the
+  underlying tree still holds only **1 file total**, so the scheduler itself
+  needs attention.
+
+### Standing gaps
 
 1. **BROKER-Green intermittent** — verified started and running
 2. **Extension + relay reload mandatory** — dist-v7 + relay restart; verify with
@@ -878,3 +939,9 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d80e7714-7a4c-4b2f-aa87-7c5cef8ee083) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c8911029-d187-40a8-9544-55a0cae17c2c) | ✅ HANDOFF_READY |
