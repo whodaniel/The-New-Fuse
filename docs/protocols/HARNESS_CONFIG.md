@@ -25,16 +25,16 @@ are optional **host harness surfaces**. Docs in `docs/core/` are artefacts;
 
 ## 2. Eight layers (UNU anatomy → TNF evidence)
 
-| Layer                           | TNF mapping                                                          | Verify                                               |
-| ------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- | ------------- |
-| Interface / override            | Turn Zero, harness pause/resume, agent modes                         | `tnf harness inspect`                                |
-| Provider routing                | Assimilation routes + failover policy + harness context              | `provider-failover.cjs` / harness-config             |
-| Context + compaction            | FRONTLOAD Stages A–C + compaction records                            | `scripts/harness/compaction-record.cjs`              |
-| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                          | `scripts/harness/sandbox-run.cjs`                    |
-| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                 | `scripts/harness/permission-berm.cjs`                |
-| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                   | `tnf harness cycle`                                  |
-| Memory / session / trajectories | MEMORY.md (static) + memory-layer (dynamic) + trajectories + handoff | `scripts/harness/memory-layer.cjs`, `trajectory.cjs` |
-| Tools / MCP / skills            | mcp_config + entrypoint hash lock + supply-chain attest              | `mcp-supply-chain-attest.cjs --write-lock            | --check-lock` |
+| Layer                           | TNF mapping                                                          | Verify                                                 |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
+| Interface / override            | Turn Zero, harness pause/resume, agent modes                         | `tnf harness inspect`                                  |
+| Provider routing                | Assimilation routes + failover policy + harness context              | `provider-failover.cjs` / harness-config               |
+| Context + compaction            | FRONTLOAD Stages A–C + compaction records                            | `scripts/harness/compaction-record.cjs`                |
+| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                          | `scripts/harness/sandbox-run.cjs`                      |
+| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                 | `scripts/harness/permission-berm.cjs`                  |
+| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                   | `tnf harness cycle`                                    |
+| Memory / session / trajectories | MEMORY.md (static) + memory-layer (dynamic) + trajectories + handoff | `scripts/harness/memory-layer.cjs`, `trajectory.cjs`   |
+| Tools / MCP / skills            | mcp lock + skill publisher registry/lock + optional cosign           | `skill-publisher-attest.cjs` / `supply-chain --skills` |
 
 Machine-readable status + evidence paths live in
 `data/harness/harness-config.json`. Update that file when a layer’s evidence or

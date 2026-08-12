@@ -1,10 +1,11 @@
 # 📍 LIVING_STATE.md - Active Session Synchronization
 
-`[CLASS:PRIME] [STATUS:DRIFT]`
+`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Push this commit
+**Current Directive:** Optional: add SKILL.md.sig for high-value third-party
+skills
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -900,6 +901,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T05:49:27.110Z handoff `37816a6d-f24c-4ad5-95d0-75f33f224694` head
+  `5a5e78ab191e` project `TNF-SESSION` — Optional: add SKILL.md.sig for
+  high-value third-party skills
 
 - 2026-08-12T05:30:07.101Z handoff `cd4f3527-9d3b-43ab-9eba-a0248d986fad` head
   `6cff2cc8e860` project `TNF-SESSION` — Push this commit

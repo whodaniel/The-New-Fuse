@@ -18,6 +18,10 @@ function parseArgs(argv) {
     strict: argv.includes('--strict'),
     writeLock: argv.includes('--write-lock'),
     checkLock: argv.includes('--check-lock') || argv.includes('--strict'),
+    skills: argv.includes('--skills') || argv.includes('--with-skills'),
+    writeSkillLock: argv.includes('--write-skill-lock'),
+    checkSkillLock: argv.includes('--check-skill-lock') || argv.includes('--strict-skills'),
+    strictSkills: argv.includes('--strict-skills'),
   };
 }
 
@@ -179,25 +183,58 @@ function main() {
   }
   const lockCheck = opts.checkLock || opts.writeLock ? checkLock(servers, lock) : { ok: true, drifts: [] };
 
-  const ok = opts.strict
-    ? missing.length === 0 && lockCheck.ok
-    : opts.checkLock
-      ? lockCheck.ok
-      : true;
+  let skillAttest = null;
+  if (opts.skills || opts.writeSkillLock || opts.checkSkillLock || opts.strictSkills) {
+    const skillMod = require('./skill-publisher-attest.cjs');
+    const { rows } = skillMod.attestSkills({ limit: 0 });
+    let skillLock = null;
+    try {
+      skillLock = JSON.parse(fs.readFileSync(skillMod.LOCK_PATH, 'utf8'));
+    } catch {
+      skillLock = null;
+    }
+    if (opts.writeSkillLock) skillLock = skillMod.writeLock(rows);
+    const skillLockCheck =
+      opts.checkSkillLock || opts.writeSkillLock
+        ? skillMod.checkLock(rows, skillLock)
+        : { ok: true, drifts: [] };
+    const cosignFail = rows.filter((r) => r.cosign?.attempted && r.cosign.ok === false);
+    const skillOk = opts.strictSkills
+      ? skillLockCheck.ok && cosignFail.length === 0
+      : opts.checkSkillLock
+        ? skillLockCheck.ok
+        : true;
+    skillAttest = {
+      ok: skillOk,
+      total: rows.length,
+      lockOk: skillLockCheck.ok,
+      lockDrifts: skillLockCheck.drifts.slice(0, 20),
+      cosignFailures: cosignFail.length,
+      registry: path.relative(ROOT, skillMod.REGISTRY_PATH),
+    };
+  }
+
+  const ok =
+    (opts.strict
+      ? missing.length === 0 && lockCheck.ok
+      : opts.checkLock
+        ? lockCheck.ok
+        : true) && (skillAttest ? skillAttest.ok : true);
   const payload = {
     ok,
-    softMode: !opts.strict && !opts.checkLock,
+    softMode: !opts.strict && !opts.checkLock && !opts.strictSkills,
     at: new Date().toISOString(),
     configSources: configs.map((c) => c.path),
     servers,
     skills,
+    skillPublisher: skillAttest,
     failed: missing.map((s) => s.name),
     lockPath: path.relative(ROOT, LOCK_PATH),
     lockUpdated: Boolean(opts.writeLock),
     lockOk: lockCheck.ok,
     lockDrifts: lockCheck.drifts,
     guidance:
-      'Use --write-lock to pin entrypoint hashes; --check-lock / --strict to fail on missing entrypoints or hash drift. Skills counted for progressive-disclosure inventory only.',
+      'Use --write-lock / --check-lock for MCP entrypoints. Add --skills or --write-skill-lock / --check-skill-lock for publisher registry + skill hash lock (optional cosign). --strict-skills fails on skill lock drift or failed cosign.',
   };
 
   fs.mkdirSync(RECEIPT_DIR, { recursive: true });
@@ -225,10 +262,23 @@ function main() {
           : `lock: DRIFT (${lockCheck.drifts.length})\n  - ${lockCheck.drifts.join('\n  - ')}`
       );
     }
+    if (skillAttest) {
+      console.log(
+        `skill-publisher: total=${skillAttest.total} lockOk=${skillAttest.lockOk} cosignFail=${skillAttest.cosignFailures}`
+      );
+    }
     console.log(
       ok
-        ? `\nSUPPLY-CHAIN ${opts.strict ? 'PASS (strict)' : opts.checkLock ? 'PASS (lock)' : 'PASS (soft inventory)'}`
-        : `\nSUPPLY-CHAIN FAIL (missing=${missing.length} drifts=${lockCheck.drifts.length})`
+        ? `\nSUPPLY-CHAIN ${
+            opts.strict || opts.strictSkills
+              ? 'PASS (strict)'
+              : opts.checkLock || opts.checkSkillLock
+                ? 'PASS (lock)'
+                : 'PASS (soft inventory)'
+          }`
+        : `\nSUPPLY-CHAIN FAIL (missing=${missing.length} drifts=${lockCheck.drifts.length} skillOk=${
+            skillAttest ? skillAttest.ok : 'n/a'
+          })`
     );
     console.log(`receipt: ${payload.receipt}`);
   }

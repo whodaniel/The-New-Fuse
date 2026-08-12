@@ -20,6 +20,7 @@ const SCRIPTS = {
   sandbox: 'scripts/harness/materialize-sandbox-profile.cjs',
   sandboxRun: 'scripts/harness/sandbox-run.cjs',
   supplyChain: 'scripts/harness/mcp-supply-chain-attest.cjs',
+  skillPublisher: 'scripts/harness/skill-publisher-attest.cjs',
   hostCompaction: 'scripts/harness/host-compaction-adapter.cjs',
   failover: 'scripts/harness/provider-failover.cjs',
 };
@@ -45,7 +46,8 @@ Commands:
   compaction write|list …
   sandbox [--out path]                 (materialize profile only)
   sandbox-run [--materialize-only] [--] <cmd>…
-  supply-chain [--json] [--write-lock] [--check-lock|--strict]
+  supply-chain [--json] [--write-lock] [--check-lock|--strict] [--skills] [--write-skill-lock] [--check-skill-lock|--strict-skills]
+  skill-publisher [--json] [--write-lock] [--check-lock] [--strict-skills]
   failover [--host <name>] [--seed] [--json]
   host-compaction record|import|list …
 `);
@@ -66,6 +68,7 @@ function main() {
   if (cmd === 'sandbox') run(SCRIPTS.sandbox, rest);
   if (cmd === 'sandbox-run') run(SCRIPTS.sandboxRun, rest);
   if (cmd === 'supply-chain') run(SCRIPTS.supplyChain, rest);
+  if (cmd === 'skill-publisher') run(SCRIPTS.skillPublisher, rest);
   if (cmd === 'failover' || cmd === 'provider-failover') run(SCRIPTS.failover, rest);
   if (cmd === 'host-compaction') run(SCRIPTS.hostCompaction, rest);
   console.error(`unknown command: ${cmd}`);

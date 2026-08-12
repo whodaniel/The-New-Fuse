@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T05:30:07.055Z** — handoff
+Updated: **2026-08-12T05:49:27.054Z** — handoff
+`37816a6d-f24c-4ad5-95d0-75f33f224694` (`5a5e78ab191e`).
 `cd4f3527-9d3b-43ab-9eba-a0248d986fad` (`6cff2cc8e860`).
 `c8911029-d187-40a8-9544-55a0cae17c2c` (`6cff2cc8e860`).
 `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` (`6cff2cc8e860`).
@@ -192,10 +193,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                          |
-| -------- | --------------------------------------------------------------- |
-| **P0**   | Push this commit                                                |
-| **P0**   | Optional: sigstore/publisher attestation for third-party skills |
+| Priority | Action                                                       |
+| -------- | ------------------------------------------------------------ |
+| **P0**   | Optional: add SKILL.md.sig for high-value third-party skills |
+| **P0**   | Continue remaining dirty-tree triage outside harness         |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -950,3 +951,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (cd4f3527-9d3b-43ab-9eba-a0248d986fad) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(37816a6d-f24c-4ad5-95d0-75f33f224694) | ✅ HANDOFF_READY |

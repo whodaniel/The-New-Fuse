@@ -108,17 +108,20 @@
       "notes": "MEMORY.md = static procedural curated facts. memory-layer.cjs = retain/recall dynamic layer. Do not conflate."
     },
     "tools_mcp_supply_chain": {
-      "status": "partial",
+      "status": "implemented",
       "evidence": [
         "data/mcp_config.json",
         "data/harness/mcp.memory.server.json",
         "data/harness/mcp-supply-chain.lock.json",
+        "data/harness/skill-publisher-registry.json",
+        "data/harness/skill-publisher.lock.json",
         "scripts/install-agent-frontload.cjs",
         "scripts/harness/verify-harness-completeness.cjs",
         "scripts/harness/mcp-supply-chain-attest.cjs",
+        "scripts/harness/skill-publisher-attest.cjs",
         "scripts/harness/memory-mcp-server.cjs"
       ],
-      "gap": "Entrypoint hash lockfile is pinned; publisher/sigstore attestation for third-party skills remains soft."
+      "gap": "Cosign/sigstore verify runs when SKILL.md.sig (or provenance) is present; unsigned third-party skills stay soft unless --strict-skills."
     }
   },
   "injectionSurfaces": {

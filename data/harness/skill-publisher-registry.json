@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-08-12T05:45:00.000Z",
+  "description": "Trusted skill publisher identities for TNF supply-chain attestation. Unsigned third-party skills remain soft unless --strict-skills.",
+  "publishers": {
+    "tnf": {
+      "displayName": "The New Fuse",
+      "trust": "first-party",
+      "pathPrefixes": [
+        ".agent/skills/tnf-",
+        ".agent/skills/tnf/",
+        "scripts/harness/"
+      ],
+      "identityUrl": "https://thenewfuse.com"
+    },
+    "anthropic": {
+      "displayName": "Anthropic",
+      "trust": "vendor",
+      "pathPrefixes": [".agent/skills/anthropic/", ".claude/skills/"],
+      "identityUrl": "https://www.anthropic.com"
+    },
+    "cursor": {
+      "displayName": "Cursor",
+      "trust": "vendor",
+      "pathPrefixes": [".cursor/skills-cursor/", ".agent/skills/cursor-"],
+      "identityUrl": "https://cursor.com"
+    },
+    "openclaw": {
+      "displayName": "OpenClaw",
+      "trust": "interop",
+      "pathPrefixes": [".agent/skills/openclaw", ".skills/openclaw"],
+      "identityUrl": "https://docs.openclaw.ai"
+    }
+  },
+  "requirePublisherMetadataFor": ["third-party"],
+  "cosign": {
+    "enabled": true,
+    "binary": "cosign",
+    "softWhenMissingBinary": true
+  }
+}

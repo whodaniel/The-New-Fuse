@@ -1,39 +1,24 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T05:30:07.055Z`  
-Handoff ID: `cd4f3527-9d3b-43ab-9eba-a0248d986fad`
+Created At: `2026-08-12T05:49:27.054Z`  
+Handoff ID: `37816a6d-f24c-4ad5-95d0-75f33f224694`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `6cff2cc8e860e3251f874829effbfe61765f7e8b`
+- Head SHA: `5a5e78ab191e54e9d9592dffb0b744ae5bc1f631`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Wire provider-failover into model-watchdog boot: harness-context seed,
-  failover consumer default, start-agent-network chain (policy +
-  harness-context.env)
+- Skill publisher attestation: registry + skill hash lock + optional cosign;
+  supply-chain --skills/--write-skill-lock; tools_mcp_supply_chain marked
+  implemented
 
 ## Changed Paths
 
-- .agent/agents/continuous-improver.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/TNF_DIRECTIVES.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/utils/full-auto-cycle.test.ts
-- packages/tnf-cli/src/utils/full-auto-cycle.ts
-- scripts/lib/federation-relay-client.cjs
-- scripts/protocols/probe-a2a-bridge.cjs
-- scripts/protocols/validate-substrate-attestation.cjs
-- scripts/protocols/validate-substrate-attestation.test.cjs
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - .learnings/SUCCESSES.md
@@ -57,18 +42,28 @@ Handoff ID: `cd4f3527-9d3b-43ab-9eba-a0248d986fad`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
+- docs/protocols/HARNESS_CONFIG.md
 - docs/protocols/TURN_ZERO_MANDATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/src/telegram/TelegramService.ts
 - pnpm-lock.yaml
-- scripts/harness/provider-failover.cjs
+- scripts/harness/mcp-supply-chain-attest.cjs
 - scripts/harness/tnf-harness.cjs
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/harness/provider-failover.cjs
 - scripts/model-watchdog-failover-consumer.cjs
 - scripts/runtime/resolve-harness-context.cjs
 - scripts/start-agent-network.sh
 - .cursor/rules/tnf-harness.mdc.tnf-bak
 - CLAUDE.md.tnf-bak
+- data/harness/skill-publisher-registry.json
+- data/harness/skill-publisher.lock.json
+- packages/tnf-cli/src/utils/fuzzy.ts
+- scripts/harness/skill-publisher-attest.cjs
 
 ## Verification
 
@@ -81,7 +76,7 @@ Handoff ID: `cd4f3527-9d3b-43ab-9eba-a0248d986fad`
 
 - Owner: `orchestrator`
 - Targets: `orchestrator`
-- Priority: `high`
+- Priority: `medium`
 
 ### Resume Checklist
 
@@ -92,5 +87,5 @@ Handoff ID: `cd4f3527-9d3b-43ab-9eba-a0248d986fad`
 
 ## Next Actions
 
-- Push this commit
-- Optional: sigstore/publisher attestation for third-party skills
+- Optional: add SKILL.md.sig for high-value third-party skills
+- Continue remaining dirty-tree triage outside harness
