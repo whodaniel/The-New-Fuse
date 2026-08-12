@@ -1,7 +1,18 @@
 # Sub-Director model policy
 # Prelaunch: keep default_tier=local-only and allow_cloud=false
-# To escalate an envelope to cloud, pass {preferred_tier: "cloud-ok"} or {cloud_ok: true}
-# in the envelope payload, OR flip this file globally.
+# To escalate a SINGLE envelope to cloud, the payload must set BOTH:
+#     {preferred_tier: "cloud-ok", cloud_ok: true}
+#
+# Measured 2026-08-12 — neither flag works on its own, despite an earlier
+# version of this comment describing them as alternatives:
+#     cloud_ok: true            sets allow_cloud, but leaves tier=local-only
+#                               -> the local-only branch refuses without ever
+#                                  considering cloud
+#     preferred_tier: cloud-ok  sets tier, but leaves allow_cloud=false
+#                               -> _pick("cloud") declines
+# Cloud selection requires both conditions, so both flags are required.
+#
+# Alternatively flip this file globally with allow_cloud: true.
 #
 # Allowed values for default_tier:
 #   local-only    : use local server if reachable; refuse otherwise. No cloud. (safest default)

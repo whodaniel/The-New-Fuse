@@ -39,7 +39,7 @@ DIRECT="tnf:direct:sub-director:$REGISTRY_ID"
 PROCESSING="$DIRECT:processing"
 log() { echo "[$(date -Iseconds)] $*" >> "$LOG"; }
 
-PAYLOAD='{"id":"'"$REGISTRY_ID"'","name":"hermes-infra-worker","role":"worker","platform":"claude","status":"active","isOnline":true,"capabilities":["infra_audit","cloud_run_manifest_validate","image_tag_resolve","build_config_render","rollout_health_probe","iam_scope_audit"],"registeredAt":"'"$NOW"'","lastSeen":"'"$NOW"'","routing":{"callableWorker":true,"directorPoolEligible":true},"source":"sub-director-cron-refresh","subdirector_authorized":true}'
+PAYLOAD='{"id":"'"$REGISTRY_ID"'","name":"hermes-infra-worker","role":"worker","expectedCadenceSec":900,"platform":"claude","status":"active","isOnline":true,"capabilities":["infra_audit","cloud_run_manifest_validate","image_tag_resolve","build_config_render","rollout_health_probe","iam_scope_audit"],"registeredAt":"'"$NOW"'","lastSeen":"'"$NOW"'","routing":{"callableWorker":true,"directorPoolEligible":true},"source":"sub-director-cron-refresh","subdirector_authorized":true}'
 redis-cli -p 6379 HSET tnf:agent-registry "$REGISTRY_ID" "$PAYLOAD" >> "$LOG" 2>&1
 
 HB='{"header":{"agent_id":"'"$REGISTRY_ID"'","alg":"HS256","nonce":"hb-'"$(date +%s%N)"'","timestamp":'"$(date +%s%3N)"'},"payload":{"type":"heartbeat","channel":"tnf:agents","data":{"from":{"agentId":"'"$REGISTRY_ID"'","agentName":"hermes-infra-worker","role":"worker","platform":"claude"},"to":{"broadcast":true},"type":"heartbeat","content":"cron-refresh heartbeat","timestamp":"'"$NOW"'"}},"signature":"cron-hb"}'

@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T10:45:24.037Z`  
-Handoff ID: `66331bb5-402f-47b0-b561-76ba65af2706`
+Created At: `2026-08-12T17:11:11.410Z`  
+Handoff ID: `618cb66d-403a-47c4-a0a6-313b9c864884`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `093d36133ddb18b1369bd32bb783c8b1b0ca17e0`
+- Head SHA: `cd0fd275078ea86084d89989f9d07d39f2f3efde`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -20,21 +20,28 @@ Handoff ID: `66331bb5-402f-47b0-b561-76ba65af2706`
 ## Changed Paths
 
 - docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/HARNESS_CONFIG.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/runtime/establish-core-federated-fleet.cjs
+- packages/tnf-cli/src/RedisAgentClient.ts
+- packages/tnf-cli/src/services/DispatchGuard.test.ts
+- packages/tnf-cli/src/services/DispatchGuard.ts
+- scripts/agents/subdirector-codegen-worker-cycle.sh
+- scripts/agents/subdirector-infra-worker-cycle.sh
 - scripts/sub-director/model-policy.example.yaml
 - scripts/sub-director/model_resolver.py
-- scripts/sub-director/run_one_envelope.py
-- scripts/sub-director/sync-runtime.sh
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - apps/frontend/.env.production.example
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
 - apps/frontend/src/data/codebase_map.json
+- apps/frontend/src/hooks/useAuth.tsx
+- data/llm-intel/arena-intel-latest.json
+- data/llm-intel/arena-intel.json
 - data/llm-intel/ranking-recommendations.json
 - data/llm-intel/ranking-report-latest.md
 - data/llm-provider-status.json
@@ -50,16 +57,25 @@ Handoff ID: `66331bb5-402f-47b0-b561-76ba65af2706`
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/slashCommands.ts
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
-- docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md
-- docs/protocols/reference/model_resolver.snapshot.py
+- scripts/runtime/establish-core-federated-fleet.cjs
+- scripts/sub-director/run_one_envelope.py
+- scripts/sub-director/sync-runtime.sh
+- apps/frontend/src/services/aiAssistPreferences.ts
+- apps/frontend/src/services/replaceFeedback.ts
+- apps/frontend/src/services/userSessionFactors.ts
+- apps/frontend/src/utils/pageContextSnapshot.ts
+- data/llm-intel/history/intel_2026-08-12.json
+- packages/tnf-cli/src/services/AgentFocusService.ts
 
 ## Verification
 
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation

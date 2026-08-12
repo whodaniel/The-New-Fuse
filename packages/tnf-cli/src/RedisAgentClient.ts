@@ -614,7 +614,27 @@ export class RedisAgentClient {
       try {
         const agent = JSON.parse(jsonStr as string);
         const lastSeen = new Date(agent.lastSeen);
-        const isOnline = Date.now() - lastSeen.getTime() < CONFIG.heartbeatInterval * 2;
+
+        // Liveness must be relative to how often the agent actually beats.
+        //
+        // The flat `heartbeatInterval * 2` (60s) rule assumes an in-process
+        // agent beating every 30s. The sub-director workers are cron-driven at
+        // */5 and */15, so a perfectly healthy codegen worker read offline for
+        // 240 of every 300 seconds (80%) and the infra worker for 840 of 900
+        // (93%). `tnf agents list` therefore flickered green/red for precisely
+        // the agents an operator would delegate to, and dispatch inherited the
+        // same noise.
+        //
+        // Agents may now declare `expectedCadenceSec` at registration; they are
+        // allowed two missed beats before being called stale. Agents that
+        // declare nothing keep the original rule, so this is backwards
+        // compatible with every existing registry row.
+        const cadenceSec = Number(agent.expectedCadenceSec);
+        const windowMs =
+          Number.isFinite(cadenceSec) && cadenceSec > 0
+            ? cadenceSec * 1000 * 2
+            : CONFIG.heartbeatInterval * 2;
+        const isOnline = Date.now() - lastSeen.getTime() < windowMs;
 
         agentList.push({
           ...agent,

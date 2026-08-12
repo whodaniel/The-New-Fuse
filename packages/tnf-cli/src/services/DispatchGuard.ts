@@ -48,6 +48,14 @@ export interface RegisteredAgent {
   platform?: string;
   lastSeen?: string;
   isOnline?: boolean;
+  /**
+   * How often this agent is expected to heartbeat, in seconds.
+   *
+   * Cron-driven workers beat every 300-900s, not every 30s. Without this the
+   * flat 60s window marked healthy workers stale 80-93% of the time. Agents
+   * that declare nothing keep the flat window.
+   */
+  expectedCadenceSec?: number;
 }
 
 export type RecipientStatus = 'live' | 'stale' | 'unknown' | 'broadcast';
@@ -145,7 +153,13 @@ export function resolveRecipient(
 
   // Prefer the registry's own isOnline when present so a future change to the
   // heartbeat rule propagates here automatically rather than silently drifting.
-  const live = typeof match.isOnline === 'boolean' ? match.isOnline : age < windowMs;
+  // When it is absent, honour the agent's declared cadence before falling back
+  // to the flat window — otherwise this would call a healthy cron worker stale
+  // exactly as the old rule did.
+  const cadenceSec = Number(match.expectedCadenceSec);
+  const effectiveWindowMs =
+    Number.isFinite(cadenceSec) && cadenceSec > 0 ? cadenceSec * 1000 * 2 : windowMs;
+  const live = typeof match.isOnline === 'boolean' ? match.isOnline : age < effectiveWindowMs;
 
   return {
     status: live ? 'live' : 'stale',

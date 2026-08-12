@@ -111,6 +111,41 @@ failed handoff (see `TURN_END_MANDATE.md`).
 | 5. Resume checklist | `continuation.resume_checklist` must list concrete next steps — not "continue queue" alone | `SESSION_HANDOFF_LATEST.json`                                                     |
 | 6. Commit           | Stage **only** intentional paths (no daemon noise, vitest caches, auto macro boards)       | `git add` scoped paths; then commit                                               |
 
+### Staging order matters (hardened 2026-08-12)
+
+The handoff gate computes `changed_paths` from what is staged **at the moment
+the emit runs**. Following steps 1–6 in the order listed above therefore fails:
+the handoff is emitted before the code is staged, so it cannot cover it, and the
+pre-commit gate blocks with
+
+```
+[session-handoff-gate] BLOCKED (staged): Handoff changed_paths does not cover
+critical changed files: <your files>
+```
+
+The gate is correct both times; the ordering was simply undocumented. Use:
+
+```bash
+git add <intentional code paths>          # 1. stage the work FIRST
+tnf handoff generate                      # 2. emit, now seeing those paths
+git add docs/protocols/reports/SESSION_HANDOFF_LATEST.json \
+        docs/protocols/reports/SESSION_HANDOFF_LATEST.md \
+        docs/protocols/AGENT_STATUS_LEDGER.md \
+        docs/protocols/LIVING_STATE.md    # 3. stage what the emit rewrote
+git commit                                # 4. pre-commit re-validates
+```
+
+Use `handoff generate` (emit only) at step 2, **not** `handoff refresh`.
+`refresh` is emit **+ validate**, and the validate runs against staged state —
+so on the first pass it necessarily fails its own check, because the artifacts
+it just rewrote are not staged yet. It exits non-zero and will abort any script
+running under `set -e`, even though the emit succeeded. `refresh` is for
+confirming a already-staged change set, not for producing one.
+
+If you add further code after the emit, re-run steps 2–3 — the emit is
+idempotent, and a stale `changed_paths` is exactly what the gate exists to
+catch.
+
 ### Non-negotiable rules
 
 - **Docs/logs move with code.** New transport lanes, gates, or CLI behavior

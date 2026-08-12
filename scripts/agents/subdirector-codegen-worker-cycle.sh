@@ -46,7 +46,7 @@ PROCESSING="$DIRECT:processing"
 log()  { echo "[$(date -Iseconds)] $*" >> "$LOG"; }
 
 # 1. Registry refresh
-PAYLOAD='{"id":"'"$REGISTRY_ID"'","name":"hermes-codegen-worker","role":"worker","platform":"claude","status":"active","isOnline":true,"capabilities":["code_generation","typescript_strict","monorepo_pnpm","pnpm_filter_invocation","drizzle_migration_apply","zod_schema_generation","subagent_dispatch_handoff"],"registeredAt":"'"$NOW"'","lastSeen":"'"$NOW"'","routing":{"callableWorker":true,"directorPoolEligible":true},"source":"sub-director-cron-refresh","subdirector_authorized":true}'
+PAYLOAD='{"id":"'"$REGISTRY_ID"'","name":"hermes-codegen-worker","role":"worker","expectedCadenceSec":300,"platform":"claude","status":"active","isOnline":true,"capabilities":["code_generation","typescript_strict","monorepo_pnpm","pnpm_filter_invocation","drizzle_migration_apply","zod_schema_generation","subagent_dispatch_handoff"],"registeredAt":"'"$NOW"'","lastSeen":"'"$NOW"'","routing":{"callableWorker":true,"directorPoolEligible":true},"source":"sub-director-cron-refresh","subdirector_authorized":true}'
 redis-cli -p 6379 HSET tnf:agent-registry "$REGISTRY_ID" "$PAYLOAD" >> "$LOG" 2>&1
 
 # 2. Heartbeat pulse on tnf:agents

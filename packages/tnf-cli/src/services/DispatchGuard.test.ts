@@ -135,6 +135,38 @@ check(
   resolveRecipient('y', [{ agentId: 'y' }], opts).status === 'stale'
 );
 
+// Cron workers beat every 300-900s. Under the flat 60s window a healthy
+// codegen worker read stale 80% of the time and the infra worker 93%, so the
+// roster flickered for exactly the agents operators delegate to.
+check(
+  'a cron worker inside its declared cadence is LIVE',
+  resolveRecipient(
+    'cron',
+    [{ agentId: 'cron', lastSeen: ago(240_000), expectedCadenceSec: 300 }],
+    opts
+  ).status === 'live'
+);
+check(
+  'the same agent WITHOUT a declared cadence is stale (old rule preserved)',
+  resolveRecipient('cron', [{ agentId: 'cron', lastSeen: ago(240_000) }], opts).status === 'stale'
+);
+check(
+  'two missed beats is the limit — beyond it is still stale',
+  resolveRecipient(
+    'cron',
+    [{ agentId: 'cron', lastSeen: ago(700_000), expectedCadenceSec: 300 }],
+    opts
+  ).status === 'stale'
+);
+check(
+  'a nonsense cadence falls back to the flat window rather than trusting it',
+  resolveRecipient(
+    'cron',
+    [{ agentId: 'cron', lastSeen: ago(240_000), expectedCadenceSec: -1 }],
+    opts
+  ).status === 'stale'
+);
+
 console.log('\ndispatch — decision policy');
 
 const unknownDecision = decideDispatch(ghost);

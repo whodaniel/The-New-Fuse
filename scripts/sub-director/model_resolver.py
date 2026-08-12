@@ -351,9 +351,20 @@ def resolve(
     if tier == "local-only":
         m, ep, cands = _pick("local")
         chosen_tier = "local" if m else "none"
-        reason = ("local server reachable"
-                  if (m and chosen_tier == "local")
-                  else "no local backend; tier=local-only refuses to escalate")
+        if m and chosen_tier == "local":
+            reason = "local server reachable"
+        elif cloud_ok_envelope:
+            # The operator explicitly asked for cloud on this envelope and is
+            # still being refused, because `cloud_ok` only sets allow_cloud —
+            # it does not change `tier`, which is still local-only. Saying just
+            # "local-only refuses to escalate" hides that their opt-in was seen
+            # and that a second flag is required. Diagnosability only: the
+            # refusal itself is unchanged.
+            reason = ("no local backend; cloud_ok was set but tier is still "
+                      "local-only — also pass preferred_tier: cloud-ok "
+                      "(cloud_ok alone does not change the tier)")
+        else:
+            reason = "no local backend; tier=local-only refuses to escalate"
     elif tier == "local-prefer":
         m, ep, cands = _pick("local")
         chosen_tier = "local" if m else (_pick("cloud")[0] and "cloud" or "none")
