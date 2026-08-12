@@ -14908,9 +14908,15 @@ program
 
       if (!options.json) {
         if (decision.level === 'warn') {
-          console.log(chalk.yellow(`⚠ Queued, but ${decision.resolution.summary}`));
+          console.log(chalk.yellow(`⚠ Published, but ${decision.resolution.summary}`));
+          // Correction: `send` uses Redis PUBLISH, which is fire-and-forget.
+          // With no live subscriber the message is DROPPED, not queued — an
+          // earlier draft of this warning said "durable", which would have
+          // been the same over-claim this guard exists to remove.
           console.log(
-            chalk.dim('  The message is durable; it is NOT delivered until that agent returns.')
+            chalk.dim(
+              '  PUBLISH is fire-and-forget: with no live subscriber this message is dropped, not queued.'
+            )
           );
         } else if (decision.resolution.status === 'broadcast') {
           console.log(chalk.green(`📤 Broadcast — ${decision.resolution.summary}`));
