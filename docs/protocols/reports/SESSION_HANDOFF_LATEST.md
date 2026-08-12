@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T17:26:23.732Z`  
-Handoff ID: `3c71e0ef-d9a0-4529-9ede-df58875e1cda`
+Created At: `2026-08-12T17:37:47.287Z`  
+Handoff ID: `a4de1606-c202-4076-955c-13125b1209c2`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `bb98b9eaf2d19b7723d0fa482133af460d7f098d`
+- Head SHA: `fcc2c032c86c341c138ffdf565b02e486732ee86`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,8 +19,8 @@ Handoff ID: `3c71e0ef-d9a0-4529-9ede-df58875e1cda`
 
 ## Changed Paths
 
-- packages/tnf-cli/src/RedisAgentClient.ts
 - packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - apps/api/src/controllers/orchestration.controller.ts
@@ -54,16 +54,10 @@ Handoff ID: `3c71e0ef-d9a0-4529-9ede-df58875e1cda`
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/HARNESS_CONFIG.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/services/DispatchGuard.test.ts
-- packages/tnf-cli/src/services/DispatchGuard.ts
-- scripts/agents/subdirector-codegen-worker-cycle.sh
-- scripts/agents/subdirector-infra-worker-cycle.sh
-- scripts/sub-director/model-policy.example.yaml
-- scripts/sub-director/model_resolver.py
+- packages/tnf-cli/src/RedisAgentClient.ts
 - apps/frontend/src/services/aiAssistPreferences.ts
 - apps/frontend/src/services/replaceFeedback.ts
 - apps/frontend/src/services/userSessionFactors.ts

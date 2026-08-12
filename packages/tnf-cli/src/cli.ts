@@ -14167,21 +14167,41 @@ agents
   .action(async () => runSelfCliWithExit(['list']));
 agents
   .command('prune-stale')
-  .description('Remove offline/duplicate Redis swarm workers (especially tnf-thin-client zombies)')
+  .description(
+    'Remove offline/duplicate Redis swarm workers. Defaults to tnf-thin-client only; use --all to include orphaned duplicates from restarted agents.'
+  )
   .option('--name <name>', 'Only prune agents with this exact name', 'tnf-thin-client')
+  .option(
+    '--all',
+    'Scan every registered agent, not just --name. Catches restart orphans: agents that re-register under a new timestamped id and abandon the old row.'
+  )
   .option('--dry-run', 'Show what would be deleted without mutating Redis')
   .option('--stale-ms <n>', 'Offline threshold in ms for non-thin agents', '3600000')
   .option('--json', 'Machine-readable JSON result')
   .action(
-    async (options: { name?: string; dryRun?: boolean; staleMs?: string; json?: boolean } = {}) => {
+    async (
+      options: {
+        name?: string;
+        all?: boolean;
+        dryRun?: boolean;
+        staleMs?: string;
+        json?: boolean;
+      } = {}
+    ) => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { RedisAgentClient } = require(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
         const client = new RedisAgentClient();
         await client.initialize();
         try {
+          // An empty name clears the scope filter inside pruneStaleAgents,
+          // which then applies its duplicate rule (group by name::platform,
+          // keep the newest, delete stale older rows) across the whole
+          // registry. That logic already existed and was correct; it was
+          // simply unreachable behind a default of --name tnf-thin-client,
+          // which is why restart orphans accumulated.
           const result = await client.pruneStaleAgents({
-            name: options.name,
+            name: options.all ? '' : options.name,
             dryRun: Boolean(options.dryRun),
             staleMs: Number(options.staleMs || 3_600_000),
           });

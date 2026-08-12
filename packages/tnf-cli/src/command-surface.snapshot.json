@@ -275,8 +275,12 @@
         {
           "name": "prune-stale",
           "aliases": [],
-          "description": "Remove offline/duplicate Redis swarm workers (especially tnf-thin-client zombies)",
+          "description": "Remove offline/duplicate Redis swarm workers. Defaults to tnf-thin-client only; use --all to include orphaned duplicates from restarted agents.",
           "options": [
+            {
+              "flags": "--all",
+              "description": "Scan every registered agent, not just --name. Catches restart orphans: agents that re-register under a new timestamped id and abandon the old row."
+            },
             {
               "flags": "--dry-run",
               "description": "Show what would be deleted without mutating Redis"
