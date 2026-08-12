@@ -13,7 +13,59 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const RECEIPT_DIR = path.join(ROOT, 'data/harness/receipts');
 
 function parseArgs(argv) {
-  return { json: argv.includes('--json'), strict: argv.includes('--strict') };
+  return {
+    json: argv.includes('--json'),
+    strict: argv.includes('--strict'),
+    writeLock: argv.includes('--write-lock'),
+    checkLock: argv.includes('--check-lock') || argv.includes('--strict'),
+  };
+}
+
+const LOCK_PATH = path.join(ROOT, 'data/harness/mcp-supply-chain.lock.json');
+
+function loadLock() {
+  if (!fs.existsSync(LOCK_PATH)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function writeLock(servers) {
+  const entries = {};
+  for (const s of servers) {
+    if (!s.sha256 || !s.entry) continue;
+    entries[s.name] = { entry: s.entry, sha256: s.sha256 };
+  }
+  const lock = {
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    generator: 'scripts/harness/mcp-supply-chain-attest.cjs --write-lock',
+    entries,
+  };
+  fs.mkdirSync(path.dirname(LOCK_PATH), { recursive: true });
+  fs.writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, 2)}\n`);
+  return lock;
+}
+
+function checkLock(servers, lock) {
+  if (!lock || !lock.entries) {
+    return { ok: false, drifts: ['lockfile missing — run with --write-lock'] };
+  }
+  const drifts = [];
+  for (const s of servers) {
+    if (!s.sha256 || !s.entry) continue;
+    const expected = lock.entries[s.name];
+    if (!expected) {
+      drifts.push(`${s.name}: not in lock (new entrypoint)`);
+      continue;
+    }
+    if (expected.sha256 !== s.sha256) {
+      drifts.push(`${s.name}: sha256 drift (locked=${expected.sha256.slice(0, 12)}… live=${s.sha256.slice(0, 12)}…)`);
+    }
+  }
+  return { ok: drifts.length === 0, drifts };
 }
 
 function exists(rel) {
@@ -120,17 +172,32 @@ function main() {
 
   const skills = collectSkillRoots();
   const missing = servers.filter((s) => s.ok === false);
-  const ok = opts.strict ? missing.length === 0 : true;
+
+  let lock = loadLock();
+  if (opts.writeLock) {
+    lock = writeLock(servers);
+  }
+  const lockCheck = opts.checkLock || opts.writeLock ? checkLock(servers, lock) : { ok: true, drifts: [] };
+
+  const ok = opts.strict
+    ? missing.length === 0 && lockCheck.ok
+    : opts.checkLock
+      ? lockCheck.ok
+      : true;
   const payload = {
     ok,
-    softMode: !opts.strict,
+    softMode: !opts.strict && !opts.checkLock,
     at: new Date().toISOString(),
     configSources: configs.map((c) => c.path),
     servers,
     skills,
     failed: missing.map((s) => s.name),
+    lockPath: path.relative(ROOT, LOCK_PATH),
+    lockUpdated: Boolean(opts.writeLock),
+    lockOk: lockCheck.ok,
+    lockDrifts: lockCheck.drifts,
     guidance:
-      'Use --strict to fail closed on missing MCP entrypoints. Skills counted for progressive-disclosure inventory only.',
+      'Use --write-lock to pin entrypoint hashes; --check-lock / --strict to fail on missing entrypoints or hash drift. Skills counted for progressive-disclosure inventory only.',
   };
 
   fs.mkdirSync(RECEIPT_DIR, { recursive: true });
@@ -150,10 +217,18 @@ function main() {
         `${sk.present ? 'OK' : 'SKIP'}: skills ${sk.root} — ${sk.present ? `${sk.skillMdCount} SKILL.md` : 'absent'}`
       );
     }
+    if (opts.writeLock) console.log(`lock written: ${payload.lockPath}`);
+    if (opts.checkLock || opts.writeLock) {
+      console.log(
+        lockCheck.ok
+          ? 'lock: OK (hashes match)'
+          : `lock: DRIFT (${lockCheck.drifts.length})\n  - ${lockCheck.drifts.join('\n  - ')}`
+      );
+    }
     console.log(
       ok
-        ? `\nSUPPLY-CHAIN ${opts.strict ? 'PASS (strict)' : 'PASS (soft inventory)'}`
-        : `\nSUPPLY-CHAIN FAIL (${missing.length} missing)`
+        ? `\nSUPPLY-CHAIN ${opts.strict ? 'PASS (strict)' : opts.checkLock ? 'PASS (lock)' : 'PASS (soft inventory)'}`
+        : `\nSUPPLY-CHAIN FAIL (missing=${missing.length} drifts=${lockCheck.drifts.length})`
     );
     console.log(`receipt: ${payload.receipt}`);
   }

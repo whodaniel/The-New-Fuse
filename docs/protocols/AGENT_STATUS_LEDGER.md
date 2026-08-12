@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T04:01:26.681Z** — handoff
+Updated: **2026-08-12T04:48:17.413Z** — handoff
+`e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae` (`d9404e41cc1f`).
 `0151b397-7eb3-40a1-ba8d-a24e2cb70290` (`318ded426b36`).
 `6f250b5a-e984-4f07-a339-5e69f17e1dfb` (`80ae0ce4ff1d`).
 `afebe93a-4f9e-4463-b67a-c98f64b9f215` (`dd1b2ecd8cef`).
@@ -188,10 +189,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                 |
-| -------- | ------------------------------------------------------ |
-| **P0**   | Verify local UI :1420 and relay :3000                  |
-| **P0**   | Operator confirmation before commit of remediation set |
+| Priority | Action                                                             |
+| -------- | ------------------------------------------------------------------ |
+| **P0**   | Push commits when operator requests                                |
+| **P0**   | Optional: wire provider-failover into model-watchdog boot path     |
+| **P0**   | Publisher/sigstore attestation for third-party skills remains soft |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -873,3 +875,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (0151b397-7eb3-40a1-ba8d-a24e2cb70290) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae) | ✅ HANDOFF_READY |

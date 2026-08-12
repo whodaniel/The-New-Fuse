@@ -18,8 +18,10 @@ const SCRIPTS = {
   trajectory: 'scripts/harness/trajectory.cjs',
   compaction: 'scripts/harness/compaction-record.cjs',
   sandbox: 'scripts/harness/materialize-sandbox-profile.cjs',
+  sandboxRun: 'scripts/harness/sandbox-run.cjs',
   supplyChain: 'scripts/harness/mcp-supply-chain-attest.cjs',
   hostCompaction: 'scripts/harness/host-compaction-adapter.cjs',
+  failover: 'scripts/harness/provider-failover.cjs',
 };
 
 function run(rel, args) {
@@ -41,8 +43,10 @@ Commands:
   berm evaluate --action-class <class> …
   trajectory start|append|end|list …
   compaction write|list …
-  sandbox [--out path]
-  supply-chain [--json]
+  sandbox [--out path]                 (materialize profile only)
+  sandbox-run [--materialize-only] [--] <cmd>…
+  supply-chain [--json] [--write-lock] [--check-lock|--strict]
+  failover [--host <name>] [--json]
   host-compaction record|import|list …
 `);
 }
@@ -60,7 +64,9 @@ function main() {
   if (cmd === 'trajectory') run(SCRIPTS.trajectory, rest);
   if (cmd === 'compaction') run(SCRIPTS.compaction, rest);
   if (cmd === 'sandbox') run(SCRIPTS.sandbox, rest);
+  if (cmd === 'sandbox-run') run(SCRIPTS.sandboxRun, rest);
   if (cmd === 'supply-chain') run(SCRIPTS.supplyChain, rest);
+  if (cmd === 'failover' || cmd === 'provider-failover') run(SCRIPTS.failover, rest);
   if (cmd === 'host-compaction') run(SCRIPTS.hostCompaction, rest);
   console.error(`unknown command: ${cmd}`);
   help();

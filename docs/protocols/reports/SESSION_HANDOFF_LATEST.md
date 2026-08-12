@@ -1,24 +1,35 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T04:01:26.681Z`  
-Handoff ID: `0151b397-7eb3-40a1-ba8d-a24e2cb70290`
+Created At: `2026-08-12T04:48:17.413Z`  
+Handoff ID: `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `318ded426b368e4f55d7b2d0ad4a93327b37490f`
+- Head SHA: `d9404e41cc1f06fc252063f4d232d3a52712d26f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Boot triage remediation: harness completeness PASS; MCP clients restored;
-  relay/database/UI boot blockers fixed; handoff path gather fixed for CI
+- Harness layer hardening: shared provider-failover policy+resolver; sandbox-run
+  wrapper; MCP entrypoint hash lock (--write-lock/--check-lock)
+- Provider routing marked implemented in harness-config; completeness still PASS
 
 ## Changed Paths
 
 - .licenses/opentargets_database_LICENSE.txt
+- apps/tauri-desktop/vite.config.ts
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/HARNESS_AGENT_MODES.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/USER_CONFIRMATION_PROTOCOL.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- package.json
+- scripts/protocols/emit-session-handoff.cjs
+- scripts/tnf-generate-mcp-clients.cjs
 - scripts/transcribe_audio.py
 - scripts/verify-progressive-disclosure.mjs
 - .agent/test-reports/\_rolling-summary.json
@@ -28,9 +39,15 @@ Handoff ID: `0151b397-7eb3-40a1-ba8d-a24e2cb70290`
 - apps/api/src/controllers/agent.controller.ts
 - apps/api/src/services/agent.service.ts
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/data/codebase_map.json
-- apps/tauri-desktop/vite.config.ts
+- data/harness/harness-config.json
+- data/llm-intel/ranking-recommendations.json
+- data/llm-intel/ranking-report-latest.md
 - data/llm-provider-status.json
+- data/marketplace/catalog-items.json
+- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
 - docs/operations/tnf-action-receipts.jsonl
 - docs/operations/tnf-full-auto-daemon.log
 - docs/operations/tnf-full-auto-runs.jsonl
@@ -38,27 +55,19 @@ Handoff ID: `0151b397-7eb3-40a1-ba8d-a24e2cb70290`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- package.json
+- docs/protocols/HARNESS_CONFIG.md
+- docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/src/telegram/TelegramService.ts
 - pnpm-lock.yaml
-- scripts/protocols/emit-session-handoff.cjs
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/utils/run-command.ts
-- packages/relay-core/src/.!75396!standalone-relay.ts
-- packages/relay-core/src/index.d.ts
-- packages/relay-core/src/standalone-relay.d.ts
-- packages/relay-core/src/standalone-relay.d.ts.map
-- packages/relay-core/src/standalone-relay.js
-- packages/relay-core/src/standalone-relay.js.map
+- scripts/harness/mcp-supply-chain-attest.cjs
+- scripts/harness/tnf-harness.cjs
 - .cursor/rules/tnf-harness.mdc.tnf-bak
 - CLAUDE.md.tnf-bak
-- docs/protocols/HARNESS_AGENT_MODES.md
-- docs/protocols/USER_CONFIRMATION_PROTOCOL.md
-- scripts/tnf-generate-mcp-clients.cjs
+- data/harness/mcp-supply-chain.lock.json
+- data/harness/provider-failover-policy.json
+- scripts/harness/provider-failover.cjs
+- scripts/harness/sandbox-run.cjs
 
 ## Verification
 
@@ -82,5 +91,6 @@ Handoff ID: `0151b397-7eb3-40a1-ba8d-a24e2cb70290`
 
 ## Next Actions
 
-- Verify local UI :1420 and relay :3000
-- Operator confirmation before commit of remediation set
+- Push commits when operator requests
+- Optional: wire provider-failover into model-watchdog boot path
+- Publisher/sigstore attestation for third-party skills remains soft

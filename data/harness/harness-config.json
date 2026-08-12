@@ -2,7 +2,7 @@
   "$schema": "./harness-config.schema.json",
   "id": "tnf-harness",
   "version": "1.0.0",
-  "updatedAt": "2026-08-10T22:30:00.000Z",
+  "updatedAt": "2026-08-12T04:45:00.000Z",
   "authorities": [
     "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
@@ -44,13 +44,15 @@
       ]
     },
     "provider_routing": {
-      "status": "partial",
+      "status": "implemented",
       "evidence": [
         "scripts/runtime/resolve-harness-context.cjs",
+        "data/harness/provider-failover-policy.json",
+        "scripts/harness/provider-failover.cjs",
         ".agent/assimilation-routes.json",
         "tnf assimilate"
       ],
-      "gap": "Not every host provider is abstracted behind one failover policy."
+      "gap": "Host CLIs still own in-process retries; TNF now owns the shared failover chain + receipts via provider-failover policy."
     },
     "context_assembly_compaction": {
       "status": "partial",
@@ -68,9 +70,10 @@
       "evidence": [
         "scripts/forge_sandbox.sb",
         "scripts/harness/materialize-sandbox-profile.cjs",
+        "scripts/harness/sandbox-run.cjs",
         "DIRECTIVES.md D11"
       ],
-      "gap": "Default interactive Cursor sessions are not seatbelt-enclosed; untrusted code path must opt into materialized sandbox."
+      "gap": "Default interactive Cursor sessions remain unsandboxed by design; untrusted paths must use sandbox-run / berm require_sandbox."
     },
     "permissions_approvals_hooks": {
       "status": "implemented",
@@ -109,12 +112,13 @@
       "evidence": [
         "data/mcp_config.json",
         "data/harness/mcp.memory.server.json",
+        "data/harness/mcp-supply-chain.lock.json",
         "scripts/install-agent-frontload.cjs",
         "scripts/harness/verify-harness-completeness.cjs",
         "scripts/harness/mcp-supply-chain-attest.cjs",
         "scripts/harness/memory-mcp-server.cjs"
       ],
-      "gap": "Soft inventory + entrypoint hashes land; cryptographic publisher attestation for every third-party skill remains soft."
+      "gap": "Entrypoint hash lockfile is pinned; publisher/sigstore attestation for third-party skills remains soft."
     }
   },
   "injectionSurfaces": {
