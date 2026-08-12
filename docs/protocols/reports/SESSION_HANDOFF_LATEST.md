@@ -1,23 +1,32 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T06:46:24.249Z`  
-Handoff ID: `c0ebd07f-a136-472b-b06a-71b4fdf1d470`
+Created At: `2026-08-12T06:47:24.775Z`  
+Handoff ID: `2f34d14b-783b-4ab2-a471-1684233fa6a5`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `de5fee7b81d085ed9794db9312ba871a8a09ebf0`
+- Head SHA: `9d1a51a1c2e0d1fa2cf72844db90d64a0af045b1`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Dirty-tree triage commits: palette-readline extract, telegram ffmpeg/python
-  STT, public agent directory API
+- Dirty-tree: telegram voice STT via ffmpeg + scripts/transcribe_audio.py
 
 ## Changed Paths
 
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/utils/command-palette.test.ts
+- packages/tnf-cli/src/utils/command-palette.ts
+- packages/tnf-cli/src/utils/palette-readline.test.ts
+- packages/tnf-cli/src/utils/palette-readline.ts
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - .learnings/SUCCESSES.md
@@ -39,33 +48,9 @@ Handoff ID: `c0ebd07f-a136-472b-b06a-71b4fdf1d470`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/telegram/TelegramService.ts
-- packages/tnf-cli/src/utils/command-palette.test.ts
-- packages/tnf-cli/src/utils/command-palette.ts
-- apps/frontend/src/hooks/useAuth.tsx
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/commands/hermes-parity-gaps.ts
-- packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
-- packages/tnf-cli/src/services/CommandSourceService.test.ts
-- packages/tnf-cli/src/services/CommandSourceService.ts
-- packages/tnf-cli/src/services/ParityService.ts
-- packages/tnf-cli/src/services/ToolPermissionService.test.ts
-- packages/tnf-cli/src/services/ToolPermissionService.ts
-- packages/tnf-cli/src/services/WorktreeService.test.ts
-- packages/tnf-cli/src/services/WorktreeService.ts
-- packages/tnf-cli/src/slashCommands.ts
-- packages/tnf-cli/src/utils/fuzzy.test.ts
-- packages/tnf-cli/src/utils/fuzzy.ts
-- packages/tnf-cli/src/utils/palette-readline.test.ts
-- packages/tnf-cli/src/utils/palette-readline.ts
 
 ## Verification
 
