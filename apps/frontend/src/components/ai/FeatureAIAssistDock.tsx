@@ -5,11 +5,22 @@ import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';
 import { agentService } from '@/services/AgentService';
+import {
+  focusModeLabel,
+  readAIAssistPreferences,
+  systemPromptForFocus,
+  writeAIAssistPreferences,
+  type AIAssistFocusMode,
+  type AIAssistPreferences,
+} from '@/services/aiAssistPreferences';
 import { aiSourceService } from '@/services/aiSource.service';
+import { submitReplaceFeedback } from '@/services/replaceFeedback';
 import { resourcesService } from '@/services/resources.service';
+import { bootstrapUserSessionFactors, readUserSessionFactors } from '@/services/userSessionFactors';
 import { AI_ASSIST_OPEN_EVENT } from '@/utils/aiAssistEvents';
+import { capturePageContentSnapshot } from '@/utils/pageContextSnapshot';
 import { filterByTenancyContext } from '@/utils/tenancy';
-import { Bot, MessageSquare, Sparkles, Wand2, X } from 'lucide-react';
+import { Bot, FilePenLine, MessageSquare, Settings2, Sparkles, Wand2, X } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -74,10 +85,12 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { workspace } = useWorkspace();
   const { isSuperAdmin, isAnyAgencyAdmin } = useAuthorization();
   const [open, setOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [agents, setAgents] = useState<{ id: string; name: string; description?: string }[]>([]);
   const [templates, setTemplates] = useState<{ id: string; name: string; description?: string }[]>(
     []
@@ -85,13 +98,15 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const [selectedAgent, setSelectedAgent] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [prompt, setPrompt] = useState('');
+  const [feedbackText, setFeedbackText] = useState('');
+  const [replacementText, setReplacementText] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [prefs, setPrefs] = useState<AIAssistPreferences>(() => readAIAssistPreferences());
+  const [pageSnapshotChars, setPageSnapshotChars] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Model override for a local relay backend — the hosted equivalent of the library's
-  // `/relay model <name>` command.
   const { selectedSource } = useAISource();
   const [relayModels, setRelayModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState('');
@@ -107,8 +122,19 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
     );
   }, [contextOverride, location.pathname]);
 
-  const pageContext = useMemo(
-    () => ({
+  // Bootstrap personal factors as soon as auth is ready
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      bootstrapUserSessionFactors(user);
+    }
+  }, [isAuthenticated, user]);
+
+  const buildPageContext = () => {
+    const factors = prefs.includeUserFactors ? readUserSessionFactors() : null;
+    const snapshot = prefs.includePageContent ? capturePageContentSnapshot() : null;
+    if (snapshot) setPageSnapshotChars(snapshot.charCount);
+
+    return {
       page: pageInfo?.name,
       path: location.pathname,
       description: pageInfo?.description,
@@ -117,15 +143,34 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       tenantId: user?.tenantId,
       agencyId: user?.agencyId,
       userId: user?.id,
-    }),
-    [pageInfo, location.pathname, workspace?.id, workspace?.name, user]
-  );
+      focusMode: prefs.focusMode,
+      userFactors: factors
+        ? {
+            name: factors.name,
+            email: factors.email,
+            role: factors.role,
+            activeProfile: factors.activeProfile,
+            goals: factors.goals,
+            domains: factors.domains,
+          }
+        : undefined,
+      pageContent: snapshot
+        ? {
+            title: snapshot.title,
+            headings: snapshot.headings,
+            text: snapshot.text,
+            charCount: snapshot.charCount,
+            capturedAt: snapshot.capturedAt,
+          }
+        : undefined,
+    };
+  };
 
-  // Reset chat when navigating to a different page so context stays accurate
   useEffect(() => {
     setMessages([]);
     setPrompt('');
     setSelectedAgent('');
+    setShowFeedback(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -138,8 +183,12 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
     if (open) {
       inputRef.current?.focus();
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      if (prefs.includePageContent) {
+        const snap = capturePageContentSnapshot();
+        setPageSnapshotChars(snap.charCount);
+      }
     }
-  }, [open, messages]);
+  }, [open, messages, prefs.includePageContent]);
 
   useEffect(() => {
     if (!open || !isLocalRelay) {
@@ -150,7 +199,6 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
     void aiSourceService.listRelayModels(selectedSource?.relayBaseUrl).then((models) => {
       if (cancelled) return;
       setRelayModels(models);
-      // Default to whatever the relay reports as active so the dropdown reflects reality.
       setSelectedModel((current) =>
         current && models.includes(current) ? current : selectedSource?.model || models[0] || ''
       );
@@ -162,9 +210,11 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
 
   const handleModelChange = async (model: string) => {
     setSelectedModel(model);
-    // Tell the relay to switch its active backend model; the per-request `model` field below
-    // covers relays that don't support the config endpoint.
     await aiSourceService.setRelayModel(model, selectedSource?.relayBaseUrl);
+  };
+
+  const patchPrefs = (patch: Partial<AIAssistPreferences>) => {
+    setPrefs(writeAIAssistPreferences(patch));
   };
 
   useEffect(() => {
@@ -206,8 +256,8 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       }
     };
 
-    fetchAgents();
-  }, []);
+    if (open) void fetchAgents();
+  }, [open, user, workspace?.id, isSuperAdmin, isAnyAgencyAdmin]);
 
   const handleAsk = async () => {
     if (!prompt.trim()) return;
@@ -217,10 +267,15 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
     setLoading(true);
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
 
+    const pageContext = buildPageContext();
+    const systemPrompt =
+      prefs.systemPromptOverride?.trim() || systemPromptForFocus(prefs.focusMode);
+
     try {
       if (selectedAgent) {
         const execution = await agentService.executeAgent(selectedAgent, userMessage, {
           context: pageContext,
+          systemPrompt,
         });
         const executionText = extractText(execution);
         setMessages((prev) => [
@@ -231,10 +286,28 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
           },
         ]);
       } else {
+        const contentBits = [
+          `You are assisting inside "${pageInfo?.name}" (${location.pathname}).`,
+          pageInfo?.description || '',
+          prefs.includePageContent && pageContext.pageContent?.text
+            ? `\nVisible page content:\n${pageContext.pageContent.text}`
+            : '\n(Page DOM content was not included — enable it in AI Assist settings.)',
+          prefs.includeUserFactors && pageContext.userFactors
+            ? `\nUser factors: ${JSON.stringify(pageContext.userFactors)}`
+            : '',
+          `\nFocus mode: ${prefs.focusMode}`,
+          `\nUser request: ${userMessage}`,
+        ]
+          .filter(Boolean)
+          .join(' ');
+
         const result = await aiSourceService.chat({
-          message: `You are assisting a user inside "${pageInfo?.name}" (${location.pathname}). ${pageInfo?.description || ''}\n\nUser request: ${userMessage}`,
+          message: contentBits,
+          systemPrompt,
           context: pageContext,
           model: isLocalRelay ? selectedModel || undefined : undefined,
+          temperature: prefs.temperature,
+          maxTokens: prefs.maxTokens,
         });
         setMessages((prev) => [...prev, { role: 'assistant', content: result.text }]);
       }
@@ -248,6 +321,38 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
           content: 'Sorry, I could not complete that request. Please try again.',
         },
       ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReplaceFeedback = async () => {
+    if (!feedbackText.trim()) {
+      toast.error('Describe what should be replaced.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const snap = capturePageContentSnapshot({ maxChars: 2000 });
+      const result = await submitReplaceFeedback({
+        pagePath: location.pathname,
+        pageName: pageInfo?.name,
+        message: feedbackText.trim(),
+        proposedReplacement: replacementText.trim() || undefined,
+        userId: user?.id,
+        userEmail: user?.email,
+        snapshotExcerpt: snap.text,
+      });
+      toast.success(
+        result.queuedLocally
+          ? 'Feedback queued locally for scrutiny pickup.'
+          : 'Replace feedback submitted for review.'
+      );
+      setFeedbackText('');
+      setReplacementText('');
+      setShowFeedback(false);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to submit feedback');
     } finally {
       setLoading(false);
     }
@@ -323,7 +428,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
             aria-modal="true"
             aria-labelledby="ai-assist-title"
             className="relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-white/10 bg-slate-950 shadow-2xl"
-            style={{ maxHeight: 'min(640px, calc(100vh - 2rem))' }}
+            style={{ maxHeight: 'min(720px, calc(100vh - 2rem))' }}
           >
             <header className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
               <div className="min-w-0">
@@ -336,27 +441,159 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
                 </h2>
                 <p className="mt-1 truncate text-xs text-slate-400">
                   Context: {pageInfo?.name}
-                  {pageInfo?.description ? ` — ${pageInfo.description}` : ''}
+                  {prefs.includePageContent
+                    ? ` · ${pageSnapshotChars || '…'} chars of page`
+                    : ' · catalog only'}
+                  {' · '}
+                  {focusModeLabel(prefs.focusMode)}
                 </p>
               </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 shrink-0 p-0 text-slate-400 hover:text-white"
-                onClick={() => setOpen(false)}
-                aria-label="Close AI Assist"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              <div className="flex shrink-0 items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                  onClick={() => {
+                    setShowFeedback((v) => !v);
+                    setShowSettings(false);
+                  }}
+                  aria-label="Replace feedback"
+                  title="Replace feedback"
+                >
+                  <FilePenLine className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                  onClick={() => {
+                    setShowSettings((v) => !v);
+                    setShowFeedback(false);
+                  }}
+                  aria-label="AI Assist settings"
+                >
+                  <Settings2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close AI Assist"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </header>
 
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              {showSettings && (
+                <div className="space-y-3 border-b border-white/10 px-4 py-3 text-xs">
+                  <p className="font-medium text-slate-200">Settings</p>
+                  <label className="flex items-center justify-between gap-2 text-slate-300">
+                    <span>Include visible page content</span>
+                    <input
+                      type="checkbox"
+                      checked={prefs.includePageContent}
+                      onChange={(e) => patchPrefs({ includePageContent: e.target.checked })}
+                    />
+                  </label>
+                  <label className="flex items-center justify-between gap-2 text-slate-300">
+                    <span>Include user profile factors</span>
+                    <input
+                      type="checkbox"
+                      checked={prefs.includeUserFactors}
+                      onChange={(e) => patchPrefs({ includeUserFactors: e.target.checked })}
+                    />
+                  </label>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Focus mode</Label>
+                    <Select
+                      value={prefs.focusMode}
+                      onValueChange={(v) => patchPrefs({ focusMode: v as AIAssistFocusMode })}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="platform-dev">Platform / codebase</SelectItem>
+                        <SelectItem value="personal">Personal</SelectItem>
+                        <SelectItem value="personal-professional">
+                          Personal · Professional
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">
+                        Temperature ({prefs.temperature.toFixed(2)})
+                      </Label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={1.2}
+                        step={0.05}
+                        value={prefs.temperature}
+                        onChange={(e) => patchPrefs({ temperature: Number(e.target.value) })}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">Max tokens</Label>
+                      <Input
+                        type="number"
+                        className="h-8 text-xs"
+                        min={256}
+                        max={8192}
+                        value={prefs.maxTokens}
+                        onChange={(e) => patchPrefs({ maxTokens: Number(e.target.value) || 2048 })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showFeedback && (
+                <div className="space-y-2 border-b border-white/10 px-4 py-3 text-xs">
+                  <p className="font-medium text-slate-200">Replace feedback</p>
+                  <p className="text-slate-500">
+                    Tied to <span className="text-slate-300">{location.pathname}</span> and queued
+                    for scrutiny review.
+                  </p>
+                  <Input
+                    placeholder="What should change on this page?"
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    className="text-xs"
+                  />
+                  <Input
+                    placeholder="Optional proposed replacement copy / behavior"
+                    value={replacementText}
+                    onChange={(e) => setReplacementText(e.target.value)}
+                    className="text-xs"
+                  />
+                  <Button
+                    size="sm"
+                    className="w-full text-xs"
+                    disabled={loading || !feedbackText.trim()}
+                    onClick={() => void handleReplaceFeedback()}
+                  >
+                    Submit for scrutiny
+                  </Button>
+                </div>
+              )}
+
               <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
                 {messages.length === 0 && (
                   <div className="rounded-lg border border-dashed border-white/10 bg-slate-900/50 p-3 text-xs text-slate-400">
                     Ask anything about <span className="text-slate-200">{pageInfo?.name}</span>.
-                    Your question is answered with this page&apos;s context.
+                    {prefs.includePageContent
+                      ? ' Visible dashboard/page text is included in the prompt.'
+                      : ' Only route catalog metadata is included — turn on page content in settings.'}
                   </div>
                 )}
                 {messages.map((msg, index) => (
@@ -473,14 +710,14 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        handleAsk();
+                        void handleAsk();
                       }
                     }}
                     disabled={loading}
                     className="text-sm"
                   />
                   <Button
-                    onClick={handleAsk}
+                    onClick={() => void handleAsk()}
                     disabled={loading || !prompt.trim()}
                     size="sm"
                     className="shrink-0"

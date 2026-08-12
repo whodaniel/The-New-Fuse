@@ -135,14 +135,29 @@ async function main() {
   if (bundle) {
     try {
       const chunkList = html.match(/\/assets\/js\/[A-Za-z0-9._-]+\.js/g) || [];
+      // Assist / chat live in lazy chunks (aiSource.service, FeatureAIAssistDock) that
+      // are not always listed in the entry HTML; probe a few known prefixes too.
+      const extras = [
+        '/assets/js/aiSource.service',
+        '/assets/js/FeatureAIAssistDock',
+        '/assets/js/WorkflowAIAssistantPanel',
+      ];
       let found = false;
       let scanned = 0;
-      for (const path of [bundle, ...chunkList].slice(0, 40)) {
+      const candidates = [bundle, ...chunkList].slice(0, 40);
+      // Resolve extras against live asset directory listing via first HTML-linked
+      // chunk names that start with those prefixes (from earlier SPA shell fetches).
+      for (const path of candidates) {
         const { body } = await fetchText(`${SITE}${path}`);
         scanned += 1;
         if (body.includes('/api/orchestration/chat')) {
           found = true;
           break;
+        }
+        // Collect dynamically imported chunk URLs from the entry bundle.
+        for (const m of body.matchAll(/assets\/js\/(aiSource\.service|FeatureAIAssistDock|WorkflowAIAssistantPanel)\.[A-Za-z0-9_-]+\.js/g)) {
+          const dyn = `/assets/js/${m[0].split('/').pop()}`;
+          if (!candidates.includes(dyn)) candidates.push(dyn);
         }
         if (/["'`]\/orchestration\/chat/.test(body)) {
           check(
@@ -153,6 +168,36 @@ async function main() {
           return finish();
         }
       }
+      if (!found) {
+        // Fallback: fetch app.html and scan for Assist dock chunk hashes.
+        const appHtml = await fetchText(`${SITE}/app.html`);
+        for (const m of (appHtml.body || '').matchAll(/\/assets\/js\/(?:aiSource\.service|FeatureAIAssistDock|WorkflowAIAssistantPanel)\.[A-Za-z0-9_-]+\.js/g)) {
+          const dyn = m[0];
+          if (!candidates.includes(dyn)) candidates.push(dyn);
+        }
+        for (const path of candidates.slice(scanned)) {
+          const { body } = await fetchText(`${SITE}${path}`);
+          scanned += 1;
+          if (body.includes('/api/orchestration/chat')) {
+            found = true;
+            break;
+          }
+        }
+      }
+      // Last resort: probe known live asset by listing from SITE root index of hashed names via extras prefix match in entry.
+      if (!found) {
+        for (const prefix of extras) {
+          // Skip exact prefix-only; require hash from prior candidate discovery.
+          const hit = candidates.find((c) => c.startsWith(prefix + '.'));
+          if (!hit) continue;
+          const { body } = await fetchText(`${SITE}${hit}`);
+          scanned += 1;
+          if (body.includes('/api/orchestration/chat')) {
+            found = true;
+            break;
+          }
+        }
+      }
       check(
         'shipped JS calls /api/orchestration/chat',
         found,
@@ -160,6 +205,25 @@ async function main() {
       );
     } catch (err) {
       check('shipped JS calls /api/orchestration/chat', false, err.message);
+    }
+  }
+
+  // --- Supabase auth must be baked into the shipped bundle -------------------
+  // When VITE_SUPABASE_* is missing at build time, /auth/login shows
+  // "Supabase OAuth is not configured" for Google/GitHub/magic link.
+  if (bundle) {
+    try {
+      const { body } = await fetchText(`${SITE}${bundle}`);
+      const hasSupabase = body.includes('.supabase.co');
+      check(
+        'shipped JS includes Supabase project URL',
+        hasSupabase,
+        hasSupabase
+          ? 'OAuth/magic-link client configured'
+          : 'missing .supabase.co — rebuild with prepare-frontend-env.sh'
+      );
+    } catch (err) {
+      check('shipped JS includes Supabase project URL', false, err.message);
     }
   }
 

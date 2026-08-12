@@ -154,11 +154,41 @@ export class OrchestrationController {
     requested?: string,
     requestedModel?: string
   ) {
+    try {
+      return await this.resolveProviderForUserInner(user, requested, requestedModel);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(
+        `Provider resolution failed: ${(error as Error).message}`,
+        (error as Error).stack
+      );
+      throw new BadRequestException(
+        'Unable to resolve an LLM provider. Add a personal API key in Settings, or ask an admin to enable a global provider.'
+      );
+    }
+  }
+
+  private async resolveProviderForUserInner(
+    user: AuthUser,
+    requested?: string,
+    requestedModel?: string
+  ) {
     const normalizedRequested = this.normalizeProvider(requested);
     const enabledConfigs = await this.safeLoadEnabledConfigs();
     const orderedConfigs = [...enabledConfigs].sort((a, b) => a.priority - b.priority);
 
-    const userProviders = user?.id ? await this.db.providerApiKeys.listByUser(user.id) : [];
+    let userProviders: Array<{ provider: string }> = [];
+    if (user?.id) {
+      try {
+        userProviders = await this.db.providerApiKeys.listByUser(user.id);
+      } catch (error) {
+        // Invalid user ids (non-UUID) or transient DB errors must not block
+        // env / global provider fallbacks — that previously surfaced as opaque 500s.
+        this.logger.warn(
+          `Unable to load personal provider keys for user ${user.id}: ${(error as Error).message}`
+        );
+      }
+    }
     const userProviderSet = new Set<string>(
       userProviders.map((row) => this.normalizeProvider(row.provider))
     );

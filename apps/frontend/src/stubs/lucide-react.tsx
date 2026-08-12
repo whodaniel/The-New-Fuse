@@ -203,6 +203,7 @@ export const Redo = IconStub;
 export const RefreshCcw = IconStub;
 export const RefreshCw = IconStub;
 export const Repeat = IconStub;
+export const Replace = IconStub;
 export const Rocket = IconStub;
 export const RotateCcw = IconStub;
 export const RotateCw = IconStub;

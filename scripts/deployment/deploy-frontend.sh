@@ -72,6 +72,11 @@ PREV_BUNDLE="$(curl -s -m 20 https://app.thenewfuse.com/ \
   | grep -oE '/assets/js/app\.[A-Za-z0-9_-]+\.js' | head -1 || true)"
 echo "Currently live bundle: ${PREV_BUNDLE:-unknown}"
 
+# --- Frontend env (Supabase OAuth is baked at build time) --------------------
+# .env.production is gitignored; without this step production serves a bundle
+# with hasSupabaseConfig=false and OAuth/magic-link buttons fail.
+bash "$repo_root/scripts/deployment/prepare-frontend-env.sh"
+
 # --- Build -------------------------------------------------------------------
 # turbo builds workspace dependencies first (build dependsOn ["^build"]);
 # a clean checkout cannot resolve @the-new-fuse/* without this.
@@ -81,6 +86,13 @@ pnpm turbo run build --filter=@the-new-fuse/frontend-app...
 
 test -f apps/frontend/dist/app.html \
   || { echo "ERROR: build produced no dist/app.html" >&2; exit 1; }
+
+# Refuse to ship a bundle that will break /auth/login OAuth and magic links.
+if ! grep -Rql "\.supabase\.co" apps/frontend/dist/assets/js 2>/dev/null; then
+  echo "ERROR: built JS bundle does not contain Supabase project URL." >&2
+  echo "       OAuth and magic-link auth will fail in production." >&2
+  exit 1
+fi
 
 # A Pages upload without functions silently falls through to marketing index.html
 # for every SPA route (including /auth/login). Refuse to ship that failure mode.

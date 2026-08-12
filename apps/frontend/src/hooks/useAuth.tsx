@@ -10,6 +10,7 @@ import {
   stashDeepLinkNext,
   validateAuthSession,
 } from '../services/authSession';
+import { bootstrapUserSessionFactors } from '../services/userSessionFactors';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -111,6 +112,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSlowLoading, setIsSlowLoading] = useState(false);
+
+  // Spine personalization factors as soon as identity is known (AI Assist / flywheels).
+  useEffect(() => {
+    if (user?.id) bootstrapUserSessionFactors(user);
+  }, [user]);
 
   // -----------------------------------------------------------------------
   // Core API helpers

@@ -90,6 +90,21 @@ export class LLMProviderController {
   @ApiResponse({ status: 200, description: 'Returns the LLM provider' })
   @ApiResponse({ status: 404, description: 'LLM provider not found' })
   async findOne(@Param('id') id: string): Promise<LLMProviderDTO> {
+    // Reserved static paths must never fall through to id lookup (production regression:
+    // "available" was queried as llm_configs.id and returned a confusing 404).
+    const reserved = new Set(['available', 'register-claude-code-cli', 'register-gemini-cli']);
+    if (
+      reserved.has(
+        String(id || '')
+          .trim()
+          .toLowerCase()
+      )
+    ) {
+      throw new HttpException(
+        `LLM provider route "${id}" is reserved; use the dedicated endpoint`,
+        HttpStatus.NOT_FOUND
+      );
+    }
     try {
       return await this.llmProviderService.findById(id);
     } catch (error) {

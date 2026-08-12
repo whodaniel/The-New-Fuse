@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T18:15:00.862Z** — handoff
+Updated: **2026-08-12T19:02:21.576Z** — handoff
+`ce954181-8577-47d1-a434-d2e83f5d8025` (`7a60d8502b06`).
 `b4a3f0f9-75a3-4e03-813b-85ffd664497c` (`65a2f2eb28fd`).
 `6e893a91-538b-4cab-b87e-5b03f87f53c5` (`5be6b8be6603`).
 `21a8888a-69ea-4401-a617-a016c2e637b3` (`680fcdecafca`).
@@ -363,6 +364,21 @@ notice if the gate stopped working.
   `TNF_DIRECTIVES.md`, and `.agent/agents/continuous-improver.md`; the
   underlying tree still holds only **1 file total**, so the scheduler itself
   needs attention.
+
+### Closed 2026-08-12 — monitoring blindness
+
+`tnf services` (alias `svc`) plus a `tnf doctor` panel now report launchd crash
+loops, failures, and plists present but not loaded. Previously no TNF surface
+showed any of it: `ws-green-blue-bridge` crash-looped on a V8 OOM for hours and
+`subdirector-autopilot` was unloaded entirely, both visible only in raw
+`launchctl list` exit codes. First run surfaced **8** services needing attention
+where 2 were known.
+
+Guard: `ServiceHealthService.test.ts` pins the classification rules, notably
+that a signal-killed service with a live pid is a crash loop rather than healthy
+— under KeepAlive launchd has already restarted it by the time you look.
+
+Detail: `docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md`.
 
 ### Standing gaps
 
@@ -1055,3 +1071,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (b4a3f0f9-75a3-4e03-813b-85ffd664497c) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ce954181-8577-47d1-a434-d2e83f5d8025) | ✅ HANDOFF_READY |

@@ -87,6 +87,9 @@ packages/*
 !.agent/
 !.agent/agents/
 !.agent/agents/**
+# skill-bank snapshots balloon the upload (~50MB+) and are not needed to run api-server
+.agent/skill-bank/
+.agent/skill-bank/**
 !.claude/
 !.claude/agents/
 !.claude/agents/**

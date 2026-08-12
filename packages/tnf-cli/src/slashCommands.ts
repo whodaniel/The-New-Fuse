@@ -61,6 +61,15 @@ const STANDARD_SLASH_COMMANDS: SlashCommandDefinition[] = [
     mode: 'control',
   },
   {
+    name: 'focus',
+    aliases: ['whoami-focus'],
+    summary:
+      'Show or set agent focus: platform-dev | personal | personal-professional (distinct from super-admin auth).',
+    usage: '/focus [platform-dev|personal|personal-professional] [--profile id] [--goal text]',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
     name: 'exit',
     aliases: ['quit'],
     summary: 'End the interactive session.',
