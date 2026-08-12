@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Operator: model-policy.yaml for cron workers (local llama
-or allow_cloud)
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -915,6 +915,18 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T10:33:57.158Z handoff `8ec7b630-7df6-4c0a-80bb-faf6b9293167` head
+  `67f7f0228534` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:32:21.954Z handoff `eb275445-7063-48a6-9ea8-f5c2ec917d1d` head
+  `67f7f0228534` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:18:11.091Z handoff `77589e6a-d5d6-483f-acdc-87c76e3f4910` head
+  `5aedc487702a` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-12T09:39:21.557Z handoff `d1bf96aa-8cdb-4785-9787-29b1103dad22` head
   `01c26a485aa0` project `TNF-SESSION` — Operator: model-policy.yaml for cron
