@@ -1,33 +1,20 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "f4cc46ed-d809-423d-8b22-f488f0cc69dc",
-  "created_at": "2026-08-12T06:48:12.460Z",
+  "handoff_id": "dd2ae2b0-d863-4b83-b1ec-38d81570bfc7",
+  "created_at": "2026-08-12T06:50:16.454Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "99188f2a76385cacb74d5115fe4a32216f2dfad9",
+  "head_sha": "7aaacc7c287be162cdb90a9a39f20b401e069501",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Dirty-tree: public agent directory and categories API endpoints"
+    "Dirty-tree: show palette badges in slash did-you-mean suggestions"
   ],
   "changed_paths": [
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/tnf-cli/package.json",
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/telegram/TelegramService.ts",
-    "packages/tnf-cli/src/utils/command-palette.test.ts",
-    "packages/tnf-cli/src/utils/command-palette.ts",
-    "packages/tnf-cli/src/utils/palette-readline.test.ts",
-    "packages/tnf-cli/src/utils/palette-readline.ts",
     ".agent/test-reports/_rolling-summary.json",
     ".agent/testing-status.json",
     ".learnings/SUCCESSES.md",
-    "apps/api/src/controllers/agent.controller.ts",
-    "apps/api/src/services/agent.service.ts",
     "apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
@@ -45,7 +32,14 @@
     "docs/operations/tnf-master-reconciliation-report-latest.md",
     "docs/operations/tnf-self-improvement-run-log.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "packages/tnf-cli/src/cli.ts",
+    "apps/api/src/controllers/agent.controller.ts",
+    "apps/api/src/services/agent.service.ts",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -69,6 +63,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["99188f2a76385cacb74d5115fe4a32216f2dfad9"]
+    "commits": ["7aaacc7c287be162cdb90a9a39f20b401e069501"]
   }
 }

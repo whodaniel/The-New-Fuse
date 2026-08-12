@@ -4773,7 +4773,7 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
       console.error(chalk.dim('Did you mean:'));
       for (const { entry } of suggestions) {
         console.error(
-          `  ${chalk.cyan(paletteEntryToLine(entry).padEnd(40))} ${chalk.dim(entry.description)}`
+          `  ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
         );
       }
     }
@@ -4878,7 +4878,7 @@ async function handleInteractiveSlashCommand(
       console.log(chalk.dim('  Did you mean:'));
       for (const { entry } of suggestions) {
         console.log(
-          `    ${chalk.cyan(paletteEntryToLine(entry).padEnd(40))} ${chalk.dim(entry.description)}`
+          `    ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
         );
       }
     }
