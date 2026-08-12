@@ -49,6 +49,21 @@ export interface Goal {
   notes?: string;
 }
 
+export interface GoalSubject {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  status: 'exploring' | 'structuring' | 'active' | 'archived';
+  notebookLmUrl?: string;
+  notebookLmTitle?: string;
+  components: string[];
+  looseContextNotes?: string;
+  goalIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface GoalsConfig {
   activeGoalId?: string;
   priorities: Record<string, number>;

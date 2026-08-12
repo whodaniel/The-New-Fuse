@@ -57,6 +57,7 @@ import { KanbanService } from './services/KanbanService.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
+import { ServiceHealthService } from './services/ServiceHealthService.js';
 import { StoryService } from './services/StoryService.js';
 import {
   KNOWN_TOOLS,
@@ -7097,6 +7098,59 @@ program
   });
 
 program
+  .command('services')
+  .alias('svc')
+  .description(
+    'Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded'
+  )
+  .option('--json', 'Machine-readable JSON')
+  .option('--strict', 'Exit non-zero when any service needs attention (for cron/CI)')
+  .action((options: { json?: boolean; strict?: boolean } = {}) => {
+    try {
+      const report = new ServiceHealthService().report();
+
+      if (options.json) {
+        console.log(JSON.stringify({ services: report }, null, 2));
+      } else if (report.length === 0) {
+        console.log(chalk.dim('\n  No TNF launchd services found.\n'));
+      } else {
+        console.log(chalk.bold('\nTNF services\n'));
+        const icon: Record<string, string> = {
+          'crash-loop': chalk.red('✗'),
+          failed: chalk.red('✗'),
+          'not-loaded': chalk.yellow('○'),
+          restarted: chalk.cyan('↻'),
+          idle: chalk.dim('·'),
+          running: chalk.green('●'),
+        };
+        const width = Math.min(Math.max(...report.map((s) => s.label.length), 10), 44);
+        for (const svc of report) {
+          console.log(
+            `  ${icon[svc.state]} ${chalk.bold(svc.label.padEnd(width))} ` +
+              `${chalk.dim(svc.state.padEnd(11))} ${chalk.dim(svc.detail)}`
+          );
+          for (const line of svc.evidence ?? []) {
+            console.log(`    ${chalk.red('↳')} ${chalk.dim(line)}`);
+          }
+        }
+        const bad = report.filter(
+          (s) => s.state !== 'running' && s.state !== 'idle' && s.state !== 'restarted'
+        );
+        console.log(
+          bad.length
+            ? chalk.yellow(`\n  ${bad.length} service(s) need attention.\n`)
+            : chalk.green('\n  All services healthy.\n')
+        );
+      }
+
+      if (options.strict && ServiceHealthService.hasProblems(report)) process.exitCode = 1;
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
   .command('doctor')
   .description('Run TNF diagnostics')
   .option('--mode <mode>', 'Execution mode: cloud (default) or local')
@@ -7126,6 +7180,31 @@ program
           console.log(chalk.bold.cyan('\n[TNF Doctor] Protocol validation panel\n'));
           await runFastHarnessProtocolGate('tnf doctor');
           await runCommand('node', ['scripts/validate-protocol-schemas.cjs']);
+        }
+
+        // launchd service panel. Two services crash-looped for hours on
+        // 2026-08-12 without appearing in any TNF health output; doctor is
+        // where an operator looks, so the check belongs here and not only in
+        // the dedicated `tnf services` command.
+        const svcReport = new ServiceHealthService().report({ evidence: false });
+        const svcProblems = svcReport.filter(
+          (svc) =>
+            svc.state === 'crash-loop' || svc.state === 'failed' || svc.state === 'not-loaded'
+        );
+        console.log(chalk.bold.cyan('\n[TNF Doctor] launchd services\n'));
+        if (svcProblems.length === 0) {
+          console.log(chalk.green(`  ${svcReport.length} service(s) healthy`));
+        } else {
+          for (const svc of svcProblems.slice(0, 8)) {
+            console.log(
+              `  ${chalk.red('✗')} ${chalk.bold(svc.label)} ${chalk.dim(`${svc.state} — ${svc.detail}`)}`
+            );
+          }
+          console.log(
+            chalk.yellow(
+              `  ${svcProblems.length} service(s) need attention — details: tnf services`
+            )
+          );
         }
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
