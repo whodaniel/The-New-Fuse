@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
-import { API_ENDPOINTS } from '../config/api';
+import { API_BASE, API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 import {
   clearTokens,
@@ -414,7 +414,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (!hasSupabaseConfig || !supabase) {
-        throw new Error('Supabase OAuth is not configured');
+        // Fall back to backend passport Google route when Supabase OAuth is unavailable.
+        const next = encodeURIComponent(
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/callback`
+            : '/auth/callback'
+        );
+        window.location.href = `${API_ENDPOINTS.AUTH.GOOGLE}?redirect=${next}`;
+        return { method: 'google_redirect' as const };
       }
 
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -440,13 +447,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (!hasSupabaseConfig || !supabase) {
         // Fall back to backend passport GitHub route when Supabase OAuth is unavailable.
-        const apiBase = String(import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
         const next = encodeURIComponent(
           typeof window !== 'undefined'
             ? `${window.location.origin}/auth/callback`
             : '/auth/callback'
         );
-        window.location.href = `${apiBase}/api/auth/github?redirect=${next}`;
+        window.location.href = `${API_BASE}/auth/github?redirect=${next}`;
         return { method: 'github_redirect' as const };
       }
 
