@@ -499,7 +499,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const forgotPassword = useCallback(async (email: string) => {
-    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+    if (!hasSupabaseConfig || !supabase) throw new Error('Password reset is unavailable');
 
     const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
@@ -509,7 +509,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetPassword = useCallback(async (_token: string, password: string) => {
-    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+    if (!hasSupabaseConfig || !supabase) throw new Error('Password reset is unavailable');
 
     const { error: updateErr } = await supabase.auth.updateUser({ password });
     if (updateErr) throw new Error(updateErr.message || 'Failed to reset password');
@@ -518,7 +518,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSSOCallback = useCallback(
     async (_provider: string, _code: string, _state?: string | null) => {
-      if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+      if (!hasSupabaseConfig || !supabase) {
+        throw new Error('SSO authentication callback requires configured Supabase client');
+      }
 
       const url = typeof window !== 'undefined' ? new URL(window.location.href) : null;
       const code = url?.searchParams.get('code') ?? _code ?? '';

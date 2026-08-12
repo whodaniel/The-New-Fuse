@@ -516,10 +516,6 @@ export const HERMES_PARITY_ROOT_OPTIONS: Array<{
 }> = [
   { flag: '--accept-hooks', description: 'Hermes parity: accept hook proposals (no-op guide)' },
   { flag: '--cli', description: 'Hermes parity: force CLI mode (TNF is already CLI-first)' },
-  {
-    flag: '--continue [session]',
-    description: 'Hermes parity: continue prior session (see also agent --continue)',
-  },
   { flag: '--dev', description: 'Hermes parity: developer diagnostics mode marker' },
   { flag: '--ignore-rules', description: 'Hermes parity: ignore project rules (not recommended)' },
   {
@@ -528,31 +524,17 @@ export const HERMES_PARITY_ROOT_OPTIONS: Array<{
   },
   { flag: '--in <dir>', description: 'Hermes parity: treat <dir> as working directory hint' },
   {
-    flag: '--model <model>',
-    description: 'Hermes parity: model override hint (see also `tnf model`)',
-  },
-  {
     flag: '--no-restore-cwd',
     description: 'Hermes parity: do not restore prior cwd after session',
   },
-  { flag: '--oneshot', description: 'Hermes parity: single-turn / oneshot interaction marker' },
   { flag: '--pass-session-id', description: 'Hermes parity: emit session id to downstream tools' },
   { flag: '--provider <name>', description: 'Hermes parity: provider override hint' },
   { flag: '--reasoning <level>', description: 'Hermes parity: reasoning effort hint' },
-  {
-    flag: '--resume [session]',
-    description: 'Hermes parity: resume session id (see also agent --resume)',
-  },
   { flag: '--safe-mode', description: 'Hermes parity: prefer conservative tool execution' },
   { flag: '--skills <list>', description: 'Hermes parity: skill allowlist hint' },
   { flag: '--toolsets <list>', description: 'Hermes parity: toolset allowlist hint' },
   { flag: '--tui', description: 'Hermes parity: prefer TUI (see also `tnf tui`)' },
   { flag: '--usage-file <path>', description: 'Hermes parity: write usage metrics to a file' },
-  {
-    flag: '--worktree',
-    description: 'Hermes parity: isolate work in a git worktree when possible',
-  },
-  { flag: '--yolo', description: 'Hermes parity: auto-approve / low-friction mode marker' },
   { flag: '--since <spec>', description: 'Hermes parity: time-range filter hint for logs/status' },
   { flag: '--status', description: 'Hermes parity: prefer status output (see also `tnf status`)' },
   {
@@ -575,4 +557,17 @@ function registerHermesRootOptionParity(program: Command): void {
     if (hasRootOption(program, long)) continue;
     program.option(entry.flag, entry.description);
   }
+}
+
+/**
+ * Hermes-side signposts and marker flags. See `getPeerParityShims` in
+ * peer-cli-parity-gaps.ts for why the parity audit must exclude these.
+ */
+export function getHermesParityShims(): { commands: Set<string>; options: Set<string> } {
+  const commands = new Set<string>(HERMES_PARITY_GAP_COMMANDS);
+  for (const alias of Object.keys(HERMES_PARITY_GAP_ALIASES)) commands.add(alias);
+  const options = new Set<string>(
+    HERMES_PARITY_ROOT_OPTIONS.map((entry) => entry.flag.split(/\s+/)[0].toLowerCase())
+  );
+  return { commands, options };
 }

@@ -1,6 +1,7 @@
+import { CommandSourceService, type DiscoveredEntry } from './services/CommandSourceService.js';
 import { ProjectConfigService, type ProjectCommandDef } from './services/ProjectConfigService.js';
 
-export type SlashCommandSource = 'standard' | 'tnf' | 'project';
+export type SlashCommandSource = 'standard' | 'tnf' | 'project' | 'discovered';
 export type SlashCommandMode = 'control' | 'prompt' | 'cli' | 'info';
 
 export interface SlashCommandDefinition {
@@ -378,19 +379,64 @@ export function getProjectSlashCommands(projectRoot: string): SlashCommandDefini
   return project.getCommands().map(projectCommandToSlashCommand);
 }
 
+/**
+ * Markdown commands/prompts/agents/skills discovered across every runtime's
+ * directory convention — including the ones TNF provisions into peer CLIs.
+ *
+ * Kept OUT of `getAllSlashCommands` on purpose. There are ~800 of them in this
+ * repo; folding them into the curated list would turn `/help` into an
+ * unreadable wall and make `findSlashCommand` walk 800 entries per keystroke.
+ * They are resolved on demand by `findSlashCommand` (after the curated list
+ * misses) and indexed separately by the palette, which can rank them.
+ */
+const discoveredCache = new Map<string, SlashCommandDefinition[]>();
+
+export function getDiscoveredSlashCommands(projectRoot: string): SlashCommandDefinition[] {
+  const cached = discoveredCache.get(projectRoot);
+  if (cached) return cached;
+
+  const service = new CommandSourceService(projectRoot);
+  const mapped = service.discover().map((entry) => discoveredToSlashCommand(entry, service));
+  discoveredCache.set(projectRoot, mapped);
+  return mapped;
+}
+
+function discoveredToSlashCommand(
+  entry: DiscoveredEntry,
+  service: CommandSourceService
+): SlashCommandDefinition {
+  const noun = entry.kind === 'agent' ? 'agent' : entry.kind === 'skill' ? 'skill' : 'command';
+  return {
+    name: normalizeSlashName(entry.name),
+    summary: entry.description || `${entry.runtime} ${noun} (${entry.scope})`,
+    usage: `/${normalizeSlashName(entry.name)} [args]`,
+    source: 'discovered',
+    mode: 'prompt',
+    // Body is read lazily: discovery must stay cheap enough to run on every
+    // interactive launch, and 800 file reads is not that.
+    get content() {
+      return service.loadBody(entry);
+    },
+    filePath: entry.filePath,
+  } as SlashCommandDefinition;
+}
+
 export function getAllSlashCommands(projectRoot: string): SlashCommandDefinition[] {
   return [...getStandardSlashCommands(), ...getProjectSlashCommands(projectRoot)];
 }
 
 export function findSlashCommand(name: string, projectRoot: string): SlashCommandDefinition | null {
   const normalized = normalizeSlashName(name);
-  return (
-    getAllSlashCommands(projectRoot).find(
-      (command) =>
-        command.name === normalized ||
-        command.aliases?.some((alias) => normalizeSlashName(alias) === normalized)
-    ) || null
+  const curated = getAllSlashCommands(projectRoot).find(
+    (command) =>
+      command.name === normalized ||
+      command.aliases?.some((alias) => normalizeSlashName(alias) === normalized)
   );
+  if (curated) return curated;
+
+  // Curated names win on collision (a hand-written /skills entry should keep
+  // beating a Markdown file literally named "skills"), so this runs second.
+  return getDiscoveredSlashCommands(projectRoot).find((c) => c.name === normalized) || null;
 }
 
 export function renderSlashCommandList(projectRoot: string): string {
@@ -412,6 +458,19 @@ export function renderSlashCommandList(projectRoot: string): string {
     lines.push('');
   }
 
+  // The discovered set is summarised rather than listed: ~800 entries would
+  // bury the curated commands. The palette (`/` then type) is the way in, and
+  // `tnf commands --all` prints the full inventory when it is actually wanted.
+  const discovered = getDiscoveredSlashCommands(projectRoot);
+  if (discovered.length > 0) {
+    lines.push(`Discovered (${discovered.length}):`);
+    lines.push('  Markdown commands, agents and skills from .tnf/, .claude/,');
+    lines.push('  .agent/, .gemini/, .cursor/, .codex/ and .pi/ — project and user scope.');
+    lines.push('  Each is addressable as /<name>. Press / and type to search them.');
+    lines.push('');
+  }
+
+  lines.push('Press / and type to open the command palette (fuzzy, all depths).');
   lines.push('Use /help <command> or tnf slash show <command> for details.');
   return lines.join('\n');
 }
@@ -437,7 +496,10 @@ export function renderSlashCommandDetail(command: SlashCommandDefinition): strin
 
 export function formatPromptSlashCommand(command: SlashCommandDefinition, args: string[]): string {
   const suffix = args.join(' ').trim();
-  if (command.source === 'project') {
+  // File-backed commands (project `.tnf/command`, and everything discovered
+  // under .claude/.agent/.gemini/.pi) expand to their body; curated commands
+  // expand to their hard-coded prompt.
+  if (command.source === 'project' || command.source === 'discovered') {
     return suffix
       ? `${command.content || ''}\n\nArguments:\n${suffix}`.trim()
       : (command.content || '').trim();

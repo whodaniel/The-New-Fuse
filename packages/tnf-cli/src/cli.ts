@@ -43,6 +43,7 @@ import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
+import { CommandSourceService } from './services/CommandSourceService.js';
 import { CronService } from './services/CronService.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
@@ -50,8 +51,15 @@ import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
 import { StoryService } from './services/StoryService.js';
+import {
+  KNOWN_TOOLS,
+  PERMISSION_MODES,
+  resolvePermissions,
+  type PermissionResolution,
+} from './services/ToolPermissionService.js';
 import { ToolsService } from './services/ToolsService.js';
 import { WebhookService } from './services/WebhookService.js';
+import { WorktreeError, WorktreeService } from './services/WorktreeService.js';
 import {
   findSlashCommand,
   formatPromptSlashCommand,
@@ -69,6 +77,15 @@ import {
   loadAutonomousTurnCapConfig,
   parseExtendTurnCapMarker,
 } from './utils/autonomous-turn-cap.js';
+import {
+  buildPaletteIndex,
+  PaletteController,
+  PaletteRenderer,
+  rankPalette,
+  type PaletteEntry,
+  type PaletteKey,
+  type PaletteTheme,
+} from './utils/command-palette.js';
 import {
   countTrailingFailures,
   FULL_AUTO_FAIL_STREAK,
@@ -95,6 +112,20 @@ import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 // PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge AI agents.
 // NOT "Hermes-to-TNF parity". Ongoing, self-iterative. See assimilation-tenet skill.
 const program = new Command();
+
+// Root options must not be recognised AFTER a subcommand name.
+//
+// Commander's default scans program-level options anywhere in argv, so the
+// 134 root options registered for cross-agent parity were silently eating
+// identically-named subcommand flags: `tnf paths --json`, `tnf parity agents
+// --json` and `tnf commands --limit 4` all had their flag consumed by the
+// root parser and fell back to human-readable output. Machine-readable output
+// was broken CLI-wide by flags that do nothing.
+//
+// Positional-options mode confines root flags to `tnf --flag <subcommand>`,
+// which is where they were always documented to go.
+program.enablePositionalOptions();
+
 // Fallback for CommonJS/ESM compatibility
 const _dirname =
   typeof __dirname !== 'undefined'
@@ -4502,6 +4533,8 @@ type InteractiveSlashContext = {
   };
   autonomousMode?: boolean;
   autonomousState?: AutonomousSessionState;
+  /** Tool policy the session launched with. Absent means unrestricted. */
+  permissions?: PermissionResolution;
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4520,69 +4553,124 @@ function printSlashCommandDetail(command: SlashCommandDefinition): void {
   printSlashText(renderSlashCommandDetail(command));
 }
 
+/**
+ * Interactive command palette wiring.
+ *
+ * Replaces the previous slash dropdown, which indexed only the ~40 curated
+ * top-level slash commands and matched them with `startsWith`. Selecting a
+ * namespace there ran `tnf <namespace>` and printed a help page, so choosing a
+ * real command always took two manual steps. The palette indexes every
+ * Commander path at every depth plus every Markdown command/agent/skill found
+ * across the runtime directories, ranks them fuzzily, and runs the selection
+ * directly.
+ */
+
+/** Built once per process: walking 1200+ nodes on every keystroke is wasteful. */
+let paletteIndexCache: PaletteEntry[] | null = null;
+
+function getPaletteIndex(projectRoot: string): PaletteEntry[] {
+  if (paletteIndexCache) return paletteIndexCache;
+  const service = new CommandSourceService(projectRoot);
+  paletteIndexCache = buildPaletteIndex({
+    program,
+    slash: getAllSlashCommands(projectRoot),
+    markdown: service.discover(),
+  });
+  return paletteIndexCache;
+}
+
+const PALETTE_THEME: PaletteTheme = {
+  dim: (s) => chalk.dim(s),
+  accent: (s) => chalk.cyan(s),
+  match: (s) => chalk.bold.yellow(s),
+  selected: (s) => chalk.bold.green(s),
+  badge: (s) => chalk.dim(s),
+};
+
+/**
+ * Resolve a token list against the real Commander tree.
+ *
+ * Returns the longest prefix of `tokens` that names an actual command path,
+ * plus whatever tokens are left over as arguments. This is what lets
+ * `/agents register alice worker` dispatch to `tnf agents register` with
+ * `alice worker` as args, instead of being mangled by the curated `/agents`
+ * entry (which hard-codes `agents list`).
+ */
+function resolveCliPath(tokens: string[]): { argv: string[]; rest: string[] } | null {
+  let node: Command = program;
+  const argv: string[] = [];
+
+  for (const token of tokens) {
+    const next = node.commands.find((cmd) => cmd.name() === token || cmd.aliases().includes(token));
+    if (!next) break;
+    node = next;
+    argv.push(token);
+  }
+
+  if (argv.length === 0) return null;
+  return { argv, rest: tokens.slice(argv.length) };
+}
+
+/**
+ * Readline Tab completion, kept as a fallback for non-TTY and for terminals
+ * where the raw-mode palette cannot attach. Now fuzzy and full-depth so it
+ * agrees with what the palette would have shown.
+ */
 function createSlashCompleter(projectRoot: string): (line: string) => [string[], string] {
   return (line: string): [string[], string] => {
-    if (line.startsWith('/') && !line.includes(' ')) {
-      const commands = getSlashCommandMatches(projectRoot, line).map((cmd) => `/${cmd.name}`);
-      const hits = commands.filter((command) => command.startsWith(line));
-      return [hits.length ? hits : commands, line];
-    }
-    return [[], line];
+    if (!line.startsWith('/')) return [[], line];
+    const hits = rankPalette(getPaletteIndex(projectRoot), line, 40).map((ranked) =>
+      ranked.entry.action.type === 'slash'
+        ? ranked.entry.tokens[0]
+        : `/${ranked.entry.tokens.join(' ')}`
+    );
+    return [hits, line];
   };
 }
 
+/**
+ * Live palette session bound to one readline interface.
+ *
+ * `pending` bridges Node's event ordering. On Enter, readline's own keypress
+ * handler runs first — it emits `line` AND clears `rl.line` — then ours runs,
+ * and only after both does the awaited promise resume. So the handler cannot
+ * read the query off readline at that point; it uses the mirrored `lastLine`
+ * and stashes the chosen entry in `pending` for `resolveSlashDropdownInput`.
+ */
 type SlashDropdownState = {
-  visible: boolean;
-  query: string;
-  selectedIndex: number;
-  selectedCommand: string | null;
+  controller: PaletteController | null;
+  pending: PaletteEntry | null;
+  /** True once the operator moved the selection or Tab-completed. */
+  navigated: boolean;
+  projectRoot: string;
 };
 
-function getSlashCommandMatches(projectRoot: string, line: string): SlashCommandDefinition[] {
-  const normalizedLine = line.startsWith('/') ? line : `/${line}`;
-  const query = normalizedLine.slice(1).toLowerCase();
-  return getAllSlashCommands(projectRoot)
-    .filter((command) => {
-      if (!query) return true;
-      if (command.name.startsWith(query)) return true;
-      return command.aliases?.some((alias) => alias.startsWith(query)) || false;
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
+function paletteEntryToLine(entry: PaletteEntry): string {
+  if (entry.action.type === 'slash') return entry.tokens[0];
+  if (entry.action.type === 'cli') return `/${entry.tokens.join(' ')}`;
+  return `/${entry.action.entry.name}`;
 }
 
-function renderSlashCommandDropdown(
-  projectRoot: string,
-  state: SlashDropdownState,
-  limit = 14
-): string {
-  const allCommands = getSlashCommandMatches(projectRoot, state.query);
-  const safeSelectedIndex = Math.min(
-    Math.max(state.selectedIndex, 0),
-    Math.max(0, allCommands.length - 1)
-  );
-  const startIndex = Math.max(
-    0,
-    Math.min(safeSelectedIndex - limit + 1, Math.max(0, allCommands.length - limit))
-  );
-  const commands = allCommands.slice(startIndex, startIndex + limit);
-  const maxNameLength = Math.max(...commands.map((command) => command.name.length), 4);
-  const lines = [
-    chalk.bold('Slash commands'),
-    ...(startIndex > 0 ? [chalk.dim(`  ... ${startIndex} previous`)] : []),
-    ...commands.map((command, index) => {
-      const absoluteIndex = startIndex + index;
-      const selected = absoluteIndex === safeSelectedIndex;
-      const name = `/${command.name}`.padEnd(maxNameLength + 1);
-      const marker = selected ? chalk.green('›') : ' ';
-      const label = selected ? chalk.inverse(name) : chalk.cyan(name);
-      return `${marker} ${label} ${chalk.dim(command.summary)}`;
-    }),
-  ];
-  if (allCommands.length > startIndex + commands.length) {
-    lines.push(chalk.dim(`  ... ${allCommands.length - startIndex - commands.length} more`));
-  }
-  lines.push(chalk.dim('  ↑/↓ select, Enter run, Tab complete, type to filter.'));
-  return lines.join('\n');
+/**
+ * Decide what the operator meant when they pressed Enter.
+ *
+ * A navigated selection always wins — moving the cursor is an unambiguous
+ * choice. Otherwise a line the operator typed with arguments of their own
+ * wins over the highlighted row, because the palette knows nothing about
+ * those arguments and would silently drop them.
+ */
+function resolveSlashDropdownInput(input: string, state: SlashDropdownState): string {
+  const pending = state.pending;
+  const navigated = state.navigated;
+  state.pending = null;
+  state.navigated = false;
+  state.controller?.close();
+
+  if (!pending) return input;
+  const trimmed = input.trim();
+  if (!trimmed.startsWith('/')) return input;
+  if (!navigated && trimmed.slice(1).includes(' ')) return input;
+  return paletteEntryToLine(pending);
 }
 
 function setReadlineLine(rl: readline.Interface, line: string): void {
@@ -4591,22 +4679,26 @@ function setReadlineLine(rl: readline.Interface, line: string): void {
   (rl as any)._refreshLine?.();
 }
 
-function resolveSlashDropdownInput(input: string, state: SlashDropdownState): string {
-  const trimmed = input.trim();
-  if (
-    state.visible &&
-    state.selectedCommand &&
-    trimmed === state.query.trim() &&
-    trimmed.startsWith('/')
-  ) {
-    const selected = `/${state.selectedCommand}`;
-    state.visible = false;
-    state.selectedCommand = null;
-    return selected;
+function toPaletteKey(keyName: string | undefined, shift: boolean): PaletteKey {
+  switch (keyName) {
+    case 'up':
+      return 'up';
+    case 'down':
+      return 'down';
+    case 'pageup':
+      return 'pageup';
+    case 'pagedown':
+      return 'pagedown';
+    case 'return':
+    case 'enter':
+      return 'enter';
+    case 'tab':
+      return shift ? 'up' : 'tab';
+    case 'escape':
+      return 'escape';
+    default:
+      return 'other';
   }
-  state.visible = false;
-  state.selectedCommand = null;
-  return input;
 }
 
 function attachSlashCommandDropdown(
@@ -4614,20 +4706,19 @@ function attachSlashCommandDropdown(
   projectRoot: string
 ): SlashDropdownState {
   const state: SlashDropdownState = {
-    visible: false,
-    query: '',
-    selectedIndex: 0,
-    selectedCommand: null,
+    controller: null,
+    pending: null,
+    navigated: false,
+    projectRoot,
   };
   if (!process.stdin.isTTY) return state;
 
   readline.emitKeypressEvents(process.stdin, rl);
 
-  // Input-bug fix: TTY line discipline in cooked mode buffers an entire
-  // line and only delivers keypress events on Enter — by which time the
-  // dropdown cannot react character-by-character. Put stdin into raw
-  // mode while the dropdown is active so each printable keystroke fires
-  // synchronously, and restore it on readline close.
+  // TTY line discipline in cooked mode buffers a whole line and only delivers
+  // keypress events on Enter — too late for a palette that filters per
+  // character. Raw mode restores per-keystroke delivery; it is undone on
+  // readline close.
   const stdinAny = process.stdin as unknown as { setRawMode?: (m: boolean) => void };
   if (typeof stdinAny.setRawMode === 'function') {
     try {
@@ -4637,55 +4728,76 @@ function attachSlashCommandDropdown(
     }
   }
 
+  const renderer = new PaletteRenderer({
+    write: (chunk) => process.stdout.write(chunk),
+    columns: () => process.stdout.columns ?? 80,
+    rows: () => process.stdout.rows ?? 24,
+  });
+  const controller = new PaletteController(renderer, PALETTE_THEME);
+  controller.setIndex(getPaletteIndex(projectRoot));
+  state.controller = controller;
+
+  /**
+   * Mirror of the query line.
+   *
+   * Needed twice over: readline clears `rl.line` on Enter, and readline's
+   * up/down are bound to history recall, which overwrites the buffer with a
+   * previous command. Keeping our own copy lets the palette own the arrow
+   * keys while it is open and restore the query the operator actually typed.
+   */
+  let lastLine = '';
+
   const onKeypress = (_value: string, key: any) => {
-    const keyName = key?.name;
-    if (['return', 'enter'].includes(keyName)) {
-      state.visible = false;
-      state.selectedCommand = null;
+    const paletteKey = toPaletteKey(key?.name, Boolean(key?.shift));
+
+    // Ctrl-/Meta- chords belong to readline (Ctrl-C, Ctrl-U, word motion).
+    if (key?.ctrl || key?.meta) {
+      lastLine = String((rl as any).line || '');
+      if (controller.isOpen) controller.close();
       return;
     }
 
-    const currentLine =
-      state.visible && ['up', 'down'].includes(keyName)
-        ? state.query
-        : String((rl as any).line || '');
-    if (!currentLine.startsWith('/') || currentLine.includes(' ')) {
-      state.visible = false;
-      state.selectedCommand = null;
+    const isNav =
+      paletteKey === 'up' ||
+      paletteKey === 'down' ||
+      paletteKey === 'pageup' ||
+      paletteKey === 'pagedown';
+
+    if (paletteKey === 'enter') {
+      const outcome = controller.handle(lastLine, 'enter');
+      if (outcome.type === 'run') state.pending = outcome.entry;
+      lastLine = '';
       return;
     }
 
-    const matches = getSlashCommandMatches(projectRoot, currentLine);
-    if (matches.length === 0) {
-      state.visible = false;
-      state.selectedCommand = null;
+    if (isNav) {
+      if (!controller.isOpen) {
+        // Palette closed: leave the arrow keys to readline's history.
+        lastLine = String((rl as any).line || '');
+        return;
+      }
+      state.navigated = true;
+      controller.handle(lastLine, paletteKey);
+      // Undo readline's history recall so the typed query stays on screen.
+      setReadlineLine(rl, lastLine);
       return;
     }
 
-    if (!state.visible || state.query !== currentLine) {
-      state.selectedIndex = 0;
-    }
-    if (keyName === 'down') {
-      state.selectedIndex = (state.selectedIndex + 1) % matches.length;
-    } else if (keyName === 'up') {
-      state.selectedIndex = (state.selectedIndex - 1 + matches.length) % matches.length;
-    }
+    // readline has already applied this keystroke to its buffer, so `rl.line`
+    // is the post-keystroke query.
+    lastLine = String((rl as any).line || '');
+    const outcome = controller.handle(lastLine, paletteKey);
 
-    state.visible = true;
-    state.query = currentLine;
-    state.selectedCommand = matches[state.selectedIndex]?.name || null;
-
-    process.stdout.write(`\n${renderSlashCommandDropdown(projectRoot, state)}\n`);
-    setReadlineLine(
-      rl,
-      ['up', 'down'].includes(keyName) && state.selectedCommand
-        ? `/${state.selectedCommand}`
-        : currentLine
-    );
+    if (outcome.type === 'complete') {
+      state.navigated = true;
+      lastLine = outcome.line;
+      setReadlineLine(rl, outcome.line);
+    }
   };
 
   process.stdin.on('keypress', onKeypress);
   rl.once('close', () => {
+    controller.close();
     process.stdin.off('keypress', onKeypress);
     if (typeof stdinAny.setRawMode === 'function') {
       try {
@@ -4773,14 +4885,50 @@ function printSessionCost(context: InteractiveSlashContext): void {
   console.log('');
 }
 
+/**
+ * Flags that belong to the root program itself and must NOT be rerouted into
+ * a `tui` session.
+ *
+ * `--help` and `--version` are Commander's own; `--no-splash` is the root's
+ * one real behavioural flag. Everything else typed before a subcommand is a
+ * session setting.
+ */
+function isRootOnlyFlag(flag: string): boolean {
+  const bare = flag.split('=')[0];
+  return ['-h', '--help', '-V', '--version', '--no-splash'].includes(bare);
+}
+
 async function handleOneShotSlashInput(input: string): Promise<boolean> {
   const parsed = parseSlashCommand(input);
   if (!parsed) return false;
 
+  // Same rule as the interactive path: `tnf "/agents register alice worker"`
+  // must reach the real command, not the curated single-token entry.
+  if (parsed.args.length > 0) {
+    const resolved = resolveCliPath([parsed.name, ...parsed.args]);
+    if (resolved && resolved.argv.length > 1) {
+      await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
+      return true;
+    }
+  }
+
   const command = findSlashCommand(parsed.name, invocationCwd);
   if (!command) {
     console.error(chalk.red(`Unknown slash command: /${parsed.rawName}`));
-    console.error(chalk.dim('Run `tnf /help` or `tnf slash list`.'));
+    // Same near-miss list the interactive path shows. A typo should cost one
+    // glance, not a trip through `tnf --help`.
+    const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
+    if (suggestions.length > 0) {
+      console.error(chalk.dim('Did you mean:'));
+      for (const { entry } of suggestions) {
+        console.error(
+          `  ${chalk.cyan(paletteEntryToLine(entry).padEnd(40))} ${chalk.dim(entry.description)}`
+        );
+      }
+    }
+    console.error(
+      chalk.dim('Run `tnf /help`, `tnf slash list`, or `tnf commands <text>` to search everything.')
+    );
     process.exitCode = 1;
     return true;
   }
@@ -4856,10 +5004,34 @@ async function handleInteractiveSlashCommand(
   const parsed = parseSlashCommand(input);
   if (!parsed) return { handled: false };
 
+  // Multi-token input that names a real CLI path dispatches straight to it.
+  //
+  // This is what makes the flat palette honest: choosing `agents register`
+  // has to RUN `tnf agents register`, not fall through to the curated
+  // `/agents` entry (hard-coded to `agents list`) and silently do something
+  // else. Single-token input is left to the curated table on purpose, so
+  // `/agents` keeps its useful default and `/skills` keeps its bank status.
+  if (parsed.args.length > 0) {
+    const resolved = resolveCliPath([parsed.name, ...parsed.args]);
+    if (resolved && resolved.argv.length > 1) {
+      await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
+      return { handled: true };
+    }
+  }
+
   const command = findSlashCommand(parsed.name, invocationCwd);
   if (!command) {
+    const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
     console.log(chalk.red(`  Unknown slash command: /${parsed.rawName}`));
-    console.log(chalk.dim('  Run /help to list available commands.'));
+    if (suggestions.length > 0) {
+      console.log(chalk.dim('  Did you mean:'));
+      for (const { entry } of suggestions) {
+        console.log(
+          `    ${chalk.cyan(paletteEntryToLine(entry).padEnd(40))} ${chalk.dim(entry.description)}`
+        );
+      }
+    }
+    console.log(chalk.dim('  Press / and type to search every command, or run /help.'));
     return { handled: true };
   }
 
@@ -4933,11 +5105,23 @@ async function handleInteractiveSlashCommand(
       console.log(chalk.red('  Usage: /autonomous [on|off]'));
       return { handled: true };
     }
-    if (toggle === null) {
-      context.autonomousMode = !context.autonomousMode;
-    } else {
-      context.autonomousMode = toggle;
+    const wantsOn = toggle === null ? !context.autonomousMode : toggle;
+    // A session launched under a read-only permission mode cannot talk itself
+    // back into shell access; the operator must relaunch with wider
+    // permissions. Otherwise --permission-mode would be advisory, which is
+    // exactly the failure this replaced.
+    if (wantsOn && context.permissions && !context.permissions.mutationsAllowed) {
+      console.log(
+        chalk.yellow(
+          `  Refused: this session runs under --permission-mode ${context.permissions.mode} (${context.permissions.summary}).`
+        )
+      );
+      console.log(
+        chalk.dim('  Relaunch with a permission mode that allows shell to enable autonomy.')
+      );
+      return { handled: true };
     }
+    context.autonomousMode = wantsOn;
     console.log(
       `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
     );
@@ -5290,6 +5474,18 @@ program
     'Execution mode: agent (default) | plan | ask (plan/ask disable shell auto-exec)',
     'agent'
   )
+  .option(
+    '--permission-mode <mode>',
+    `Tool permission mode: ${PERMISSION_MODES.join(' | ')}`,
+    'default'
+  )
+  .option('--allowed-tools <list>', `Comma-separated tool allowlist (${KNOWN_TOOLS.join(', ')})`)
+  .option('--disallowed-tools <list>', 'Comma-separated tool denylist; applied after the allowlist')
+  .option(
+    '--worktree [name]',
+    'Run the session in an isolated git worktree under .tnf/worktrees/ (default name: tnf-session)'
+  )
+  .option('--worktree-base <ref>', 'Base ref for a new worktree (default: origin/HEAD, else HEAD)')
   .option('--skip-voice-kws', 'Do not auto-start Voice beam + KWS (default: start them)')
   .action(
     async (
@@ -5307,6 +5503,11 @@ program
         force?: boolean;
         yolo?: boolean;
         mode?: string;
+        permissionMode?: string;
+        allowedTools?: string;
+        disallowedTools?: string;
+        worktree?: string | true;
+        worktreeBase?: string;
         skipVoiceKws?: boolean;
       }
     ) => {
@@ -5316,6 +5517,25 @@ program
           | 'agent'
           | 'plan'
           | 'ask';
+
+        // `--mode plan|ask` and `--permission-mode plan|readOnly` are two
+        // spellings of the same intent (TNF's own, and the peer CLIs'). The
+        // stricter of the two wins, so neither can be used to widen the other.
+        const permissions = resolvePermissions({
+          mode: mode === 'plan' || mode === 'ask' ? 'plan' : (options.permissionMode ?? 'default'),
+          allowedTools: options.allowedTools,
+          disallowedTools: options.disallowedTools,
+        });
+        if (permissions.unknownTools.length > 0) {
+          console.error(
+            chalk.red(
+              `Unknown tool name(s): ${permissions.unknownTools.join(', ')}.\n` +
+                `Known tools: ${KNOWN_TOOLS.join(', ')}`
+            )
+          );
+          process.exit(2);
+        }
+
         const yolo = Boolean(options.yolo || options.force);
         const autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
@@ -5323,6 +5543,27 @@ program
 
         if (options.model) {
           process.env.TNF_LLM_MODEL = options.model;
+        }
+
+        // Worktree isolation must happen before anything reads or writes the
+        // workspace, so the whole session — Turn Zero included — runs inside
+        // the isolated checkout.
+        if (options.worktree !== undefined) {
+          const service = new WorktreeService(repoRoot);
+          const name =
+            typeof options.worktree === 'string' && options.worktree.trim()
+              ? options.worktree.trim()
+              : 'tnf-session';
+          const { info, created } = service.create({ name, baseRef: options.worktreeBase });
+          process.chdir(info.worktreePath);
+          process.env.TNF_WORKTREE = info.worktreePath;
+          console.log(
+            chalk.cyan(
+              `  ⑂ ${created ? 'Created' : 'Reusing'} worktree ${chalk.bold(info.name)} ` +
+                `on ${chalk.bold(info.branch)} (base ${info.baseRef})`
+            )
+          );
+          console.log(chalk.dim(`    ${info.worktreePath}`));
         }
 
         if (wantsOneshot) {
@@ -5333,10 +5574,12 @@ program
             positional: promptParts,
             outputFormat: options.outputFormat || 'text',
             model: options.model,
-            enableTools: mode === 'ask' || mode === 'plan' ? 'none' : undefined,
+            enableTools: permissions.enableTools,
           });
           return;
         }
+
+        console.log(chalk.dim(`  ⚿ Permissions — ${permissions.summary}`));
 
         await runTurnZeroOnboardSurface();
         if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
@@ -5344,13 +5587,23 @@ program
         }
 
         const shouldResume = Boolean(options.continue || options.resume !== undefined);
-        const resumeId =
+        let resumeId: string | undefined =
           typeof options.resume === 'string' && options.resume.trim()
             ? options.resume.trim()
             : undefined;
 
+        // `--resume` with no id used to silently take the most recent session.
+        // On a TTY, offer the actual choice instead — picking the wrong
+        // transcript is only discoverable several turns later.
+        if (options.resume === true && !resumeId) {
+          const picked = await pickSessionInteractively();
+          if (picked === null) return; // operator cancelled
+          resumeId = picked;
+        }
+
         await startTuiAgent({
-          autonomous: mode === 'agent' ? Boolean(autonomous || yolo) : false,
+          autonomous:
+            mode === 'agent' && permissions.mutationsAllowed ? Boolean(autonomous || yolo) : false,
           model: options.model,
           mode,
           continueSession: shouldResume,
@@ -5358,6 +5611,7 @@ program
           task: options.task,
           taskFile: options.taskFile,
           positional: promptParts,
+          permissions,
         });
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
@@ -5365,6 +5619,116 @@ program
       }
     }
   );
+
+// Isolated git worktrees for agent sessions. Replaces the former
+// "Cursor Agent parity: isolated git worktree marker" root flag, which
+// created nothing.
+const worktreeCommand = program
+  .command('worktree')
+  .description('Manage isolated git worktrees for TNF sessions (see also: tnf tui --worktree)');
+
+function printWorktreeError(err: unknown): never {
+  const message = err instanceof WorktreeError ? err.message : (err as any)?.message || String(err);
+  console.error(chalk.red(`Error: ${message}`));
+  process.exit(1);
+}
+
+worktreeCommand
+  .command('list')
+  .description('List TNF-managed worktrees under .tnf/worktrees/')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean } = {}) => {
+    try {
+      const worktrees = new WorktreeService(repoRoot).list();
+      if (options.json) {
+        console.log(JSON.stringify({ count: worktrees.length, worktrees }, null, 2));
+        return;
+      }
+      if (worktrees.length === 0) {
+        console.log(
+          chalk.dim('\n  No TNF worktrees. Create one with: tnf worktree create <name>\n')
+        );
+        return;
+      }
+      console.log(chalk.bold('\nTNF worktrees\n'));
+      for (const worktree of worktrees) {
+        console.log(
+          `  ${chalk.green(worktree.name.padEnd(24))} ${chalk.cyan(worktree.branch.padEnd(32))} ${chalk.dim(`base ${worktree.baseRef}`)}`
+        );
+        console.log(`  ${' '.repeat(24)} ${chalk.dim(worktree.worktreePath)}`);
+      }
+      console.log('');
+    } catch (err) {
+      printWorktreeError(err);
+    }
+  });
+
+worktreeCommand
+  .command('create')
+  .description('Create an isolated worktree and branch')
+  .argument('<name>', 'Worktree name (letters, digits, dot, dash, underscore)')
+  .option('--base <ref>', 'Base ref (default: origin/HEAD, else HEAD)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((name: string, options: { base?: string; json?: boolean } = {}) => {
+    try {
+      const { info, created } = new WorktreeService(repoRoot).create({
+        name,
+        baseRef: options.base,
+      });
+      if (options.json) {
+        console.log(JSON.stringify({ created, worktree: info }, null, 2));
+        return;
+      }
+      console.log(
+        chalk.green(`\n  ${created ? 'Created' : 'Already present'}: ${info.name}`) +
+          chalk.dim(`\n  branch ${info.branch} (base ${info.baseRef})\n  ${info.worktreePath}\n`)
+      );
+    } catch (err) {
+      printWorktreeError(err);
+    }
+  });
+
+worktreeCommand
+  .command('status')
+  .description('Show uncommitted files and unmerged commits in a worktree')
+  .argument('<name>', 'Worktree name')
+  .option('--json', 'Output machine-readable JSON')
+  .action((name: string, options: { json?: boolean } = {}) => {
+    try {
+      const status = new WorktreeService(repoRoot).status(name);
+      if (options.json) {
+        console.log(JSON.stringify({ name, ...status }, null, 2));
+        return;
+      }
+      console.log(chalk.bold(`\nWorktree ${name}\n`));
+      console.log(`  uncommitted files : ${chalk.cyan(String(status.dirtyFiles.length))}`);
+      for (const file of status.dirtyFiles.slice(0, 20)) console.log(`    ${chalk.dim(file)}`);
+      console.log(`  unmerged commits  : ${chalk.cyan(String(status.unmergedCommits.length))}`);
+      for (const commit of status.unmergedCommits.slice(0, 20))
+        console.log(`    ${chalk.dim(commit)}`);
+      console.log('');
+    } catch (err) {
+      printWorktreeError(err);
+    }
+  });
+
+worktreeCommand
+  .command('remove')
+  .description('Remove a worktree and its branch (refuses to discard work without --force)')
+  .argument('<name>', 'Worktree name')
+  .option('--force', 'Discard uncommitted changes and unmerged commits')
+  .action((name: string, options: { force?: boolean } = {}) => {
+    try {
+      const result = new WorktreeService(repoRoot).remove(name, { force: options.force });
+      if (!result.removed) {
+        console.error(chalk.yellow(`\n  Not removed: ${result.reason}\n`));
+        process.exit(1);
+      }
+      console.log(chalk.green(`\n  Removed worktree ${name}\n`));
+    } catch (err) {
+      printWorktreeError(err);
+    }
+  });
 
 program
   .command('gateway')
@@ -13583,6 +13947,136 @@ hooks
     }
   });
 
+// Non-interactive twin of the palette. `tnf menu` shows a hand-curated,
+// grouped view; this shows the flat index the palette actually searches, so
+// what you can find by typing `/` is inspectable, scriptable and diffable.
+program
+  .command('commands')
+  .alias('palette')
+  .description(
+    'Search the flat command index the palette uses: every CLI path at every depth, plus Markdown commands/agents/skills from .tnf/, .claude/, .agent/, .gemini/, .cursor/, .codex/ and .pi/'
+  )
+  .argument('[query...]', 'Fuzzy query; omit to list everything')
+  .option('--kind <kind>', 'Filter by kind: cli | slash | command | prompt | agent | skill')
+  .option('--limit <n>', 'Max rows to print', '40')
+  .option('--all', 'Print every match (overrides --limit)')
+  .option('--stats', 'Show where the index came from, by runtime and kind')
+  .option('--json', 'Output machine-readable JSON')
+  .action(
+    (
+      queryParts: string[] = [],
+      options: {
+        kind?: string;
+        limit?: string;
+        all?: boolean;
+        stats?: boolean;
+        json?: boolean;
+      } = {}
+    ) => {
+      try {
+        if (options.stats) {
+          const service = new CommandSourceService(invocationCwd);
+          const markdown = service.summary();
+          const cliCount = getPaletteIndex(invocationCwd).filter(
+            (entry) => entry.action.type === 'cli'
+          ).length;
+          if (options.json) {
+            console.log(JSON.stringify({ cliCommands: cliCount, markdown }, null, 2));
+            return;
+          }
+          console.log(chalk.bold('\nCommand index sources\n'));
+          console.log(`  ${chalk.cyan(String(cliCount).padStart(5))}  cli commands (all depths)`);
+          for (const row of markdown) {
+            console.log(
+              `  ${chalk.cyan(String(row.count).padStart(5))}  ${row.kind} · ${chalk.dim(row.runtime)}`
+            );
+          }
+          console.log(
+            chalk.dim(
+              `\n  ${getPaletteIndex(invocationCwd).length} entries total. Press / in an interactive TNF session to search them.\n`
+            )
+          );
+          return;
+        }
+
+        const query = queryParts.join(' ').trim();
+        const sigil =
+          options.kind === 'agent'
+            ? '@'
+            : options.kind === 'skill'
+              ? '#'
+              : options.kind === 'cli'
+                ? '!'
+                : '';
+        // Rank the whole index, then slice: --limit must cap what is PRINTED,
+        // not what is searched, or `--limit 5 --kind skill` would filter five
+        // pre-truncated rows and usually print nothing.
+        const ranked = rankPalette(
+          getPaletteIndex(invocationCwd),
+          `/${sigil}${query}`,
+          Number.MAX_SAFE_INTEGER
+        ).filter((r) => {
+          if (!options.kind || sigil) return true;
+          const action = r.entry.action;
+          if (action.type === 'slash') return options.kind === 'slash';
+          if (action.type === 'cli') return options.kind === 'cli';
+          return action.entry.kind === options.kind;
+        });
+
+        const limit = options.all ? ranked.length : Math.max(1, Number(options.limit ?? 40));
+        const shown = ranked.slice(0, limit);
+
+        if (options.json) {
+          console.log(
+            JSON.stringify(
+              {
+                query,
+                total: ranked.length,
+                shown: shown.length,
+                results: shown.map((r) => ({
+                  label: r.entry.label,
+                  description: r.entry.description,
+                  badge: r.entry.badge,
+                  score: r.score,
+                  run: paletteEntryToLine(r.entry),
+                  needsArgs: r.entry.needsArgs,
+                })),
+              },
+              null,
+              2
+            )
+          );
+          return;
+        }
+
+        if (shown.length === 0) {
+          console.log(chalk.yellow(`\n  No command matches "${query}".\n`));
+          return;
+        }
+
+        const width = Math.min(Math.max(...shown.map((r) => r.entry.label.length), 10), 54);
+        console.log('');
+        for (const { entry } of shown) {
+          const label =
+            entry.label.length > width
+              ? `${entry.label.slice(0, width - 1)}…`
+              : entry.label.padEnd(width);
+          console.log(
+            `  ${chalk.green(label)}  ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
+          );
+        }
+        console.log(
+          chalk.dim(
+            `\n  ${shown.length} of ${ranked.length} matches${ranked.length > shown.length ? ' (--all for the rest)' : ''}. Run one with: tnf <path>  or  /<path> in a session.\n`
+          )
+        );
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
 program
   .command('menu')
   .description('Show an organized TNF command menu')
@@ -19069,7 +19563,62 @@ type TuiAgentOptions = {
   task?: string;
   taskFile?: string;
   positional?: string[];
+  /** Resolved tool policy for this session. Absent means unrestricted. */
+  permissions?: PermissionResolution;
 };
+
+/**
+ * Let the operator choose which saved session to resume.
+ *
+ * `--resume` with no id previously took `sessions[0]` without saying so, and
+ * resuming the wrong transcript is the kind of mistake you only notice after
+ * the agent has acted on stale context. Falls back to the most recent session
+ * when there is no TTY (scripts and cron must not block on a prompt).
+ *
+ * Returns the chosen id, `undefined` for "most recent", or `null` if the
+ * operator cancelled and the caller should not start a session at all.
+ */
+async function pickSessionInteractively(): Promise<string | null | undefined> {
+  const sessions = sessionManager.list();
+  if (sessions.length === 0) {
+    console.log(chalk.yellow('  No saved sessions to resume — starting fresh.'));
+    return undefined;
+  }
+  if (sessions.length === 1) return sessions[0].id;
+  if (!process.stdin.isTTY) return sessions[0].id;
+
+  const shown = sessions.slice(0, 20);
+  console.log(chalk.bold('\n  Resume which session?\n'));
+  shown.forEach((session, index) => {
+    const when = new Date(session.updatedAt).toLocaleString();
+    console.log(
+      `  ${chalk.cyan(String(index + 1).padStart(2))}. ${chalk.bold((session.name || session.id).padEnd(28))} ` +
+        `${chalk.dim(`${String(session.messageCount).padStart(4)} msgs`)}  ` +
+        `${chalk.dim(session.model?.padEnd(24) ?? '')} ${chalk.dim(when)}`
+    );
+  });
+  if (sessions.length > shown.length) {
+    console.log(chalk.dim(`  … ${sessions.length - shown.length} older sessions not shown`));
+  }
+
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await new Promise<string>((resolve) =>
+      rl.question(chalk.green('\n  Number (Enter for most recent, q to cancel): '), resolve)
+    );
+    const trimmed = answer.trim().toLowerCase();
+    if (trimmed === 'q' || trimmed === 'quit') return null;
+    if (!trimmed) return shown[0].id;
+    const index = Number.parseInt(trimmed, 10);
+    if (!Number.isFinite(index) || index < 1 || index > shown.length) {
+      console.log(chalk.yellow('  Not a listed number — resuming the most recent session.'));
+      return shown[0].id;
+    }
+    return shown[index - 1].id;
+  } finally {
+    rl.close();
+  }
+}
 
 /**
  * Peer-parity oneshot/print path (claude -p / hermes -z / cursor --print).
@@ -19237,7 +19786,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   // Resolve the persistent TUI mode. LONG_RUN keeps the agent alive without
   // operator keystrokes; INTERACTIVE waits for input.
   const tuiMode: TuiMode = resolveTuiMode();
-  const modeDisablesAuto = options?.mode === 'plan' || options?.mode === 'ask';
+
+  // A permission mode that forbids mutation outranks every autonomy source —
+  // including the persisted LONG_RUN/AUTONOMOUS default, which would otherwise
+  // silently re-enable shell execution the operator just asked to disable.
+  const permissionsForbidShell = options?.permissions
+    ? !options.permissions.mutationsAllowed
+    : false;
+  const modeDisablesAuto =
+    options?.mode === 'plan' || options?.mode === 'ask' || permissionsForbidShell;
+  if (permissionsForbidShell) {
+    autonomousMode = false;
+  }
   if (
     (tuiMode === 'LONG_RUN' || tuiMode === 'AUTONOMOUS') &&
     !autonomousMode &&
@@ -19276,6 +19836,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     messages,
     systemMessageCount: 1,
     client,
+    permissions: options?.permissions,
     autonomousMode,
     autonomousState,
   };
@@ -19574,8 +20135,13 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       const useStreaming = process.env.TNF_USE_STREAMING === '1';
       // Native tool calling is the default autonomous execution path
       // (TNF_TUI_NATIVE_TOOLS=0 restores the fenced-block-only convention).
+      // `permissionsForbidShell` is checked here as well as at autonomy setup:
+      // /autonomous on can flip autonomousMode mid-session, and it must not be
+      // able to re-grant a permission the session was launched without.
       const useNativeTools =
-        slashContext.autonomousMode && process.env.TNF_TUI_NATIVE_TOOLS !== '0';
+        slashContext.autonomousMode &&
+        !permissionsForbidShell &&
+        process.env.TNF_TUI_NATIVE_TOOLS !== '0';
 
       let turnResponseText = '';
       let nativeToolCallsMade = 0;
@@ -20170,6 +20736,19 @@ async function main(): Promise<void> {
   const implicitArgs = resolveImplicitPassthroughArgs(argv);
   if (implicitArgs) {
     await runPassthrough(implicitArgs.cliName, implicitArgs.args);
+    return;
+  }
+
+  // `tnf --permission-mode plan` must mean what `claude --permission-mode plan`
+  // means: start a session with that setting. When the first argument is a
+  // flag there is no subcommand, so the flags describe the session — route
+  // them to `tui`, which is the command that actually implements them.
+  //
+  // Without this, every session flag typed at the root landed on the root
+  // parser, which has no action, so `tnf --worktree x` printed nothing and did
+  // nothing. That is the same silent-no-op class as the parity markers.
+  if (argv.length > 2 && argv[2].startsWith('-') && !isRootOnlyFlag(argv[2])) {
+    await program.parseAsync([argv[0], argv[1], 'tui', ...argv.slice(2)]);
     return;
   }
   // Hermes-parity gap closers (aliases + thin wrappers) must run after every

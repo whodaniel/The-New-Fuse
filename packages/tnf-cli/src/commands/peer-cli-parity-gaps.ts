@@ -1,7 +1,28 @@
 /**
- * Claude / Pi / Codex parity gap closers — same shape as hermes-parity-gaps:
- * honest top-level verbs + root option markers so `tnf parity` coverage lifts
- * without inventing fake peer behavior.
+ * Claude / Pi / Codex parity gap closers.
+ *
+ * WHAT THESE ARE, HONESTLY
+ *   Two different things live in this file and they are NOT equivalent:
+ *
+ *     - `registerGuide(...)` registers a real command that prints where the
+ *       equivalent TNF capability lives. It does not do what the peer verb
+ *       does. It is a signpost.
+ *     - `registerRootOptions(...)` registers a flag that is parsed and then
+ *       ignored. Nothing reads it.
+ *
+ *   Both were previously counted by `tnf parity audit` as coverage, which is
+ *   how the ledger reached "100% coverage, 0 open gaps" while the underlying
+ *   features did not exist. `PARITY_SHIMS` below is exported so ParityService
+ *   can subtract them from the score instead of counting them.
+ *
+ * MARKER OPTIONS ARE NOT FREE
+ *   Commander recognises program-level options anywhere in argv unless
+ *   positional-options mode is on. These markers therefore SHADOWED real
+ *   subcommand flags of the same name — `tnf paths --json`, `tnf parity
+ *   agents --json` and `tnf commands --limit 4` all silently lost their flag
+ *   to a root marker that did nothing with it. cli.ts now calls
+ *   `program.enablePositionalOptions()`, and the markers that have since been
+ *   implemented for real have been removed from the lists below.
  */
 
 import chalk from 'chalk';
@@ -93,8 +114,6 @@ export const CLAUDE_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: stri
     flag: '--allow-dangerously-skip-permissions',
     description: 'Claude parity: skip-permissions allow marker (not recommended)',
   },
-  { flag: '--allowed-tools <list>', description: 'Claude parity: tool allowlist hint' },
-  { flag: '--allowedtools <list>', description: 'Claude parity: tool allowlist alias' },
   {
     flag: '--append-system-prompt <text>',
     description: 'Claude/Pi parity: append system prompt hint',
@@ -118,8 +137,6 @@ export const CLAUDE_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: stri
     flag: '--disable-slash-commands',
     description: 'Claude parity: disable slash commands marker',
   },
-  { flag: '--disallowed-tools <list>', description: 'Claude parity: tool denylist hint' },
-  { flag: '--disallowedtools <list>', description: 'Claude parity: tool denylist alias' },
   { flag: '--effort <level>', description: 'Claude parity: effort / reasoning level hint' },
   { flag: '--environment <name>', description: 'Claude parity: environment profile hint' },
   {
@@ -151,7 +168,6 @@ export const CLAUDE_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: stri
     description: 'Claude parity: skip session persistence marker',
   },
   { flag: '--output-format <fmt>', description: 'Claude parity: output format hint' },
-  { flag: '--permission-mode <mode>', description: 'Claude parity: permission mode hint' },
   { flag: '--plugin-dir <path>', description: 'Claude parity: plugin directory hint' },
   { flag: '--plugin-url <url>', description: 'Claude parity: plugin URL hint' },
   { flag: '--print', description: 'Claude/Pi parity: print/non-interactive marker' },
@@ -228,8 +244,6 @@ export const CODEX_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: strin
 export const JULES_PARITY_ROOT_OPTIONS: Array<{ flag: string; description: string }> = [
   { flag: '--apply', description: 'Jules parity: apply suggestion/patch marker' },
   { flag: '--assignee <name>', description: 'Jules parity: assignee hint' },
-  { flag: '--json', description: 'Jules parity: JSON output marker' },
-  { flag: '--limit <n>', description: 'Jules parity: result limit hint' },
   { flag: '--parallel <n>', description: 'Jules parity: parallelism hint' },
   { flag: '--repo <slug>', description: 'Jules parity: repository hint' },
 ];
@@ -252,15 +266,6 @@ export const CURSOR_AGENT_PARITY_ROOT_OPTIONS: Array<{ flag: string; description
   },
   { flag: '--trust', description: 'Cursor Agent parity: trust workspace marker' },
   { flag: '--workspace <path>', description: 'Cursor Agent parity: workspace path hint' },
-  {
-    flag: '--worktree [name]',
-    description: 'Cursor Agent parity: isolated git worktree marker',
-  },
-  {
-    flag: '--worktree-base <branch>',
-    description: 'Cursor Agent parity: worktree base branch/ref hint',
-  },
-  { flag: '--yolo', description: 'Cursor Agent parity: alias for --force marker' },
 ];
 
 export function registerPeerCliParityGapCommands(program: Command, _repoRoot: string): void {
@@ -429,4 +434,39 @@ export function registerPeerCliParityGapCommands(program: Command, _repoRoot: st
   registerRootOptions(program, CODEX_PARITY_ROOT_OPTIONS);
   registerRootOptions(program, JULES_PARITY_ROOT_OPTIONS);
   registerRootOptions(program, CURSOR_AGENT_PARITY_ROOT_OPTIONS);
+}
+
+/**
+ * Everything in this file that is a SIGNPOST rather than an implementation.
+ *
+ * `tnf parity audit` uses this to stop counting shims as coverage. Before
+ * this existed the ledger read "100% coverage, 0 open gaps" across 8 reference
+ * CLIs while `tnf fork`, `tnf worker` and `tnf cloud` printed a few lines of
+ * pointer text and `--permission-mode` did nothing at all — the audit was
+ * measuring name collisions, not capability.
+ *
+ * The contract: when a name here graduates to a real implementation, delete it
+ * from this list in the same change. A name that is absent here is claimed as
+ * genuinely implemented, and the audit will score it.
+ */
+export function getPeerParityShims(): { commands: Set<string>; options: Set<string> } {
+  const commands = new Set<string>([
+    ...CLAUDE_PARITY_GAP_COMMANDS,
+    ...CODEX_PARITY_GAP_COMMANDS,
+    ...JULES_PARITY_GAP_COMMANDS,
+    ...CURSOR_AGENT_PARITY_GAP_COMMANDS,
+    ...OPENCODE_KILO_PARITY_GAP_COMMANDS,
+  ]);
+
+  const options = new Set<string>();
+  for (const list of [
+    CLAUDE_PARITY_ROOT_OPTIONS,
+    PI_PARITY_ROOT_OPTIONS,
+    CODEX_PARITY_ROOT_OPTIONS,
+    JULES_PARITY_ROOT_OPTIONS,
+    CURSOR_AGENT_PARITY_ROOT_OPTIONS,
+  ]) {
+    for (const entry of list) options.add(entry.flag.split(/\s+/)[0].toLowerCase());
+  }
+  return { commands, options };
 }

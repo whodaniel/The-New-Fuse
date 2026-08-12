@@ -1,21 +1,21 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T06:24:49.532Z`  
-Handoff ID: `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14`
+Created At: `2026-08-12T06:39:15.842Z`  
+Handoff ID: `fd075003-b6b8-4e5c-8db4-ee92ab394962`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `bb1ae588a17290f62aba440f356b54864ae00249`
+- Head SHA: `3ce882df10964be1d9cfed31dc440b68075eaa7f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Host compaction control-plane: verify/status/discover +
-  HARNESS_HOST_COMPACTION protocol; context_assembly_compaction marked
-  implemented
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
 
@@ -28,7 +28,7 @@ Handoff ID: `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14`
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/data/codebase_map.json
-- data/harness/harness-config.json
+- apps/frontend/src/hooks/useAuth.tsx
 - data/llm-intel/ranking-recommendations.json
 - data/llm-intel/ranking-report-latest.md
 - data/llm-provider-status.json
@@ -41,28 +41,29 @@ Handoff ID: `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/HARNESS_CONFIG.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
 - packages/tnf-cli/src/commands/hermes-parity-gaps.ts
 - packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
 - packages/tnf-cli/src/services/ParityService.ts
 - packages/tnf-cli/src/slashCommands.ts
 - packages/tnf-cli/src/telegram/TelegramService.ts
 - pnpm-lock.yaml
-- scripts/harness/host-compaction-adapter.cjs
-- scripts/harness/tnf-harness.cjs
-- scripts/harness/verify-harness-completeness.cjs
-- apps/frontend/src/hooks/useAuth.tsx
+- data/harness/harness-config.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/HARNESS_CONFIG.md
+- docs/protocols/HARNESS_HOST_COMPACTION.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/harness/host-compaction-adapter.cjs
+- scripts/harness/tnf-harness.cjs
+- scripts/harness/verify-harness-completeness.cjs
 - .cursor/rules/tnf-harness.mdc.tnf-bak
 - CLAUDE.md.tnf-bak
-- docs/protocols/HARNESS_HOST_COMPACTION.md
 - packages/tnf-cli/src/services/CommandSourceService.test.ts
 - packages/tnf-cli/src/services/CommandSourceService.ts
 - packages/tnf-cli/src/services/ToolPermissionService.test.ts
@@ -83,9 +84,9 @@ Handoff ID: `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14`
 
 ## Continuation
 
-- Owner: `orchestrator`
-- Targets: `orchestrator`
-- Priority: `medium`
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
 ### Resume Checklist
 
@@ -96,5 +97,7 @@ Handoff ID: `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14`
 
 ## Next Actions
 
-- Optional: sandbox_isolation remains partial by design
-- Dirty-tree triage outside harness
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

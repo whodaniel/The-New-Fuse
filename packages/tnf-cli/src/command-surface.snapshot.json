@@ -273,6 +273,30 @@
           "commands": []
         },
         {
+          "name": "prune-stale",
+          "aliases": [],
+          "description": "Remove offline/duplicate Redis swarm workers (especially tnf-thin-client zombies)",
+          "options": [
+            {
+              "flags": "--dry-run",
+              "description": "Show what would be deleted without mutating Redis"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON result"
+            },
+            {
+              "flags": "--name <name>",
+              "description": "Only prune agents with this exact name"
+            },
+            {
+              "flags": "--stale-ms <n>",
+              "description": "Offline threshold in ms for non-thin agents"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "register",
           "aliases": [],
           "description": "Alias for `tnf register`",
@@ -684,6 +708,26 @@
       ]
     },
     {
+      "name": "autonomy",
+      "aliases": [],
+      "description": "Autonomy health surfaces (establish ≠ operate)",
+      "options": [],
+      "commands": [
+        {
+          "name": "health",
+          "aliases": [],
+          "description": "Print autonomy health rollup (healthy|degraded|critical); non-zero on critical when fail-closed",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "boot",
       "aliases": ["boor"],
       "description": "Master entry point to boot the entire TNF stack",
@@ -970,6 +1014,34 @@
         {
           "flags": "--include-node-modules",
           "description": "Also delete node_modules directories (off by default; pnpm install restores)"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "commands",
+      "aliases": ["palette"],
+      "description": "Search the flat command index the palette uses: every CLI path at every depth, plus Markdown commands/agents/skills from .tnf/, .claude/, .agent/, .gemini/, .cursor/, .codex/ and .pi/",
+      "options": [
+        {
+          "flags": "--all",
+          "description": "Print every match (overrides --limit)"
+        },
+        {
+          "flags": "--json",
+          "description": "Output machine-readable JSON"
+        },
+        {
+          "flags": "--kind <kind>",
+          "description": "Filter by kind: cli | slash | command | prompt | agent | skill"
+        },
+        {
+          "flags": "--limit <n>",
+          "description": "Max rows to print"
+        },
+        {
+          "flags": "--stats",
+          "description": "Show where the index came from, by runtime and kind"
         }
       ],
       "commands": []
@@ -1776,6 +1848,78 @@
       "commands": []
     },
     {
+      "name": "fleet",
+      "aliases": [],
+      "description": "TNF Harness fleet and terminal window management",
+      "options": [],
+      "commands": [
+        {
+          "name": "core-status",
+          "aliases": [],
+          "description": "Show the latest core federated fleet establish receipt",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print raw receipt JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "establish",
+          "aliases": [],
+          "description": "Endow Local Sub-Director + establish the core OSS federated fleet (Redis, harness, workers, launchd)",
+          "options": [
+            {
+              "flags": "--dry-run",
+              "description": "Show planned actions without applying"
+            },
+            {
+              "flags": "--force-identity",
+              "description": "Overwrite ~/.tnf/agent.yaml with Local Sub-Director defaults"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "inventory",
+          "aliases": [],
+          "description": "Query all active Terminal.app windows by permanent AppleScript ID and prompt state",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output inventory as structured JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "prompt",
+          "aliases": [],
+          "description": "Inject a prompt into a target terminal window by permanent ID with hardware Return submission",
+          "options": [
+            {
+              "flags": "--message <text>",
+              "description": "Prompt text to inject"
+            },
+            {
+              "flags": "--no-submit",
+              "description": "Do not send hardware Return key code after typing"
+            },
+            {
+              "flags": "--space",
+              "description": "Send space bar (key code 49) before message for interactive menu selection"
+            },
+            {
+              "flags": "--target <id>",
+              "description": "Target permanent AppleScript window ID"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "forefront",
       "aliases": [],
       "description": "Bring TNF to the operator forefront: harness, relay, local UI, browser control",
@@ -1853,6 +1997,30 @@
       "description": "Run unattended TNF automation loops with persisted state/logging",
       "options": [],
       "commands": [
+        {
+          "name": "contend",
+          "aliases": [],
+          "description": "Observe dual full-auto contention (never kills by default)",
+          "options": [],
+          "commands": [
+            {
+              "name": "status",
+              "aliases": [],
+              "description": "Read-only contention sample (≥2 full-auto start loops)",
+              "options": [
+                {
+                  "flags": "--append",
+                  "description": "Append sample to docs/operations/tnf-full-auto-contention.jsonl"
+                },
+                {
+                  "flags": "--json",
+                  "description": "Machine-readable JSON"
+                }
+              ],
+              "commands": []
+            }
+          ]
+        },
         {
           "name": "daemon",
           "aliases": [],
@@ -1963,6 +2131,22 @@
                 {
                   "flags": "--json",
                   "description": "Output machine-readable JSON"
+                }
+              ],
+              "commands": []
+            },
+            {
+              "name": "stop",
+              "aliases": [],
+              "description": "Stop the detached full-auto daemon using the recorded pid file (process-tree aware)",
+              "options": [
+                {
+                  "flags": "--json",
+                  "description": "Output machine-readable JSON"
+                },
+                {
+                  "flags": "--super-admin-token <token>",
+                  "description": "Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)"
                 }
               ],
               "commands": []
@@ -2271,8 +2455,8 @@
       "options": [],
       "commands": [
         {
-          "name": "emit",
-          "aliases": [],
+          "name": "generate",
+          "aliases": ["emit"],
           "description": "Emit SESSION_HANDOFF_LATEST.json and markdown mirror",
           "options": [
             {
@@ -2359,10 +2543,33 @@
       "options": [],
       "commands": [
         {
+          "name": "berm",
+          "aliases": [],
+          "description": "Permission berm evaluate (outside the model)",
+          "options": [],
+          "commands": []
+        },
+        {
           "name": "boot",
           "aliases": [],
           "description": "Boot relay monitor, terminal heartbeat, and director harness processes",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "completeness",
+          "aliases": [],
+          "description": "Verify UNU-aligned harness completeness (layers + injection + berm/memory)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--provision",
+              "description": "Repair injection surfaces before verify"
+            }
+          ],
           "commands": []
         },
         {
@@ -2418,6 +2625,13 @@
           "commands": []
         },
         {
+          "name": "host-compaction",
+          "aliases": [],
+          "description": "Record/import host (Cursor/Claude) compaction boundaries",
+          "options": [],
+          "commands": []
+        },
+        {
           "name": "inspect",
           "aliases": [],
           "description": "Inspect harness health: protocol, agents, and live agent loop",
@@ -2454,6 +2668,13 @@
           "commands": []
         },
         {
+          "name": "memory",
+          "aliases": [],
+          "description": "Dynamic memory layer (retain/recall/pin/status) — not MEMORY.md",
+          "options": [],
+          "commands": []
+        },
+        {
           "name": "pause",
           "aliases": [],
           "description": "Pause all autonomous TNF fleet activity (cron + launchd + heartbeat injection)",
@@ -2470,9 +2691,60 @@
           "commands": []
         },
         {
+          "name": "provision",
+          "aliases": [],
+          "description": "Provision or verify per-runtime harness injection surfaces",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--repair",
+              "description": "Write/repair surfaces"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "resume",
           "aliases": [],
           "description": "Resume normal autonomous TNF fleet activity (clear pause state)",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "sandbox",
+          "aliases": [],
+          "description": "Materialize macOS seatbelt profile for D11 untrusted execution",
+          "options": [
+            {
+              "flags": "--out <path>",
+              "description": "Output .sb path"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "supply-chain",
+          "aliases": [],
+          "description": "MCP/skills supply-chain attestation inventory",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--strict",
+              "description": "Fail closed on missing entrypoints"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "trajectory",
+          "aliases": [],
+          "description": "Trajectory retention start/append/end/list",
           "options": [],
           "commands": []
         }
@@ -4414,6 +4686,10 @@
               "description": "Skip semantic route audit stage"
             },
             {
+              "flags": "--soft-fail-audits",
+              "description": "Write audit artifacts without failing the run on broken links / semantic / auth / scorecard issues"
+            },
+            {
               "flags": "--super-admin-token <token>",
               "description": "Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)"
             }
@@ -4729,6 +5005,35 @@
       ]
     },
     {
+      "name": "spark",
+      "aliases": [],
+      "description": "Optional Gemini Spark / Workspace MCP adapter (config via TNF_SPARK_* env)",
+      "options": [],
+      "commands": [
+        {
+          "name": "delegate",
+          "aliases": [],
+          "description": "Print how to hand a long-horizon goal to a configured Spark worker",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show Spark adapter config / enablement (no personal workspace claims)",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "sync",
+          "aliases": [],
+          "description": "Sync guidance: map TNF handoff artifacts to deployer-configured Workspace MCP",
+          "options": [],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "splash",
       "aliases": [],
       "description": "Render TNF branded splash only",
@@ -4751,6 +5056,78 @@
         }
       ],
       "commands": []
+    },
+    {
+      "name": "staffing",
+      "aliases": [],
+      "description": "TNF staffing coverage analysis and agent gap detection",
+      "options": [],
+      "commands": [
+        {
+          "name": "plan",
+          "aliases": [],
+          "description": "Show prioritized staffing action plan",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output as structured JSON"
+            },
+            {
+              "flags": "--severity <level>",
+              "description": "Filter by severity"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "propose",
+          "aliases": [],
+          "description": "Generate proposed new agent roles for missing coverage",
+          "options": [
+            {
+              "flags": "--category <name>",
+              "description": "Filter by category"
+            },
+            {
+              "flags": "--json",
+              "description": "Output as structured JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "report",
+          "aliases": [],
+          "description": "Generate a staffing coverage report for review",
+          "options": [
+            {
+              "flags": "--format <format>",
+              "description": "Output format (json, jsonl)"
+            },
+            {
+              "flags": "--output <path>",
+              "description": "Write report to file"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "scan",
+          "aliases": [],
+          "description": "Scan for staffing gaps and missing agent coverage",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output report as structured JSON"
+            },
+            {
+              "flags": "--workspace <path>",
+              "description": "Limit scan to workspace"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "state",
@@ -5176,8 +5553,16 @@
       "description": "Launch the TNF TUI agent — always-on interactive LLM session (peer-parity with claude/cursor/hermes/codex entry flags)",
       "options": [
         {
+          "flags": "--allowed-tools <list>",
+          "description": "Comma-separated tool allowlist (bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall)"
+        },
+        {
           "flags": "--autonomous",
           "description": "Start with autonomous shell execution and auto-continue enabled"
+        },
+        {
+          "flags": "--disallowed-tools <list>",
+          "description": "Comma-separated tool denylist; applied after the allowlist"
         },
         {
           "flags": "--mode <mode>",
@@ -5186,6 +5571,10 @@
         {
           "flags": "--output-format <format>",
           "description": "Oneshot/print output format: text | json (default: text)"
+        },
+        {
+          "flags": "--permission-mode <mode>",
+          "description": "Tool permission mode: default | plan | acceptEdits | bypassPermissions | readOnly"
         },
         {
           "flags": "--resume [id]",
@@ -5202,6 +5591,14 @@
         {
           "flags": "--task-file <path>",
           "description": "Read initial prompt from a file (UTF-8). Use \"-\" for stdin."
+        },
+        {
+          "flags": "--worktree [name]",
+          "description": "Run the session in an isolated git worktree under .tnf/worktrees/ (default name: tnf-session)"
+        },
+        {
+          "flags": "--worktree-base <ref>",
+          "description": "Base ref for a new worktree (default: origin/HEAD, else HEAD)"
         },
         {
           "flags": "--yolo",
@@ -5809,6 +6206,66 @@
             {
               "flags": "--runtime",
               "description": "Attempt runtime loading for each package entrypoint"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "worktree",
+      "aliases": [],
+      "description": "Manage isolated git worktrees for TNF sessions (see also: tnf tui --worktree)",
+      "options": [],
+      "commands": [
+        {
+          "name": "create",
+          "aliases": [],
+          "description": "Create an isolated worktree and branch",
+          "options": [
+            {
+              "flags": "--base <ref>",
+              "description": "Base ref (default: origin/HEAD, else HEAD)"
+            },
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List TNF-managed worktrees under .tnf/worktrees/",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "remove",
+          "aliases": [],
+          "description": "Remove a worktree and its branch (refuses to discard work without --force)",
+          "options": [
+            {
+              "flags": "--force",
+              "description": "Discard uncommitted changes and unmerged commits"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show uncommitted files and unmerged commits in a worktree",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
             }
           ],
           "commands": []

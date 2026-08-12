@@ -19,12 +19,28 @@
  *  - Reference CLIs are spawned with a hard timeout and a non-interactive
  *    environment. A missing or hanging CLI degrades to `available: false`; it
  *    never fails the audit.
+ *
+ * SHIMS ARE NOT COVERAGE (added 2026-08-12)
+ *   Until this change the audit counted any TNF command or root option whose
+ *   NAME matched the reference, which included the ~40 signpost commands and
+ *   ~130 marker flags registered by `peer-cli-parity-gaps.ts` and
+ *   `hermes-parity-gaps.ts` purely so the names would exist. The ledger
+ *   therefore read "Mean coverage 100%, 0 open gaps" across 8 reachable CLIs
+ *   while `tnf fork` printed two lines of pointer text and `--permission-mode`
+ *   was never read by anything.
+ *
+ *   A parity number that cannot go down is not a measurement. Shim names are
+ *   now excluded from the covered set and surface as gaps, and each report
+ *   carries `shimmedCommands` / `shimmedOptions` so the ledger can say which
+ *   part of the old 100% was signage.
  */
 
 import { spawn } from 'child_process';
 import type { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
+import { getHermesParityShims } from '../commands/hermes-parity-gaps.js';
+import { getPeerParityShims } from '../commands/peer-cli-parity-gaps.js';
 
 export interface ReferenceAgent {
   /** Stable identifier used in the ledger and in goal records. */
@@ -64,6 +80,25 @@ export const REFERENCE_AGENTS: ReferenceAgent[] = [
  */
 const UNIVERSAL_COMMANDS = new Set(['help', 'command', 'commands', 'version']);
 const UNIVERSAL_OPTIONS = new Set(['--help', '--version']);
+
+/**
+ * Names TNF registers as signposts or inert markers rather than behaviour.
+ *
+ * Merged from both gap-closer modules and memoised: the audit calls this once
+ * per reference agent, and the underlying arrays are static.
+ */
+let shimCache: { commands: Set<string>; options: Set<string> } | null = null;
+
+export function parityShims(): { commands: Set<string>; options: Set<string> } {
+  if (shimCache) return shimCache;
+  const peer = getPeerParityShims();
+  const hermes = getHermesParityShims();
+  shimCache = {
+    commands: new Set([...peer.commands, ...hermes.commands]),
+    options: new Set([...peer.options, ...hermes.options]),
+  };
+  return shimCache;
+}
 
 /**
  * Reject help-example placeholders (e.g. Pi's `sessions/--path--/session.jsonl`)
@@ -111,6 +146,15 @@ export interface AgentParityReport {
   missingCommands: string[];
   /** Reference root options TNF does not expose at its root. */
   missingOptions: string[];
+  /**
+   * Reference commands TNF answers to by NAME only, via a signpost command
+   * that prints where the real capability lives. Counted as missing, but
+   * reported separately so the backlog can distinguish "no entry point at all"
+   * from "entry point exists, behaviour does not".
+   */
+  shimmedCommands: string[];
+  /** Reference root options TNF parses and ignores. Counted as missing. */
+  shimmedOptions: string[];
   /** Reference surface size, after filtering universals. */
   referenceCommandCount: number;
   referenceOptionCount: number;
@@ -391,13 +435,25 @@ export function captureTnfSurface(program: Command): {
   walk(program);
 
   const rootOptions = new Set<string>();
-  for (const opt of program.options ?? []) {
-    const long = (opt as any).long as string | undefined;
-    if (!long) continue;
-    const normalized = long.toLowerCase();
-    if (UNIVERSAL_OPTIONS.has(normalized)) continue;
-    rootOptions.add(normalized);
-  }
+  const collectOptions = (cmd: Command): void => {
+    for (const opt of cmd.options ?? []) {
+      const long = (opt as any).long as string | undefined;
+      if (!long) continue;
+      const normalized = long.toLowerCase();
+      if (UNIVERSAL_OPTIONS.has(normalized)) continue;
+      rootOptions.add(normalized);
+    }
+  };
+  collectOptions(program);
+
+  // Options on `tui` count as root-reachable, because cli.ts routes a leading
+  // flag with no subcommand into a `tui` session — `tnf --permission-mode plan`
+  // is literally `tnf tui --permission-mode plan`. Peer CLIs expose these same
+  // settings at their root, so measuring only `program.options` would report
+  // implemented behaviour as a gap, which is the mirror image of the
+  // shims-counted-as-coverage bug this audit was fixed for.
+  const sessionCommand = program.commands.find((cmd) => cmd.name() === 'tui');
+  if (sessionCommand) collectOptions(sessionCommand);
 
   return { commands: [...commands].sort(), rootOptions: [...rootOptions].sort() };
 }
@@ -462,6 +518,8 @@ export class ParityService {
       version: null,
       missingCommands: [],
       missingOptions: [],
+      shimmedCommands: [],
+      shimmedOptions: [],
       referenceCommandCount: 0,
       referenceOptionCount: 0,
       commandsMeasured: false,
@@ -482,16 +540,33 @@ export class ParityService {
 
     // A reference command is covered if ANY of its names appears anywhere in
     // TNF's tree — `opencode providers` is satisfied by TNF's `auth`, and
-    // `plugin` by TNF's `plugins`.
-    const covers = (name: string): boolean =>
+    // `plugin` by TNF's `plugins`. A name TNF only answers to via a signpost
+    // command is NOT covered: the entry point exists, the behaviour does not.
+    const shims = parityShims();
+    const matches = (name: string): boolean =>
       tnfCommands.has(name) ||
       (name.endsWith('s') && tnfCommands.has(name.slice(0, -1))) ||
       tnfCommands.has(`${name}s`);
+    const isShimCommand = (name: string): boolean =>
+      shims.commands.has(name) ||
+      (name.endsWith('s') && shims.commands.has(name.slice(0, -1))) ||
+      shims.commands.has(`${name}s`);
+    const covers = (name: string): boolean => matches(name) && !isShimCommand(name);
 
-    const missingCommands = surface.entries
-      .filter((entry) => !entry.names.some(covers))
+    const uncovered = surface.entries.filter((entry) => !entry.names.some(covers));
+    const missingCommands = uncovered.map((entry) => entry.name);
+    // Split the uncovered set for reporting: a name TNF signposts is a
+    // different backlog item from a name TNF has never heard of.
+    const shimmedCommands = uncovered
+      .filter((entry) => entry.names.some((name) => matches(name) && isShimCommand(name)))
       .map((entry) => entry.name);
-    const missingOptions = surface.options.filter((o) => !tnfRootOptions.has(o));
+
+    const optionCovers = (flag: string): boolean =>
+      tnfRootOptions.has(flag) && !shims.options.has(flag.toLowerCase());
+    const missingOptions = surface.options.filter((o) => !optionCovers(o));
+    const shimmedOptions = surface.options.filter(
+      (o) => tnfRootOptions.has(o) && shims.options.has(o.toLowerCase())
+    );
 
     // Score only what was actually measured. If the help page had no command
     // section, commands contribute neither to the numerator nor denominator —
@@ -511,6 +586,8 @@ export class ParityService {
       version,
       missingCommands: surface.commandsParsed ? missingCommands : [],
       missingOptions,
+      shimmedCommands: surface.commandsParsed ? shimmedCommands : [],
+      shimmedOptions,
       referenceCommandCount: surface.commands.length,
       referenceOptionCount: surface.options.length,
       commandsMeasured: surface.commandsParsed,
@@ -623,14 +700,32 @@ export class ParityService {
       for (const a of withGaps) {
         lines.push(`### ${a.agent} — ${a.note}`);
         lines.push('');
-        if (a.missingCommands.length > 0) {
+        // Split the report so the backlog can tell the two kinds apart: a
+        // shimmed name already has an entry point and needs behaviour behind
+        // it; an absent name needs both.
+        const shimmedCommandSet = new Set(a.shimmedCommands);
+        const absentCommands = a.missingCommands.filter((c) => !shimmedCommandSet.has(c));
+        const shimmedOptionSet = new Set(a.shimmedOptions);
+        const absentOptions = a.missingOptions.filter((o) => !shimmedOptionSet.has(o));
+
+        if (absentCommands.length > 0) {
+          lines.push(`- Commands TNF lacks: ${absentCommands.map((c) => `\`${c}\``).join(', ')}`);
+        }
+        if (a.shimmedCommands.length > 0) {
           lines.push(
-            `- Commands TNF lacks: ${a.missingCommands.map((c) => `\`${c}\``).join(', ')}`
+            `- Commands TNF only signposts (entry point exists, behaviour does not): ` +
+              `${a.shimmedCommands.map((c) => `\`${c}\``).join(', ')}`
           );
         }
-        if (a.missingOptions.length > 0) {
+        if (absentOptions.length > 0) {
           lines.push(
-            `- Root options TNF lacks: ${a.missingOptions.map((o) => `\`${o}\``).join(', ')}`
+            `- Root options TNF lacks: ${absentOptions.map((o) => `\`${o}\``).join(', ')}`
+          );
+        }
+        if (a.shimmedOptions.length > 0) {
+          lines.push(
+            `- Root options TNF parses and ignores: ` +
+              `${a.shimmedOptions.map((o) => `\`${o}\``).join(', ')}`
           );
         }
         lines.push('');
