@@ -204,7 +204,35 @@ export class ServiceHealthService {
    * line-level recency would be a fresh false signal, so the label says
    * "log active Nm ago" and leaves the judgement to the reader.
    */
-  private evidenceFrom(logPaths: string[], maxLines = 3, maxAgeMs = 6 * 60 * 60 * 1000): string[] {
+  /**
+   * Start time of a running process, in epoch ms. Null when unavailable.
+   *
+   * This is what makes evidence belong to the CURRENT run. Without it, a
+   * service that crashed hours ago, was restarted, and is now perfectly
+   * healthy still looks broken because its old fatal lines sit inside the log
+   * tail — relay-monitor did exactly that, flagged as crash-looping while
+   * running cleanly and not writing at all.
+   */
+  private processStartMs(pid: number | null): number | null {
+    if (!pid) return null;
+    try {
+      const out = execFileSync('ps', ['-o', 'lstart=', '-p', String(pid)], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim();
+      const ms = Date.parse(out);
+      return Number.isFinite(ms) ? ms : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private evidenceFrom(
+    logPaths: string[],
+    maxLines = 3,
+    maxAgeMs = 6 * 60 * 60 * 1000,
+    sinceMs: number | null = null
+  ): string[] {
     const found: string[] = [];
     for (const p of logPaths) {
       try {
@@ -212,6 +240,9 @@ export class ServiceHealthService {
         if (!stat.isFile() || stat.size === 0) continue;
         const ageMs = Date.now() - stat.mtimeMs;
         if (ageMs > maxAgeMs) continue; // resolved long ago; not current evidence
+        // Written before the current process started => it belongs to a prior
+        // run that has already been replaced. Not evidence about now.
+        if (sinceMs !== null && stat.mtimeMs < sinceMs) continue;
         const ageLabel =
           ageMs < 60_000
             ? `${Math.round(ageMs / 1000)}s ago`

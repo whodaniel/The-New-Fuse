@@ -3,9 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Deploy API image with decrypt fallbacks.
-
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-12 Federated transport + harness closure (Cursor)** — Closed
@@ -914,6 +912,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T20:38:47.945Z handoff `63153892-7c46-4b8c-9324-6b8f4121ae52` head `fa1f95f22f36` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-12T20:06:32.907Z handoff `5a950341-0034-4834-9650-71560edae39d` head
   `1ab45d5c7320` project `TNF-SESSION` — Deploy API image with decrypt
