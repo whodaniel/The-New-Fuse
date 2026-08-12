@@ -116,7 +116,18 @@ export interface AttachDeps {
   stdout: NodeJS.WritableStream & { columns?: number; rows?: number };
   /** Injected for tests; defaults to node:readline's emitKeypressEvents. */
   emitKeypressEvents: (stream: NodeJS.ReadableStream, rl?: readline.Interface) => void;
+  /**
+   * How long to wait after a lone ESC byte before treating it as Escape.
+   *
+   * The classic terminal ambiguity: ESC is both its own key and the prefix of
+   * every arrow/function sequence, so it can only be resolved by waiting.
+   * Long enough that a real escape sequence arrives first, short enough that
+   * a human never perceives the delay.
+   */
+  escapeDelayMs?: number;
 }
+
+const DEFAULT_ESCAPE_DELAY_MS = 60;
 
 /**
  * Attach the palette to a readline interface.
@@ -126,6 +137,7 @@ export interface AttachDeps {
  */
 export function attachPalette(deps: AttachDeps): SlashDropdownState {
   const { rl, projectRoot, getIndex, theme, stdin, stdout, emitKeypressEvents } = deps;
+  const escapeDelayMs = deps.escapeDelayMs ?? DEFAULT_ESCAPE_DELAY_MS;
 
   const state: SlashDropdownState = {
     controller: null,
@@ -163,13 +175,65 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
   /** Mirror of the query line. See hazards 2 and 3 in the module docblock. */
   let lastLine = '';
 
-  const onKeypress = (_value: string, key: any) => {
-    const paletteKey = toPaletteKey(key?.name, Boolean(key?.shift));
+  /**
+   * Pending lone-ESC resolution.
+   *
+   * A bare ESC produces no keypress event at all — Node's parser holds the
+   * byte in case a sequence follows — so without this the palette could not
+   * be dismissed until the operator pressed something else. Watching the raw
+   * stream lets a solitary ESC resolve on its own after a short delay, while
+   * any real sequence (arrow keys, meta chords) cancels it.
+   */
+  let escapeTimer: NodeJS.Timeout | null = null;
+  const cancelEscapeTimer = () => {
+    if (escapeTimer) {
+      clearTimeout(escapeTimer);
+      escapeTimer = null;
+    }
+  };
 
-    // Ctrl-/Meta- chords belong to readline (Ctrl-C, Ctrl-U, word motion).
-    if (key?.ctrl || key?.meta) {
+  const onData = (chunk: Buffer | string) => {
+    const bytes = typeof chunk === 'string' ? chunk : chunk.toString('binary');
+    if (bytes !== '\x1b') return;
+    cancelEscapeTimer();
+    escapeTimer = setTimeout(() => {
+      escapeTimer = null;
+      if (controller.isOpen) controller.handle(lastLine, 'escape');
+    }, escapeDelayMs);
+    // Never hold the process open for a dismissal timer.
+    escapeTimer.unref?.();
+  };
+
+  const onKeypress = (_value: string, key: any) => {
+    // Any resolved key means the ESC was a sequence prefix, not a lone Escape.
+    cancelEscapeTimer();
+
+    let paletteKey = toPaletteKey(key?.name, Boolean(key?.shift));
+
+    // Escape does not arrive as `{name:'escape'}` in a real terminal.
+    //
+    // Node's keypress parser emits NOTHING for a lone ESC — it holds the byte
+    // in case an escape sequence follows — and once any key does follow, both
+    // bytes surface as a single `{meta:true}` chord. So the only observable
+    // form of "the operator pressed Escape" is a meta chord, and a palette
+    // that waits for `name === 'escape'` can never be dismissed. (Verified
+    // against readline.emitKeypressEvents; the fake-TTY test that synthesised
+    // `{name:'escape'}` directly hid this for exactly that reason.)
+    //
+    // Alt-chords are the collateral: Alt-B/Alt-F inside a `/query` also
+    // dismiss. That is the better trade — dismissal is one keystroke to undo,
+    // an undismissable palette is not.
+    if (key?.meta && !key?.ctrl) {
+      paletteKey = 'escape';
+    } else if (key?.ctrl) {
+      // Ctrl chords belong to readline (Ctrl-C, Ctrl-U, word motion).
       lastLine = String((rl as any).line || '');
       if (controller.isOpen) controller.close();
+      return;
+    }
+
+    if (paletteKey === 'escape') {
+      controller.handle(lastLine, 'escape');
       return;
     }
 
@@ -210,13 +274,16 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
   };
 
   stdin.on('keypress', onKeypress);
+  stdin.on('data', onData);
 
   let disposed = false;
   state.dispose = () => {
     if (disposed) return;
     disposed = true;
+    cancelEscapeTimer();
     controller.close();
     stdin.off?.('keypress', onKeypress);
+    stdin.off?.('data', onData);
     if (typeof stdin.setRawMode === 'function') {
       try {
         stdin.setRawMode(false);

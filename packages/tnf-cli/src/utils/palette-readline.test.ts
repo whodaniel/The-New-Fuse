@@ -17,6 +17,8 @@
  */
 import { Command } from 'commander';
 import { EventEmitter } from 'node:events';
+import readline from 'node:readline';
+import { PassThrough } from 'node:stream';
 import { PLAIN_THEME, buildPaletteIndex, type PaletteEntry } from './command-palette.js';
 import {
   attachPalette,
@@ -37,6 +39,8 @@ function check(name: string, cond: boolean, detail = ''): void {
   }
 }
 
+const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
 /* ---------------- fixtures ---------------- */
 
 function buildIndex(): PaletteEntry[] {
@@ -54,7 +58,23 @@ function buildIndex(): PaletteEntry[] {
 
 const INDEX = buildIndex();
 
-/** Minimal stand-in for readline.Interface with Node's buffer semantics. */
+/**
+ * Stand-in for readline.Interface, driven through Node's REAL keypress parser.
+ *
+ * An earlier version of this harness synthesised key objects directly
+ * (`emit('keypress', '', {name:'escape'})`). That hid a bug that only a live
+ * terminal exposed: Node emits NOTHING for a lone ESC — it holds the byte in
+ * case an escape sequence follows — and once any key follows, both bytes
+ * surface as one `{meta:true}` chord. `{name:'escape'}` simply never occurs,
+ * so Escape handling was unreachable while the test reported it working.
+ *
+ * Raw bytes now go through `readline.emitKeypressEvents`, so the events this
+ * harness produces are the events a real terminal produces. Buffer mutation
+ * still has to be simulated (there is no real readline attached), and it
+ * deliberately reproduces the two behaviours that break naive palettes:
+ * Enter clears the buffer before our listener runs, and arrows overwrite it
+ * with history.
+ */
 class FakeReadline extends EventEmitter {
   line = '';
   cursor = 0;
@@ -65,42 +85,52 @@ class FakeReadline extends EventEmitter {
     /* no-op: nothing to repaint in a test */
   }
 
-  /** Simulate typing one character: readline updates the buffer, then emits. */
+  /** Type one character: readline updates the buffer, then the byte is parsed. */
   type(char: string): void {
     this.line += char;
     this.cursor = this.line.length;
-    this.emitKey({ name: char.length === 1 ? char : undefined });
+    this.feed(char);
   }
 
   typeAll(text: string): void {
     for (const char of text) this.type(char);
   }
 
-  /** Simulate Enter: readline emits `line` and CLEARS the buffer first. */
+  /** Enter: readline emits `line` and CLEARS the buffer before listeners run. */
   pressEnter(): string {
     const submitted = this.line;
     this.line = '';
     this.cursor = 0;
-    this.emitKey({ name: 'return' });
+    this.feed('\r');
     return submitted;
   }
 
-  /** Simulate an arrow key: readline recalls history INTO the buffer first. */
+  /** Arrow key: readline recalls history INTO the buffer first. */
   pressArrow(name: 'up' | 'down'): void {
     this.line = this.historyEntry;
     this.cursor = this.line.length;
-    this.emitKey({ name });
+    this.feed(name === 'up' ? '\x1b[A' : '\x1b[B');
   }
 
-  pressKey(name: string, extra: Record<string, unknown> = {}): void {
-    this.emitKey({ name, ...extra });
+  /** Press Escape the way a terminal sends it: a bare ESC byte. */
+  pressEscape(): void {
+    this.feed('\x1b');
   }
 
-  private emitKey(key: Record<string, unknown>): void {
-    this.stdin?.emit('keypress', '', key);
+  pressTab(shift = false): void {
+    this.feed(shift ? '\x1b[Z' : '\t');
   }
 
-  stdin: (EventEmitter & { isTTY?: boolean; setRawMode?: (m: boolean) => void }) | null = null;
+  pressCtrl(char: string): void {
+    this.feed(String.fromCharCode(char.toUpperCase().charCodeAt(0) - 64));
+  }
+
+  /** Write raw bytes into the parser. */
+  feed(bytes: string): void {
+    (this.stdin as any)?.write(bytes);
+  }
+
+  stdin: (PassThrough & { isTTY?: boolean; setRawMode?: (m: boolean) => void }) | null = null;
 }
 
 interface Harness {
@@ -110,17 +140,17 @@ interface Harness {
   written: string[];
 }
 
-function makeHarness(options: { isTTY?: boolean } = {}): Harness {
+function makeHarness(options: { isTTY?: boolean; escapeDelayMs?: number } = {}): Harness {
   const rl = new FakeReadline();
   const rawModeCalls: boolean[] = [];
   const written: string[] = [];
 
-  const stdin = Object.assign(new EventEmitter(), {
+  const stdin = Object.assign(new PassThrough(), {
     isTTY: options.isTTY ?? true,
     setRawMode: (mode: boolean) => {
       rawModeCalls.push(mode);
     },
-  }) as EventEmitter & { isTTY?: boolean; setRawMode?: (m: boolean) => void };
+  }) as PassThrough & { isTTY?: boolean; setRawMode?: (m: boolean) => void };
   rl.stdin = stdin;
 
   const stdout = {
@@ -139,9 +169,8 @@ function makeHarness(options: { isTTY?: boolean } = {}): Harness {
     theme: PLAIN_THEME,
     stdin: stdin as never,
     stdout: stdout as never,
-    emitKeypressEvents: () => {
-      /* the fake stdin already emits keypress events directly */
-    },
+    emitKeypressEvents: readline.emitKeypressEvents,
+    escapeDelayMs: options.escapeDelayMs ?? 10,
   });
 
   return { rl, state, rawModeCalls, written };
@@ -276,7 +305,7 @@ console.log('\npalette-readline — Tab completes without running');
 {
   const h = makeHarness();
   h.rl.typeAll('/regi');
-  h.rl.pressKey('tab');
+  h.rl.pressTab();
   check('buffer is completed to the full path', h.rl.line === '/agents register', h.rl.line);
   check('nothing was submitted', h.state.pending === null);
   check('palette stays open to keep refining', h.state.controller?.isOpen === true);
@@ -285,17 +314,25 @@ console.log('\npalette-readline — Tab completes without running');
 {
   const h = makeHarness();
   h.rl.typeAll('/agents');
-  h.rl.pressKey('tab', { shift: true });
+  h.rl.pressTab(true);
   check('shift-tab walks backwards instead of completing', h.rl.line === '/agents', h.rl.line);
 }
 
 console.log('\npalette-readline — dismissal');
 
 {
-  const h = makeHarness();
+  // A lone ESC produces no keypress event at all, so dismissal can only be
+  // resolved on a timer. `escapeDelayMs` is shortened here; the assertion is
+  // that Escape works WITHOUT requiring another keystroke.
+  const h = makeHarness({ escapeDelayMs: 10 });
   h.rl.typeAll('/regi');
-  h.rl.pressKey('escape');
-  check('escape closes the palette', h.state.controller?.isOpen === false);
+  h.rl.pressEscape();
+  check(
+    'a bare ESC does not resolve instantly (Node buffers it)',
+    h.state.controller?.isOpen === true
+  );
+  await wait(40);
+  check('escape closes the palette once the delay expires', h.state.controller?.isOpen === false);
   const submitted = h.rl.pressEnter();
   check(
     'a dismissed palette does not hijack the submitted line',
@@ -304,13 +341,39 @@ console.log('\npalette-readline — dismissal');
 }
 
 {
+  // An arrow key is ESC-prefixed. Its sequence must NOT be mistaken for a
+  // dismissal, or navigating would close the palette.
+  const h = makeHarness({ escapeDelayMs: 10 });
+  h.rl.typeAll('/agents');
+  h.rl.pressArrow('down');
+  await wait(40);
+  check('an arrow sequence does not trigger the escape timer', h.state.controller?.isOpen === true);
+}
+
+{
   const h = makeHarness();
   h.rl.typeAll('/regi');
-  h.rl.pressKey('c', { ctrl: true });
+  h.rl.pressCtrl('c');
   check(
     'ctrl-chords close the palette and defer to readline',
     h.state.controller?.isOpen === false
   );
+}
+
+{
+  // Regression found by driving a REAL TTY, not by these fake-TTY tests:
+  // Escape dismissed only until the next keystroke, so continuing to type
+  // reopened the palette over a query the operator had already rejected.
+  const h = makeHarness();
+  h.rl.typeAll('/regi');
+  h.rl.pressEscape();
+  h.rl.typeAll('ster');
+  check('escape survives continued typing on the same line', h.state.controller?.isOpen === false);
+
+  // Submitting re-arms it, so the next line gets a palette again.
+  h.rl.pressEnter();
+  h.rl.typeAll('/reg');
+  check('the next line gets the palette back', h.state.controller?.isOpen === true);
 }
 
 console.log('\npalette-readline — the frame is erased, not appended');
@@ -319,7 +382,7 @@ console.log('\npalette-readline — the frame is erased, not appended');
   const h = makeHarness();
   h.rl.typeAll('/reg');
   const drawsWhileTyping = h.written.length;
-  h.rl.pressKey('escape');
+  h.rl.pressEscape();
   const all = h.written.join('');
   check('each redraw erases below the cursor', all.includes('\x1b[0J'));
   check(

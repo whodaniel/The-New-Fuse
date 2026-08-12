@@ -223,11 +223,32 @@ export class WorktreeService {
 
     // Reuse an existing branch rather than failing: a session may be resuming
     // after its worktree directory was removed but its work committed.
-    this.git(
-      branchExists
-        ? ['worktree', 'add', worktreePath, branch]
-        : ['worktree', 'add', '-b', branch, worktreePath, baseRef]
-    );
+    try {
+      this.git(
+        branchExists
+          ? ['worktree', 'add', worktreePath, branch]
+          : ['worktree', 'add', '-b', branch, worktreePath, baseRef]
+      );
+    } catch (err) {
+      // `worktree add -b` creates the branch BEFORE checking out, so a
+      // checkout that dies partway (disk full is the one that happened here)
+      // leaves an orphan branch behind. Retrying then takes the
+      // `branchExists` path against a branch pointing at nothing useful.
+      // Roll back only what this call created.
+      if (!branchExists) {
+        try {
+          this.git(['branch', '-D', branch]);
+        } catch {
+          /* branch may not have been created yet */
+        }
+      }
+      try {
+        this.git(['worktree', 'prune']);
+      } catch {
+        /* best effort */
+      }
+      throw err;
+    }
 
     const info: WorktreeInfo = {
       name,

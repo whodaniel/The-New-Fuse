@@ -294,5 +294,20 @@ check(
   controller.handle('/reg', 'enter').type === 'none'
 );
 
+// Found by driving a real TTY: Escape only hid the palette until the next
+// keystroke, because `handle()` reopens on any printable key. Dismissing it
+// and continuing to type brought it straight back.
+controller.handle('/reg', 'other');
+controller.handle('/reg', 'escape');
+controller.handle('/regi', 'other');
+check('escape stays dismissed while the same line is edited', !controller.isOpen);
+controller.handle('/regis', 'other');
+check('still dismissed several keystrokes later', !controller.isOpen);
+
+// Abandoning the line re-arms it.
+controller.handle('', 'other');
+controller.handle('/reg', 'other');
+check('clearing the line re-arms the palette', controller.isOpen);
+
 console.log(`\npalette: ${pass} passed, ${fail} failed\n`);
 if (fail > 0) process.exit(1);

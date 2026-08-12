@@ -496,6 +496,15 @@ export class PaletteController {
   private selectedIndex = 0;
   private open = false;
   private line = '';
+  /**
+   * Set by Escape, cleared when the operator abandons the query.
+   *
+   * Without this, Escape only hid the palette until the very next keystroke —
+   * `handle()` reopens on any printable key — so dismissing it and continuing
+   * to type brought it straight back. Escape now means "stay out of my way for
+   * this line"; clearing the line (or submitting it) re-arms the palette.
+   */
+  private suppressed = false;
 
   constructor(
     private readonly renderer: PaletteRenderer,
@@ -528,6 +537,9 @@ export class PaletteController {
    */
   handle(line: string, key: PaletteKey): PaletteOutcome {
     if (!PaletteController.triggers(line)) {
+      // The query was abandoned (line cleared, or no longer a slash command),
+      // so a previous Escape no longer applies — re-arm for the next `/`.
+      this.suppressed = false;
       if (this.open) {
         this.close();
         return { type: 'dismissed' };
@@ -536,8 +548,19 @@ export class PaletteController {
     }
 
     if (key === 'escape') {
+      this.suppressed = true;
       this.close();
       return { type: 'dismissed' };
+    }
+
+    // Enter always re-arms: whatever the operator does next is a new line.
+    if (key === 'enter') this.suppressed = false;
+
+    // Stay dismissed while the operator keeps editing the same line. Enter is
+    // handled below so a suppressed palette still submits the typed text.
+    if (this.suppressed && key !== 'enter') {
+      this.line = line;
+      return { type: 'none' };
     }
 
     // Re-rank whenever the query text changed; navigation keys keep the

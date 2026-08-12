@@ -160,6 +160,33 @@ try {
   }
   check('an unresolvable base ref is rejected', baseRefError instanceof WorktreeError);
 
+  // Observed for real: the first attempt against The-New-Fuse died mid-checkout
+  // (disk full). `git worktree add -b` creates the branch BEFORE checking out,
+  // so the failure left an orphan `tnf/worktree/<name>` branch behind and the
+  // next attempt silently took the "branch already exists" path.
+  {
+    // Force a checkout failure by parking a file where the worktree must go.
+    const blocked = service.pathFor('blocked');
+    fs.mkdirSync(path.dirname(blocked), { recursive: true });
+    fs.writeFileSync(blocked, 'not a directory');
+
+    let failed = false;
+    try {
+      service.create({ name: 'blocked', baseRef: 'HEAD' });
+    } catch {
+      failed = true;
+    }
+    check('a failed create surfaces as an error', failed);
+
+    const branches = git(['branch', '--list', 'tnf/worktree/blocked']);
+    check(
+      'a failed create does not leave an orphan branch behind',
+      branches.trim() === '',
+      JSON.stringify(branches)
+    );
+    fs.rmSync(blocked, { force: true });
+  }
+
   console.log('\nworktree — outside a git repo');
   const notRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-not-a-repo-'));
   try {
