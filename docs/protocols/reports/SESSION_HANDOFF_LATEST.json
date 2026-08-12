@@ -1,15 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "2f34d14b-783b-4ab2-a471-1684233fa6a5",
-  "created_at": "2026-08-12T06:47:24.775Z",
+  "handoff_id": "f4cc46ed-d809-423d-8b22-f488f0cc69dc",
+  "created_at": "2026-08-12T06:48:12.460Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "9d1a51a1c2e0d1fa2cf72844db90d64a0af045b1",
+  "head_sha": "99188f2a76385cacb74d5115fe4a32216f2dfad9",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Dirty-tree: telegram voice STT via ffmpeg + scripts/transcribe_audio.py"
+    "Dirty-tree: public agent directory and categories API endpoints"
   ],
   "changed_paths": [
     "docs/protocols/AGENT_STATUS_LEDGER.md",
@@ -18,6 +18,7 @@
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "packages/tnf-cli/package.json",
     "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/telegram/TelegramService.ts",
     "packages/tnf-cli/src/utils/command-palette.test.ts",
     "packages/tnf-cli/src/utils/command-palette.ts",
     "packages/tnf-cli/src/utils/palette-readline.test.ts",
@@ -44,8 +45,7 @@
     "docs/operations/tnf-master-reconciliation-report-latest.md",
     "docs/operations/tnf-self-improvement-run-log.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "packages/tnf-cli/src/telegram/TelegramService.ts"
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -69,6 +69,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["9d1a51a1c2e0d1fa2cf72844db90d64a0af045b1"]
+    "commits": ["99188f2a76385cacb74d5115fe4a32216f2dfad9"]
   }
 }

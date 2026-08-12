@@ -1,19 +1,19 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T06:47:24.775Z`  
-Handoff ID: `2f34d14b-783b-4ab2-a471-1684233fa6a5`
+Created At: `2026-08-12T06:48:12.460Z`  
+Handoff ID: `f4cc46ed-d809-423d-8b22-f488f0cc69dc`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `9d1a51a1c2e0d1fa2cf72844db90d64a0af045b1`
+- Head SHA: `99188f2a76385cacb74d5115fe4a32216f2dfad9`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Dirty-tree: telegram voice STT via ffmpeg + scripts/transcribe_audio.py
+- Dirty-tree: public agent directory and categories API endpoints
 
 ## Changed Paths
 
@@ -23,6 +23,7 @@ Handoff ID: `2f34d14b-783b-4ab2-a471-1684233fa6a5`
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/telegram/TelegramService.ts
 - packages/tnf-cli/src/utils/command-palette.test.ts
 - packages/tnf-cli/src/utils/command-palette.ts
 - packages/tnf-cli/src/utils/palette-readline.test.ts
@@ -50,7 +51,6 @@ Handoff ID: `2f34d14b-783b-4ab2-a471-1684233fa6a5`
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/tnf-cli/src/telegram/TelegramService.ts
 
 ## Verification
 
