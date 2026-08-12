@@ -14929,7 +14929,25 @@ program
       }
 
       if (!options.json) {
-        if (decision.level === 'warn') {
+        // Report the DURABLE outcome first, independent of liveness.
+        //
+        // Ordering matters here and got this wrong once already: when the
+        // stale-recipient branch ran first, a worker that had genuinely been
+        // LPUSHed to its durable inbox was told "dropped, not queued". That is
+        // the common case, not an edge case — cron workers heartbeat every
+        // 5-15min against a 60s liveness window, so they read stale most of
+        // the time. An LPUSH that lands must never be reported as a drop.
+        if (workerQueue) {
+          console.log(chalk.green(`📥 Queued to worker inbox — ${decision.resolution.summary}`));
+          console.log(chalk.dim(`  ${workerQueue.queueKey} (envelope ${workerQueue.envelopeId})`));
+          console.log(
+            chalk.dim(
+              decision.level === 'warn'
+                ? '  Durable: the worker drains this on its next cron cycle, even though it reads stale now.'
+                : '  Durable: the worker drains this on its next cron cycle.'
+            )
+          );
+        } else if (decision.level === 'warn') {
           console.log(chalk.yellow(`⚠ Published, but ${decision.resolution.summary}`));
           console.log(
             chalk.dim(
@@ -14938,13 +14956,6 @@ program
           );
         } else if (decision.resolution.status === 'broadcast') {
           console.log(chalk.green(`📤 Broadcast — ${decision.resolution.summary}`));
-        } else if (workerQueue) {
-          console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
-          console.log(
-            chalk.dim(
-              `  Worker queue: ${workerQueue.queueKey} (envelope ${workerQueue.envelopeId})`
-            )
-          );
         } else {
           console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
         }

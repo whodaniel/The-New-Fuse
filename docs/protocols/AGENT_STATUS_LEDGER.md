@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T09:39:14.474Z** — handoff
+Updated: **2026-08-12T10:18:03.735Z** — handoff
+`77589e6a-d5d6-483f-acdc-87c76e3f4910` (`5aedc487702a`).
 `d1bf96aa-8cdb-4785-9787-29b1103dad22` (`01c26a485aa0`).
 `50860ddc-0dce-4459-8625-af397976d037` (`cda5a0b8a358`).
 `72de409e-c8eb-4652-84f8-ee6703850238` (`9efe371f6f8c`).
@@ -204,10 +205,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                    |
-| -------- | ------------------------------------------------------------------------- |
-| **P0**   | Operator: model-policy.yaml for cron workers (local llama or allow_cloud) |
-| **P0**   | Run pnpm run tnf:live:agents:write after fleet changes                    |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1005,3 +1006,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d1bf96aa-8cdb-4785-9787-29b1103dad22) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(77589e6a-d5d6-483f-acdc-87c76e3f4910) | ✅ HANDOFF_READY |
