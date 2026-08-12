@@ -1,0 +1,15 @@
+# Sub-Director model policy
+# Prelaunch: keep default_tier=local-only and allow_cloud=false
+# To escalate an envelope to cloud, pass {preferred_tier: "cloud-ok"} or {cloud_ok: true}
+# in the envelope payload, OR flip this file globally.
+#
+# Allowed values for default_tier:
+#   local-only    : use local server if reachable; refuse otherwise. No cloud. (safest default)
+#   local-prefer  : local first, cloud fallback (paid pass-through).
+#   cloud-ok      : local first, cloud fallback allowed.
+#   cloud-primary : cloud first, local last-resort (paid pass-through).
+#
+# allow_cloud: false|true — operator-controlled gate.
+
+default_tier: local-only
+allow_cloud: false

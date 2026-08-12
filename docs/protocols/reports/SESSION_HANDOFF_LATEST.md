@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T10:33:51.948Z`  
-Handoff ID: `8ec7b630-7df6-4c0a-80bb-faf6b9293167`
+Created At: `2026-08-12T10:45:24.037Z`  
+Handoff ID: `66331bb5-402f-47b0-b561-76ba65af2706`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `67f7f022853496623bc975b73f4e12bffe2ec0a4`
+- Head SHA: `093d36133ddb18b1369bd32bb783c8b1b0ca17e0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -20,10 +20,14 @@ Handoff ID: `8ec7b630-7df6-4c0a-80bb-faf6b9293167`
 ## Changed Paths
 
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md
-- docs/protocols/reference/model_resolver.snapshot.py
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/runtime/establish-core-federated-fleet.cjs
+- scripts/sub-director/model-policy.example.yaml
+- scripts/sub-director/model_resolver.py
+- scripts/sub-director/run_one_envelope.py
+- scripts/sub-director/sync-runtime.sh
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - apps/frontend/.env.production.example
@@ -44,12 +48,12 @@ Handoff ID: `8ec7b630-7df6-4c0a-80bb-faf6b9293167`
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/AGENT_WHO_IS_WHO.md
-- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
-- packages/tnf-cli/src/cli.ts
+- docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md
+- docs/protocols/reference/model_resolver.snapshot.py
 
 ## Verification
 

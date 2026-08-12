@@ -468,6 +468,44 @@ function installServices() {
   }
 }
 
+/**
+ * Materialise the Sub-Director Lane 2 runtime from the repo.
+ *
+ * Must run BEFORE installWorkerCrons(): the crons this installs invoke
+ * run_one_envelope.py and model_resolver.py out of ~/.tnf/sub-director/, and
+ * until 2026-08-12 those files were hand-placed and untracked — no history, no
+ * review, no rollback, invisible to repo search. See
+ * docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md for what that cost.
+ *
+ * Best-effort by design: a sync failure must not abort fleet establishment,
+ * because a stale-but-working runtime beats no fleet at all. It is recorded as
+ * a warning so the receipt shows it rather than hiding it.
+ */
+function syncSubDirectorRuntime() {
+  const script = path.join(ROOT, 'scripts', 'sub-director', 'sync-runtime.sh');
+  if (!fs.existsSync(script)) {
+    record('sync:sub-director-runtime', 'skip', 'sync-runtime.sh not present');
+    return;
+  }
+  try {
+    const out = execFileSync('bash', [script], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const changed = out
+      .split('\n')
+      .filter((l) => /\b(installed|updated|seeded)\b/.test(l))
+      .map((l) => l.trim().split(/\s{2,}/)[1] || l.trim());
+    record(
+      'sync:sub-director-runtime',
+      'ok',
+      changed.length ? `applied: ${changed.join(', ')}` : 'already in sync'
+    );
+  } catch (err) {
+    record('sync:sub-director-runtime', 'warn', err.message || String(err));
+  }
+}
+
 function installWorkerCrons() {
   let crontab = '';
   try {
@@ -688,6 +726,7 @@ Env:
     ensureRedis();
     ensureRelayBestEffort();
     seedMcpConfig();
+    syncSubDirectorRuntime();
     installServices();
     installWorkerCrons();
     redisRegisterCoreAgents();
