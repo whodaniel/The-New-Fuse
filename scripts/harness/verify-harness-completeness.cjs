@@ -153,13 +153,31 @@ function main() {
 
   const hostCmpOk =
     exists('scripts/harness/host-compaction-adapter.cjs') &&
-    exists('scripts/harness/compaction-record.cjs');
+    exists('scripts/harness/compaction-record.cjs') &&
+    exists('docs/protocols/HARNESS_HOST_COMPACTION.md');
+  let hostCmpDetail = hostCmpOk
+    ? 'adapter+protocol present (record|import|status|verify)'
+    : 'host-compaction adapter or protocol missing';
+  if (hostCmpOk) {
+    const verify = runNode('scripts/harness/host-compaction-adapter.cjs', ['verify']);
+    let verifyOk = verify.code === 0;
+    try {
+      const parsed = JSON.parse(verify.stdout || '{}');
+      verifyOk = verify.code === 0 && parsed.ok === true;
+      hostCmpDetail += `; verify checked=${parsed.checked ?? '?'}`;
+    } catch {
+      verifyOk = false;
+    }
+    checks.push({
+      name: 'host_compaction.verify',
+      ok: verifyOk,
+      detail: verifyOk ? hostCmpDetail : 'host-compaction verify failed',
+    });
+  }
   checks.push({
     name: 'host_compaction.adapter',
     ok: hostCmpOk,
-    detail: hostCmpOk
-      ? 'adapter present (tnf harness host-compaction record|import)'
-      : 'host-compaction adapter missing',
+    detail: hostCmpDetail,
   });
 
   for (const rel of [

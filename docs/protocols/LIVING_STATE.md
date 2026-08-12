@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Optional: sandbox_isolation remains partial by design
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -901,6 +900,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T06:24:49.580Z handoff `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14` head
+  `bb1ae588a172` project `TNF-SESSION` — Optional: sandbox_isolation remains
+  partial by design
 
 - 2026-08-12T06:12:36.161Z handoff `480ceb93-cd53-4ca3-84ea-59b95d89d937` head
   `09b3f5475ee4` project `TNF-SESSION` — Continue priority queue from

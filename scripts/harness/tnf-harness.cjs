@@ -49,7 +49,7 @@ Commands:
   supply-chain [--json] [--write-lock] [--check-lock|--strict] [--skills] [--write-skill-lock] [--check-skill-lock|--strict-skills]
   skill-publisher [--json] [--write-lock] [--check-lock] [--strict-skills]
   failover [--host <name>] [--seed] [--json]
-  host-compaction record|import|list …
+  host-compaction record|import|list|status|verify|discover …
 `);
 }
 

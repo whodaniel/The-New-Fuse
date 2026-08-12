@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T06:12:36.126Z** — handoff
+Updated: **2026-08-12T06:24:49.532Z** — handoff
+`96be2b5a-33ed-4c46-b5ca-5886ae9fdf14` (`bb1ae588a172`).
 `480ceb93-cd53-4ca3-84ea-59b95d89d937` (`09b3f5475ee4`).
 `37816a6d-f24c-4ad5-95d0-75f33f224694` (`5a5e78ab191e`).
 `cd4f3527-9d3b-43ab-9eba-a0248d986fad` (`6cff2cc8e860`).
@@ -194,10 +195,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                |
+| -------- | ----------------------------------------------------- |
+| **P0**   | Optional: sandbox_isolation remains partial by design |
+| **P0**   | Dirty-tree triage outside harness                     |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -958,3 +959,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (480ceb93-cd53-4ca3-84ea-59b95d89d937) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(96be2b5a-33ed-4c46-b5ca-5886ae9fdf14) | ✅ HANDOFF_READY |

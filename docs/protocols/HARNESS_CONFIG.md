@@ -26,10 +26,10 @@ are optional **host harness surfaces**. Docs in `docs/core/` are artefacts;
 ## 2. Eight layers (UNU anatomy → TNF evidence)
 
 | Layer                           | TNF mapping                                                          | Verify                                                 |
-| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ | ------- |
 | Interface / override            | Turn Zero, harness pause/resume, agent modes                         | `tnf harness inspect`                                  |
 | Provider routing                | Assimilation routes + failover policy + harness context              | `provider-failover.cjs` / harness-config               |
-| Context + compaction            | FRONTLOAD Stages A–C + compaction records                            | `scripts/harness/compaction-record.cjs`                |
+| Context + compaction            | FRONTLOAD + compaction records + host-compaction adapter             | `host-compaction-adapter.cjs status                    | verify` |
 | Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                          | `scripts/harness/sandbox-run.cjs`                      |
 | Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                 | `scripts/harness/permission-berm.cjs`                  |
 | Orchestration + budgets         | harness cycle/loop, full-auto, D10                                   | `tnf harness cycle`                                    |

@@ -55,15 +55,17 @@
       "gap": "Host CLIs may still retry internally; TNF owns the shared failover chain via provider-failover policy, wired into harness-context, model-watchdog, and start-agent-network."
     },
     "context_assembly_compaction": {
-      "status": "partial",
+      "status": "implemented",
       "evidence": [
         "docs/core/FRONTLOAD_MANIFEST.md",
+        "docs/protocols/HARNESS_HOST_COMPACTION.md",
         "scripts/tnf-onboard.cjs",
         "scripts/harness/compaction-record.cjs",
         "scripts/harness/host-compaction-adapter.cjs",
-        "data/harness/compaction/"
+        "data/harness/compaction/",
+        "data/harness/host-compaction/"
       ],
-      "gap": "Host LLM compaction remains vendor-owned; TNF host-compaction-adapter records control-plane boundaries and optional transcript imports."
+      "gap": "Vendor LLM internal token budgets remain opaque; TNF owns boundary receipts, linked compaction records, and optional transcript import hashes."
     },
     "sandbox_isolation": {
       "status": "partial",
