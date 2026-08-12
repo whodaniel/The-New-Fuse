@@ -49,6 +49,9 @@ const DEFAULT_IDENTITY = {
     'Default Local Sub-Director endowment written by establish-core-federated-fleet. Cloud Super Director binding is optional and credential-gated.',
 };
 
+/** launchd StartInterval for com.tnf.local-subdirector, in seconds. */
+const LOCAL_SUBDIRECTOR_INTERVAL_SEC = 300;
+
 const WORKERS = [
   {
     scheduleId: 'tnf-subdirector-codegen-worker',
@@ -568,6 +571,19 @@ function seedMcpConfig() {
   record('mcp', 'ok', dest);
 }
 
+/**
+ * Seconds between runs for a step cron cadence such as every-5-minutes.
+ *
+ * Derived from the cadence already declared in WORKERS rather than restated as
+ * a constant, so the schedule and the liveness expectation cannot drift apart.
+ * Anything not matching that shape yields null, and the agent keeps the flat
+ * liveness window.
+ */
+function cronCadenceSeconds(cadence) {
+  const m = /^\*\/(\d+)\s+\*\s+\*\s+\*\s+\*$/.exec(String(cadence || '').trim());
+  return m ? Number(m[1]) * 60 : null;
+}
+
 function redisRegisterCoreAgents() {
   const ping = spawnSync('redis-cli', ['ping'], { encoding: 'utf8' });
   if ((ping.stdout || '').trim() !== 'PONG') {
@@ -588,6 +604,9 @@ function redisRegisterCoreAgents() {
         'broadcast_super_director_prompt',
         'fleet_establish',
       ],
+      // launchd runs this on StartInterval=300, so a 60s liveness window
+      // marked a perfectly healthy Sub-Director offline ~80% of the time.
+      expectedCadenceSec: LOCAL_SUBDIRECTOR_INTERVAL_SEC,
       extra: {
         daccRole: 'director',
         directorTier: 'sub',
@@ -600,6 +619,7 @@ function redisRegisterCoreAgents() {
       name: w.name,
       role: 'worker',
       platform: 'claude',
+      expectedCadenceSec: cronCadenceSeconds(w.cadence),
       capabilities: ['subdirector_authorized'],
       extra: { source: 'establish-core-federated-fleet', subdirector_authorized: true },
     })),
@@ -616,6 +636,7 @@ function redisRegisterCoreAgents() {
       capabilities: agent.capabilities,
       registeredAt: now,
       lastSeen: now,
+      ...(agent.expectedCadenceSec ? { expectedCadenceSec: agent.expectedCadenceSec } : {}),
       routing: { callableWorker: agent.role === 'worker', directorPoolEligible: true },
       ...agent.extra,
     });
@@ -713,7 +734,7 @@ Env:
         'com.tnf.local-subdirector',
         'local-subdirector-runtime.cjs',
         'com.tnf.fleet-health-probe',
-        300
+        LOCAL_SUBDIRECTOR_INTERVAL_SEC
       );
       relocateHijackedLabel(
         'com.tnf.master-heartbeat',

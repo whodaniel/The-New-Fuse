@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T17:49:35.762Z`  
-Handoff ID: `21a8888a-69ea-4401-a617-a016c2e637b3`
+Created At: `2026-08-12T17:58:55.933Z`  
+Handoff ID: `6e893a91-538b-4cab-b87e-5b03f87f53c5`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `680fcdecafca5c364cbe9845f569c65d18b5f50c`
+- Head SHA: `5be6b8be6603f01a9b46b159f5c449888c2a2c1e`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,13 +19,7 @@ Handoff ID: `21a8888a-69ea-4401-a617-a016c2e637b3`
 
 ## Changed Paths
 
-- data/providers/catalog.json
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/services/provider-catalog.test.ts
-- packages/tnf-cli/src/services/provider-config.test.ts
-- packages/tnf-cli/src/services/provider-config.ts
-- scripts/sub-director/model_resolver.py
-- scripts/swarm/llm-provider-tester.cjs
+- scripts/runtime/establish-core-federated-fleet.cjs
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - apps/api/package.json
@@ -33,6 +27,7 @@ Handoff ID: `21a8888a-69ea-4401-a617-a016c2e637b3`
 - apps/api/src/controllers/orchestration.controller.ts
 - apps/api/src/llm/llm-provider.controller.ts
 - apps/frontend/.env.production.example
+- apps/frontend/app.html
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
@@ -61,12 +56,17 @@ Handoff ID: `21a8888a-69ea-4401-a617-a016c2e637b3`
 - packages/tnf-cli/src/slashCommands.ts
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
+- data/providers/catalog.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/services/provider-catalog.test.ts
+- packages/tnf-cli/src/services/provider-config.test.ts
+- packages/tnf-cli/src/services/provider-config.ts
+- scripts/sub-director/model_resolver.py
+- scripts/swarm/llm-provider-tester.cjs
 - apps/api/src/modules/error-awareness/
 - apps/frontend/src/lib/errorAwareness.ts
 - apps/frontend/src/services/aiAssistPreferences.ts
