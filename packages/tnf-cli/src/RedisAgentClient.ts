@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
+import { buildWorkerTaskEnvelope, workerQueueKey } from './services/WorkerEnvelope.js';
+
 export interface AgentInfo {
   id: string;
   name: string;
@@ -362,6 +364,41 @@ export class RedisAgentClient {
     }
 
     return message;
+  }
+
+  /**
+   * LPUSH a task envelope onto a sub-director worker inbox so cron drainers
+   * (run_one_envelope.py) can process it. Redis PUBLISH used by send() does not
+   * reach these LIST-backed queues.
+   */
+  async enqueueWorkerTask(
+    recipientAgentId: string,
+    content: string,
+    options: { title?: string; metadata?: Record<string, unknown> } = {}
+  ): Promise<{ queueKey: string; envelopeId: string }> {
+    if (!this.agentInfo || !this.publisher) {
+      throw new Error('Agent not registered or Redis publisher not initialized');
+    }
+
+    const envelope = buildWorkerTaskEnvelope({
+      recipientAgentId,
+      content,
+      senderAgentId: this.agentInfo.id,
+      title: options.title,
+      metadata: options.metadata,
+    });
+    const queueKey = workerQueueKey(recipientAgentId);
+    const payload = JSON.stringify(envelope);
+
+    if (this.publisher instanceof Redis) {
+      await this.publisher.lpush(queueKey, payload);
+    } else if (typeof this.publisher.lpush === 'function') {
+      await this.publisher.lpush(queueKey, payload);
+    } else {
+      throw new Error('Redis client does not support LPUSH for worker queue delivery');
+    }
+
+    return { queueKey, envelopeId: envelope.payload.id };
   }
 
   async broadcast(options: any) {

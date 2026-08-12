@@ -91,3 +91,42 @@ retention, compaction, interruptions, trajectories, and provider substitution is
 both an **ops** decision and a **governance** decision (UNU). Gaps in
 `harness-config.json` must stay honest (`partial` / explicit `gap` fields) —
 never claim `implemented` without runnable evidence.
+
+---
+
+## 7. Work Completion Closure (mandatory — no silent finishes)
+
+Any harness session that changes code, protocols, fleet behavior, or operator
+surfaces MUST close with this sequence **before** `git commit`. Skipping it is a
+failed handoff (see `TURN_END_MANDATE.md`).
+
+### Inspect → Act → Verify → Propagate → Commit
+
+| Step                | Action                                                                                     | Artifact / command                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| 1. Verify           | Run tests and probes that cover the change                                                 | e.g. `pnpm --filter @the-new-fuse/tnf-cli test`, `pnpm run tnf:ws:channels:check` |
+| 2. Living State     | Mark completed work `[✅]` at top of `LIVING_STATE.md` Active Steps; demote stale blockers | `docs/protocols/LIVING_STATE.md`                                                  |
+| 3. Ledger           | Update Protocol Gaps / Next Agent Focus when gaps close or new ones open                   | `docs/protocols/AGENT_STATUS_LEDGER.md`                                           |
+| 4. Handoff          | Emit fresh session handoff with `TNF_PROTOCOL_ACK`                                         | `pnpm run handoff:emit:verified` or `node scripts/turn-end.cjs`                   |
+| 5. Resume checklist | `continuation.resume_checklist` must list concrete next steps — not "continue queue" alone | `SESSION_HANDOFF_LATEST.json`                                                     |
+| 6. Commit           | Stage **only** intentional paths (no daemon noise, vitest caches, auto macro boards)       | `git add` scoped paths; then commit                                               |
+
+### Non-negotiable rules
+
+- **Docs/logs move with code.** New transport lanes, gates, or CLI behavior
+  require a protocol doc or explicit cross-reference
+  (`TNF_TRANSPORT_LANE_SPEC.md` is the pattern).
+- **Handoff is not optional for critical paths** — see
+  `SESSION_HANDOFF_ENFORCEMENT.md` (`apps/`, `packages/`, `scripts/`,
+  `docs/protocols/`).
+- **Never commit without updating handoff** when the change set touches critical
+  paths; CI and pre-push gates expect `SESSION_HANDOFF_LATEST.*` + ledger sync.
+- **Turn End idempotent** — re-run `turn-end.cjs` or `handoff:emit` before
+  commit if additional edits land after the first emit.
+
+### Mode integration (`HARNESS_AGENT_MODES.md`)
+
+- **EXECUTE** mode ends with Verify + Propagate (steps 1–4), not merely "code
+  applied."
+- **VERIFY** mode must cite probe output (pass/fail JSON paths), not narrative
+  success.

@@ -32,19 +32,11 @@
  *   needs a reply channel and belongs in a later change; promising it here
  *   would recreate the very over-claiming this fixes.
  *
- * KNOWN TRANSPORT INCOHERENCE (measured 2026-08-12, NOT fixed here)
- *   `tnf send` publishes to `tnf:direct:<sender>:<recipient>` via Redis
- *   PUBLISH. The cron-driven sub-director workers drain a Redis LIST at
- *   `tnf:direct:sub-director:<agentId>` (`LLEN` + run_one_envelope.py). A
- *   PUBLISH never lands in a list, so `tnf send` cannot reach those workers
- *   at all — independent of liveness, and independent of this guard.
- *
- *   This guard therefore reports honestly about the RECIPIENT while the
- *   TRANSPORT remains mismatched: it will say "live" for a worker that still
- *   will not receive the message. Closing that gap means either routing
- *   direct sends through LPUSH to the worker inbox, or having workers
- *   subscribe to the published channel — a fleet-wide change that touches
- *   cron scripts and the broker, and is the operator's call to sequence.
+ * KNOWN TRANSPORT INCOHERENCE (measured 2026-08-12, addressed 2026-08-12)
+ *   Cron workers drain LIST queues at `tnf:direct:sub-director:<agentId>`.
+ *   `tnf send` now LPUSHes worker envelopes to that queue when the recipient
+ *   role is `worker`, while still publishing for live subscribers. See
+ *   `docs/protocols/TNF_TRANSPORT_LANE_SPEC.md`.
  */
 
 /** Shape borrowed from RedisAgentClient.listAgents(); kept structural. */

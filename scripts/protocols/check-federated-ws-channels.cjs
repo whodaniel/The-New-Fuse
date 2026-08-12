@@ -10,6 +10,7 @@ const {
   buildRelayAgentRegister,
   buildRelayMessageSend,
   buildWorkerAgentIdentity,
+  discoverRelayUrl,
 } = require('../lib/federation-protocol.cjs');
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -18,10 +19,24 @@ const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const writeMode = args.includes('--write');
 const keepAlive = args.includes('--keep-alive');
-const relayUrl = readOption('--url', process.env.TNF_RELAY_WS_URL || 'ws://127.0.0.1:3000/ws');
+const MIN_DELIVERY_WAIT_MS = 8000;
 const timeoutMs = readIntOption('--timeout-ms', 10000);
 const settleMs = readIntOption('--settle-ms', 1500);
-const holdMs = readIntOption('--hold-ms', keepAlive ? 0 : 8000);
+/** Always wait long enough for CHANNEL_MESSAGE delivery before pass/fail. */
+const deliveryWaitMs = Math.max(
+  readIntOption('--hold-ms', MIN_DELIVERY_WAIT_MS),
+  MIN_DELIVERY_WAIT_MS
+);
+
+function readRelayUrlFallback() {
+  return (
+    readOption('--url', null) ||
+    process.env.TNF_RELAY_WS_URL ||
+    process.env.TNF_RELAY_URL ||
+    process.env.RELAY_URL ||
+    null
+  );
+}
 
 function readOption(name, fallback) {
   const index = args.indexOf(name);
@@ -56,7 +71,7 @@ function protocolEnvelope(message) {
   });
 }
 
-async function connectAgent(agent, runId, clients, events) {
+async function connectAgent(relayUrl, agent, runId, clients, events) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(relayUrl);
     const state = {
@@ -124,6 +139,15 @@ function hasToken(state, token) {
 
 function hasFederatedIdentity(state, identity) {
   return state.channelMessages.some((msg) => {
+    const meta = msg.metadata || msg.payload?.metadata;
+    if (
+      meta &&
+      meta.idNumber === identity.idNumber &&
+      meta.operationalHandle === identity.operationalHandle &&
+      (!identity.canonicalEntityId || meta.canonicalEntityId === identity.canonicalEntityId)
+    ) {
+      return true;
+    }
     const haystack = JSON.stringify(msg);
     return (
       haystack.includes(identity.idNumber) &&
@@ -136,7 +160,7 @@ function hasFederatedIdentity(state, identity) {
 async function waitForDelivery(connected, agents, greenToken, blueToken) {
   const startedAt = Date.now();
   let snapshot = null;
-  while (Date.now() - startedAt <= holdMs) {
+  while (Date.now() - startedAt <= deliveryWaitMs) {
     snapshot = {
       greenDelivery: {
         gemini: hasToken(connected.gemini, greenToken),
@@ -201,6 +225,8 @@ function holdBridgeClients(clients) {
 }
 
 async function runCheck() {
+  const relayUrl =
+    (await discoverRelayUrl(readRelayUrlFallback())) || 'ws://127.0.0.1:3007/ws';
   const runId = `fed-ws-${Date.now()}`;
   const greenToken = `TNF_GREEN_GEMINI_ONBOARD_${runId}`;
   const blueToken = `TNF_BLUE_KIMI_K3_ONBOARD_${runId}`;
@@ -288,7 +314,7 @@ async function runCheck() {
 
   const connected = {};
   for (const [key, agent] of Object.entries(agents)) {
-    connected[key] = await connectAgent(agent, runId, clients, events);
+    connected[key] = await connectAgent(relayUrl, agent, runId, clients, events);
   }
 
   await sleep(settleMs);
@@ -320,7 +346,7 @@ async function runCheck() {
     runId,
     keepAlive,
     settleMs,
-    holdMs,
+    deliveryWaitMs,
     greenToken,
     blueToken,
     confirmed: Object.fromEntries([...clients].map(([id, state]) => [id, state.confirmed])),

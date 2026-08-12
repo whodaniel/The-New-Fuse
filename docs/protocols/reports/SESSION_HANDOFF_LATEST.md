@@ -1,21 +1,22 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T08:24:12.946Z`  
-Handoff ID: `50860ddc-0dce-4459-8625-af397976d037`
+Created At: `2026-08-12T09:39:14.474Z`  
+Handoff ID: `d1bf96aa-8cdb-4785-9787-29b1103dad22`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `cda5a0b8a358542ce28ab651b0a7b0e8d6c65a7f`
+- Head SHA: `01c26a485aa0682ffb9dc0fd8e3a9395a3ef6d76`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Federated WS channel check pass on :3007 (discoverRelayUrl, min delivery wait)
+- tnf send LPUSH worker envelopes (WorkerEnvelope.ts)
+- TNF_TRANSPORT_LANE_SPEC + HARNESS_CONFIG §7 completion closure
+- tnf-cli test suite green with WorkerEnvelope.test.ts
 
 ## Changed Paths
 
@@ -38,18 +39,26 @@ Handoff ID: `50860ddc-0dce-4459-8625-af397976d037`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/AGENT_WHO_IS_WHO.md
+- docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md
+- docs/protocols/HARNESS_CONFIG.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/PROTOCOL_MAP.md
+- docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/RedisAgentClient.ts
 - packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/services/DispatchGuard.ts
-- docs/protocols/AGENT_STATUS_LEDGER.md
+- scripts/protocols/check-federated-ws-channels.cjs
+- scripts/protocols/live-agent-work-check.cjs
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/services/DispatchGuard.test.ts
+- docs/protocols/TNF_TRANSPORT_LANE_SPEC.md
+- packages/tnf-cli/src/services/WorkerEnvelope.test.ts
+- packages/tnf-cli/src/services/WorkerEnvelope.ts
 
 ## Verification
 
@@ -66,14 +75,12 @@ Handoff ID: `50860ddc-0dce-4459-8625-af397976d037`
 
 ### Resume Checklist
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Read SESSION_HANDOFF_LATEST.md
+- Run pnpm run tnf:ws:channels:check
+- Verify worker queue: tnf send --to agent_hermes-codegen-worker_1782364000001
+  --require-live
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Operator: model-policy.yaml for cron workers (local llama or allow_cloud)
+- Run pnpm run tnf:live:agents:write after fleet changes

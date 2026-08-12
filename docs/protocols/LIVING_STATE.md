@@ -4,10 +4,25 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Operator: model-policy.yaml for cron workers (local llama
+or allow_cloud)
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-12 Federated transport + harness closure (Cursor)** — Closed
+  three-lane transport gaps and hardened completion procedures. (1)
+  `check-federated-ws-channels.cjs`: `discoverRelayUrl()` prefers `:3007`,
+  minimum 8s delivery wait (fixes false fail when `--keep-alive` zeroed holdMs),
+  stronger `ID#` metadata checks — **FEDERATED_WS_CHANNEL_CHECK: pass**. (2)
+  `tnf send` LPUSHes `WorkerEnvelope` task envelopes to
+  `tnf:direct:sub-director:<workerId>` while retaining PUBLISH for live
+  subscribers (`WorkerEnvelope.ts`, `RedisAgentClient.enqueueWorkerTask`). (3)
+  `docs/protocols/TNF_TRANSPORT_LANE_SPEC.md` documents WS / pub/sub / LIST
+  lanes; `PROTOCOL_MAP` indexed. (4) `HARNESS_CONFIG.md` §7 +
+  `SESSION_HANDOFF_ENFORCEMENT` completion closure — verify → logs → handoff →
+  scoped commit. (5) `tnf-cli` test suite runs `WorkerEnvelope.test.ts`; full
+  `pnpm test` passes including command-surface snapshot. `live-agent-work-check`
+  WS probe timeout aligned.
 
 - [✅] **2026-08-12 Silent-gate remediation (Claude Code, Turn Zero)** — Four
   health gates were reporting the opposite of the truth; all four fixed with
@@ -27,10 +42,9 @@ continuation.resume_checklist.
   the ASSIMILATE_CHECK scan path (`~/.hermes/cron/output/*.jsonl` matched
   nothing; runs live at `<job-hash>/<timestamp>.md`). **Live agent work check:
   BLOCK → CAUTION.** Detail: `AGENT_STATUS_LEDGER.md` §Protocol Gaps,
-  `DIRECTIVE_CONVERSION_LEDGER.md` Batch 012. **Open for operator:** `tnf-cli`
-  `test` script chains a `src/whatsapp/whatsapp.test.ts` that has never existed,
-  so the suite dies there and `command-surface.test.ts` has never run; running
-  it directly shows 20 missing / 1 changed command vs. snapshot.
+  `DIRECTIVE_CONVERSION_LEDGER.md` Batch 012. **`tnf-cli` test suite:** whatsapp
+  chain removed; `WorkerEnvelope.test.ts` added — full suite passes (resolved
+  2026-08-12 transport closure).
 
 - [✅] **2026-08-12 Boot triage autonomous remediation (Cursor)** — Restored
   missing harness protocols `HARNESS_AGENT_MODES.md` +
@@ -901,6 +915,22 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T09:39:21.557Z handoff `d1bf96aa-8cdb-4785-9787-29b1103dad22` head
+  `01c26a485aa0` project `TNF-SESSION` — Operator: model-policy.yaml for cron
+  workers (local llama or allow_cloud)
+
+- 2026-08-12T08:24:19.024Z handoff `50860ddc-0dce-4459-8625-af397976d037` head
+  `cda5a0b8a358` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T08:08:06.723Z handoff `72de409e-c8eb-4652-84f8-ee6703850238` head
+  `9efe371f6f8c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T07:48:09.139Z handoff `5d8acc7d-13a8-4a0a-be32-5a6e43ca2a30` head
+  `d2054883ddde` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-12T06:50:16.510Z handoff `dd2ae2b0-d863-4b83-b1ec-38d81570bfc7` head
   `7aaacc7c287b` project `TNF-SESSION` — Continue priority queue from

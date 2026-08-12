@@ -202,7 +202,7 @@ the truth — into landed code with regression tests **Owner**: Claude Code
 | directive-3 | Point the A2A probe at the federation relay                  | ✅ verified | probe returns `ok:true`, responder `BROKER-Fuse-activity-log`; live check BLOCK → CAUTION                        |
 | directive-4 | Keep probe diagnostics off the JSON stdout contract          | ✅ verified | `JSON.parse(probe.stdout)` succeeds; was throwing `Unexpected token 'C'` on every run                            |
 | directive-5 | Correct the ASSIMILATE_CHECK scan path                       | ✅ verified | mandate + directives + continuous-improver updated to recurse `<job-hash>/<timestamp>.md`                        |
-| directive-6 | Repair the `tnf-cli` test suite (missing `whatsapp.test.ts`) | ⚠️ blocked  | operator decision required: author the test or drop the reference + refresh a 21-entry-stale snapshot            |
+| directive-6 | Repair the `tnf-cli` test suite (missing `whatsapp.test.ts`) | ✅ verified | `WorkerEnvelope.test.ts` added; whatsapp chain removed; full `pnpm test` passes (2026-08-12)                     |
 
 ### Root Cause — shared across directives 1–4
 

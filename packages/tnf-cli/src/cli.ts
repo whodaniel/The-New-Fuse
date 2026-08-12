@@ -14906,13 +14906,31 @@ program
 
       await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
 
+      let workerQueue: { queueKey: string; envelopeId: string } | null = null;
+      if (
+        options.to &&
+        decision.resolution.agentId &&
+        (decision.resolution.role === 'worker' ||
+          /worker/i.test(decision.resolution.agentId || options.to))
+      ) {
+        try {
+          workerQueue = await client.enqueueWorkerTask(decision.resolution.agentId!, message, {
+            metadata: { transport: 'sub-director-list', via: 'tnf send' },
+          });
+        } catch (enqueueErr: any) {
+          if (!options.json) {
+            console.error(
+              chalk.yellow(
+                `⚠ Published via PUBLISH but worker queue LPUSH failed: ${enqueueErr.message}`
+              )
+            );
+          }
+        }
+      }
+
       if (!options.json) {
         if (decision.level === 'warn') {
           console.log(chalk.yellow(`⚠ Published, but ${decision.resolution.summary}`));
-          // Correction: `send` uses Redis PUBLISH, which is fire-and-forget.
-          // With no live subscriber the message is DROPPED, not queued — an
-          // earlier draft of this warning said "durable", which would have
-          // been the same over-claim this guard exists to remove.
           console.log(
             chalk.dim(
               '  PUBLISH is fire-and-forget: with no live subscriber this message is dropped, not queued.'
@@ -14920,6 +14938,13 @@ program
           );
         } else if (decision.resolution.status === 'broadcast') {
           console.log(chalk.green(`📤 Broadcast — ${decision.resolution.summary}`));
+        } else if (workerQueue) {
+          console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
+          console.log(
+            chalk.dim(
+              `  Worker queue: ${workerQueue.queueKey} (envelope ${workerQueue.envelopeId})`
+            )
+          );
         } else {
           console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
         }

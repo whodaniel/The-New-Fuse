@@ -201,8 +201,8 @@ function collectRelay() {
   if (wsChannelsMode) {
     const check = run(
       'node',
-      ['scripts/protocols/check-federated-ws-channels.cjs', '--json', '--write', '--timeout-ms', '10000'],
-      { timeoutMs: 20000 }
+      ['scripts/protocols/check-federated-ws-channels.cjs', '--json', '--write', '--timeout-ms', '15000'],
+      { timeoutMs: 30000 }
     );
     try {
       channelCheck = check.stdout ? JSON.parse(check.stdout) : { ok: false, error: check.stderr || check.error || 'empty output' };
@@ -223,7 +223,10 @@ function collectRelay() {
   }
 
   return {
-    listening: listener.stdout ? listener.stdout.includes(':3000') : false,
+    listening: listener.stdout
+      ? listener.stdout.includes(':3000') || listener.stdout.includes(':3007')
+      : false,
+    federationListening: listener.stdout ? listener.stdout.includes(':3007') : false,
     listener: listener.stdout ? listener.stdout.split('\n').slice(0, 6) : [],
     healthOk: health.ok && healthPayload?.status === 'ok' && healthPayload?.relay === 'running',
     health: healthPayload || health.stderr || health.error || health.stdout,

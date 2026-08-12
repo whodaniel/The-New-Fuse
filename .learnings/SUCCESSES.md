@@ -51,33 +51,62 @@
 - **Task**: wf-1786381573663-juku1
 - **Category**: success
 - **Details**: Workflow completed successfully
+
 ## 2026-08-10T17:38:31.279Z
+
 - **Goal**: Run self-improvement cycle and capture learnings
 - **Task**: wf-1786383511029-j02q0
 - **Category**: success
 - **Details**: Workflow completed successfully
 
 ## 2026-08-10T17:41:22.190Z
+
 - **Goal**: Run self-improvement cycle and capture learnings
 - **Task**: wf-1786383680182-5aspt
 - **Category**: success
 - **Details**: Workflow completed successfully
 
 ## 2026-08-10T17:54:47.027Z
+
 - **Goal**: Run self-improvement cycle and capture learnings
 - **Task**: wf-1786384483691-y51s0
 - **Category**: success
 - **Details**: Workflow completed successfully
 
 ## 2026-08-10T18:37:23.800Z
+
 - **Goal**: Run self-improvement cycle and capture learnings
 - **Task**: wf-1786387043178-r6bp2
 - **Category**: success
 - **Details**: Workflow completed successfully
 
 ## 2026-08-10T20:27:43.821Z
+
 - **Goal**: Run self-improvement cycle and capture learnings
 - **Task**: wf-1786393663484-uiqhi
 - **Category**: success
 - **Details**: Workflow completed successfully
 
+## 2026-08-12T01:30:49.751Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1786498249502-plwxd
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-12T02:11:02.015Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1786500660755-6yb8g
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-12T09:40:00.000Z
+
+- **Goal**: Close federated transport gaps (WS :3007, worker LIST queues) and
+  harden harness work-completion closure before commit
+- **Task**: cursor-federated-transport-closure
+- **Category**: success
+- **Details**: Federated WS channel check pass; `tnf send` LPUSH to sub-director
+  workers; `TNF_TRANSPORT_LANE_SPEC`; `HARNESS_CONFIG` §7; handoff emitted;
+  `pnpm test` green in tnf-cli

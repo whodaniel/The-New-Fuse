@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T08:24:12.946Z** — handoff
+Updated: **2026-08-12T09:39:14.474Z** — handoff
+`d1bf96aa-8cdb-4785-9787-29b1103dad22` (`01c26a485aa0`).
 `50860ddc-0dce-4459-8625-af397976d037` (`cda5a0b8a358`).
 `72de409e-c8eb-4652-84f8-ee6703850238` (`9efe371f6f8c`).
 `5d8acc7d-13a8-4a0a-be32-5a6e43ca2a30` (`d2054883ddde`).
@@ -203,10 +204,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                    |
+| -------- | ------------------------------------------------------------------------- |
+| **P0**   | Operator: model-policy.yaml for cron workers (local llama or allow_cloud) |
+| **P0**   | Run pnpm run tnf:live:agents:write after fleet changes                    |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -330,16 +331,20 @@ notice if the gate stopped working.
    port fix alone. Fixed: diagnostics to stderr. Watch for: any script whose
    stdout is parsed by a caller.
 
+5. **`known-failure: federated WS check false fail + worker dispatch transport`**
+   (2026-08-12) — Channel check used `:3000` default and `holdMs=0` with
+   `--keep-alive`, reporting fail while registrations succeeded; `tnf send`
+   PUBLISH never reached LIST-backed cron workers. Fixed: `discoverRelayUrl()` +
+   min delivery wait; `WorkerEnvelope` LPUSH on worker targets;
+   `TNF_TRANSPORT_LANE_SPEC.md`. Verified: `tnf:ws:channels:check` pass on
+   `:3007`.
+
 **Open (not fixed — needs an owner):**
 
-- **`tnf-cli` test suite is red on a file that never existed.** `package.json`
-  `test` chains `tsx src/whatsapp/whatsapp.test.ts`; there is no such file and
-  no commit ever added one. The `&&` chain therefore dies there, so
-  `command-surface.test.ts` has **never executed** in the suite. Running it
-  directly reports 20 missing and 1 changed command versus
-  `command-surface.snapshot.json` — pre-existing drift, unrelated to any current
-  change. Decide: write the WhatsApp test, or drop the reference and refresh the
-  snapshot.
+- ~~**`tnf-cli` test suite is red on a file that never existed.**~~ **Resolved
+  2026-08-12:** `whatsapp.test.ts` reference absent; `WorkerEnvelope.test.ts`
+  added; full `pnpm test` in `packages/tnf-cli` passes including
+  `command-surface.test.ts`.
 - **ASSIMILATE_CHECK scanned a path shape that does not exist.** The mandate
   prescribed `~/.hermes/cron/output/*.jsonl`; Hermes writes
   `<job-hash>/<timestamp>.md`. The glob matched nothing, so the check reported
@@ -997,3 +1002,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (50860ddc-0dce-4459-8625-af397976d037) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d1bf96aa-8cdb-4785-9787-29b1103dad22) | ✅ HANDOFF_READY |
