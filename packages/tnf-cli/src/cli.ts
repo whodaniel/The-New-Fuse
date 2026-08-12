@@ -79,11 +79,8 @@ import {
 } from './utils/autonomous-turn-cap.js';
 import {
   buildPaletteIndex,
-  PaletteController,
-  PaletteRenderer,
   rankPalette,
   type PaletteEntry,
-  type PaletteKey,
   type PaletteTheme,
 } from './utils/command-palette.js';
 import {
@@ -100,6 +97,12 @@ import {
   persistOperatorWindowMs,
   resolveOperatorWindowMs,
 } from './utils/operator-window.js';
+import {
+  attachPalette,
+  paletteEntryToLine,
+  resolveSlashDropdownInput,
+  type SlashDropdownState,
+} from './utils/palette-readline.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
@@ -4637,177 +4640,25 @@ function createSlashCompleter(projectRoot: string): (line: string) => [string[],
  * read the query off readline at that point; it uses the mirrored `lastLine`
  * and stashes the chosen entry in `pending` for `resolveSlashDropdownInput`.
  */
-type SlashDropdownState = {
-  controller: PaletteController | null;
-  pending: PaletteEntry | null;
-  /** True once the operator moved the selection or Tab-completed. */
-  navigated: boolean;
-  projectRoot: string;
-};
-
-function paletteEntryToLine(entry: PaletteEntry): string {
-  if (entry.action.type === 'slash') return entry.tokens[0];
-  if (entry.action.type === 'cli') return `/${entry.tokens.join(' ')}`;
-  return `/${entry.action.entry.name}`;
-}
-
 /**
- * Decide what the operator meant when they pressed Enter.
+ * Bind the palette to a readline interface for this process.
  *
- * A navigated selection always wins — moving the cursor is an unambiguous
- * choice. Otherwise a line the operator typed with arguments of their own
- * wins over the highlighted row, because the palette knows nothing about
- * those arguments and would silently drop them.
+ * The ordering-sensitive glue lives in utils/palette-readline.ts so it can be
+ * tested over a fake TTY; importing cli.ts would execute main().
  */
-function resolveSlashDropdownInput(input: string, state: SlashDropdownState): string {
-  const pending = state.pending;
-  const navigated = state.navigated;
-  state.pending = null;
-  state.navigated = false;
-  state.controller?.close();
-
-  if (!pending) return input;
-  const trimmed = input.trim();
-  if (!trimmed.startsWith('/')) return input;
-  if (!navigated && trimmed.slice(1).includes(' ')) return input;
-  return paletteEntryToLine(pending);
-}
-
-function setReadlineLine(rl: readline.Interface, line: string): void {
-  (rl as any).line = line;
-  (rl as any).cursor = line.length;
-  (rl as any)._refreshLine?.();
-}
-
-function toPaletteKey(keyName: string | undefined, shift: boolean): PaletteKey {
-  switch (keyName) {
-    case 'up':
-      return 'up';
-    case 'down':
-      return 'down';
-    case 'pageup':
-      return 'pageup';
-    case 'pagedown':
-      return 'pagedown';
-    case 'return':
-    case 'enter':
-      return 'enter';
-    case 'tab':
-      return shift ? 'up' : 'tab';
-    case 'escape':
-      return 'escape';
-    default:
-      return 'other';
-  }
-}
-
 function attachSlashCommandDropdown(
   rl: readline.Interface,
   projectRoot: string
 ): SlashDropdownState {
-  const state: SlashDropdownState = {
-    controller: null,
-    pending: null,
-    navigated: false,
+  return attachPalette({
+    rl,
     projectRoot,
-  };
-  if (!process.stdin.isTTY) return state;
-
-  readline.emitKeypressEvents(process.stdin, rl);
-
-  // TTY line discipline in cooked mode buffers a whole line and only delivers
-  // keypress events on Enter — too late for a palette that filters per
-  // character. Raw mode restores per-keystroke delivery; it is undone on
-  // readline close.
-  const stdinAny = process.stdin as unknown as { setRawMode?: (m: boolean) => void };
-  if (typeof stdinAny.setRawMode === 'function') {
-    try {
-      stdinAny.setRawMode(true);
-    } catch {
-      /* tty may be wrapped */
-    }
-  }
-
-  const renderer = new PaletteRenderer({
-    write: (chunk) => process.stdout.write(chunk),
-    columns: () => process.stdout.columns ?? 80,
-    rows: () => process.stdout.rows ?? 24,
+    getIndex: getPaletteIndex,
+    theme: PALETTE_THEME,
+    stdin: process.stdin,
+    stdout: process.stdout,
+    emitKeypressEvents: readline.emitKeypressEvents,
   });
-  const controller = new PaletteController(renderer, PALETTE_THEME);
-  controller.setIndex(getPaletteIndex(projectRoot));
-  state.controller = controller;
-
-  /**
-   * Mirror of the query line.
-   *
-   * Needed twice over: readline clears `rl.line` on Enter, and readline's
-   * up/down are bound to history recall, which overwrites the buffer with a
-   * previous command. Keeping our own copy lets the palette own the arrow
-   * keys while it is open and restore the query the operator actually typed.
-   */
-  let lastLine = '';
-
-  const onKeypress = (_value: string, key: any) => {
-    const paletteKey = toPaletteKey(key?.name, Boolean(key?.shift));
-
-    // Ctrl-/Meta- chords belong to readline (Ctrl-C, Ctrl-U, word motion).
-    if (key?.ctrl || key?.meta) {
-      lastLine = String((rl as any).line || '');
-      if (controller.isOpen) controller.close();
-      return;
-    }
-
-    const isNav =
-      paletteKey === 'up' ||
-      paletteKey === 'down' ||
-      paletteKey === 'pageup' ||
-      paletteKey === 'pagedown';
-
-    if (paletteKey === 'enter') {
-      const outcome = controller.handle(lastLine, 'enter');
-      if (outcome.type === 'run') state.pending = outcome.entry;
-      lastLine = '';
-      return;
-    }
-
-    if (isNav) {
-      if (!controller.isOpen) {
-        // Palette closed: leave the arrow keys to readline's history.
-        lastLine = String((rl as any).line || '');
-        return;
-      }
-      state.navigated = true;
-      controller.handle(lastLine, paletteKey);
-      // Undo readline's history recall so the typed query stays on screen.
-      setReadlineLine(rl, lastLine);
-      return;
-    }
-
-    // readline has already applied this keystroke to its buffer, so `rl.line`
-    // is the post-keystroke query.
-    lastLine = String((rl as any).line || '');
-    const outcome = controller.handle(lastLine, paletteKey);
-
-    if (outcome.type === 'complete') {
-      state.navigated = true;
-      lastLine = outcome.line;
-      setReadlineLine(rl, outcome.line);
-    }
-  };
-
-  process.stdin.on('keypress', onKeypress);
-  rl.once('close', () => {
-    controller.close();
-    process.stdin.off('keypress', onKeypress);
-    if (typeof stdinAny.setRawMode === 'function') {
-      try {
-        stdinAny.setRawMode(false);
-      } catch {
-        /* already gone */
-      }
-    }
-  });
-  return state;
 }
 
 async function runSlashCliCommand(command: SlashCommandDefinition, args: string[]): Promise<void> {

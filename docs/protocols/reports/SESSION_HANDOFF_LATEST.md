@@ -1,21 +1,20 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T06:39:15.842Z`  
-Handoff ID: `fd075003-b6b8-4e5c-8db4-ee92ab394962`
+Created At: `2026-08-12T06:46:24.249Z`  
+Handoff ID: `c0ebd07f-a136-472b-b06a-71b4fdf1d470`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `3ce882df10964be1d9cfed31dc440b68075eaa7f`
+- Head SHA: `de5fee7b81d085ed9794db9312ba871a8a09ebf0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Dirty-tree triage commits: palette-readline extract, telegram ffmpeg/python
+  STT, public agent directory API
 
 ## Changed Paths
 
@@ -28,7 +27,6 @@ Handoff ID: `fd075003-b6b8-4e5c-8db4-ee92ab394962`
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/data/codebase_map.json
-- apps/frontend/src/hooks/useAuth.tsx
 - data/llm-intel/ranking-recommendations.json
 - data/llm-intel/ranking-report-latest.md
 - data/llm-provider-status.json
@@ -41,39 +39,33 @@ Handoff ID: `fd075003-b6b8-4e5c-8db4-ee92ab394962`
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/operations/tnf-self-improvement-run-log.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/telegram/TelegramService.ts
+- packages/tnf-cli/src/utils/command-palette.test.ts
+- packages/tnf-cli/src/utils/command-palette.ts
+- apps/frontend/src/hooks/useAuth.tsx
 - packages/tnf-cli/src/command-surface.snapshot.json
 - packages/tnf-cli/src/commands/hermes-parity-gaps.ts
 - packages/tnf-cli/src/commands/peer-cli-parity-gaps.ts
-- packages/tnf-cli/src/services/ParityService.ts
-- packages/tnf-cli/src/slashCommands.ts
-- packages/tnf-cli/src/telegram/TelegramService.ts
-- pnpm-lock.yaml
-- data/harness/harness-config.json
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/HARNESS_CONFIG.md
-- docs/protocols/HARNESS_HOST_COMPACTION.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/harness/host-compaction-adapter.cjs
-- scripts/harness/tnf-harness.cjs
-- scripts/harness/verify-harness-completeness.cjs
-- .cursor/rules/tnf-harness.mdc.tnf-bak
-- CLAUDE.md.tnf-bak
 - packages/tnf-cli/src/services/CommandSourceService.test.ts
 - packages/tnf-cli/src/services/CommandSourceService.ts
+- packages/tnf-cli/src/services/ParityService.ts
 - packages/tnf-cli/src/services/ToolPermissionService.test.ts
 - packages/tnf-cli/src/services/ToolPermissionService.ts
 - packages/tnf-cli/src/services/WorktreeService.test.ts
 - packages/tnf-cli/src/services/WorktreeService.ts
-- packages/tnf-cli/src/utils/command-palette.test.ts
-- packages/tnf-cli/src/utils/command-palette.ts
+- packages/tnf-cli/src/slashCommands.ts
 - packages/tnf-cli/src/utils/fuzzy.test.ts
 - packages/tnf-cli/src/utils/fuzzy.ts
+- packages/tnf-cli/src/utils/palette-readline.test.ts
+- packages/tnf-cli/src/utils/palette-readline.ts
 
 ## Verification
 

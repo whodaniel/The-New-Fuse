@@ -563,6 +563,10 @@ export class PaletteController {
     }
 
     if (key === 'enter') {
+      // A dismissed palette must not claim the line. Escape means "run what I
+      // typed, not what you highlighted" — without this guard the last ranked
+      // selection survived the dismissal and hijacked the next Enter.
+      if (!this.open) return { type: 'none' };
       const entry = this.selected;
       this.close();
       return entry ? { type: 'run', entry } : { type: 'none' };

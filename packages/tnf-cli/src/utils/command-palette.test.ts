@@ -287,6 +287,12 @@ check('enter closes the palette', !controller.isOpen);
 controller.handle('/reg', 'other');
 check('escape dismisses', controller.handle('/reg', 'escape').type === 'dismissed');
 check('escape closes the palette', !controller.isOpen);
+// Regression: the last ranked selection used to survive dismissal and claim
+// the next Enter, so escaping the palette still ran a command.
+check(
+  'enter after escape does NOT run the stale selection',
+  controller.handle('/reg', 'enter').type === 'none'
+);
 
 console.log(`\npalette: ${pass} passed, ${fail} failed\n`);
 if (fail > 0) process.exit(1);

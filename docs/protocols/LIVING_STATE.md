@@ -902,6 +902,14 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-12T06:46:24.298Z handoff `c0ebd07f-a136-472b-b06a-71b4fdf1d470` head
+  `de5fee7b81d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:46:03.691Z handoff `793ed8a2-1f70-465e-be73-b7e0d5e40365` head
+  `de5fee7b81d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-08-12T06:39:15.897Z handoff `fd075003-b6b8-4e5c-8db4-ee92ab394962` head
   `3ce882df1096` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
