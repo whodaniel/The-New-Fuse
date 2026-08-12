@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T05:29:17.269Z** — handoff
+Updated: **2026-08-12T05:30:07.055Z** — handoff
+`cd4f3527-9d3b-43ab-9eba-a0248d986fad` (`6cff2cc8e860`).
 `c8911029-d187-40a8-9544-55a0cae17c2c` (`6cff2cc8e860`).
 `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` (`6cff2cc8e860`).
 `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae` (`d9404e41cc1f`).
@@ -191,9 +192,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Operator: approve the held-back TURN_ZERO_MANDATE.md ASSIMILATE_CHECK scan-path fix (authority surface, agents may not self-approve)\|Decide on tnf-cli test suite: whatsapp.test.ts is referenced but never existed, so command-surface.test.ts has never run (20 missing / 1 changed vs snapshot)\|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds 174G\|Hermes cron output tree holds only 1 file - scheduler needs attention |
+| Priority | Action                                                          |
+| -------- | --------------------------------------------------------------- |
+| **P0**   | Push this commit                                                |
+| **P0**   | Optional: sigstore/publisher attestation for third-party skills |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -945,3 +947,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (c8911029-d187-40a8-9544-55a0cae17c2c) | ✅ HANDOFF_READY |
+
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(cd4f3527-9d3b-43ab-9eba-a0248d986fad) | ✅ HANDOFF_READY |

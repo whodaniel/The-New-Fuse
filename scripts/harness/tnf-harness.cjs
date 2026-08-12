@@ -46,7 +46,7 @@ Commands:
   sandbox [--out path]                 (materialize profile only)
   sandbox-run [--materialize-only] [--] <cmd>…
   supply-chain [--json] [--write-lock] [--check-lock|--strict]
-  failover [--host <name>] [--json]
+  failover [--host <name>] [--seed] [--json]
   host-compaction record|import|list …
 `);
 }

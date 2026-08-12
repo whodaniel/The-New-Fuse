@@ -1,8 +1,8 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T05:29:17.269Z`  
-Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
+Created At: `2026-08-12T05:30:07.055Z`  
+Handoff ID: `cd4f3527-9d3b-43ab-9eba-a0248d986fad`
 
 ## Scope
 
@@ -13,12 +13,9 @@ Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 
 ## Work Summary
 
-- Silent-gate remediation: armed the full-auto circuit breaker inside the cycle
-  loop (212-cycle streak went undetected); replaced lifetime-counter quarantine
-  gate with trailing-streak count; fixed two independent defects in
-  probe-a2a-bridge (wrong relay port :3000 vs :3007, and debug output corrupting
-  its JSON stdout contract) that produced a FALSE CRITICAL against a healthy
-  bridge. Live agent work check BLOCK -> CAUTION.
+- Wire provider-failover into model-watchdog boot: harness-context seed,
+  failover consumer default, start-agent-network chain (policy +
+  harness-context.env)
 
 ## Changed Paths
 
@@ -27,6 +24,8 @@ Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 - docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/TNF_DIRECTIVES.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/utils/full-auto-cycle.test.ts
@@ -60,20 +59,14 @@ Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/TURN_ZERO_MANDATE.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/src/telegram/TelegramService.ts
 - pnpm-lock.yaml
 - scripts/harness/provider-failover.cjs
 - scripts/harness/tnf-harness.cjs
+- scripts/model-watchdog-failover-consumer.cjs
 - scripts/runtime/resolve-harness-context.cjs
 - scripts/start-agent-network.sh
-- data/harness/mcp-supply-chain.lock.json
-- data/harness/provider-failover-policy.json
-- docs/protocols/HARNESS_CONFIG.md
-- scripts/harness/mcp-supply-chain-attest.cjs
-- scripts/harness/sandbox-run.cjs
 - .cursor/rules/tnf-harness.mdc.tnf-bak
 - CLAUDE.md.tnf-bak
 
@@ -86,7 +79,7 @@ Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 
 ## Continuation
 
-- Owner: `claude-code`
+- Owner: `orchestrator`
 - Targets: `orchestrator`
 - Priority: `high`
 
@@ -99,9 +92,5 @@ Handoff ID: `c8911029-d187-40a8-9544-55a0cae17c2c`
 
 ## Next Actions
 
-- Operator: approve the held-back TURN_ZERO_MANDATE.md ASSIMILATE_CHECK
-  scan-path fix (authority surface, agents may not self-approve)|Decide on
-  tnf-cli test suite: whatsapp.test.ts is referenced but never existed, so
-  command-surface.test.ts has never run (20 missing / 1 changed vs
-  snapshot)|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds
-  174G|Hermes cron output tree holds only 1 file - scheduler needs attention
+- Push this commit
+- Optional: sigstore/publisher attestation for third-party skills

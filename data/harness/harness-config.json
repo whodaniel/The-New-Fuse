@@ -52,7 +52,7 @@
         ".agent/assimilation-routes.json",
         "tnf assimilate"
       ],
-      "gap": "Host CLIs still own in-process retries; TNF now owns the shared failover chain + receipts via provider-failover policy."
+      "gap": "Host CLIs may still retry internally; TNF owns the shared failover chain via provider-failover policy, wired into harness-context, model-watchdog, and start-agent-network."
     },
     "context_assembly_compaction": {
       "status": "partial",

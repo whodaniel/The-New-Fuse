@@ -1,15 +1,10 @@
 # 📍 LIVING_STATE.md - Active Session Synchronization
 
-`[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
+`[CLASS:PRIME] [STATUS:DRIFT]`
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Operator: approve the held-back TURN_ZERO_MANDATE.md
-ASSIMILATE_CHECK scan-path fix (authority surface, agents may not
-self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is referenced but
-never existed, so command-surface.test.ts has never run (20 missing / 1 changed
-vs snapshot)|Disk hit 100% full mid-session (79MiB free); /Users/Shared holds
-174G|Hermes cron output tree holds only 1 fi
+**Current Directive:** Push this commit
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -905,6 +900,9 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T05:30:07.101Z handoff `cd4f3527-9d3b-43ab-9eba-a0248d986fad` head
+  `6cff2cc8e860` project `TNF-SESSION` — Push this commit
 
 - 2026-08-12T05:29:17.312Z handoff `c8911029-d187-40a8-9544-55a0cae17c2c` head
   `6cff2cc8e860` project `TNF-SESSION` — Operator: approve the held-back

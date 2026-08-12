@@ -169,6 +169,35 @@ function pickModelForFamily(providers, family) {
 }
 
 function buildWatchdogChain(providers, clis) {
+  try {
+    const { resolveProviderFailover } = require('../harness/provider-failover.cjs');
+    const primary = providers[0] || null;
+    const resolution = resolveProviderFailover({
+      host: 'watchdog',
+      seed: true,
+      providers,
+      ctx: {
+        models: {
+          primaryProvider: primary
+            ? {
+                id: primary.id || providerFamily(primary),
+                model: primary.model,
+                endpoint: primary.endpoint,
+                priority: primary.priority,
+              }
+            : null,
+          workingModel: primary?.model || null,
+        },
+      },
+    });
+    if (resolution.chainCsv) return resolution.chainCsv;
+  } catch (err) {
+    // Fall through to legacy builder if policy missing.
+    if (process.env.TNF_DEBUG_HARNESS === '1') {
+      console.warn(`[harness-context] provider-failover seed failed: ${err.message}`);
+    }
+  }
+
   const disabled = new Set(
     String(process.env.MODEL_WATCHDOG_DISABLED_PROVIDERS || process.env.TNF_DISABLED_PROVIDERS || '')
       .split(',')
@@ -187,7 +216,6 @@ function buildWatchdogChain(providers, clis) {
   // that caused failover loops while nvidia was the active primary.
   for (const p of providers) push(providerFamily(p));
   if (clis.claude) push('anthropic');
-  // Only append google as a fallback when a google catalog entry exists (or CLI is present).
   if (providers.some((p) => providerFamily(p) === 'google') || clis.agy || clis.gemini) {
     push('google');
   }

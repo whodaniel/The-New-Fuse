@@ -175,7 +175,48 @@ append_csv_token() {
 }
 
 build_watchdog_provider_chain() {
-    local default_chain="${MODEL_WATCHDOG_PROVIDER_CHAIN:-google,anthropic,openai,openrouter,nvidia,deepseek}"
+    # Explicit env always wins.
+    if [ -n "${MODEL_WATCHDOG_PROVIDER_CHAIN:-}" ]; then
+        echo "$MODEL_WATCHDOG_PROVIDER_CHAIN"
+        return
+    fi
+
+    # Prefer chain already resolved into harness-context (catalog-aware).
+    local ctx_env="${TNF_REPO_ROOT:-.}/.agent/runtime-state/harness-context.env"
+    if [ ! -f "$ctx_env" ] && [ -f ".agent/runtime-state/harness-context.env" ]; then
+        ctx_env=".agent/runtime-state/harness-context.env"
+    fi
+    if [ -f "$ctx_env" ]; then
+        local from_ctx
+        from_ctx="$(
+            # shellcheck disable=SC1090
+            set -a
+            # shellcheck source=/dev/null
+            . "$ctx_env"
+            set +a
+            printf '%s' "${MODEL_WATCHDOG_PROVIDER_CHAIN:-}"
+        )"
+        if [ -n "$from_ctx" ]; then
+            echo "$from_ctx"
+            return
+        fi
+    fi
+
+    # Shared TNF failover policy (seed mode) — same SOT as harness-context + watchdog consumer.
+    local policy_chain=""
+    if command -v node >/dev/null 2>&1 && [ -f "scripts/harness/provider-failover.cjs" ]; then
+        policy_chain="$(
+            node scripts/harness/provider-failover.cjs --seed --json --no-write 2>/dev/null \
+              | node -e "let s='';process.stdin.on('data',d=>s+=d);process.stdin.on('end',()=>{try{const j=JSON.parse(s);process.stdout.write((j.chain||[]).join(','))}catch{process.exit(1)}})" \
+              2>/dev/null || true
+        )"
+    fi
+    if [ -n "$policy_chain" ]; then
+        echo "$policy_chain"
+        return
+    fi
+
+    local default_chain="nvidia,google,neuralwatt,openrouter,anthropic,openai,deepseek"
     local disabled="${MODEL_WATCHDOG_DISABLED_PROVIDERS:-${TNF_DISABLED_PROVIDERS:-}}"
     local claude_cmd="${CLAUDE_CMD:-claude}"
     local chain=""
