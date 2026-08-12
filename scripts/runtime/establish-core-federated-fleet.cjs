@@ -584,6 +584,31 @@ function cronCadenceSeconds(cadence) {
   return m ? Number(m[1]) * 60 : null;
 }
 
+/**
+ * Cap runtime logs under ~/.tnf.
+ *
+ * Nothing rotated these. On 2026-08-12 relay stdout alone reached 2.8 GB and
+ * ~/.tnf hit 6.5 GB, filling the volume; com.tnf.subdirector-autopilot then
+ * died repeatedly with ENOSPC while writing its state file. One service was
+ * killed by another service's logging.
+ *
+ * Best-effort: failing to rotate must never abort fleet establishment.
+ */
+function rotateRuntimeLogs() {
+  const script = path.join(ROOT, 'scripts', 'runtime', 'rotate-tnf-logs.sh');
+  if (!fs.existsSync(script)) {
+    record('rotate:logs', 'skip', 'rotate-tnf-logs.sh not present');
+    return;
+  }
+  try {
+    const out = execFileSync('bash', [script], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const line = out.split('\n').find((l) => l.includes('reclaimed')) || 'nothing over threshold';
+    record('rotate:logs', 'ok', line.trim());
+  } catch (err) {
+    record('rotate:logs', 'warn', err.message || String(err));
+  }
+}
+
 function redisRegisterCoreAgents() {
   const ping = spawnSync('redis-cli', ['ping'], { encoding: 'utf8' });
   if ((ping.stdout || '').trim() !== 'PONG') {
@@ -748,6 +773,7 @@ Env:
     ensureRelayBestEffort();
     seedMcpConfig();
     syncSubDirectorRuntime();
+    rotateRuntimeLogs();
     installServices();
     installWorkerCrons();
     redisRegisterCoreAgents();

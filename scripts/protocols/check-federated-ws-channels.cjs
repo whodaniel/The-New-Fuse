@@ -28,6 +28,27 @@ const deliveryWaitMs = Math.max(
   MIN_DELIVERY_WAIT_MS
 );
 
+/**
+ * Retain at most `cap` entries, dropping oldest first.
+ *
+ * These arrays were unbounded. That is harmless for the one-shot check this
+ * script was written as, but com.tnf.ws-green-blue-bridge runs it with
+ * --keep-alive under launchd KeepAlive=1, where every CHANNEL_MESSAGE was
+ * retained forever. Measured 2026-08-12: the bridge reached ~4 GB and V8
+ * aborted with "Reached heap limit Allocation failed" after ~39 minutes,
+ * launchd restarted it, and it did so again — a permanent crash loop that no
+ * health surface reported.
+ *
+ * The delivery assertions only ever inspect recent traffic, so a bounded
+ * window is sufficient for the check and survivable for the daemon.
+ */
+const RETAINED_MESSAGES = 500;
+function pushBounded(arr, item, cap = RETAINED_MESSAGES) {
+  arr.push(item);
+  if (arr.length > cap) arr.splice(0, arr.length - cap);
+  return arr;
+}
+
 function readRelayUrlFallback() {
   return (
     readOption('--url', null) ||
@@ -102,8 +123,8 @@ async function connectAgent(relayUrl, agent, runId, clients, events) {
 
     ws.on('message', (data) => {
       const parsed = JSON.parse(data.toString());
-      state.inbox.push(parsed);
-      events.push({ agentId: agent.id, type: parsed.type });
+      pushBounded(state.inbox, parsed);
+      pushBounded(events, { agentId: agent.id, type: parsed.type });
 
       if (parsed.type === 'REGISTRATION_ERROR') {
         clearTimeout(timer);
@@ -122,7 +143,7 @@ async function connectAgent(relayUrl, agent, runId, clients, events) {
       }
 
       if (parsed.type === 'CHANNEL_MESSAGE') {
-        state.channelMessages.push(parsed.payload || parsed);
+        pushBounded(state.channelMessages, parsed.payload || parsed);
       }
     });
 

@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T17:58:55.933Z`  
-Handoff ID: `6e893a91-538b-4cab-b87e-5b03f87f53c5`
+Created At: `2026-08-12T18:15:00.862Z`  
+Handoff ID: `b4a3f0f9-75a3-4e03-813b-85ffd664497c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `5be6b8be6603f01a9b46b159f5c449888c2a2c1e`
+- Head SHA: `65a2f2eb28fdc3bdebd9ad2e7d9dd90e3b6fc476`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,7 +19,11 @@ Handoff ID: `6e893a91-538b-4cab-b87e-5b03f87f53c5`
 
 ## Changed Paths
 
+- docs/protocols/PROTOCOL_MAP.md
+- docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md
+- scripts/protocols/check-federated-ws-channels.cjs
 - scripts/runtime/establish-core-federated-fleet.cjs
+- scripts/runtime/rotate-tnf-logs.sh
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - apps/api/package.json
@@ -35,6 +39,7 @@ Handoff ID: `6e893a91-538b-4cab-b87e-5b03f87f53c5`
 - apps/frontend/src/data/codebase_map.json
 - apps/frontend/src/hooks/useAuth.tsx
 - apps/frontend/src/main.tsx
+- apps/frontend/src/pages/TNFCommandCenter.tsx
 - apps/frontend/src/stubs/lucide-react.tsx
 - data/llm-intel/arena-intel-latest.json
 - data/llm-intel/arena-intel.json
@@ -56,25 +61,20 @@ Handoff ID: `6e893a91-538b-4cab-b87e-5b03f87f53c5`
 - packages/tnf-cli/src/slashCommands.ts
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
-- data/providers/catalog.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/services/provider-catalog.test.ts
-- packages/tnf-cli/src/services/provider-config.test.ts
-- packages/tnf-cli/src/services/provider-config.ts
-- scripts/sub-director/model_resolver.py
-- scripts/swarm/llm-provider-tester.cjs
 - apps/api/src/modules/error-awareness/
 - apps/frontend/src/lib/errorAwareness.ts
+- apps/frontend/src/pages/UnifiedIntelligenceView.tsx
 - apps/frontend/src/services/aiAssistPreferences.ts
 - apps/frontend/src/services/replaceFeedback.ts
 - apps/frontend/src/services/userSessionFactors.ts
 - apps/frontend/src/utils/pageContextSnapshot.ts
 - data/llm-intel/history/intel_2026-08-12.json
 - packages/tnf-cli/src/services/AgentFocusService.ts
+- scripts/smoke-error-awareness.ts
 
 ## Verification
 
