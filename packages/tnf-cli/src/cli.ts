@@ -43,6 +43,12 @@ import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
+import {
+  describeAgentFocus,
+  focusFilePath,
+  writeAgentFocus,
+  type AgentFocusMode,
+} from './services/AgentFocusService.js';
 import { CommandSourceService } from './services/CommandSourceService.js';
 import { CronService } from './services/CronService.js';
 import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
@@ -4750,6 +4756,46 @@ function isRootOnlyFlag(flag: string): boolean {
   return ['-h', '--help', '-V', '--version', '--no-splash'].includes(bare);
 }
 
+function handleAgentFocusSlash(args: string[]): void {
+  if (!args.length) {
+    console.log(chalk.bold('\nAgent focus\n'));
+    console.log(describeAgentFocus());
+    console.log(chalk.dim(`\nFile: ${focusFilePath()}`));
+    console.log(
+      chalk.dim('Env override: TNF_AGENT_FOCUS=platform-dev|personal|personal-professional\n')
+    );
+    return;
+  }
+
+  let mode: AgentFocusMode | undefined;
+  let profileId: string | undefined;
+  const goals: string[] = [];
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
+    if (arg === '--profile' || arg === '-p') {
+      profileId = args[++i];
+      continue;
+    }
+    if (arg === '--goal' || arg === '-g') {
+      const goal = args[++i];
+      if (goal) goals.push(goal);
+      continue;
+    }
+    if (!mode) {
+      mode = arg as AgentFocusMode;
+    }
+  }
+
+  const next = writeAgentFocus({
+    ...(mode ? { mode } : {}),
+    ...(profileId ? { profileId } : {}),
+    ...(goals.length ? { goals } : {}),
+  });
+  console.log(chalk.green('\nUpdated agent focus\n'));
+  console.log(describeAgentFocus(next));
+  console.log('');
+}
+
 async function handleOneShotSlashInput(input: string): Promise<boolean> {
   const parsed = parseSlashCommand(input);
   if (!parsed) return false;
@@ -4832,6 +4878,11 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
     }
     await runTnfCliEntrypoint(['config', 'set', 'model', modelName]);
     console.log(chalk.green(`Persisted TNF model preference: ${modelName}`));
+    return true;
+  }
+
+  if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
+    handleAgentFocusSlash(parsed.args);
     return true;
   }
 
@@ -4933,6 +4984,11 @@ async function handleInteractiveSlashCommand(
       return { handled: true };
     }
     setInteractiveModel(context.client, modelName);
+    return { handled: true };
+  }
+
+  if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
+    handleAgentFocusSlash(parsed.args);
     return { handled: true };
   }
 
@@ -14970,7 +15026,15 @@ program
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     } finally {
+      // `tnf send` is a one-shot: registering a `cli-sender` participant and
+      // leaving the row behind turned the roster into a graveyard (16 rows
+      // for ~7 real agents when measured). Drop our own row before the normal
+      // cleanup, which only marks agents offline.
+      // Order matters: cleanup() re-writes the row with status=offline, so
+      // deregistering first just gets undone. Verified empirically — the
+      // cli-sender row reappeared until this was flipped.
       await client.cleanup();
+      await client.deregister();
     }
   });
 

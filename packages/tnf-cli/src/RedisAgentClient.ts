@@ -704,6 +704,40 @@ export class RedisAgentClient {
     return Array.from(allChannels);
   }
 
+  /**
+   * Remove this agent's row from the registry entirely.
+   *
+   * `cleanup()` marks an agent `offline` but keeps its row, which is right for
+   * a long-lived agent whose history is worth seeing. It is wrong for a
+   * one-shot CLI invocation: every `tnf send` registered a `cli-sender`
+   * participant and left a permanent tombstone behind. Measured 2026-08-12 —
+   * 16 registry rows for roughly 7 real agents, the surplus being throwaway
+   * senders plus restarted agents that re-register under a new timestamped id
+   * and orphan the old row. A roster that is mostly ghosts is a roster nobody
+   * reads, and DispatchGuard's "did you mean" suggestions start pointing at
+   * ids that can never receive anything.
+   *
+   * Ephemeral clients should call this instead of relying on `cleanup()`.
+   */
+  async deregister(): Promise<boolean> {
+    if (!this.agentInfo) return false;
+    const id = this.agentInfo.id;
+    try {
+      if (this.upstash) {
+        await this.upstash.hdel('tnf:agent-registry', id);
+      } else if (this.publisher) {
+        await this.publisher.hdel('tnf:agent-registry', id);
+      } else {
+        return false;
+      }
+      return true;
+    } catch {
+      // Never let registry hygiene fail the operation the caller actually
+      // wanted; a leftover row is a nuisance, a thrown error is a broken send.
+      return false;
+    }
+  }
+
   async cleanup() {
     if (this.heartbeatTimer) {
       clearInterval(this.heartbeatTimer);

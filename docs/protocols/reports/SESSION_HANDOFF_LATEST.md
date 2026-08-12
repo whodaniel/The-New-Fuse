@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T17:11:11.410Z`  
-Handoff ID: `618cb66d-403a-47c4-a0a6-313b9c864884`
+Created At: `2026-08-12T17:26:23.732Z`  
+Handoff ID: `3c71e0ef-d9a0-4529-9ede-df58875e1cda`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `cd0fd275078ea86084d89989f9d07d39f2f3efde`
+- Head SHA: `bb98b9eaf2d19b7723d0fa482133af460d7f098d`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,20 +19,12 @@ Handoff ID: `618cb66d-403a-47c4-a0a6-313b9c864884`
 
 ## Changed Paths
 
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/HARNESS_CONFIG.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - packages/tnf-cli/src/RedisAgentClient.ts
-- packages/tnf-cli/src/services/DispatchGuard.test.ts
-- packages/tnf-cli/src/services/DispatchGuard.ts
-- scripts/agents/subdirector-codegen-worker-cycle.sh
-- scripts/agents/subdirector-infra-worker-cycle.sh
-- scripts/sub-director/model-policy.example.yaml
-- scripts/sub-director/model_resolver.py
+- packages/tnf-cli/src/cli.ts
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
+- apps/api/src/controllers/orchestration.controller.ts
+- apps/api/src/llm/llm-provider.controller.ts
 - apps/frontend/.env.production.example
 - apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
@@ -40,6 +32,7 @@ Handoff ID: `618cb66d-403a-47c4-a0a6-313b9c864884`
 - apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
 - apps/frontend/src/data/codebase_map.json
 - apps/frontend/src/hooks/useAuth.tsx
+- apps/frontend/src/stubs/lucide-react.tsx
 - data/llm-intel/arena-intel-latest.json
 - data/llm-intel/arena-intel.json
 - data/llm-intel/ranking-recommendations.json
@@ -57,13 +50,20 @@ Handoff ID: `618cb66d-403a-47c4-a0a6-313b9c864884`
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/slashCommands.ts
 - scripts/deployment/deploy-frontend.sh
 - scripts/deployment/verify-production.mjs
-- scripts/runtime/establish-core-federated-fleet.cjs
-- scripts/sub-director/run_one_envelope.py
-- scripts/sub-director/sync-runtime.sh
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/HARNESS_CONFIG.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/tnf-cli/src/services/DispatchGuard.test.ts
+- packages/tnf-cli/src/services/DispatchGuard.ts
+- scripts/agents/subdirector-codegen-worker-cycle.sh
+- scripts/agents/subdirector-infra-worker-cycle.sh
+- scripts/sub-director/model-policy.example.yaml
+- scripts/sub-director/model_resolver.py
 - apps/frontend/src/services/aiAssistPreferences.ts
 - apps/frontend/src/services/replaceFeedback.ts
 - apps/frontend/src/services/userSessionFactors.ts
