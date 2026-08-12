@@ -29,6 +29,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export interface ProviderDef {
   id: string;
@@ -222,14 +223,83 @@ function mergeTolerances(raw: unknown, warnings: string[]): ResolverTolerances {
  * Load the effective provider configuration. Always returns a usable result;
  * inspect `warnings` to report degradation.
  */
+/**
+ * Path to the shared, language-neutral provider catalog.
+ *
+ * TNF had four provider lists that drifted apart: this file's
+ * DEFAULT_PROVIDERS (7), scripts/swarm/llm-provider-tester.cjs (9, and the
+ * only one that knew about local Ollama), the sub-director resolver (2
+ * hardcoded constants), and the generated status file. Nothing reconciled
+ * them, so a provider added here was invisible to the worker fleet and vice
+ * versa. See docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md.
+ *
+ * The catalog is JSON precisely so the TypeScript CLI, the CommonJS tester and
+ * the Python resolver can all read the same bytes.
+ */
+export function providerCatalogPath(): string {
+  const override = process.env.TNF_PROVIDER_CATALOG_PATH;
+  if (override && override.trim()) return override.trim();
+  // This package is ESM ("type": "module"), where __dirname does not exist —
+  // using it typechecks fine and then throws at runtime, which would have made
+  // every consumer degrade silently to built-in defaults. Derive the directory
+  // from import.meta.url instead.
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  // packages/tnf-cli/src/services -> repo root
+  return path.resolve(here, '../../../..', 'data', 'providers', 'catalog.json');
+}
+
+/**
+ * Catalog entries as ProviderDef, or null when the catalog is unreadable.
+ *
+ * Never throws: a missing or malformed catalog must fall back to the built-in
+ * defaults rather than leaving the CLI with no providers at all.
+ */
+export function loadProviderCatalog(): { providers: ProviderDef[]; warning?: string } | null {
+  const catalogPath = providerCatalogPath();
+  try {
+    if (!fs.existsSync(catalogPath)) return null;
+    const parsed = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+    const rows = Array.isArray(parsed?.providers) ? parsed.providers : [];
+    const providers: ProviderDef[] = [];
+    for (const row of rows) {
+      if (!isRecord(row)) continue;
+      // Local providers legitimately have no credential; this resolver is
+      // credential-driven, so they are carried but cannot be selected without
+      // an envKey. Skipping them here keeps ProviderDef's contract intact.
+      if (typeof row.envKey !== 'string' || !row.envKey) continue;
+      if (typeof row.id !== 'string' || typeof row.baseUrl !== 'string') continue;
+      if (row.enabled === false) continue;
+      providers.push({
+        id: row.id,
+        name: typeof row.name === 'string' ? row.name : row.id,
+        envKey: row.envKey,
+        baseUrl: row.baseUrl,
+        tier: typeof row.tier === 'number' ? row.tier : 100,
+        enabled: true,
+      });
+    }
+    return providers.length ? { providers } : null;
+  } catch (err) {
+    return { providers: [], warning: `${catalogPath} unreadable (${(err as Error).message})` };
+  }
+}
+
 export function loadProviderConfig(): ProviderConfig {
   const configPath = providerConfigPath();
   const warnings: string[] = [];
-  const base = new Map(DEFAULT_PROVIDERS.map((p) => [p.id, { ...p }]));
+
+  // Shared catalog first, built-in list as the floor. The user file at
+  // providerConfigPath() still layers on top of both, so per-machine overrides
+  // keep working exactly as before.
+  const catalog = loadProviderCatalog();
+  if (catalog?.warning) warnings.push(catalog.warning);
+  const DEFAULTS = catalog?.providers?.length ? catalog.providers : DEFAULT_PROVIDERS;
+
+  const base = new Map(DEFAULTS.map((p) => [p.id, { ...p }]));
 
   if (!fs.existsSync(configPath)) {
     return {
-      providers: [...DEFAULT_PROVIDERS],
+      providers: [...DEFAULTS],
       tolerances: { ...DEFAULT_TOLERANCES },
       source: 'defaults',
       configPath,
@@ -245,7 +315,7 @@ export function loadProviderConfig(): ProviderConfig {
       `${configPath} is not valid JSON (${(err as Error).message}) — built-in defaults used`
     );
     return {
-      providers: [...DEFAULT_PROVIDERS],
+      providers: [...DEFAULTS],
       tolerances: { ...DEFAULT_TOLERANCES },
       source: 'defaults',
       configPath,
@@ -256,7 +326,7 @@ export function loadProviderConfig(): ProviderConfig {
   if (!isRecord(parsed)) {
     warnings.push(`${configPath} must contain a JSON object — built-in defaults used`);
     return {
-      providers: [...DEFAULT_PROVIDERS],
+      providers: [...DEFAULTS],
       tolerances: { ...DEFAULT_TOLERANCES },
       source: 'defaults',
       configPath,
@@ -268,7 +338,7 @@ export function loadProviderConfig(): ProviderConfig {
 
   if (parsed.providers === undefined) {
     return {
-      providers: [...DEFAULT_PROVIDERS],
+      providers: [...DEFAULTS],
       tolerances,
       source: 'user+defaults',
       configPath,
@@ -279,7 +349,7 @@ export function loadProviderConfig(): ProviderConfig {
   if (!Array.isArray(parsed.providers)) {
     warnings.push('"providers" must be an array — built-in provider list used');
     return {
-      providers: [...DEFAULT_PROVIDERS],
+      providers: [...DEFAULTS],
       tolerances,
       source: 'user+defaults',
       configPath,
@@ -303,7 +373,7 @@ export function loadProviderConfig(): ProviderConfig {
     providers,
     tolerances,
     source:
-      providers.length === DEFAULT_PROVIDERS.length && parsed.providers.length === 0
+      providers.length === DEFAULTS.length && parsed.providers.length === 0
         ? 'user+defaults'
         : 'user',
     configPath,

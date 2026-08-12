@@ -48,13 +48,23 @@ async function loadWith(contents: string | null): Promise<any> {
 }
 
 async function main(): Promise<void> {
-  const { DEFAULT_PROVIDERS, DEFAULT_TOLERANCES } = await import('./provider-config.js');
+  const { DEFAULT_PROVIDERS, DEFAULT_TOLERANCES, loadProviderCatalog } =
+    await import('./provider-config.js');
+
+  // The effective floor is the shared catalog when it is readable, and the
+  // built-in array otherwise. These assertions are about that floor being
+  // PRESERVED through degradation and override — not about a specific count.
+  // Hardcoding DEFAULT_PROVIDERS.length here made them fail the moment the
+  // catalog became the source, which is a stale test rather than a regression.
+  const catalog = loadProviderCatalog();
+  const baselineCount = catalog?.providers.length || DEFAULT_PROVIDERS.length;
 
   // --- no config file -----------------------------------------------------
   const none = await loadWith(null);
   check(
-    'missing file falls back to built-in providers',
-    none.providers.length === DEFAULT_PROVIDERS.length
+    'missing file falls back to the baseline registry',
+    none.providers.length === baselineCount,
+    `got ${none.providers.length}, expected ${baselineCount}`
   );
   check('missing file reports source=defaults', none.source === 'defaults');
   check(
@@ -72,7 +82,8 @@ async function main(): Promise<void> {
   const broken = await loadWith('{ this is not json');
   check(
     'malformed file still yields a usable registry',
-    broken.providers.length === DEFAULT_PROVIDERS.length
+    broken.providers.length === baselineCount,
+    `got ${broken.providers.length}, expected ${baselineCount}`
   );
   check('malformed file degrades loudly', broken.warnings.length > 0);
   check(
@@ -85,8 +96,8 @@ async function main(): Promise<void> {
   const partial = await loadWith(JSON.stringify({ providers: [{ id: 'openai', tier: 1 }] }));
   check(
     'overriding one provider preserves the rest',
-    partial.providers.length === DEFAULT_PROVIDERS.length,
-    `got ${partial.providers.length}`
+    partial.providers.length === baselineCount,
+    `got ${partial.providers.length}, expected ${baselineCount}`
   );
   check('override is applied', partial.providers.find((p: any) => p.id === 'openai')?.tier === 1);
   check(

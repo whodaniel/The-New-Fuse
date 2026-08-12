@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T17:37:47.287Z`  
-Handoff ID: `a4de1606-c202-4076-955c-13125b1209c2`
+Created At: `2026-08-12T17:49:35.762Z`  
+Handoff ID: `21a8888a-69ea-4401-a617-a016c2e637b3`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `fcc2c032c86c341c138ffdf565b02e486732ee86`
+- Head SHA: `680fcdecafca5c364cbe9845f569c65d18b5f50c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,10 +19,17 @@ Handoff ID: `a4de1606-c202-4076-955c-13125b1209c2`
 
 ## Changed Paths
 
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
+- data/providers/catalog.json
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/services/provider-catalog.test.ts
+- packages/tnf-cli/src/services/provider-config.test.ts
+- packages/tnf-cli/src/services/provider-config.ts
+- scripts/sub-director/model_resolver.py
+- scripts/swarm/llm-provider-tester.cjs
 - .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
+- apps/api/package.json
+- apps/api/src/app.module.ts
 - apps/api/src/controllers/orchestration.controller.ts
 - apps/api/src/llm/llm-provider.controller.ts
 - apps/frontend/.env.production.example
@@ -32,6 +39,7 @@ Handoff ID: `a4de1606-c202-4076-955c-13125b1209c2`
 - apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
 - apps/frontend/src/data/codebase_map.json
 - apps/frontend/src/hooks/useAuth.tsx
+- apps/frontend/src/main.tsx
 - apps/frontend/src/stubs/lucide-react.tsx
 - data/llm-intel/arena-intel-latest.json
 - data/llm-intel/arena-intel.json
@@ -57,7 +65,10 @@ Handoff ID: `a4de1606-c202-4076-955c-13125b1209c2`
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/RedisAgentClient.ts
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- apps/api/src/modules/error-awareness/
+- apps/frontend/src/lib/errorAwareness.ts
 - apps/frontend/src/services/aiAssistPreferences.ts
 - apps/frontend/src/services/replaceFeedback.ts
 - apps/frontend/src/services/userSessionFactors.ts

@@ -103,6 +103,40 @@ PROVIDER_STATUS_FILE = os.path.expanduser(
     "~/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/llm-provider-status.json"
 )
 
+# The shared, language-neutral provider catalog — the single source the
+# TypeScript CLI and the CommonJS tester also read. PROVIDER_REGISTRY above is
+# the fallback for when this file is unreachable, not a second opinion.
+PROVIDER_CATALOG_FILE = os.environ.get("TNF_PROVIDER_CATALOG_PATH") or os.path.expanduser(
+    "~/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/providers/catalog.json"
+)
+
+
+def _catalog_registry() -> Dict[str, Dict[str, str]]:
+    """PROVIDER_REGISTRY-shaped view of the shared catalog.
+
+    Returns the static registry unchanged when the catalog is missing or
+    malformed — a resolver that cannot read a config file must still resolve.
+    """
+    try:
+        with open(PROVIDER_CATALOG_FILE) as fh:
+            data = json.load(fh)
+    except Exception:
+        return PROVIDER_REGISTRY
+
+    merged = dict(PROVIDER_REGISTRY)
+    for row in data.get("providers") or []:
+        pid = str(row.get("id") or "").lower()
+        env = row.get("envKey")
+        base = row.get("baseUrl")
+        if not pid or not env or not base:
+            continue          # local providers carry no envKey; skip for cloud routing
+        if row.get("enabled") is False:
+            continue
+        if not row.get("openaiCompatible", True):
+            continue          # this invoke path speaks /v1/chat/completions only
+        merged[pid] = {"base": base.rstrip("/") + "/chat/completions", "env": env}
+    return merged
+
 
 def _live_allocation(role: str = "worker") -> Optional[Dict[str, Any]]:
     """Read TNF's published allocation for a role. None when unavailable.
@@ -136,8 +170,9 @@ def _resolve_cloud_endpoint(model_id: str) -> Tuple[Optional[str], Optional[str]
     environment is skipped rather than returned — an endpoint we cannot
     authenticate against is not a usable plan.
     """
+    registry = _catalog_registry()
     vendor = _provider_of(model_id)
-    entry = PROVIDER_REGISTRY.get(vendor)
+    entry = registry.get(vendor)
     if entry and os.environ.get(entry["env"]):
         return entry["base"], entry["env"], f"vendor prefix '{vendor}' with {entry['env']} present"
 
@@ -149,7 +184,7 @@ def _resolve_cloud_endpoint(model_id: str) -> Tuple[Optional[str], Optional[str]
             return url, env_key, f"TNF live allocation for role=worker ({alloc.get('id')})"
 
     if os.environ.get(CLOUD_PROVIDERS_ENV):
-        return (PROVIDER_REGISTRY["openrouter"]["base"], CLOUD_PROVIDERS_ENV,
+        return (registry["openrouter"]["base"], CLOUD_PROVIDERS_ENV,
                 "legacy OpenRouter default")
 
     return None, None, f"no usable provider for '{model_id}' (no API key in environment)"
@@ -249,7 +284,7 @@ def _cloud_invoke_chat(model: str, prompt: str, timeout: float) -> Tuple[Optiona
 
     vendor = _provider_of(model)
     wire_model = model
-    if vendor and vendor in PROVIDER_REGISTRY and vendor != "openrouter":
+    if vendor and vendor in _catalog_registry() and vendor != "openrouter":
         wire_model = model.split("/", 1)[1]
 
     req_body = json.dumps({
