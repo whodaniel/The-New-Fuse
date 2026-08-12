@@ -1,36 +1,27 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T20:38:47.807Z`  
-Handoff ID: `63153892-7c46-4b8c-9324-6b8f4121ae52`
+Created At: `2026-08-12T21:18:40.569Z`  
+Handoff ID: `5e0e4ed7-0da3-4846-bade-a3bdc898dbc6`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `fa1f95f22f36ccaaf8b72f4f15c4abc5047ede94`
+- Head SHA: `bc060fd7b3d222631ed566e27b7f6c03211a67eb`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Protocol enforcement layer implemented for mandatory session handoff continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+
+- Fix Dockerfile.api to compile a2a-core and related workspace packages during
+  Cloud Build so Cloud Run revisions do not exit with MODULE_NOT_FOUND.
 
 ## Changed Paths
-- packages/tnf-cli/src/services/ServiceHealthService.ts
-- .agent/test-reports/_rolling-summary.json
+
+- Dockerfile.api
+- .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
-- apps/api/src/app.module.ts
-- apps/api/src/modules/billing/stripe.service.ts
-- apps/frontend/app.html
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/ComprehensiveRouter.tsx
-- apps/frontend/src/components/A2AMultiAgentChat.tsx
 - apps/frontend/src/data/codebase_map.json
-- apps/frontend/src/main.tsx
-- apps/frontend/src/pages/Pricing.tsx
-- apps/frontend/src/pages/TNFCommandCenter.tsx
-- apps/frontend/src/pages/auth/Register.tsx
 - data/llm-intel/arena-intel-latest.json
 - data/llm-intel/arena-intel.json
 - data/llm-intel/ranking-recommendations.json
@@ -47,47 +38,61 @@ Handoff ID: `63153892-7c46-4b8c-9324-6b8f4121ae52`
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/ag-ui-core/node_modules/body-parser/HISTORY.md
+- packages/ag-ui-core/node_modules/body-parser/lib/types/json.js
+- packages/ag-ui-core/node_modules/body-parser/lib/types/urlencoded.js
+- packages/ag-ui-core/node_modules/body-parser/package.json
+- pnpm-lock.yaml
 - scripts/runtime/rotate-tnf-logs.sh
-- apps/api/src/controllers/orchestration.controller.ts
-- apps/frontend/src/components/control-surface/useLocalRuntime.ts
-- apps/frontend/src/services/AgentService.ts
+- scripts/tnf-doctor.cjs
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/database/drizzle/0016_agents_profile_and_prod_align.sql
-- packages/database/drizzle/0017_workflow_executions_align.sql
-- packages/database/src/drizzle/repositories/provider-api-key.repository.ts
-- apps/api/src/modules/error-awareness/
-- apps/frontend/public/widgets/
-- apps/frontend/src/components/GoalSubjectHub.tsx
-- apps/frontend/src/components/GoogleStudioSessionPicker.tsx
-- apps/frontend/src/hooks/useTenantBranding.ts
-- apps/frontend/src/lib/errorAwareness.ts
-- apps/frontend/src/pages/Agency/AgencyWhiteLabelHub.tsx
-- apps/frontend/src/pages/UnifiedIntelligenceView.tsx
+- packages/tnf-cli/src/services/ServiceHealthService.ts
+- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
+- packages/ag-ui-core/node_modules/qs/.editorconfig
+- packages/ag-ui-core/node_modules/qs/.github/FUNDING.yml
+- packages/ag-ui-core/node_modules/qs/.github/SECURITY.md
+- packages/ag-ui-core/node_modules/qs/.github/THREAT_MODEL.md
+- packages/ag-ui-core/node_modules/qs/.nycrc
+- packages/ag-ui-core/node_modules/qs/CHANGELOG.md
+- packages/ag-ui-core/node_modules/qs/LICENSE.md
+- packages/ag-ui-core/node_modules/qs/README.md
+- packages/ag-ui-core/node_modules/qs/eslint.config.mjs
+- packages/ag-ui-core/node_modules/qs/lib/formats.js
+- packages/ag-ui-core/node_modules/qs/lib/index.js
+- packages/ag-ui-core/node_modules/qs/lib/parse.js
+- packages/ag-ui-core/node_modules/qs/lib/stringify.js
+- packages/ag-ui-core/node_modules/qs/lib/utils.js
+- packages/ag-ui-core/node_modules/qs/package.json
+- packages/ag-ui-core/node_modules/qs/test/empty-keys-cases.js
+- packages/ag-ui-core/node_modules/qs/test/parse.js
+- packages/ag-ui-core/node_modules/qs/test/stringify.js
+- packages/ag-ui-core/node_modules/qs/test/utils.js
 - data/llm-intel/history/intel_2026-08-12.json
 - docs/protocols/instant-error-awareness-pipeline.md
 
 ## Verification
+
 - privacy_guard: `na`
 - secret_sweep: `na`
 - docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `tnf-orchestrator`
+
+- Owner: `cursor-agent`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+
+- Confirm api-server new revision passes startup probe.
+- Confirm app.thenewfuse.com serves new frontend bundle.
 
 ## Next Actions
-- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical work unit.
+
+- Cloud Build and deploy api-server with Dockerfile fix.
+- Deploy frontend soft-fail bundle once disk space allows.

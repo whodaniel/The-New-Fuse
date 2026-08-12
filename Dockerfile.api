@@ -90,14 +90,20 @@ COPY packages/types/ packages/types/
 COPY packages/utils/ packages/utils/
 COPY packages/web-scraping/ packages/web-scraping/
 
-# Build required workspace packages and api service
+# Build required workspace packages and api service.
+# Clean Cloud Build contexts do not ship local dist/, so runtime deps like
+# a2a-core must be compiled here (otherwise Cloud Run exits with MODULE_NOT_FOUND).
 RUN pnpm --filter @the-new-fuse/infrastructure run build && \
     pnpm --filter @the-new-fuse/types run build && \
     pnpm --filter @the-new-fuse/shared run build && \
+    pnpm --filter @the-new-fuse/security run build && \
+    pnpm --filter @the-new-fuse/ap2-protocol run build && \
+    pnpm --filter @the-new-fuse/a2a-core run build && \
     pnpm --filter @the-new-fuse/database run build && \
-    pnpm --filter @the-new-fuse/api-server run build || true
+    pnpm --filter @the-new-fuse/api-server run build
 
-RUN test -f apps/api/dist/main.js || (mkdir -p apps/api/dist && touch apps/api/dist/main.js)
+RUN test -f apps/api/dist/main.js \
+  && test -f packages/a2a-core/dist/index.js
 
 # Verify the build output exists
 RUN ls -la apps/api/dist/ || echo "Build output check"
