@@ -4729,15 +4729,27 @@
     {
       "name": "send",
       "aliases": [],
-      "description": "Send a single message",
+      "description": "Send a single message (verifies the recipient exists and is heartbeating)",
       "options": [
+        {
+          "flags": "--force",
+          "description": "Send even when the recipient is unknown (records the id verbatim)"
+        },
+        {
+          "flags": "--json",
+          "description": "Emit the dispatch decision as JSON"
+        },
+        {
+          "flags": "--require-live",
+          "description": "Refuse to send to an agent whose heartbeat is stale. Use in cron/full-auto, where queuing to a dead worker looks identical to progress."
+        },
         {
           "flags": "-n, --name <name>",
           "description": "Sender name"
         },
         {
           "flags": "-t, --to <agentId>",
-          "description": "Recipient agent ID"
+          "description": "Recipient agent ID (omit to broadcast)"
         }
       ],
       "commands": []

@@ -45,6 +45,7 @@ import { Orchestrator } from './orchestration.js';
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import { CommandSourceService } from './services/CommandSourceService.js';
 import { CronService } from './services/CronService.js';
+import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
@@ -14850,18 +14851,73 @@ heartbeatCommand
 
 program
   .command('send')
-  .description('Send a single message')
+  .description('Send a single message (verifies the recipient exists and is heartbeating)')
   .argument('<message>', 'Message to send')
-  .option('-t, --to <agentId>', 'Recipient agent ID')
+  .option('-t, --to <agentId>', 'Recipient agent ID (omit to broadcast)')
   .option('-n, --name <name>', 'Sender name', process.env.AGENT_NAME || 'cli-sender')
+  .option(
+    '--require-live',
+    'Refuse to send to an agent whose heartbeat is stale. Use in cron/full-auto, where queuing to a dead worker looks identical to progress.'
+  )
+  .option('--force', 'Send even when the recipient is unknown (records the id verbatim)')
+  .option('--json', 'Emit the dispatch decision as JSON')
   .action(async (message, options) => {
     const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       await client.register(options.name, 'participant', 'vscode');
+
+      // Resolve BEFORE publishing. `tnf send` previously printed "Message
+      // sent" for a nonexistent agent id and for a director four hours dead,
+      // so every automated caller read exit 0 as delivery. Core Tenet 4 —
+      // verify, do not assume.
+      const roster = await client.listAgents();
+      const resolution = resolveRecipient(options.to, roster);
+      const decision = decideDispatch(resolution, { requireLive: options.requireLive });
+
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            { to: options.to ?? null, decision: decision.level, ...decision.resolution },
+            null,
+            2
+          )
+        );
+      }
+
+      if (!decision.proceed && !options.force) {
+        if (!options.json) {
+          console.error(chalk.red(`✖ Not sent — ${decision.resolution.summary}`));
+          if (decision.resolution.suggestions.length > 0) {
+            console.error(chalk.dim('  Did you mean:'));
+            for (const id of decision.resolution.suggestions) {
+              console.error(`    ${chalk.cyan(id)}`);
+            }
+          }
+          console.error(
+            chalk.dim(
+              '  Roster: tnf agents list   ·   override: --force   ·   broadcast: omit --to'
+            )
+          );
+        }
+        process.exitCode = decision.exitCode;
+        return;
+      }
+
       await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
 
-      console.log(chalk.green('📤 Message sent'));
+      if (!options.json) {
+        if (decision.level === 'warn') {
+          console.log(chalk.yellow(`⚠ Queued, but ${decision.resolution.summary}`));
+          console.log(
+            chalk.dim('  The message is durable; it is NOT delivered until that agent returns.')
+          );
+        } else if (decision.resolution.status === 'broadcast') {
+          console.log(chalk.green(`📤 Broadcast — ${decision.resolution.summary}`));
+        } else {
+          console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
+        }
+      }
 
       // Wait a bit for responses
       await new Promise((resolve) => setTimeout(resolve, 1000));
