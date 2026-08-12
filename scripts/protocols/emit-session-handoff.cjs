@@ -185,6 +185,9 @@ function gatherChangedPaths() {
     return [...new Set(listed)];
   }
 
+  // Union working-tree + last-commit paths. Returning the first non-empty
+  // source alone caused CI handoff gates (HEAD~1..HEAD) to fail when dirty
+  // untracked/workspace files short-circuited gather before commit coverage.
   const commands = [
     'git diff --cached --name-only --diff-filter=ACMR',
     'git diff --name-only --diff-filter=ACMR @{u}..HEAD',
@@ -192,34 +195,44 @@ function gatherChangedPaths() {
     'git diff --name-only --diff-filter=ACMR HEAD~1..HEAD',
   ];
 
+  const collected = new Set();
   for (const command of commands) {
     try {
       const out = run(command);
       if (!out) continue;
-      const changed = out
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => line.replace(/\\/g, '/'));
-      if (changed.length) return [...new Set(changed)];
+      for (const line of out.split('\n')) {
+        const cleaned = line.trim().replace(/\\/g, '/');
+        if (cleaned) collected.add(cleaned);
+      }
     } catch {
       continue;
     }
   }
 
   try {
-    const porcelain = run('git status --porcelain');
-    const changed = porcelain
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => line.replace(/^..\s+/, '').trim())
-      .map((line) => line.replace(/\\/g, '/'))
-      .filter(Boolean);
-    return [...new Set(changed)];
+    // Do not trim the whole porcelain blob — a leading space on the first
+    // status line is significant (e.g. " M path"); trimming collapses it to
+    // "M path" and poisons changed_paths.
+    const porcelain = execSync('git status --porcelain', {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: 1024 * 1024 * 128,
+    });
+    for (const line of porcelain.split('\n')) {
+      if (!line) continue;
+      // Porcelain is XY<space>path — status columns are always two chars.
+      const pathPart = line.length >= 4 && line[2] === ' ' ? line.slice(3) : line.trim();
+      const pathOnly = pathPart.includes(' -> ') ? pathPart.split(' -> ').pop() : pathPart;
+      const cleaned = String(pathOnly || '')
+        .trim()
+        .replace(/\\/g, '/');
+      if (cleaned) collected.add(cleaned);
+    }
   } catch {
-    return [];
+    /* ignore */
   }
+
+  return [...collected];
 }
 
 function ensureDirFor(filePath) {

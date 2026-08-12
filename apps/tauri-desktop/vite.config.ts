@@ -157,16 +157,19 @@ export default defineConfig(({ mode }) => {
     base: env.VITE_BASE_PATH || './',
     publicDir: 'public',
     optimizeDeps: {
+      // firebase/* is optional (peer); do not force-include when not installed —
+      // Vite otherwise fails local UI boot with "Failed to resolve dependency".
       include: [
-        'firebase/app',
-        'firebase/auth',
-        'firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',
         'react-router-dom',
       ],
       exclude: [
+        'firebase',
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
         '@firebase/app-types',
         '@firebase/app-compat',
         '@types/d3',

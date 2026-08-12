@@ -161,7 +161,7 @@
     "agents:registry:cron:run": "bash scripts/agent-registry/hybrid-refresh-cron.sh run-now",
     "agents:registry:cloud_runtime": "bash scripts/agent-registry/cloud_runtime-auto-import.sh",
     "notebooklm:export": "node scripts/notebooklm/export-notebooks.mjs",
-    "tnf:mcp:generate": "node scripts/mcp-config-manager.cjs sync",
+    "tnf:mcp:generate": "node scripts/mcp-config-manager.cjs sync && node scripts/tnf-generate-mcp-clients.cjs",
     "tnf:start": "docker-compose up -d redis && node scripts/tnf-start-ai.cjs",
     "tnf:start:codex": "docker-compose up -d redis && node scripts/tnf-start-ai.cjs codex",
     "tnf:start:claude": "docker-compose up -d redis && node scripts/tnf-start-ai.cjs claude",

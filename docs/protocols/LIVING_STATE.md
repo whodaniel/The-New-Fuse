@@ -4,10 +4,20 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Verify local UI :1420 and relay :3000
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-12 Boot triage autonomous remediation (Cursor)** — Restored
+  missing harness protocols `HARNESS_AGENT_MODES.md` +
+  `USER_CONFIRMATION_PROTOCOL.md` (Living State claimed them; files were absent
+  — completeness FAIL). Restored `scripts/tnf-generate-mcp-clients.cjs` (deleted
+  Aug 10) and wired `pnpm tnf:mcp:generate` to sync **and** generate
+  `data/mcp.clients/*` including `openclaw.mcp.json` + `agy.mcp.json` with
+  absolute `cwd`. Rebuilt `@the-new-fuse/database` declarations; cleaned
+  relay-core src emit pollution; `dist/standalone-relay.js` builds again.
+  Stopped forcing unavailable `firebase/*` into tauri-desktop
+  `optimizeDeps.include` (Vite boot blocker).
 
 **Cleared / no longer P0:**
 
@@ -868,6 +878,24 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-12T04:01:26.795Z handoff `0151b397-7eb3-40a1-ba8d-a24e2cb70290` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI :1420 and relay :3000
+
+- 2026-08-12T04:01:02.125Z handoff `dbaf4c88-3329-4e4f-99e3-4f860944ab82` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI :1420 and relay :3000
+
+- 2026-08-12T04:00:13.713Z handoff `ecffa078-9ccd-4c9a-ac04-7702ff1b2ce2` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI http://127.0.0.1:1420
+  and relay :3000 after factory-boot
+
+- 2026-08-12T03:58:47.117Z handoff `24f19a1f-62b0-483c-8491-813e90610d7e` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI http://127.0.0.1:1420
+  and relay :3000 after factory-boot
+
+- 2026-08-12T03:56:21.245Z handoff `8eb1cbeb-4b54-4770-804d-5707bcc67e39` head
+  `318ded426b36` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-08-11T19:22:31.433Z handoff `6f250b5a-e984-4f07-a339-5e69f17e1dfb` head
   `80ae0ce4ff1d` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
@@ -1328,4 +1356,10 @@ continuation
   verification and write docs/reports/system_h...
 
 - [✅] 2026-08-11T15:41:46.174Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-12T01:30:49.744Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-12T02:11:02.011Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

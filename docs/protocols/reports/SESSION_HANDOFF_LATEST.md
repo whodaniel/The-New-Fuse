@@ -1,30 +1,64 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-11T19:22:31.377Z`  
-Handoff ID: `6f250b5a-e984-4f07-a339-5e69f17e1dfb`
+Created At: `2026-08-12T04:01:26.681Z`  
+Handoff ID: `0151b397-7eb3-40a1-ba8d-a24e2cb70290`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `fix/full-auto-tsx-spawn`
-- Head SHA: `80ae0ce4ff1db93c8b9113a4ecbfbcb65ae07513`
+- Branch: `main`
+- Head SHA: `318ded426b368e4f55d7b2d0ad4a93327b37490f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Boot triage remediation: harness completeness PASS; MCP clients restored;
+  relay/database/UI boot blockers fixed; handoff path gather fixed for CI
 
 ## Changed Paths
 
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/utils/run-command.ts
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- .licenses/opentargets_database_LICENSE.txt
+- scripts/transcribe_audio.py
+- scripts/verify-progressive-disclosure.mjs
+- .agent/test-reports/\_rolling-summary.json
+- .agent/testing-status.json
+- .learnings/SUCCESSES.md
+- CLAUDE.md
+- apps/api/src/controllers/agent.controller.ts
+- apps/api/src/services/agent.service.ts
+- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
+- apps/frontend/src/data/codebase_map.json
+- apps/tauri-desktop/vite.config.ts
+- data/llm-provider-status.json
+- docs/operations/tnf-action-receipts.jsonl
+- docs/operations/tnf-full-auto-daemon.log
+- docs/operations/tnf-full-auto-runs.jsonl
+- docs/operations/tnf-full-auto-state.json
+- docs/operations/tnf-master-reconciliation-report-latest.json
+- docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- package.json
+- packages/tnf-cli/src/telegram/TelegramService.ts
+- pnpm-lock.yaml
+- scripts/protocols/emit-session-handoff.cjs
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/utils/run-command.ts
+- packages/relay-core/src/.!75396!standalone-relay.ts
+- packages/relay-core/src/index.d.ts
+- packages/relay-core/src/standalone-relay.d.ts
+- packages/relay-core/src/standalone-relay.d.ts.map
+- packages/relay-core/src/standalone-relay.js
+- packages/relay-core/src/standalone-relay.js.map
+- .cursor/rules/tnf-harness.mdc.tnf-bak
+- CLAUDE.md.tnf-bak
+- docs/protocols/HARNESS_AGENT_MODES.md
+- docs/protocols/USER_CONFIRMATION_PROTOCOL.md
+- scripts/tnf-generate-mcp-clients.cjs
 
 ## Verification
 
@@ -35,8 +69,8 @@ Handoff ID: `6f250b5a-e984-4f07-a339-5e69f17e1dfb`
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
+- Owner: `orchestrator`
+- Targets: `orchestrator`
 - Priority: `high`
 
 ### Resume Checklist
@@ -48,7 +82,5 @@ Handoff ID: `6f250b5a-e984-4f07-a339-5e69f17e1dfb`
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Verify local UI :1420 and relay :3000
+- Operator confirmation before commit of remediation set
