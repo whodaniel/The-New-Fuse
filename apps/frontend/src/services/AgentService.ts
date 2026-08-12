@@ -132,13 +132,20 @@ class AgentService {
     return /\b401\b|\b403\b|authentication required|unauthorized/i.test(message);
   }
 
+  private isSoftFleetFailure(error: unknown): boolean {
+    if (this.isAuthFailure(error)) return true;
+    const status = (error as Error & { status?: number })?.status;
+    // Schema-drift / empty-tenant 400s should not hard-fail the dashboard shell.
+    return status === 400;
+  }
+
   /** Live DB instances for the signed-in user (Fleet). */
   async getFleetAgents(): Promise<Agent[]> {
     try {
       const instances = await this.request<any[]>('/agents');
       return (Array.isArray(instances) ? instances : []).map((a) => this.transformAgent(a));
     } catch (error) {
-      if (this.isAuthFailure(error)) {
+      if (this.isSoftFleetFailure(error)) {
         return [];
       }
       console.error('Failed to get fleet agents', error);

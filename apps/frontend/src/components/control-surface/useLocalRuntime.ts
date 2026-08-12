@@ -140,6 +140,19 @@ async function fetchJson<T>(url: string): Promise<T> {
   if (response.status === 429) {
     throw new Error(`${url} rate-limited (429)`);
   }
+  // Local runtime / mirror endpoints are optional when the operator machine is offline.
+  // Treat auth/missing as "unavailable" so the dashboard does not spam console errors.
+  if (response.status === 401 || response.status === 403 || response.status === 404) {
+    const unavailable = {
+      available: false as const,
+      reason:
+        response.status === 404
+          ? 'Local runtime is not available on this deployment'
+          : 'Local runtime requires an authenticated operator session',
+      generatedAt: new Date().toISOString(),
+    };
+    return unavailable as T;
+  }
   if (!response.ok) {
     throw new Error(`${url} failed with ${response.status}`);
   }

@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Deploy API image with decrypt fallbacks.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -915,6 +914,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-12T20:06:32.907Z handoff `5a950341-0034-4834-9650-71560edae39d` head
+  `1ab45d5c7320` project `TNF-SESSION` — Deploy API image with decrypt
+  fallbacks.
 
 - 2026-08-12T19:57:31.527Z handoff `3e6984f5-5641-4fcf-aa21-db57cfe6fd52` head
   `64469c375664` project `TNF-SESSION` — Continue priority queue from

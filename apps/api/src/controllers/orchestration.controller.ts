@@ -206,33 +206,46 @@ export class OrchestrationController {
     for (const config of orderedConfigs) {
       const normalized = this.normalizeProvider(config.provider);
       if (!normalized || !userProviderSet.has(normalized)) continue;
-      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
-        user.id!,
-        normalized
-      );
-      if (userKey?.apiKey) {
-        return {
-          provider: normalized,
-          modelName: config.modelName,
-          apiKey: userKey.apiKey,
-          apiEndpoint: config.apiEndpoint ?? null,
-        };
+      try {
+        const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
+          user.id!,
+          normalized
+        );
+        if (userKey?.apiKey) {
+          return {
+            provider: normalized,
+            modelName: config.modelName,
+            apiKey: userKey.apiKey,
+            apiEndpoint: config.apiEndpoint ?? null,
+          };
+        }
+      } catch (error) {
+        // Stale ENCRYPTION_KEY or corrupt ciphertext must not block env/global fallbacks.
+        this.logger.warn(
+          `Unable to decrypt personal key for ${normalized}: ${(error as Error).message}`
+        );
       }
     }
 
     if (userProviderSet.size > 0 && user?.id) {
       const provider = [...userProviderSet][0];
-      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
-        user.id,
-        provider
-      );
-      if (userKey?.apiKey) {
-        return {
-          provider,
-          modelName: this.defaultModelForProvider(provider),
-          apiKey: userKey.apiKey,
-          apiEndpoint: null,
-        };
+      try {
+        const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
+          user.id,
+          provider
+        );
+        if (userKey?.apiKey) {
+          return {
+            provider,
+            modelName: this.defaultModelForProvider(provider),
+            apiKey: userKey.apiKey,
+            apiEndpoint: null,
+          };
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Unable to decrypt personal key for ${provider}: ${(error as Error).message}`
+        );
       }
     }
 
@@ -294,19 +307,24 @@ export class OrchestrationController {
       requestedModel?.trim() || config?.modelName || this.defaultModelForProvider(provider);
 
     if (userProviderSet.has(provider) && user?.id) {
-      const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
-        user.id,
-        provider
-      );
-      if (!userKey?.apiKey) {
-        throw new BadRequestException(`No API key configured for provider "${provider}"`);
+      try {
+        const userKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
+          user.id,
+          provider
+        );
+        if (userKey?.apiKey) {
+          return {
+            provider,
+            modelName,
+            apiKey: userKey.apiKey,
+            apiEndpoint: config?.apiEndpoint ?? null,
+          };
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Unable to decrypt personal key for ${provider}: ${(error as Error).message}`
+        );
       }
-      return {
-        provider,
-        modelName,
-        apiKey: userKey.apiKey,
-        apiEndpoint: config?.apiEndpoint ?? null,
-      };
     }
 
     if (config?.apiKey && config.apiKey.trim()) {
@@ -323,7 +341,86 @@ export class OrchestrationController {
       };
     }
 
-    throw new BadRequestException(`Provider "${provider}" is not configured`);
+    // Env fallback for the requested provider (same sources as auto-resolve).
+    const envResolved = this.resolveProviderFromEnv(provider, modelName);
+    if (envResolved) return envResolved;
+
+    throw new BadRequestException(
+      `Provider "${provider}" is not configured. Re-save the API key in Settings if it was stored under an older encryption key.`
+    );
+  }
+
+  private resolveProviderFromEnv(
+    provider: string,
+    modelName?: string
+  ): {
+    provider: string;
+    modelName: string;
+    apiKey: string;
+    apiEndpoint: string | null;
+  } | null {
+    const normalized = this.normalizeProvider(provider);
+    if (normalized === 'openai') {
+      const key = process.env.OPENAI_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'openai',
+        modelName: modelName?.trim() || process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
+        apiKey: key,
+        apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
+      };
+    }
+    if (normalized === 'gemini' || normalized === 'google') {
+      const key = process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_AI_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'gemini',
+        modelName: modelName?.trim() || process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash',
+        apiKey: key,
+        apiEndpoint: process.env.GEMINI_API_BASE?.trim() || null,
+      };
+    }
+    if (normalized === 'anthropic') {
+      const key = process.env.ANTHROPIC_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'anthropic',
+        modelName: modelName?.trim() || 'claude-3-5-sonnet-20240620',
+        apiKey: key,
+        apiEndpoint: null,
+      };
+    }
+    if (normalized === 'groq') {
+      const key = process.env.GROQ_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'groq',
+        modelName: modelName?.trim() || 'llama-3.1-70b-versatile',
+        apiKey: key,
+        apiEndpoint: null,
+      };
+    }
+    if (normalized === 'openrouter') {
+      const key = process.env.OPENROUTER_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'openrouter',
+        modelName: modelName?.trim() || 'openai/gpt-4o-mini',
+        apiKey: key,
+        apiEndpoint: null,
+      };
+    }
+    if (normalized === 'exa') {
+      const key = process.env.EXA_API_KEY?.trim();
+      if (!key) return null;
+      return {
+        provider: 'exa',
+        modelName: modelName?.trim() || 'gpt-4o-mini',
+        apiKey: key,
+        apiEndpoint: null,
+      };
+    }
+    return null;
   }
 
   private async safeLoadEnabledConfigs() {

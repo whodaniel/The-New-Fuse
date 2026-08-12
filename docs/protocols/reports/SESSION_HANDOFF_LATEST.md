@@ -1,31 +1,35 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-12T19:57:31.108Z`  
-Handoff ID: `3e6984f5-5641-4fcf-aa21-db57cfe6fd52`
+Created At: `2026-08-12T20:06:32.813Z`  
+Handoff ID: `5a950341-0034-4834-9650-71560edae39d`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `64469c3756647af07afd96bb13c0b29dba9ae54c`
+- Head SHA: `1ab45d5c73203d32c1e4b1a83d59ff4415d7ce5f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Re-encrypted prod provider keys with live ENCRYPTION_KEY.
+- Hardened orchestration decrypt fallbacks to env providers.
+- Softened local-runtime and fleet dashboard noise.
 
 ## Changed Paths
 
 - apps/api/src/controllers/orchestration.controller.ts
 - apps/frontend/src/components/control-surface/useLocalRuntime.ts
 - apps/frontend/src/services/AgentService.ts
-- docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md
 - packages/database/drizzle/0016_agents_profile_and_prod_align.sql
 - packages/database/drizzle/0017_workflow_executions_align.sql
 - packages/database/src/drizzle/repositories/provider-api-key.repository.ts
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/services/GoalsService.ts
 - packages/tnf-cli/src/services/ServiceHealthService.test.ts
@@ -61,31 +65,10 @@ Handoff ID: `3e6984f5-5641-4fcf-aa21-db57cfe6fd52`
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/command-surface.snapshot.json
 - scripts/runtime/rotate-tnf-logs.sh
-- .gcloudignore
-- apps/api/package.json
-- apps/api/src/app.controller.ts
-- apps/api/src/llm/llm-provider.controller.ts
-- apps/frontend/.env.production.example
-- apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
-- apps/frontend/src/hooks/useAuth.tsx
-- apps/frontend/src/services/aiAssistPreferences.ts
-- apps/frontend/src/services/replaceFeedback.ts
-- apps/frontend/src/services/userSessionFactors.ts
-- apps/frontend/src/stubs/lucide-react.tsx
-- apps/frontend/src/utils/pageContextSnapshot.ts
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- packages/tnf-cli/src/services/AgentFocusService.ts
-- packages/tnf-cli/src/slashCommands.ts
-- scripts/deployment/deploy-frontend.sh
-- scripts/deployment/prepare-frontend-env.sh
-- scripts/deployment/verify-production.mjs
 - apps/api/src/modules/error-awareness/
 - apps/frontend/public/widgets/
 - apps/frontend/src/components/GoalSubjectHub.tsx
@@ -106,20 +89,18 @@ Handoff ID: `3e6984f5-5641-4fcf-aa21-db57cfe6fd52`
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
+- Owner: `cursor-agent`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Confirm provider_api_keys decrypt with Cloud Run ENCRYPTION_KEY.
+- Confirm /api/agents and chat return 200/201.
+- Confirm local-runtime 401/404 no longer hard-errors.
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Deploy API image with decrypt fallbacks.
+- Deploy frontend soft-fail bundle.
+- Verify Assist chat and dashboard APIs.
