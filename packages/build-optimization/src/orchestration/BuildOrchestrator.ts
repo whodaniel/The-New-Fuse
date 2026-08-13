@@ -55,7 +55,8 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     memoryMonitor?: IMemoryMonitor,
     dependencyAnalyzer?: IDependencyGraphAnalyzer,
     concurrencyController?: IConcurrencyController,
-    typescriptManager?: ITypeScriptCompilationManager
+    typescriptManager?: ITypeScriptCompilationManager,
+    buildThrottler?: BuildProcessThrottler
   ) {
     super();
 

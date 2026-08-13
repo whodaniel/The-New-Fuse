@@ -14,4 +14,4 @@ export * from './utils/react-helpers.js';
 export * from './utils/nestjs-helpers.js';
 
 // Export fixtures
-export * from './fixtures.js';
+export * from './fixtures/index.js';

@@ -8,14 +8,26 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import {
+  JwtAuth,
+  RateLimitTier,
+  SecureAuthGuard,
+  SetRateLimitTier,
+} from '../guards/secure-auth.guard';
+import { ProviderCatalogService } from '../services/provider-catalog.service';
 import { CreateLLMProviderDTO, LLMProviderDTO, LLMProviderService } from './llm-provider.service';
 
 @ApiTags('llm')
 @Controller('llm/providers')
 export class LLMProviderController {
-  constructor(private readonly llmProviderService: LLMProviderService) {}
+  constructor(
+    private readonly llmProviderService: LLMProviderService,
+    private readonly providerCatalog: ProviderCatalogService
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all LLM providers' })
@@ -26,6 +38,33 @@ export class LLMProviderController {
     } catch (error) {
       throw new HttpException(
         `Failed to fetch LLM providers: ${(error as Error).message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  /**
+   * Declared before `@Get(':id')` — Nest matches routes in declaration order, so moving this below
+   * would make it resolve as an id lookup for the literal string "available".
+   *
+   * Authenticated per-method rather than per-class: `GET /llm/providers` above is deliberately
+   * public (the Virtual Library relay imports it via TNF_PROVIDER_REGISTRY_URL), and guarding the
+   * whole controller would break that.
+   */
+  @Get('available')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @SetRateLimitTier(RateLimitTier.API)
+  @ApiOperation({
+    summary: 'Providers selectable by the current user (global plus their own API keys)',
+  })
+  @ApiResponse({ status: 200, description: 'Returns providers available to this user' })
+  async findAvailable(@CurrentUser() user: { id?: string }) {
+    try {
+      return await this.providerCatalog.listAvailableForUser(user?.id);
+    } catch (error) {
+      throw new HttpException(
+        `Failed to fetch available providers: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -51,6 +90,21 @@ export class LLMProviderController {
   @ApiResponse({ status: 200, description: 'Returns the LLM provider' })
   @ApiResponse({ status: 404, description: 'LLM provider not found' })
   async findOne(@Param('id') id: string): Promise<LLMProviderDTO> {
+    // Reserved static paths must never fall through to id lookup (production regression:
+    // "available" was queried as llm_configs.id and returned a confusing 404).
+    const reserved = new Set(['available', 'register-claude-code-cli', 'register-gemini-cli']);
+    if (
+      reserved.has(
+        String(id || '')
+          .trim()
+          .toLowerCase()
+      )
+    ) {
+      throw new HttpException(
+        `LLM provider route "${id}" is reserved; use the dedicated endpoint`,
+        HttpStatus.NOT_FOUND
+      );
+    }
     try {
       return await this.llmProviderService.findById(id);
     } catch (error) {

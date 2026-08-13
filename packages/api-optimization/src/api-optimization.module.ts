@@ -2,13 +2,13 @@ import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 // Rate Limiting
-import { RateLimitModule } from './rate-limiting.js';
+import { RateLimitModule } from './rate-limiting/index.js';
 import { RedisRateLimiterService } from './rate-limiting/redis-rate-limiter.service';
 import { RateLimitGuard } from './rate-limiting/rate-limit.guard';
 import { RateLimitMiddleware } from './rate-limiting/rate-limit.middleware';
 
 // Caching
-import { CacheModule } from './caching.js';
+import { CacheModule } from './caching/index.js';
 import { ResponseCacheService } from './caching/response-cache.service';
 import { CacheInterceptor } from './caching/cache.interceptor';
 import { CacheInvalidationService } from './caching/cache-invalidation.service';
