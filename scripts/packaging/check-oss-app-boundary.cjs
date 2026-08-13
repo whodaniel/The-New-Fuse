@@ -101,6 +101,7 @@ function main() {
   }
 
   const byCorePath = new Map();
+  const excludedTopLevelApps = new Map();
   for (const entry of manifest.regularOpenSourceDownload) {
     if (!entry.path || !entry.path.startsWith('apps/')) {
       errors.push(`Invalid regular path: ${entry.path || '(missing)'}`);
@@ -120,8 +121,33 @@ function main() {
     }
   }
 
+  for (const entry of manifest.excludedTopLevelApps || []) {
+    if (!entry.path || !entry.path.startsWith('apps/')) {
+      errors.push(`Invalid excludedTopLevelApps path: ${entry.path || '(missing)'}`);
+      continue;
+    }
+    if (entry.path === 'apps/extensions') {
+      errors.push('apps/extensions is controlled by appsExtensionsRedirect, not excludedTopLevelApps');
+      continue;
+    }
+    if (byCorePath.has(entry.path)) {
+      errors.push(`${entry.path} cannot be both regularOpenSourceDownload and excludedTopLevelApps`);
+      continue;
+    }
+    if (excludedTopLevelApps.has(entry.path)) {
+      errors.push(`Duplicate excludedTopLevelApps entry: ${entry.path}`);
+      continue;
+    }
+    excludedTopLevelApps.set(entry.path, entry);
+    if (!alwaysExclude.has(entry.path) && !proprietaryDirs.has(entry.path)) {
+      errors.push(`${entry.path} is excludedTopLevelApps but is not excluded by sync-repos.sh`);
+    }
+  }
+
   for (const appPath of coreApps) {
-    if (!byCorePath.has(appPath)) errors.push(`Unclassified core app: ${appPath}`);
+    if (!byCorePath.has(appPath) && !excludedTopLevelApps.has(appPath)) {
+      errors.push(`Unclassified core app: ${appPath}`);
+    }
   }
   for (const appPath of byCorePath.keys()) {
     if (!coreApps.includes(appPath)) {
@@ -150,13 +176,44 @@ function main() {
     }
     const abs = extAbs(entry);
     if (!fs.existsSync(abs)) errors.push(`Missing extension app (${entry.tier}): ${abs}`);
-  }
-
-  for (const prop of ['apps/extensions/nexus-orchestrator', 'apps/extensions/picoclaw-overseer']) {
-    if (!proprietaryDirs.has(prop)) {
-      warnings.push(`Expected PROPRIETARY_DIRS to include ${prop} (control-plane extract via redirect)`);
+    const github = entry.github;
+    if (entry.path === 'external') {
+      if (github !== null) {
+        errors.push('external must set github: null (vendored checkouts, not a TNF repo)');
+      }
+      continue;
+    }
+    if (typeof github !== 'string' || !/^https:\/\/github\.com\/whodaniel\/[A-Za-z0-9._-]+$/.test(github)) {
+      errors.push(
+        `${entry.path} must declare github as https://github.com/whodaniel/<repo> (own repo, not a packaged offering)`
+      );
+      continue;
+    }
+    const gitDir = path.join(abs, '.git');
+    if (!fs.existsSync(abs)) continue;
+    if (!fs.existsSync(gitDir)) {
+      errors.push(`${entry.path} at ${abs} is not a git clone; each satellite must be its own GitHub repo`);
+      continue;
+    }
+    const origin = spawnSync('git', ['-C', abs, 'remote', 'get-url', 'origin'], {
+      encoding: 'utf8',
+    });
+    const got = String(origin.stdout || '')
+      .trim()
+      .replace(/\.git$/, '');
+    const want = github.replace(/\.git$/, '');
+    if (origin.status !== 0 || !got) {
+      errors.push(`${entry.path} has no git origin; expected ${want}`);
+    } else if (got !== want) {
+      errors.push(`${entry.path} origin is ${got}, manifest github is ${want}`);
     }
   }
+
+  // Nexus/PicoClaw live in their own private repos under TNF-Extensions.
+  // Do not require PROPRIETARY_DIRS entries at apps/extensions/... — CI checkouts
+  // have a dangling apps/extensions symlink, and ALWAYS_EXCLUDE apps/extensions
+  // already keeps the satellite tree out of the public export. Control-plane
+  // extract copies from the local redirect when it resolves.
 
   const committedSync = readCommittedSyncScript();
   if (committedSync === null) {
@@ -186,6 +243,7 @@ function main() {
 
   console.log('[oss-app-boundary] OK');
   console.log(`regularOpenSourceDownload=${manifest.regularOpenSourceDownload.length}`);
+  console.log(`excludedTopLevelApps=${excludedTopLevelApps.size}`);
   console.log(`separateOpenSourceSatellites=${(manifest.separateOpenSourceSatellites || []).length}`);
   console.log(`nonOssOrPersonalApps=${(manifest.nonOssOrPersonalApps || []).length}`);
   console.log(`appsExtensionsRedirect=${redirect ? redirect.path : '(missing)'}`);

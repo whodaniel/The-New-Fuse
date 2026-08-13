@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "updated": "2026-08-09",
+  "schemaVersion": 3,
+  "updated": "2026-08-13",
   "regularOpenSourceDownload": [
     {
       "path": "apps/api",
@@ -42,11 +42,63 @@
   "appsExtensionsRedirect": {
     "path": "apps/extensions",
     "target": "../../TNF-Extensions",
-    "description": "Symlink from The-New-Fuse/apps/extensions into the sibling TNF-Extensions tree (outside the monorepo). Not a product form factor."
+    "description": "Local workspace of per-app clones (each satellite is its own GitHub repo, not a packaged offering). Not a product form factor."
   },
+  "excludedTopLevelApps": [
+    {
+      "path": "apps/ai-arcade",
+      "classification": "separate-open-source-satellite",
+      "reason": "game/demo satellite, not part of the default TNF runtime"
+    },
+    {
+      "path": "apps/cloud-sandbox",
+      "classification": "non-oss-or-personal",
+      "reason": "hosted/cloud experimentation surface"
+    },
+    {
+      "path": "apps/gemini-bridge-extension",
+      "classification": "separate-open-source-satellite",
+      "reason": "optional integration adapter, not a default OSS form factor"
+    },
+    {
+      "path": "apps/myphoneremote-api",
+      "classification": "non-oss-or-personal",
+      "reason": "standalone product, tracked outside TNF distribution"
+    },
+    {
+      "path": "apps/nexus-orchestrator",
+      "classification": "private-control-plane-placeholder",
+      "reason": "proprietary orchestration surface; source is handled through the control-plane lane"
+    },
+    {
+      "path": "apps/poker-room",
+      "classification": "separate-open-source-satellite",
+      "reason": "game/demo satellite, not part of the default TNF runtime"
+    },
+    {
+      "path": "apps/stripe-provider-bridge",
+      "classification": "private-saas-surface",
+      "reason": "payment/provider bridge surface; not part of the regular public runtime"
+    },
+    {
+      "path": "apps/telegram-mcp",
+      "classification": "separate-open-source-satellite",
+      "reason": "optional integration adapter, not a default OSS form factor"
+    },
+    {
+      "path": "apps/virtual-library-blueprints",
+      "classification": "non-oss-or-personal",
+      "reason": "operator/library intake workstream, not default runtime"
+    },
+    {
+      "path": "apps/visualization-hub",
+      "classification": "separate-open-source-satellite",
+      "reason": "observability/visualization satellite, not default runtime"
+    }
+  ],
   "coreRationale": {
     "keptInApps": "Form factors and runtime surfaces that ship with the regular OSS / local runtime download.",
-    "movedToTnfExtensions": "Satellites, games, proprietary control planes, hosted experiments, and vendored external checkouts.",
+    "movedToTnfExtensions": "Satellites, games, proprietary control planes, hosted experiments, and vendored external checkouts. Each TNF-owned satellite is its own private GitHub repo; TNF-Extensions is only a local checkout root.",
     "reconsidered2026-08-09": [
       "mcp-servers stays core — ships with open runtime as local MCP bridges",
       "visualization-hub stays satellite (merge into frontend later if ops routes consolidate)",
@@ -57,74 +109,88 @@
     {
       "path": "adk-gateway",
       "root": "TNF-Extensions",
-      "reason": "agent-development satellite; publish separately when productized"
+      "github": "https://github.com/whodaniel/tnf-adk-gateway",
+      "reason": "agent-development satellite; own repo, not a packaged TNF offering"
     },
     {
       "path": "ai-arcade",
       "root": "TNF-Extensions",
-      "reason": "game/demo satellite, not part of the default TNF runtime"
+      "github": "https://github.com/whodaniel/tnf-ai-arcade",
+      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
     },
     {
       "path": "audio-trigger-kws-mvp",
       "root": "TNF-Extensions",
-      "reason": "voice/KWS pilot; optional operator stack, not default OSS app"
+      "github": "https://github.com/whodaniel/tnf-audio-trigger-kws-mvp",
+      "reason": "voice/KWS pilot; own repo, not a packaged TNF offering"
     },
     {
       "path": "casin8-games",
       "root": "TNF-Extensions",
-      "reason": "game/demo satellite with separate product and asset concerns"
+      "github": "https://github.com/whodaniel/tnf-casin8-games",
+      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
     },
     {
       "path": "openclaw",
       "root": "TNF-Extensions",
-      "reason": "adjacent agent skills/vendor overlay; publish separately when needed"
+      "github": "https://github.com/whodaniel/tnf-openclaw",
+      "reason": "OpenClaw overlay; own repo, not a packaged TNF offering"
     },
     {
       "path": "poker-room",
       "root": "TNF-Extensions",
-      "reason": "game/demo satellite, not part of the default TNF runtime"
+      "github": "https://github.com/whodaniel/tnf-poker-room",
+      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
     },
     {
       "path": "telegram-mcp",
       "root": "TNF-Extensions",
-      "reason": "optional integration adapter, not default OSS app"
+      "github": "https://github.com/whodaniel/tnf-telegram-mcp",
+      "reason": "Telegram MCP adapter; own repo, not a packaged TNF offering"
     },
     {
       "path": "visualization-hub",
       "root": "TNF-Extensions",
-      "reason": "observability/visualization satellite, not default OSS app"
+      "github": "https://github.com/whodaniel/tnf-visualization-hub",
+      "reason": "ops visualization satellite; own repo, not a packaged TNF offering"
     }
   ],
   "nonOssOrPersonalApps": [
     {
       "path": "cloud-sandbox",
       "root": "TNF-Extensions",
-      "reason": "hosted/cloud experimentation surface"
+      "github": "https://github.com/whodaniel/tnf-cloud-sandbox",
+      "reason": "hosted/cloud experimentation surface; own private repo"
     },
     {
       "path": "external",
       "root": "TNF-Extensions",
-      "reason": "vendored and research checkouts; not TNF source distribution"
+      "github": null,
+      "reason": "vendored and research checkouts; not TNF source; no TNF GitHub repo"
     },
     {
       "path": "myphoneremote-api",
       "root": "TNF-Extensions",
-      "reason": "standalone product, tracked outside TNF distribution"
+      "github": "https://github.com/whodaniel/tnf-myphoneremote-api",
+      "reason": "standalone product; own private repo"
     },
     {
       "path": "nexus-orchestrator",
       "root": "TNF-Extensions",
-      "reason": "proprietary control-plane/orchestration surface"
+      "github": "https://github.com/whodaniel/tnf-nexus-orchestrator",
+      "reason": "proprietary control-plane/orchestration surface; own private repo"
     },
     {
       "path": "picoclaw-overseer",
       "root": "TNF-Extensions",
-      "reason": "proprietary/private overseer surface"
+      "github": "https://github.com/whodaniel/tnf-picoclaw-overseer",
+      "reason": "proprietary/private overseer surface; own private repo"
     },
     {
       "path": "virtual-library-blueprints",
       "root": "TNF-Extensions",
-      "reason": "operator/library intake workstream and submodule, not default runtime"
+      "github": "https://github.com/whodaniel/virtual-library-blueprints",
+      "reason": "operator/library intake workstream; already its own private repo"
     }
   ]
 }

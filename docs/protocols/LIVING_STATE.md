@@ -5,7 +5,7 @@
 <!-- CURRENT_DIRECTIVE:START -->
 
 **Current Directive:** Keep TNF Repo Separation Sync disabled until a dry-run of
-the new sync/open-runtime PR path is proven.
+sync/open-runtime against restored public main is proven.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -950,6 +950,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-13T20:21:30.716Z handoff `d2f04a2b-74d6-4444-82fa-82f7790b89cc` head
+  `aaca77ef0700` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled
+  until a dry-run of sync/open-runtime against restored public main is proven.
 
 - 2026-08-13T19:50:34.349Z handoff `1b577255-a6dc-4860-86f3-48dcd07d76df` head
   `944c848dc71f` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled

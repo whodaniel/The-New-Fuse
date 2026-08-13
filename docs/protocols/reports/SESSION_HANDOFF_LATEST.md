@@ -1,26 +1,28 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T19:50:34.293Z`  
-Handoff ID: `1b577255-a6dc-4860-86f3-48dcd07d76df`
+Created At: `2026-08-13T20:21:30.656Z`  
+Handoff ID: `d2f04a2b-74d6-4444-82fa-82f7790b89cc`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `944c848dc71f0c8efa1f91c81064bafb490adb38`
+- Head SHA: `aaca77ef0700c4ae6f73a65d5326bf61387ca2bc`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Stop orphan-force-push of public main; fail closed if proprietary stubs still
-  contain control-plane implementations.
+- Satellites are each their own private GitHub repo, not a packaged
+  TNF-Extensions offering. Empty leftover apps/ dirs removed; boundary checker
+  requires github URLs.
 
 ## Changed Paths
 
-- .github/workflows/repo-sync.yml
-- scripts/check-proprietary-leakage.sh
-- scripts/sync-repos.sh
+- data/distribution/oss-app-boundary.json
+- scripts/packaging/check-oss-app-boundary.cjs
+- docs/packaging/OSS_APP_BOUNDARY.md
+- docs/REPO_SEPARATION.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -48,9 +50,8 @@ Handoff ID: `1b577255-a6dc-4860-86f3-48dcd07d76df`
 
 ## Next Actions
 
-- Keep TNF Repo Separation Sync disabled until a dry-run of the new
-  sync/open-runtime PR path is proven.
-- Do not restore public history 655c84aadabb unless the operator asks.
-- Do not merge product or a11y work until that path is proven.
-- Then decide whether to reopen closed PRs onto current main or restore
-  pre-orphan history.
+- Keep TNF Repo Separation Sync disabled until a dry-run of sync/open-runtime
+  against restored public main is proven.
+- Do not merge the conflicted a11y PRs (#126-#131) until that path is proven.
+- #124 SQL injection and #125 Hosted Spaces are mergeable after Build Summary.
+- Land user_data_locations only after sync is safe.

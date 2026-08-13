@@ -3,7 +3,8 @@
 > **Status**: Active — This is the canonical reference for how TNF code is
 > distributed across repositories.
 >
-> **Last Updated**: 2026-07-25 (repo names swapped; boundary leak fixed)
+> **Last Updated**: 2026-08-13 (satellites are per-repo; sync no longer orphans
+> public main)
 
 ---
 
@@ -63,6 +64,9 @@ We develop in a single monorepo because:
 3. **Solo developer + AI agents** — No team boundary justifies repo-level
    separation during development.
 
+For product-level classification rules before code lands, see
+[`docs/product/TNF_PRODUCT_BOUNDARY.md`](product/TNF_PRODUCT_BOUNDARY.md).
+
 ---
 
 ## Repository Map
@@ -74,7 +78,7 @@ control-plane sources, and everything published to both downstream repos.
 
 ```
 tnf-monorepo/
-├── apps/                       # Applications
+├── apps/                       # Regular OSS form factors only
 │   ├── api/                    # 🟢 NestJS API server
 │   ├── api-gateway/            # 🟢 NestJS gateway
 │   ├── backend/                # 🟢 Backend (orchestrator module is stub)
@@ -82,13 +86,21 @@ tnf-monorepo/
 │   │       └── orchestrator/   # 🔴 PROPRIETARY (full impl here, stubbed in open-runtime)
 │   ├── frontend/               # 🟢 React frontend
 │   ├── relay-server/           # 🟢 WebSocket relay
-│   ├── nexus-orchestrator/     # 🔴 PROPRIETARY
-│   ├── picoclaw-overseer/      # 🔴 PROPRIETARY
-│   ├── tauri-desktop/         # 🟢
+│   ├── tauri-desktop/          # 🟢
 │   ├── vscode-extension/       # 🟢
 │   ├── chrome-extension/       # 🟢
 │   ├── mcp-servers/            # 🟢
-│   └── ...                     # ⚪ everything else — see app boundary below
+│   └── extensions → ../../TNF-Extensions   # local clones; not a packaged offering
+```
+
+Satellite apps (games, Nexus, PicoClaw, Telegram MCP, …) are **each their own
+private GitHub repo**. `TNF-Extensions/` is only a local workspace of those
+clones. See
+[`data/distribution/oss-app-boundary.json`](../data/distribution/oss-app-boundary.json)
+`github` fields. Do not treat `TNF-Extensions` as one publish unit.
+
+```
+tnf-monorepo/  (continued)
 ├── packages/
 │   ├── relay-core/
 │   │   └── src/
@@ -150,11 +162,11 @@ fuse-control-plane/
 Proprietary and "not in the download" are **two different axes**, and conflating
 them routes code to the wrong repo.
 
-| Bucket                                                       | Where it goes                                                     | Mechanism                        |
-| ------------------------------------------------------------ | ----------------------------------------------------------------- | -------------------------------- |
-| Core runtime + form factors                                  | Public `The-New-Fuse`                                             | default (not excluded)           |
-| Proprietary control plane                                    | Private `fuse-control-plane` (extracted)                          | `PROPRIETARY_FILES/DIRS/SCRIPTS` |
-| Satellites, demos, standalone products, personal/vendor apps | Stay in the monorepo; separate publication lanes if ever released | `ALWAYS_EXCLUDE`                 |
+| Bucket                                 | Where it goes                                                  | Mechanism                        |
+| -------------------------------------- | -------------------------------------------------------------- | -------------------------------- |
+| Core runtime + form factors            | Public `The-New-Fuse`                                          | default (not excluded)           |
+| Proprietary control plane              | Private `fuse-control-plane` (extracted)                       | `PROPRIETARY_FILES/DIRS/SCRIPTS` |
+| Satellites, demos, standalone products | Own private GitHub repos; local clones under `TNF-Extensions/` | not packaged with the runtime    |
 
 The regular open-source download is **9 apps**:
 
@@ -262,22 +274,26 @@ pnpm run sync:repos -- --dry-run
 
 1. **Control-plane**: Clones `fuse-control-plane`, copies latest proprietary
    content from monorepo HEAD, commits, pushes.
-2. **Open-runtime**: Clones monorepo, removes all proprietary paths, creates
-   stub files, pushes clean tree to `The-New-Fuse`.
+2. **Open-runtime**: Builds a stripped tree, clones existing `The-New-Fuse`,
+   commits **on top of current public HEAD**, and force-pushes only
+   `sync/open-runtime`, then opens a PR into `main`. It does **not** `git init`
+   and does **not** `git push origin main --force` unless `--replace-history`
+   (forbidden in GitHub Actions).
 
 ### When to Sync
 
-- After merging significant PRs to `main` on `The-New-Fuse`
+- After merging significant work to monorepo `main`
 - Before releases (tag first: `git tag vX.Y.Z`)
-- Whenever you want the public/private repos to reflect latest state
+- Never as an automatic force-push of public `main`
 
 Recommended cadence:
 
-1. Merge → `main`
+1. Merge → monorepo `main`
 2. `pnpm run sync:repos:dry-run`
-3. `pnpm run sync:repos` (or rely on `.github/workflows/repo-sync.yml` on push
-   to `main`)
-4. Tag release on monorepo and on `The-New-Fuse` after sync
+3. Dispatch **TNF Repo Separation Sync** manually (`workflow_dispatch` only — it
+   must not run on every monorepo push). Merge the resulting `sync/open-runtime`
+   PR on public `The-New-Fuse`.
+4. Tag release on the monorepo and on `The-New-Fuse` after that PR lands
 
 ---
 
@@ -315,12 +331,13 @@ When you create new proprietary code:
 
 ## Split History
 
-| Date       | Event                                                                  |
-| ---------- | ---------------------------------------------------------------------- |
-| 2026-03-20 | Initial control-plane extraction plan created                          |
-| 2026-03-21 | Control-plane services bootstrapped (master-clock, broker-agent, etc.) |
-| 2026-03-23 | Open-runtime branch created with ~61K files (unfiltered)               |
-| 2026-03-24 | **Final separation**: sync script created, both repos pushed clean     |
+| Date       | Event                                                                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-03-20 | Initial control-plane extraction plan created                                                                                                                             |
+| 2026-03-21 | Control-plane services bootstrapped (master-clock, broker-agent, etc.)                                                                                                    |
+| 2026-03-23 | Open-runtime branch created with ~61K files (unfiltered)                                                                                                                  |
+| 2026-03-24 | **Final separation**: sync script created, both repos pushed clean                                                                                                        |
+| 2026-08-13 | Public `main` orphaned by sync `git init` + force-push; restored to `655c84aa`. Sync now PRs `sync/open-runtime`. Each TNF-Extensions app is its own private GitHub repo. |
 
 ---
 
@@ -330,14 +347,18 @@ When you create new proprietary code:
 doesn't map cleanly to subtree semantics. A simple script that clones, filters,
 and pushes is more transparent and debuggable.
 
-**Q: Can I commit directly to The-New-Fuse?** A: Yes, this is the canonical repo
-now.
+**Q: Can I commit directly to The-New-Fuse?** A: No. Develop in `tnf-monorepo`.
+Public `The-New-Fuse` is a publication target. Direct commits there diverge from
+the export and get overwritten by the next sync PR.
 
 **Q: What if I need to add a new proprietary component?** A: Add code to the
-monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run sync.
+monorepo, add its path to `scripts/sync-repos.sh`, add a stub, run a dry-run
+sync, then dispatch the workflow.
 
-**Q: Is the monorepo public?** A: `whodaniel/The-New-Fuse` is the canonical
-public development workspace. Legacy `whodaniel/The-New-Fuse` remains public for
-historical narrative; see `docs/lineage/REPO_LINEAGE.md` for archive status. The
-separation exists so `The-New-Fuse` is a clean public release without
-proprietary internals.
+**Q: Is the monorepo public?** A: No. `whodaniel/tnf-monorepo` is private.
+`whodaniel/The-New-Fuse` is the public open-runtime publication. See
+`docs/lineage/REPO_LINEAGE.md` for historical slugs.
+
+**Q: Are TNF-Extensions one GitHub repo?** A: No. Each satellite is its own
+private repo (`tnf-ai-arcade`, `tnf-nexus-orchestrator`, …). The
+`TNF-Extensions/` directory is a local workspace of those clones.
