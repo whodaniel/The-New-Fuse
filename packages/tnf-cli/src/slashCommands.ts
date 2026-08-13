@@ -1,6 +1,7 @@
+import { CommandSourceService, type DiscoveredEntry } from './services/CommandSourceService.js';
 import { ProjectConfigService, type ProjectCommandDef } from './services/ProjectConfigService.js';
 
-export type SlashCommandSource = 'standard' | 'tnf' | 'project';
+export type SlashCommandSource = 'standard' | 'tnf' | 'project' | 'discovered';
 export type SlashCommandMode = 'control' | 'prompt' | 'cli' | 'info';
 
 export interface SlashCommandDefinition {
@@ -60,10 +61,60 @@ const STANDARD_SLASH_COMMANDS: SlashCommandDefinition[] = [
     mode: 'control',
   },
   {
+    name: 'focus',
+    aliases: ['whoami-focus'],
+    summary:
+      'Show or set agent focus: platform-dev | personal | personal-professional (distinct from super-admin auth).',
+    usage: '/focus [platform-dev|personal|personal-professional] [--profile id] [--goal text]',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
     name: 'exit',
     aliases: ['quit'],
     summary: 'End the interactive session.',
     usage: '/exit',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'exec',
+    aliases: ['run', 'shell'],
+    summary: 'Execute a shell command in the TNF repo root.',
+    usage: '/exec <command>',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'autonomous',
+    aliases: ['auto'],
+    summary: 'Toggle automatic execution of bash blocks from assistant replies.',
+    usage: '/autonomous [on|off]',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'window',
+    aliases: ['operator-window', 'ow'],
+    summary:
+      'Show or set the operator takeover window (seconds). Persists to ~/.tnf/tui-mode.json.',
+    usage: '/window [seconds|30s|8000ms]',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'hold',
+    aliases: ['pause-auto'],
+    summary: 'Pause autonomous continue so you can type freely. Use /continue to resume.',
+    usage: '/hold',
+    source: 'standard',
+    mode: 'control',
+  },
+  {
+    name: 'continue',
+    aliases: ['resume-auto'],
+    summary: 'Resume autonomous continue after /hold (or after a stall auto-hold).',
+    usage: '/continue',
     source: 'standard',
     mode: 'control',
   },
@@ -187,22 +238,6 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     cliCommand: ['mcp', 'list'],
   },
   {
-    name: 'models',
-    summary: 'List available model/provider information.',
-    usage: '/models',
-    source: 'tnf',
-    mode: 'cli',
-    cliCommand: ['models'],
-  },
-  {
-    name: 'config',
-    summary: 'Show resolved TNF configuration.',
-    usage: '/config',
-    source: 'tnf',
-    mode: 'cli',
-    cliCommand: ['config', 'show'],
-  },
-  {
     name: 'skills',
     summary: 'Show TNF skill-bank status.',
     usage: '/skills',
@@ -251,6 +286,81 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     mode: 'cli',
     cliCommand: ['project', 'create', 'mcp-server'],
   },
+  {
+    name: 'boot',
+    summary: 'Boot the full TNF stack and attach the interactive agent.',
+    usage: '/boot [profile]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['boot'],
+  },
+  {
+    name: 'tui',
+    summary: 'Launch the TNF TUI always-on agent session.',
+    usage: '/tui [--autonomous]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['tui'],
+  },
+  {
+    name: 'harness',
+    aliases: ['h'],
+    summary: 'Harness master loop: inspect, loop, cycle, or boot.',
+    usage: '/harness inspect|loop|cycle|boot [flags]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['harness'],
+  },
+  {
+    name: 'gate',
+    summary: 'Run all TNF protocol gates (Turn Zero, handoff drift, session handoff).',
+    usage: '/gate',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['protocol', 'gate'],
+  },
+  {
+    name: 'turn-end',
+    aliases: ['end', 'handoff-end'],
+    summary: 'Run Turn End: refresh LIVING_STATE and SESSION_HANDOFF artifacts.',
+    usage: '/turn-end',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['turn-end'],
+  },
+  {
+    name: 'cycle',
+    aliases: ['master-loop'],
+    summary: 'Run one full harness master loop (inspect → act → verify).',
+    usage: '/cycle [--skip-live-loop]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['harness', 'cycle'],
+  },
+  {
+    name: 'clean',
+    summary: 'Remove build artifacts (dist, .next, *.{d.ts,js.map}, .vite, *.log).',
+    usage: '/clean [--dry-run] [--include-node-modules]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['clean'],
+  },
+  {
+    name: 'tree',
+    summary: 'Print the monorepo apps/ and packages/ directories as a tree.',
+    usage: '/tree [--depth N] [--root PATH]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['tree'],
+  },
+  {
+    name: 'find',
+    summary: 'Search file contents across the monorepo using ripgrep (falls back to grep).',
+    usage: '/find <pattern> [--path PATH] [--glob GLOB] [--limit N]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['find'],
+  },
 ];
 
 export function parseSlashCommand(input: string): ParsedSlashCommand | null {
@@ -278,19 +388,64 @@ export function getProjectSlashCommands(projectRoot: string): SlashCommandDefini
   return project.getCommands().map(projectCommandToSlashCommand);
 }
 
+/**
+ * Markdown commands/prompts/agents/skills discovered across every runtime's
+ * directory convention — including the ones TNF provisions into peer CLIs.
+ *
+ * Kept OUT of `getAllSlashCommands` on purpose. There are ~800 of them in this
+ * repo; folding them into the curated list would turn `/help` into an
+ * unreadable wall and make `findSlashCommand` walk 800 entries per keystroke.
+ * They are resolved on demand by `findSlashCommand` (after the curated list
+ * misses) and indexed separately by the palette, which can rank them.
+ */
+const discoveredCache = new Map<string, SlashCommandDefinition[]>();
+
+export function getDiscoveredSlashCommands(projectRoot: string): SlashCommandDefinition[] {
+  const cached = discoveredCache.get(projectRoot);
+  if (cached) return cached;
+
+  const service = new CommandSourceService(projectRoot);
+  const mapped = service.discover().map((entry) => discoveredToSlashCommand(entry, service));
+  discoveredCache.set(projectRoot, mapped);
+  return mapped;
+}
+
+function discoveredToSlashCommand(
+  entry: DiscoveredEntry,
+  service: CommandSourceService
+): SlashCommandDefinition {
+  const noun = entry.kind === 'agent' ? 'agent' : entry.kind === 'skill' ? 'skill' : 'command';
+  return {
+    name: normalizeSlashName(entry.name),
+    summary: entry.description || `${entry.runtime} ${noun} (${entry.scope})`,
+    usage: `/${normalizeSlashName(entry.name)} [args]`,
+    source: 'discovered',
+    mode: 'prompt',
+    // Body is read lazily: discovery must stay cheap enough to run on every
+    // interactive launch, and 800 file reads is not that.
+    get content() {
+      return service.loadBody(entry);
+    },
+    filePath: entry.filePath,
+  } as SlashCommandDefinition;
+}
+
 export function getAllSlashCommands(projectRoot: string): SlashCommandDefinition[] {
   return [...getStandardSlashCommands(), ...getProjectSlashCommands(projectRoot)];
 }
 
 export function findSlashCommand(name: string, projectRoot: string): SlashCommandDefinition | null {
   const normalized = normalizeSlashName(name);
-  return (
-    getAllSlashCommands(projectRoot).find(
-      (command) =>
-        command.name === normalized ||
-        command.aliases?.some((alias) => normalizeSlashName(alias) === normalized)
-    ) || null
+  const curated = getAllSlashCommands(projectRoot).find(
+    (command) =>
+      command.name === normalized ||
+      command.aliases?.some((alias) => normalizeSlashName(alias) === normalized)
   );
+  if (curated) return curated;
+
+  // Curated names win on collision (a hand-written /skills entry should keep
+  // beating a Markdown file literally named "skills"), so this runs second.
+  return getDiscoveredSlashCommands(projectRoot).find((c) => c.name === normalized) || null;
 }
 
 export function renderSlashCommandList(projectRoot: string): string {
@@ -312,6 +467,19 @@ export function renderSlashCommandList(projectRoot: string): string {
     lines.push('');
   }
 
+  // The discovered set is summarised rather than listed: ~800 entries would
+  // bury the curated commands. The palette (`/` then type) is the way in, and
+  // `tnf commands --all` prints the full inventory when it is actually wanted.
+  const discovered = getDiscoveredSlashCommands(projectRoot);
+  if (discovered.length > 0) {
+    lines.push(`Discovered (${discovered.length}):`);
+    lines.push('  Markdown commands, agents and skills from .tnf/, .claude/,');
+    lines.push('  .agent/, .gemini/, .cursor/, .codex/ and .pi/ — project and user scope.');
+    lines.push('  Each is addressable as /<name>. Press / and type to search them.');
+    lines.push('');
+  }
+
+  lines.push('Press / and type to open the command palette (fuzzy, all depths).');
   lines.push('Use /help <command> or tnf slash show <command> for details.');
   return lines.join('\n');
 }
@@ -337,7 +505,10 @@ export function renderSlashCommandDetail(command: SlashCommandDefinition): strin
 
 export function formatPromptSlashCommand(command: SlashCommandDefinition, args: string[]): string {
   const suffix = args.join(' ').trim();
-  if (command.source === 'project') {
+  // File-backed commands (project `.tnf/command`, and everything discovered
+  // under .claude/.agent/.gemini/.pi) expand to their body; curated commands
+  // expand to their hard-coded prompt.
+  if (command.source === 'project' || command.source === 'discovered') {
     return suffix
       ? `${command.content || ''}\n\nArguments:\n${suffix}`.trim()
       : (command.content || '').trim();
