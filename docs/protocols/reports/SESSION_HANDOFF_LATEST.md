@@ -1,13 +1,13 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T18:04:33.055Z`  
-Handoff ID: `7949a361-4fe6-4d06-a7e5-c6550e6db638`
+Created At: `2026-08-13T18:09:07.421Z`  
+Handoff ID: `75904602-0f3a-4853-b740-34910f9660ba`
 
 ## Scope
 - Repository: `tnf-sync-publish`
 - Branch: `main`
-- Head SHA: `5935e4705cd05b5b6f6b013c47af99eb20a5295c`
+- Head SHA: `5bb153f7afc02f5c5dddccf2ee38a28ee5651f09`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -16,7 +16,7 @@ Handoff ID: `7949a361-4fe6-4d06-a7e5-c6550e6db638`
 
 ## Changed Paths
 - scripts/sync-repos.sh
-- scripts/verify-progressive-disclosure.mjs
+- apps/tauri-desktop/e2e/helpers/interactionAudit.ts
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json

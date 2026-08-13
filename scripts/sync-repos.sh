@@ -190,6 +190,9 @@ ALWAYS_EXCLUDE=(
   # Fleet/agent run snapshots — regenerated locally, embed absolute paths
   ".agent/fleet/agent-pathway-matrix.json"
   ".agent/testing-status.json"
+  # Skill-bank import indexes embed absolute ~/.codex/skills paths
+  ".agent/skill-bank/resource-registry-import.json"
+  ".agent/skill-bank/skills-index.json"
   ".tnf/agent-registry-snapshot.json"
   "data/agent-registry/agents.json"
   "data/video-reports"
