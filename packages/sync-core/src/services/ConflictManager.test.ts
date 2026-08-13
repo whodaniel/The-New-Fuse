@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DrizzleClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/drizzle';
+import { DrizzleClient } from '@the-new-fuse/database';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { ConflictManager } from './ConflictManager';
 
@@ -75,7 +75,7 @@ describe('ConflictManager', () => {
     });
 
     it('should return null when no conflict detected', async () => {
-      const mockSyncState: SyncState = {
+      const mockSyncState: any = {
         id: 'sync-state-id',
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -107,7 +107,7 @@ describe('ConflictManager', () => {
     });
 
     it('should create conflict when version mismatch detected', async () => {
-      const mockSyncState: SyncState = {
+      const mockSyncState: any = {
         id: 'sync-state-id',
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -119,7 +119,7 @@ describe('ConflictManager', () => {
         metadata: null,
       };
 
-      const mockConflict: SyncConflict = {
+      const mockConflict: any = {
         id: 'conflict-id',
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -141,7 +141,7 @@ describe('ConflictManager', () => {
       syncDb.getSyncState.mockResolvedValue(mockSyncState);
 
       // Mock transaction
-      drizzle.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback: any) => {
         const mockTx = {
           syncConflict: {
             create: jest.fn().mockResolvedValue(mockConflict),
@@ -169,7 +169,7 @@ describe('ConflictManager', () => {
 
     it('should handle tenant-specific conflicts', async () => {
       const tenantId = 'tenant-123';
-      const mockSyncState: SyncState = {
+      const mockSyncState: any = {
         id: 'sync-state-id',
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -198,7 +198,7 @@ describe('ConflictManager', () => {
   describe('resolveConflict', () => {
     it('should resolve conflict with latest_wins strategy', async () => {
       const conflictId = 'conflict-id';
-      const mockConflict: SyncConflict = {
+      const mockConflict: any = {
         id: conflictId,
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -218,7 +218,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      drizzle.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback: any) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -249,7 +249,7 @@ describe('ConflictManager', () => {
 
     it('should resolve conflict with merge strategy', async () => {
       const conflictId = 'conflict-id';
-      const mockConflict: SyncConflict = {
+      const mockConflict: any = {
         id: conflictId,
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -269,7 +269,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      drizzle.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback: any) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -303,7 +303,7 @@ describe('ConflictManager', () => {
 
     it('should throw error for already resolved conflict', async () => {
       const conflictId = 'conflict-id';
-      const mockConflict: SyncConflict = {
+      const mockConflict: any = {
         id: conflictId,
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -318,7 +318,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      drizzle.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback: any) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -334,7 +334,7 @@ describe('ConflictManager', () => {
 
     it('should throw error for manual resolution strategy', async () => {
       const conflictId = 'conflict-id';
-      const mockConflict: SyncConflict = {
+      const mockConflict: any = {
         id: conflictId,
         resourceType: 'agent',
         resourceId: 'test-agent-id',
@@ -349,7 +349,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      drizzle.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback: any) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -367,7 +367,7 @@ describe('ConflictManager', () => {
   describe('getPendingConflicts', () => {
     it('should return pending conflicts for tenant', async () => {
       const tenantId = 'tenant-123';
-      const mockConflicts: SyncConflict[] = [
+      const mockConflicts: any[] = [
         {
           id: 'conflict-1',
           resourceType: 'agent',
@@ -397,7 +397,7 @@ describe('ConflictManager', () => {
       const resourceType = 'agent';
       const resourceId = 'test-agent-id';
       const tenantId = 'tenant-123';
-      const mockConflicts: SyncConflict[] = [
+      const mockConflicts: any[] = [
         {
           id: 'conflict-1',
           resourceType,
@@ -425,7 +425,7 @@ describe('ConflictManager', () => {
   describe('autoResolveConflicts', () => {
     it('should auto-resolve version conflicts with latest_wins', async () => {
       const tenantId = 'tenant-123';
-      const mockConflicts: SyncConflict[] = [
+      const mockConflicts: any[] = [
         {
           id: 'conflict-1',
           resourceType: 'agent',
@@ -463,7 +463,7 @@ describe('ConflictManager', () => {
     });
 
     it('should skip concurrent conflicts (no auto-resolution)', async () => {
-      const mockConflicts: SyncConflict[] = [
+      const mockConflicts: any[] = [
         {
           id: 'conflict-1',
           resourceType: 'agent',

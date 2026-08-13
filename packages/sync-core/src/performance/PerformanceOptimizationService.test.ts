@@ -11,7 +11,7 @@ const mockRedisService = {
   setex: jest.fn(),
   get: jest.fn(),
   sadd: jest.fn(),
-  smembers: jest.fn(),
+  smembers: jest.fn<any>(),
   srem: jest.fn(),
   del: jest.fn(),
   lpush: jest.fn(),
@@ -84,7 +84,7 @@ describe('PerformanceOptimizationService', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
-      mockRedisService.setex.mockRejectedValue(new Error('Redis connection failed'));
+      mockRedisService.setex.mockRejectedValue(new Error('Redis connection failed') as never);
 
       await expect(service.initialize()).rejects.toThrow('Redis connection failed');
     });
@@ -92,7 +92,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('file change processing', () => {
     beforeEach(async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       try {
         await service.initialize();
       } catch (error) {
@@ -139,7 +139,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('caching operations', () => {
     beforeEach(async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       await service.initialize();
     });
 
@@ -168,7 +168,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('work distribution', () => {
     beforeEach(async () => {
-      mockRedisService.smembers.mockResolvedValue(['test-instance']);
+      mockRedisService.smembers.mockResolvedValue(['test-instance'] as string[]);
       mockRedisService.get.mockResolvedValue(
         JSON.stringify({
           instanceId: 'test-instance',
@@ -178,7 +178,7 @@ describe('PerformanceOptimizationService', () => {
           load: 50,
           lastHeartbeat: new Date(),
           status: 'active',
-        })
+        }) as never
       );
 
       await service.initialize();
@@ -194,7 +194,7 @@ describe('PerformanceOptimizationService', () => {
     });
 
     it('should handle work distribution when no instances available', async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
 
       const workload = { task: 'sync-files' };
 
@@ -206,7 +206,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('performance metrics', () => {
     beforeEach(async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       await service.initialize();
     });
 
@@ -234,7 +234,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('optimization', () => {
     beforeEach(async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       await service.initialize();
     });
 
@@ -248,7 +248,7 @@ describe('PerformanceOptimizationService', () => {
 
   describe('shutdown', () => {
     it('should shutdown gracefully', async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       await service.initialize();
 
       await service.shutdown();
@@ -258,11 +258,11 @@ describe('PerformanceOptimizationService', () => {
     });
 
     it('should handle shutdown errors gracefully', async () => {
-      mockRedisService.smembers.mockResolvedValue([]);
+      mockRedisService.smembers.mockResolvedValue([] as string[]);
       await service.initialize();
 
       // Mock an error during shutdown
-      mockRedisService.srem.mockRejectedValue(new Error('Shutdown error'));
+      mockRedisService.srem.mockRejectedValue(new Error('Shutdown error') as never);
 
       await expect(service.shutdown()).resolves.not.toThrow();
     });

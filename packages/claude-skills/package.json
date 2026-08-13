@@ -58,7 +58,8 @@
     "gray-matter": "^4.0.3",
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/core-error-handling": "workspace:*",
-    "@the-new-fuse/core-monitoring": "workspace:*"
+    "@the-new-fuse/core-monitoring": "workspace:*",
+    "@the-new-fuse/core-vector-db": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

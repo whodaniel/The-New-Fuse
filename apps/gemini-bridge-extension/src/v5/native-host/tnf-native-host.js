@@ -7,7 +7,7 @@
  * This host uses relative paths and auto-discovers the project root.
  */
 
-const { spawn, exec } = require('child_process');
+const { spawn, exec, execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -328,7 +328,7 @@ async function openFolder(folderPath) {
   const targetPath = path.isAbsolute(folderPath) ? folderPath : path.join(PROJECT_ROOT, folderPath);
 
   return new Promise((resolve) => {
-    exec(`open "${targetPath}"`, (error) => {
+    execFile('open', [targetPath], (error) => {
       if (error) {
         log(`Error opening folder: ${error.message}`);
         resolve({

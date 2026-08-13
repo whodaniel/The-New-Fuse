@@ -28,6 +28,7 @@
     "axios": "^1.13.5",
     "node-port-check": "^2.0.1",
     "portfinder": "^1.0.38",
+    "redis": "^5.8.3",
     "ws": "^8.18.3",
     "zod": "^4.1.12"
   },
@@ -42,7 +43,8 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./client": {
       "import": "./dist/client/index.js",
@@ -51,6 +53,7 @@
     "./server": {
       "import": "./dist/server/index.js",
       "types": "./dist/server/index.d.ts"
-    }
+    },
+    "./scripts/find-available-port.cjs": "./scripts/find-available-port.cjs"
   }
 }
