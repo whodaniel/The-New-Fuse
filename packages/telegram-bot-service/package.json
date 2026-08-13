@@ -11,7 +11,8 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "@the-new-fuse/logger": "workspace:*"
+    "@the-new-fuse/logger": "workspace:*",
+    "@the-new-fuse/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
