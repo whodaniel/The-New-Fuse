@@ -47,6 +47,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/minimatch": "*",
     "@types/node": "^24.8.1",
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.14",

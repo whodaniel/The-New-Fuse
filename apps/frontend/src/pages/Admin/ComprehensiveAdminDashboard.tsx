@@ -795,7 +795,7 @@ export default function ComprehensiveAdminDashboard() {
           description: 'System configuration management',
           icon: <Settings className="h-6 w-6" />,
           link: '/admin/configuration',
-          color: 'bg-transparent0',
+          color: 'bg-gray-500',
         },
         {
           title: 'OpenClaw Security',

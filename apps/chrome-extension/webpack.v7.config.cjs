@@ -1,12 +1,9 @@
-/**
- * Fuse Connect v7 - Webpack Configuration
- *
- * Note: source-of-truth code currently lives under `src/v6`.
- * This config builds the v7 artifact (`dist-v7`) from that source.
- */
+// chrome-extension/webpack.config.cjs
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
@@ -14,38 +11,28 @@ module.exports = (env, argv) => {
   return {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
-
     entry: {
       'background/index': './src/v6/background/index.ts',
       'content/index': './src/v6/content/index.ts',
-      'popup/popup': './src/v6/popup/popup.js',
-      // AI Studio integrations
-      'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
-      'content/youtube-integration': './src/v6/content/ai-studio/youtube.js',
-      'content/notebooklm-integration': './src/v6/content/ai-studio/notebooklm.js',
-      'content/iframe-bridge': './src/v6/content/ai-studio/iframe-bridge.js',
     },
-
     output: {
-      path: path.resolve(__dirname, 'dist-v7'),
+      path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
       clean: true,
-      pathinfo: false,
     },
-
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      alias: {
-        '@the-new-fuse/workflow-engine/sequencer': path.resolve(
-          __dirname,
-          '../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts'
-        ),
-      },
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
+      mainFields: ['browser', 'module', 'main'],
       extensionAlias: {
         '.js': ['.ts', '.js'],
+        '.mjs': ['.mts', '.mjs'],
+      },
+      alias: {
+        '@utils': path.resolve(__dirname, 'src/utils'),
+        '@styles': path.resolve(__dirname, 'src/styles'),
+        '@components': path.resolve(__dirname, 'src/components'),
       },
     },
-
     module: {
       rules: [
         {
@@ -53,10 +40,12 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true,
+              transpileOnly: true, // Skip type checking for faster builds
               compilerOptions: {
                 module: 'ESNext',
                 moduleResolution: 'bundler',
+                strict: false,
+                noImplicitAny: false,
               },
             },
           },
@@ -66,31 +55,63 @@ module.exports = (env, argv) => {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+        },
       ],
     },
-
     plugins: [
       new MiniCssExtractPlugin({
         filename: '[name].css',
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/v6/manifest.json', to: 'manifest.json' },
-          { from: './src/v6/popup/index.html', to: 'popup/index.html' },
-          { from: './src/v6/popup/popup.css', to: 'popup/popup.css' },
-          { from: './assets/icons', to: 'icons', noErrorOnMissing: true },
-          { from: './src/v6/native-host', to: 'native-host', noErrorOnMissing: true },
+          {
+            from: './src/v6/manifest.json',
+            to: 'manifest.json',
+            transform(content) {
+              const manifest = JSON.parse(content.toString());
+              // Adjust paths if needed
+              return JSON.stringify(manifest, null, 2);
+            },
+          },
+          { from: './src/v6/popup', to: 'popup', noErrorOnMissing: true },
+          { from: './icons', to: 'icons', noErrorOnMissing: true },
         ],
       }),
-      // Polyfill Buffer and process
-      new (require('webpack').ProvidePlugin)({
-        Buffer: ['buffer', 'Buffer'],
-        process: 'process/browser',
-      }),
     ],
-
     optimization: {
-      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: isProduction,
+              pure_funcs: isProduction ? ['console.log', 'console.debug'] : [],
+            },
+          },
+        }),
+        new CssMinimizerPlugin(),
+      ],
+      splitChunks: {
+        chunks: 'all',
+        maxInitialRequests: 3,
+        cacheGroups: {
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+            priority: -10,
+            reuseExistingChunk: true,
+          },
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+            enforce: true,
+          },
+        },
+      },
     },
   };
 };

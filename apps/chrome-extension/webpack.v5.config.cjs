@@ -16,11 +16,6 @@ module.exports = (env, argv) => {
       'background/index': './src/v5/background/index.ts',
       'content/index': './src/v5/content/index.ts',
       'popup/popup': './src/v5/popup/popup.js',
-      // AI Studio integrations
-      'content/ai-studio-automation': './src/v5/content/ai-studio/ai-studio.js',
-      'content/youtube-integration': './src/v5/content/ai-studio/youtube.js',
-      'content/notebooklm-integration': './src/v5/content/ai-studio/notebooklm.js',
-      'content/iframe-bridge': './src/v5/content/ai-studio/iframe-bridge.js',
     },
 
     output: {
@@ -31,12 +26,6 @@ module.exports = (env, argv) => {
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      alias: {
-        '@the-new-fuse/workflow-engine/sequencer': path.resolve(
-          __dirname,
-          '../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts'
-        ),
-      },
       extensionAlias: {
         '.js': ['.ts', '.js'],
       },
@@ -78,15 +67,10 @@ module.exports = (env, argv) => {
           { from: './src/v5/native-host', to: 'native-host', noErrorOnMissing: true },
         ],
       }),
-      // Polyfill Buffer and process
-      new (require('webpack').ProvidePlugin)({
-        Buffer: ['buffer', 'Buffer'],
-        process: 'process/browser',
-      }),
     ],
 
     optimization: {
-      minimize: false,
+      minimize: isProduction,
     },
   };
 };

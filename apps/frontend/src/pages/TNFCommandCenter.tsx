@@ -204,7 +204,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
   const getStatusColor = (status: AgentActivity['status']) => {
     switch (status) {
       case 'idle':
-        return 'bg-transparent0';
+        return 'bg-gray-500';
       case 'thinking':
         return 'bg-purple-500 animate-pulse';
       case 'working':
@@ -227,7 +227,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
         </h3>
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-transparent0'}`}
+            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-gray-500'}`}
           />
           <span className="text-sm text-gray-400">{activeCount} active</span>
         </div>
@@ -323,7 +323,7 @@ const TaskQueuePanel: React.FC<{
       case 'medium':
         return 'border-l-yellow-500 bg-yellow-500/10';
       case 'low':
-        return 'border-l-gray-500 bg-transparent0/10';
+        return 'border-l-gray-500 bg-gray-500/10';
     }
   };
 

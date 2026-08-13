@@ -194,7 +194,7 @@ export const MCPHub: React.FC = () => {
                               ? 'bg-green-500 animate-pulse'
                               : server.status === 'error'
                                 ? 'bg-red-500'
-                                : 'bg-transparent0'
+                                : 'bg-gray-500'
                           }`}
                         />
                         <span className="text-sm text-gray-300 capitalize">{server.status}</span>

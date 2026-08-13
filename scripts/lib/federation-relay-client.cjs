@@ -160,11 +160,17 @@ class FederationRelayClient extends EventEmitter {
     );
   }
 
+  // Do not re-register here. Registration happens once per connection in the
+  // 'open' handler, and REGISTRATION_CONFIRMED re-joins every channel. Calling
+  // registerAgent() from a join made those two mutually recursive: confirming a
+  // registration triggered a join, the join triggered a registration, and the
+  // broker sprayed AGENT_REGISTER/CHANNEL_JOIN pairs at ~300/s until the relay
+  // log reached 1.8 GB. The relay tracks channel membership from CHANNEL_JOIN
+  // on its own, so the extra registration was redundant as well as recursive.
   joinChannel(channelId) {
     if (!channelId) return;
     this.joinedChannels.add(channelId);
     this.sendEnvelope('CHANNEL_JOIN', { channelId });
-    this.registerAgent();
   }
 
   leaveChannel(channelId) {

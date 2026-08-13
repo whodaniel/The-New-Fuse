@@ -1,15 +1,17 @@
 {
-  "mode": "running",
-  "updatedAt": "2026-08-10T20:41:26.852Z",
+  "mode": "stopped",
+  "updatedAt": "2026-08-13T04:21:50.474Z",
   "intervalMinutes": 30,
   "maxCycles": 0,
-  "completedCycles": 47,
-  "failedCycles": 224,
+  "completedCycles": 82,
+  "failedCycles": 226,
   "lastRun": {
-    "cycle": 5,
-    "startedAt": "2026-08-10T20:41:09.408Z",
-    "finishedAt": "2026-08-10T20:41:26.851Z",
-    "durationMs": 17443,
-    "ok": true
-  }
+    "cycle": 36,
+    "startedAt": "2026-08-12T02:10:49.986Z",
+    "finishedAt": "2026-08-12T02:21:03.426Z",
+    "durationMs": 613440,
+    "ok": true,
+    "error": "post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"
+  },
+  "stoppedReason": "Reconciled 2026-08-13: state claimed running, but the daemon (pid 8865) was dead and both pidfiles were stale. Last cycle finished 2026-08-12T02:21Z."
 }

@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-12T21:25:43.993Z** — handoff `8a9ab4a4-f7bb-4bb4-a243-6806caa79534` (`a6e17e5d6213`).
+Updated: **2026-08-13T12:18:03.781Z** — handoff `c547269d-3e8c-4489-be4b-b8a22c722c87` (`875857824f97`).
+`1502fd6c-4d2c-4ce6-8984-25c8432514d3` (`875857824f97`).
 `5e0e4ed7-0da3-4846-bade-a3bdc898dbc6` (`bc060fd7b3d2`).
 `5a950341-0034-4834-9650-71560edae39d` (`1ab45d5c7320`).
 `3e6984f5-5641-4fcf-aa21-db57cfe6fd52` (`64469c375664`).
@@ -306,6 +307,17 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 ## Protocol Gaps (prioritized)
 
 ### known-failure entries (2026-08-12 Turn Zero, Claude Code)
+
+5. **`known-failure: Extension build pipeline broken (missing webpack config)`**
+   — *(Resolved 2026-08-13)* The `apps/chrome-extension` build relies on `webpack.config.cjs` which was missing from the directory. The missing configuration was restored from a prior commit (`251a2786de`), cloned into `webpack.v7.config.cjs` with updated entry paths to `src/v6`, and the mangled `src/v6/background/index.ts` file was restored to its working state to allow the pipeline to pass.
+
+6. **`known-failure: Extension DOM injection lacks full federated identity payload`**
+   — _(Resolved 2026-08-13)_ The DOM injection in `FloatingPanel.ts` and
+   `index.ts` was manually building a string `[Sender: <senderId>]` which
+   bypassed the Phase 9 identity rules. This resulted in the downstream regex
+   `/@(ID#:[1-9A-HJ-NP-Za-km-z]+)/` dropping the message silently. Fixed by
+   using `buildPageAgentIdentity()` to generate a fully conformant UFTE identity
+   string mapped accurately to the regex.
 
 Four gates were reporting the opposite of the truth. All four are fixed; the
 pattern they share is the durable lesson: **every one of them failed silently in
@@ -1090,4 +1102,10 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (5e0e4ed7-0da3-4846-bade-a3bdc898dbc6) | ✅ HANDOFF_READY |
 
-| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST (8a9ab4a4-f7bb-4bb4-a243-6806caa79534) | ✅ HANDOFF_READY |
+| 2026-08-12 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(8a9ab4a4-f7bb-4bb4-a243-6806caa79534) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1502fd6c-4d2c-4ce6-8984-25c8432514d3) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST (c547269d-3e8c-4489-be4b-b8a22c722c87) | ✅ HANDOFF_READY |

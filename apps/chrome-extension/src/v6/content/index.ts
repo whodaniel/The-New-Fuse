@@ -8,6 +8,7 @@
  * 2. User presses Ctrl+Shift+F keyboard shortcut
  */
 
+import { buildPageAgentIdentity } from '../shared/federation-identity';
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
@@ -862,6 +863,13 @@ class FuseConnectContentScript {
         });
       }
     });
+
+    window.addEventListener('fuse:inject-message', (e: any) => {
+      const { content, metadata } = e.detail || {};
+      if (content) {
+        this.injectMessage(content, metadata);
+      }
+    });
   }
 
   /**
@@ -908,7 +916,30 @@ class FuseConnectContentScript {
   private async injectMessage(content: string, metadata?: any): Promise<boolean> {
     console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
 
-    const success = await simpleChatBridge.sendMessage(content);
+    let finalContent = content;
+
+    // FEDERATION IMPROVEMENT: Prepend full federated ID#ing logic if it's missing
+    if (!finalContent.includes('[Sender:')) {
+      const senderId = metadata?.senderId || this.pageAgentId || 'Human';
+      const channel = metadata?.channel || this.currentChannel || 'global';
+
+      // Compute full UFTE / Phase 9 Federated Identity
+      let handle = senderId;
+      let idNumber = 'UNKNOWN';
+      try {
+        const identity = buildPageAgentIdentity(senderId, 'FUSE_BROWSER');
+        handle = identity.operationalHandle;
+        idNumber = identity.idNumber;
+      } catch (e) {
+        // Fallback if senderId is malformed
+      }
+
+      // Format: [Sender: XXX (@ID#:YYY)][Channel: ZZZ] text
+      // Follows Phase 9 DACC formatting + UFTE identity requirements
+      finalContent = `[Sender: ${handle} (@${idNumber})][Channel: ${channel}]\n${finalContent}`;
+    }
+
+    const success = await simpleChatBridge.sendMessage(finalContent);
 
     if (success) {
       this.selfPrompter.updateActivity();

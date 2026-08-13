@@ -6,6 +6,14 @@
 **Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 <!-- CURRENT_DIRECTIVE:END -->
 
+- [✅] **2026-08-13 Extension DOM Injection Parity Check (Cursor)** — Verified
+  and integrated Phase 9 DACC formatting + UFTE identity fulfillment into the
+  Chrome extension's DOM chat injection step (`index.ts`). Extracted canonical
+  handles and ID# strings natively using `buildPageAgentIdentity()` rather than
+  raw text prefixes, satisfying `resolveMessageTarget` downstream parsing regex
+  (`/@(ID#:[...])/`). Resolved routing drops for federated injection. Build
+  pipeline `webpack.config.cjs` restoration queued next.
+
 - [✅] **2026-08-12 Federated transport + harness closure (Cursor)** — Closed
   three-lane transport gaps and hardened completion procedures. (1)
   `check-federated-ws-channels.cjs`: `discoverRelayUrl()` prefers `:3007`,
@@ -53,6 +61,18 @@
   relay-core src emit pollution; `dist/standalone-relay.js` builds again.
   Stopped forcing unavailable `firebase/*` into tauri-desktop
   `optimizeDeps.include` (Vite boot blocker).
+
+- [✅] **2026-08-13 Full Vocabulary Alignment Audit** — Swept all 11 canonical
+  surfaces (post-Phase-9). Found 7 inconsistencies across three layers: INC-1
+  (HIGH): CLI role traits (7) extend beyond DACC-v1 hierarchy (5); INC-2
+  (MEDIUM): AGENT_STATUS_LEDGER missing 5/6 seeded agents; INC-3 (HIGH):
+  ROLE_DEFINITIONS.md defines canonicalEntityId incorrectly; INC-4 (MEDIUM):
+  ROLE_DEFINITIONS.md missing idNumber band allocation; INC-5 (MEDIUM):
+  FEDERATED_BASE58_ALPHABET duplicated in 5 files; INC-6 (LOW): qualities
+  deprecated alias used in registry stats; INC-7 (LOW): vector_id namespace
+  undocumented. All verification gates PASS. Report:
+  `docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.{md,json}`.
+  Recommended: Phase 10 alignment pass (3-4h).
 
 **Cleared / no longer P0:**
 
@@ -913,7 +933,15 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-12T21:25:44.040Z handoff `8a9ab4a4-f7bb-4bb4-a243-6806caa79534` head `a6e17e5d6213` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-13T12:18:03.873Z handoff `c547269d-3e8c-4489-be4b-b8a22c722c87` head `875857824f97` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:10:11.225Z handoff `1502fd6c-4d2c-4ce6-8984-25c8432514d3` head
+  `875857824f97` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T21:25:44.040Z handoff `8a9ab4a4-f7bb-4bb4-a243-6806caa79534` head
+  `a6e17e5d6213` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-12T21:18:40.613Z handoff `5e0e4ed7-0da3-4846-bade-a3bdc898dbc6` head
   `bc060fd7b3d2` project `TNF-SESSION` — Cloud Build and deploy api-server with

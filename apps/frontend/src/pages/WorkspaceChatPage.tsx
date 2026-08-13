@@ -475,7 +475,7 @@ const WorkspaceChat: React.FC = () => {
                           ? 'bg-emerald-500'
                           : member.status === 'away'
                             ? 'bg-amber-500'
-                            : 'bg-transparent0'
+                            : 'bg-gray-500'
                       }`}
                     />
                   </div>
@@ -512,7 +512,7 @@ const WorkspaceChat: React.FC = () => {
                     </div>
                     <div
                       className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-transparent0'
+                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
                       }`}
                     />
                   </div>

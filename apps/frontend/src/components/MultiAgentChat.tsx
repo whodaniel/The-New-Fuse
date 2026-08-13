@@ -223,7 +223,7 @@ export const MultiAgentChat: React.FC = () => {
                         ? 'bg-emerald-500'
                         : agent.status === 'busy'
                           ? 'bg-amber-500'
-                          : 'bg-transparent0'
+                          : 'bg-gray-500'
                     }`}
                   />
                 </div>
