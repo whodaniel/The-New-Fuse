@@ -18,6 +18,12 @@ set -euo pipefail
 #   Anything still pointing a monorepo remote at whodaniel/The-New-Fuse is now
 #   aimed at the PUBLIC repo — repoint it at tnf-monorepo.
 #
+# PUBLICATION RULE (open-runtime):
+#   Default path clones existing The-New-Fuse, commits on top of current main,
+#   and force-pushes only refs/heads/sync/open-runtime, then opens a PR.
+#   It does NOT `git init` and does NOT `git push origin main --force`.
+#   --replace-history keeps the old orphan-main path and is forbidden in Actions.
+#
 # USAGE:
 #   pnpm run sync:repos              # sync both
 #   pnpm run sync:repos -- --open    # open-runtime only
@@ -39,23 +45,33 @@ SYNC_OPEN=true
 SYNC_CONTROL=true
 DRY_RUN=false
 FORCE=false
+REPLACE_HISTORY=false
 
 for arg in "$@"; do
   case "$arg" in
-    --open)    SYNC_CONTROL=false ;;
-    --control) SYNC_OPEN=false ;;
-    --dry-run) DRY_RUN=true ;;
-    --force)   FORCE=true ;;
+    --open)             SYNC_CONTROL=false ;;
+    --control)          SYNC_OPEN=false ;;
+    --dry-run)          DRY_RUN=true ;;
+    --force)            FORCE=true ;;
+    --replace-history)  REPLACE_HISTORY=true ;;
     --help)
-      echo "Usage: sync-repos.sh [--open] [--control] [--dry-run] [--force]"
-      echo "  --open      Sync only The-New-Fuse (public)"
-      echo "  --control   Sync only fuse-control-plane"
-      echo "  --dry-run   Preview changes without pushing"
-      echo "  --force     Force push even if no changes detected"
+      echo "Usage: sync-repos.sh [--open] [--control] [--dry-run] [--force] [--replace-history]"
+      echo "  --open             Sync only The-New-Fuse (public)"
+      echo "  --control          Sync only fuse-control-plane"
+      echo "  --dry-run          Preview changes without pushing"
+      echo "  --force            Commit even if the public tree has no file changes"
+      echo "  --replace-history  DANGER: git init + force-push public main (orphan commit,"
+      echo "                     closes every open PR, wipes ancestry). Not used by CI."
       exit 0
       ;;
   esac
 done
+
+if [ "$REPLACE_HISTORY" = true ] && [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+  echo "ERROR: --replace-history is forbidden in GitHub Actions."
+  echo "       It orphans public main and closes every open PR."
+  exit 1
+fi
 
 echo "╔══════════════════════════════════════════════╗"
 echo "║  TNF Repo Separation Sync                   ║"
@@ -393,39 +409,49 @@ if [ "$SYNC_OPEN" = true ]; then
   echo "━━━ Phase 2: The-New-Fuse (public) ━━━"
   echo ""
 
-  OPEN_DIR="$WORK_DIR/The-New-Fuse"
-  mkdir -p "$OPEN_DIR"
+  # Build the stripped tree in a git-less staging dir first. Never `git init`
+  # this tree as public main — that orphaned every PR on 2026-08-13.
+  EXPORT_DIR="$WORK_DIR/export"
+  mkdir -p "$EXPORT_DIR"
   echo "  Exporting monorepo HEAD via git archive (skips node_modules, dist, .turbo)..."
-  (cd "$MONO_ROOT" && git archive HEAD) | tar -x -C "$OPEN_DIR"
+  (cd "$MONO_ROOT" && git archive HEAD) | tar -x -C "$EXPORT_DIR"
 
-  cd "$OPEN_DIR"
-  git init -b main -q
-  if [ -n "${GITHUB_PAT:-}" ]; then
-    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse.git"
-  else
-    git remote add origin https://github.com/whodaniel/The-New-Fuse.git
-  fi
+  cd "$EXPORT_DIR"
 
-  # Remove proprietary files
+  # Remove proprietary files. Do not `|| true` a failed rm — a path that exists
+  # but cannot be deleted would publish. Missing paths are expected (dist/).
   REMOVED=0
   for f in "${PROPRIETARY_FILES[@]}"; do
-    [ -e "$f" ] && rm -f "$f" && ((REMOVED++)) || true
+    if [ -e "$f" ]; then
+      rm -f "$f"
+      REMOVED=$((REMOVED + 1))
+    fi
   done
   for d in "${PROPRIETARY_DIRS[@]}"; do
-    [ -d "$d" ] && rm -rf "$d" && ((REMOVED++)) || true
+    if [ -d "$d" ]; then
+      rm -rf "$d"
+      REMOVED=$((REMOVED + 1))
+    fi
   done
   for f in "${PROPRIETARY_SCRIPTS[@]}"; do
-    [ -e "$f" ] && rm -f "$f" && ((REMOVED++)) || true
+    if [ -e "$f" ]; then
+      rm -f "$f"
+      REMOVED=$((REMOVED + 1))
+    fi
   done
   for f in "${ALWAYS_EXCLUDE[@]}"; do
-    [ -e "$f" ] && rm -rf "$f" && ((REMOVED++)) || true
+    if [ -e "$f" ]; then
+      rm -rf "$f"
+      REMOVED=$((REMOVED + 1))
+    fi
   done
 
   # Pattern-pruned build cache. These are tracked in the monorepo but are
   # regenerated locally and embed absolute operator paths in their logs
   # (packages/*/.turbo alone accounts for ~129 such files).
   while IFS= read -r d; do
-    rm -rf "$d" && ((REMOVED++)) || true
+    rm -rf "$d"
+    REMOVED=$((REMOVED + 1))
   done < <(find . -type d \( -name '.turbo' -o -name 'node_modules' \) 2>/dev/null)
 
   # Remove temp/junk dotfiles
@@ -508,6 +534,28 @@ STUB
 
   echo "  Created 3 contract stubs"
 
+  assert_open_stub() {
+    local f="$1"
+    [ -f "$f" ] || { echo "FAIL: missing stub $f"; exit 1; }
+    if grep -qE 'Eternal Heartbeat|THE BUTTON IS ALWAYS BEING HELD|ALWAYS-ON orchestration daemon|stringifySignedBusMessage|sweepHandoffPacketLifecycle|createTNFEnvelope' "$f"; then
+      echo "FAIL: $f still contains proprietary implementation after strip+stub"
+      exit 1
+    fi
+    grep -qE 'stub mode|intentionally minimal|no-op implementation' "$f" || {
+      echo "FAIL: $f is not a recognized stub"
+      exit 1
+    }
+    local sz
+    sz="$(wc -c < "$f" | tr -d ' ')"
+    if [ "$sz" -ge 3000 ]; then
+      echo "FAIL: $f is ${sz} bytes — too large to be a stub"
+      exit 1
+    fi
+  }
+  assert_open_stub "packages/relay-core/src/master-clock.ts"
+  assert_open_stub "packages/relay-core/src/broker-agent.ts"
+  assert_open_stub "apps/backend/src/modules/orchestrator/index.ts"
+
   # ── Publication gates ─────────────────────────────────────────────────────
   # These MUST run here, in the actual publish path. They previously existed only
   # in scripts/verify-open-runtime-export.sh, which is a separate script someone
@@ -518,36 +566,99 @@ STUB
   echo "  ━━ Publication gates ━━"
 
   chmod +x "$MONO_ROOT/scripts/check-proprietary-leakage.sh"
-  if ! "$MONO_ROOT/scripts/check-proprietary-leakage.sh" "$OPEN_DIR"; then
+  if ! "$MONO_ROOT/scripts/check-proprietary-leakage.sh" "$EXPORT_DIR"; then
     echo ""
     echo "ABORT: proprietary content present in the open-runtime export."
     echo "       Nothing was pushed."
     exit 1
   fi
 
-  PERSONAL_HITS="$(grep -rIl -E '/Users/[a-zA-Z0-9._-]+/' "$OPEN_DIR" 2>/dev/null | grep -v '^'"$OPEN_DIR"'/\.git/' || true)"
+  PERSONAL_HITS="$(grep -rIl -E '/Users/[a-zA-Z0-9._-]+/' "$EXPORT_DIR" 2>/dev/null | grep -v '/\.git/' || true)"
   if [ -n "$PERSONAL_HITS" ]; then
     COUNT="$(printf '%s\n' "$PERSONAL_HITS" | grep -c . || true)"
     echo "ABORT: $COUNT file(s) contain a hard-coded /Users/<name>/ path."
     echo "       Replace the literal with runtime resolution, or exclude the file."
-    printf '%s\n' "$PERSONAL_HITS" | sed "s#^$OPEN_DIR/##" | sed -n '1,20p' | sed 's/^/         /'
+    printf '%s\n' "$PERSONAL_HITS" | sed "s#^$EXPORT_DIR/##" | sed -n '1,20p' | sed 's/^/         /'
     echo "       Nothing was pushed."
     exit 1
   fi
   echo "  PASS: no proprietary content, no hard-coded operator paths"
   echo ""
 
-  git add -A
-  git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+  OPEN_REMOTE="https://github.com/whodaniel/The-New-Fuse.git"
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    OPEN_REMOTE="https://x-access-token:${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse.git"
+  fi
+
+  if [ "$REPLACE_HISTORY" = true ]; then
+    echo "WARNING: --replace-history orphans public main (git init + force-push)."
+    echo "         This closed every open PR on 2026-08-13. CI does not pass this flag."
+    OPEN_DIR="$WORK_DIR/The-New-Fuse"
+    mkdir -p "$OPEN_DIR"
+    cp -a "$EXPORT_DIR"/. "$OPEN_DIR"/
+    cd "$OPEN_DIR"
+    git init -b main -q
+    git remote add origin "$OPEN_REMOTE"
+    git add -A
+    git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
 
 Source commit: $MONO_MSG
 Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null || echo "Nothing to commit"
-
-  if [ "$DRY_RUN" = true ]; then
-    echo "🔍 DRY RUN: Would force-push to The-New-Fuse (public)"
+    if [ "$DRY_RUN" = true ]; then
+      echo "🔍 DRY RUN: Would force-push ORPHAN history to The-New-Fuse main"
+    else
+      git push origin main --force
+      echo "✅ The-New-Fuse (public) force-pushed (replace-history)"
+    fi
   else
-    git push origin main --force 2>&1
-    echo "✅ The-New-Fuse (public) pushed (force)"
+    # Default: clone existing public history, overlay the export, commit on top,
+    # push a sync branch. Never force-push main.
+    OPEN_DIR="$WORK_DIR/The-New-Fuse"
+    echo "  Cloning existing The-New-Fuse (preserving history)..."
+    git clone --depth 1 "$OPEN_REMOTE" "$OPEN_DIR"
+
+    find "$OPEN_DIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+    cp -a "$EXPORT_DIR"/. "$OPEN_DIR"/
+
+    if ! "$MONO_ROOT/scripts/check-proprietary-leakage.sh" "$OPEN_DIR"; then
+      echo "ABORT: proprietary content present after overlay onto public clone."
+      echo "       Nothing was pushed."
+      exit 1
+    fi
+
+    cd "$OPEN_DIR"
+    git add -A
+    if git diff --cached --quiet && [ "$FORCE" != true ]; then
+      echo "ℹ️  The-New-Fuse (public): no changes to sync"
+    else
+      git commit --allow-empty -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+
+Source commit: $MONO_MSG
+Proprietary content stripped. Stubs reference fuse-control-plane."
+      SYNC_BRANCH="sync/open-runtime"
+      if [ "$DRY_RUN" = true ]; then
+        echo "🔍 DRY RUN: Would push $SYNC_BRANCH and open/update a PR into main"
+      else
+        git push origin "HEAD:refs/heads/${SYNC_BRANCH}" --force
+        echo "✅ Pushed $SYNC_BRANCH (main was not force-pushed)"
+        if command -v gh >/dev/null 2>&1; then
+          export GH_TOKEN="${GITHUB_PAT:-${GH_TOKEN:-}}"
+          if GH_TOKEN="$GH_TOKEN" gh pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
+            echo "  Existing PR for $SYNC_BRANCH updated by branch push"
+          else
+            GH_TOKEN="$GH_TOKEN" gh pr create --repo whodaniel/The-New-Fuse \
+              --base main --head "$SYNC_BRANCH" \
+              --title "sync: open-runtime ← tnf-monorepo @ $MONO_HEAD" \
+              --body "Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.
+
+Does **not** force-push \`main\`. Merge this PR to publish.
+
+Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs." \
+              || echo "  gh pr create failed — branch is still on origin/$SYNC_BRANCH"
+          fi
+        fi
+      fi
+    fi
   fi
 
   echo ""

@@ -39,10 +39,26 @@ source_arrays() {
 source_arrays
 LEAKS=0
 
+# Unique strings from the real control-plane implementations. A stub comment
+# pasted on top of the full source must still fail.
+PROPRIETARY_IMPL_MARKERS='Eternal Heartbeat|THE BUTTON IS ALWAYS BEING HELD|ALWAYS-ON orchestration daemon|stringifySignedBusMessage|sweepHandoffPacketLifecycle|createTNFEnvelope'
+
 is_stub_file() {
   local p="$1"
   [ -f "$p" ] || return 1
-  grep -qE 'stub mode|intentionally minimal|no-op implementation' "$p" 2>/dev/null
+  if grep -qE "$PROPRIETARY_IMPL_MARKERS" "$p" 2>/dev/null; then
+    return 1
+  fi
+  grep -qE 'stub mode|intentionally minimal|no-op implementation' "$p" 2>/dev/null || return 1
+  # Known stub paths are a few hundred bytes. The real master-clock.ts is ~40k.
+  case "$p" in
+    */master-clock.ts|*/broker-agent.ts|*/orchestrator/index.ts)
+      local sz
+      sz="$(wc -c < "$p" | tr -d ' ')"
+      [ "$sz" -lt 3000 ] || return 1
+      ;;
+  esac
+  return 0
 }
 
 check_path() {

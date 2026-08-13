@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T19:33:36.901Z** — handoff
+Updated: **2026-08-13T19:50:34.293Z** — handoff
+`1b577255-a6dc-4860-86f3-48dcd07d76df` (`944c848dc71f`).
 `227120de-b92d-4aaf-aa27-0d57295f43b4` (`88a570307ddc`).
 `e481a67e-e9a4-4a97-8fe6-60782aa048af` (`0fd96c848c9b`).
 `51091426-cadb-419a-9d29-4760ec7d0bb5` (`0fd96c848c9b`).
@@ -227,9 +228,12 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                           |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Leave generated intel/catalog/artifact churn uncommitted. Land user_data_locations product cluster when that workstream is next. |
+| Priority | Action                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------ |
+| **P0**   | Keep TNF Repo Separation Sync disabled until a dry-run of the new sync/open-runtime PR path is proven. |
+| **P0**   | Do not restore public history 655c84aadabb unless the operator asks.                                   |
+| **P0**   | Do not merge product or a11y work until that path is proven.                                           |
+| **P0**   | Then decide whether to reopen closed PRs onto current main or restore pre-orphan history.              |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1165,3 +1169,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (227120de-b92d-4aaf-aa27-0d57295f43b4) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1b577255-a6dc-4860-86f3-48dcd07d76df) | ✅ HANDOFF_READY |

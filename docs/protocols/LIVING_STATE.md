@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Leave generated intel/catalog/artifact churn uncommitted.
-Land user_data_locations product cluster when that workstream is next.
+**Current Directive:** Keep TNF Repo Separation Sync disabled until a dry-run of
+the new sync/open-runtime PR path is proven.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -950,6 +950,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-13T19:50:34.349Z handoff `1b577255-a6dc-4860-86f3-48dcd07d76df` head
+  `944c848dc71f` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled
+  until a dry-run of the new sync/open-runtime PR path is proven.
 
 - 2026-08-13T19:33:36.953Z handoff `227120de-b92d-4aaf-aa27-0d57295f43b4` head
   `88a570307ddc` project `TNF-SYNC` — Leave generated intel/catalog/artifact

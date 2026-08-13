@@ -1,32 +1,30 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T19:33:36.901Z`  
-Handoff ID: `227120de-b92d-4aaf-aa27-0d57295f43b4`
+Created At: `2026-08-13T19:50:34.293Z`  
+Handoff ID: `1b577255-a6dc-4860-86f3-48dcd07d76df`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `88a570307ddc8ff60fbbb756d4af37f9da299c5c`
+- Head SHA: `944c848dc71f0c8efa1f91c81064bafb490adb38`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Ignore apps/api tsc emit (245 paired .js files). Untrack agent test-report and
-  Vite vitest cache files that gitignore already covered. Sync gaps from
-  0fd96c848c are closed at 88a570307d.
+- Stop orphan-force-push of public main; fail closed if proprietary stubs still
+  contain control-plane implementations.
 
 ## Changed Paths
 
-- .gitignore
-- .agent/test-reports/\_rolling-summary.json
-- .agent/testing-status.json
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
+- .github/workflows/repo-sync.yml
+- scripts/check-proprietary-leakage.sh
+- scripts/sync-repos.sh
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
 
 ## Verification
 
@@ -50,5 +48,9 @@ Handoff ID: `227120de-b92d-4aaf-aa27-0d57295f43b4`
 
 ## Next Actions
 
-- Leave generated intel/catalog/artifact churn uncommitted. Land
-  user_data_locations product cluster when that workstream is next.
+- Keep TNF Repo Separation Sync disabled until a dry-run of the new
+  sync/open-runtime PR path is proven.
+- Do not restore public history 655c84aadabb unless the operator asks.
+- Do not merge product or a11y work until that path is proven.
+- Then decide whether to reopen closed PRs onto current main or restore
+  pre-orphan history.
