@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Confirm TNF Repo Separation Sync succeeds on
-tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
+**Current Directive:** Leave generated intel/catalog/artifact churn uncommitted.
+Land user_data_locations product cluster when that workstream is next.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -950,6 +950,16 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-13T19:33:36.953Z handoff `227120de-b92d-4aaf-aa27-0d57295f43b4` head
+  `88a570307ddc` project `TNF-SYNC` — Leave generated intel/catalog/artifact
+  churn uncommitted. Land user_data_locations product cluster when that
+  workstream is next.
+
+- 2026-08-13T19:13:02.129Z handoff `f992d3cd-3db9-43b0-b01f-5c7923f2b16a` head
+  `0fd96c848c9b` project `TNF-PRODUCT` — Implement SaaS API/UI flows that create
+  and manage user_data_locations when members connect Google Drive or another
+  storage provider.
 
 - 2026-08-13T19:09:59.519Z handoff `e481a67e-e9a4-4a97-8fe6-60782aa048af` head
   `0fd96c848c9b` project `TNF-SYNC` — Confirm TNF Repo Separation Sync succeeds

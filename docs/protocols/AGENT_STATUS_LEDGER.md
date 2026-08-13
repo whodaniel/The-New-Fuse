@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T19:09:59.474Z** — handoff
+Updated: **2026-08-13T19:33:36.901Z** — handoff
+`227120de-b92d-4aaf-aa27-0d57295f43b4` (`88a570307ddc`).
 `e481a67e-e9a4-4a97-8fe6-60782aa048af` (`0fd96c848c9b`).
 `51091426-cadb-419a-9d29-4760ec7d0bb5` (`0fd96c848c9b`).
 `4b9ef86b-190e-4041-8bac-b60c83abeaf2` (`0a811ca5e0f8`).
@@ -226,9 +227,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Confirm TNF Repo Separation Sync succeeds on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires. |
+| Priority | Action                                                                                                                           |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Leave generated intel/catalog/artifact churn uncommitted. Land user_data_locations product cluster when that workstream is next. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1158,3 +1159,9 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (e481a67e-e9a4-4a97-8fe6-60782aa048af) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f992d3cd-3db9-43b0-b01f-5c7923f2b16a) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(227120de-b92d-4aaf-aa27-0d57295f43b4) | ✅ HANDOFF_READY |

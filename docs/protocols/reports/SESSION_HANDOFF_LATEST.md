@@ -1,33 +1,28 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T19:09:59.474Z`  
-Handoff ID: `e481a67e-e9a4-4a97-8fe6-60782aa048af`
+Created At: `2026-08-13T19:33:36.901Z`  
+Handoff ID: `227120de-b92d-4aaf-aa27-0d57295f43b4`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `0fd96c848c9b9cbe227874d001bc2f2702c0803e`
+- Head SHA: `88a570307ddc8ff60fbbb756d4af37f9da299c5c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Set TNF_SYNC_PAT, un-self-ignore .gitignore, drop stale proprietary dirs,
-  recover unique a11y from closed PRs 103/101/93/92/89/88 into monorepo.
+- Ignore apps/api tsc emit (245 paired .js files). Untrack agent test-report and
+  Vite vitest cache files that gitignore already covered. Sync gaps from
+  0fd96c848c are closed at 88a570307d.
 
 ## Changed Paths
 
 - .gitignore
-- scripts/sync-repos.sh
-- apps/frontend/src/components/infinite-canvas.tsx
-- apps/frontend/src/components/memory/visualization/MemoryVisualizer.tsx
-- apps/frontend/src/pages/Admin/AgentManagementFull.tsx
-- apps/frontend/src/components/theme-toggle.tsx
-- apps/frontend/src/components/voice-controlled-commander.tsx
-- apps/frontend/src/components/features/ChatInterface.tsx
-- apps/frontend/src/components/layout/Header/index.tsx
-- apps/frontend/src/components/MultiAgentChat.tsx
+- .agent/test-reports/\_rolling-summary.json
+- .agent/testing-status.json
+- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
@@ -55,5 +50,5 @@ Handoff ID: `e481a67e-e9a4-4a97-8fe6-60782aa048af`
 
 ## Next Actions
 
-- Confirm TNF Repo Separation Sync succeeds on tnf-monorepo; swap TNF_SYNC_PAT
-  to a dedicated PAT when oauth expires.
+- Leave generated intel/catalog/artifact churn uncommitted. Land
+  user_data_locations product cluster when that workstream is next.

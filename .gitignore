@@ -471,6 +471,11 @@ docs/operations/tnf-full-auto-state.json
 packages/ui-consolidated/src/**/*.js
 packages/ui-consolidated/src/**/*.js.map
 !packages/ui-consolidated/src/**/*.config.js
+# Nest tsc emit next to TypeScript sources. 245 untracked .js files here were
+# being counted as "operator confirmation" work; every one has a .ts sibling.
+apps/api/src/**/*.js
+apps/api/src/**/*.js.map
+apps/api/tsc_*.txt
 
 # Redis RDB snapshots and other runtime dumps
 temp-*.rdb
