@@ -269,3 +269,6 @@
 {"cycle":3,"startedAt":"2026-08-10T20:26:38.664Z","finishedAt":"2026-08-10T20:37:41.989Z","durationMs":663325,"ok":true,"error":"post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"}
 {"cycle":4,"startedAt":"2026-08-10T20:40:03.083Z","finishedAt":"2026-08-10T20:40:35.626Z","durationMs":32543,"ok":true}
 {"cycle":5,"startedAt":"2026-08-10T20:41:09.408Z","finishedAt":"2026-08-10T20:41:26.851Z","durationMs":17443,"ok":true}
+{"cycle":34,"startedAt":"2026-08-11T21:40:05.622Z","finishedAt":"2026-08-11T23:40:47.102Z","durationMs":7241480,"ok":true,"error":"post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 0s and was killed | status: /Users/danielgoldberg/.hermes/node/bin/node timed out after 0s and was killed"}
+{"cycle":35,"startedAt":"2026-08-12T01:30:39.662Z","finishedAt":"2026-08-12T01:40:49.930Z","durationMs":610268,"ok":true,"error":"post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"}
+{"cycle":36,"startedAt":"2026-08-12T02:10:49.986Z","finishedAt":"2026-08-12T02:21:03.426Z","durationMs":613440,"ok":true,"error":"post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"}

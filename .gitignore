@@ -29,6 +29,12 @@ out/
 **/*.d.ts
 **/*.d.ts.map
 !apps/poker-room/global.d.ts
+# Hand-written ambient declarations are source, not build output. The blanket
+# rule above hid them from every commit, so they never reached the split repo
+# (git archive HEAD skips them, so sync-repos.sh missed them too) and the build
+# failed there with TS2882/TS2305 while passing in every working copy.
+!**/css.d.ts
+!packages/contracts/scripts/hardhat-env.d.ts
 # **/*.js # Commented out: unsafe for mixed TS/JS projects
 # **/*.js.map # Commented out: unsafe for mixed TS/JS projects
 !**/*.config.js

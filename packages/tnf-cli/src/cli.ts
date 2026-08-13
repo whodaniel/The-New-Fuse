@@ -3393,19 +3393,7 @@ export const PLATFORM_TAXONOMY: string[] = [
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-// 'coordinator' (e.g. Project-Planner) and 'bridge' (e.g. hermes-bridge) were
-// added after being found live in the agent registry but missing from this
-// list — see broker-agent.ts isWorkerAgent(), which excludes both from
-// worker-dispatch eligibility alongside director/orchestrator/broker.
-const AGENT_ROLE_TRAITS = [
-  'director',
-  'orchestrator',
-  'broker',
-  'worker',
-  'participant',
-  'coordinator',
-  'bridge',
-];
+const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -8827,6 +8815,44 @@ mcp
       process.exit(1);
     }
   });
+
+mcp
+  .command('codex-login')
+  .description('Run Codex MCP OAuth login and open the callback URL automatically')
+  .argument('[name]', 'Codex MCP server name', 'supabase')
+  .option('--scopes <list>', 'Comma-separated OAuth scopes to pass through to Codex')
+  .option('--codex-bin <path>', 'Codex executable', 'codex')
+  .option('--browser <command>', 'Browser/open command to prefer')
+  .option('--no-open', 'Print the authorize URL but do not open it')
+  .option('--dry-run', 'Verify Codex/server discovery without starting OAuth')
+  .option('--json', 'Print a final JSON summary')
+  .action(
+    async (
+      name: string,
+      options: {
+        scopes?: string;
+        codexBin?: string;
+        browser?: string;
+        open?: boolean;
+        dryRun?: boolean;
+        json?: boolean;
+      }
+    ) => {
+      try {
+        const args = ['scripts/codex-mcp-oauth-login.cjs', name];
+        if (options.scopes) args.push('--scopes', options.scopes);
+        if (options.codexBin) args.push('--codex-bin', options.codexBin);
+        if (options.browser) args.push('--browser', options.browser);
+        if (options.open === false) args.push('--no-open');
+        if (options.dryRun) args.push('--dry-run');
+        if (options.json) args.push('--json');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 mcp
   .command('logout')

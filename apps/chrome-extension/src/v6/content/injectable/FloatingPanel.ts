@@ -1807,17 +1807,10 @@ export class EnhancedFloatingPanel {
     });
 
     // 2. Inject into page chat (Submit to Page)
-    this.safeSendMessage(
-      {
-        type: 'INJECT_MESSAGE',
-        content,
-        metadata,
-      },
-      (response) => {
-        if (!response?.success) {
-          console.warn('[FuseConnect] Failed to inject message to page:', response?.error);
-        }
-      }
+    window.dispatchEvent(
+      new CustomEvent('fuse:inject-message', {
+        detail: { content, metadata },
+      })
     );
 
     // 3. Add to local messages
@@ -1845,34 +1838,27 @@ export class EnhancedFloatingPanel {
 
     const metadata = {
       senderId: this.myAgentId || 'unknown',
+      federatedId: this.myAgentId,
       source: 'floating-panel-inject-only',
     };
 
     // Send to content script to inject into page chat
-    this.safeSendMessage(
-      {
-        type: 'INJECT_MESSAGE',
-        content,
-        metadata,
-      },
-      (response) => {
-        if (response?.success) {
-          // Add to local messages
-          this.messages.push({
-            id: Date.now().toString(),
-            from: this.myAgentId || 'You (Fuse)',
-            to: 'page',
-            content,
-            timestamp: Date.now(),
-            type: 'text',
-            metadata,
-          });
-          this.update();
-        } else {
-          console.warn('[FuseConnect] Failed to inject message:', response?.error);
-        }
-      }
+    window.dispatchEvent(
+      new CustomEvent('fuse:inject-message', {
+        detail: { content, metadata },
+      })
     );
+    // Assume success for DOM event and add to local messages
+    this.messages.push({
+      id: Date.now().toString(),
+      from: this.myAgentId || 'You',
+      to: 'AI',
+      content,
+      timestamp: Date.now(),
+      type: 'text',
+      metadata,
+    });
+    this.update();
   }
 
   /**
@@ -1949,26 +1935,12 @@ export class EnhancedFloatingPanel {
     }
 
     // Inject message into page chat
-    this.safeSendMessage(
-      {
-        type: 'INJECT_MESSAGE',
-        content,
-        metadata,
-      },
-      (response) => {
-        if (!response?.success) {
-          console.warn('[FuseConnect] Failed to inject message:', response?.error);
-          // Update message to show error
-          const msg = this.messages.find((m) => m.content === content);
-          if (msg) {
-            msg.content = `❌ ${content} (failed to send)`;
-            this.update();
-          }
-        }
-        // Note: AI response will be captured by the content script's response polling
-        // and forwarded via RESPONSE_COMPLETE message to handleChromeMessage
-      }
+    window.dispatchEvent(
+      new CustomEvent('fuse:inject-message', {
+        detail: { content, metadata },
+      })
     );
+    this.update();
   }
 
   /**

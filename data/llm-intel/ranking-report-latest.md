@@ -1,13 +1,13 @@
 # LLM Ranking Report
 
-Generated: 2026-08-10T06:01:29.085Z Intel Snapshot: intel_1786341635493
+Generated: 2026-08-13T10:00:57.321Z Intel Snapshot: intel_1786615203240
 
 ## Summary
 
 | Metric          | Value |
 | --------------- | ----- |
 | Models Scored   | 37    |
-| Live on NVIDIA  | 2     |
+| Live on NVIDIA  | 1     |
 | Recommendations | 125   |
 | Add New         | 0     |
 | Reorder         | 6     |
@@ -18,9 +18,9 @@ Generated: 2026-08-10T06:01:29.085Z Intel Snapshot: intel_1786341635493
 
 | Rank | Model                                          | Arena Score | Health  | Latency |
 | ---- | ---------------------------------------------- | ----------- | ------- | ------- |
-| 1    | `meta/llama-3.2-90b-vision-instruct`           | -           | live    | 953ms   |
-| 2    | `openai/gpt-oss-20b`                           | -           | live    | 384ms   |
-| 3    | `meta/llama-3.3-70b-instruct`                  | -           | timeout | -       |
+| 1    | `openai/gpt-oss-20b`                           | -           | live    | 463ms   |
+| 2    | `meta/llama-3.3-70b-instruct`                  | -           | timeout | -       |
+| 3    | `meta/llama-3.2-90b-vision-instruct`           | -           | timeout | -       |
 | 4    | `meta/llama-guard-4-12b`                       | -           | timeout | -       |
 | 5    | `openai/gpt-oss-120b`                          | -           | timeout | -       |
 | 6    | `google/gemma-4-31b-it`                        | -           | timeout | -       |
@@ -72,9 +72,9 @@ Generated: 2026-08-10T06:01:29.085Z Intel Snapshot: intel_1786341635493
 | remove-eol | `z-ai/glm-5.1`                                   | 54010   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `meta/llama-4-maverick-17b-128e-instruct`        | 54011   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `mistralai/mistral-large-3-675b-instruct-2512`   | 63007   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
-| reorder    | `meta/llama-3.2-90b-vision-instruct`             | 111     | 0        | Arena score change suggests priority shift of 111 positions |
-| reorder    | `openai/gpt-oss-20b`                             | 253     | 1        | Arena score change suggests priority shift of 252 positions |
-| reorder    | `meta/llama-3.3-70b-instruct`                    | 245     | 2        | Arena score change suggests priority shift of 243 positions |
+| reorder    | `openai/gpt-oss-20b`                             | 253     | 0        | Arena score change suggests priority shift of 253 positions |
+| reorder    | `meta/llama-3.3-70b-instruct`                    | 245     | 1        | Arena score change suggests priority shift of 244 positions |
+| reorder    | `meta/llama-3.2-90b-vision-instruct`             | 111     | 2        | Arena score change suggests priority shift of 109 positions |
 | reorder    | `meta/llama-guard-4-12b`                         | 113     | 3        | Arena score change suggests priority shift of 110 positions |
 | reorder    | `openai/gpt-oss-120b`                            | 17      | 4        | Arena score change suggests priority shift of 13 positions  |
 | reorder    | `google/gemma-4-31b-it`                          | 1       | 5        | Arena score change suggests priority shift of 4 positions   |

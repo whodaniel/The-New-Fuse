@@ -135,6 +135,7 @@ export default defineConfig(({ mode }) => {
           'url',
           'path',
           'os',
+          'vm',
         ],
         globals: {
           Buffer: true,
@@ -181,7 +182,7 @@ export default defineConfig(({ mode }) => {
         '@types/react',
         '@types/react-dom',
       ],
-      mainFields: ['module', 'main'],
+      mainFields: ['browser', 'module', 'main'],
       conditions: ['import', 'module', 'browser', 'default'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -215,6 +216,8 @@ export default defineConfig(({ mode }) => {
         // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
         zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
         'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),
+        http2: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        'node:http2': path.resolve(__dirname, 'src/stubs/empty.ts'),
         // Force browser-safe shims for Node-only transitive deps
         'axios/lib/adapters/http.js': path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts'),
         'xmlhttprequest-ssl': path.resolve(__dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
@@ -263,12 +266,14 @@ export default defineConfig(({ mode }) => {
         'util',
         'xmlhttprequest-ssl',
         'form-data',
+        'http2',
+        'node:http2',
       ],
       esbuildOptions: {
         target: 'es2020',
         // Ensure proper module resolution for framer-motion
-        mainFields: ['module', 'main'],
-        conditions: ['import', 'module', 'default'],
+        mainFields: ['browser', 'module', 'main'],
+        conditions: ['import', 'module', 'browser', 'default'],
       },
     },
     build: {

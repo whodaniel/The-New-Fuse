@@ -1,855 +1,170 @@
 {
-  "iteration": 1276,
-  "startTime": 1783480989905,
-  "lastRun": "2026-07-23T22:13:28.625Z",
-  "bestScore": 100,
-  "currentScore": 100,
-  "status": "stopped",
+  "iteration": 104,
+  "startTime": 1786515365097,
+  "lastRun": "2026-08-13T12:12:25.889Z",
+  "bestScore": 93,
+  "currentScore": 87,
+  "status": "running",
   "issues": [
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-08T04:33:36.984Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-08T04:18:36.623Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T10:18:05.502Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T10:03:06.126Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-08T04:45:39.793Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-08T04:38:45.920Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests"
+      "timestamp": "2026-08-12T10:38:17.215Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T10:23:09.165Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-08T16:33:24.682Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-08T16:18:23.919Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T10:59:06.284Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T10:44:06.453Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-08T16:53:33.092Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-08T16:38:35.509Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T11:19:07.852Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T11:04:07.940Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T06:37:30.662Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T06:22:30.743Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T11:39:09.808Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T11:24:09.914Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T06:57:39.560Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T06:42:41.701Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
+      "timestamp": "2026-08-12T11:59:11.988Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T11:44:12.102Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T07:17:44.318Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T07:02:44.502Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
+      "timestamp": "2026-08-12T18:37:11.138Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T18:22:11.280Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T07:37:46.201Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T07:22:48.165Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
+      "timestamp": "2026-08-12T19:15:21.727Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T19:00:21.612Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T07:58:01.782Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T07:43:02.000Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T19:35:29.434Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T19:20:29.612Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T08:18:04.271Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T08:03:04.393Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T19:56:07.439Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T19:41:24.796Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T08:38:07.474Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T08:23:07.611Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T20:18:06.314Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T20:03:08.926Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-09T15:27:58.081Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-09T15:18:14.314Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T20:38:47.647Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T20:23:50.405Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-13T22:08:31.148Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-13T21:53:31.123Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T20:59:16.681Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T20:44:16.137Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-13T22:28:35.179Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-13T22:13:35.314Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T21:27:18.096Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T21:12:18.926Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-13T22:48:37.047Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-13T22:33:37.307Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T21:56:14.248Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T21:41:14.500Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T01:39:31.217Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T01:24:31.741Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T22:16:17.391Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T22:01:17.499Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T02:18:25.070Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T02:03:25.192Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T22:36:25.152Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T22:21:26.846Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T02:38:27.972Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T02:23:28.151Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T22:56:43.726Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T22:41:45.175Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T02:58:33.250Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T02:43:33.283Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-12T23:16:48.991Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T23:01:49.693Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T13:45:25.965Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T13:30:25.991Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T23:36:55.238Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T23:21:55.524Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T14:41:54.303Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T14:26:54.465Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-12T23:45:07.297Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T23:42:01.089Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T15:01:59.949Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T14:47:00.079Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T00:31:45.230Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-12T23:51:18.527Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T16:00:58.406Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T15:45:58.493Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T00:51:50.642Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T00:36:50.726Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T16:54:12.111Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T16:39:12.230Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-13T01:11:52.828Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T00:56:52.956Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T17:33:58.097Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T17:18:58.197Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T01:32:10.925Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T01:17:41.864Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T18:13:16.489Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T17:58:16.539Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T02:18:07.137Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T01:37:20.585Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T18:33:23.259Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T18:18:23.960Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T04:04:37.493Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T02:23:09.941Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T18:53:30.364Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T18:38:40.460Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
+      "timestamp": "2026-08-13T04:24:47.135Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T04:09:47.582Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T19:13:45.798Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T18:58:45.946Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
+      "timestamp": "2026-08-13T04:35:37.667Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T04:30:39.176Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T19:33:48.489Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T19:18:48.594Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
+      "timestamp": "2026-08-13T11:47:00.252Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T11:32:01.000Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T20:31:59.857Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T20:16:59.950Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
+      "timestamp": "2026-08-13T12:07:08.044Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T11:52:10.910Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     },
     {
       "agent": "Website Testing",
-      "timestamp": "2026-07-14T20:52:02.379Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T20:37:02.549Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T21:12:05.091Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T20:57:05.231Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T21:32:10.263Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T21:17:17.995Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T21:52:13.738Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T21:37:15.252Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T22:12:16.827Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T21:57:21.700Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T22:32:33.442Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T22:17:35.849Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T22:52:19.159Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T22:37:45.826Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-14T23:46:51.374Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-14T23:31:51.488Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T03:11:13.293Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T02:56:13.873Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T03:31:52.791Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T03:16:57.032Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T03:51:58.156Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T03:36:58.232Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T04:12:00.993Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T03:57:03.384Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T04:32:25.113Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T04:17:27.263Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T04:53:06.196Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T04:38:09.723Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T05:13:58.808Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T04:59:00.638Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T05:34:05.138Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T05:19:05.302Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T05:54:16.476Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T05:39:17.004Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T06:14:19.067Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T05:59:19.187Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T06:34:24.639Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T06:19:24.707Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T06:54:43.253Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T06:39:44.239Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T07:14:54.678Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T07:00:04.178Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-15T12:22:39.480Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-15T11:35:54.456Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T01:50:35.361Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T01:35:35.513Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T03:23:19.830Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T03:08:19.843Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T03:43:22.701Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T03:28:22.774Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T04:03:25.414Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T03:48:25.458Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T04:23:31.455Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T04:08:31.571Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T04:43:33.551Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T04:28:33.631Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T05:03:35.463Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T04:48:35.486Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T05:53:34.475Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T05:38:34.437Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T06:14:41.557Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T05:59:48.142Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T06:35:24.086Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T06:20:30.287Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T06:56:01.942Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T06:41:10.421Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T07:16:47.327Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T07:01:56.468Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T07:37:06.881Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T07:22:11.839Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T07:57:22.359Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T07:42:22.444Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T08:17:26.935Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T08:02:27.010Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T08:37:31.972Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T08:22:32.043Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T08:57:40.883Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T08:42:41.034Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T09:17:44.054Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T09:02:44.341Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-16T18:13:22.074Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-16T17:58:22.095Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T03:37:51.928Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T03:22:51.976Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ✅ 19 unit tests passed\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T04:52:33.198Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T04:37:36.223Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T05:12:35.343Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T04:57:36.307Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T05:25:56.485Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T05:17:36.752Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Integration Testing",
-      "timestamp": "2026-07-17T05:25:57.305Z",
-      "error": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:105\n      throw error;\n      ^\n\nError: ENOSPC: no space left on device, mkdir '/Users/danielgoldberg/.tnf/locks/integration-test-agent.lock'\n    at Object.mkdirSync (node:fs:1370:26)\n    at createLock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:102:10)\n    at singleInstanceGuard (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:133:9)\n    at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/integration-test-agent.cjs:10:16)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T06:20:11.814Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T06:19:47.840Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T06:34:08.445Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T06:20:57.782Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T06:35:49.475Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T06:34:25.591Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T15:34:32.428Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T15:33:02.943Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Integration Testing",
-      "timestamp": "2026-07-17T15:34:32.599Z",
-      "error": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:105\n      throw error;\n      ^\n\nError: ENOSPC: no space left on device, mkdir '/Users/danielgoldberg/.tnf/locks/integration-test-agent.lock'\n    at Object.mkdirSync (node:fs:1370:26)\n    at createLock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:102:10)\n    at singleInstanceGuard (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:133:9)\n    at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/integration-test-agent.cjs:10:16)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T15:37:13.815Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T15:34:59.334Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Integration Testing",
-      "timestamp": "2026-07-17T15:37:14.157Z",
-      "error": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:105\n      throw error;\n      ^\n\nError: ENOSPC: no space left on device, mkdir '/Users/danielgoldberg/.tnf/locks/integration-test-agent.lock'\n    at Object.mkdirSync (node:fs:1370:26)\n    at createLock (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:102:10)\n    at singleInstanceGuard (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/tnf-single-instance-guard.cjs:118:7)\n    at Object.<anonymous> (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/integration-test-agent.cjs:10:16)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T18:36:38.171Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T18:35:21.321Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T18:58:21.027Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T18:43:21.069Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T19:18:27.038Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T19:03:28.917Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T19:49:38.318Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T19:34:38.388Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T20:09:40.716Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T19:54:41.551Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T21:59:12.991Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T21:44:14.809Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T22:19:17.540Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T22:04:18.101Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T22:39:22.156Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T22:24:22.293Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T23:16:44.327Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T23:01:44.460Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T23:36:50.712Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T23:21:50.609Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-17T23:56:55.872Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-17T23:41:56.262Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T00:16:57.498Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T00:01:57.948Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T00:56:15.148Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T00:41:15.404Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T01:33:56.524Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T01:18:57.088Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T01:54:00.287Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T01:39:00.383Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T02:14:04.413Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T01:59:04.677Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T04:55:07.253Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T04:40:07.367Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T05:15:09.927Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T05:00:11.859Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-18T10:01:06.941Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-18T07:59:51.694Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T05:59:06.894Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T05:44:06.990Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T06:19:21.158Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T06:04:21.743Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T06:39:31.749Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T06:24:31.735Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T07:16:20.464Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T07:01:20.249Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T07:36:34.808Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T07:21:36.202Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T07:56:40.586Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T07:41:40.994Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T08:17:00.204Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T08:02:00.823Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T08:53:32.309Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T08:38:32.455Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-20T09:13:39.742Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-20T08:58:40.292Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T05:04:48.510Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T04:57:33.511Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T05:22:22.635Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T05:07:22.704Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T06:33:02.935Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T06:18:03.042Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T06:53:06.158Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T06:38:06.471Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T07:31:24.432Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T07:16:24.406Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T07:51:42.505Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T07:36:41.600Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T09:42:14.572Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T09:27:14.648Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T10:02:18.489Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T09:47:18.606Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T10:22:22.699Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T10:07:22.832Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T10:42:23.894Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T10:27:24.054Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T11:02:29.081Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T10:47:29.587Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-21T22:49:08.135Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-21T22:34:08.211Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T12:11:15.020Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T12:06:53.518Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T13:24:33.899Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T13:09:35.209Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T13:45:27.200Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T13:34:55.552Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T14:13:19.107Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T13:51:54.432Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T14:35:24.476Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T14:20:24.901Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T14:55:34.829Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T14:40:26.457Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T15:27:10.195Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T15:08:52.535Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Integration Testing",
-      "timestamp": "2026-07-22T16:43:33.989Z",
-      "error": "🔌 TNF Integration Testing Agent\n   Started: 2026-07-22T15:32:29.693Z\n\n🔌 API Endpoints Check\n  ℹ️ Backend API directory exists\n  ✅ Found 44 API controllers/routes in Backend\n  ℹ️ API Gateway API directory exists\n  ✅ Found 21 API controllers/routes in API Gateway\n  ✅ API spec found: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/api\n\n🔌 Database Configuration Check\n  ✅ Database schema found: src/drizzle/schema.ts\n  ✅ Found 28 migration files in migrations\n  ✅ Found 20 migration files in drizzle\n  ✅ Database package entry point exists\n  ✅ DATABASE_URL is configured\n\n🔌 Service Connections Check\n  ℹ️ Redis URL not configured (optional for some features)\n  ℹ️ Firebase not configured (optional)\n  ✅ Found 3 MCP server packages\n  ✅ Relay server package exists\n\n============================================================\n  INTEGRATION TEST RESULTS\n============================================================\n\n📊 API Endpoints:\n   Passed: 3\n   Failed: 0\n\n📊 Database:\n   Passed"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T17:44:56.821Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T17:29:57.026Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T18:07:11.027Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T17:50:01.374Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Integration Testing",
-      "timestamp": "2026-07-22T19:01:13.614Z",
-      "error": "🔌 TNF Integration Testing Agent\n   Started: 2026-07-22T18:09:29.329Z\n\n🔌 API Endpoints Check\n  ℹ️ Backend API directory exists\n  ✅ Found 44 API controllers/routes in Backend\n  ℹ️ API Gateway API directory exists\n  ✅ Found 21 API controllers/routes in API Gateway\n  ✅ API spec found: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/api\n\n🔌 Database Configuration Check\n  ✅ Database schema found: src/drizzle/schema.ts\n  ✅ Found 28 migration files in migrations\n  ✅ Found 20 migration files in drizzle\n  ✅ Database package entry point exists\n  ✅ DATABASE_URL is configured\n\n🔌 Service Connections Check\n  ℹ️ Redis URL not configured (optional for some features)\n  ℹ️ Firebase not configured (optional)\n  ✅ Found 3 MCP server packages\n  ✅ Relay server package exists\n\n============================================================\n  INTEGRATION TEST RESULTS\n============================================================\n\n📊 API Endpoints:\n   Passed: 3\n   Failed: 0\n\n📊 Database:\n   Passed"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T19:22:12.131Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T19:07:12.495Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T19:42:33.205Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T19:27:35.496Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T20:29:45.739Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T19:47:42.136Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T21:02:41.968Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T20:47:42.218Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T21:22:55.586Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T21:07:56.985Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T22:37:47.019Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T22:22:47.097Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T22:58:13.292Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T22:42:53.730Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "UI/UX Testing",
-      "timestamp": "2026-07-22T23:15:02.039Z",
-      "error": "🎨 TNF UI/UX Testing Agent\n   Started: 2026-07-22T23:00:20.151Z\n\n🎨 Component Structure Check\n  ✅ components: 461 components\n  ✅ shared/ui: 23 components\n  ✅ pages: 231 components\n  ✅ Total: 715 components found\n\n🎨 Accessibility Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-22T23:39:40.660Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T23:24:16.388Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T00:39:38.963Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-22T23:47:24.245Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T01:00:30.470Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T00:45:30.638Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T01:20:46.175Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T01:05:46.590Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T01:43:46.974Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T01:28:42.311Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T02:07:24.908Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T01:52:28.369Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T05:52:19.331Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T05:37:19.415Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T06:12:20.558Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T05:57:20.614Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T06:32:21.335Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T06:17:21.407Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T06:52:22.730Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T06:37:22.819Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T07:12:23.912Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T06:57:23.914Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T07:32:25.772Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T07:17:25.894Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T10:53:17.841Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T08:50:36.131Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T17:27:58.984Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T17:12:59.039Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build\n  ✅ Backend build successful\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T17:47:59.816Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T17:32:59.964Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T18:08:02.368Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T17:53:02.460Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T18:28:21.677Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T18:13:23.962Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T19:03:06.084Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T18:48:06.733Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T19:23:04.668Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T19:08:16.895Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T20:24:20.622Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T20:09:20.672Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ✅ Production build successful\n\n🔍 Unit Tests\n  ✅ 21 unit tests passed\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ✅ TypeScript types valid\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 NestJS Build\n  ❌ Backend build failed\n\n🔍 Unit Tests"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T20:44:35.318Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T20:29:35.580Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T21:04:45.233Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T20:49:46.359Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T21:24:56.257Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T21:09:57.649Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T21:46:42.740Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T21:31:46.176Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T22:06:53.346Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T21:51:47.376Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
-    },
-    {
-      "agent": "Website Testing",
-      "timestamp": "2026-07-23T22:25:42.356Z",
-      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-07-23T22:13:34.681Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests"
+      "timestamp": "2026-08-13T12:27:25.933Z",
+      "error": "🤖 TNF Website Testing Agent\n   Started: 2026-08-13T12:12:36.763Z\n\n============================================================\n  FRONTEND TESTING\n============================================================\n\n🔍 TypeScript Type Check\n  ⚠️ TypeScript errors found (tracked as technical debt, non-blocking)\n\n🔍 ESLint Check\n  ⚠️ ESLint issues found (non-blocking)\n\n🔍 Production Build\n  ❌ Production build failed\n\n🔍 Unit Tests\n  ⚠️ Unit tests had issues\n\n🔍 Critical Files Check\n  ✅ Frontend entry: src/main.tsx\n  ✅ Root app component: src/App.tsx\n  ✅ Route bootstrap: src/routers/SubdomainRouter.tsx\n  ✅ Vite HTML entry: index.html\n\n============================================================\n  BACKEND TESTING\n============================================================\n\n🔍 TypeScript Type Check"
     }
   ],
   "fixes": []

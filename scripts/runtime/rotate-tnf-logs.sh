@@ -34,6 +34,13 @@
 set -uo pipefail
 
 ROOT_DIR="${TNF_LOG_ROOT:-$HOME/.tnf}"
+# Second root: in-repo operations logs and run ledgers. These are worse than
+# the ~/.tnf ones because they live inside the repository, so they inflate the
+# working tree and every clone rather than the volume alone.
+REPO_LOG_DIR="${TNF_REPO_LOG_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/docs/operations}"
+# Sync backups written by scripts/sub-director/sync-runtime.sh. It keeps every
+# replaced file forever; only the most recent few are useful for rollback.
+KEEP_BACKUPS="${KEEP_BACKUPS:-3}"
 MAX_MB="${MAX_MB:-100}"        # rotate anything larger than this
 KEEP_LINES="${KEEP_LINES:-20000}"  # tail retained after truncation
 DRY=0
@@ -75,7 +82,33 @@ while IFS= read -r f; do
     echo "  SKIP (write failed)  $f" >&2
     rm -f "$tmp"
   fi
-done < <(find "$ROOT_DIR" -type f -name '*.log' -size +"${MAX_MB}"M 2>/dev/null)
+done < <(
+  find "$ROOT_DIR" -type f -name '*.log' -size +"${MAX_MB}"M 2>/dev/null
+  [ -d "$REPO_LOG_DIR" ] && find "$REPO_LOG_DIR" -type f \( -name '*.log' -o -name '*.jsonl' \) -size +"${MAX_MB}"M 2>/dev/null
+)
+
+# Prune sync-runtime backups, newest KEEP_BACKUPS retained per basename.
+prune_backups() {
+  local dir="$HOME/.tnf/sub-director"
+  [ -d "$dir" ] || return 0
+  local pruned=0
+  for stem in model_resolver.py run_one_envelope.py; do
+    local n=0
+    while IFS= read -r b; do
+      n=$((n + 1))
+      [ "$n" -le "$KEEP_BACKUPS" ] && continue
+      if [ "$DRY" -eq 1 ]; then
+        echo "  would prune backup  $b"
+      else
+        rm -f "$b" && echo "  pruned backup  $(basename "$b")"
+      fi
+      pruned=$((pruned + 1))
+    done < <(ls -t "$dir/$stem".bak-* 2>/dev/null)
+  done
+  [ "$pruned" -eq 0 ] && echo "  no surplus sync backups"
+  return 0
+}
+prune_backups
 
 if [ "$rotated" -eq 0 ]; then
   echo "  no log over ${MAX_MB}MB under $ROOT_DIR"

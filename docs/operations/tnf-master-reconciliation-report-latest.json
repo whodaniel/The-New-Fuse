@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-10T20:47:43.169Z",
+  "timestamp": "2026-08-13T12:39:39.105Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 84,
+      "durationMs": 81,
       "data": {
-        "branch": "fix/honest-failure-reporting",
-        "commit": "156ecbfca4",
+        "branch": "main",
+        "commit": "b5a7afdf2d",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 137,
+      "durationMs": 117,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 1,
+      "durationMs": 0,
       "data": {
         "status": "skipped"
       }
@@ -39,31 +39,35 @@
       }
     },
     "processHealth": {
-      "ok": true,
-      "verdict": "clean",
-      "durationMs": 152,
+      "ok": false,
+      "verdict": "findings",
+      "findings": 2,
+      "durationMs": 156,
       "data": {
-        "findings": 0,
-        "healthy": 30,
-        "detail": []
+        "findings": 2,
+        "healthy": 28,
+        "detail": [
+          "never-ran: tenant-daily-priority-plan",
+          "never-ran: tenant-nightly-maintenance"
+        ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 0,
+      "durationMs": 1,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 378,
+  "totalDurationMs": 360,
   "summary": {
-    "clean": 4,
-    "findings": 0,
+    "clean": 3,
+    "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 0
+    "totalFindings": 2
   }
 }

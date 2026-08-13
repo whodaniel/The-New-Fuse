@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T12:18:03.781Z** — handoff `c547269d-3e8c-4489-be4b-b8a22c722c87` (`875857824f97`).
+Updated: **2026-08-13T12:43:01.008Z** — handoff
+`677835ef-4b17-4c99-a238-95d906d07d17` (`b5a7afdf2d1f`).
+`a456d278-b2cf-42eb-bed2-36f2524a48f3` (`b5a7afdf2d1f`).
 `1502fd6c-4d2c-4ce6-8984-25c8432514d3` (`875857824f97`).
 `5e0e4ed7-0da3-4846-bade-a3bdc898dbc6` (`bc060fd7b3d2`).
 `5a950341-0034-4834-9650-71560edae39d` (`1ab45d5c7320`).
@@ -220,8 +222,8 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
 | **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
 | **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
@@ -304,12 +306,27 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | ------------------- | ----------------------------------------- | ------------------------------------------------ |
 | Continuous Improver | `TNF:LOCAL:AGENT:CONTINUOUS-IMPROVER:001` | **NEW** — registered at 2026-08-11T14:29:30.845Z |
 
+### Seeded Agents (Standing By)
+
+| Agent           | Identity                              | Status          |
+| --------------- | ------------------------------------- | --------------- |
+| kilo-cli        | `TNF:LOCAL:AGENT:KILO-CLI:001`        | **STANDING-BY** |
+| opencode-cli    | `TNF:LOCAL:AGENT:OPENCODE-CLI:001`    | **STANDING-BY** |
+| pi-coding-agent | `TNF:LOCAL:AGENT:PI-CODING-AGENT:001` | **STANDING-BY** |
+| claude-code     | `TNF:LOCAL:AGENT:CLAUDE-CODE:001`     | **STANDING-BY** |
+| tnf-hermes      | `TNF:LOCAL:AGENT:TNF-HERMES:001`      | **STANDING-BY** |
+
 ## Protocol Gaps (prioritized)
 
 ### known-failure entries (2026-08-12 Turn Zero, Claude Code)
 
 5. **`known-failure: Extension build pipeline broken (missing webpack config)`**
-   — *(Resolved 2026-08-13)* The `apps/chrome-extension` build relies on `webpack.config.cjs` which was missing from the directory. The missing configuration was restored from a prior commit (`251a2786de`), cloned into `webpack.v7.config.cjs` with updated entry paths to `src/v6`, and the mangled `src/v6/background/index.ts` file was restored to its working state to allow the pipeline to pass.
+   — _(Resolved 2026-08-13)_ The `apps/chrome-extension` build relies on
+   `webpack.config.cjs` which was missing from the directory. The missing
+   configuration was restored from a prior commit (`251a2786de`), cloned into
+   `webpack.v7.config.cjs` with updated entry paths to `src/v6`, and the mangled
+   `src/v6/background/index.ts` file was restored to its working state to allow
+   the pipeline to pass.
 
 6. **`known-failure: Extension DOM injection lacks full federated identity payload`**
    — _(Resolved 2026-08-13)_ The DOM injection in `FloatingPanel.ts` and
@@ -1108,4 +1125,14 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (1502fd6c-4d2c-4ce6-8984-25c8432514d3) | ✅ HANDOFF_READY |
 
-| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST (c547269d-3e8c-4489-be4b-b8a22c722c87) | ✅ HANDOFF_READY |
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c547269d-3e8c-4489-be4b-b8a22c722c87) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(82b69a99-97ff-47cf-99ed-13ac9be0508b) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a456d278-b2cf-42eb-bed2-36f2524a48f3) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(677835ef-4b17-4c99-a238-95d906d07d17) | ✅ HANDOFF_READY |

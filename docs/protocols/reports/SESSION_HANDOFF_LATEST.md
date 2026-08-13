@@ -1,20 +1,29 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T12:18:03.781Z`  
-Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
+Created At: `2026-08-13T12:43:01.008Z`  
+Handoff ID: `677835ef-4b17-4c99-a238-95d906d07d17`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `875857824f970c2292e6da6c5a5a2818c7e2433c`
+- Head SHA: `b5a7afdf2d1f98c842f57832395ef51c302543e0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Protocol enforcement layer implemented for mandatory session handoff continuity.
+
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
 - CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
+
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - apps/chrome-extension/src/v6/background/index.ts
 - apps/chrome-extension/src/v6/content/index.ts
 - apps/chrome-extension/webpack.config.cjs
@@ -46,10 +55,6 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - apps/frontend/src/pages/timeline-demo.tsx
 - apps/frontend/src/pages/workflow-pages/ExecutionConsole.tsx
 - docs/operations/tnf-full-auto-state.json
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - package.json
 - packages/build-optimization/package.json
 - packages/contracts/scripts/hardhat-env.d.ts
@@ -67,7 +72,7 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - .agent/ROLE_DEFINITIONS.md
 - .agent/agents/master-of-taxonomies.md
 - .agent/landscape/DAILY_NEWS.md
-- .agent/test-reports/_rolling-summary.json
+- .agent/test-reports/\_rolling-summary.json
 - .agent/testing-status.json
 - .gitignore
 - apps/api/package.json
@@ -91,6 +96,7 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - data/llm-intel/ranking-recommendations.json
 - data/llm-intel/ranking-report-latest.md
 - data/marketplace/catalog-items.json
+- docs/MCP_TROUBLESHOOTING_GUIDE.md
 - docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
 - docs/operations/tnf-action-receipts.jsonl
 - docs/operations/tnf-full-auto-daemon.log
@@ -101,11 +107,13 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
+- packages/a2a-core/src/index.ts
 - packages/ag-ui-core/node_modules/body-parser/HISTORY.md
 - packages/ag-ui-core/node_modules/body-parser/lib/types/json.js
 - packages/ag-ui-core/node_modules/body-parser/lib/types/urlencoded.js
 - packages/ag-ui-core/node_modules/body-parser/package.json
 - packages/jules-skill/node_modules/npm-run-path/readme.md
+- packages/relay-core/src/services/agent-registry.service.ts
 - packages/sync-core/node_modules/@types/express-serve-static-core/node_modules/@types/node/README.md
 - packages/sync-core/node_modules/@types/express-serve-static-core/node_modules/@types/node/assert.d.ts
 - packages/sync-core/node_modules/@types/express-serve-static-core/node_modules/@types/node/assert/strict.d.ts
@@ -241,11 +249,13 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - packages/sync-core/node_modules/@types/serve-static/node_modules/@types/node/worker_threads.d.ts
 - packages/sync-core/node_modules/@types/serve-static/node_modules/@types/node/zlib.d.ts
 - packages/sync-core/node_modules/readdirp/README.md
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
 - packages/ui-consolidated/node_modules/readdirp/README.md
 - pnpm-lock.yaml
 - scripts/runtime/rotate-tnf-logs.sh
 - scripts/swarm/news-scout.cjs
-- scripts/tnf-doctor.cjs
+- scripts/tnf-start-ai.cjs
 - apps/api/node_modules/@types/node/LICENSE
 - apps/api/node_modules/@types/node/README.md
 - apps/api/node_modules/@types/node/assert.d.ts
@@ -577,6 +587,7 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - packages/sync-core/node_modules/@types/serve-static/node_modules/@types/node/web-globals/performance.d.ts
 - packages/sync-core/node_modules/@types/serve-static/node_modules/@types/node/web-globals/timers.d.ts
 - packages/sync-core/node_modules/@types/serve-static/node_modules/@types/node/web-globals/url.d.ts
+- .agents/
 - .claude/agents/master-of-taxonomies.md
 - apps/api/src/agents/agent.factory.js
 - apps/api/src/agents/agents.module.js
@@ -835,24 +846,31 @@ Handoff ID: `c547269d-3e8c-4489-be4b-b8a22c722c87`
 - data/llm-intel/history/intel_2026-08-13.json
 - docs/protocols/instant-error-awareness-pipeline.md
 - docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.json
-- docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md
+- scripts/codex-mcp-oauth-login.cjs
 
 ## Verification
+
 - privacy_guard: `na`
 - secret_sweep: `na`
 - docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `tnf-orchestrator`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical work unit.
+
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

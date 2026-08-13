@@ -3421,6 +3421,38 @@
           "commands": []
         },
         {
+          "name": "codex-login",
+          "aliases": [],
+          "description": "Run Codex MCP OAuth login and open the callback URL automatically",
+          "options": [
+            {
+              "flags": "--browser <command>",
+              "description": "Browser/open command to prefer"
+            },
+            {
+              "flags": "--codex-bin <path>",
+              "description": "Codex executable"
+            },
+            {
+              "flags": "--dry-run",
+              "description": "Verify Codex/server discovery without starting OAuth"
+            },
+            {
+              "flags": "--json",
+              "description": "Print a final JSON summary"
+            },
+            {
+              "flags": "--no-open",
+              "description": "Print the authorize URL but do not open it"
+            },
+            {
+              "flags": "--scopes <list>",
+              "description": "Comma-separated OAuth scopes to pass through to Codex"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "debug",
           "aliases": [],
           "description": "Debug OAuth connection for an MCP server",
@@ -4782,6 +4814,22 @@
         {
           "flags": "--port <number>",
           "description": "Port to listen on"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "services",
+      "aliases": ["svc"],
+      "description": "Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "Machine-readable JSON"
+        },
+        {
+          "flags": "--strict",
+          "description": "Exit non-zero when any service needs attention (for cron/CI)"
         }
       ],
       "commands": []
