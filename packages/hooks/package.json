@@ -8,7 +8,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
+    "build": "tsc --skipLibCheck --noEmitOnError false",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import React, { forwardRef } from 'react';
-import { cn } from '../../utils';
+import { cn } from '../../utils/index.js';
 
 /**
  * Card variants using class-variance-authority

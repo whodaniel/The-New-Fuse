@@ -7,7 +7,7 @@ Unified command surface for TNF operations and agent orchestration.
 ### One-line install (remote)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
 ```
 
 ### Install from a local clone
@@ -52,8 +52,18 @@ Running `tnf` with no arguments is a harness-compliant agent entrypoint:
    excerpts into the interactive agent context.
 3. Start the TNF interactive agent from the canonical workspace root.
 
-Set `TNF_SKIP_TURN_ZERO_ONBOARD=1` only for CI or tests that must bypass the
-interactive Turn Zero surface.
+Set `TNF_SKIP_TURN_ZERO_ONBOARD=1` for CI or tests that must bypass the
+interactive Turn Zero surface. This env var skips _both_ the interactive
+onboarding surface (when running `tnf` with no arguments) and the unconditional
+protocol preflight that runs before every CLI invocation, so scripts in
+`scripts/agents/*.sh` that export it get a clean stdout and no Turn Zero Mandate
+noise (regression-tested in `src/utils/preflight-skip.test.ts`).
+
+Set `TNF_SKIP_PREFLIGHT=1` for the narrower opt-out that skips only the protocol
+preflight without touching the interactive onboarding surface.
+
+`tnf protocol gate` (the explicit "run the checks now" verb) is never suppressed
+by either env var — it is always honoured when invoked.
 
 OpenCode compatibility remains available explicitly:
 
@@ -159,12 +169,25 @@ tnf menu --full
 
 ```bash
 tnf boot --plan
+tnf boot --plan --with-claude --force-onboard
+tnf boot --non-interactive --no-attach-agent
+tnf boot --with-claude
 tnf boot
 tnf onboard
 tnf doctor
 tnf state show
 tnf state show --json
 tnf handoff show
+```
+
+`tnf boot` and `tnf boot --plan` share one pipeline
+(`packages/tnf-cli/src/boot/pipeline.ts`). Boot writes
+`.agent/runtime-logs/cli-boot.latest.json`. Profile arg is a receipt label
+(default `goldberg`). Claude wrapper is opt-in via `--with-claude` (`--all` does
+not start it). Turn Zero onboard is skipped by default after ProtocolInterceptor
+preflight; use `--force-onboard` to re-run `scripts/tnf-onboard.cjs`.
+
+```bash
 tnf handoff emit --auto-verify
 tnf handoff validate
 tnf protocol validate

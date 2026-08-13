@@ -25,7 +25,7 @@
     "test": "echo \"No tests for this package\" && exit 0"
   },
   "dependencies": {
-    "@nestjs/swagger": "^7.1.17",
+    "@nestjs/swagger": "^11.2.6",
     "class-validator": "^0.14.3",
     "react": "^19.2.5",
     "reflect-metadata": "^0.2.2",

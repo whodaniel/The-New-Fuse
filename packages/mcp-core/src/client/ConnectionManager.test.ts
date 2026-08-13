@@ -3,17 +3,56 @@
  */
 
 import { EventEmitter } from 'events';
-import { ConnectionManager } from './ConnectionManager.js';
 import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection.js';
-import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { ConnectionManager } from './ConnectionManager.js';
 
-// Mock WebSocket
-class MockWebSocket extends EventEmitter {
-  public readyState: number = WebSocket.CONNECTING;
+// ConnectionManager's real implementation talks to the browser-style
+// WebSocket API (assigning to onopen/onmessage/onerror/onclose properties),
+// not Node's EventEmitter API. Every mock WebSocket in this file is written
+// in EventEmitter style (`.emit('open')` etc.) for convenience, so this
+// shared base bridges both styles: emit() also invokes the matching
+// property callback. All mock classes below extend this instead of
+// EventEmitter directly.
+abstract class EventBridgedWebSocket extends EventEmitter {
   public static CONNECTING = 0;
   public static OPEN = 1;
   public static CLOSING = 2;
   public static CLOSED = 3;
+
+  public onopen: (() => void) | null = null;
+  public onmessage: ((event: { data: string }) => void) | null = null;
+  public onerror: ((error: unknown) => void) | null = null;
+  public onclose: (() => void) | null = null;
+
+  override emit(event: string | symbol, ...args: any[]): boolean {
+    switch (event) {
+      case 'open':
+        this.onopen?.();
+        break;
+      case 'message':
+        this.onmessage?.(args[0]);
+        break;
+      case 'error':
+        this.onerror?.(args[0]);
+        break;
+      case 'close':
+        this.onclose?.();
+        break;
+    }
+    // Only forward to real EventEmitter-style listeners if any are
+    // registered. Node's EventEmitter treats an unhandled 'error' emit as a
+    // fatal, thrown exception -- and nothing here ever listens via .on(),
+    // only via the onopen/onmessage/onerror/onclose properties above.
+    if (this.listenerCount(event) > 0) {
+      return super.emit(event, ...args);
+    }
+    return false;
+  }
+}
+
+// Mock WebSocket
+class MockWebSocket extends EventBridgedWebSocket {
+  public readyState: number = WebSocket.CONNECTING;
 
   constructor(public url: string) {
     super();
@@ -32,12 +71,12 @@ class MockWebSocket extends EventEmitter {
     if (data.includes('"method":"ping"')) {
       const message = JSON.parse(data);
       setTimeout(() => {
-        this.emit('message', { 
+        this.emit('message', {
           data: JSON.stringify({
             jsonrpc: '2.0',
             id: message.id,
-            result: 'pong'
-          })
+            result: 'pong',
+          }),
         });
       }, 5);
     }
@@ -62,14 +101,14 @@ describe('ConnectionManager', () => {
       maxIdleTime: 1000,
       healthCheckInterval: 100,
       reconnectInterval: 50,
-      maxReconnectAttempts: 3
+      maxReconnectAttempts: 3,
     });
 
     defaultOptions = {
       timeout: 5000,
       retryAttempts: 2,
       retryDelay: 100,
-      keepAlive: true
+      keepAlive: true,
     };
   });
 
@@ -98,14 +137,12 @@ describe('ConnectionManager', () => {
 
     it('should enforce connection pool limits', async () => {
       const promises = [];
-      
+
       // Create connections up to the limit
       for (let i = 0; i < 5; i++) {
-        promises.push(
-          connectionManager.createConnection(`ws://localhost:808${i}`, defaultOptions)
-        );
+        promises.push(connectionManager.createConnection(`ws://localhost:808${i}`, defaultOptions));
       }
-      
+
       await Promise.all(promises);
 
       // Attempt to create one more connection should fail
@@ -116,7 +153,7 @@ describe('ConnectionManager', () => {
 
     it('should handle connection timeout', async () => {
       // Mock WebSocket that never connects
-      class TimeoutWebSocket extends EventEmitter {
+      class TimeoutWebSocket extends EventBridgedWebSocket {
         public readyState = WebSocket.CONNECTING;
         constructor(url: string) {
           super();
@@ -132,7 +169,7 @@ describe('ConnectionManager', () => {
       (global as any).WebSocket = TimeoutWebSocket;
 
       const shortTimeoutOptions = { ...defaultOptions, timeout: 50 };
-      
+
       await expect(
         connectionManager.createConnection('ws://localhost:8080', shortTimeoutOptions)
       ).rejects.toThrow('Connection timeout');
@@ -146,47 +183,47 @@ describe('ConnectionManager', () => {
     it('should close connection successfully', async () => {
       const endpoint = 'ws://localhost:8080';
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       expect(connectionManager.getConnection(endpoint)).toBeDefined();
-      
+
       await connectionManager.closeConnection(endpoint);
-      
+
       expect(connectionManager.getConnection(endpoint)).toBeNull();
     });
 
     it('should get connection status correctly', async () => {
       const endpoint = 'ws://localhost:8080';
-      
+
       expect(connectionManager.getConnectionStatus(endpoint)).toBe(ConnectionStatus.DISCONNECTED);
-      
+
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       expect(connectionManager.getConnectionStatus(endpoint)).toBe(ConnectionStatus.CONNECTED);
     });
 
     it('should list all connections', async () => {
       const endpoints = ['ws://localhost:8080', 'ws://localhost:8081'];
-      
+
       for (const endpoint of endpoints) {
         await connectionManager.createConnection(endpoint, defaultOptions);
       }
-      
+
       const connections = connectionManager.listConnections();
       expect(connections).toHaveLength(2);
-      expect(connections.map(c => c.endpoint)).toEqual(expect.arrayContaining(endpoints));
+      expect(connections.map((c) => c.endpoint)).toEqual(expect.arrayContaining(endpoints));
     });
 
     it('should close all connections', async () => {
       const endpoints = ['ws://localhost:8080', 'ws://localhost:8081'];
-      
+
       for (const endpoint of endpoints) {
         await connectionManager.createConnection(endpoint, defaultOptions);
       }
-      
+
       expect(connectionManager.listConnections()).toHaveLength(2);
-      
+
       await connectionManager.closeAllConnections();
-      
+
       expect(connectionManager.listConnections()).toHaveLength(0);
     });
   });
@@ -194,15 +231,15 @@ describe('ConnectionManager', () => {
   describe('Connection Retry Logic', () => {
     it('should retry connection with exponential backoff', async () => {
       let attemptCount = 0;
-      
+
       // Mock WebSocket that fails first two attempts
-      class RetryWebSocket extends EventEmitter {
+      class RetryWebSocket extends EventBridgedWebSocket {
         public readyState = WebSocket.CONNECTING;
-        
+
         constructor(url: string) {
           super();
           attemptCount++;
-          
+
           setTimeout(() => {
             if (attemptCount <= 2) {
               this.readyState = WebSocket.CLOSED;
@@ -213,7 +250,7 @@ describe('ConnectionManager', () => {
             }
           }, 10);
         }
-        
+
         send() {}
         close() {
           this.readyState = WebSocket.CLOSED;
@@ -223,8 +260,11 @@ describe('ConnectionManager', () => {
 
       (global as any).WebSocket = RetryWebSocket;
 
-      const connection = await connectionManager.createConnection('ws://localhost:8080', defaultOptions);
-      
+      const connection = await connectionManager.createConnection(
+        'ws://localhost:8080',
+        defaultOptions
+      );
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
       expect(attemptCount).toBe(3);
 
@@ -234,9 +274,9 @@ describe('ConnectionManager', () => {
 
     it('should fail after max retry attempts', async () => {
       // Mock WebSocket that always fails
-      class FailingWebSocket extends EventEmitter {
+      class FailingWebSocket extends EventBridgedWebSocket {
         public readyState = WebSocket.CONNECTING;
-        
+
         constructor(url: string) {
           super();
           setTimeout(() => {
@@ -244,7 +284,7 @@ describe('ConnectionManager', () => {
             this.emit('error', new Error('Connection failed'));
           }, 10);
         }
-        
+
         send() {}
         close() {
           this.readyState = WebSocket.CLOSED;
@@ -267,9 +307,9 @@ describe('ConnectionManager', () => {
     it('should track connection health', async () => {
       const endpoint = 'ws://localhost:8080';
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       const health = connectionManager.getConnectionHealth(endpoint);
-      
+
       expect(health).toBeDefined();
       expect(health!.endpoint).toBe(endpoint);
       expect(health!.isHealthy).toBe(true);
@@ -279,11 +319,11 @@ describe('ConnectionManager', () => {
     it('should perform health checks', async () => {
       const endpoint = 'ws://localhost:8080';
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       const isHealthy = await connectionManager.checkConnectionHealth(endpoint);
-      
+
       expect(isHealthy).toBe(true);
-      
+
       const health = connectionManager.getConnectionHealth(endpoint);
       expect(health!.isHealthy).toBe(true);
     });
@@ -291,14 +331,14 @@ describe('ConnectionManager', () => {
     it('should detect unhealthy connections', async () => {
       const endpoint = 'ws://localhost:8080';
       const connection = await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       // Simulate connection failure
       await connection.close();
-      
+
       const isHealthy = await connectionManager.checkConnectionHealth(endpoint);
-      
+
       expect(isHealthy).toBe(false);
-      
+
       const health = connectionManager.getConnectionHealth(endpoint);
       expect(health!.isHealthy).toBe(false);
       expect(health!.consecutiveFailures).toBeGreaterThan(0);
@@ -308,13 +348,13 @@ describe('ConnectionManager', () => {
   describe('Automatic Reconnection', () => {
     it('should attempt automatic reconnection on disconnect', (done) => {
       const endpoint = 'ws://localhost:8080';
-      
+
       connectionManager.on('reconnectionScheduled', (reconnectEndpoint, delay) => {
         expect(reconnectEndpoint).toBe(endpoint);
         expect(delay).toBeGreaterThan(0);
         done();
       });
-      
+
       connectionManager.createConnection(endpoint, defaultOptions).then((connection) => {
         // Simulate disconnection
         (connection as any).ws.emit('close');
@@ -323,19 +363,19 @@ describe('ConnectionManager', () => {
 
     it('should abandon reconnection after max attempts', (done) => {
       const endpoint = 'ws://localhost:8080';
-      
+
       connectionManager.on('reconnectionAbandoned', (reconnectEndpoint, attempts) => {
         expect(reconnectEndpoint).toBe(endpoint);
         expect(attempts).toBeGreaterThanOrEqual(3);
         done();
       });
-      
+
       connectionManager.createConnection(endpoint, defaultOptions).then((connection) => {
         const health = connectionManager.getConnectionHealth(endpoint);
         if (health) {
           health.consecutiveFailures = 5; // Exceed max attempts
         }
-        
+
         // Simulate disconnection
         (connection as any).ws.emit('close');
       });
@@ -345,13 +385,13 @@ describe('ConnectionManager', () => {
   describe('Connection Pool Statistics', () => {
     it('should provide pool statistics', async () => {
       const endpoints = ['ws://localhost:8080', 'ws://localhost:8081'];
-      
+
       for (const endpoint of endpoints) {
         await connectionManager.createConnection(endpoint, defaultOptions);
       }
-      
+
       const stats = connectionManager.getPoolStatistics();
-      
+
       expect(stats.totalConnections).toBe(2);
       expect(stats.activeConnections).toBe(2);
       expect(stats.healthyConnections).toBe(2);
@@ -361,9 +401,9 @@ describe('ConnectionManager', () => {
     it('should provide detailed statistics', async () => {
       const endpoint = 'ws://localhost:8080';
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       const stats = connectionManager.getDetailedStatistics();
-      
+
       expect(stats.pool.totalConnections).toBe(1);
       expect(stats.pool.activeConnections).toBe(1);
       expect(stats.pool.utilizationPercentage).toBe(20); // 1/5 * 100
@@ -375,9 +415,9 @@ describe('ConnectionManager', () => {
     it('should provide connection metrics', async () => {
       const endpoint = 'ws://localhost:8080';
       await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       const metrics = connectionManager.getConnectionMetrics();
-      
+
       expect(metrics.totalConnections).toBe(1);
       expect(metrics.activeConnections).toBe(1);
       expect(metrics.failedConnections).toBe(0);
@@ -386,13 +426,13 @@ describe('ConnectionManager', () => {
 
     it('should aggregate metrics from multiple connections', async () => {
       const endpoints = ['ws://localhost:8080', 'ws://localhost:8081'];
-      
+
       for (const endpoint of endpoints) {
         await connectionManager.createConnection(endpoint, defaultOptions);
       }
-      
+
       const metrics = connectionManager.getConnectionMetrics();
-      
+
       expect(metrics.totalConnections).toBe(2);
       expect(metrics.activeConnections).toBe(2);
     });
@@ -402,13 +442,13 @@ describe('ConnectionManager', () => {
     it('should clean up idle connections', async () => {
       const endpoint = 'ws://localhost:8080';
       const connection = await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       // Simulate connection becoming inactive
       await connection.close();
-      
+
       // Wait for cleanup interval
-      await new Promise(resolve => setTimeout(resolve, 150));
-      
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
       expect(connectionManager.getConnection(endpoint)).toBeNull();
     });
   });
@@ -416,15 +456,15 @@ describe('ConnectionManager', () => {
   describe('Graceful Shutdown', () => {
     it('should shutdown gracefully', async () => {
       const endpoints = ['ws://localhost:8080', 'ws://localhost:8081'];
-      
+
       for (const endpoint of endpoints) {
         await connectionManager.createConnection(endpoint, defaultOptions);
       }
-      
+
       expect(connectionManager.listConnections()).toHaveLength(2);
-      
+
       await connectionManager.shutdown();
-      
+
       expect(connectionManager.listConnections()).toHaveLength(0);
     });
 
@@ -432,7 +472,7 @@ describe('ConnectionManager', () => {
       connectionManager.on('shutdown', () => {
         done();
       });
-      
+
       connectionManager.shutdown();
     });
   });
@@ -440,16 +480,16 @@ describe('ConnectionManager', () => {
   describe('Error Handling', () => {
     it('should handle WebSocket errors gracefully', async () => {
       // Mock WebSocket that emits error
-      class ErrorWebSocket extends EventEmitter {
+      class ErrorWebSocket extends EventBridgedWebSocket {
         public readyState = WebSocket.CONNECTING;
-        
+
         constructor(url: string) {
           super();
           setTimeout(() => {
             this.emit('error', new Error('WebSocket error'));
           }, 10);
         }
-        
+
         send() {}
         close() {
           this.readyState = WebSocket.CLOSED;
@@ -461,7 +501,7 @@ describe('ConnectionManager', () => {
 
       await expect(
         connectionManager.createConnection('ws://localhost:8080', defaultOptions)
-      ).rejects.toThrow('Connection failed');
+      ).rejects.toThrow('WebSocket error');
 
       // Restore mock
       (global as any).WebSocket = MockWebSocket;
@@ -470,16 +510,16 @@ describe('ConnectionManager', () => {
     it('should handle send errors', async () => {
       const endpoint = 'ws://localhost:8080';
       const connection = await connectionManager.createConnection(endpoint, defaultOptions);
-      
+
       // Close the connection to make send fail
       await connection.close();
-      
+
       await expect(
         connection.send({
           type: 'request',
           content: { jsonrpc: '2.0', id: 1, method: 'test' },
           timestamp: new Date(),
-          source: 'test'
+          source: 'test',
         })
       ).rejects.toThrow('Connection not active');
     });
