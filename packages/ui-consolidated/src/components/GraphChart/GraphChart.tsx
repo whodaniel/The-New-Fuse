@@ -63,14 +63,14 @@ export function GraphChart({
   colors = defaultColors,
   className = '',
 }: ChartProps) {
-  const isPieChart = type === 'pie';
-  const chartData = isPieChart ? (data as ChartData[]) : (data as SeriesData[]);
+  const pieData = data as ChartData[];
+  const seriesData = data as SeriesData[];
 
   const renderChart = () => {
     switch (type) {
       case 'line':
         return (
-          <LineChart data={chartData}>
+          <LineChart data={seriesData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={xAxisKey} />
             <YAxis />
@@ -94,7 +94,7 @@ export function GraphChart({
 
       case 'bar':
         return (
-          <BarChart data={chartData}>
+          <BarChart data={seriesData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={xAxisKey} />
             <YAxis />
@@ -120,7 +120,7 @@ export function GraphChart({
         return (
           <PieChart>
             <Pie
-              data={chartData}
+              data={pieData}
               dataKey="value"
               nameKey="label"
               cx="50%"
@@ -128,7 +128,7 @@ export function GraphChart({
               outerRadius={80}
               label
             >
-              {chartData.map((entry, index) => (
+              {pieData.map((entry, index) => (
                 <Cell key={entry.id} fill={entry.color || colors[index % colors.length]} />
               ))}
             </Pie>
@@ -139,7 +139,7 @@ export function GraphChart({
 
       case 'area':
         return (
-          <AreaChart data={chartData}>
+          <AreaChart data={seriesData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={xAxisKey} />
             <YAxis />

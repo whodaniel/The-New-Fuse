@@ -25,6 +25,7 @@ import { EventEmitter } from 'events';
 import type { Cluster, Redis } from 'ioredis';
 import { createAgentIdentityRecord } from './contracts/identity.js';
 import { getNativeEnvelopeValidatorStatus } from './protocol/native-envelope-validator.js';
+import { stringifySignedBusMessage } from './protocol/sign-bus-message.js';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope.js';
 
 export interface RedisRelayBridgeConfig {
@@ -159,12 +160,18 @@ export class RedisRelayBridge extends EventEmitter {
     // No need for a second validateTNFEnvelope call here.
     const normalizedEnvelope = envelope;
 
-    // Publish to ingress
+    // Publish to ingress (signed for RedisAgentClient consumers)
     try {
-      await this.redisClient.publish(
+      const signerId =
+        String(normalizedEnvelope?.from?.agentId || agentId || 'redis-relay-bridge').trim() ||
+        'redis-relay-bridge';
+      const payload = stringifySignedBusMessage(
+        signerId,
         this.config.ingressChannel,
-        JSON.stringify(normalizedEnvelope)
+        normalizedEnvelope,
+        String(normalizedEnvelope.type || 'event')
       );
+      await this.redisClient.publish(this.config.ingressChannel, payload);
       console.log(
         `[Redis-Bridge] Published to ${this.config.ingressChannel}:`,
         normalizedEnvelope.id
@@ -269,8 +276,11 @@ export class RedisRelayBridge extends EventEmitter {
    * Publish a raw message to a specific Redis channel
    */
   async publish(channel: string, message: string): Promise<number> {
+    // Soft-fail while connecting / after disconnect — never crash the relay
+    // event loop (master-clock floods AGENT_REGISTER/CHANNEL_* on boot).
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn(`[Redis-Bridge] Not connected, dropping publish to ${channel}`);
+      return 0;
     }
     return (this.redisClient as any).publish(channel, message);
   }
@@ -280,11 +290,21 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async publishToIngress(envelope: TNFEnvelope): Promise<void> {
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn('[Redis-Bridge] Not connected, dropping publishToIngress');
+      return;
     }
 
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
+    const signerId =
+      String(normalizedEnvelope?.from?.agentId || 'redis-relay-bridge').trim() ||
+      'redis-relay-bridge';
+    const payload = stringifySignedBusMessage(
+      signerId,
+      this.config.ingressChannel,
+      normalizedEnvelope,
+      String(normalizedEnvelope.type || 'event')
+    );
+    await this.redisClient.publish(this.config.ingressChannel, payload);
     console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
   }
 
@@ -293,12 +313,22 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async publishToAgent(agentId: string, envelope: TNFEnvelope): Promise<void> {
     if (!this.connected) {
-      throw new Error('Not connected to Redis');
+      console.warn(`[Redis-Bridge] Not connected, dropping publishToAgent ${agentId}`);
+      return;
     }
 
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
+    const signerId =
+      String(normalizedEnvelope?.from?.agentId || 'redis-relay-bridge').trim() ||
+      'redis-relay-bridge';
+    const payload = stringifySignedBusMessage(
+      signerId,
+      channel,
+      normalizedEnvelope,
+      String(normalizedEnvelope.type || 'event')
+    );
+    await this.redisClient.publish(channel, payload);
     console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
   }
 

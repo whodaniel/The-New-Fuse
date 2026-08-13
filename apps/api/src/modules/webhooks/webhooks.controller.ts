@@ -27,6 +27,7 @@ import {
 } from '@the-new-fuse/types';
 import { Response } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard';
 import { BusinessEventService } from './services/business-event.service';
 import { SSEService } from './services/sse.service';
 import { WebhooksService } from './webhooks.service';
@@ -59,6 +60,7 @@ export class WebhooksController {
   }
 
   @Post('incoming/:source')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
   @ApiOperation({ summary: 'Handle incoming webhook from integration source' })
   @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
   async handleWebhook(
