@@ -46,5 +46,6 @@
     },
     "./package.json": "./package.json",
     "./*": "./dist/*"
-  }
+  },
+  "type": "module"
 }

@@ -45,6 +45,7 @@ type Classification = {
     | 'CLI_KILO'
     | 'CLI_OPENCODE'
     | 'CLI_PI'
+    | 'CLI_QODER'
     | 'API_CLAUDE_CODE'
     | 'GITHUB_JULES'
     | 'TNF_CORE'
@@ -198,6 +199,7 @@ function deriveRole(meta: ParsedFrontmatter): Classification['workerAction'] {
   if (name.includes('test') || name.includes('qa')) return 'cli_qa';
   if (name.includes('review')) return 'code_review';
   if (name.includes('research')) return 'cli_research';
+  if (name.includes('qoder')) return 'cli_coder';
   if (agentType === 'external') return 'cli_coder';
   return 'unknown';
 }
@@ -208,6 +210,7 @@ function deriveType(name: string, meta: ParsedFrontmatter): Classification['type
   if (n.includes('kilo')) return 'CLI_KILO';
   if (n.includes('opencode')) return 'CLI_OPENCODE';
   if (n.includes('pi')) return 'CLI_PI';
+  if (n.includes('qoder')) return 'CLI_QODER';
   if (n.includes('jules')) return 'GITHUB_JULES';
   if (n.includes('tnf') || n.includes('hermes')) return 'TNF_CORE';
   return 'BASIC';
@@ -305,6 +308,7 @@ export function classifyOne(
         type === 'CLI_KILO' ||
         type === 'CLI_OPENCODE' ||
         type === 'CLI_PI' ||
+        type === 'CLI_QODER' ||
         type === 'API_CLAUDE_CODE'
           ? 'cli'
           : type === 'TNF_CORE'
@@ -386,22 +390,63 @@ export function runAgentsClassify(options: {
     : path.join(repoRoot, '.tnf', 'agent-registry-snapshot.json');
 
   let priorNames = new Set<string>();
+  let priorAgents: any[] = [];
   if (fs.existsSync(snapshotPath)) {
     try {
       const prior = JSON.parse(fs.readFileSync(snapshotPath, 'utf-8'));
       if (Array.isArray(prior?.agents)) {
-        priorNames = new Set(prior.agents.map((a: any) => String(a.name)));
+        priorAgents = prior.agents;
+        priorNames = new Set(priorAgents.map((a: any) => String(a.name)));
       }
     } catch {
       // ignore; we're about to overwrite anyway
     }
   }
-  const newNames = new Set(classified.map((c) => c.name));
   let inserted = 0;
   let updated = 0;
+  let unchanged = 0;
   for (const c of classified) {
-    if (priorNames.has(c.name)) updated += 1;
-    else inserted += 1;
+    if (priorNames.has(c.name)) {
+      // Check whether the classification payload truly differs from the prior
+      // snapshot record: if name + role + type match, count it as unchanged
+      // (idempotent re-run), otherwise update.
+      const priorMatch = priorAgents.find((a: any) => String(a.name) === c.name);
+      const priorKey = priorMatch
+        ? JSON.stringify({
+            role: priorMatch.workerAction ?? priorMatch.role,
+            type: priorMatch.type,
+            daccRole: priorMatch.daccRole,
+            provider: priorMatch.provider,
+            fulfillment: priorMatch.fulfillment
+              ? {
+                  vendor: priorMatch.fulfillment.vendor,
+                  model: priorMatch.fulfillment.model,
+                  transport: priorMatch.fulfillment.transport,
+                  protocol_version: priorMatch.fulfillment.protocol_version,
+                }
+              : null,
+          })
+        : null;
+      const nextKey = JSON.stringify({
+        role: c.workerAction,
+        type: c.type,
+        daccRole: c.daccRole,
+        provider: c.provider,
+        fulfillment: {
+          vendor: c.fulfillment.vendor,
+          model: c.fulfillment.model,
+          transport: c.fulfillment.transport,
+          protocol_version: c.fulfillment.protocol_version,
+        },
+      });
+      if (priorKey === nextKey) {
+        unchanged += 1;
+      } else {
+        updated += 1;
+      }
+    } else {
+      inserted += 1;
+    }
   }
 
   const summary = {
@@ -414,7 +459,7 @@ export function runAgentsClassify(options: {
       errors: errors.length,
       inserted,
       updated,
-      unchanged: priorNames.size - updated,
+      unchanged,
     },
     agents: classified,
   };
