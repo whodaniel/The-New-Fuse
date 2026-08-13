@@ -53,6 +53,7 @@ export interface LogConfig {
     level?: LogLevel;
     format?: any;
     transports?: winston.transport[];
+    service?: string;
 }
 
 export class LoggerWrapper {
@@ -107,5 +108,7 @@ export class LoggerWrapper {
 export const createCustomizedLogger = (config?: LogConfig): LoggerWrapper => {
     return new LoggerWrapper(config);
 };
+
+export { LoggerWrapper as Logger };
 
 export default createCustomizedLogger;

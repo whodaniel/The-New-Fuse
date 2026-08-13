@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../../utils/cn';
+import { cn } from '../../utils/cn.js';
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
 

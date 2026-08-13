@@ -13,7 +13,7 @@ export enum ConnectionStatus {
   CONNECTED = 'connected',
   DISCONNECTED = 'disconnected',
   ERROR = 'error',
-  RECONNECTING = 'reconnecting'
+  RECONNECTING = 'reconnecting',
 }
 
 /**
@@ -112,6 +112,8 @@ export interface MCPConnection extends EventEmitter {
   lastActivity: Date;
   /** Connection metadata */
   metadata?: Record<string, any>;
+  /** Set by close() to distinguish a deliberate close from an unexpected drop */
+  isIntentionalClose?: boolean;
 
   /**
    * Send a message through the connection

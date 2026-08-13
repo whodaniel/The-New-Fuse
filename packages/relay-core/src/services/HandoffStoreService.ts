@@ -16,6 +16,14 @@ import {
   type HandoffPacket as HandoffPacketType,
   type HandoffStatus,
 } from '../protocol/handoff-protocol.js';
+import {
+  softRetirePacketFromLiveIndexes,
+  sweepHandoffPacketLifecycle,
+  writeVerificationReceipt,
+  type HandoffVerificationReceipt,
+  type SweepHandoffLifecycleOptions,
+  type SweepHandoffLifecycleResult,
+} from './handoff-packet-lifecycle.service.js';
 
 interface HandoffStoreOptions {
   redisUrl?: string;
@@ -113,10 +121,12 @@ export class HandoffStoreService {
         pipeline.set(packetKey, JSON.stringify(packet), { ex: ttlSeconds });
 
         for (const agentId of packet.targets.agentIds) {
-          const inboxKey = this.agentInboxKey(agentId);
-          pipeline.lpush(inboxKey, packet.id);
-          pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-          pipeline.expire(inboxKey, ttlSeconds);
+          // Dual-write: wrappers historically used inbox:{id}; store used inbox:agent:{id}.
+          for (const inboxKey of this.agentInboxKeys(agentId)) {
+            pipeline.lpush(inboxKey, packet.id);
+            pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+            pipeline.expire(inboxKey, ttlSeconds);
+          }
         }
 
         if (packet.scope.sessionKey) {
@@ -135,10 +145,11 @@ export class HandoffStoreService {
         multi.set(packetKey, JSON.stringify(packet), 'EX', ttlSeconds);
 
         for (const agentId of packet.targets.agentIds) {
-          const inboxKey = this.agentInboxKey(agentId);
-          multi.lpush(inboxKey, packet.id);
-          multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-          multi.expire(inboxKey, ttlSeconds);
+          for (const inboxKey of this.agentInboxKeys(agentId)) {
+            multi.lpush(inboxKey, packet.id);
+            multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+            multi.expire(inboxKey, ttlSeconds);
+          }
         }
 
         if (packet.scope.sessionKey) {
@@ -190,17 +201,24 @@ export class HandoffStoreService {
     const includeAcknowledged = options.includeAcknowledged ?? false;
     const result: AgentHandoffView[] = [];
 
-    const inboxKey = this.agentInboxKey(agentId);
     let candidateIds: string[] = [];
 
     candidateIds = await this.withRetry('list handoff inbox', async () => {
-      if (this.upstash) {
-        return await this.upstash.lrange(inboxKey, 0, limit * 10 - 1);
+      const ids: string[] = [];
+      for (const inboxKey of this.agentInboxKeys(agentId)) {
+        let chunk: string[] = [];
+        if (this.upstash) {
+          chunk = (await this.upstash.lrange(inboxKey, 0, limit * 10 - 1)) || [];
+        } else if (this.client) {
+          chunk = (await this.client.lrange(inboxKey, 0, limit * 10 - 1)) || [];
+        } else {
+          throw new Error('No handoff store backend is available');
+        }
+        for (const id of chunk) {
+          if (!ids.includes(id)) ids.push(id);
+        }
       }
-      if (this.client) {
-        return await this.client.lrange(inboxKey, 0, limit * 10 - 1);
-      }
-      throw new Error('No handoff store backend is available');
+      return ids;
     });
 
     for (const packetId of candidateIds) {
@@ -297,6 +315,65 @@ export class HandoffStoreService {
     return packets;
   }
 
+  /**
+   * Record verification and soft-retire from live inboxes when result=pass.
+   * Requires terminal acks for all targets. See HANDOFF_PACKET_LIFECYCLE.md.
+   */
+  async verifyAndRetire(
+    receipt: Omit<HandoffVerificationReceipt, 'verifiedAt'> & { verifiedAt?: string }
+  ): Promise<HandoffVerificationReceipt> {
+    await this.connect();
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('verify and retire handoff packet', async () =>
+      writeVerificationReceipt(
+        redis,
+        {
+          ...receipt,
+          verifiedAt: receipt.verifiedAt ?? this.now().toISOString(),
+        },
+        { keyPrefix: this.keyPrefix }
+      )
+    );
+  }
+
+  /** Soft-retire a packet from live inbox/session indexes (idempotent). */
+  async softRetire(packetId: string): Promise<number> {
+    await this.connect();
+    const packet = await this.getPacket(packetId);
+    if (!packet) {
+      throw new Error(`Cannot soft-retire missing packet: ${packetId}`);
+    }
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('soft-retire handoff packet', async () =>
+      softRetirePacketFromLiveIndexes(redis, packet, this.keyPrefix)
+    );
+  }
+
+  /** Periodic lifecycle sweep: dangling/expired LREM, verify grace, archive. */
+  async sweepLifecycle(
+    options: SweepHandoffLifecycleOptions = {}
+  ): Promise<SweepHandoffLifecycleResult> {
+    await this.connect();
+    const redis = this.requireLifecycleRedis();
+    return this.withRetry('sweep handoff packet lifecycle', async () =>
+      sweepHandoffPacketLifecycle(redis, {
+        ...options,
+        keyPrefix: options.keyPrefix ?? this.keyPrefix,
+        now: options.now ?? this.now,
+      })
+    );
+  }
+
+  private requireLifecycleRedis() {
+    if (this.client) {
+      return this.client as any;
+    }
+    if (this.upstash) {
+      return this.upstash as any;
+    }
+    throw new Error('No handoff store backend is available');
+  }
+
   private async getAck(
     packetId: string,
     agentId: string
@@ -343,8 +420,18 @@ export class HandoffStoreService {
     return `${this.keyPrefix}:ack:${packetId}`;
   }
 
+  /** Canonical store key (API / HandoffStoreService). */
   private agentInboxKey(agentId: string): string {
     return `${this.keyPrefix}:inbox:agent:${agentId}`;
+  }
+
+  /**
+   * Both inbox key shapes used in the wild. Role/platform of the agent does not
+   * change which shape applies — wrappers wrote `inbox:{id}` while the store
+   * historically wrote `inbox:agent:{id}`.
+   */
+  private agentInboxKeys(agentId: string): string[] {
+    return [`${this.keyPrefix}:inbox:${agentId}`, this.agentInboxKey(agentId)];
   }
 
   private sessionIndexKey(sessionKey: string): string {
@@ -398,7 +485,9 @@ export class HandoffStoreService {
     }
 
     const message = lastError instanceof Error ? lastError.message : String(lastError);
-    throw new Error(`Handoff store ${operation} failed after ${this.maxRetries + 1} attempt(s): ${message}`);
+    throw new Error(
+      `Handoff store ${operation} failed after ${this.maxRetries + 1} attempt(s): ${message}`
+    );
   }
 
   private sleep(ms: number): Promise<void> {
