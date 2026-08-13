@@ -1,4 +1,4 @@
-import { ExportButton } from './ExportButton';
+import { ExportButton } from './ExportButton.js';
 
 export default {
   title: 'Components/ExportButton',
@@ -21,6 +21,10 @@ export const Markdown = () => (
 
 export const PlainText = () => (
   <div style={{ maxWidth: 400 }}>
-    <ExportButton conversation={sampleConversation} format="txt" buttonLabel="Export as Plain Text" />
+    <ExportButton
+      conversation={sampleConversation}
+      format="txt"
+      buttonLabel="Export as Plain Text"
+    />
   </div>
 );

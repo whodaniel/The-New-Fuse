@@ -1,0 +1,11 @@
+{
+  "name": "@the-new-fuse/claw-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Canonical markdown skill packs for OpenClaw / PicoClaw (symlinked consumers)",
+  "files": [
+    "*/SKILL.md",
+    "*/**/*",
+    "README.md"
+  ]
+}

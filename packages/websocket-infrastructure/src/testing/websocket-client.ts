@@ -221,7 +221,7 @@ export class WebSocketTestClient {
         () => {
           this.logger.log('Reconnection successful');
         },
-        (error) => {
+        (error: Error) => {
           this.logger.error(`Reconnection failed: ${error.message}`);
         }
       );

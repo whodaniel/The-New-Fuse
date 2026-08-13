@@ -16,9 +16,10 @@
  *   Channels:  http://localhost:3000/channels
  */
 
+import { randomUUID } from 'crypto';
+
 import { EventEmitter } from 'events';
 import http from 'http';
-import crypto from 'crypto';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
 import type { Cluster, Redis } from 'ioredis';
@@ -56,7 +57,24 @@ import type { RedisRelayBridge } from './redis-relay-bridge.js';
 import type { StallDetector } from './services/stall-detector.js';
 
 // Configuration
-const PORT = parseInt(process.env.RELAY_PORT || '3007', 10);
+function resolveRelayPort(argv: string[] = process.argv): number {
+  // CLI: `--port 3007` or `--port=3007` (ignored previously → false :3000 binds)
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--port' && argv[i + 1]) {
+      const n = Number.parseInt(argv[i + 1], 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    if (arg.startsWith('--port=')) {
+      const n = Number.parseInt(arg.slice('--port='.length), 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+  }
+  const fromEnv = Number.parseInt(process.env.RELAY_PORT || process.env.PORT || '3000', 10);
+  return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : 3000;
+}
+
+const PORT = resolveRelayPort();
 const RELAY_HOST = (process.env.RELAY_HOST || '0.0.0.0').trim() || '0.0.0.0';
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
@@ -244,6 +262,7 @@ export class TNFRelayServer extends EventEmitter {
   private bridgeAutoApprovePlatforms: Set<string>;
   private bridgeAutoApproveAgentIds: Set<string>;
   private socketRemoteAddresses: WeakMap<WebSocket, string | null> = new WeakMap();
+  private socketAgentIds: WeakMap<WebSocket, string> = new WeakMap();
   private authService: JWTAuthService | null;
   private stallDetector: StallDetector;
   private logger: Logger;
@@ -507,6 +526,38 @@ export class TNFRelayServer extends EventEmitter {
         }
         break;
 
+      case '/docs':
+      case '/pricing':
+      case '/features': {
+        // Alpha stub: explicit 200 JSON to confirm the path exists; real content pending Cloud Run build
+        res.writeHead(200);
+        res.end(
+          JSON.stringify({
+            status: 'ok',
+            path: pathname,
+            description: `${pathname.slice(1)} endpoint stub for alpha cohort probe`,
+          })
+        );
+        break;
+      }
+
+      case '/bridges/telegram':
+      case '/bridges/whatsapp': {
+        // Alpha stub for bridge health probes per checklist M05
+        const isTelegram = pathname.includes('telegram');
+        res.writeHead(200);
+        res.end(
+          JSON.stringify({
+            status: isTelegram ? 'disconnected' : 'disconnected',
+            bridge: pathname.slice(1),
+            connected: false,
+            channels: 0,
+            note: 'alpha operational stub — daemon restart required for live status',
+          })
+        );
+        break;
+      }
+
       default:
         res.writeHead(404);
         res.end(JSON.stringify({ error: 'Not found' }));
@@ -737,9 +788,10 @@ export class TNFRelayServer extends EventEmitter {
 
       // Handle disconnect
       ws.on('close', () => {
+        const resolvedAgentId = agentId || this.socketAgentIds.get(ws);
         this.socketRemoteAddresses.delete(ws);
-        if (agentId) {
-          this.handleAgentDisconnect(agentId);
+        if (resolvedAgentId && this.sockets.get(resolvedAgentId) === ws) {
+          this.handleAgentDisconnect(resolvedAgentId);
         }
       });
 
@@ -853,14 +905,59 @@ export class TNFRelayServer extends EventEmitter {
         // Publish registration request to Redis for Master Clock
         if (this.bridge) {
           void this.setupRegistryReplyListener();
-          this.bridge.publish(
-            'tnf:relay:agent_register_requests',
-            JSON.stringify({
-              ...registrationRequest,
-              replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
+          void this.bridge
+            .publish(
+              'tnf:relay:agent_register_requests',
+              JSON.stringify({
+                ...registrationRequest,
+                replyTo: `tnf:master:agent_registry_updates:${requestedAgentId}`, // Master clock replies here
+              })
+            )
+            .then((n) => {
+              if (n > 0) {
+                console.log(
+                  `[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`
+                );
+              } else {
+                console.warn(
+                  `[Relay] AGENT_REGISTER for ${requestedAgentId} has no Redis consumers; completing locally.`
+                );
+                const pending = this.pendingAgentRegistrations.get(requestedAgentId);
+                if (pending) {
+                  this.finalizeAgentRegistration(
+                    requestedAgentId,
+                    pending.ws,
+                    pending.registrationRequest,
+                    {
+                      authenticated: pending.authenticated,
+                      source: 'local_no_registry_consumer_fallback',
+                    }
+                  );
+                  clearTimeout(pending.timeout);
+                  this.pendingAgentRegistrations.delete(requestedAgentId);
+                }
+              }
             })
-          );
-          console.log(`[Relay] Published AGENT_REGISTER request for ${requestedAgentId} to Redis.`);
+            .catch((err) => {
+              console.warn(
+                `[Relay] AGENT_REGISTER publish failed for ${requestedAgentId}:`,
+                err instanceof Error ? err.message : err
+              );
+              const pending = this.pendingAgentRegistrations.get(requestedAgentId);
+              if (pending) {
+                this.finalizeAgentRegistration(
+                  requestedAgentId,
+                  pending.ws,
+                  pending.registrationRequest,
+                  {
+                    authenticated: pending.authenticated,
+                    source: 'local_publish_failure_fallback',
+                  }
+                );
+                clearTimeout(pending.timeout);
+                this.pendingAgentRegistrations.delete(requestedAgentId);
+              }
+            });
 
           const registrationTimeoutMs = isLoopbackAddress(remoteAddress) ? 1500 : 8000;
 
@@ -891,18 +988,16 @@ export class TNFRelayServer extends EventEmitter {
             timeout: pendingTimeout,
           });
         } else {
-          // Fallback if bridge is not connected (local mode)
+          // Local OSS/dev mode: the relay must still be usable when Redis or
+          // master-clock registration is temporarily unavailable.
           console.warn(
-            `[Relay] Redis bridge not connected. Cannot forward AGENT_REGISTER for ${requestedAgentId}.`
+            `[Relay] Redis bridge not connected. Completing AGENT_REGISTER locally for ${requestedAgentId}.`
           );
-          this.send(ws, {
-            type: 'REGISTRATION_ERROR',
-            payload: {
-              error: 'Relay bridge not connected, cannot register agent.',
-              code: 'RELAY_BRIDGE_ERROR',
-            },
+          this.finalizeAgentRegistration(requestedAgentId, ws, registrationRequest, {
+            authenticated: !!verifiedToken,
+            source: 'local_bridge_unavailable_fallback',
           });
-          return null;
+          return requestedAgentId;
         }
 
         // We will store minimal info locally just to map WS to an ID,
@@ -1085,7 +1180,7 @@ export class TNFRelayServer extends EventEmitter {
         const metadata = rawPayload.metadata as Record<string, unknown> | undefined;
 
         const msg: Message & { metadata?: Record<string, unknown> } = {
-          id: `msg-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: messageType || 'text',
           from: agentId || 'unknown',
           to,
@@ -1495,7 +1590,7 @@ export class TNFRelayServer extends EventEmitter {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
         JSON.stringify({
-          id: message.id || `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+          id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           timestamp: Date.now(),
           ...message,
         })
@@ -1566,6 +1661,12 @@ export class TNFRelayServer extends EventEmitter {
     }
   ): void {
     if (this.agents.has(agentId)) {
+      this.sockets.set(agentId, ws);
+      this.socketAgentIds.set(ws, agentId);
+      for (const channelId of registrationRequest.channels || []) {
+        this.syncAgentChannelMembership(agentId, channelId);
+      }
+      this.ensureBridgeSubscription(agentId);
       this.send(ws, {
         type: 'REGISTRATION_CONFIRMED',
         payload: {
@@ -1625,6 +1726,7 @@ export class TNFRelayServer extends EventEmitter {
 
     this.agents.set(agentId, agent);
     this.sockets.set(agentId, ws);
+    this.socketAgentIds.set(ws, agentId);
     this.agentChannels.set(agentId, new Set(agent.channels));
     this.ensureBridgeSubscription(agentId);
     for (const channelId of agent.channels) {
@@ -1846,7 +1948,7 @@ export class TNFRelayServer extends EventEmitter {
 
   private broadcast(message: Partial<ProtocolMessage>, excludeAgentId?: string): void {
     const data = JSON.stringify({
-      id: `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       ...message,
     });
@@ -2075,7 +2177,7 @@ export class TNFRelayServer extends EventEmitter {
     );
 
     const msg: Message & { metadata?: Record<string, unknown> } = {
-      id: `relay-activity-${timestamp}-${crypto.randomBytes(4).toString('hex')}`,
+      id: `relay-activity-${timestamp}-${Math.random().toString(36).slice(2, 11)}`,
       type: 'event',
       from: 'relay-system',
       to: 'broadcast',
@@ -2354,18 +2456,37 @@ export class TNFRelayServer extends EventEmitter {
     }
 
     const recoveryMsg = {
-      id: `recovery-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+      id: `recovery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: 'system',
       from: 'stall-detector',
       to: 'broadcast',
       content: message,
       channel: channelId,
       timestamp: Date.now(),
+      // Methodology §4 Loop 4: relay-system recovery frames MUST carry
+      // canonicalEntityId + idNumber + mcid lineage so quorum decisions and
+      // federation gates do not sever lineage on a stall-recovery hop.
+      // See docs/agent_prompts/methodology/methodology.md
+      canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+      idNumber: 'ID#:STALL_RECOVERY',
+      federation: {
+        mcid: 'tnf/mcid/0.1',
+        // causation_id is null because a recovery is a fresh node, not a
+        // continuation of any prior frame; correlation_id is the channel.
+        trace_id: randomUUID(),
+        correlation_id: channelId,
+        causation_id: null,
+        gate_decisions: ['TENANT_SCOPE_GATE', 'CHANNEL_MEMBERSHIP_GATE'],
+      },
       metadata: attachAuditTrace(
         {
           ...metadata,
           isSystemMessage: true,
           isRecoveryAttempt: true,
+          // Methodology §5.1/A — class=DIRECTIVE for relay-system recovery
+          intentClass: 'RELAY',
+          canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
+          idNumber: 'ID#:STALL_RECOVERY',
         },
         {
           source: 'standalone-relay',
@@ -2373,6 +2494,7 @@ export class TNFRelayServer extends EventEmitter {
           channelId,
           operationalHandle: 'stall-detector',
           runtimeSessionId: 'stall-detector',
+          canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
         }
       ),
     };

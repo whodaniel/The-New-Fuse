@@ -1,4 +1,3 @@
-// @ts-ignore
 import { createClient } from '@supabase/supabase-js';
 
 export interface StorySession {
