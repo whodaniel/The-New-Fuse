@@ -1,2 +1,2 @@
-import rootConfig from '../../eslint.config.mjs';
-export default rootConfig;
+const rootConfig = require('../../eslint.config.js');
+module.exports = rootConfig;

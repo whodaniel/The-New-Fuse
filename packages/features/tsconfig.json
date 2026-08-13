@@ -11,7 +11,7 @@
     "types": [],
     "jsx": "react-jsx"
   },
-  "include": ["ui/**/*.ts", "ui/**/*.tsx", "*.d.ts"],
+  "include": ["ui/**/*.ts", "ui/**/*.tsx"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [{ "path": "../types" }]
 }

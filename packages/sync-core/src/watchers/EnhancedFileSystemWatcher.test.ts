@@ -32,10 +32,10 @@ describe('EnhancedFileSystemWatcher', () => {
     } as any;
 
     dbService = {
-      upsertSyncState: jest.fn<any>().mockResolvedValue({}),
-      getSyncState: jest.fn<any>().mockResolvedValue(null),
-      deleteSyncState: jest.fn<any>().mockResolvedValue(undefined),
-      createSyncConflict: jest.fn<any>().mockResolvedValue({}),
+      upsertSyncState: jest.fn().mockResolvedValue({}),
+      getSyncState: jest.fn().mockResolvedValue(null),
+      deleteSyncState: jest.fn().mockResolvedValue(undefined),
+      createSyncConflict: jest.fn().mockResolvedValue({}),
     } as any;
 
     watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);

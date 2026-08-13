@@ -1,20 +1,16 @@
-import { spawn, spawnSync } from 'child_process';
-import * as fs from 'fs';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
+import { WebSocketServer, WebSocket } from 'ws';
+import { spawn, spawnSync } from 'child_process';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { WebSocket, WebSocketServer } from 'ws';
-
-const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
+import * as fs from 'fs';
 
 const CLI_VERSION = (() => {
   try {
-    const pkgPath = path.join(MODULE_DIR, '../package.json');
+    const pkgPath = path.join(__dirname, '../package.json');
     return JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version || '1.0.0';
-  } catch {
-    return '1.0.0';
-  }
+  } catch { return '1.0.0'; }
 })();
+import * as os from 'os';
 
 export interface ServeOptions {
   port?: number;
@@ -92,8 +88,7 @@ export class ServeService {
 
     const allowedOrigins = ['http://localhost', 'http://127.0.0.1', ...this.options.cors];
     const origin = req.headers.origin || '';
-    const isAllowed =
-      allowedOrigins.some((o) => origin.startsWith(o)) || this.options.cors.includes('*');
+    const isAllowed = allowedOrigins.some(o => origin.startsWith(o)) || this.options.cors.includes('*');
 
     if (req.headers.origin) {
       res.setHeader('Access-Control-Allow-Origin', isAllowed ? origin : '');
@@ -109,29 +104,25 @@ export class ServeService {
 
     if (url.pathname === '/health' || url.pathname === '/') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({
-          status: 'ok',
-          service: 'tnf-server',
-          version: CLI_VERSION,
-          pid: process.pid,
-          clients: this.clients.size,
-          cwd: this.options.cwd,
-        })
-      );
+      res.end(JSON.stringify({
+        status: 'ok',
+        service: 'tnf-server',
+        version: CLI_VERSION,
+        pid: process.pid,
+        clients: this.clients.size,
+        cwd: this.options.cwd,
+      }));
       return;
     }
 
     if (url.pathname === '/api/status') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({
-          pid: process.pid,
-          uptime: process.uptime(),
-          memory: process.memoryUsage(),
-          clients: this.clients.size,
-        })
-      );
+      res.end(JSON.stringify({
+        pid: process.pid,
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        clients: this.clients.size,
+      }));
       return;
     }
 
@@ -198,13 +189,19 @@ export class ServeService {
     });
   }
 
-  private broadcastMDNS(): void {
-    try {
-      if (process.platform === 'darwin') {
-        spawnSync('dns-sd', ['-R', `"TNF Server"`, '_http._tcp', '.', String(this.options.port)]);
-      }
-    } catch {}
-  }
+private broadcastMDNS(): void {
+try {
+if (process.platform === 'darwin') {
+spawnSync('dns-sd', [
+'-R',
+`"TNF Server"`,
+'_http._tcp',
+'.',
+String(this.options.port),
+]);
+}
+} catch {}
+}
 
   async stop(): Promise<void> {
     return new Promise((resolve, reject) => {

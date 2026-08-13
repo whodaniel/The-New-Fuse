@@ -1,21 +1,5 @@
+import { Skill } from '@the-new-fuse/mcp-core/types';
 import { Priority } from '../bridges.js';
-
-export interface ResourceRequirement {
-  type: 'HARDWARE' | 'SOFTWARE' | 'NETWORK' | 'DATA' | 'CREDENTIAL';
-  subtype?: string;
-  name?: string;
-  version?: string;
-  count: number;
-  optional?: boolean;
-}
-
-export interface Skill {
-  id: string;
-  name: string;
-  description?: string;
-  requiredTools: string[];
-  requiredResources: ResourceRequirement[];
-}
 
 export enum AgentState {
   INITIALIZING = 'INITIALIZING',

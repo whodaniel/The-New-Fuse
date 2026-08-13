@@ -4,9 +4,9 @@
 
 // Import types from @the-new-fuse/types package
 import type { Agent, Workflow, WorkflowExecution } from '@the-new-fuse/types';
-import { RedisService } from './redis.service.js';
+import { RedisService } from './redis.service';
 // Import types from our own package to avoid duplication
-import type { ApiResponse, PaginatedResponse, PaginationParams } from '../types/index.js';
+import type { ApiResponse, PaginatedResponse, PaginationParams } from './types.js';
 
 /**
  * Base API service with common functionality

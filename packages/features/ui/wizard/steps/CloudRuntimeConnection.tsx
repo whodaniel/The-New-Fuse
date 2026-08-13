@@ -46,12 +46,11 @@ export const CloudRuntimeConnection: React.FC<CloudRuntimeConnectionProps> = ({
     setIsChecking(true);
 
     try {
-      // Legacy CloudRuntime CLI is retired — UI is informational only.
-      // Production deploy path: gcloud / scripts/deployment/gcp-deploy.sh
+      // Simulate CloudRuntime CLI check - in production this would run `cloud_runtime whoami`
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Simulate connection status
-      const isConnected = true; // Would check actual gcloud auth status
+      const isConnected = true; // Would check actual CLI status
 
       setStatus({
         connected: isConnected,
@@ -182,17 +181,16 @@ export const CloudRuntimeConnection: React.FC<CloudRuntimeConnectionProps> = ({
                 Use API Token
               </button>
               <a
-                href="https://console.cloud.google.com/run"
+                href="https://cloud_runtime.app/dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="option-btn secondary"
               >
                 <ExternalLink className="w-4 h-4" />
-                Open GCP Cloud Run Console
+                Open CloudRuntime Dashboard
               </a>
               <p className="option-hint">
-                Run <code>gcloud auth login</code> in your terminal. The legacy{' '}
-                <code>cloud_runtime</code> CLI does not exist.
+                Run <code>cloud_runtime login</code> in your terminal, or use an API token
               </p>
             </div>
           )}

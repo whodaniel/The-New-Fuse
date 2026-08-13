@@ -5,7 +5,7 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import type {
+import {
   N8nWorkflow,
   WorkflowCategory,
   WorkflowSearchQuery,

@@ -3,7 +3,7 @@
  * Parses n8n workflow JSON files and extracts metadata
  */
 
-import type {
+import {
   N8nWorkflow,
   NodeTypeInfo,
   TriggerNode,
@@ -130,9 +130,9 @@ export class WorkflowParser {
    */
   private determineTriggerType(node: WorkflowNode): 'trigger' | 'webhook' | 'schedule' | 'manual' {
     const type = node.type.toLowerCase();
-    if (type.includes('webhook')) {return 'webhook';}
-    if (type.includes('cron') || type.includes('schedule')) {return 'schedule';}
-    if (type.includes('manual') || type === 'n8n-nodes-base.start') {return 'manual';}
+    if (type.includes('webhook')) return 'webhook';
+    if (type.includes('cron') || type.includes('schedule')) return 'schedule';
+    if (type.includes('manual') || type === 'n8n-nodes-base.start') return 'manual';
     return 'trigger';
   }
 
@@ -318,12 +318,12 @@ export class WorkflowParser {
   private getCategoryFromNodeType(nodeType: string): string {
     const type = nodeType.toLowerCase();
 
-    if (type.includes('trigger') || type.includes('webhook')) {return 'triggers';}
-    if (type.includes('database') || type.includes('sql')) {return 'database';}
-    if (type.includes('http') || type.includes('api')) {return 'api';}
-    if (type.includes('file')) {return 'files';}
-    if (type.includes('email') || type.includes('gmail')) {return 'email';}
-    if (type.includes('slack') || type.includes('discord')) {return 'communication';}
+    if (type.includes('trigger') || type.includes('webhook')) return 'triggers';
+    if (type.includes('database') || type.includes('sql')) return 'database';
+    if (type.includes('http') || type.includes('api')) return 'api';
+    if (type.includes('file')) return 'files';
+    if (type.includes('email') || type.includes('gmail')) return 'email';
+    if (type.includes('slack') || type.includes('discord')) return 'communication';
 
     return 'utility';
   }
@@ -400,8 +400,8 @@ export class WorkflowParser {
   private calculateComplexity(nodes: WorkflowNode[]): 'simple' | 'medium' | 'complex' {
     const nodeCount = nodes.length;
 
-    if (nodeCount <= 3) {return 'simple';}
-    if (nodeCount <= 10) {return 'medium';}
+    if (nodeCount <= 3) return 'simple';
+    if (nodeCount <= 10) return 'medium';
     return 'complex';
   }
 

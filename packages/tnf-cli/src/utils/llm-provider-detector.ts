@@ -27,90 +27,35 @@ export interface DetectionResult {
 /**
  * Provider priority order (higher = more preferred)
  * Based on cost, speed, and capability
- * Updated 2026-06-29 from active session intel.
- *
- * Note: OpenRouter credits exhausted 2026-05-17 (HTTP 402) — kept in catalog
- * but demoted to priority 0 so it never auto-selects first. NVIDIA is the
- * only provider currently returning 200s with a stable key.
  */
 const PROVIDER_PRIORITY: Record<string, number> = {
-  nvidia: 12,
+  nvidia: 10,
   groq: 9,
   sambanova: 8,
   cerebras: 7,
   deepseek: 6,
+  openrouter: 5,
   gemini: 4,
   openai: 3,
-  openrouter: 0, // DEAD — credits exhausted
 };
 
 /**
- * Known working models per provider (updated 2026-07-17).
- *
- * Order within each array = fallback preference (index 0 first).
- * Models pulled from:
- *   - Top of catalog (build.nvidia.com, 2026-07-17):
- *     thinkingmachines/inkling, poolside/laguna-xs-2.1, z-ai/glm-5.2
- *   - Proven fallback: minimaxai/minimax-m3 (NVIDIA).
- *   - data/llm-intel/ranking-report-latest.md (2026-05-12 intel snapshot)
- *     for NVIDIA-tier fallbacks ranked by latency.
- *   - Knowingly stale entries that were returning 429/timeout removed.
- *
- * Models NOT in NVIDIA live list (per ranking) were dropped:
- *   - minimaxai/minimax-m2.7  (timeout)
- *   - minimaxai/minimax-m2.5  (eol / HTTP 410)
- *   - nvidia/meta/llama-3.3-70b-instruct (wrong double-prefix; real path
- *     on NVIDIA is just meta/llama-3.3-70b-instruct — kept below without
- *     the redundant nvidia/ prefix)
- *   - nvidia/nemotron-3-ultra-550b-a55b, nvidia/z-ai/glm-5 (incorrect
- *     names; not in the NVIDIA live catalog)
- *
- * OpenRouter branch kept minimal because credits are exhausted (HTTP 402
- * returned on every probe since 2026-05-17); these will fail until
- * credits are refilled.
+ * Known working models per provider (verified as of 2026-06)
  */
 const VERIFIED_MODELS: Record<string, string[]> = {
   nvidia: [
-    // ACTIVE tier — build.nvidia.com flagships (2026-07-17)
-    'thinkingmachines/inkling',
-    'poolside/laguna-xs-2.1',
-    'z-ai/glm-5.2',
-    // Proven agentic fallback
     'minimaxai/minimax-m3',
-    // Fastest healthy NVIDIA fallbacks (sub-500ms in ranking)
-    'openai/gpt-oss-120b', // 104ms
-    'qwen/qwen3-next-80b-a3b-instruct', // 288ms (thinking variant also available)
-    'meta/llama-3.3-70b-instruct', // 307ms — note: rate-limited 429 at peak
-    'meta/llama-4-maverick-17b-128e-instruct', // 481ms
-    'meta/llama-guard-4-12b', // 495ms — guardrail/classification
-    'meta/llama-3.2-90b-vision-instruct', // 3661ms — multimodal
-    'google/gemma-3n-e4b-it', // 728ms
-    'mistralai/ministral-14b-instruct-2512', // 291ms
-    'mistralai/mistral-small-4-119b-2603', // 442ms
-    'mistralai/mistral-medium-3.5-128b', // 664ms
-    'stockmark/stockmark-2-100b-instruct', // 385ms
-    // Larger / slower reasoning models
-    'deepseek-ai/deepseek-v4-flash', // 1657ms — fast DeepSeek
-    'deepseek-ai/deepseek-v4-pro', // 4216ms
-    'qwen/qwen3.5-397b-a17b', // 1479ms
-    'google/gemma-4-31b-it', // 1779ms
-    'z-ai/glm-5.1', // 3912ms (top arena score in ranking)
-    'z-ai/glm5', // 3766ms
-    'z-ai/glm4.7', // 15052ms — slow, only as last resort
-    'qwen/qwen3-coder-480b-a35b-instruct', // 3323ms — code specialist
+    'nvidia/nemotron-3-ultra-550b-a55b',
+    'nvidia/z-ai/glm-5',
+    'nvidia/meta/llama-3.3-70b-instruct',
   ],
-  groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'meta-llama/llama-3.1-8b-instruct'],
+  groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
   sambanova: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
-  cerebras: ['llama-3.3-70b', 'llama-3.1-8b'],
+  cerebras: ['llama-3.3-70b'],
   deepseek: ['deepseek-chat', 'deepseek-reasoner'],
-  // OpenRouter dead since 2026-05-17 — kept for when credits return
-  openrouter: [
-    'meta-llama/llama-3.3-70b-instruct',
-    'deepseek/deepseek-chat-v3-0324',
-    'google/gemma-2-9b-it:free',
-  ],
-  gemini: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'],
-  openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'],
+  openrouter: ['meta-llama/llama-3.3-70b-instruct', 'google/gemma-2-9b-it:free'],
+  gemini: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+  openai: ['gpt-4o-mini', 'gpt-4o'],
 };
 
 /**

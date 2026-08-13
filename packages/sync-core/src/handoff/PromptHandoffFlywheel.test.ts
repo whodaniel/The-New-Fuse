@@ -25,13 +25,13 @@ describe('PromptHandoffFlywheel', () => {
 
   beforeEach(() => {
     mockSyncOrchestrator = {
-      syncGlobalData: jest.fn<any>().mockResolvedValue(undefined),
-      syncAgentState: jest.fn<any>().mockResolvedValue({ success: true }),
-      on: jest.fn<any>(),
+      syncGlobalData: jest.fn().mockResolvedValue(undefined),
+      syncAgentState: jest.fn().mockResolvedValue({ success: true }),
+      on: jest.fn(),
     } as any;
 
     mockMasterClock = {
-      now: jest.fn<any>().mockResolvedValue(new Date('2024-01-01T00:00:00Z')),
+      now: jest.fn().mockResolvedValue(new Date('2024-01-01T00:00:00Z')),
     } as any;
 
     mockConflictManager = {} as any;

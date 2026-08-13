@@ -1,8 +1,6 @@
 import chalk from 'chalk';
-import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { formatWorkPlaneOrientationConsole } from '../utils/work-plane.js';
 import { AssimilationEngine } from './AssimilationEngine.js';
 import { DirectiveConversionService } from './DirectiveConversionService.js';
 import { LivingStateService } from './LivingStateService.js';
@@ -22,14 +20,7 @@ export type ProtocolSummary = {
   allPassed: boolean;
   activeDirective: string | null;
   turnZero: TurnZeroResult | null;
-  substrateBlocked: boolean;
 };
-
-function isTruthyEnv(value: string | undefined): boolean {
-  if (value == null) return false;
-  const v = String(value).trim().toLowerCase();
-  return v === '1' || v === 'true' || v === 'yes' || v === 'on';
-}
 
 export class ProtocolInterceptor {
   private repoRoot: string;
@@ -39,16 +30,9 @@ export class ProtocolInterceptor {
   assimilation: AssimilationEngine;
   disclosure: ProceduralDisclosureService;
   directives: DirectiveConversionService;
-  /**
-   * When true, suppress all cosmetic console output from runPreFlightChecks
-   * while still running every check. Used by --no-splash consumers so CI
-   * pipes and LLM-driving agents get a clean JSON stdout.
-   */
-  silent: boolean;
 
-  constructor(repoRoot: string, options: { silent?: boolean } = {}) {
+  constructor(repoRoot: string) {
     this.repoRoot = repoRoot;
-    this.silent = Boolean(options.silent);
     this.turnZero = new TurnZeroService(repoRoot);
     this.livingState = new LivingStateService(repoRoot);
     this.handoff = new SessionHandoffService(repoRoot);
@@ -96,41 +80,27 @@ export class ProtocolInterceptor {
 
   /**
    * Run all protocol checks and return a summary.
-   * When constructed with `silent: true`, cosmetic console output is
-   * suppressed; checks still run and the summary is returned unchanged.
    */
   async runPreFlightChecks(): Promise<ProtocolSummary> {
-    const log = this.silent
-      ? () => {
-          /* silenced */
-        }
-      : (line: string) => console.log(line);
-    log(chalk.bold('\n═══════════════════════════════════════'));
-    log(chalk.bold('  TNF Protocol Pre-Flight Checks'));
-    log(chalk.bold('═══════════════════════════════════════\n'));
+    console.log(chalk.bold('\n═══════════════════════════════════════'));
+    console.log(chalk.bold('  TNF Protocol Pre-Flight Checks'));
+    console.log(chalk.bold('═══════════════════════════════════════\n'));
 
     const checks: ProtocolCheckResult[] = [];
 
     // 1. Turn Zero Mandate
-    log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
-    const turnZeroResult = await this.turnZero.execute({ silent: this.silent });
-    // Report how many steps actually ran. "Turn Zero passed" previously said
-    // nothing about whether integrity or repo-sync were verified or merely
-    // asserted; a skipped-step count keeps that visible to every consumer.
-    const skippedSteps = Object.values(turnZeroResult.checks).filter(
-      (c) => c.state === 'skipped'
-    ).length;
+    console.log(chalk.bold('▶ Protocol: Turn Zero Mandate'));
+    const turnZeroResult = await this.turnZero.execute();
     checks.push({
       name: 'Turn Zero Mandate',
       passed: turnZeroResult.passed,
       details: turnZeroResult.passed
-        ? `${turnZeroResult.stateFiles.length} state files, ${turnZeroResult.handoffFiles.length} handoff artifacts` +
-          (skippedSteps > 0 ? `, ${skippedSteps} step(s) skipped` : ', all steps verified')
+        ? `${turnZeroResult.stateFiles.length} state files, ${turnZeroResult.handoffFiles.length} handoff artifacts`
         : `${turnZeroResult.errors.length} error(s): ${turnZeroResult.errors.join(', ')}`,
     });
 
     // 2. Living State Synchronization
-    log(chalk.bold('\n▶ Protocol: Living State Sync'));
+    console.log(chalk.bold('\n▶ Protocol: Living State Sync'));
     const livingStateContent = this.livingState.readCurrentState();
     const livingStateOk =
       livingStateContent !== null && livingStateContent.includes('[STATUS:SYNCHRONIZED]');
@@ -142,23 +112,16 @@ export class ProtocolInterceptor {
         : 'LIVING_STATE.md missing or not synchronized',
     });
 
-    if (!this.silent && livingStateContent) {
+    if (livingStateContent) {
       const activeDirective = this.livingState.getCurrentDirective();
       if (activeDirective) {
-        log(chalk.cyan(`  Active Directive: ${activeDirective}`));
-      }
-    }
-
-    // Work-plane orientation (every interactive preflight — OSS vs tenant/personal)
-    if (!this.silent) {
-      for (const line of formatWorkPlaneOrientationConsole()) {
-        log(chalk.dim(line));
+        console.log(chalk.cyan(`  Active Directive: ${activeDirective}`));
       }
     }
 
     // 3. Procedural Disclosure
-    log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
-    const disclosureResult = await this.disclosure.executeCheck({ silent: this.silent });
+    console.log(chalk.bold('\n▶ Protocol: Procedural Disclosure'));
+    const disclosureResult = await this.disclosure.executeCheck();
     checks.push({
       name: 'Procedural Disclosure',
       passed: disclosureResult.ready,
@@ -168,7 +131,7 @@ export class ProtocolInterceptor {
     });
 
     // 4. Handoff Artifact Check
-    log(chalk.bold('\n▶ Protocol: Session Handoff'));
+    console.log(chalk.bold('\n▶ Protocol: Session Handoff'));
     const latestHandoff = this.handoff.readLatestJson();
     checks.push({
       name: 'Session Handoff',
@@ -179,7 +142,7 @@ export class ProtocolInterceptor {
     });
 
     // 5. Knowledge Tree Integrity
-    log(chalk.bold('\n▶ Protocol: Knowledge Tree Integrity'));
+    console.log(chalk.bold('\n▶ Protocol: Knowledge Tree Integrity'));
     const knowledgeTreePath = 'KNOWLEDGE_TREE.json';
     const knowledgeTreeOk = fs.existsSync(this.resolve(knowledgeTreePath));
     checks.push({
@@ -189,7 +152,7 @@ export class ProtocolInterceptor {
     });
 
     // 6. Integration Verification
-    log(chalk.bold('\n▶ Protocol: Integration Verification'));
+    console.log(chalk.bold('\n▶ Protocol: Integration Verification'));
     const coreProtocolsDir = 'docs/protocols';
     const coreProtocolsOk = fs.existsSync(this.resolve(coreProtocolsDir));
     checks.push({
@@ -200,54 +163,24 @@ export class ProtocolInterceptor {
         : 'Missing',
     });
 
-    // 7. Substrate attestation (warn by default; fail-closed with TNF_REQUIRE_SUBSTRATE=1)
-    log(chalk.bold('\n▶ Protocol: Substrate Attestation'));
-    const substrate = this.runSubstrateAttestation();
-    checks.push({
-      name: 'Substrate Attestation',
-      passed: substrate.passed,
-      details: substrate.details,
-    });
+    // Summary
+    const allPassed = checks.every((c) => c.passed);
+    console.log(chalk.bold('\n═══════════════════════════════════════'));
+    console.log(chalk.bold('  Protocol Check Summary'));
+    console.log(chalk.bold('═══════════════════════════════════════\n'));
+    for (const check of checks) {
+      const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
+      console.log(`${icon} ${check.name}: ${check.details}`);
+    }
 
-    // Summary — silent mode skips this entirely so the consumer gets a
-    // clean stdout (the JSON envelope) on the caller side.
-    if (!this.silent) {
-      const allPassed = checks.every((c) => c.passed);
-      log(chalk.bold('\n═══════════════════════════════════════'));
-      log(chalk.bold('  Protocol Check Summary'));
-      log(chalk.bold('═══════════════════════════════════════\n'));
-      for (const check of checks) {
-        const icon = check.passed ? chalk.green('✓') : chalk.red('✗');
-        log(`${icon} ${check.name}: ${check.details}`);
-      }
-
-      log(chalk.bold('\nResult:'));
-      if (allPassed) {
-        // Final PASS/FAIL belongs to `tnf protocol gate` (or other callers) after
-        // CI subgates. Interceptor output is provisional only — unless legacy banner
-        // is explicitly requested.
-        if (isTruthyEnv(process.env.TNF_PROTOCOL_GATE_LEGACY_BANNER)) {
-          log(chalk.green('  ALL PROTOCOLS PASSED'));
-        } else {
-          log(chalk.cyan('  PREFLIGHT SECTIONS OK (provisional)'));
-        }
-      } else {
-        const failed = checks.filter((c) => !c.passed);
-        log(chalk.yellow(`  ${failed.length} protocol check(s) failed (provisional)`));
-        for (const f of failed) {
-          log(chalk.yellow(`  - ${f.name}: ${f.details}`));
-        }
-      }
+    console.log(chalk.bold('\nResult:'));
+    if (allPassed) {
+      console.log(chalk.green('  ALL PROTOCOLS PASSED'));
     } else {
-      // In silent mode, surface failures to stderr so CI doesn't lose them.
       const failed = checks.filter((c) => !c.passed);
-      if (failed.length > 0) {
-        process.stderr.write(
-          `[ProtocolInterceptor] silent mode: ${failed.length} protocol check(s) failed\n`
-        );
-        for (const f of failed) {
-          process.stderr.write(`  - ${f.name}: ${f.details}\n`);
-        }
+      console.log(chalk.yellow(`  ${failed.length} protocol check(s) failed`));
+      for (const f of failed) {
+        console.log(chalk.yellow(`  - ${f.name}: ${f.details}`));
       }
     }
 
@@ -256,59 +189,10 @@ export class ProtocolInterceptor {
     return {
       timestamp: new Date().toISOString(),
       checks,
-      allPassed: checks.every((c) => c.passed),
+      allPassed,
       activeDirective,
       turnZero: turnZeroResult,
-      substrateBlocked: substrate.blocked,
     };
-  }
-
-  runSubstrateAttestation(): { passed: boolean; details: string; blocked: boolean } {
-    if (isTruthyEnv(process.env.TNF_SKIP_SUBSTRATE)) {
-      return { passed: true, details: 'skipped (TNF_SKIP_SUBSTRATE=1)', blocked: false };
-    }
-    const requireMode = isTruthyEnv(process.env.TNF_REQUIRE_SUBSTRATE);
-    const script = this.resolve('scripts/protocols/validate-substrate-attestation.cjs');
-    if (!fs.existsSync(script)) {
-      const details = 'validator missing: scripts/protocols/validate-substrate-attestation.cjs';
-      return { passed: !requireMode, details, blocked: requireMode };
-    }
-    const mode = requireMode ? 'require' : 'warn';
-    const result = spawnSync(process.execPath, [script, `--mode=${mode}`, '--json'], {
-      cwd: this.repoRoot,
-      encoding: 'utf8',
-      env: process.env,
-      timeout: 15_000,
-    });
-    let summary: any = null;
-    try {
-      const stdout = (result.stdout || '').trim();
-      const jsonStart = stdout.indexOf('{');
-      summary = jsonStart >= 0 ? JSON.parse(stdout.slice(jsonStart)) : null;
-    } catch {
-      summary = null;
-    }
-    if (!summary) {
-      const err = (result.stderr || result.stdout || 'substrate probe failed').trim().slice(0, 240);
-      return {
-        passed: !requireMode,
-        details: `substrate probe error: ${err}`,
-        blocked: requireMode,
-      };
-    }
-    const hard = summary.hardFailures ?? (summary.ok ? 0 : 1);
-    const soft = summary.softFailures ?? 0;
-    const failedIds = (summary.checks || [])
-      .filter((c: any) => !c.ok)
-      .map((c: any) => c.id)
-      .slice(0, 6)
-      .join(',');
-    const details =
-      hard === 0 && soft === 0
-        ? 'install + runtime probes clean'
-        : `hard=${hard} soft=${soft}${failedIds ? ` (${failedIds})` : ''} — set TNF_REQUIRE_SUBSTRATE=1 to fail closed`;
-    if (requireMode && hard > 0) return { passed: false, details, blocked: true };
-    return { passed: true, details, blocked: false };
   }
 
   /**

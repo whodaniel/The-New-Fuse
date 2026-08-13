@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 /**
  * Radio variants using class-variance-authority
@@ -25,8 +25,7 @@ export const radioVariants = cva(
  * Radio component props
  */
 export interface RadioProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof radioVariants> {
   /**
    * Label for the radio
@@ -86,20 +85,17 @@ export interface RadioProps
  * <Radio size="lg" name="size" value="large" label="Large radio" />
  */
 const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
-  (
-    {
-      className,
-      size,
-      label,
-      helperText,
-      error,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    size,
+    label,
+    helperText,
+    error,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    ...props
+  }, ref) => {
     const id = React.useId();
 
     return (
@@ -293,7 +289,12 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         ))}
       </div>
       {(error || helperText) && (
-        <p className={cn('text-sm', error ? 'text-destructive' : 'text-muted-foreground')}>
+        <p
+          className={cn(
+            'text-sm',
+            error ? 'text-destructive' : 'text-muted-foreground'
+          )}
+        >
           {error || helperText}
         </p>
       )}

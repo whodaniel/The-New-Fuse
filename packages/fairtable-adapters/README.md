@@ -1,20 +1,15 @@
-# `@the-new-fuse/fairtable-adapters`
+# @the-new-fuse/airtable-adapters
 
-Migration adapters for transitioning from legacy components to fairtable-based
-implementations while maintaining backward compatibility.
+Migration adapters for transitioning from legacy components to airtable-based implementations while maintaining backward compatibility.
 
 ## Overview
 
-This package provides seamless migration adapters that allow existing codebases
-to benefit from the new fairtable architecture without requiring immediate code
-changes. The adapters serve as a bridge between legacy component APIs and the
-new fairtable-based components.
+This package provides seamless migration adapters that allow existing codebases to benefit from the new airtable architecture without requiring immediate code changes. The adapters serve as a bridge between legacy component APIs and the new airtable-based components.
 
 ## Features
 
 - 🔄 **Zero Breaking Changes**: Drop-in replacements for legacy components
-- ⚠️ **Migration Guidance**: Development-time warnings with clear migration
-  paths
+- ⚠️ **Migration Guidance**: Development-time warnings with clear migration paths
 - 🔍 **Data Validation**: Ensures data integrity during transitions
 - 📊 **Migration Reporting**: Comprehensive tracking of migration status
 - 🎯 **Type Safety**: Full TypeScript support with legacy API preservation
@@ -24,7 +19,7 @@ new fairtable-based components.
 ### 1. Installation
 
 ```bash
-pnpm add @the-new-fuse/fairtable-adapters
+pnpm add @the-new-fuse/airtable-adapters
 ```
 
 ### 2. Drop-in Replacement
@@ -36,7 +31,7 @@ Replace your existing KanbanBoard import:
 import KanbanBoard from '@the-new-fuse/feature-suggestions/components/KanbanBoard';
 
 // After - zero code changes required!
-import { KanbanBoardAdapter as KanbanBoard } from '@the-new-fuse/fairtable-adapters';
+import { KanbanBoardAdapter as KanbanBoard } from '@the-new-fuse/airtable-adapters';
 
 // Your existing code works unchanged
 function MyComponent() {
@@ -56,7 +51,7 @@ In development, you'll see helpful migration guidance:
 
 ```
 🔄 [MIGRATION] KanbanBoardAdapter is being used.
-Consider migrating to @the-new-fuse/fairtable-components/KanbanView for better performance and features.
+Consider migrating to @the-new-fuse/airtable-components/KanbanView for better performance and features.
 📖 Migration guide: docs/migration/kanban-board.md
 ```
 
@@ -67,22 +62,17 @@ Consider migrating to @the-new-fuse/fairtable-components/KanbanView for better p
 A drop-in replacement for the legacy KanbanBoard component that:
 
 - ✅ Maintains exact same props interface
-- ✅ Converts legacy data to fairtable format automatically
-- ✅ Translates event handlers between legacy and fairtable patterns
-- ✅ Provides performance benefits through fairtable optimizations
+- ✅ Converts legacy data to airtable format automatically
+- ✅ Translates event handlers between legacy and airtable patterns
+- ✅ Provides performance benefits through airtable optimizations
 - ✅ Shows migration guidance in development
 
 **Props (Legacy Compatible):**
-
 ```typescript
 interface LegacyKanbanBoardProps {
   columns: LegacyKanbanColumn[];
   onDragStart?: (item: LegacyDraggableItem, sourceColumnId: string) => void;
-  onDragEnd?: (
-    item: LegacyDraggableItem,
-    sourceColumnId: string,
-    targetColumnId: string
-  ) => void;
+  onDragEnd?: (item: LegacyDraggableItem, sourceColumnId: string, targetColumnId: string) => void;
   onItemClick?: (item: LegacyDraggableItem) => void;
 }
 ```
@@ -92,7 +82,7 @@ interface LegacyKanbanBoardProps {
 ### Data Conversion
 
 ```tsx
-import { convertLegacyKanbanToAirtable } from '@the-new-fuse/fairtable-adapters';
+import { convertLegacyKanbanToAirtable } from '@the-new-fuse/airtable-adapters';
 
 const legacyData = { columns: [...] };
 const { table, view, warnings } = convertLegacyKanbanToAirtable(legacyData);
@@ -106,7 +96,7 @@ warnings.forEach(warning => {
 ### Migration Reporting
 
 ```tsx
-import { generateMigrationReport } from '@the-new-fuse/fairtable-adapters';
+import { generateMigrationReport } from '@the-new-fuse/airtable-adapters';
 
 const report = generateMigrationReport();
 console.log(`Migration Status: ${report.totalWarnings} warnings found`);
@@ -115,7 +105,7 @@ console.log(`Migration Status: ${report.totalWarnings} warnings found`);
 ### Data Validation
 
 ```tsx
-import { validateDataCompatibility } from '@the-new-fuse/fairtable-adapters';
+import { validateDataCompatibility } from '@the-new-fuse/airtable-adapters';
 
 const warnings = validateDataCompatibility(legacyData);
 if (warnings.length > 0) {
@@ -126,23 +116,19 @@ if (warnings.length > 0) {
 ## Migration Strategies
 
 ### Strategy 1: Immediate Adapter (Recommended)
-
-Use adapters as drop-in replacements for immediate benefits with zero code
-changes.
+Use adapters as drop-in replacements for immediate benefits with zero code changes.
 
 ### Strategy 2: Gradual Migration
-
-Gradually convert data and migrate to native fairtable components over time.
+Gradually convert data and migrate to native airtable components over time.
 
 ### Strategy 3: Full Native Migration
-
-Complete migration to native fairtable components for full feature access.
+Complete migration to native airtable components for full feature access.
 
 ## Example Usage
 
 ```tsx
 import React from 'react';
-import { KanbanBoardAdapter } from '@the-new-fuse/fairtable-adapters';
+import { KanbanBoardAdapter } from '@the-new-fuse/airtable-adapters';
 
 const MyKanbanComponent = () => {
   const legacyColumns = [
@@ -154,20 +140,21 @@ const MyKanbanComponent = () => {
           id: 'task-1',
           title: 'Implement feature',
           description: 'Add new functionality',
-          priority: 'HIGH',
-        },
-      ],
-    },
+          priority: 'HIGH'
+        }
+      ]
+    }
   ];
 
   const handleDragEnd = (item, sourceColumnId, targetColumnId) => {
-    console.log(
-      `Moved ${item.title} from ${sourceColumnId} to ${targetColumnId}`
-    );
+    console.log(`Moved ${item.title} from ${sourceColumnId} to ${targetColumnId}`);
   };
 
   return (
-    <KanbanBoardAdapter columns={legacyColumns} onDragEnd={handleDragEnd} />
+    <KanbanBoardAdapter
+      columns={legacyColumns}
+      onDragEnd={handleDragEnd}
+    />
   );
 };
 
@@ -177,14 +164,12 @@ export default MyKanbanComponent;
 ## Benefits
 
 ### Immediate Benefits
-
-- ✅ Performance improvements from fairtable optimizations
+- ✅ Performance improvements from airtable optimizations
 - ✅ Better type safety with maintained API compatibility
 - ✅ Future-proof architecture without code changes
 - ✅ Development guidance for planned migration
 
 ### Future Benefits (After Full Migration)
-
 - 🎯 Multiple view types (Grid, Calendar, Timeline, Gallery)
 - 🔍 Advanced filtering and sorting capabilities
 - 📊 Rich column types and data validation
@@ -200,7 +185,6 @@ export default MyKanbanComponent;
 ## Support
 
 For migration assistance:
-
 - 📖 Check the migration guides in `/docs/migration/`
 - 🐛 Report issues with the `migration` label
 - 💬 Ask questions in discussions
@@ -208,10 +192,9 @@ For migration assistance:
 ## Version Compatibility
 
 - **Legacy Support**: Maintains compatibility with existing KanbanBoard APIs
-- **Fairtable Integration**: Built on fairtable-core v1.0.0+
+- **Airtable Integration**: Built on airtable-core v1.0.0+
 - **Migration Path**: Provides clear upgrade path to native components
 
 ---
 
-**Migration made simple.** Start with adapters, migrate at your own pace, and
-unlock powerful fairtable features when you're ready.
+**Migration made simple.** Start with adapters, migrate at your own pace, and unlock powerful airtable features when you're ready.

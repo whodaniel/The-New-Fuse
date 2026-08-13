@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 /**
  * Badge variants using class-variance-authority
@@ -35,7 +35,8 @@ export const badgeVariants = cva(
  * Badge component props
  */
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {
   /**
    * Whether the badge is dismissible
    */
@@ -71,7 +72,11 @@ export interface BadgeProps
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant, size, dismissible, onDismiss, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn(badgeVariants({ variant, size }), className)} {...props}>
+      <div
+        ref={ref}
+        className={cn(badgeVariants({ variant, size }), className)}
+        {...props}
+      >
         {children}
         {dismissible && (
           <button

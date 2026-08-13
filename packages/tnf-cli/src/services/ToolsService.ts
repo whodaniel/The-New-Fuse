@@ -176,8 +176,7 @@ export class ToolsService {
       },
       {
         name: 'browser',
-        description:
-          'Stateful browser automation via agent-browser; authenticated state via browser-session-auth-bridge',
+        description: 'Browser automation via webpilot',
         enabled: true,
         platforms: ['cli'],
         category: 'core',

@@ -8,25 +8,13 @@
     "moduleResolution": "Bundler",
     "composite": true,
     "declaration": true,
-    "baseUrl": ".",
-    "paths": {
-      "@the-new-fuse/*": ["../*/src"]
-    }
+    "baseUrl": "."
   },
   "include": ["src/**/*"],
   "references": [
-    {
-      "path": "../tnf-core"
-    },
-    {
-      "path": "../infrastructure"
-    },
-    {
-      "path": "../tnf-note-taking"
-    },
-    {
-      "path": "../shared"
-    }
+    { "path": "../tnf-core" },
+    { "path": "../infrastructure" },
+    { "path": "../tnf-note-taking" }
   ],
-  "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
+  "exclude": ["node_modules", "dist"]
 }

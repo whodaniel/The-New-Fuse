@@ -6,6 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
+import crypto from 'crypto';
 import WebSocket, { WebSocketServer } from 'ws';
 import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
@@ -151,6 +152,6 @@ export class WebSocketTransport extends EventEmitter implements Transport {
   }
 
   private generateClientId(): string {
-    return `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `ws_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 }

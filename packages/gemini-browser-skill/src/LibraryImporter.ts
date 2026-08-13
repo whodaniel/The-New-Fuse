@@ -10,7 +10,7 @@ const OUT_DIR = path.join(process.cwd(), 'data', 'library_import');
 
 async function main() {
   console.log('🚀 Starting Library Importer...');
-  await fs.promises.mkdir(OUT_DIR, { recursive: true });
+  fs.mkdirSync(OUT_DIR, { recursive: true });
 
   const context = await chromium.launchPersistentContext(PROFILE_DIR, {
     headless: false,
@@ -47,7 +47,7 @@ async function main() {
     } catch (e) {
       console.log('⚠️ Could not find obvious list items. Dumping page structure...');
       const html = await page.content();
-      await fs.promises.writeFile(path.join(OUT_DIR, 'library_dump.html'), html);
+      fs.writeFileSync(path.join(OUT_DIR, 'library_dump.html'), html);
       console.log('Saved library_dump.html. Please verify selectors.');
 
       // Fallback: Try to find ANY links to prompts
@@ -105,12 +105,9 @@ async function processChatLink(context: BrowserContext, url: string) {
   const id = url.split('/').pop()?.split('?')[0] || 'unknown_' + Date.now();
   const outFile = path.join(OUT_DIR, `chat_${id}.json`);
 
-  try {
-    await fs.promises.access(outFile);
+  if (fs.existsSync(outFile)) {
     console.log(`Skipping ${id} (already imported)`);
     return;
-  } catch (e) {
-    // File doesn't exist, proceed
   }
 
   console.log(`Opening ${id}...`);
@@ -148,7 +145,7 @@ async function processChatLink(context: BrowserContext, url: string) {
       turns: data,
     };
 
-    await fs.promises.writeFile(outFile, JSON.stringify(chatData, null, 2));
+    fs.writeFileSync(outFile, JSON.stringify(chatData, null, 2));
     console.log(`✅ Saved ${data.length} turns from ${id}`);
   } catch (e) {
     console.error(`Error processing ${url}:`, e);

@@ -6,20 +6,45 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPCapability } from '../interfaces/IMCPCapability.js';
-import { IMCPClient } from '../interfaces/IMCPClient.js';
-import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection.js';
-import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
-import { MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
-import { ToolResult } from '../interfaces/IMCPTool.js';
-import { ClientStatistics, ClientStatus, MCPClientConfig } from '../types/client.js';
-import { NotificationCallback } from '../types/common.js';
-import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import {
+  IMCPClient
+} from '../interfaces/IMCPClient.js';
+import {
+  MCPRequest,
+  MCPResponse,
+  MCPNotification
+} from '../interfaces/IMCPMessage.js';
+import {
+  MCPResource,
+  ResourceContent
+} from '../interfaces/IMCPResource.js';
+import {
+  MCPCapability
+} from '../interfaces/IMCPCapability.js';
+import {
+  ToolResult
+} from '../interfaces/IMCPTool.js';
+import {
+  ConnectionOptions,
+  ConnectionStatus
+} from '../interfaces/IMCPConnection.js';
+import {
+  MCPClientConfig,
+  ClientStatistics,
+  ClientStatus
+} from '../types/client.js';
+import {
+  NotificationCallback
+} from '../types/common.js';
+import {
+  MCPErrorClass,
+  MCPErrorCode
+} from '../types/error.js';
 
-import { ClientCache } from './ClientCache.js';
 import { ConnectionManager } from './ConnectionManager.js';
-import { EventManager } from './EventManager.js';
 import { RequestManager } from './RequestManager.js';
+import { EventManager } from './EventManager.js';
+import { ClientCache } from './ClientCache.js';
 
 /**
  * MCP Client implementation
@@ -44,7 +69,7 @@ export class MCPClient extends EventEmitter implements IMCPClient {
     connectionFailures: 0,
     dataSent: 0,
     dataReceived: 0,
-    startTime: this.startTime,
+    startTime: this.startTime
   };
 
   constructor(private config: MCPClientConfig) {
@@ -61,7 +86,7 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       maxSize: 1000,
       defaultTTL: config.options?.cacheTTL || 300000,
       cleanupInterval: 60000,
-      enableStatistics: true,
+      enableStatistics: true
     });
 
     this.setupEventHandlers();
@@ -127,7 +152,7 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       retryAttempts: this.config.retryPolicy.maxAttempts,
       retryDelay: this.config.retryPolicy.baseDelay,
       keepAlive: true,
-      ...options,
+      ...options
     };
 
     try {
@@ -203,13 +228,17 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       jsonrpc: '2.0',
       id: this.generateRequestId(),
       method: 'resources/list',
-      params: pattern ? { pattern } : {},
+      params: pattern ? { pattern } : {}
     };
 
     const response = await this.sendRequest(request);
 
     if (response.error) {
-      throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
+      throw new MCPErrorClass(
+        response.error.code,
+        response.error.message,
+        response.error.data
+      );
     }
 
     return response.result?.resources || [];
@@ -231,13 +260,17 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       jsonrpc: '2.0',
       id: this.generateRequestId(),
       method: 'resources/read',
-      params: { uri },
+      params: { uri }
     };
 
     const response = await this.sendRequest(request);
 
     if (response.error) {
-      throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
+      throw new MCPErrorClass(
+        response.error.code,
+        response.error.message,
+        response.error.data
+      );
     }
 
     const content: ResourceContent = response.result;
@@ -266,13 +299,17 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       jsonrpc: '2.0',
       id: this.generateRequestId(),
       method: 'tools/call',
-      params: { name, arguments: params },
+      params: { name, arguments: params }
     };
 
     const response = await this.sendRequest(request);
 
     if (response.error) {
-      throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
+      throw new MCPErrorClass(
+        response.error.code,
+        response.error.message,
+        response.error.data
+      );
     }
 
     const result: ToolResult = response.result;
@@ -310,15 +347,19 @@ export class MCPClient extends EventEmitter implements IMCPClient {
         capabilities: {},
         clientInfo: {
           name: this.config.name,
-          version: this.config.version,
-        },
-      },
+          version: this.config.version
+        }
+      }
     };
 
     const response = await this.sendRequest(request);
 
     if (response.error) {
-      throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
+      throw new MCPErrorClass(
+        response.error.code,
+        response.error.message,
+        response.error.data
+      );
     }
 
     const capabilities: MCPCapability[] = response.result?.capabilities || [];
@@ -335,11 +376,8 @@ export class MCPClient extends EventEmitter implements IMCPClient {
    * Check if the client is currently connected
    */
   isConnected(): boolean {
-    return (
-      this.currentEndpoint !== null &&
-      this.connectionManager.getConnectionStatus(this.currentEndpoint) ===
-        ConnectionStatus.CONNECTED
-    );
+    return this.currentEndpoint !== null &&
+           this.connectionManager.getConnectionStatus(this.currentEndpoint) === ConnectionStatus.CONNECTED;
   }
 
   /**
@@ -394,7 +432,7 @@ export class MCPClient extends EventEmitter implements IMCPClient {
   getStatistics(): ClientStatistics {
     return {
       ...this.statistics,
-      lastRequestTime: this.statistics.totalRequests > 0 ? new Date() : undefined,
+      lastRequestTime: this.statistics.totalRequests > 0 ? new Date() : undefined
     };
   }
 
@@ -404,12 +442,12 @@ export class MCPClient extends EventEmitter implements IMCPClient {
   getStatus(): ClientStatus {
     return {
       name: this.config.name,
-      connectionStatus: this.currentEndpoint
-        ? this.connectionManager.getConnectionStatus(this.currentEndpoint)
-        : ConnectionStatus.DISCONNECTED,
+      connectionStatus: this.currentEndpoint ?
+        this.connectionManager.getConnectionStatus(this.currentEndpoint) :
+        ConnectionStatus.DISCONNECTED,
       endpoint: this.currentEndpoint || undefined,
       lastActivity: this.statistics.lastRequestTime,
-      statistics: this.getStatistics(),
+      statistics: this.getStatistics()
     };
   }
 
@@ -471,9 +509,8 @@ export class MCPClient extends EventEmitter implements IMCPClient {
       // Disconnect from server
       await this.disconnect();
 
-      // Shut down the connection manager (closes connections, clears
-      // timers, and removes its process-level signal listeners)
-      await this.connectionManager.shutdown();
+      // Close all connections
+      await this.connectionManager.closeAllConnections();
 
       // Cleanup managers
       this.requestManager.cleanup();
@@ -519,7 +556,7 @@ export class MCPClient extends EventEmitter implements IMCPClient {
 
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
           try {
-            await new Promise((resolve) => setTimeout(resolve, interval));
+            await new Promise(resolve => setTimeout(resolve, interval));
             await this.reconnect();
             this.emit('reconnected', endpoint, attempt);
             break;

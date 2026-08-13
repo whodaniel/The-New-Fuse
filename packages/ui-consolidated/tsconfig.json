@@ -19,7 +19,6 @@
     "declaration": true,
     "declarationDir": "dist",
     "ignoreDeprecations": "6.0",
-    "rootDir": "src",
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/a2a-core": ["../a2a-core/src"],

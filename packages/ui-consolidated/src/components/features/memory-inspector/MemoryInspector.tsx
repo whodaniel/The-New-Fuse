@@ -1,10 +1,10 @@
-import { MemoryItem } from '@the-new-fuse/api-types/memory';
 import React from 'react';
-import { useMemoryInspector } from '../../../hooks/useMemoryInspector.js';
-import { Badge } from '../../Badge/Badge.js';
-import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card.js';
-import { List, ListItem } from '../../List/List.js';
-import { ScrollArea } from '../../ScrollArea/ScrollArea.js';
+import { useMemoryInspector } from '../../../hooks/useMemoryInspector';
+import { MemoryItem } from '@the-new-fuse/api-types/src/memory';
+import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card';
+import { List, ListItem } from '../../List/List';
+import { ScrollArea } from '../../ScrollArea/ScrollArea';
+import { Badge } from '../../Badge/Badge';
 
 interface MemoryInspectorProps {
   agentId: string;
@@ -32,7 +32,9 @@ const MemoryInspector: React.FC<MemoryInspectorProps> = ({ agentId }) => {
                     {new Date(item.timestamp).toLocaleString()}
                   </p>
                 </div>
-                <Badge variant={item.type === 'core' ? 'default' : 'secondary'}>{item.type}</Badge>
+                <Badge variant={item.type === 'core' ? 'default' : 'secondary'}>
+                  {item.type}
+                </Badge>
               </ListItem>
             ))}
           </List>

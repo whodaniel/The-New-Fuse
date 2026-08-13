@@ -83,7 +83,8 @@ export class CreateAgentDto {
 
   @ApiProperty({
     required: false,
-    type: () => Object,
+    type: 'object',
+    additionalProperties: true,
     description: 'Agent-specific configuration',
   })
   @IsOptional()
@@ -91,7 +92,8 @@ export class CreateAgentDto {
 
   @ApiProperty({
     required: false,
-    type: () => Object,
+    type: 'object',
+    additionalProperties: true,
     description: 'Arbitrary metadata',
   })
   @IsOptional()
@@ -160,7 +162,8 @@ export class UpdateAgentDto {
 
   @ApiProperty({
     required: false,
-    type: () => Object,
+    type: 'object',
+    additionalProperties: true,
     description: 'Agent-specific configuration',
   })
   @IsOptional()
@@ -173,7 +176,8 @@ export class UpdateAgentDto {
 
   @ApiProperty({
     required: false,
-    type: () => Object,
+    type: 'object',
+    additionalProperties: true,
     description: 'Arbitrary metadata',
   })
   @IsOptional()

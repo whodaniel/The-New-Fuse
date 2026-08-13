@@ -4,23 +4,26 @@ import { X } from 'lucide-react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils';
 
 /**
  * Modal overlay variants using class-variance-authority
  */
-export const modalOverlayVariants = cva('fixed inset-0 z-50 bg-background/80 backdrop-blur-sm', {
-  variants: {
-    position: {
-      default: 'flex items-center justify-center',
-      top: 'flex items-start justify-center pt-16',
-      bottom: 'flex items-end justify-center pb-16',
+export const modalOverlayVariants = cva(
+  'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
+  {
+    variants: {
+      position: {
+        default: 'flex items-center justify-center',
+        top: 'flex items-start justify-center pt-16',
+        bottom: 'flex items-end justify-center pb-16',
+      },
     },
-  },
-  defaultVariants: {
-    position: 'default',
-  },
-});
+    defaultVariants: {
+      position: 'default',
+    },
+  }
+);
 
 /**
  * Modal content variants using class-variance-authority
@@ -138,19 +141,16 @@ const useModal = () => {
  * Modal component for displaying a modal dialog
  */
 const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
-  (
-    {
-      children,
-      open = false,
-      onOpenChange,
-      closeOnClickOutside = true,
-      closeOnEscape = true,
-      showCloseButton = true,
-      position = 'default',
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    children,
+    open = false,
+    onOpenChange,
+    closeOnClickOutside = true,
+    closeOnEscape = true,
+    showCloseButton = true,
+    position = 'default',
+    ...props
+  }, ref) => {
     // Remove unused state variables
 
     // Handle escape key
@@ -193,7 +193,13 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
           showCloseButton,
         }}
       >
-        <div ref={ref} className="fixed inset-0 z-50" role="dialog" aria-modal="true" {...props}>
+        <div
+          ref={ref}
+          className="fixed inset-0 z-50"
+          role="dialog"
+          aria-modal="true"
+          {...props}
+        >
           <div
             className={cn(modalOverlayVariants({ position }))}
             onClick={closeOnClickOutside ? () => onOpenChange?.(false) : undefined}
@@ -214,7 +220,7 @@ ModalComponent.displayName = 'Modal';
 const ModalContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->((_args) => {
+>(_args => {
   const { children, ...props } = _args;
   return (
     <ModalPortal>
@@ -234,8 +240,17 @@ ModalContent.displayName = DialogPrimitive.Content.displayName;
 /**
  * Modal header component for displaying the modal header
  */
-const ModalHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col space-y-1.5 text-center sm:text-left', className)} {...props} />
+const ModalHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      'flex flex-col space-y-1.5 text-center sm:text-left',
+      className
+    )}
+    {...props}
+  />
 );
 ModalHeader.displayName = 'ModalHeader';
 
@@ -248,7 +263,10 @@ const ModalTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+    className={cn(
+      'text-lg font-semibold leading-none tracking-tight',
+      className
+    )}
     {...props}
   />
 ));
@@ -272,9 +290,15 @@ ModalDescription.displayName = DialogPrimitive.Description.displayName;
 /**
  * Modal footer component for displaying the modal footer
  */
-const ModalFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+const ModalFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
+    className={cn(
+      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      className
+    )}
     {...props}
   />
 );
@@ -339,19 +363,19 @@ ModalPortal.displayName = 'ModalPortal';
 /**
  * ModalOverlay renders the modal overlay using the modalOverlayVariants.
  */
-const ModalOverlay: React.FC<{ position?: 'default' | 'top' | 'bottom' }> = ({
-  position = 'default',
-}) => <div className={cn(modalOverlayVariants({ position }))} />;
+const ModalOverlay: React.FC<{ position?: 'default' | 'top' | 'bottom' }> = ({ position = 'default' }) => (
+  <div className={cn(modalOverlayVariants({ position }))} />
+);
 ModalOverlay.displayName = 'ModalOverlay';
 
 export {
   ModalComponent as Modal,
-  ModalCloseButton,
   ModalContent,
+  ModalHeader,
+  ModalTitle,
   ModalDescription,
   ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  ModalCloseButton,
   ModalPortal,
-  ModalTitle,
+  ModalOverlay,
 };

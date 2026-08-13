@@ -9,15 +9,10 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { execSync } from 'child_process';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
 
-// Resolve the package's own location so the default works from any checkout,
-// rather than baking in one machine's absolute path.
-const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const REPO_ROOT = resolve(PACKAGE_ROOT, '..', '..');
-
-const CONCORDANCE_DIR = process.env.CONCORDANCE_DIR || resolve(REPO_ROOT, 'concordance_results');
+const CONCORDANCE_DIR =
+  process.env.CONCORDANCE_DIR ||
+  '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results';
 const SUPABASE_BASE =
   process.env.SUPABASE_CONCORDANCE_URL ||
   'https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525';

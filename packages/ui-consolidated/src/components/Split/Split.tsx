@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils';
 import './Split.css';
-import { SplitPane } from './SplitPane.js';
+import { SplitPane } from './SplitPane';
 
 /**
  * Split component props

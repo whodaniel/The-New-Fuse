@@ -48,5 +48,3 @@ export {
   drizzleWorkspaceMemberRepository,
 } from './workspace-member.repository.js';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository.js';
-
-export { DrizzleFeedbackRepository, drizzleFeedbackRepository } from './feedback.repository.js';

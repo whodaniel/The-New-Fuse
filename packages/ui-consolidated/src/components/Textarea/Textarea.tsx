@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 /**
  * Textarea variants using class-variance-authority
@@ -42,7 +42,8 @@ export const textareaVariants = cva(
  * Textarea component props
  */
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, VariantProps<typeof textareaVariants> {
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    VariantProps<typeof textareaVariants> {
   /**
    * Error message to display
    */
@@ -112,26 +113,23 @@ export interface TextareaProps
  * <Textarea variant="outline" placeholder="Outlined textarea" />
  */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      className,
-      variant,
-      state,
-      width,
-      label,
-      helperText,
-      error,
-      success,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      autoResize,
-      maxHeight,
-      style: _style, // extract style to prevent inline usage, prefix with _ as it's unused
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    variant,
+    state,
+    width,
+    label,
+    helperText,
+    error,
+    success,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    autoResize,
+    maxHeight,
+    style: _style, // extract style to prevent inline usage, prefix with _ as it's unused
+    ...props
+  }, ref) => {
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const combinedRef = React.useMemo(() => {
       return (node: HTMLTextAreaElement) => {

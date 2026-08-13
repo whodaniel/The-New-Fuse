@@ -6,7 +6,6 @@ export const getCorsOptions = (): CorsOptions => {
     'https://www.thenewfuse.com',
     'https://app.thenewfuse.com',
     'https://tnf-saas-app.pages.dev',
-    'https://production.thenewfuse-main.pages.dev',
     'https://api-gateway-241337102384.us-central1.run.app',
   ];
 

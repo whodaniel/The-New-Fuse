@@ -5,9 +5,9 @@
  * These repositories replace the legacy Drizzle-based repositories.
  */
 
-export { AgentRepository, type IAgentRepository } from './agent.repository.js';
+export { AgentRepository, type IAgentRepository } from './agent.repository';
 export {
-  WorkflowExecutionRepository,
   WorkflowRepository,
-  type IWorkflowRepository,
-} from './workflow.repository.js';
+  WorkflowExecutionRepository,
+  type IWorkflowRepository
+} from './workflow.repository';

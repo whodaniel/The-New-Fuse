@@ -4,15 +4,15 @@
  */
 
 import {
-  ArgumentsHost,
-  Catch,
   ExceptionFilter,
+  Catch,
+  ArgumentsHost,
   HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiResponse } from '../types/api-response.types.js';
+import { ApiResponse } from '../types/api-response.types';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -24,10 +24,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Get status and error information
     const status =
-      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const message =
-      exception instanceof HttpException ? exception.message : 'Internal server error';
+      exception instanceof HttpException
+        ? exception.message
+        : 'Internal server error';
 
     const details = exception.response?.message || exception.message || message;
 

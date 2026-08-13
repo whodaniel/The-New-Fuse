@@ -1,7 +1,7 @@
 import { Edit, ExternalLink, Info, PauseCircle, PlayCircle, Settings, Trash } from 'lucide-react';
 import React from 'react';
-import { Badge } from '../Badge/Badge.js';
-import { Button } from '../Button/Button.js';
+import { Badge } from '../Badge/Badge';
+import { Button } from '../Button/Button';
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '../Card/Card.js';
+} from '../Card/Card';
 
 // Comprehensive Agent type that supports all protocol features
 export interface Agent {

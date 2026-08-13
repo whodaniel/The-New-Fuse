@@ -1,11 +1,12 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
+  UnauthorizedException,
   ForbiddenException,
+  BadRequestException,
   HttpException,
   HttpStatus,
-  Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
@@ -65,244 +66,27 @@ export class SecurityGuard implements CanActivate {
       requireAuth: this.reflector.get<boolean>('requireAuth', context.getHandler()) || false,
       roles: this.reflector.get<string[]>('roles', context.getHandler()) || [],
       permissions: this.reflector.get<string[]>('permissions', context.getHandler()) || [],
-      rateLimit: this.reflector.get<RateLimitOptions>('rateLimit', context.getHandler()) || {
-        // SPA shells (dashboard polls + chat) routinely exceed 100/min.
-        requests: 1200,
-        window: 60000,
-      },
+      rateLimit: this.reflector.get<RateLimitOptions>('rateLimit', context.getHandler()) || { requests: 100, window: 60000 },
       sanitizeInput: this.reflector.get<boolean>('sanitizeInput', context.getHandler()) || true,
       validateCSRF: this.reflector.get<boolean>('validateCSRF', context.getHandler()) || false,
       strictMode: this.reflector.get<boolean>('strictMode', context.getHandler()) || false,
     };
   }
 
-  private async checkRateLimit(
-    request: Request,
-    response: Response,
-    options: RateLimitOptions
-  ): Promise<void> {
-    if (request.method === 'OPTIONS') {
-      return;
-    }
-
-    const path = this.normalizeRequestPath(request);
-    if (this.isAuthBootstrapPath(path)) {
-      await this.checkAuthBootstrapRateLimit(request, response);
-      return;
-    }
-
-    if (this.isRateLimitExemptPath(path)) {
-      return;
-    }
-
-    // Loopback operator traffic (desktop + full-auto daemon) shares one subject.
-    // Keep public limits intact; only relax when explicitly not in enforce mode.
-    if (
-      process.env.API_RATE_LIMIT_LOOPBACK !== 'enforce' &&
-      this.isLoopbackSubject(this.getRateLimitSubject(request))
-    ) {
-      return;
-    }
-
+  private async checkRateLimit(request: Request, response: Response, options: RateLimitOptions): Promise<void> {
+    const clientIP = this.getClientIP(request);
+    const userAgent = request.headers['user-agent'] || 'unknown';
+    const key = `${clientIP}:${userAgent}`;
     const now = Date.now();
-    const bucket = this.resolveRateLimitBucket(request.method, path);
-    const subject = this.getRateLimitSubject(request);
-    const key = `${bucket}:${subject}`;
-
-    const defaultMax =
-      bucket === 'poll'
-        ? this.resolvePositiveInteger(
-            process.env.API_POLL_RATE_LIMIT_REQUESTS,
-            Math.max(options.requests, 1800),
-            1,
-            1_000_000
-          )
-        : bucket === 'ai'
-          ? this.resolvePositiveInteger(process.env.API_AI_RATE_LIMIT_REQUESTS, 120, 1, 1_000_000)
-          : this.resolvePositiveInteger(
-              process.env.API_RATE_LIMIT_REQUESTS,
-              options.requests,
-              1,
-              1_000_000
-            );
-
-    const windowMs = this.resolvePositiveInteger(
-      process.env.API_RATE_LIMIT_WINDOW_MS,
-      options.window,
-      1_000,
-      86_400_000
-    );
-    const maxEntries = this.resolvePositiveInteger(
-      process.env.API_RATE_LIMIT_MAX_KEYS,
-      10_000,
-      100,
-      1_000_000
-    );
+    const maxRequests = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_REQUESTS, options.requests, 1, 1_000_000);
+    const windowMs = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_WINDOW_MS, options.window, 1_000, 86_400_000);
+    const maxEntries = this.resolvePositiveInteger(process.env.API_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
 
     if (!request.app.locals.rateLimit) {
       request.app.locals.rateLimit = new Map();
     }
 
-    const rateLimitData: Map<string, { count: number; resetTime: number }> =
-      request.app.locals.rateLimit;
-    this.pruneRateLimitData(rateLimitData, now, maxEntries);
-
-    const userData = rateLimitData.get(key) || { count: 0, resetTime: now + windowMs };
-
-    if (now > userData.resetTime) {
-      userData.count = 0;
-      userData.resetTime = now + windowMs;
-    }
-
-    userData.count++;
-    rateLimitData.set(key, userData);
-
-    const remaining = Math.max(0, defaultMax - userData.count);
-    const retryAfterSeconds = Math.max(1, Math.ceil((userData.resetTime - now) / 1000));
-    response.setHeader('X-RateLimit-Limit', String(defaultMax));
-    response.setHeader('X-RateLimit-Remaining', String(remaining));
-    response.setHeader('X-RateLimit-Reset', String(Math.ceil(userData.resetTime / 1000)));
-    response.setHeader('X-RateLimit-Bucket', bucket);
-
-    if (userData.count > defaultMax) {
-      response.setHeader('Retry-After', String(retryAfterSeconds));
-      throw new HttpException(
-        'Rate limit exceeded. Please try again later.',
-        HttpStatus.TOO_MANY_REQUESTS
-      );
-    }
-  }
-
-  private getRateLimitSubject(request: Request): string {
-    const user = (request as Request & { user?: { id?: string | number; sub?: string | number } })
-      .user;
-    const userId = user?.id ?? user?.sub;
-    if (userId !== undefined && userId !== null && String(userId).trim()) {
-      return `user:${String(userId)}`;
-    }
-
-    const fromToken = this.readBearerSubject(request);
-    if (fromToken) {
-      return `user:${fromToken}`;
-    }
-
-    const clientIP = this.getClientIP(request);
-    return `ip:${clientIP}`;
-  }
-
-  private readBearerSubject(request: Request): string | null {
-    const authorization = request.headers.authorization;
-    if (!authorization || typeof authorization !== 'string') return null;
-    const [scheme, token] = authorization.split(' ');
-    if (!scheme || scheme.toLowerCase() !== 'bearer' || !token) return null;
-
-    try {
-      const payloadPart = token.split('.')[1];
-      if (!payloadPart) return null;
-      const json = Buffer.from(payloadPart, 'base64url').toString('utf8');
-      const payload = JSON.parse(json) as { sub?: unknown; id?: unknown; userId?: unknown };
-      const subject = payload.sub ?? payload.id ?? payload.userId;
-      if (subject === undefined || subject === null) return null;
-      const normalized = String(subject).trim();
-      return normalized || null;
-    } catch {
-      return null;
-    }
-  }
-
-  private resolveRateLimitBucket(method: string, path: string): 'poll' | 'ai' | 'default' {
-    if (this.isAiPath(path)) {
-      return 'ai';
-    }
-    if (method === 'GET' && this.isPollPath(path)) {
-      return 'poll';
-    }
-    return 'default';
-  }
-
-  private isRateLimitExemptPath(path: string): boolean {
-    return (
-      path === '/' ||
-      path === '/health' ||
-      path === '/api/health' ||
-      path === '/api/v1/health' ||
-      path === '/api/system/health' ||
-      path === '/system/health' ||
-      path.startsWith('/docs')
-    );
-  }
-
-  private isLoopbackSubject(subject: string): boolean {
-    if (!subject.startsWith('ip:')) return false;
-    const ip = subject
-      .slice(3)
-      .trim()
-      .toLowerCase()
-      .replace(/^::ffff:/, '');
-    return ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' || ip === '0:0:0:0:0:0:0:1';
-  }
-
-  private isPollPath(path: string): boolean {
-    return (
-      path.includes('/local-runtime/') ||
-      path.includes('/admin/metrics/') ||
-      path.includes('/admin/audit-logs') ||
-      path.includes('/unified-ledger/goals') ||
-      /\/api(?:\/v1)?\/(agents|workflows|goals)(?:\/|$)/i.test(path) ||
-      /\/api(?:\/v1)?\/chat(?:\/|$)/i.test(path)
-    );
-  }
-
-  private isAiPath(path: string): boolean {
-    return (
-      /\/api(?:\/v1)?\/ai\//i.test(path) ||
-      path.includes('/text-completion') ||
-      path.includes('/image-generation') ||
-      path.includes('/orchestration/chat')
-    );
-  }
-
-  private normalizeRequestPath(request: Request): string {
-    const raw = request.path || request.url || '';
-    const withoutQuery = raw.split('?')[0] || '';
-    return withoutQuery.replace(/\/+$/, '') || '/';
-  }
-
-  private isAuthBootstrapPath(path: string): boolean {
-    return /^\/api(?:\/v1)?\/auth\/(me|session|supabase|login|register|refresh|google|github|invite-policy)(?:\/|$)/i.test(
-      path
-    );
-  }
-
-  private async checkAuthBootstrapRateLimit(request: Request, response: Response): Promise<void> {
-    const clientIP = this.getClientIP(request);
-    const key = `auth-bootstrap:${clientIP}`;
-    const now = Date.now();
-    const maxRequests = this.resolvePositiveInteger(
-      process.env.API_AUTH_RATE_LIMIT_REQUESTS,
-      60,
-      10,
-      10_000
-    );
-    const windowMs = this.resolvePositiveInteger(
-      process.env.API_AUTH_RATE_LIMIT_WINDOW_MS,
-      60_000,
-      1_000,
-      86_400_000
-    );
-    const maxEntries = this.resolvePositiveInteger(
-      process.env.API_RATE_LIMIT_MAX_KEYS,
-      10_000,
-      100,
-      1_000_000
-    );
-
-    if (!request.app.locals.authBootstrapRateLimit) {
-      request.app.locals.authBootstrapRateLimit = new Map();
-    }
-
-    const rateLimitData: Map<string, { count: number; resetTime: number }> =
-      request.app.locals.authBootstrapRateLimit;
+    const rateLimitData: Map<string, { count: number; resetTime: number }> = request.app.locals.rateLimit;
     this.pruneRateLimitData(rateLimitData, now, maxEntries);
 
     const userData = rateLimitData.get(key) || { count: 0, resetTime: now + windowMs };
@@ -323,19 +107,11 @@ export class SecurityGuard implements CanActivate {
 
     if (userData.count > maxRequests) {
       response.setHeader('Retry-After', String(retryAfterSeconds));
-      throw new HttpException(
-        'Rate limit exceeded. Please try again later.',
-        HttpStatus.TOO_MANY_REQUESTS
-      );
+      throw new HttpException('Rate limit exceeded. Please try again later.', HttpStatus.TOO_MANY_REQUESTS);
     }
   }
 
-  private resolvePositiveInteger(
-    value: string | undefined,
-    fallback: number,
-    min: number,
-    max: number
-  ): number {
+  private resolvePositiveInteger(value: string | undefined, fallback: number, min: number, max: number): number {
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) {
       return fallback;
@@ -343,11 +119,7 @@ export class SecurityGuard implements CanActivate {
     return Math.min(Math.max(Math.floor(parsed), min), max);
   }
 
-  private pruneRateLimitData(
-    rateLimitData: Map<string, { count: number; resetTime: number }>,
-    now: number,
-    maxEntries: number
-  ): void {
+  private pruneRateLimitData(rateLimitData: Map<string, { count: number; resetTime: number }>, now: number, maxEntries: number): void {
     if (rateLimitData.size <= maxEntries) {
       return;
     }
@@ -360,31 +132,25 @@ export class SecurityGuard implements CanActivate {
   }
 
   private validateAndSanitizeInput(request: Request, options: any): void {
-    const path = this.normalizeRequestPath(request);
-    // Auth bootstrap bodies carry JWTs / passwords — do not mutate them.
-    const skipBodySanitize = this.isAuthBootstrapPath(path);
-
     // Sanitize all input data
     if (options.sanitizeInput) {
       // Sanitize query parameters
       if (request.query && typeof request.query === 'object') {
-        Object.keys(request.query).forEach((key) => {
+        Object.keys(request.query).forEach(key => {
           if (typeof request.query[key] === 'string') {
-            (request.query as any)[key] = this.sanitizationService.sanitizeText(
-              request.query[key] as string
-            );
+            (request.query as any)[key] = this.sanitizationService.sanitizeText(request.query[key] as string);
           }
         });
       }
 
-      // Sanitize body (except auth routes that post JWTs / credentials)
-      if (!skipBodySanitize && request.body && typeof request.body === 'object') {
+      // Sanitize body
+      if (request.body && typeof request.body === 'object') {
         request.body = this.sanitizationService.sanitizeObject(request.body);
       }
 
       // Sanitize params
       if (request.params && typeof request.params === 'object') {
-        Object.keys(request.params).forEach((key) => {
+        Object.keys(request.params).forEach(key => {
           if (typeof request.params[key] === 'string') {
             request.params[key] = this.sanitizationService.sanitizeText(request.params[key]);
           }
@@ -412,13 +178,12 @@ export class SecurityGuard implements CanActivate {
     // Security headers are already added by the middleware
     // This is a backup to ensure they're set
     if (!response.getHeader('Content-Security-Policy')) {
-      response.setHeader(
-        'Content-Security-Policy',
+      response.setHeader('Content-Security-Policy',
         "default-src 'self'; " +
-          "script-src 'self' 'unsafe-inline'; " +
-          "style-src 'self' 'unsafe-inline'; " +
-          "img-src 'self' data: https:; " +
-          "frame-ancestors 'none';"
+        "script-src 'self' 'unsafe-inline'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' data: https:; " +
+        "frame-ancestors 'none';"
       );
     }
 
@@ -445,12 +210,6 @@ export class SecurityGuard implements CanActivate {
   }
 
   private prepareForResponse(request: Request, response: Response): void {
-    // Auth responses must include JWTs verbatim — response sanitization masks *token* fields.
-    const path = request.path || request.url || '';
-    if (path.includes('/auth/')) {
-      return;
-    }
-
     // Store the original response methods to intercept and sanitize
     const originalJson = response.json.bind(response);
     const originalSend = response.send.bind(response);
@@ -541,12 +300,10 @@ export class SecurityGuard implements CanActivate {
   }
 
   private getClientIP(request: Request): string {
-    return (
-      (request.headers['x-forwarded-for'] as string)?.split(',')[0] ||
-      (request.headers['x-real-ip'] as string) ||
-      request.connection.remoteAddress ||
-      'unknown'
-    );
+    return (request.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+           request.headers['x-real-ip'] as string ||
+           request.connection.remoteAddress ||
+           'unknown';
   }
 
   private generateRequestId(): string {

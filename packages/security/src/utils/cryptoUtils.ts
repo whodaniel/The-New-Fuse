@@ -7,8 +7,8 @@ import {
   createHmac,
   timingSafeEqual as nodeTimingSafeEqual,
   randomBytes,
-  randomUUID,
 } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16; // For AES, this is always 16
@@ -26,7 +26,7 @@ const KEY_LENGTH = 32; // For aes-256-gcm
  * @returns {string} A new UUID.
  */
 export function getUUID(): string {
-  return randomUUID();
+  return uuidv4();
 }
 
 /**

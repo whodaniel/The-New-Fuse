@@ -125,7 +125,7 @@ const ChatInterface = () => {
             className="flex-1 bg-background/50"
             disabled={isLoading}
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()} aria-label="Send message">
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (

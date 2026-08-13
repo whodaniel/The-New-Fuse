@@ -5,7 +5,6 @@ import { DatabaseModule } from '@the-new-fuse/database';
 import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
 
 // Import existing controllers to maintain compatibility
-import { MetricsService } from '../../services/metrics.service';
 import { A2AAuthBrokerController } from './controllers/a2a-auth-broker.controller';
 import { A2AMessageBrokerController } from './controllers/a2a-broker.controller';
 import { AgencyController } from './controllers/agency.controller';
@@ -17,7 +16,6 @@ import { SwarmController } from './controllers/swarm.controller';
 // Services - The Three Pillars of TNF Agent
 import { A2AAuthBrokerService } from './services/a2a-auth-broker.service';
 import { A2AMessageBrokerService } from './services/a2a-message-broker.service';
-import { AgencyAnalyticsService } from './services/agency-analytics.service';
 import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service';
 import { EmailCustodianService } from './services/email-custodian.service';
 
@@ -41,8 +39,6 @@ import { EmailCustodianService } from './services/email-custodian.service';
     EmailCustodianController,
   ],
   providers: [
-    MetricsService,
-    AgencyAnalyticsService,
     // Pillar 1: Orchestrator - Task management and swarm coordination
     AgentSwarmOrchestrationService,
     // Pillar 3: Message Broker - Inter-agent communication

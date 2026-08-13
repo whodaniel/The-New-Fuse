@@ -188,7 +188,7 @@ tools/vscode-lm-bridge/         - VS Code language model bridge
 
 ```bash
 # Developer clones repo
-git clone https://github.com/whodaniel/The-New-Fuse.git
+git clone https://github.com/whodaniel/fuse.git
 
 # Install all dependencies (including internal packages)
 pnpm install

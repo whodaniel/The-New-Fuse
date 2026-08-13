@@ -4,14 +4,10 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   transform: {
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.test.json',
-        useESM: false,
-        isolatedModules: true,
-      },
-    ],
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json',
+      useESM: false,
+    }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
@@ -28,6 +24,13 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  transformIgnorePatterns: ['node_modules/(?!(@modelcontextprotocol|@tnf)/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@modelcontextprotocol|@tnf)/)',
+  ],
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
   testTimeout: 30000,
 };

@@ -1,8 +1,7 @@
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
+import * as os from 'os';
 
 export interface UpgradeOptions {
   target?: string;
@@ -18,8 +17,6 @@ export interface UpgradeResult {
 
 const VERSION_MANIFEST_URL = 'https://releases.thenewfuse.com/tnf-cli/versions.json';
 
-const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
-
 export class UpgradeService {
   private configDir: string;
 
@@ -28,7 +25,7 @@ export class UpgradeService {
   }
 
   getCurrentVersion(): string {
-    const packageJsonPath = path.join(MODULE_DIR, '..', 'package.json');
+    const packageJsonPath = path.join(__dirname, '..', 'package.json');
     try {
       const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       return pkg.version || '1.0.0';
@@ -41,7 +38,7 @@ export class UpgradeService {
     try {
       const response = await fetch(VERSION_MANIFEST_URL);
       if (!response.ok) return '1.0.0';
-      const data = (await response.json()) as { latest?: string };
+      const data = await response.json() as { latest?: string };
       return data.latest || '1.0.0';
     } catch {
       return this.getCurrentVersion();
@@ -52,7 +49,7 @@ export class UpgradeService {
     try {
       const response = await fetch(VERSION_MANIFEST_URL);
       if (!response.ok) return [this.getCurrentVersion()];
-      const data = (await response.json()) as { versions?: string[] };
+      const data = await response.json() as { versions?: string[] };
       return data.versions || [this.getCurrentVersion()];
     } catch {
       return [this.getCurrentVersion()];
@@ -61,7 +58,7 @@ export class UpgradeService {
 
   async upgrade(options: UpgradeOptions = {}): Promise<UpgradeResult> {
     const currentVersion = this.getCurrentVersion();
-    const targetVersion = options.target || (await this.getLatestVersion());
+    const targetVersion = options.target || await this.getLatestVersion();
 
     if (targetVersion === currentVersion) {
       return {

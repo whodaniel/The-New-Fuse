@@ -69,8 +69,8 @@ describe('SyncDashboardService', () => {
     service = module.get<SyncDashboardService>(SyncDashboardService);
 
     // Setup mock implementations
-    mockRedisConfig.getChannelName.mockImplementation((type: any, subtype: any) => `sync:${type}:${subtype}`);
-    mockRedisConfig.getKeyPattern.mockImplementation((type: any, pattern: any) => `sync:${type}:${pattern}`);
+    mockRedisConfig.getChannelName.mockImplementation((type, subtype) => `sync:${type}:${subtype}`);
+    mockRedisConfig.getKeyPattern.mockImplementation((type, pattern) => `sync:${type}:${pattern}`);
   });
 
   afterEach(async () => {

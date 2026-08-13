@@ -3,7 +3,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { ConfigurationRepository } from '../repositories/configuration.repository.js';
+import { ConfigurationRepository } from '../repositories/configuration.repository';
 
 @Injectable()
 export class AdminConfigurationService {

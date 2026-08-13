@@ -21,8 +21,6 @@ import { validateGcpEnvironment } from './config/gcp.config';
 import { setupSwagger } from './config/swagger.config';
 import { routeFallbackMiddleware } from './middleware/route-fallback.middleware';
 import { securityMiddleware } from './middleware/security.middleware';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const cookieParser = require('cookie-parser');
 
 const logger = new Logger('Bootstrap');
 
@@ -36,46 +34,12 @@ async function bootstrap(): Promise<void> {
     cors: getCorsOptions(),
   });
 
-  // Back-compat: clients still call /v1/* or /api/v1/* while routes are registered at /api/*.
-  // Also rewrite checklist probe paths (M02/M05) so they hit NestJS controllers under /api.
-  const CHECKLIST_REWRITES = new Set(['/docs', '/pricing', '/features']);
-  app.use((req, _res, next) => {
-    const rawUrl = req.url || '';
-    const queryIndex = rawUrl.indexOf('?');
-    const query = queryIndex >= 0 ? rawUrl.slice(queryIndex) : '';
-    let pathname = queryIndex >= 0 ? rawUrl.slice(0, queryIndex) : rawUrl;
-
-    if (pathname.startsWith('/v1/') || pathname === '/v1') {
-      pathname = `/api${pathname}`;
-    }
-    if (pathname.startsWith('/api/v1/')) {
-      // Don't rewrite /api/v1/health — it's a direct route
-      if (pathname === '/api/v1/health') {
-        // keep as-is
-      } else {
-        pathname = pathname.replace('/api/v1/', '/api/');
-      }
-    } else if (pathname === '/api/v1') {
-      pathname = '/api';
-    }
-
-    // M02/M05: Rewrite bare /docs, /pricing, /features, /bridges/* to /api/*
-    if (CHECKLIST_REWRITES.has(pathname) || pathname.startsWith('/bridges/')) {
-      pathname = `/api${pathname}`;
-    }
-
-    if (pathname + query !== rawUrl) {
-      const rewritten = `${pathname}${query}`;
-      req.url = rewritten;
-      req.originalUrl = rewritten;
-    }
-    next();
-  });
+  // Back-compat middleware for /api/auth/* -> /api/v1/auth/* (if versioning is implicitly active)
+  // app.use(backCompatMiddleware);
 
   // Explicitly add body parsers (essential for POST data processing)
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(cookieParser());
 
   // Global validation pipe with enhanced options
   app.useGlobalPipes(
@@ -124,30 +88,11 @@ async function bootstrap(): Promise<void> {
       timestamp: new Date().toISOString(),
     });
   });
-  app.getHttpAdapter().get('/api/v1/health', async (req: any, res: any) => {
-    // V02: Include Redis connectivity status for monitoring dashboards
-    let redisConnected = false;
-    try {
-      const Redis = require('ioredis');
-      const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-      const client = new Redis(redisUrl, { connectTimeout: 2000, lazyConnect: true });
-      await client.connect();
-      const pong = await client.ping();
-      redisConnected = pong === 'PONG';
-      client.disconnect();
-    } catch {
-      // Redis unavailable — report gracefully, don't crash
-      redisConnected = false;
-    }
-
+  app.getHttpAdapter().get('/api/v1/health', (req: any, res: any) => {
     res.json({
       status: 'ok',
       service: SERVICE_NAME_API,
       timestamp: new Date().toISOString(),
-      redis: {
-        connected: redisConnected,
-        note: redisConnected ? undefined : 'Redis unreachable from this deployment',
-      },
     });
   });
 

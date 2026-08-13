@@ -51,26 +51,9 @@ function deterministicSeedNumber(seed: string): number {
     h ^= seed.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  // Band allocation (Phase 9, revised 2026-08-09). See ROLE_DEFINITIONS.md.
-  //
-  //   1 – 999,999,999   production sequential (Redis INCR)
-  //   1e9 – 2e9         provisional edge/bridge hashes
-  //   2e9 – 3e9         seeder (this function)
-  //
-  // The previous band was `1000 + (h % 9000)`, described as "visually
-  // distinctive from production IDs (which start at 1)". It was not: it sits
-  // INSIDE the production range, so a seeded ID is indistinguishable from a low
-  // sequential one, and it overlapped the old provisional band at 5,000–9,999.
-  //
-  // 9,000 values was also too small. Measured against the live 194-agent roster
-  // on 2026-08-09 it produced a real collision — `backend-specialist` and
-  // `cto-agent` both hashed to 3755 — which is an ambiguous address wherever
-  // `@ID#:…` is used for routing. The band below is disjoint and 1e9 wide.
-  //
-  // NOTE: re-seeding assigns new ID#s to already-seeded agents. Seeded values
-  // are placeholders (Phase 9: authoritative IDs come from the sequence), but
-  // anything that persisted an old seeded ID must be refreshed.
-  return 2_000_000_000 + (h % 1_000_000_000);
+  // Bias into 1000-9999 range so the encoded Base58 is at least 2 chars
+  // and visually distinctive from production IDs (which start at 1).
+  return 1000 + (h % 9000);
 }
 
 function buildCanonicalEntityIdLocal(parts: {

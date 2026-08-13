@@ -9,19 +9,13 @@ export interface LLMRegistry {
 export const LLM_REGISTRY = 'LLMRegistry';
 
 @Injectable()
-export class InMemoryLLMRegistry implements LLMRegistry {
-  private readonly providers = new Map<string, Record<string, unknown>>();
-
+export class MockLLMRegistry implements LLMRegistry {
   async registerProvider(id: string, config: any): Promise<void> {
-    this.providers.set(id, config);
+    // Mock implementation
   }
 
   async unregisterProvider(id: string): Promise<void> {
-    this.providers.delete(id);
-  }
-
-  getProvider(id: string): Record<string, unknown> | undefined {
-    return this.providers.get(id);
+    // Mock implementation
   }
 }
 
@@ -232,6 +226,7 @@ export class LLMProviderService {
 
   async registerClaudeCodeCLI(): Promise<LLMProviderDTO | null> {
     try {
+      // Mock implementation - usually does nothing if in memory without persistence logic
       return null;
     } catch (error) {
       return null;

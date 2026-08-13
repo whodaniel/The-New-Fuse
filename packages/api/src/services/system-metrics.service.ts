@@ -7,7 +7,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE_CLIENT, type DrizzleClient, sql } from '@the-new-fuse/database';
 import * as os from 'os';
-import { ApiLogsRepository } from '../repositories/api-logs.repository.js';
+import { ApiLogsRepository } from '../repositories/api-logs.repository';
 
 @Injectable()
 export class SystemMetricsService {

@@ -3,12 +3,13 @@
  * Entry point for the NestJS application
  */
 
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module.js';
-import { GlobalExceptionFilter } from './filters/global-exception.filter.js';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -31,7 +32,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true,
+      transform: true
     })
   );
 
@@ -58,6 +59,6 @@ async function bootstrap() {
   logger.log(`Application is running on: http://localhost:${port}/api/v1`);
 }
 
-bootstrap().catch((err) => {
+bootstrap().catch(err => {
   new Logger('Bootstrap').error(`Failed to start application: ${err.message}`, err.stack);
 });

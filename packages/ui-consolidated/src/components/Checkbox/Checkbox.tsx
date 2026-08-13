@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 // Generate unique IDs for checkbox components
 let idCounter = 0;
@@ -29,8 +29,7 @@ export const checkboxVariants = cva(
  * Checkbox component props
  */
 export interface CheckboxProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof checkboxVariants> {
   /**
    * Label for the checkbox
@@ -84,20 +83,17 @@ export interface CheckboxProps
  * <Checkbox size="lg" label="Large checkbox" />
  */
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  (
-    {
-      className,
-      size,
-      label,
-      helperText,
-      error,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    size,
+    label,
+    helperText,
+    error,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    ...props
+  }, ref) => {
     const id = React.useMemo(() => generateId(), []);
 
     return (

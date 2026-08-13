@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils';
 
 /**
  * Sidebar variants using class-variance-authority
