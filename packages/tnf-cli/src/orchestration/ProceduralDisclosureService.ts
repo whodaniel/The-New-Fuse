@@ -34,24 +34,34 @@ export class ProceduralDisclosureService {
    * 2. Flag Detection - Identify [CLASS] and [STATUS] flags
    * 3. Requirement Match - Check current inbox/directive
    * 4. Action Sequence - Confirm readiness
+   *
+   * When `silent` is true, checks still run but cosmetic stdout is suppressed
+   * (required for --help/--json/--print/--oneshot and nested runSelfCli).
    */
-  async executeCheck(): Promise<ProceduralDisclosureResult> {
-    console.log(chalk.cyan('\n[Procedural Disclosure] Checking protocol alignment...\n'));
+  async executeCheck(options: { silent?: boolean } = {}): Promise<ProceduralDisclosureResult> {
+    const silent = Boolean(options.silent);
+    const log = silent
+      ? () => {
+          /* silenced */
+        }
+      : (line: string) => console.log(line);
+
+    log(chalk.cyan('\n[Procedural Disclosure] Checking protocol alignment...\n'));
 
     // Step 1: Context Load
     const flagsDetected = this.detectFlags();
     const contextLoaded = flagsDetected.length > 0;
 
     if (contextLoaded) {
-      console.log(chalk.green('  ✓ Context loaded'));
+      log(chalk.green('  ✓ Context loaded'));
     } else {
-      console.log(chalk.yellow('  ~ No [CLASS]/[STATUS] flags detected'));
+      log(chalk.yellow('  ~ No [CLASS]/[STATUS] flags detected'));
     }
 
     // Step 2: Flag Detection
     for (const flag of flagsDetected) {
       const relPath = path.relative(this.repoRoot, flag.filePath);
-      console.log(chalk.dim(`    ${relPath}: [CLASS:${flag.classType}] [STATUS:${flag.status}]`));
+      log(chalk.dim(`    ${relPath}: [CLASS:${flag.classType}] [STATUS:${flag.status}]`));
     }
 
     // Step 3: Requirement Match - Check LIVING_STATE for directive
@@ -62,13 +72,17 @@ export class ProceduralDisclosureService {
       const directiveMatch = livingStateContent.match(/\*\*Current Directive:\*\*\s*(.+)/);
       if (directiveMatch) {
         requirementsMatched = true;
-        console.log(chalk.green(`  ✓ Current directive: ${chalk.bold(directiveMatch[1].trim())}`));
+        log(chalk.green(`  ✓ Current directive: ${chalk.bold(directiveMatch[1].trim())}`));
       }
     }
 
     const ready = contextLoaded;
-    console.log(chalk.cyan('\n[Procedural Disclosure] Complete'));
-    console.log(ready ? chalk.green('  ✓ Ready for action sequence') : chalk.yellow('  ~ Limited protocol context'));
+    log(chalk.cyan('\n[Procedural Disclosure] Complete'));
+    log(
+      ready
+        ? chalk.green('  ✓ Ready for action sequence')
+        : chalk.yellow('  ~ Limited protocol context')
+    );
 
     return { flagsDetected, contextLoaded, requirementsMatched, ready };
   }

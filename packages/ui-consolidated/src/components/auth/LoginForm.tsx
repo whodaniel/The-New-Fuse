@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuthContext } from '../../providers/AuthProvider';
-import { Alert, AlertDescription, AlertTitle } from '../Alert/Alert';
-import { Button } from '../Button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card';
-import { Input } from '../Input';
+import { useAuthContext } from '../../providers/AuthProvider.js';
+import { Alert, AlertDescription, AlertTitle } from '../Alert/Alert.js';
+import { Button } from '../Button.js';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card.js';
+import { Input } from '../Input.js';
 
 /**
  * Login form props

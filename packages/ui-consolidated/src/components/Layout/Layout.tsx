@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getOrCreateMonitor } from '../../hooks/useTNFLogger';
-import { cn } from '../../utils';
+import { getOrCreateMonitor } from '../../hooks/useTNFLogger.js';
+import { cn } from '../../utils/index.js';
 
 /**
  * Layout component props

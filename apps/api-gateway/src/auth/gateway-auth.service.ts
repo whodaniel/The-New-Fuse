@@ -500,16 +500,18 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private getAccessSecret(): string {
-    return (
-      this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret-key-123'
-    );
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('[GatewayAuth] 🛑 CRITICAL SECURITY ERROR: Invalid or missing JWT secret.');
+    }
+    return secret;
   }
 
   private getRefreshSecret(): string {
-    return (
-      this.configService.get<string>('JWT_REFRESH_SECRET') ||
-      process.env.JWT_REFRESH_SECRET ||
-      'dev-refresh-secret-key-123'
-    );
+    const secret = this.configService.get<string>('JWT_REFRESH_SECRET') || process.env.JWT_REFRESH_SECRET;
+    if (!secret) {
+      throw new Error('[GatewayAuth] 🛑 CRITICAL SECURITY ERROR: Invalid or missing JWT refresh secret.');
+    }
+    return secret;
   }
 }

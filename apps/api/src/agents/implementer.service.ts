@@ -399,7 +399,7 @@ describe('${className}Service', () => {
       this.logger.log(`Pull request branch created: ${branchName}`);
 
       return {
-        url: `https://github.com/whodaniel/fuse/pull/new/${branchName}`,
+        url: `https://github.com/whodaniel/The-New-Fuse/pull/new/${branchName}`,
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

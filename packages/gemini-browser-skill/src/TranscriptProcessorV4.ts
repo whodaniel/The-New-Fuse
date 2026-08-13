@@ -16,7 +16,11 @@ import * as process from 'node:process';
 
 import { chromium, type BrowserContext, type Page } from 'playwright';
 
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { generateFederatedIdNumber } from './TranscriptProcessorV2.js';
+// Resolved at runtime so this package works in any checkout.
+const TNF_ROOT = process.env.TNF_ROOT || resolve(__dirname, '..', '..', '..');
 
 interface VideoEntry {
   index: number;
@@ -138,7 +142,7 @@ class TranscriptProcessorV4 {
 
   constructor(targetPhase: 'metadata' | 'transcript' | 'analysis' = 'analysis') {
     this.targetPhase = targetPhase;
-    const dataDir = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data';
+    const dataDir = TNF_ROOT + '/data';
 
     this.stateFilePath = path.join(dataDir, 'transcript-v2-state.json');
     this.reportsDir = path.join(dataDir, 'video-reports');
@@ -159,12 +163,35 @@ class TranscriptProcessorV4 {
 
   private loadGoogleKey(): void {
     try {
-      const envPath = '/Users/danielgoldberg/.hermes/.env';
-      const envContent = fs.readFileSync(envPath, 'utf8');
-      const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
-      if (match) {
-        this.googleApiKey = match[1];
-        console.log('[v4-pro] ✅ Google AI API Key loaded');
+      // 1. Try process.env first
+      if (process.env.GEMINI_API_KEY) {
+        this.googleApiKey = process.env.GEMINI_API_KEY;
+        console.log('[v4-pro] ✅ Google AI API Key loaded from process environment');
+        return;
+      }
+
+      // 2. Try ~/.hermes/.env
+      const envPath = join(homedir(), '.hermes', '.env');
+      if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
+        if (match) {
+          this.googleApiKey = match[1];
+          console.log('[v4-pro] ✅ Google AI API Key loaded from ~/.hermes/.env');
+          return;
+        }
+      }
+
+      // 3. Fallback to project root .env
+      const localEnvPath = TNF_ROOT + '/.env';
+      if (fs.existsSync(localEnvPath)) {
+        const envContent = fs.readFileSync(localEnvPath, 'utf8');
+        const match = envContent.match(/GEMINI_API_KEY=(AIza[A-Za-z0-9\-_]+)/);
+        if (match) {
+          this.googleApiKey = match[1];
+          console.log('[v4-pro] ✅ Google AI API Key loaded from project .env');
+          return;
+        }
       }
     } catch (e) {}
   }
@@ -830,8 +857,7 @@ async function main() {
   const endArg = args.find((a) => a.startsWith('--end='));
   const start = startArg ? parseInt(startArg.split('=')[1]) : 692;
   const end = endArg ? parseInt(endArg.split('=')[1]) : 648;
-  const libraryPath =
-    '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html';
+  const libraryPath = process.env.TNF_VIDEO_LIBRARY || '';
   const ingestProcessor = new TranscriptProcessorV4();
   await ingestProcessor.run(libraryPath, start, end);
 }

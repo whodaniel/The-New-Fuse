@@ -79,10 +79,17 @@ export class DrizzleProviderApiKeyRepository {
     if (!row) return null;
 
     const { encryptedKey, ...rest } = row;
-    return {
-      ...rest,
-      apiKey: decrypt(encryptedKey),
-    };
+    try {
+      return {
+        ...rest,
+        apiKey: decrypt(encryptedKey),
+      };
+    } catch (error) {
+      // Stale ENCRYPTION_KEY / corrupt ciphertext — callers fall through to env/global keys.
+      throw new Error(
+        `Unable to decrypt provider key for ${normalized}: ${(error as Error).message}`
+      );
+    }
   }
 
   async upsert(
