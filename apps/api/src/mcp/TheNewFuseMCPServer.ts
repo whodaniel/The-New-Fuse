@@ -5,8 +5,8 @@
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {
   CallToolRequest,
   CallToolRequestSchema,
@@ -19,6 +19,7 @@ import {
   ReadResourceRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
+import { randomUUID } from 'crypto';
 import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -46,6 +47,10 @@ export class TheNewFuseMCPServer {
   private services: ServiceInterface = {};
   private webScrapingTools: any;
   private julesClient: any;
+  /** Streamable HTTP mode only — null under stdio. */
+  private httpTransport: StreamableHTTPServerTransport | null = null;
+  private httpServer: any = null;
+  private httpSessionId: string | null = null;
 
   constructor(isRemote: boolean = false) {
     this.isRemote = isRemote;
@@ -1641,31 +1646,109 @@ export class TheNewFuseMCPServer {
   }
 
   /**
-   * Start the MCP server
+   * Start the MCP server.
+   *
+   * `http` serves the Streamable HTTP transport (MCP 2025-03-26 and later) on
+   * POST/GET/DELETE `/mcp`. It replaces an earlier HTTP+SSE attempt that could
+   * never work: SSEServerTransport takes a per-request ServerResponse, not the
+   * http.Server, and no route was registered to open the stream.
+   *
+   * Single-session by design. This class owns one SDK `Server`, and a Server
+   * can only be bound to one transport, so a second concurrent initialize is
+   * rejected with 409 rather than silently stealing the first client's session.
+   * Multi-client would need a Server-per-session factory.
+   *
+   * Binds to loopback only. This exposes every registered tool with no auth, so
+   * it must not be published; DNS-rebinding protection is on to stop a page in
+   * the user's browser from reaching it.
    */
   async start(transport: 'stdio' | 'http' = 'stdio', port?: number) {
     if (transport === 'stdio') {
       const stdinTransport = new StdioServerTransport();
       await this.server.connect(stdinTransport);
       console.error('The New Fuse MCP Server running on stdio');
-    } else if (transport === 'http') {
-      const app = express();
-      app.use(express.json());
-
-      const httpPort = port || 3001;
-      const httpServer = app.listen(httpPort, () => {
-        console.error(`The New Fuse MCP Server running on http://localhost:${httpPort}`);
-      });
-
-      const transport = new SSEServerTransport('/message', httpServer as any);
-      await this.server.connect(transport);
+      return;
     }
+
+    if (transport !== 'http') return;
+
+    // Must not default to the API's own port (DEFAULT_PORT 3001) or this binds
+    // on top of the running API and dies with EADDRINUSE.
+    const httpPort = port || Number(process.env.MCP_HTTP_PORT) || 3399;
+    const host = '127.0.0.1';
+    const allowedHosts = [`${host}:${httpPort}`, `localhost:${httpPort}`];
+
+    const app = express();
+    app.use(express.json());
+
+    const httpTransport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      enableDnsRebindingProtection: true,
+      allowedHosts,
+      onsessioninitialized: (sessionId: string) => {
+        this.httpSessionId = sessionId;
+        console.error(`MCP session initialized: ${sessionId}`);
+      },
+      onsessionclosed: (sessionId: string) => {
+        if (this.httpSessionId === sessionId) this.httpSessionId = null;
+        console.error(`MCP session closed: ${sessionId}`);
+      },
+    });
+
+    const handle = async (req: any, res: any) => {
+      const incoming = req.headers['mcp-session-id'];
+      // Guard the single-session constraint: a new initialize while another
+      // client holds the session would otherwise rebind the transport.
+      if (!incoming && this.httpSessionId) {
+        res.status(409).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32000,
+            message: `MCP session ${this.httpSessionId} is already active; DELETE /mcp to release it.`,
+          },
+          id: null,
+        });
+        return;
+      }
+      try {
+        await httpTransport.handleRequest(req, res, req.body);
+      } catch (error) {
+        console.error('MCP request failed:', error);
+        if (!res.headersSent) {
+          res.status(500).json({
+            jsonrpc: '2.0',
+            error: { code: -32603, message: 'Internal server error' },
+            id: null,
+          });
+        }
+      }
+    };
+
+    app.post('/mcp', handle);
+    app.get('/mcp', handle); // resumable server->client stream
+    app.delete('/mcp', handle); // session termination
+
+    await this.server.connect(httpTransport);
+
+    this.httpTransport = httpTransport;
+    this.httpServer = app.listen(httpPort, host, () => {
+      console.error(`The New Fuse MCP Server (Streamable HTTP) on http://${host}:${httpPort}/mcp`);
+    });
   }
 
   /**
    * Stop the server
    */
   async stop() {
+    if (this.httpTransport) {
+      await this.httpTransport.close().catch(() => undefined);
+      this.httpTransport = null;
+    }
+    if (this.httpServer) {
+      await new Promise<void>((resolve) => this.httpServer.close(() => resolve()));
+      this.httpServer = null;
+    }
+    this.httpSessionId = null;
     await this.server.close();
   }
 }

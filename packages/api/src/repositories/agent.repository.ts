@@ -115,6 +115,92 @@ export class AgentRepository implements IAgentRepository {
   }
 
   /**
+   * Find agents with semantic chain filters (category, visibility, dacc_role, domain).
+   * This supports the progressive disclosure API by allowing drill-down by department
+   * and visibility tier instead of returning all 194 agents flat.
+   */
+  async findWithSemanticFilters(options: {
+    userId?: string;
+    category?: string;
+    domain?: string;
+    visibility?: string;
+    daccRole?: string;
+    limit?: number;
+  }): Promise<Agent[]> {
+    const conditions = [isNull(agents.deletedAt)];
+
+    if (options.userId) {
+      conditions.push(eq(agents.userId, options.userId));
+    }
+    if (options.category) {
+      conditions.push(eq(drizzleSchema.agentDirectoryEntries.category, options.category));
+    }
+    if (options.visibility) {
+      // visibility is stored in agent metadata profile
+      conditions.push(sql`${agents.profile}->>'visibility' = ${options.visibility}`);
+    }
+    if (options.daccRole) {
+      // dacc_role is stored in the profile jsonb
+      conditions.push(sql`${agents.profile}->>'dacc_role' = ${options.daccRole}`);
+    }
+    if (options.domain) {
+      // domain is stored in the profile jsonb
+      conditions.push(sql`${agents.profile}->>'domain' = ${options.domain}`);
+    }
+
+    const query = this.db
+      .select()
+      .from(agents)
+      .where(and(...conditions))
+      .orderBy(desc(agents.createdAt));
+
+    if (options.limit) {
+      return query.limit(options.limit);
+    }
+    return query;
+  }
+
+  /**
+   * Get distinct categories (departments) from agent directory entries
+   */
+  async getDistinctCategories(): Promise<string[]> {
+    const results = await this.db
+      .selectDistinct({ category: drizzleSchema.agentDirectoryEntries.category })
+      .from(drizzleSchema.agentDirectoryEntries);
+
+    return results.map((r) => r.category).filter(Boolean) as string[];
+  }
+
+  /**
+   * Get agent directory entries with optional category and visibility filtering
+   */
+  async findDirectoryEntries(options: {
+    category?: string;
+    isPublicOnly?: boolean;
+    limit?: number;
+  }): Promise<any[]> {
+    const conditions: any[] = [];
+
+    if (options.category) {
+      conditions.push(eq(drizzleSchema.agentDirectoryEntries.category, options.category));
+    }
+    if (options.isPublicOnly) {
+      conditions.push(eq(drizzleSchema.agentDirectoryEntries.isPublic, true));
+    }
+
+    const query = this.db
+      .select()
+      .from(drizzleSchema.agentDirectoryEntries)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(drizzleSchema.agentDirectoryEntries.lastActiveAt));
+
+    if (options.limit) {
+      return query.limit(options.limit);
+    }
+    return query;
+  }
+
+  /**
    * Find one agent matching filter
    */
   async findOne(filter: Partial<Agent>): Promise<Agent | null> {

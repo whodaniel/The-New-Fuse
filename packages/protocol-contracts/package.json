@@ -23,7 +23,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
-    "clean": "rm -rf dist generated/jsonschema generated/python/tnf_contracts/__pycache__",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo .tsbuildinfo .turbo generated/jsonschema generated/python/tnf_contracts/__pycache__",
     "test": "echo \"No tests for this package\" && exit 0"
   },
   "dependencies": {

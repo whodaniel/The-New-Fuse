@@ -2,14 +2,17 @@
  * Unit tests for MCPClient
  */
 
-import { MCPClient } from './MCPClient.js';
-import { MCPClientConfig } from '../types/client.js';
 import { ConnectionStatus } from '../interfaces/IMCPConnection.js';
-import { MCPErrorCode } from '../types/error.js';
+import { MCPClientConfig } from '../types/client.js';
+import { MCPClient } from './MCPClient.js';
 
 // Mock WebSocket
 class MockCloseEvent extends Event {
-  constructor(type: string, public code?: number, public reason?: string) {
+  constructor(
+    type: string,
+    public code?: number,
+    public reason?: string
+  ) {
     super(type);
   }
 }
@@ -51,9 +54,9 @@ class MockWebSocket {
             result: {
               capabilities: [
                 { name: 'resources', version: '1.0' },
-                { name: 'tools', version: '1.0' }
-              ]
-            }
+                { name: 'tools', version: '1.0' },
+              ],
+            },
           };
         } else if (message.method === 'resources/list') {
           response = {
@@ -62,9 +65,9 @@ class MockWebSocket {
             result: {
               resources: [
                 { uri: 'test://resource1', name: 'Resource 1' },
-                { uri: 'test://resource2', name: 'Resource 2' }
-              ]
-            }
+                { uri: 'test://resource2', name: 'Resource 2' },
+              ],
+            },
           };
         } else if (message.method === 'resources/read') {
           response = {
@@ -73,8 +76,8 @@ class MockWebSocket {
             result: {
               uri: message.params.uri,
               mimeType: 'text/plain',
-              content: 'Test content'
-            }
+              content: 'Test content',
+            },
           };
         } else if (message.method === 'tools/call') {
           response = {
@@ -82,14 +85,14 @@ class MockWebSocket {
             id: message.id,
             result: {
               success: true,
-              result: { output: 'Tool executed successfully' }
-            }
+              result: { output: 'Tool executed successfully' },
+            },
           };
         } else if (message.method === 'ping') {
           response = {
             jsonrpc: '2.0',
             id: message.id,
-            result: { status: 'pong' }
+            result: { status: 'pong' },
           };
         } else {
           response = {
@@ -97,8 +100,8 @@ class MockWebSocket {
             id: message.id,
             error: {
               code: -32601,
-              message: 'Method not found'
-            }
+              message: 'Method not found',
+            },
           };
         }
 
@@ -130,12 +133,12 @@ describe('MCPClient', () => {
       retryPolicy: {
         maxAttempts: 3,
         baseDelay: 1000,
-        maxDelay: 10000
+        maxDelay: 10000,
       },
       options: {
         enableCaching: true,
-        cacheTTL: 300000
-      }
+        cacheTTL: 300000,
+      },
     };
 
     client = new MCPClient(config);
@@ -167,17 +170,33 @@ describe('MCPClient', () => {
     });
 
     test('should handle connection errors', async () => {
-      // Mock WebSocket that fails to connect
+      // Mock WebSocket that fails to connect. Deliberately does not extend
+      // MockWebSocket: its constructor also schedules a success (onopen)
+      // timer at the same delay, which raced against the error timer here
+      // and made this test flaky depending on timer registration order.
       const OriginalWebSocket = (global as any).WebSocket;
-      (global as any).WebSocket = class extends MockWebSocket {
-        constructor(url: string) {
-          super(url);
+      (global as any).WebSocket = class {
+        static CONNECTING = 0;
+        static OPEN = 1;
+        static CLOSING = 2;
+        static CLOSED = 3;
+
+        readyState = 0;
+        onopen: ((event: Event) => void) | null = null;
+        onclose: ((event: CloseEvent) => void) | null = null;
+        onmessage: ((event: MessageEvent) => void) | null = null;
+        onerror: ((event: Event) => void) | null = null;
+
+        constructor(public url: string) {
           setTimeout(() => {
             if (this.onerror) {
               this.onerror(new Event('error'));
             }
           }, 10);
         }
+
+        send(): void {}
+        close(): void {}
       };
 
       const endpoint = 'ws://invalid:8080';
@@ -212,7 +231,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-1',
         method: 'initialize',
-        params: {}
+        params: {},
       };
 
       const response = await client.sendRequest(request);
@@ -227,7 +246,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-error',
         method: 'nonexistent-method',
-        params: {}
+        params: {},
       };
 
       await expect(client.sendRequest(request)).rejects.toThrow();
@@ -240,7 +259,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-disconnected',
         method: 'test',
-        params: {}
+        params: {},
       };
 
       await expect(client.sendRequest(request)).rejects.toThrow();
@@ -349,7 +368,7 @@ describe('MCPClient', () => {
       const notification = {
         jsonrpc: '2.0' as const,
         method: 'test-notification',
-        params: { data: 'test' }
+        params: { data: 'test' },
       };
 
       await expect(client.sendNotification(notification)).resolves.not.toThrow();
@@ -363,12 +382,15 @@ describe('MCPClient', () => {
 
       client.subscribeToNotifications(callback);
 
-      // Simulate incoming notification
+      // Simulate an incoming server notification. subscribeToNotifications
+      // is served by the client's internal eventManager (fed by
+      // requestManager's 'notification' event), not by the client's own
+      // public EventEmitter -- emitting on `client` directly never reaches it.
       setTimeout(() => {
-        client.emit('notification', {
+        (client as any).eventManager.handleNotification({
           jsonrpc: '2.0',
           method: 'test-notification',
-          params: {}
+          params: {},
         });
       }, 10);
     });
@@ -381,12 +403,13 @@ describe('MCPClient', () => {
 
       client.subscribeToMethod('specific-method', callback);
 
-      // Simulate incoming notification
+      // See note above: subscribeToMethod is served by the internal
+      // eventManager, not the client's own public EventEmitter.
       setTimeout(() => {
-        client.emit('notification', {
+        (client as any).eventManager.handleNotification({
           jsonrpc: '2.0',
           method: 'specific-method',
-          params: {}
+          params: {},
         });
       }, 10);
     });
@@ -403,7 +426,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0',
         id: 'stats-test',
         method: 'initialize',
-        params: {}
+        params: {},
       });
 
       const updatedStats = client.getStatistics();
@@ -429,18 +452,35 @@ describe('MCPClient', () => {
 
   describe('Error Handling', () => {
     test('should handle connection timeout', async () => {
-      // Mock WebSocket that never connects
+      // Mock WebSocket that never connects. Deliberately does not extend
+      // MockWebSocket: its constructor also schedules a success (onopen)
+      // timer, which fired well within this test's short timeout and made
+      // the connection succeed instead of time out.
       const OriginalWebSocket = (global as any).WebSocket;
-      (global as any).WebSocket = class extends MockWebSocket {
-        constructor(url: string) {
-          super(url);
-          // Never call onopen
+      (global as any).WebSocket = class {
+        static CONNECTING = 0;
+        static OPEN = 1;
+        static CLOSING = 2;
+        static CLOSED = 3;
+
+        readyState = 0;
+        onopen: ((event: Event) => void) | null = null;
+        onclose: ((event: CloseEvent) => void) | null = null;
+        onmessage: ((event: MessageEvent) => void) | null = null;
+        onerror: ((event: Event) => void) | null = null;
+
+        constructor(public url: string) {
+          // Never call onopen, onerror, or onclose -- simulates a connection
+          // attempt that hangs until the client's own timeout fires.
         }
+
+        send(): void {}
+        close(): void {}
       };
 
       const shortTimeoutConfig = {
         ...config,
-        timeout: 100
+        timeout: 100,
       };
       const timeoutClient = new MCPClient(shortTimeoutConfig);
 
@@ -462,7 +502,7 @@ describe('MCPClient', () => {
 
       const timeoutClient = new MCPClient({
         ...config,
-        timeout: 100
+        timeout: 100,
       });
 
       await timeoutClient.connect('ws://localhost:8080');
@@ -471,7 +511,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'timeout-test',
         method: 'test',
-        params: {}
+        params: {},
       };
 
       await expect(timeoutClient.sendRequest(request)).rejects.toThrow();
