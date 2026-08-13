@@ -5,7 +5,7 @@
     "postinstall": "node scripts/postinstall.cjs",
     "fix:native-modules": "bash scripts/fix-native-modules.sh",
     "setup:native-modules": "node scripts/setup-native-modules.cjs",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "start": "COMMAND='pnpm run tnf -- ports conflicts --auto-resolve'; if [ \"$TNF_ALLOW_PROTECTED_PORT_TERMINATION\" = \"true\" ]; then COMMAND+=' --include-protected'; fi; eval $COMMAND && pnpm run dev",
     "dev:filtered": "turbo run dev --filter=@the-new-fuse/api-server --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/frontend-app --concurrency=2",
     "dev": "turbo run dev --concurrency=4",
