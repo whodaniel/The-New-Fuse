@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 export function ThemeToggle() {
   const { theme, toggleMode } = useTheme();
   return (
-    <Button variant="ghost" size="icon" onClick={toggleMode} className="w-9 h-9">
+    <Button variant="ghost" size="icon" onClick={toggleMode} className="w-9 h-9" aria-label="Toggle theme">
       <span className="sr-only">Toggle theme</span>
       {theme.mode === 'light' ? (
         <svg
