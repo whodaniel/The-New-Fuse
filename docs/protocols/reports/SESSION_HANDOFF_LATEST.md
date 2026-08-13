@@ -55,3 +55,7 @@ Handoff ID: `4b9ef86b-190e-4041-8bac-b60c83abeaf2`
   work unit.
 - Re-verification stamp 2026-08-13T14:35:00Z: vocabulary audit FULLY_CONSISTENT,
   all 7 INCs resolved in commit 0a811ca5e0.
+- Gap-area re-verification stamp 2026-08-13T14:55:00Z: all 8 open gaps
+  investigated, none actionable. GAP 1 clarified as not-drift (two distinct
+  axes: marketplace kind enum `mcp_server` vs CLI subcommand `mcp-server`). GAP
+  11 is stale audit reference (no source file).

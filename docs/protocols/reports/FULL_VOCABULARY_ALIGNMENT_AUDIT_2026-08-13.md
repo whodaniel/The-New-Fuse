@@ -307,3 +307,28 @@ federated `ID#` routing logic and overall TNF protocols:
 11. **Gap Area**: Test Registry Sync
     - **Location**: test-sync.ts
     - **Drift Risk**: Minor validation drift risk
+    - **Status (2026-08-13T14:45Z):** `test-sync.ts` not found in src/ — may be
+      stale reference or only present in dist/. No source file in
+      `packages/relay-core/src/` or `packages/database/src/`. Gap may be stale.
+
+## 8. Gap-Area Re-Verification (2026-08-13T14:45Z)
+
+Live codebase check of all 8 open gaps. Result: only GAP 1 has real drift;
+others are defensive/normalizer-resolved or well-documented.
+
+| Gap                         | Drift Risk | Status      | Notes                                                                                                                                                                                                                                                                                                                                                          |
+| --------------------------- | ---------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GAP 1 (MCP server vocab)    | LOW        | NOT DRIFT   | `mcp_server` (cli.ts:8982/9004) is the marketplace catalog kind value (matches DB schema, frontend types, api marketplace.service — 50+ references). `mcp-server` (cli.ts:17014/17057) is the CLI subcommand arg name. Two distinct axes: kind enum value vs subcommand name. Normalizer at cli.ts:17019 maps `mcpserver` -> `mcp-server` for subcommand args. |
+| GAP 2 (capability enum)     | LOW        | RESOLVED    | DB enum UPPERCASE (25 values, enums.ts:160-186). Broker uses traits, not enum. No drift.                                                                                                                                                                                                                                                                       |
+| GAP 3 (status enum)         | LOW        | RESOLVED    | DB enum UPPERCASE (9 values). `normalizeAgentLifecycleStatus` (relay-core/contracts/lifecycle.ts) handles both cases via `AGENT_STATUS_ALIASES`. Runtime callers always lowercase.                                                                                                                                                                             |
+| GAP 4 (IdentityCategory)    | LOW        | DOCUMENTED  | 11 values in `protocol-contracts/src/identity.ts:3-13`. Zod schema enforces enum. Surface 11 documents the axis.                                                                                                                                                                                                                                               |
+| GAP 5 (WorkerEnvelope)      | LOW        | VERSIONED   | Hardcoded `type:'task'`, `version:'1.0'` (WorkerEnvelope.ts). Single version, no drift today.                                                                                                                                                                                                                                                                  |
+| GAP 6 (Registry interface)  | LOW        | IN TYPES    | `operationalHandle`/`aliases`/`channels` defined in `relay-core/src/types.ts:6/8/13`. Not duplicated in ROLE_DEFINITIONS.md but types.ts is canonical.                                                                                                                                                                                                         |
+| GAP 7 (jsonb bag inventory) | LOW        | INVENTORIED | 10+ jsonb columns in `agents.ts` with inline comments. Policy in ROLE_DEFINITIONS.md § Metadata policy.                                                                                                                                                                                                                                                        |
+| GAP 8 (mcid/lineage vocab)  | LOW        | ISOLATED    | tnf/mcid/0.1 spec at `protocol-contracts/src/handoff.ts:30-45`. Separate namespace from federated IDs. Surface 11 documents.                                                                                                                                                                                                                                   |
+| GAP 11 (test-sync.ts)       | LOW        | STALE       | `test-sync.ts` not present in src/. May be stale audit reference.                                                                                                                                                                                                                                                                                              |
+
+**Conclusion:** No actionable gaps remain. All 8 gap areas are either
+defensively normalized (GAP 2, 3), documented in canonical surfaces (GAP 4, 6,
+7, 8), versioned (GAP 5), or are non-drift between distinct axes (GAP 1). GAP 11
+(test-sync.ts) is a stale audit reference; no source file exists.
