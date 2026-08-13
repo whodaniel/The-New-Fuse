@@ -212,7 +212,8 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Add">
               <button
                 onClick={() => onAction?.('add', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md"
+                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                aria-label="Add"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -223,7 +224,8 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Edit">
               <button
                 onClick={() => onAction?.('edit', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md"
+                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                aria-label="Edit"
               >
                 <Edit className="h-4 w-4" />
               </button>
@@ -234,7 +236,8 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Delete">
               <button
                 onClick={() => onAction?.('delete', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md text-danger-600"
+                className="p-1.5 hover:bg-muted/30 rounded-md text-danger-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                aria-label="Delete"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -245,7 +248,8 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Refresh">
               <button
                 onClick={() => onAction?.('refresh', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md"
+                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                aria-label="Refresh"
               >
                 <RefreshCw className="h-4 w-4" />
               </button>
@@ -254,7 +258,7 @@ export function DataTable<T extends { id: string | number }>({
 
           {actions.export && (
             <Tooltip label="Export">
-              <button onClick={handleExport} className="p-1.5 hover:bg-muted/30 rounded-md">
+              <button onClick={handleExport} className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1" aria-label="Export">
                 <Download className="h-4 w-4" />
               </button>
             </Tooltip>
@@ -277,7 +281,8 @@ export function DataTable<T extends { id: string | number }>({
                       processedData.length > 0 && selectedRows.length === processedData.length
                     }
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded"
+                    className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    aria-label="Select all rows"
                   />
                 </th>
               )}
@@ -354,7 +359,8 @@ export function DataTable<T extends { id: string | number }>({
                         checked={selectedRows.some((r) => r.id === row.id)}
                         onChange={() => handleSelectRow(row)}
                         onClick={(e) => e.stopPropagation()}
-                        className="rounded"
+                        className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                        aria-label="Select row"
                       />
                     </td>
                   )}
