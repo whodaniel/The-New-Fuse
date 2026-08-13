@@ -340,3 +340,4 @@ dump.rdb
 
 # Telegram bot credentials
 .env.tnf-telegram
+data/
