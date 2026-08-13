@@ -1,6 +1,12 @@
+/* global require, process, console */
 const https = require('https');
 
-const TOKEN = 'fpX3SUxktWBIgDgb1sm29x5G8G9YmlaKyzE0uReM';
+const TOKEN = process.env.CLOUDFLARE_TOKEN;
+
+if (!TOKEN) {
+  console.error('Error: CLOUDFLARE_TOKEN environment variable is not set.');
+  process.exit(1);
+}
 const ACCOUNT_ID = '7a340d098bbe253ce909af4ca6870ff0';
 const BASE_URL = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}`;
 

@@ -27,6 +27,7 @@ export class FileChangeBatcher {
   private readonly batchTimers = new Map<string, NodeJS.Timeout>();
   private readonly batches = new Map<string, FileChangeEvent[]>();
   private batchCounter = 0;
+  private isShuttingDown = false;
 
   constructor(
     private readonly config: BatchConfig,
@@ -53,6 +54,8 @@ export class FileChangeBatcher {
     const debounceTimer = setTimeout(async () => {
       await this.processDebounced(key, priority);
     }, this.config.debounceDelay);
+
+    
 
     this.debounceTimers.set(key, debounceTimer);
 
@@ -111,6 +114,8 @@ export class FileChangeBatcher {
       const batchTimer = setTimeout(async () => {
         await this.processBatch(batchKey, priority);
       }, this.config.batchTimeout);
+      
+      
 
       this.batchTimers.set(batchKey, batchTimer);
     }
@@ -157,10 +162,10 @@ export class FileChangeBatcher {
       });
 
       // Re-queue individual events for retry
+      if (this.isShuttingDown) return;
       for (const event of events) {
-        setTimeout(() => {
-          this.addFileChange(event);
-        }, 1000); // Retry after 1 second
+        const t = setTimeout(() => { this.retryTimers.delete(t); this.addFileChange(event); }, 1000);
+        this.retryTimers.add(t); // Retry after 1 second
       }
     }
   }
@@ -271,6 +276,8 @@ export class FileChangeBatcher {
       clearTimeout(timer);
     }
 
+    for (const t of this.retryTimers) clearTimeout(t);
+    this.retryTimers.clear();
     this.debounceTimers.clear();
     this.batchTimers.clear();
   }
@@ -279,6 +286,7 @@ export class FileChangeBatcher {
    * Shutdown the batcher
    */
   async shutdown(): Promise<void> {
+    this.isShuttingDown = true;
     await this.flushAll();
     this.logger.info('File change batcher shutdown complete');
   }

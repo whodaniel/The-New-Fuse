@@ -7,13 +7,13 @@
 
 # Cloud Infrastructure Migration Blueprint (CloudRuntime -> GCP/Cloudflare Stack)
 
-> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** This document describes the migration FROM
-> CloudRuntime TO the current stack: **GCP (Cloud Run) + Cloudflare (Pages/Workers) +
-> Supabase (PostgreSQL) + Upstash (Redis)**. The CloudRuntime references below are
-> historical and preserved for migration context only.
+> **⚠️ CLOUD_RUNTIME IS NO LONGER USED.** This document describes the migration
+> FROM CloudRuntime TO the current stack: **GCP (Cloud Run) + Cloudflare
+> (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis)**. The CloudRuntime
+> references below are historical and preserved for migration context only.
 
-Based on the verified CloudRuntime configuration, here is exactly how the services
-must be configured on the new infrastructure stack.
+Based on the verified CloudRuntime configuration, here is exactly how the
+services must be configured on the new infrastructure stack.
 
 ## 1. Supabase (PostgreSQL)
 
@@ -31,8 +31,9 @@ Your new Upstash instance must replace the CloudRuntime Redis service.
 
 - **Old URL**: `redis://default:...@redis.cloud_runtime.internal:6379`
 - **New URL (`REDIS_URL`, `A2A_REDIS_URL`)**:
-  `rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA...@...` (Use the Upstash
-  connection string with `rediss://` for TLS)
+  `rediss://default:<UPSTASH_TOKEN>@<instance>.upstash.io:6379` (Use the Upstash
+  connection string with `rediss://` for TLS; read the real value from the
+  Upstash console — never commit it)
 - **Required across**: `api-gateway`, `backend-jfal`
 
 ## 3. Google Cloud Platform (GCR / Cloud Run)
@@ -60,7 +61,8 @@ Your new Upstash instance must replace the CloudRuntime Redis service.
 - **Critical Variables**:
   - `DATABASE_URL` (Supabase)
   - `REDIS_URL` (Upstash)
-  - `JWT_SECRET`: (Migrate from CloudRuntime secret manager; do not hardcode value)
+  - `JWT_SECRET`: (Migrate from CloudRuntime secret manager; do not hardcode
+    value)
   - `LOG_LEVEL`: `warn`
 
 ### C. Relay Server (`relay-server`)
