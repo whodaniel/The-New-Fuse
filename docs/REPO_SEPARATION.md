@@ -16,7 +16,7 @@ downstream publication repos.**
 whodaniel/tnf-monorepo  (COMBINED MONOREPO, PRIVATE — you develop here)
     │
     ├──► whodaniel/The-New-Fuse        (PUBLIC,  ~90% open-source runtime)
-    └──► whodaniel/The-New-Fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
+    └──► whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
 ```
 
 - **NEVER commit directly to `The-New-Fuse` or `fuse-control-plane`.**
@@ -119,7 +119,7 @@ was removed, contract stubs are placed that:
 - Provide no-op stub classes with console warnings
 - Reference the control-plane repo in comments
 
-### `whodaniel/The-New-Fuse-control-plane` — Proprietary (Read-Only)
+### `whodaniel/fuse-control-plane` — Proprietary (Read-Only)
 
 Published automatically by `sync-repos.sh`. Contains:
 

@@ -14,6 +14,10 @@ on:
 
 jobs:
   sync-repos:
+    # Sync must only run from the private monorepo. The workflow file is
+    # published into The-New-Fuse by Phase 2; without this guard a push to
+    # public main would re-run sync against itself (and force-push).
+    if: github.repository == 'whodaniel/tnf-monorepo'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Monorepo

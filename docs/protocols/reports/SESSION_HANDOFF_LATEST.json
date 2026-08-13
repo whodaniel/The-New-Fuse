@@ -1,27 +1,27 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "4b9ef86b-190e-4041-8bac-b60c83abeaf2",
-  "created_at": "2026-08-13T14:35:56.947Z",
-  "repository": "The-New-Fuse",
-  "branch": "main",
-  "head_sha": "0a811ca5e0f8bac48847440b05e402b3d6c752d9",
+  "handoff_id": "52d520bc-c4e5-407b-a3f6-960e55ced537",
+  "created_at": "2026-08-13T18:00:17.983Z",
+  "repository": "tnf-sync-publish",
+  "branch": "HEAD",
+  "head_sha": "4f36df2601e3dbf9f72d5e3f9ac5ad1991a120ac",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
     "Protocol enforcement layer implemented for mandatory session handoff continuity.",
     "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
   "changed_paths": [
-    "docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.json",
-    ".github/workflows/repo-sync.yml",
-    "docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/LIVING_STATE.md",
     "scripts/sync-repos.sh",
+    ".github/workflows/repo-sync.yml",
+    "docs/REPO_SEPARATION.md",
+    "docs/protocols/LIVING_STATE.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/REPO_SEPARATION.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -32,7 +32,10 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -42,11 +45,11 @@
   },
   "next_actions": [
     "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
-    "Re-verification stamp 2026-08-13T14:35:00Z: vocabulary audit FULLY_CONSISTENT, all 7 INCs resolved in commit 0a811ca5e0",
-    "Gap-area re-verification stamp 2026-08-13T14:55:00Z: all 8 open gaps investigated, none actionable."
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["0a811ca5e0f8bac48847440b05e402b3d6c752d9"]
+    "commits": [
+      "4f36df2601e3dbf9f72d5e3f9ac5ad1991a120ac"
+    ]
   }
 }

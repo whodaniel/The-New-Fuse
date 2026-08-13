@@ -9,7 +9,7 @@ set -euo pipefail
 #   Syncs the combined private monorepo (whodaniel/tnf-monorepo) to the two
 #   downstream publication repos:
 #     1. whodaniel/The-New-Fuse        (PUBLIC, ~90% open-source runtime)
-#     2. whodaniel/The-New-Fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
+#     2. whodaniel/fuse-control-plane  (PRIVATE, ~10% proprietary control plane)
 #
 #   NAMING (swapped 2026-07-25): the flagship name The-New-Fuse now belongs to the
 #   PUBLIC publication repo. The private development monorepo — this one — is
@@ -71,6 +71,12 @@ MONO_MSG=$(cd "$MONO_ROOT" && git log -1 --format='%s')
 echo "Source: whodaniel/tnf-monorepo @ $MONO_HEAD"
 echo "        \"$MONO_MSG\""
 echo ""
+
+if [ -z "${GITHUB_PAT:-}" ]; then
+  echo "ERROR: GITHUB_PAT is empty. Set repository secret TNF_SYNC_PAT on whodaniel/tnf-monorepo"
+  echo "       (classic or fine-grained PAT with repo scope for fuse-control-plane + The-New-Fuse)."
+  exit 1
+fi
 
 # ─────────────────────────────────────────────────────────────────────
 # PROPRIETARY EXCLUSION LIST
@@ -272,9 +278,9 @@ if [ "$SYNC_CONTROL" = true ]; then
 
   CTRL_DIR="$WORK_DIR/fuse-control-plane"
   if [ -n "${GITHUB_PAT:-}" ]; then
-    git clone "https://${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
+    git clone "https://${GITHUB_PAT}@github.com/whodaniel/fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
   else
-    git clone https://github.com/whodaniel/The-New-Fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
+    git clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
   fi
 
   cd "$CTRL_DIR"
@@ -414,7 +420,7 @@ if [ "$SYNC_OPEN" = true ]; then
  *
  * This module provides the Master Clock synchronization service for TNF.
  * The implementation is part of the proprietary control-plane
- * (https://github.com/whodaniel/The-New-Fuse-control-plane).
+ * (https://github.com/whodaniel/fuse-control-plane).
  *
  * Public contracts are available in @the-new-fuse/control-plane-contracts.
  *
@@ -438,7 +444,7 @@ STUB
  *
  * This module provides the Broker Agent service for TNF.
  * The implementation is part of the proprietary control-plane
- * (https://github.com/whodaniel/The-New-Fuse-control-plane).
+ * (https://github.com/whodaniel/fuse-control-plane).
  *
  * Public contracts are available in @the-new-fuse/control-plane-contracts.
  *
@@ -464,7 +470,7 @@ STUB
  * The orchestration engine is part of the proprietary control-plane.
  * This stub module provides a no-op implementation for the open-source runtime.
  *
- * @see https://github.com/whodaniel/The-New-Fuse-control-plane
+ * @see https://github.com/whodaniel/fuse-control-plane
  */
 
 import { Module } from '@nestjs/common';
@@ -537,5 +543,5 @@ echo "  Removed temp directory"
 echo ""
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Sync complete ✅                            ║"
-echo "║  Source: whodaniel/The-New-Fuse @ $MONO_HEAD              ║"
+echo "║  Source: whodaniel/tnf-monorepo @ $MONO_HEAD              ║"
 echo "╚══════════════════════════════════════════════╝"
