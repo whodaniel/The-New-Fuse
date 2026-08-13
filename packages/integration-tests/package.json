@@ -17,7 +17,7 @@
     "test:workflow-builder:watch": "jest --testPathPatterns=workflow-builder --watch",
     "test:workflow-builder:coverage": "jest --testPathPatterns=workflow-builder --coverage",
     "test:all": "jest && pnpm run test:workflow-builder",
-    "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Integration tests build completed with warnings'",
+    "build": "tsc --skipLibCheck --noEmitOnError false",
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
@@ -79,7 +79,8 @@
       "node_modules/(?!(@the-new-fuse|react-dnd|react-dnd-html5-backend)/)"
     ],
     "moduleNameMapper": {
-      "^@the-new-fuse/(.*)$": "<rootDir>/../../packages/$1/src"
+      "^@the-new-fuse/(.*)$": "<rootDir>/../../packages/$1/src",
+      "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "roots": [
       "<rootDir>/src"

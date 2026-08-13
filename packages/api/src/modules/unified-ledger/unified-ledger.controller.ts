@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { UnifiedLedgerService } from './unified-ledger.service';
-import { UnifiedRecordKind, UnifiedRecordStatus } from './unified-ledger.types';
+import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { UnifiedRecordKind, UnifiedRecordStatus } from './unified-ledger.types.js';
 
 @Controller()
 export class UnifiedLedgerController {

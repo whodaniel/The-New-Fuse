@@ -33,7 +33,7 @@ The command palette is already part of the TNF monorepo:
 ### 2. Basic Usage
 
 ```typescript
-import { CommandPalette, useCommandPalette } from '@the-new-fuse/ui/command-palette';
+import { CommandPalette, useCommandPalette } from '@the-new-fuse/features/ui/command-palette';
 
 function App() {
   const { isOpen, close, executeCommand } = useCommandPalette({
@@ -75,7 +75,7 @@ The command palette organizes commands into 12 categories:
 | **Testing**         | 🧪   | Test execution, coverage        | `pnpm test`, `pnpm test:e2e`            |
 | **Database**        | 🗄️   | Migrations, schema, Drizzle     | `pnpm db:migrate`, `pnpm db:studio`     |
 | **Docker**          | 🐳   | Container management            | `pnpm docker:start`, `pnpm docker:logs` |
-| **Deployment**      | ☁️   | CloudRuntime, production deploy      | `pnpm build:cloud_runtime`                    |
+| **Deployment**      | ☁️   | CloudRuntime, production deploy | `pnpm build:cloud_runtime`              |
 | **Agents**          | 🤖   | Agent management, registry      | `/agent-register`, `/agent-status`      |
 | **Workflows**       | 🔀   | Multi-agent workflows           | `/workflow-create`                      |
 | **Code Quality**    | ✨   | Linting, formatting, type-check | `pnpm lint`, `pnpm format`              |
@@ -103,7 +103,7 @@ The command palette organizes commands into 12 categories:
 
 ```typescript
 import React from 'react';
-import { CommandPalette, useCommandPalette } from '@the-new-fuse/ui/command-palette';
+import { CommandPalette, useCommandPalette } from '@the-new-fuse/features/ui/command-palette';
 
 export function MyApp() {
   const palette = useCommandPalette({
@@ -129,7 +129,7 @@ export function MyApp() {
 ### Example 2: API Execution
 
 ```typescript
-import { CommandPalette, useCommandPalette, executeCommandAPI } from '@the-new-fuse/ui/command-palette';
+import { CommandPalette, useCommandPalette, executeCommandAPI } from '@the-new-fuse/features/ui/command-palette';
 
 export function MyApp() {
   const palette = useCommandPalette({
@@ -152,7 +152,7 @@ export function MyApp() {
 ### Example 3: Electron Integration
 
 ```typescript
-import { useCommandPalette, executeCommandNode } from '@the-new-fuse/ui/command-palette';
+import { useCommandPalette, executeCommandNode } from '@the-new-fuse/features/ui/command-palette';
 
 export function ElectronApp() {
   const palette = useCommandPalette({

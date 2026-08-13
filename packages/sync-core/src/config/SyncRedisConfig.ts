@@ -187,6 +187,22 @@ export class SyncRedisConfig {
     }
 
     /**
+     * Helper to build channel names
+     */
+    getChannelName(type: string, subtype: string): string {
+        const prefix = this.configService.get<string>('REDIS_KEY_PREFIX', 'tnf');
+        return `${prefix}:${type}:${subtype}`;
+    }
+
+    /**
+     * Helper to build key patterns
+     */
+    getKeyPattern(type: string, pattern: string): string {
+        const prefix = this.configService.get<string>('REDIS_KEY_PREFIX', 'tnf');
+        return `${prefix}:${type}:${pattern}`;
+    }
+
+    /**
      * Get TTL values for different types of sync data
      */
     getTTLConfig() {
