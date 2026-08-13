@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: TWIP API (Stub)
+  version: 0.1.0
+  description: Terminal Window Identity Protocol HTTP binding stub for TNF.
+servers:
+  - url: http://localhost:8080/v1/twip
+paths:
+  /identity:publish:
+    post:
+      summary: Publish canonical TWIP identity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../schemas/twip-envelope.schema.json
+      responses:
+        "200":
+          description: Accepted
+  /identity:resolve:
+    post:
+      summary: Resolve TWIP identity by twid or scope hints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../schemas/twip-envelope.schema.json
+      responses:
+        "200":
+          description: Resolved
+  /identity:revoke:
+    post:
+      summary: Revoke TWIP identity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../schemas/twip-envelope.schema.json
+      responses:
+        "200":
+          description: Revoked
+  /capability:register:
+    post:
+      summary: Register TWIP capability metadata into TNF catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../schemas/twip-envelope.schema.json
+      responses:
+        "200":
+          description: Registered
+  /policy:evaluate:
+    post:
+      summary: Evaluate policy for TWIP action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../schemas/twip-envelope.schema.json
+      responses:
+        "200":
+          description: Decision

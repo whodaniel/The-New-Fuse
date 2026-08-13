@@ -1,0 +1,797 @@
+Every major AI lab is racing to build
+the same thing right now. An agent that
+can sit at a computer, see what is on
+the screen, and actually do the work for
+you. Not generate text about the work,
+not suggest what you should do next,
+actually open the browser, click the
+buttons, navigate the interfaces, and
+complete real tasks from start to finish
+exactly the way a human would. Anthropic
+built Claude Co-work for it. Open AAI
+had operator, which eventually got
+folded into their premium Chad GPT
+subscription. Manus came out of China
+and made a lot of noise. These are
+serious products backed by serious money
+and they all share one thing in common.
+They run in the cloud. They sit behind a
+payw wall and they are closed. You use
+what they give you. You pay what they
+charge. And you trust that your tasks,
+your data, and your screen activity are
+being handled responsibly somewhere on a
+server you will never see. Then by
+dance, the company behind Tik Tok
+quietly dropped something on GitHub that
+the AI developer community has been
+talking about ever since. is called TARS
+and it is their open- source multimodal
+AI agent stack. It hit 32,000 GitHub
+stars. It outperformed GPT for Omni,
+Claude, and Gemini across more than 10
+GUI benchmarks. And unlike every other
+serious computer use agent in the market
+right now, it runs locally. It is
+completely free and the entire thing is
+open source down to the model weights.
+In this video, we're doing a full
+breakdown of TARS. We're going to cover
+the two products that ship under this
+stack. The model family that powers all
+of it and how it has evolved through
+three generations. A direct comparison
+between TAR and its two closest
+competitors which are Mus and Claude Co.
+And then we're going to walk through
+five real world agentic use cases that
+show what Tar actually looks like when
+multiple parts of the stack work
+together on a single task. Not a feature
+list, actual workflows that developers
+and power users can take and run with
+today. If you have been watching this
+channel for a while, you already know
+how we do things here. We go deep. We
+stay honest and we do not waste your
+time with surface level takes. This
+video is no different. So before we get
+into it, if this kind of content is
+useful to you, go ahead and hit that
+like button right now. It genuinely
+helps this video reach more people who
+are building with AI tools and who need
+accurate technical breakdowns rather
+than hype. Subscribe if you're not
+already because we cover the AI
+developer tool space consistently and
+there's a lot more coming. And if you
+know someone who is currently paying for
+mayus or evaluating computer use agents
+for their workflow, share this video
+with them. It could save them a
+significant amount of money every single
+month. All right, let's get into tar.
+Most people who stumble across this
+project on GitHub make the same mistake
+right out of the gate. They see the
+repository name, they read the
+description, and they assume TARS is a
+single product. It is not. Tar is a
+stack. And understanding that
+distinction up front is what makes
+everything else in this video make
+sense. Under the same GitHub repository,
+Bite Dance ships two completely separate
+products that serve two different
+audiences with two different use cases.
+They share the same underlying model
+family. They share the same open-source
+foundation and they were built by the
+same team. But the way you interact with
+them, the problems they solve, and the
+kind of user they are built for
+meaningfully different. Miss that and
+you will spend the rest of this video
+confused about which thing does what.
+The first product is called Agentars.
+This is the developerfacing side of the
+stack. Agent TARS is a general purpose
+multimodal AI agent that you run from
+your terminal or through a web-based
+interface. It is model agnostic meaning
+you are not locked into any single AI
+provider. You can run it with claude,
+you can run it with bite dance on
+doughbound model or you can point it at
+whatever model fits your setup. The
+entire tool layer is built on top of the
+model context protocol which means any
+MCP server the community builds can be
+mounted directly into agent tars and
+immediately becomes a capability the
+agent can use. It ships with a command
+line interface for power users who want
+full control and a web interface for
+anyone who wants something more visual
+without giving up the depth underneath.
+The second product is called UITARS
+desktop. This is the consumerf facing
+side of the stack. It is a native
+desktop application that you download,
+install and run on your local machine.
+You open [music] it, describe what you
+want in plain language and it takes
+control of your computer and does it. It
+can operate local applications. It can
+control a browser and it supports remote
+operators that let you connect to and
+control other machines entirely. No
+terminal required, no configuration
+files. You talk to it like a co-orker
+and it executes like one. Now, here is
+why this matters when you are comparing
+tars to something like mayus or claude
+co-work. Most tools in the computer use
+agent category are one thing. They are
+either a product you download or a
+developer framework you build with.
+Mainus is a product. You log in, you
+give it tasks, it works in the cloud.
+Cloudco work is a product. It is tied to
+your Anthropic subscription and it runs
+on Anthropic's infrastructure. Car ships
+both the desktop application for users
+who want to get started immediately and
+the full agent framework for developers
+who want to build, extend, automate and
+deploy on their own terms. That dual
+approach is what makes the 32,000 GitHub
+stars make sense. This is not just a
+cool demo. It is an entire open-source
+ecosystem and it is actively growing.
+Everything else we cover in this video
+sits on top of that foundation. Agent
+tars is the developer layer. UI tar
+desktop is the user layer and underneath
+both of them is the model family that
+makes any of this work at all which is
+exactly where we're going next. Before
+we go any deeper into what tars can do
+we need to talk about the model that
+powers it. Because unlike most agent
+products you have seen where a general
+purpose language model gets wrapped in
+some tooling and called an agent. Tars
+is built on a model that was designed
+from the ground up specifically for GUI
+interaction. That is not a marketing
+distinction. It is an architectural one
+and it explains why the benchmark
+numbers look the way they do. The model
+is called UI TARS and it has gone
+through three generations since it first
+launched in January of 2025. Each
+generation is a meaningful upgrade, not
+just an incremental patch and
+understanding what changed between
+versions tells you a lot about where
+this technology is heading and why the
+team behind it is worth taking
+seriously. The original UITAR launched
+with a research paper co-authored by
+Bite Dan Seed and Chinua University. It
+was trained on roughly 50 billion tokens
+and released in two sizes, a 7 billion
+parameter version and a 72 billion
+parameter version. Right out of the
+gate, it achieved state-of-the-art
+results across more than 10 GUI
+benchmarks, consistently outperforming
+GPT for Omni, Claude, and Gemini on
+tasks that involve perceiving,
+understanding, and interacting with
+graphical interfaces. The reason it
+performed that well comes down to a
+single architectural decision the team
+made early on. Rather than taking a
+general purpose vision language model
+and teaching it to use computers as an
+afterthought, they built UI TARS as a
+unified system where perception,
+reasoning, grounding, and memory all
+live inside one model. There is no
+separate perception module. There's no
+separate planning module bolted on top.
+Everything the model needs to understand
+a screen, decide what to do, locate the
+right element, and execute the right
+action happens inside a single unified
+architecture. That coherence is what
+gives an edge on benchmarks and it is
+what makes it feel different when you
+actually use it. The team also built in
+something they called iterative training
+with reflection tuning. Essentially the
+model was trained not just on successful
+task completions but on its own
+mistakes. It learned to recognize when
+something went wrong, adapt its approach
+and recover without human intervention.
+That is a significant capability in the
+real world where web pages do not always
+load correctly, [music] interfaces
+change between interactions, and tasks
+rarely unfold exactly as expected.
+UITARS 1.5 arrived in April of 2025, and
+a headline upgrade was reinforcement
+learning. The model gained the ability
+to reason through its thoughts before
+taking action, which sounds simple, but
+has a significant practical effect.
+Instead of immediately executing
+whatever action seems most likely based
+on what it sees, the model now works
+through a reasoning process first. It
+considers what the current state of the
+screen means, what the intended outcome
+is, and what sequence of actions is most
+likely to get there. An acts. This kind
+of deliberate reasoning before
+execution. Sometimes called system two
+thinking dramatically improved the
+model's performance on multi-step tasks
+where an early mistake compounds into a
+much larger failure later. Bite Dance
+also open sourced the 7 billion
+parameter version of UITARS 1.5 on
+hugging face making it freely available
+for anyone to download run locally and
+build on top of UITARS 2 dropped in
+September of 2025 and this is where the
+model crosses into genuinely new
+territory. The team described it as an
+all-in-one agent model and that phrase
+is doing real work here. Previous
+versions of UITARS were excellent at GUI
+tasks. Specifically, UI TAR 2 expands
+that to GUI control, game environments,
+software coding, and tool use, all
+integrated into a single model that can
+move between those capabilities fluidly
+depending on what the task requires. The
+practical implication is that the model
+is no longer limited to pointing and
+clicking through visual interfaces. It
+can reason about code, interact with
+external tools, and handle tasks that
+require combining visual understanding
+with deeper computational work. In game
+environment benchmarks, which
+researchers use as a proxy for how well
+an agent handles unpredictable, dynamic,
+fast-changing interfaces, UIARS 2
+reached approximately 60% of human level
+performance. That number is significant
+because game environments are
+deliberately adversarial to agents. The
+interfaces are complex, the states
+change rapidly, and there is no fixed
+workflow to follow. performing at 60% of
+human level in that context is a
+meaningful signal about how capable the
+underlying model has become. The reason
+all of this matters for the rest of this
+video is that agentars and UITARS
+desktop are only as good as the model
+running underneath them. When you see
+agent tars navigate a booking site,
+operate a remote machine or complete a
+multi-step research workflow without
+human input. That capability is coming
+from UIARS 2. The application layer is
+what makes it accessible. The model is
+what makes it work. And having a
+purpose-built model that was trained
+natively for this kind of interaction
+rather than a general model that learned
+GUI tasks as a secondary skill is the
+core technical reason to can stand next
+to Mayus and Claude co-work and make a
+serious argument for itself. Now that we
+have the model foundation covered, let's
+get into the product that is going to
+matter most to the developer and power
+user side of this audience. Agent tars
+is where the technical depth of this
+stack really becomes visible and it is
+the part of tars that most directly
+competes with the agent frameworks and
+automation tools that people in this
+space are already building with. The
+starting point is the command line
+interface and bite dance made a
+deliberate decision here that tells you
+a lot about what kind of tool this is
+meant to be. To launch agentars you run
+a single command using npx. That is it.
+No cloning a repository, no setting up a
+virtual environment. No navigating a
+configuration dashboard before you can
+do anything useful. [music] You run the
+command, you point at a model provider,
+you hand an API key and it is running.
+It supports node.js version 22 and above
+and it works with multiple model
+providers out of the box including
+Enthropic, Volsen and others. If you
+want to install it globally rather than
+running it fresh each time, that is one
+additional command. The entire
+onboarding experience was clearly
+designed to remove every possible point
+of friction between a developer deciding
+to try this and that developer actually
+having it running in their environment.
+From the command line interface, you get
+two modes of operation. The first is
+headful mode, which launches a web-based
+interface alongside the agent so you can
+see what it is doing in real time, watch
+the reasoning process unfold, and
+interact with it visually if you need
+to. The second is headless mode, which
+runs the agent as a server with no
+interface at all. In headless mode,
+Agent TARS is fully programmable. You
+send it tasks via API, it executes them
+and it returns results. This is how you
+embed Agent TARS into a larger system,
+trigger from a web hook, chain it with
+other services, or run it as a
+background process that handles work
+autonomously without anyone watching.
+The fact that both modes ship out of the
+box without requiring separate builds or
+separate configurations is a significant
+practical advantage for developers who
+need to prototype quickly and then move
+that prototype into a production
+context. The entire tool layer of agent
+tars is built on the model context
+protocol. And this is the architectural
+decision that separates it most clearly
+from agent frameworks that bolt on
+external tool support as an
+afterthought. MCP is not just something
+agentar supports. It is the kernel the
+entire system is built around. Every
+capability the agent has access to
+whether that is browser control, shell
+command execution, file system access or
+any external API [music] is exposed
+through the MCP layer. That means any
+MCP server that exists in the ecosystem,
+whether it was built by the Agentars
+team or by an independent developer can
+be mounted directly into your Agent
+Tararss instance and immediately become
+something the agent can use. The
+community around MCP has been growing
+rapidly and Agent Tar is positioned to
+benefit directly from every new MCP
+server that gets published. You're not
+waiting for the TAR team to add support
+for a new tool. You mount the MCP server
+and the capability is there. The browser
+agent in agent tars is worth its own
+explanation because it does something
+that most browser automation tools do
+not. It does not pick a single strategy
+for controlling the browser and commit
+to it. Instead, it supports three
+distinct modes and can use them in
+combination. The first mode is pure GUI
+agent control where the model looks at a
+screenshot of the browser understand
+what is visible on the screen exactly
+the way a human would and decides what
+to click or type based on that visual
+understanding alone. The second mode is
+DOM based control where the agent reads
+the underlying HTML structure of the
+page and interacts with elements
+directly through the document model
+rather than through what is visually
+rendered. The third is a hybrid of both
+and this is the default recommended
+approach. In hybrid mode, the agent uses
+whichever strategy is most appropriate
+for the current state of the page. When
+the DOM is clean and readable, it uses
+DOM based interaction for precision and
+reliability. When the DOM is obfuscated,
+dynamically rendered or structured in a
+way that makes direct interaction
+unreliable. It falls back to visual
+understanding. The result is a browser
+agent that is significantly more robust
+than one locked into a single approach
+because real websites are inconsistent
+and a good agent needs to handle that
+inconsistency. gracefully. The event
+stream is the part of agent tars that
+makes it a platform rather than just a
+tool. Every action the agent takes,
+every decision it makes, every tool call
+it executes is emitted as a structured
+event in real time. This serves several
+purposes simultaneously for developers
+who are debugging a complex workflow.
+The event stream viewer gives you
+complete visibility into exactly what
+the agent did and in what order, making
+it possible to identify where something
+went wrong and why. For developers who
+are building products on top of
+agentars, the event stream is the data
+layer that drives the interface. You can
+build a custom front end that visualizes
+agent activity, surfaces specific events
+to users, or triggers other processes
+when certain events occur. And for
+researchers and teams thinking about how
+to approach context engineering in
+agenic systems, the event stream
+provides a structured inspectable record
+of the agents entire reasoning and
+execution process. The most recent
+addition to agentarss is the AIO sandbox
+which shipped with version 0.3.0 in
+November of 2025. The sandbox is an
+isolated all-in-one execution
+environment that gives the agent a safe
+contain space to run shell commands,
+access a file system, operate a browser,
+and use tools without any of that
+activity touching your host system
+directly. This matters for two reasons.
+First, it makes agent tar significantly
+safer to run autonomously on tasks that
+involve executing code or making system
+level changes because the agent is
+operating inside an isolated environment
+rather than directly on your machine.
+Second, it makes agent tars more
+practical as a production tool because
+you can give it meaningful access to
+real capabilities without opening up
+your entire system to whatever the agent
+decides to do. The sandbox is the
+boundary between a powerful prototype
+and a tool you can actually trust in a
+real workflow. If agent tars is the
+developer layer of this stack, UIS
+desktop is the layer built for everyone
+else. It is a native desktop application
+that you download and install on your
+machine and it brings the full power of
+the UIRS model into an interface that
+does not require a terminal, a
+configuration file or any prior
+experience with agent frameworks. You
+describe what you want in plain language
+and the application handles the rest.
+The core of UITARS desktop is what the
+team calls the local operator. When you
+run the local operator, the UI tar model
+is running on your own hardware. It
+takes screenshots of your screen at
+regular intervals, processes what it
+sees through the vision language model
+decides what action to take next, and
+then executes that action through
+precise mouse movements and keyboard
+inputs. From the outside, it looks
+exactly like someone sitting at your
+computer and operating it. From the
+inside, it is the UI Tar's model working
+through a continuous loop of perceive,
+reason, and act entirely on your local
+machine. Nothing is sent to a remote
+server. No screenshot of your screen
+leaves your device. No record of what
+you're doing is stored anywhere outside
+your own hardware. For users who are
+handling sensitive workflows, operating
+on confidential data, or simply
+uncomfortable with the idea of a cloud
+service watching their screen, that
+local first architecture is not a minor
+detail is the whole point. The remote
+computer operator is where UIR's desktop
+extends beyond your local machine. With
+a remote computer operator, you can
+connect to any other computer and
+operate it through the same natural
+language interface you use for local
+control. You describe the task and UI
+Tar's desktop takes control of the
+remote machine, navigates its interface,
+and completes the work. This shipped in
+version 0.2.0
+in June of 2025, and it was made
+available completely free with no
+additional configuration required. The
+practical applications here are
+significant. Developers managing remote
+servers, teams automating workflows on
+dedicated machines, or anyone who needs
+to operate a second device without
+switching physical setups can do all of
+that through a single UI's desktop
+session. The remote machine does not
+need to have any special software
+installed beyond what is needed to
+establish the connection. You connect,
+you describe the task, and the agent
+works. The remote browser operator is
+the third mode of operation, and it is
+the one most directly relevant to
+web-based workflows. Rather than opening
+a browser on your local machine and
+controlling it visually, the remote
+browser operator spins up a browser
+session in a remote environment and lets
+UI tar desktop operate that session on
+your behalf. Your local browser stays
+untouched. Your local browsing history,
+cookies, and active sessions are
+completely separate from whatever the
+agent is doing in the remote session.
+For users who run a lot of browser-based
+automation, who want the agent to handle
+web tasks without that activity mixing
+into their personal browsing
+environment, or who simply want to keep
+agent work cleanly separated from
+everything else on their machine, the
+remote browser operator is the right
+tool. And like the remote computer
+operator, it ships free and requires no
+manual configuration to get running. All
+three operators, the local computer
+operator, the remote computer operator,
+and the remote browser operator are
+controlled through the same unified
+interface inside the desktop
+application. You do not switch between
+different tools or different modes. You
+describe what you need, and UITAR's
+desktop figures out which operator is
+appropriate and gets to work. The
+real-time feedback display shows you
+what the agent is seeing and what it is
+doing at every step. So you always have
+visibility into the execution process
+and can take over manually at any point
+if the task requires a human judgment
+call. What makes UITAR's desktop
+directly comparable to mainus and claude
+co-work is not just the feature set, it
+is the philosophy. Both mayus and cloud
+co-work ask you to trust a cloud service
+with your workflows, your data and your
+screen. UITAR's desktop asks you to
+trust a model running on your own
+hardware with your own data never
+leaving your own device. For a growing
+number of users, that is not just a
+preference. It is a requirement. This is
+the comparison most of you came here
+for. So, let us do it properly. Not a
+feature checklist, not a marketing
+comparison, but an honest look at where
+each of these tools is genuinely
+stronger and where each one falls short.
+Because the honest answer is that none
+of them wins on every dimension and
+pretending otherwise would be a
+disservice to everyone watching. The
+most important thing to establish up
+front is the philosophical difference
+between these products because it shapes
+every other comparison that follows.
+Mayus and Claude Co are finished
+products built on top of powerful
+generalpurpose AI models. You use them
+as they are. The team behind each one
+decides what features ship, what
+integrations are available, what the
+pricing [music] looks like, and what
+level of access you get to the
+underlying system. PARS is
+infrastructure. It is an open- source
+stack with a purpose-built model
+underneath it. and every layer of it is
+available for you to inspect, modify,
+extend, and deploy on your own terms.
+That distinction matters more than any
+individual feature comparison because it
+determines what is possible over the
+long term, not just what is available
+today. On cost, the comparison is
+straightforward. Manus operates on paid
+tiers. Cloud Co-Work requires an active
+anthropic subscription, which means
+you're paying for cloud access whether
+you use co-work specifically or not.
+PARS is free and open- source. The only
+cost is compute. And if you are running
+the 7 billion parameter UI tars model
+locally on reasonably modern hardware,
+that compute cost is essentially zero.
+If you want to run agent tars in
+headless server mode on a VPS, that is a
+fixed monthly infrastructure cost that
+you control entirely with no per task
+pricing, no usage caps, and no
+subscription that renews whether you use
+it or not. For developers building
+automation workflows at any meaningful
+scale, that cost structure is a
+fundamental advantage on privacy. Tar
+wins clearly and without much nuance.
+When you run UI Tar desktop in local
+mode, your screen data, your file
+activity and your task execution all
+happen on your own hardware. With
+Mayanus and Claudeco, your tasks run on
+cloud infrastructure you do not own or
+control. That is not inherently wrong.
+Both Mayanus and Anthropic have privacy
+policies and security practices in
+place. But the structural reality is
+that one option keeps your data on your
+machine and the other sends it somewhere
+else. For users in regulated industries,
+users handling sensitive business data
+or users who simply have a principal
+preference for local first tools.
+[music] TAR is the only option in this
+comparison that actually delivers on
+that preference. On extensibility, TARS
+again has a structural advantage. Agent
+TAR being MCP native means that every
+new MCP server published by the
+community is immediately a new
+capability you can add to your agent
+setup. [music] You're not waiting for
+the TAR team to add a specific
+integration. You mount the server and it
+is there. Mayus and Claude Co-work do
+not offer that kind of open
+extensibility. They expose the
+integrations their teams have built and
+you work within those boundaries for
+power users and developers who want to
+connect their agent to internal tools,
+custom APIs or niche services that no
+closed product will ever prioritize
+supporting. That open extensibility is
+the difference between a tool that fits
+your workflow and one that asks you to
+change your workflow to fit the tool. On
+task reliability, this is where the
+comparison gets more honest and more
+complicated. Mayus has been in the
+market longer than agent tars. It has
+had more time to mature and for complex
+real world task execution involving
+things like multi-step booking flows,
+form completion across dynamic web pages
+and long autonomous research sessions.
+Manus is currently more reliable. The
+execution layer is more polished. The
+error handling is more robust. The agent
+recovers from unexpected interface
+states more gracefully. PARS is closing
+that gap with every release and the
+velocity of shipping from the bite
+DanceC team has been genuinely
+impressive. But if you need the most
+reliable computer use agent available
+today from missionritical workflows,
+Mayus is still ahead on that specific
+dimension on model quality for this
+specific use case. TAR has a compelling
+argument that neither Mannus nor Claude
+co-work can fully match. Claude is an
+extraordinarily capable generalpurpose
+model and it performs well at computer
+use tasks but it was not built
+specifically for GUI interaction. UIRS
+was every parameter in that model was
+trained on tasks involving perceiving
+understanding and operating graphical
+interfaces. The benchmark results
+reflect that specialization and Claude
+co-work for all its strengths is
+ultimately running a general model on a
+specialized task. PARS is running a
+specialized model on the task it was
+built for. That difference may not be
+visible on simple workflows but becomes
+meaningful on complex multi-step
+visually intensive tasks where the depth
+of GUI specific training starts to
+matter. Where Claude Co-work has a
+genuine edge is ecosystem integration.
+If you're already working inside the
+anthropic ecosystem, already using
+Claude for coding or writing or
+research, already have an active
+subscription and already trust the model
+quality, then Claude co-work is zero
+additional friction. The subscription is
+already paid. The model you trust is
+already there. Adding co-work to that
+setup is the path of least resistance.
+And for users in that position, that
+ease of integration is worth something
+real. The summary is this. If you're a
+developer who wants open- source
+infrastructure, local privacy, MCP
+extensibility, and zero subscription
+cost, TARS is the clear choice, and it
+is not particularly close. If you need
+the most reliable cloud-based computer
+use agent available today, and you are
+comfortable paying for it, Mayus is
+still the benchmark on execution
+quality. And if you're already deep in
+the anthropic ecosystem and want
+something that works without any setup
+friction, Claude Co-work is the logical
+path. Each of these tools serves a real
+audience. The question is which audience
+you belong to. Understanding what a tool
+can do in isolation is one thing. Seeing
+how it behaves when multiple
+capabilities work together on a real
+task is something else entirely. These
+five use cases are not feature
+demonstrations. Each one is a workflow
+that combines several parts of the tar
+stack simultaneously because that is
+what agentic work actually looks like in
+practice. The first use case is
+automated job application at scale. A
+developer looking for their next role
+has a resume, a set of clear criteria,
+target seniority level, remote only, a
+minimum salary threshold, a list of
+preferred tech stacks, and no interest
+in spending their evenings clicking
+through job boards manually. They open
+agent tars, drop their resume into the
+session, and describe the criteria in
+plain language. The agent opens LinkedIn
+and Indeed sequentially using the hybrid
+browser operator, which is important
+here because job listing pages combine
+structured DOM elements for filters and
+pageionation with visually render card
+layouts that change between sites and
+even between sessions on the same site.
+The agent reads listings using vision
+when the DOM structure is inconsistent,
+switches to DOM interaction when filling
+search filters, and moves through
+results methodically. For every listing
+that matches the criteria, [music] it
+navigates to the full job description,
+evaluates the fit, opens the application
+flow, and completes the form fields. The
+AIO sandbo
+[TRUNCATED]

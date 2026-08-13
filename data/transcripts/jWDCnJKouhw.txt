@@ -1,0 +1,332 @@
+Your AI agent just approved a
+prescription or did it deny one?
+Actually, do you even know? Because
+right now, most teams running agents in
+production are flying blind. And in
+healthcare, finance, anywhere with real
+stakes, blind is not a strategy. It's a
+liability. Let me paint you a picture. A
+patient needs a specialty medication.
+Their doctor prescribes it. But before
+the pharmacy can hand it over, someone
+or something has to get the insurance
+company to approve it. That process it
+is called prior authorization.
+And traditionally it takes 3 to five
+business days. 3 to 5 days of phone
+calls, faxes. Yes, faxes still exist in
+healthcare and back and forth paperwork
+while a patient waits for medication
+they need. Now, imagine you deploy two
+AI agents to handle this. One agent
+pulls clinical documentation from the
+hospital records. Another agent submits
+it to the insurance portal and handles
+the back and forth. Suddenly, that 3 to
+5 day process done in under four hours.
+94% of the time, no human needed. Sounds
+incredible, right? It is. But here's the
+question that keeps the CISO up at
+night. How do you know it's doing what
+it's supposed to do? How do you know
+it's not hallucinating diagnosis codes?
+How do you know it's not leaking patient
+data? And how do you know it's not stuck
+in an infinite loop burning through your
+API budget? This is where most agent
+products go to die. Not because the
+agent doesn't work, but because no one
+built the infrastructure to prove it
+works. And that is exactly what agent
+ops is about. Agent operations.
+It's the emerging discipline of actually
+managing AI agents in production. Not
+just deploying them, managing them,
+monitoring them, improving them,
+catching them when they fail before your
+users do. Think of it this way. DevOps
+gave us the tools to deploy software
+reliably.
+And then we have MLOps, which gave us
+the tools to manage machine learning
+models.
+Agent Ops is what you need when your AI
+can take actions in the real world. So,
+open tickets, update records, make
+decisions, call APIs, and you need to
+know exactly what it did, why it did it,
+and whether it should should have done
+it at all.
+The agent op frameworks break down
+breaks down into three layers. One, two,
+and three. And the order matters because
+you cannot improve what you cannot
+measure and you cannot measure what you
+cannot see. Let's start with the first
+one. Layer one is observability.
+This is your visibility layer. If your
+agent made a decision, you need to be
+able to reconstruct exactly how it got
+there. every tool call, every LLM
+invocation, every handoff between
+agents.
+Let me give you three metrics that
+matter most here. One metric we can
+measure here is the end to end trace
+duration.
+This is simply how long it takes from
+the moment a user makes a request to the
+moment they get a final answer. It's
+your headline number. If this is slow,
+nothing else matters.
+A second one is agent to agent handoff
+latency.
+So that's the A2A
+handoff
+lat for latency. When one agent passes
+work to another agent, how long does
+that handoff actually take? In multi-
+aent systems, these handoffs can add up
+and become your hidden bottleneck. And
+third, cost per request.
+How much does each interaction actually
+cost you an API calls? This is the
+metric your finance team will ask you
+about. Know it before they do. The
+second layer is evaluation.
+Observability
+tells you what happened. Evaluation
+tells you if it was any good. Here are
+the three metrics that matter most. The
+first one is task completion rate.
+Keeping this short as well. Out of every
+100 requests, how many actually get done
+successfully without a human stepping
+in? This is your north star. Everything
+else is commentary. A second metric,
+guard rail violation rate.
+Guard rail
+violation rate.
+How often does your agent try to do
+something it shouldn't? Leak sensitive
+data, give medical advice it's not
+qualified to give. This number should
+really be tiny. If it isn't, you have a
+problem.
+And third, factual accuracy rate.
+When your agent states a fact, let's say
+a diagnosis code, a drug dosage, a
+policy number, is it actually correct?
+In regulated industries, this is not
+negotiable. Let's take a look at the
+third layer, optimization.
+Once you can see what is happening and
+judge whether it's good, now you can
+make it better. And here are three
+metrics that drive improvement.
+The first one, prompt token efficiency.
+I like that one.
+Prompt token
+efficiency. Or in other words, how much
+output quality are you getting per input
+token? After you tune your prompts, you
+might get the same quality with 40%
+fewer tokens. That is real money saved
+on every single request.
+A second metric here is retrieval
+precision at K.
+Retrieval
+precision
+at K. When your agent pulls documents
+from a knowledge base, are the top
+results actually relevant? If you
+retrieve five documents and only two are
+useful, your agent is working with what
+we call noise. A third metric, handoff
+success rate.
+When one agent passes work to another,
+does it actually succeed? A 98% success
+rate sounds great until you realize that
+2% represents thousands of failed
+transactions at scale.
+Now, let us bring this home. Remember
+those two agents handling prior
+authorization?
+I'm going to show you exactly what an
+agent op dashboard would look like for
+that system. This is where it gets real.
+Let me introduce the two agents. Agent
+one is the clinical documentation agent.
+Its job is to connect to the hospital
+electronic health record system, the
+EHR,
+and pull together everything needed to
+justify why this patient needs this
+medication. So, diagnosis codes, lab
+results, previous treatments that did
+not work.
+It compiles all of that into a neat
+package. Agent number two is the payer
+authorization agent. It takes that
+documentation package and submits it to
+the insurance portal. Then it monitors
+the status. If the insurer asks for more
+information, this agent coordinates with
+the clinical documentation agent to get
+it. When a decision comes back, it
+notifies the pharmacy and the doctor
+down here.
+Two agents talking to each other,
+talking to external systems, making
+decisions. This is a real agentic
+workflow. So what does observability
+look like for this system? The first one
+is endtoend trace duration. The average
+authorization completes in 2.8 hours.
+That is down from 3 to five business
+days with the manual process. an 85%
+reduction.
+Every single authorization generates a
+trace that we can now drill into. The
+second metric is agent to agent agent
+handoff latency. When the payer agent
+calls the clinical agent, that handoff
+takes 340 milliseconds on average, well
+within our 500 millisecond target. If
+this starts creeping up, we will know
+this immediately. The next one is tool
+execution latency. What does that mean?
+The clinical agent makes about 4.2 calls
+to the EHR system per request, averaging
+1.8 seconds.
+H. The payer agent makes 2.8 calls to
+the insurance portal. When the payer
+asks for more documentation, that jumps
+to 4.1 calls. With our agent ops
+dashboard, we can see all of this. We
+can alert on it and we can optimize for
+it.
+The last one we'll use in this example
+is cost per authorization.
+So let's say it's 47.
+That is 8,400 input tokens and 2,100
+output tokens across both of the agents.
+Compare that to $25
+for a human to process the same requests
+manually. The cost efficiency
+improvements are clear reducing API
+expenses significantly.
+Now let's talk evaluation.
+Is this system actually doing a good
+job? Let's take a look at the task
+completion rate. 94.2% 2% of prior
+authorization requests complete without
+any human touching them. The other 5.8%
+escalate to specialists. That's usually
+weird edge cases or payer system
+outages. We know exactly which ones and
+why.
+Then there is factual accuracy. The
+clinical documentation agent extracts
+diagnosis codes and lab values from the
+patient records. Diagnosis code accuracy
+it's 99.4%.
+Lab value accuracy 99.8%.
+These are not guesses. We can validate
+against the source records. How about
+guardrail violations? 0.8% of requests
+trigger a guardrail. Usually incomplete
+patient identifiers or missing clinical
+codes. Those get automatically held for
+human review. No PHI leaks, no
+compliance violations because we built
+the safety net before we needed it.
+Next, we have clinical appropriateness.
+A panel of pharmacists review 5% of
+submissions. 97.3%
+are rated clinically appropriate. That
+is actually not the grade agent grading
+itself. That is humans validating the
+output.
+And finally, we have the first pass
+approval rate. 78% of authorizations get
+approved on the first submission. No
+back and forth, no requests for more
+information. The industry average for
+manual submissions, it's actually 52%.
+The agents are not just faster, they're
+simply better. Finally, let's look at
+optimization.
+How do we make this system better over
+time? We do this by looking at prompt
+token efficiency. We started with
+prompts that were 1,800 tokens long.
+After tuning, we get them down to 1,100
+tokens with the exact same quality
+score. That is a 39%
+cost reduction on every single request.
+Multiply that by thousands of
+authorizations per day. And then what
+about flowstep efficiency?
+The optimal path through this workflow
+takes six steps.
+We are currently averaging 7.2 steps.
+That 1.2 times overhead, it mostly
+happens when the initial EHR query comes
+back incomplete and triggers a
+follow-up. Now we know exactly where to
+focus our optimization effort. We can
+also look at retrieval precision. The
+clinical agent retrieves the top five
+most relevant clinical notes for each
+authorization.
+Precision at five is84,
+meaning 4.2 of those five documents are
+actually relevant to the decision. We
+can work on pushing that even higher.
+Then there's the handoff success rate.
+98.7% of handoffs between the two agents
+complete successfully. the 1.3% that
+fail almost always ehr systems avail
+unavailability. Now we know to build
+better retry logic and last but not
+least improvement velocity. The team
+ships three optimizations per week.
+Prompt tweaks, retrieval tuning, flow
+adjustments. Every single week the
+system gets a little faster, a little
+cheaper, a little bit more accurate.
+That is not magic. that is agent ops.
+Let's recap the system level
+improvements enabled by agent ops.
+Processing time reduced by 85%.
+First pass approval improved by 50%.
+And per authorization API costs
+minimized to 47.
+That's pretty great. Staff who used to
+process these manually now handling the
+complex cases that actually need human
+judgment and patients getting their
+medications faster. None of this would
+be possible without the observability to
+see what is happening, the evaluation to
+know if it is good and the optimization
+to make it better. So that is the agent
+ops 101. Three layers, observability,
+evaluation, and optimization.
+The playbook for taking your agents from
+demo to production, from hope to proof,
+from fingers crossed to dashboard green.
+But here's the thing. AI agents are
+scaling rapidly, and this really
+highlights the need for operational
+frameworks like agent ops. $5 billion in
+agent shipped in 2024.
+50 billion by 2030.
+A lot of teams are going to ship agents.
+Most of them are going to struggle to
+operate them. The ones who invest in
+agent ops early, they are the ones who
+will still be running those agents a
+year from now confidently, reliably, and
+at scale.

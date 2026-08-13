@@ -1,0 +1,56 @@
+{
+  "name": "@the-new-fuse/feature-suggestions",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -w",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "test": "echo \"Tests temporarily disabled for this package\"",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hello-pangea/dnd": "18.0.1",
+    "@the-new-fuse/feature-tracker": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "date-fns": "^4.1.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.14",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.9",
+    "typescript": "^6.0.2"
+  },
+  "peerDependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

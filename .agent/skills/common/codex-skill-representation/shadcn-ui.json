@@ -1,0 +1,12 @@
+{
+  "skillName": "shadcn-ui",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/shadcn-ui/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/shadcn-ui/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/shadcn-ui.json",
+  "status": "present"
+}

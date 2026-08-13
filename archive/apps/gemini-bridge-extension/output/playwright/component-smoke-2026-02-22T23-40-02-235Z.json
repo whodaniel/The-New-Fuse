@@ -1,0 +1,291 @@
+{
+  "startedAt": "2026-02-22T23:40:02.237Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "channelTests": {
+    "firstCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771803696786",
+        "name": "TNF-Autotest-1771803696784",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771803696786,
+        "createdBy": "browser-1771803604664-5phnh1g3k",
+        "members": ["browser-1771803604664-5phnh1g3k"]
+      }
+    },
+    "thirdCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771803696828",
+        "name": "TNF-Autotest-1771803696784-B",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771803696828,
+        "createdBy": "browser-1771803604664-5phnh1g3k",
+        "members": ["browser-1771803604664-5phnh1g3k"]
+      }
+    },
+    "secondCreate": {
+      "success": false,
+      "alreadyExists": true,
+      "error": "Channel \"TNF-Autotest-1771803696784\" already exists",
+      "channel": {
+        "id": "channel-1771803696792",
+        "name": "TNF-Autotest-1771803696784",
+        "description": "",
+        "createdBy": "browser-1771803604664-5phnh1g3k",
+        "createdAt": 1771803696792,
+        "isPrivate": false,
+        "members": ["browser-1771803604664-5phnh1g3k"]
+      }
+    },
+    "channelCount": 16,
+    "duplicateNameKeys": []
+  },
+  "popupControlTests": {
+    "tabVisits": [
+      {
+        "tabId": "connect",
+        "active": true
+      },
+      {
+        "tabId": "network",
+        "active": true
+      },
+      {
+        "tabId": "services",
+        "active": true
+      },
+      {
+        "tabId": "settings",
+        "active": true
+      },
+      {
+        "tabId": "connect",
+        "active": true
+      }
+    ],
+    "centralSelectors": {
+      "#central-channel-select": true,
+      "#central-new-channel": true,
+      "#central-create-channel": true,
+      "#central-chat-stream": true,
+      "#central-chat-input": true,
+      "#central-send-message": true
+    },
+    "centralSendFlow": {
+      "attempted": true,
+      "optionsCount": 18,
+      "subtitleText": "Channel: Fuse Activity Log"
+    }
+  },
+  "supportedSiteChecks": [
+    {
+      "url": "https://chatgpt.com",
+      "loaded": true,
+      "finalUrl": "https://chatgpt.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 97378226,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://gemini.google.com",
+      "loaded": true,
+      "finalUrl": "https://gemini.google.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 97378227,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.perplexity.ai",
+      "loaded": true,
+      "finalUrl": "https://www.perplexity.ai/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 97378228,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    }
+  ],
+  "experimentalSiteChecks": [
+    {
+      "url": "https://poe.com",
+      "loaded": true,
+      "finalUrl": "https://poe.com/login?redirect_url=%2F",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://claude.ai",
+      "loaded": true,
+      "finalUrl": "https://claude.ai/login",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://huggingface.co/chat",
+      "loaded": true,
+      "finalUrl": "https://huggingface.co/chat/",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    }
+  ],
+  "tabChannelIsolation": {
+    "firstTabId": 97378226,
+    "secondTabId": 97378227,
+    "firstChannelId": "fuse-activity-log",
+    "secondChannelId": "Red",
+    "firstSelectApplied": true,
+    "secondSelectApplied": true,
+    "persisted": {
+      "97378226": "fuse-activity-log",
+      "97378227": "Red"
+    }
+  },
+  "errors": [],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-22T23:42:44.422Z"
+}

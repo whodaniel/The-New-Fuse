@@ -1,0 +1,25 @@
+{
+  "name": "@tnf/a2a-protocol",
+  "version": "1.2.0-next-gen",
+  "description": "TNF Agent-to-Agent protocol and Next-Gen assimilation adapters",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mariozechner/pi-agent-core": "^0.70.2",
+    "@mariozechner/pi-ai": "^0.70.2"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

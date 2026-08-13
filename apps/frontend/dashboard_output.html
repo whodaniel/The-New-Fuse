@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;</script>
+
+  <script type="module" src="/@vite/client"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New Fuse — Orchestrate Intelligence</title>
+  <meta name="description" content="Build intelligent AI workflows, coordinate agent swarms, and leverage the MCP protocol for seamless integration.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-slate-950: #020617;
+      --bg-slate-900: #0f172a;
+      --primary-blue: #3b82f6;
+      --primary-purple: #8b5cf6;
+      --primary-pink: #ec4899;
+      --text-white: #f8fafc;
+      --text-gray: #94a3b8;
+      --text-muted: #64748b;
+      --border-white: rgba(255, 255, 255, 0.1);
+      --gradient-main: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+      --glass: rgba(15, 23, 42, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-slate-950);
+      color: var(--text-white);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background Effects */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+              mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.15), transparent 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .gradient-text {
+      background: var(--gradient-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      transition: background 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    nav.scrolled {
+      background: var(--glass);
+      border-bottom: 1px solid var(--border-white);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-gray);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-white);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--gradient-main);
+      color: var(--bg-slate-950);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(167, 139, 250, 0.3);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border-white);
+      color: var(--text-white);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-gray);
+    }
+
+    /* Hero Section */
+    section {
+      padding: 8rem 2rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .announcement {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+    }
+
+    .hero h1 {
+      font-size: 4.5rem;
+      line-height: 1.1;
+      max-width: 900px;
+    }
+
+    .hero p {
+      color: var(--text-gray);
+      font-size: 1.25rem;
+      max-width: 600px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .metrics-bar {
+      display: flex;
+      gap: 4rem;
+      margin-top: 4rem;
+      padding: 2rem;
+      border-top: 1px solid var(--border-white);
+      border-bottom: 1px solid var(--border-white);
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Features Grid */
+    .features {
+      padding-top: 6rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-slate-900);
+      border: 1px solid var(--border-white);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary-blue);
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: var(--text-gray);
+    }
+
+    /* Bento Grid */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 300px);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .bento-item {
+      background: var(--bg-slate-900);
+      border: 1px solid var(--border-white);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bento-1 { grid-column: span 2; }
+    .bento-2 { grid-column: span 2; }
+    .bento-3 { grid-column: span 1; }
+    .bento-4 { grid-column: span 2; }
+    .bento-5 { grid-column: span 1; }
+
+    .code-preview {
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      background: #020617;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      color: #60a5fa;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-white);
+      padding: 4rem 2rem;
+      margin-top: 8rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 4rem;
+    }
+
+    .footer-col h4 {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-col a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--text-white);
+    }
+
+    /* Animations */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 3rem; }
+      .nav-links { display: none; }
+      .bento { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .bento-item { grid-column: span 1 !br; }
+      .metrics-bar { flex-direction: column; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-gradient"></div>
+
+  <nav id="navbar">
+    <div class="logo">
+      <span>🚀</span> The New Fuse
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#product">Product</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/visualizations/dashboard.html">Visualizations</a>
+      <a href="/login">Sign In</a>
+      <a href="/dashboard" class="btn btn-primary">Get Started</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="announcement" data-reveal>New: Integrated MCP Protocol Support →</div>
+    <h1 data-reveal>Build Intelligent <span class="gradient-text">AI Workflows</span></h1>
+    <p data-reveal>
+      Orchestrate autonomous agent swarms, manage persistent memory banks, and deploy production-grade AI infrastructure in minutes.
+    </p>
+    <div class="hero-ctas" data-reveal>
+      <a href="/dashboard" class="btn btn-primary">Start Building Free</a>
+      <a href="https://github.com/whodaniel/The-New-Fuse" class="btn btn-outline" target="_blank" rel="noopener">Star on GitHub</a>
+    </div>
+
+    <div class="metrics-bar" data-reveal>
+      <div class="metric">
+        <span class="metric-value">MCP + A2A</span>
+        <span class="metric-label">Protocols</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value">90%</span>
+        <span class="metric-label">Open Source</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value">3</span>
+        <span class="metric-label">Runtimes</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="features" class="features">
+    <div class="section-header" data-reveal>
+      <h2>Stop duct-taping APIs.</h2>
+      <p class="gradient-text" style="font-size: 1.5rem; font-weight: 700;">Start orchestrating intelligence.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">🔌</div>
+        <h3>Universal MCP Support</h3>
+        <p>Connect any tool or data source via the Model Context Protocol. Seamlessly bridge your local context to LLMs.</p>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">🐝</div>
+        <h3>Agent Swarm Control</h3>
+        <p>Coordinate hundreds of specialized agents to work in parallel on complex multi-step objectives.</p>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">🛡️</div>
+        <h3>Zero-Trust Security</h3>
+        <p>Production-ready security with isolated execution environments and granular permission mapping.</p>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">🧠</div>
+        <h3>Vector Memory Bank</h3>
+        <p>Give your agents persistent long-term memory with built-in vector database synchronization.</p>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">☁️</div>
+        <h3>Deploy Anywhere</h3>
+        <p>Export your swarms to Docker, CloudRuntime, or Vercel with one click. No lock-in, just performance.</p>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="feature-icon">⚡</div>
+        <h3>Sub-ms Latency</h3>
+        <p>Optimized TNF Envelope Protocol ensures your agents communicate with minimal overhead.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="product">
+    <div class="section-header" data-reveal>
+      <h2>Engineered for Performance.</h2>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item bento-1" data-reveal>
+        <h3>IDE Integration</h3>
+        <p>Direct bridge to VS Code, Cursor, and Theia.</p>
+        <div class="code-preview">
+          tnf agents deploy --swarm experimental
+        </div>
+      </div>
+      <div class="bento-item bento-2" data-reveal>
+        <h3>A2A Communication</h3>
+        <p>Native agent-to-agent protocol for deep collaboration.</p>
+      </div>
+      <div class="bento-item bento-3" data-reveal>
+        <h3>Real-time Observatory</h3>
+      </div>
+      <div class="bento-item bento-4" data-reveal>
+        <h3>Visual Builder</h3>
+        <p>Drag and drop nodes to define complex logic chains.</p>
+      </div>
+      <div class="bento-item bento-5" data-reveal>
+        <h3>Graph Analytics</h3>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta" style="text-align: center;">
+    <div class="section-header" data-reveal>
+      <h2>Ready to Build The Future?</h2>
+      <div style="margin-top: 2rem;">
+        <a href="/dashboard" class="btn btn-primary" style="padding: 1.5rem 3rem; font-size: 1.2rem;">Start Processing Now</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <div class="logo">🚀 The New Fuse</div>
+        <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+          The ultimate orchestration plane for the AI-first era.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="/visualizations/dashboard.html">Visualizations</a></li>
+          <li><a href="/marketplace">Marketplace</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <ul>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="https://github.com/tnf">GitHub</a></li>
+          <li><a href="/api/docs">API Reference</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/legal/privacy">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.8rem;">
+      © 2026 The New Fuse Team. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

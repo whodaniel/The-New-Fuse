@@ -1,0 +1,11 @@
+export HERMES_MODEL_PROVIDER=nvidia
+export HERMES_MODEL_DEFAULT=deepseek/deepseek-v4-pro
+export HERMES_TNF_PROJECT=~/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+export HERMES_TNF_GOALS=~/.hermes/tnf_goals.yaml
+export HERMES_SESSION_PREFIX=tnf-
+export GOALS_MAX_TURNS=50
+export AGENT_MAX_TURNS=200
+export HERMES_SKILLS="tnf-hermes-feature-parity"
+export HERMES_THEME=tnf
+export HERMES_TNF_GATEWAY=ws://localhost:7788
+export HERMES_TNF_RELAY_ENABLED=true

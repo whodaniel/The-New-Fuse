@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scriptwriter Agent"
+  short_description: "Help with Scriptwriter Agent tasks"
+  default_prompt: "Run the Scriptwriter Agent workflow using SKILL.md instructions."

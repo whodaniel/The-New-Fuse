@@ -1,0 +1,798 @@
+Humans, at least in this part of the
+world, were wrenched into a way of
+living that was so different from how
+the huntergather ancestors lived that
+the organism had to adapt very strongly.
+Maybe the degree of that wrenching
+process moving into the Bronze Age was
+qualitatively greater than the degree of
+the wrenching process that happened
+[music] from the initial transition to
+growing plants. Which is surprising cuz
+our cartoon picture is that the big
+transition [music] is farming. But the
+genetic data, the biological readout is
+saying our genome is reacting much more
+strongly to these events that happened
+5,000 years ago.
+I am back with David Reich who is a
+professor of ancient DNA at Harvard. How
+do you describe what it is that you um
+you study?
+&gt;&gt; I'm a geneticist and I work on human
+history and how people uh relate ancient
+people relate to each other and people
+living today.
+&gt;&gt; Great. Um and so we did an interview uh
+was it two years ago at this point which
+um ended up being one of the most
+popular interviews I've ever done. I
+think people just found really
+compelling that there's so much about
+human history we don't know and are just
+learning about now as a result of the
+kinds of techniques that your lab is
+using and um you have a new preprint uh
+that um uh that's very exciting and I
+wanted to talk to you about it. Um so
+let's begin. Can you can you give me a
+little bit of context on what we're
+talking about today? Well, well, the
+dream was that when this field started,
+this ancient DNF field started, uh, more
+than 16 or 17 years ago, that we were
+going to learn a lot about biology,
+learn about how people's biology changed
+over time by getting DNA out of ancient
+human remains and tracking changes over
+time. And that dream has really not been
+realized uh, since the beginning of this
+field. So while the field's been a big
+success with regard to learning about
+human history, it's resulted in um
+surprising findings about human
+migrations, people not being descended
+from the people who lived in the same
+place hundreds or thousands or tens of
+thousands of years before and mixture
+being common in human history, sex bias
+processes being common in human history
+and things that were not expected from
+archaeology. And so the field's been a
+big success from that perspective. But
+what's not been successful is learning
+about uh biology and biological change.
+And one big reason for that has been
+that the sample sizes have been too
+small. So when you have a single
+person's DNA, it provides a a tremendous
+amount of information about history. And
+that's because when you look at one
+person's DNA, it's not a single person.
+It's many people. It's your two parents.
+It's your four grandparents. It's your
+eight great-grandparents and 16 great
+great grandparents and so on. and going
+back in time, thousands, tens of
+thousands, even hundreds of thousands of
+ancestors going back in time contributed
+to people today. So when you look at the
+DNA of a single person's genome or a
+Neanderthal genome, you have effectively
+tens of thousands of ancestors all
+represented in your data and you can ex
+you can position that individual
+exquisitly with respect to other people
+from whom you have data. But when you
+are interested in how a particular
+genetic variant that affects something
+like your skin pigmentation or affects
+your ability to digest cow's milk into
+adulthood or affects a behavioral trait
+when you want to see how that changes
+over time, a single person gives you
+only one sample or maybe two samples,
+the one that is in their mother and the
+one that's in their father. And so to
+get a highresolution picture of how the
+frequency changes over time, you need to
+have very big sample sizes of truly very
+large numbers of people. and we just
+didn't have that until the last few
+years. So what motivates this study that
+we're I think talking about today and
+the work that hopefully another number
+of groups will be doing in the coming
+years is the fact that we now finally
+have those numbers and we can do
+something with the data to see how
+frequency changes over time.
+&gt;&gt; And can can I ask a question? Um I'll be
+asking a lot of value questions through
+the next few hours, but why are
+frequency changes especially
+interesting? So what we're interested in
+is using the experiment of nature that's
+occurred uh in in our history over the
+last tens of thousands of years to
+understand what's uh biologically uh
+significant uh in our in our DNA. And if
+there has been a change in environment
+that a population has experienced, for
+example, people have shifted to
+agriculture or begun living close to
+domesticated animals or move to a new
+environment from a cold place to a warm
+place or a a low place to a high place,
+then there's pressure on the population
+to adapt to these new stresses, these
+new these new needs. And the way you're
+going to detect that is you're going to
+see that the frequency of a genetic
+variant that for example might allow you
+to live at higher altitude, for example,
+or that might sort of nudge you to have
+a different behavioral pattern that
+might be advantageous in the new
+situation. That genetic variant might
+push systematically in some direction in
+a way that is enough that you can detect
+it. Now, it's very hard to detect slight
+shifts in frequency by a few percent or
+a 10 percent unless you have a very very
+big sample size. And so, what we're
+looking for are those changes in
+frequency that are too extreme to be due
+to chance. And that will tell us that
+there have been pushes in the against
+the biology as a result of the changes
+in environment that people have
+experienced.
+&gt;&gt; Interesting. Okay. So, what did you guys
+find? So seven years ago uh Ali Akbari
+uh who is a at the time was a post-doal
+scientist in my laboratory and a few
+years later became a permanent staff
+scientist in my laboratory set out to
+use the data that we were producing to
+learn about biological change over time.
+And I think the reason he was interested
+in our laboratory rather than other
+places was that a focus of our
+laboratory has been generating truly
+large amounts of data from ancient
+humans. We've been really trying to
+industrialize the process, make it very
+inexpensive, make it high quality and
+generate large numbers of samples uh
+with lots of good data for this purpose.
+So there's been this large amount of
+data that we've generated and it made it
+possible to conceive again of asking the
+question about whether there's been
+frequency changes over time. So the
+mainstream view in human evolution in
+the last several decades has been that
+natural selection has been pretty
+quiescent over the last several hundred
+thousands of years of human history. And
+there's several lines of evidence that
+have been deployed to document this. One
+is that if you compare diverse
+populations from different continents
+around the world, for example, Europeans
+and East Asians, and you look at
+mutations that differ in frequency
+between these groups, all mutations
+differ a little bit in frequency,
+sometimes a lot, you can say, what are
+the most different mutations in terms of
+frequency between Europeans and East
+Asians, and there's almost no genetic
+changes that are 100% different in
+frequency between Europeans and East
+Asians. So, Europeans and East Asians
+descend from a common ancestral
+population 40 or 50,000 years ago that
+came out of Africa and the Middle East.
+This population had a set of gene
+frequencies, genetic frequencies, and
+these variants popped around uh
+randomly, the process known as genetic
+drift, or perhaps under selection in one
+direction or another. And the time
+that's passed since 40 or 50,000 years
+ago is sufficiently small on an
+evolutionary time scale that there's
+just not much genetic differentiation on
+average between these two groups
+Europeans and East Asians. But however,
+if there's been natural selection, for
+example, to help people in one place
+digest digest alcohol better or for
+example digest milk better or do
+something else better, what you might
+expect is that there would be some
+mutation that would have rocketed up to
+very high frequency. And 40 or 50,000
+years is a lot of time. It's maybe 1500
+or 2,000 generations. And so that might
+be enough time easily to see 100%
+different in frequency. And yet you
+don't see any more compared to what you
+would expect by chance. So this made it
+seem that just selection has been
+quiescent. Maybe a few hundred thousand
+years ago the ancestral human population
+got to some kind of optimum and after
+that there hasn't been much genetic
+change in one way or the other. And
+there's been small amounts of natural
+selection or there's been selection to
+remove bad mutations that are constantly
+raining down on the genome. but not what
+we call directional selection, which is
+newly arising mutations or mutations
+being pushed in a systematic direction
+to help the population get to a a
+different adaptive set point that's
+that's that's more favorable for the
+conditions that population is living in.
+So we were able to partition how much of
+the changes in frequencies of of of all
+the mutations that we're seeing in the
+DNA. We're looking at about 10 10
+million positions that vary is due to
+directional selection adaptation versus
+other factors especially genetic drift.
+Uh and 98% of it is other factors
+especially genetic drift. So it's
+overwhelmingly migrations in population
+structure causing fluctuations in
+frequency and as a result it's super
+hard to actually detect the signals of
+natural selection in adaptive natural
+selection because they're a tiny
+fraction of the total frequency change.
+The vast majority of it are these
+migrations and mixtures. Nevertheless,
+there's so much natural selection as our
+study thinks has shown that in fact it's
+been rampant in the genome.
+&gt;&gt; Can I can I ask a clarifying question
+here?
+Why are we discounting population ad
+mixture or replacement as selection?
+Because if you think about it at a group
+level, if one population replaces
+another population, isn't that
+selection? I I remember from the last
+episode, you were explaining how there's
+been huge changes in what kinds of
+people are in a specific area. One
+population came in and kind of replaced
+the previous one, and then a new
+population came in and replaced the
+previous one. And to the extent that the
+genetics are relevant to why that
+population replaced the other one, um
+why why should that not count towards uh
+you know what we understand to be
+selection over the last 10,000 years?
+&gt;&gt; It it could count uh and may count and
+probably should count in some respects.
+But it could also be that this
+population replacement is due to some
+cultural phenomenon uh technology held
+by one of these groups, not others. And
+maybe there's some genetic mutations
+that are contributing to this. Who
+knows? It's possible. Uh but what you're
+seeing is a whole genome shift. And so
+what we're looking to see is whether
+there's one place in the DNA that is
+driving the change in a way that's
+different from the rest of the genome.
+And really from a statistical point of
+view, what happens at these times of
+migration is there's just huge
+fluctuations in frequencies. And these
+are extremely uninformative times for
+looking and detecting natural selection.
+The best moments to detect natural
+selection is when migrations and
+population ad mixtures are not happening
+for a few hundred years. And during
+these times, you can actually see the
+mutation slowly blowing in one direction
+as a result.
+&gt;&gt; Really, the way we think about the
+history of Europe in the Middle East and
+the way we think about it for the
+purpose of this study is as an
+archipelico of little populations in
+space and time, each of which are pretty
+isolated from each other. So a little
+population in Britain isolated for a few
+hundred years, a little population in
+Hungary isolated few hundred years
+between big events of migration and
+mixture. And in each of those little
+experiments of nature, we can ask does
+this mutation slightly increase in
+frequency? Does that same mutation
+slightly increase in frequency? And if
+all the arrows point in the same
+direction, we win. And they're telling
+us that natural selection is occurring.
+So for example, 4,500 years ago in
+Europe, almost all mutations go through
+huge frequency changes. And that's not
+because of natural selection. It's
+because of the step migration from the
+step north of the Black and Caspian Sea.
+40% 50% 80% of the DNA becomes Yamna
+from step pestoralists. And their
+frequencies of mutations were different
+not because of selection necessarily,
+but just because they had evolved in
+different places for thousands and tens
+of thousands of years. And then if you
+look at the descendant populations,
+there's huge changes in frequency. And
+it's very what you need to do is see oh
+is natural selection explaining a shift
+more than you would expect by chance.
+&gt;&gt; Okay. In this next section, David
+explains the nitty-gritty of the
+methodology of this paper. It's honestly
+a bit technical and I wanted you to get
+a sense of the results first. So I've
+moved that section to the end. If you
+want to understand the methodology, just
+stick around for the full episode. Okay.
+You found these locations that seem to
+be under selection. Oh, another
+clarifying question. So you have you say
+3,800
+locations which you're 50% confident are
+have been under selection in the last
+10,000 years.
+&gt;&gt; 7,200 which where where we're 50%
+confident. So I think we're getting
+about 7,200 positions in the DNA that
+have 50% confidence of being real.
+&gt;&gt; Yeah.
+&gt;&gt; So only half of those are real.
+&gt;&gt; Uh I see.
+&gt;&gt; So 3600 which don't know which ones.
+&gt;&gt; So 3600 of them are real.
+&gt;&gt; Okay. And um does that also mean that
+outside of those 7 to200
+you're confident the other locations the
+genome are not under selection?
+&gt;&gt; No. Okay.
+&gt;&gt; So if you look at the 25% probability
+cutoff there will be tens of thousands.
+Uh and there will be many real ones
+there too. In fact, multiple analyses we
+do suggest that the genome is vibrating
+with natural selection and uh there's
+all sorts of weaker effects that are
+there that would be picked up in larger
+studies even than we've done. Uh and
+that uh in fact almost every position in
+the DNA is uh correlated to a position
+that and being dragged in one way or the
+other uh by natural selection. Instead
+of being quiescent, natural selection is
+everywhere. Even though it's only 2% of
+the frequency change, it's tugging the
+positions in one direction or the other
+everywhere. So we analyzed these
+positions that we had identified, these
+hundreds of positions, the ones we were
+super confident about. And we looked to
+see whether they were randomly
+distributed in the DNA or whether they
+had patterns. And what we did is we
+looked at maybe a hundred or so traits
+where there had been genomewide
+association studies for all sorts of
+different traits like ones associated
+with immunity or autoimmunity or
+behavior or metabolism and uh basically
+other other things. And for each of
+these we could ask are the genetic
+variations that are known to affect
+these traits from genomewide association
+studies do they have an unusual number
+of genetic selection signals? And what
+we found is there was a vast enrichment
+by about a four or fivefold for immune
+traits. That is there was a super
+concentration of selected uh signals in
+immune traits. Whereas also we saw a
+strong enrichment for metabolic traits,
+things that might impact your obesity or
+fat traits or type two diabetes and
+really almost no detectable enrichment
+as far as we could tell for behavioral
+traits or for uh for for psychiatric
+traits. And just to make sure I
+understand this is not to say the
+behavioral traits or psychiatric traits
+or cognitive traits are not under
+selection. It's just that the individual
+sites where such traits are controlled
+are not especially likely to be among
+the locations that you've identified as
+under selection.
+&gt;&gt; Yeah, that's exactly right. So, so it
+might seem from the uh results of that
+analysis that in fact immune traits are
+highly selected and that there's been no
+selection for behavior in the last
+18,000 years in this part of the world.
+But in fact, that's a wrong conclusion.
+And in fact, we have evidence that
+that's a wrong conclusion. And in fact,
+there's clear evidence of selection also
+on behavioral traits. And the uh reason
+we think we see and we have evidence
+that this is so uh much weaker signals
+for behavioral traits is that behavioral
+traits we know from other studies
+medical studies are underpinned by much
+larger numbers of genes than immune
+traits which are underpinned by
+relatively small numbers of gains of
+strong effect. behavioral trait traits
+are shaped genetically by very large
+number of gains of weak effect and we
+just don't have the statistical power to
+detect these very weak signals there. So
+when we do an analysis where we look at
+our very strong signals of selection
+that collection of very strong results
+is very effectively querying the immune
+traits but is not very effectively
+querying the behavioral traits. It may
+still be the case and I guess it is that
+immune traits are the most selected
+category but it is not at all the case
+and in fact we can prove it's not the
+case that behavioral traits are not
+selected.
+&gt;&gt; So we think there's two reasons why
+natural selection has uh we've been able
+to prove really that there's two reasons
+why uh how to reconcile the previous
+observations with our new observations.
+Remember the previous observation is
+that is that natural selection seems to
+have been quiescent over a time scale of
+hundreds of thousands or many tens of
+thousands of years. Reason that you
+don't see 100% different in frequency
+variance across Europeans and East
+Asians. So now we're seeing hundreds of
+positions that are rocketing up in
+frequency with selection rates 1% or
+more in a lot of cases. So 1% or more
+selection rates will mean that there'll
+be rapid doubling over periods of dozens
+of generations. And so over 1500 2,000
+generations like you see separating
+Europeans and East Asians, shouldn't you
+see many genetic variants that are 100%
+differently different in frequency
+across populations? So we were able to
+show that this is explained by at least
+two factors. So one of them is that we
+actually in this part of the world,
+Europe and the Middle East are in a
+period of accelerated natural selection.
+And one way to see this is to look at
+this enrichment pattern that we're
+observing where immune traits are
+unusually associated with these
+selection signals. And we could compare
+the last 5,000 years of our of our time
+period, what's called the Bronze Age and
+further onward uh to the previous 5,000
+years. And what we see is that this
+intensification of selection around
+immune traits, similarly, the
+intensification around metabolic traits
+has accelerated over this time period.
+So it's not like natural selection has
+been at the same rate over all places
+and times. In fact, it's increasing over
+the time period we're analyzing. And so
+plausibly the whole time period has
+increased compared to previous periods.
+So we're in a period of intensified
+selection. That's not implausible
+because this is a a population that went
+through a huge shock in terms of the way
+people live in the culture. So this is a
+population that almost everybody we're
+analyzing are farmers or food producers
+in one way or another. Farming was
+invented for the first time anywhere in
+the world in the Middle East 11 or
+12,000 years ago. The people who
+invented farming uh exploded into Europe
+after 8,500 years ago and spread across
+Europe and expanded rapidly in the
+Bronze Age. There was an intensification
+of how people lived with much higher
+population densities. People living more
+and more next to their animals and
+getting their diseases and exchanging
+their diseases with them and with each
+other. And so this is a period of rapid
+rapid change in terms of how people are
+living resulting in different biological
+uh needs of this population. So it's not
+surprising perhaps that in the context
+of these dramatic changes the biology of
+the population might be not in the
+ideally adapted uh position. that is
+that there might be what some people
+call an evolutionary mismatch where you
+take a a genetic uh variation that's
+evolved in hunter gatherers and put it
+into farmers or pastoralists and it's
+not exactly right. And so what you're
+seeing is the DNA of this population
+which is descended from hunter gatherers
+only 10,000 years ago reacting to the
+shock have having been moved into an
+agricultural and bronze age and high
+population density and urban
+environment. And a hypothesis is that
+what we're seeing is the adaptation that
+occurs as a result of that.
+&gt;&gt; Interesting. Okay. So, it might be
+helpful to you you in the paper you have
+you you have many examples of um this
+intensification of selection around the
+bronze age. And so um but feel free to
+navigate it yourself but it might be
+helpful to go through some of these
+examples.
+&gt;&gt; So we look one of the things we do in
+this work is we look carefully at many
+many of these positions in the in in the
+DNA. We've actually have an internet
+browser that you could look at called
+the Aegis browser that Ali and a
+colleague of his who's a co-author of
+our paper built uh that allows you to
+query these each of these 10 million
+positions and see the trajectories at
+each at each position and the evidence
+for selection. And one of the things
+that we see is that while for the most
+part uh the signals of natural selection
+we detect are consistent with being
+constant natural selection over time in
+a handful of them we're able to see that
+there's been a reversal or a radical
+change in natural selection. And very
+often that occurs in the period between
+5,000 to 2,000 years ago which is the
+Bronze Age and the uh Iron Age. a period
+of rapid population growth and rapid
+movement to uh intensive use of of of um
+of many technologies that were not used
+that way before. So an example of this
+is the tick 2 uh genetic variant that is
+a major risk factor for severe
+tuberculosis which is the major
+infectious disease the most important
+infectious disease killer in the world
+today. And if you look at the this major
+risk factor for tuberculosis, this
+variant rockets up in frequency from
+eight or six thousand years ago to maybe
+nine or 10% in this part of the world.
+And then it rockets down in frequency in
+the last 3,000 years. In both cases,
+there's very clear evidence of natural
+selection in the first case to increase
+in frequency and then in the next case
+to decrease in frequency. And a possible
+reason for this is maybe the spread of
+tuberculosis uh maybe becomes endemic in
+the population two or three thousand
+years ago that's potentially consistent
+with pathogen uh sequence data and other
+lines of evidence and maybe this variant
+was protecting against something before
+then. But then tuberculosis became uh
+significant after that point and it was
+so bad that it pushed in the opposite
+direction. That's speculative.
+&gt;&gt; Oh, interesting. And the thing it was
+protecting against was probably another
+disease.
+&gt;&gt; Maybe.
+&gt;&gt; Prepping for this episode required a
+full lit review. I needed to understand
+why other methods had failed to find
+evidence of natural selection over the
+last 10,000 years. What exactly did
+Reich and Abari do differently.
+Honestly, this was quite subtle because
+the most important points were
+distributed across a bunch of different
+papers and it was frustrating to talk to
+LLMs about it because they kept getting
+confused. One of them would fail to
+understand an important crux. And so I
+switch over to a different model and
+that one would get tripped up on the
+very next point. I ended up using cursor
+to kick off a handful of models at the
+same time and compare the results after.
+I could have one model critique the
+response of another. This was super
+useful because while I'm not a
+geneticist, I do have enough taste to be
+able to say, "Hey, this answer makes
+sense. These ones don't." I also had
+Cursor turn this work into a flash card
+so I could retain what I learned. Cursor
+started as a programming tool, but I
+found it really great for this kind of
+research. There's no other interface
+where I can get answers from a bunch of
+independent LLMs all while reading the
+relevant paper on the same screen. Go to
+cursor.com/thash
+to try it out. One of the big takeaways
+for me uh from the paper was just that
+something weird happened in the Bronze
+Age. Um and that as you said, we're not
+like across trade after trade uh the
+selection intensifies during the Bronze
+Age. And this makes sense for some
+things. For example, why do we see
+lactase persistence uh where adults can
+process milk? Why is that intensified
+during this period? Oh, well, it makes
+sense. This is the time when we don't we
+start using cattle not just for the meat
+but then also for milk and wool and
+other secondary products. Um so it makes
+sense this is why lactose would matter,
+lactase persistence would matter more.
+But then there's other things which seem
+like they should have been relevant
+since the dawn of agriculture. I forget
+the exact name of the alil, but was it
+fat S1? Um, which uh helps convert plant
+fatty acids into longchain fatty acids
+that your body needs. Uh, and that's
+obviously relevant when you move from a
+diet of meat as a hunter gatherer to a
+diet of cereals. But why why that is
+also one I think you found was under a
+special selection or especially high
+selection during the uh, you know, 5,000
+3,000 years ago. Um, yeah. So, what's
+going on? Why is the bronze jade so
+special across all these different
+traits that you're observing?
+&gt;&gt; Right. So fads fads one two this variant
+is sort of a vegetarian/meioning
+ad adaptation and already in work prior
+to this actually Ian Mat who uh was a
+former uh colleague worked with me in
+2015 identified this as a very strongly
+selected variant and it's actually been
+ancient. You see copies in archaic
+humans too. Um, one of the findings of
+our paper is the blood system. You
+know, you get your blood type, it's A
+and O. The B variant has increased up to
+10% at the expense of A. But previous
+work has shown that A and B were both
+already present in the ancestor of
+humans and gibbons, you know, other
+other other apes. Uh, and so these
+mutations, some of them have been going
+back and forth and fluctuating over
+time, uh, in different time periods. But
+we're talking about changes in the
+Bronze Age. So this tick 2 variant for
+uh tuberculosis risk uh multiple
+sclerosis risk variant inflected and
+increased in frequency before the bronze
+age and then two or three thousand years
+ago reversed at that period and there's
+differences in northern Europe where
+this process is super strong very strong
+positive selection very strong negative
+selection and then in southern Europe
+only a little bit and not even very
+strong negative selection for
+hemocchromattosis which is iron
+pathogenic iron buildup that causes
+problems s uh in Europe that too has
+reversed around this period. Um in some
+of the complex traits that maybe we'll
+talk about later, these traits too have
+periods of intensification of natural
+selection. For example, depigmentation
+which is the uh Europeans have
+depigmented gotten lighter skin over the
+last 10,000 years. You can see it in our
+data. The period of strongest
+depppigmentation is between about 4,000
+to 2,000 years ago and then after that
+it's much less. And so this seems to be
+a very impactful, eventful, important
+period where a lot of the processes that
+we are seeing become very powerful. And
+it's surprising on first principles. You
+might think before you walked into this
+genetic data that the big change is
+going to be starting to grow plants and
+maybe farm animals. And that happens in
+the Neolithic, you know, beginning 10 or
+11 or 12,000 years ago and spreads into
+Europe after 8,500 years ago. But
+actually the intensification happens
+like 5,000 years ago, 4,000 years ago.
+And so it's really interesting this this
+observation of that being a key point,
+that being an inflection point, tells us
+something about when humans, at least in
+this part of the world, were wrenched
+into a way of living that was so
+different from how the huntergather
+ancestors lived that the organism had to
+adapt very strongly. and that maybe the
+degree of that wrenching process moving
+into the bronze age was qualitatively
+greater than the degree of the wrenching
+process that happened from the initial
+transition to growing plants. So which
+is surprising because our cartoon
+picture is that the big transition is
+farming but the genetic data the
+biological readout is saying our genome
+is reacting much more strongly to this
+these events that happened 5,000 years
+ago. So you did some work with uh Batia
+and many other colleagues in 2014. You
+were looking at 20 or 30,000
+African-American genomes today and you
+were saying look there's some percentage
+80% West African DNA and then 20%
+European DNA and can we look at their uh
+genomes today and do we see that their
+uh aloof frequencies are much different
+than what you just expect from this ad
+mixture? Um, and you find, correct me if
+I'm wrong, but you found that they
+weren't, that is to say that over 200,
+300 years of extremely intense
+environment change, you know, going
+from, you know, yeah, cattle slavery
+and, uh, yeah, completely new
+environment. Uh, there's no effect of
+natural selection. And so, we see
+episodes like this where we don't see
+natural selection. And then but then the
+bronze age apparently must have had an
+even stronger effect where the change in
+environment is even stronger than what
+we see from Africans in Africa then
+being trans migrated to the uh uh to the
+new world and then living under slavery.
+[TRUNCATED]

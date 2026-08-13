@@ -1,0 +1,4108 @@
+{
+  "summary": {
+    "urls_audited": 157,
+    "with_issues": 157,
+    "http_4xx_5xx": 2,
+    "severity": {
+      "critical": 1,
+      "high": 4,
+      "medium": 7,
+      "low": 145,
+      "none": 0
+    }
+  },
+  "top": [
+    {
+      "url": "https://thenewfuse.com/observatory",
+      "status": null,
+      "load_ms": 7972,
+      "nav_error": "Page.goto: net::ERR_CONNECTION_TIMED_OUT at https://thenewfuse.com/observatory\nCall log:\n  - navigating to \"https://thenewfuse.com/observatory\", waiting until \"domcontentloaded\"\n",
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "No HTML captured"
+      ],
+      "severity": "critical"
+    },
+    {
+      "url": "https://thenewfuse.com/api/admin/database",
+      "status": 404,
+      "load_ms": 948,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "HTTP status 404",
+        "Missing title",
+        "Missing meta description",
+        "Missing H1",
+        "Console errors (1)"
+      ],
+      "title": "",
+      "meta_description_len": 0,
+      "h1_count": 0,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/api/admin/features",
+      "status": 404,
+      "load_ms": 925,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "HTTP status 404",
+        "Missing title",
+        "Missing meta description",
+        "Missing H1",
+        "Console errors (1)"
+      ],
+      "title": "",
+      "meta_description_len": 0,
+      "h1_count": 0,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/llm-selection",
+      "status": 200,
+      "load_ms": 930,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [
+        "System is not defined"
+      ],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)",
+        "Runtime page errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/chat-model",
+      "status": 200,
+      "load_ms": 906,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [
+        "System is not defined"
+      ],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)",
+        "Runtime page errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/profile",
+      "status": 200,
+      "load_ms": 981,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Fetch profile error: Error: Unable to load profile data\n    at https://thenewfuse.com/assets/js/UserProfilePage.C6QhWtVw.js:1:7881"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/user/profile",
+      "status": 200,
+      "load_ms": 871,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Fetch profile error: Error: Unable to load profile data\n    at https://thenewfuse.com/assets/js/UserProfilePage.C6QhWtVw.js:1:7881"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/google/callback",
+      "status": 200,
+      "load_ms": 859,
+      "nav_error": null,
+      "console_errors": [
+        "Authentication error: null"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/onboard",
+      "status": 200,
+      "load_ms": 853,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 ()",
+        "Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/google-callback",
+      "status": 200,
+      "load_ms": 846,
+      "nav_error": null,
+      "console_errors": [
+        "Authentication error: null"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/community",
+      "status": 200,
+      "load_ms": 916,
+      "nav_error": null,
+      "console_errors": [
+        "TypeError: Cannot read properties of undefined (reading 'map')\n    at https://thenewfuse.com/assets/js/CommunityHub.BhPofyda.js:1:10346\n    at Array.map (<anonymous>)\n    at re (https://thenewfuse.com/assets/js/CommunityHub.BhPofyda.js:1:7229)\n    at gf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:47961)\n    at Yf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:70711)\n    at Ms (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:81044)\n    at ud (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:116717)\n    at by (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115763)\n    at nc (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115595)\n    at Is (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:112394)"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/main",
+      "status": 200,
+      "load_ms": 894,
+      "nav_error": null,
+      "console_errors": [
+        "Connecting to 'ws://localhost:3001/' violates the following Content Security Policy directive: \"connect-src 'self' https: wss:\". The action has been blocked.",
+        "ReferenceError: CardHeader is not defined\n    at D (https://thenewfuse.com/assets/js/index.DSthnIMp.js:1:3922)\n    at gf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:47961)\n    at Yf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:70711)\n    at Ms (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:81044)\n    at ud (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:116717)\n    at by (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115763)\n    at nc (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115595)\n    at Is (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:112394)\n    at gd (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:124173)\n    at MessagePort.Ce (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:1:12887)"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/admin",
+      "status": 200,
+      "load_ms": 1635,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/api",
+      "status": 200,
+      "load_ms": 1435,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/simple-test",
+      "status": 200,
+      "load_ms": 1404,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/simple-landing",
+      "status": 200,
+      "load_ms": 1371,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/marketplace",
+      "status": 200,
+      "load_ms": 1354,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings",
+      "status": 200,
+      "load_ms": 1317,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/debug-routing",
+      "status": 200,
+      "load_ms": 1258,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/",
+      "status": 200,
+      "load_ms": 1256,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/general",
+      "status": 200,
+      "load_ms": 1241,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/components-nav",
+      "status": 200,
+      "load_ms": 1214,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/configuration",
+      "status": 200,
+      "load_ms": 1205,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/suggestions",
+      "status": 200,
+      "load_ms": 1193,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/resources",
+      "status": 200,
+      "load_ms": 1182,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/connect",
+      "status": 200,
+      "load_ms": 1181,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/security",
+      "status": 200,
+      "load_ms": 1165,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/tasks-page",
+      "status": 200,
+      "load_ms": 1136,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/backup-restore",
+      "status": 200,
+      "load_ms": 1132,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/command-center",
+      "status": 200,
+      "load_ms": 1131,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/404",
+      "status": 200,
+      "load_ms": 1128,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/notifications",
+      "status": 200,
+      "load_ms": 1124,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/users",
+      "status": 200,
+      "load_ms": 1120,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/settings",
+      "status": 200,
+      "load_ms": 1120,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/agents/skills",
+      "status": 200,
+      "load_ms": 1117,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/a2a-control",
+      "status": 200,
+      "load_ms": 1101,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/timeline",
+      "status": 200,
+      "load_ms": 1098,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/system-health",
+      "status": 200,
+      "load_ms": 1087,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/settings",
+      "status": 200,
+      "load_ms": 1086,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/audit-logs",
+      "status": 200,
+      "load_ms": 1085,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/revenue-dashboard",
+      "status": 200,
+      "load_ms": 1063,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/knowledge-hub",
+      "status": 200,
+      "load_ms": 1062,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/appearance",
+      "status": 200,
+      "load_ms": 1062,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/agents/web-search",
+      "status": 200,
+      "load_ms": 1060,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/unauthorized",
+      "status": 200,
+      "load_ms": 1058,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/legal/terms",
+      "status": 200,
+      "load_ms": 1057,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/not-found",
+      "status": 200,
+      "load_ms": 1051,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/ai-command-center",
+      "status": 200,
+      "load_ms": 1050,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/contact",
+      "status": 200,
+      "load_ms": 1044,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/live-view",
+      "status": 200,
+      "load_ms": 1040,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/feature-flags",
+      "status": 200,
+      "load_ms": 1037,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/api-analytics",
+      "status": 200,
+      "load_ms": 1033,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/experimental-features",
+      "status": 200,
+      "load_ms": 1033,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/suggestions/new",
+      "status": 200,
+      "load_ms": 1030,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/system-metrics",
+      "status": 200,
+      "load_ms": 1027,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/onboarding",
+      "status": 200,
+      "load_ms": 1024,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/console",
+      "status": 200,
+      "load_ms": 1022,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/docs",
+      "status": 200,
+      "load_ms": 1020,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/chat",
+      "status": 200,
+      "load_ms": 1019,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows",
+      "status": 200,
+      "load_ms": 999,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/control-panel",
+      "status": 200,
+      "load_ms": 994,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/multi-agent-chat",
+      "status": 200,
+      "load_ms": 992,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/timeline-demo",
+      "status": 200,
+      "load_ms": 990,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/openclaw-security",
+      "status": 200,
+      "load_ms": 989,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/frontend-showcase",
+      "status": 200,
+      "load_ms": 989,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/port-management",
+      "status": 200,
+      "load_ms": 988,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/home",
+      "status": 200,
+      "load_ms": 986,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/components-showcase",
+      "status": 200,
+      "load_ms": 984,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/agent-model",
+      "status": 200,
+      "load_ms": 979,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows-enhanced",
+      "status": 200,
+      "load_ms": 976,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/admin",
+      "status": 200,
+      "load_ms": 974,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/landing-page",
+      "status": 200,
+      "load_ms": 971,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agent-management",
+      "status": 200,
+      "load_ms": 963,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/dashboard",
+      "status": 200,
+      "load_ms": 962,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/brand",
+      "status": 200,
+      "load_ms": 961,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/analytics",
+      "status": 200,
+      "load_ms": 959,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard",
+      "status": 200,
+      "load_ms": 959,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/workspaces",
+      "status": 200,
+      "load_ms": 954,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/register",
+      "status": 200,
+      "load_ms": 953,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard/agents",
+      "status": 200,
+      "load_ms": 949,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    }
+  ],
+  "pages": [
+    {
+      "url": "https://thenewfuse.com/",
+      "status": 200,
+      "load_ms": 1256,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/404",
+      "status": 200,
+      "load_ms": 1128,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/a2a-control",
+      "status": 200,
+      "load_ms": 1101,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin",
+      "status": 200,
+      "load_ms": 1635,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/agent-management",
+      "status": 200,
+      "load_ms": 919,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/agents/skills",
+      "status": 200,
+      "load_ms": 1117,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/agents/web-search",
+      "status": 200,
+      "load_ms": 1060,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/api-analytics",
+      "status": 200,
+      "load_ms": 1033,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/audit-logs",
+      "status": 200,
+      "load_ms": 1085,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/backup-restore",
+      "status": 200,
+      "load_ms": 1132,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/configuration",
+      "status": 200,
+      "load_ms": 1205,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/control-panel",
+      "status": 200,
+      "load_ms": 994,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/dashboard",
+      "status": 200,
+      "load_ms": 859,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/database",
+      "status": 200,
+      "load_ms": 912,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/experimental-features",
+      "status": 200,
+      "load_ms": 1033,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/feature-flags",
+      "status": 200,
+      "load_ms": 1037,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/layout",
+      "status": 200,
+      "load_ms": 938,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/marketplace",
+      "status": 200,
+      "load_ms": 1354,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/onboarding",
+      "status": 200,
+      "load_ms": 1024,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/openclaw-security",
+      "status": 200,
+      "load_ms": 989,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/port-management",
+      "status": 200,
+      "load_ms": 988,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/settings",
+      "status": 200,
+      "load_ms": 1086,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/system-health",
+      "status": 200,
+      "load_ms": 1087,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/system-metrics",
+      "status": 200,
+      "load_ms": 1027,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/user-management",
+      "status": 200,
+      "load_ms": 889,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/users",
+      "status": 200,
+      "load_ms": 1120,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/admin/workspaces",
+      "status": 200,
+      "load_ms": 954,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agency/dashboard",
+      "status": 200,
+      "load_ms": 914,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agency/onboard",
+      "status": 200,
+      "load_ms": 862,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agent-builder",
+      "status": 200,
+      "load_ms": 887,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agent-management",
+      "status": 200,
+      "load_ms": 963,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents",
+      "status": 200,
+      "load_ms": 853,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/new",
+      "status": 200,
+      "load_ms": 875,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/nft-marketplace",
+      "status": 200,
+      "load_ms": 841,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/onboard",
+      "status": 200,
+      "load_ms": 853,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 ()",
+        "Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/revenue-dashboard",
+      "status": 200,
+      "load_ms": 1063,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/agents/unified-creator",
+      "status": 200,
+      "load_ms": 838,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/ai-agent-portal",
+      "status": 200,
+      "load_ms": 898,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/ai-agents",
+      "status": 200,
+      "load_ms": 846,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/ai-command-center",
+      "status": 200,
+      "load_ms": 1050,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/ai-portal",
+      "status": 200,
+      "load_ms": 834,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/all-pages",
+      "status": 200,
+      "load_ms": 852,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/analytics",
+      "status": 200,
+      "load_ms": 959,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/api/admin/database",
+      "status": 404,
+      "load_ms": 948,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "HTTP status 404",
+        "Missing title",
+        "Missing meta description",
+        "Missing H1",
+        "Console errors (1)"
+      ],
+      "title": "",
+      "meta_description_len": 0,
+      "h1_count": 0,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/api/admin/features",
+      "status": 404,
+      "load_ms": 925,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "page_errors": [],
+      "issues": [
+        "HTTP status 404",
+        "Missing title",
+        "Missing meta description",
+        "Missing H1",
+        "Console errors (1)"
+      ],
+      "title": "",
+      "meta_description_len": 0,
+      "h1_count": 0,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/auth",
+      "status": 200,
+      "load_ms": 861,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/callback",
+      "status": 200,
+      "load_ms": 945,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/forgot-password",
+      "status": 200,
+      "load_ms": 878,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/google-callback",
+      "status": 200,
+      "load_ms": 846,
+      "nav_error": null,
+      "console_errors": [
+        "Authentication error: null"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/google/callback",
+      "status": 200,
+      "load_ms": 859,
+      "nav_error": null,
+      "console_errors": [
+        "Authentication error: null"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/login",
+      "status": 200,
+      "load_ms": 863,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/oauth-callback",
+      "status": 200,
+      "load_ms": 870,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/register",
+      "status": 200,
+      "load_ms": 953,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/reset-password",
+      "status": 200,
+      "load_ms": 821,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/auth/sso",
+      "status": 200,
+      "load_ms": 850,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/blog",
+      "status": 200,
+      "load_ms": 850,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/brand",
+      "status": 200,
+      "load_ms": 961,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/build-info",
+      "status": 200,
+      "load_ms": 882,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/chat",
+      "status": 200,
+      "load_ms": 904,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/chat-page",
+      "status": 200,
+      "load_ms": 904,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/command-center",
+      "status": 200,
+      "load_ms": 1131,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/community",
+      "status": 200,
+      "load_ms": 916,
+      "nav_error": null,
+      "console_errors": [
+        "TypeError: Cannot read properties of undefined (reading 'map')\n    at https://thenewfuse.com/assets/js/CommunityHub.BhPofyda.js:1:10346\n    at Array.map (<anonymous>)\n    at re (https://thenewfuse.com/assets/js/CommunityHub.BhPofyda.js:1:7229)\n    at gf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:47961)\n    at Yf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:70711)\n    at Ms (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:81044)\n    at ud (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:116717)\n    at by (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115763)\n    at nc (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115595)\n    at Is (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:112394)"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Console errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/components",
+      "status": 200,
+      "load_ms": 886,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/components-nav",
+      "status": 200,
+      "load_ms": 1214,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/components-showcase",
+      "status": 200,
+      "load_ms": 984,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/connect",
+      "status": 200,
+      "load_ms": 1181,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/contact",
+      "status": 200,
+      "load_ms": 1044,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard",
+      "status": 200,
+      "load_ms": 959,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard/agents",
+      "status": 200,
+      "load_ms": 949,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard/agents/new",
+      "status": 200,
+      "load_ms": 904,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard/analytics",
+      "status": 200,
+      "load_ms": 872,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/dashboard/settings",
+      "status": 200,
+      "load_ms": 862,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/debug",
+      "status": 200,
+      "load_ms": 861,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/debug-routing",
+      "status": 200,
+      "load_ms": 1258,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/design-system",
+      "status": 200,
+      "load_ms": 944,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/docs",
+      "status": 200,
+      "load_ms": 1020,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/features",
+      "status": 200,
+      "load_ms": 889,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/frontend-showcase",
+      "status": 200,
+      "load_ms": 989,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/general-settings",
+      "status": 200,
+      "load_ms": 874,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/general-settings/community-hub",
+      "status": 200,
+      "load_ms": 877,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/general-settings/embedding",
+      "status": 200,
+      "load_ms": 838,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/goals",
+      "status": 200,
+      "load_ms": 894,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/graph-demo",
+      "status": 200,
+      "load_ms": 853,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/home",
+      "status": 200,
+      "load_ms": 986,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/admin",
+      "status": 200,
+      "load_ms": 974,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/agents",
+      "status": 200,
+      "load_ms": 845,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/chat",
+      "status": 200,
+      "load_ms": 1019,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/dashboard",
+      "status": 200,
+      "load_ms": 962,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/tasks",
+      "status": 200,
+      "load_ms": 885,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/html/workflows",
+      "status": 200,
+      "load_ms": 922,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/hub",
+      "status": 200,
+      "load_ms": 899,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/knowledge-hub",
+      "status": 200,
+      "load_ms": 1062,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/landing",
+      "status": 200,
+      "load_ms": 851,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/landing-page",
+      "status": 200,
+      "load_ms": 971,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/layout-example",
+      "status": 200,
+      "load_ms": 914,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/legal/privacy",
+      "status": 200,
+      "load_ms": 863,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/legal/terms",
+      "status": 200,
+      "load_ms": 1057,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/live-view",
+      "status": 200,
+      "load_ms": 1040,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/login",
+      "status": 200,
+      "load_ms": 899,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/main",
+      "status": 200,
+      "load_ms": 894,
+      "nav_error": null,
+      "console_errors": [
+        "Connecting to 'ws://localhost:3001/' violates the following Content Security Policy directive: \"connect-src 'self' https: wss:\". The action has been blocked.",
+        "ReferenceError: CardHeader is not defined\n    at D (https://thenewfuse.com/assets/js/index.DSthnIMp.js:1:3922)\n    at gf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:47961)\n    at Yf (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:70711)\n    at Ms (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:81044)\n    at ud (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:116717)\n    at by (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115763)\n    at nc (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:115595)\n    at Is (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:112394)\n    at gd (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:8:124173)\n    at MessagePort.Ce (https://thenewfuse.com/assets/js/react-vendor.CqKzVGOC.js:1:12887)"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/marketplace",
+      "status": 200,
+      "load_ms": 863,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/mcp-hub",
+      "status": 200,
+      "load_ms": 923,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/multi-agent-chat",
+      "status": 200,
+      "load_ms": 992,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/multi-agent-chat-demo",
+      "status": 200,
+      "load_ms": 920,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/not-found",
+      "status": 200,
+      "load_ms": 1051,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/observatory",
+      "status": null,
+      "load_ms": 7972,
+      "nav_error": "Page.goto: net::ERR_CONNECTION_TIMED_OUT at https://thenewfuse.com/observatory\nCall log:\n  - navigating to \"https://thenewfuse.com/observatory\", waiting until \"domcontentloaded\"\n",
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "No HTML captured"
+      ],
+      "severity": "critical"
+    },
+    {
+      "url": "https://thenewfuse.com/onboarding",
+      "status": 200,
+      "load_ms": 928,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/onboarding/ai-agent",
+      "status": 200,
+      "load_ms": 806,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 1,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/package/agents",
+      "status": 200,
+      "load_ms": 910,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/package/dashboard",
+      "status": 200,
+      "load_ms": 894,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/package/login",
+      "status": 200,
+      "load_ms": 841,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/package/workflows",
+      "status": 200,
+      "load_ms": 869,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/plans",
+      "status": 200,
+      "load_ms": 884,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/preview/onboarding",
+      "status": 200,
+      "load_ms": 872,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/pricing",
+      "status": 200,
+      "load_ms": 856,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/profile",
+      "status": 200,
+      "load_ms": 981,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Fetch profile error: Error: Unable to load profile data\n    at https://thenewfuse.com/assets/js/UserProfilePage.C6QhWtVw.js:1:7881"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/register",
+      "status": 200,
+      "load_ms": 880,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/resources",
+      "status": 200,
+      "load_ms": 1182,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings",
+      "status": 200,
+      "load_ms": 1317,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/api",
+      "status": 200,
+      "load_ms": 1435,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/appearance",
+      "status": 200,
+      "load_ms": 1062,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/general",
+      "status": 200,
+      "load_ms": 1241,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/notifications",
+      "status": 200,
+      "load_ms": 1124,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/settings/security",
+      "status": 200,
+      "load_ms": 1165,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/simple-landing",
+      "status": 200,
+      "load_ms": 1371,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/simple-test",
+      "status": 200,
+      "load_ms": 1404,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/sophisticated-hub",
+      "status": 200,
+      "load_ms": 945,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/suggestions",
+      "status": 200,
+      "load_ms": 1193,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/suggestions/new",
+      "status": 200,
+      "load_ms": 1030,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/support",
+      "status": 200,
+      "load_ms": 930,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (4)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 4,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/tasks",
+      "status": 200,
+      "load_ms": 937,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/tasks-page",
+      "status": 200,
+      "load_ms": 1136,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/tasks/new",
+      "status": 200,
+      "load_ms": 867,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/test",
+      "status": 200,
+      "load_ms": 863,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/timeline",
+      "status": 200,
+      "load_ms": 1098,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/timeline-demo",
+      "status": 200,
+      "load_ms": 990,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/unauthorized",
+      "status": 200,
+      "load_ms": 1058,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/user/profile",
+      "status": 200,
+      "load_ms": 871,
+      "nav_error": null,
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Fetch profile error: Error: Unable to load profile data\n    at https://thenewfuse.com/assets/js/UserProfilePage.C6QhWtVw.js:1:7881"
+      ],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)",
+        "Console errors (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "medium"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows",
+      "status": 200,
+      "load_ms": 999,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows-enhanced",
+      "status": 200,
+      "load_ms": 976,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/advanced-builder",
+      "status": 200,
+      "load_ms": 930,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/builder",
+      "status": 200,
+      "load_ms": 865,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/console",
+      "status": 200,
+      "load_ms": 1022,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/detail",
+      "status": 200,
+      "load_ms": 844,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/execution",
+      "status": 200,
+      "load_ms": 859,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/executions",
+      "status": 200,
+      "load_ms": 849,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workflows/templates",
+      "status": 200,
+      "load_ms": 875,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-chat",
+      "status": 200,
+      "load_ms": 866,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/agent-model",
+      "status": 200,
+      "load_ms": 979,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/chat-model",
+      "status": 200,
+      "load_ms": 906,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [
+        "System is not defined"
+      ],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)",
+        "Runtime page errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace-settings/llm-selection",
+      "status": 200,
+      "load_ms": 930,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [
+        "System is not defined"
+      ],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (3)",
+        "Runtime page errors (1)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 3,
+      "images_missing_alt": 0,
+      "severity": "high"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/analytics",
+      "status": 200,
+      "load_ms": 905,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/chat",
+      "status": 200,
+      "load_ms": 853,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/layout",
+      "status": 200,
+      "load_ms": 919,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/members",
+      "status": 200,
+      "load_ms": 867,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/overview",
+      "status": 200,
+      "load_ms": 938,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    },
+    {
+      "url": "https://thenewfuse.com/workspace/settings",
+      "status": 200,
+      "load_ms": 1120,
+      "nav_error": null,
+      "console_errors": [],
+      "page_errors": [],
+      "issues": [
+        "Meta description too long (>160)",
+        "Multiple H1 (2)"
+      ],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "meta_description_len": 172,
+      "h1_count": 2,
+      "images_missing_alt": 0,
+      "severity": "low"
+    }
+  ]
+}

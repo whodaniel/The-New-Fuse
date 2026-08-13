@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-hosting-setup-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-hosting-setup-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-hosting-setup-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-hosting-setup-agent.json",
+  "status": "present"
+}

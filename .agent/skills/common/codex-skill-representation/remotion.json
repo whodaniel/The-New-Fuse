@@ -1,0 +1,12 @@
+{
+  "skillName": "remotion",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/remotion/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/remotion/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/remotion.json",
+  "status": "present"
+}

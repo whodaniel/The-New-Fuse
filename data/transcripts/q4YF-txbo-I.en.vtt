@@ -1,0 +1,2640 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.040 --> 00:00:01.709 align:start position:0%
+ 
+what's<00:00:00.240><c> going</c><00:00:00.399><c> on</c><00:00:00.560><c> everybody</c><00:00:00.919><c> Josh</c><00:00:01.160><c> pook</c><00:00:01.599><c> here</c>
+
+00:00:01.709 --> 00:00:01.719 align:start position:0%
+what's going on everybody Josh pook here
+ 
+
+00:00:01.719 --> 00:00:03.470 align:start position:0%
+what's going on everybody Josh pook here
+and<00:00:01.920><c> in</c><00:00:02.080><c> today's</c><00:00:02.480><c> video</c><00:00:02.800><c> we</c><00:00:02.919><c> are</c><00:00:03.080><c> going</c><00:00:03.159><c> to</c><00:00:03.280><c> be</c>
+
+00:00:03.470 --> 00:00:03.480 align:start position:0%
+and in today's video we are going to be
+ 
+
+00:00:03.480 --> 00:00:06.309 align:start position:0%
+and in today's video we are going to be
+looking<00:00:03.800><c> at</c><00:00:03.959><c> an</c><00:00:04.279><c> AI</c><00:00:04.920><c> researcher</c><00:00:05.720><c> agent</c><00:00:06.240><c> this</c>
+
+00:00:06.309 --> 00:00:06.319 align:start position:0%
+looking at an AI researcher agent this
+ 
+
+00:00:06.319 --> 00:00:09.270 align:start position:0%
+looking at an AI researcher agent this
+is<00:00:06.440><c> a</c><00:00:06.640><c> free</c><00:00:07.120><c> open-</c><00:00:07.480><c> source</c><00:00:07.880><c> alternative</c><00:00:08.880><c> to</c>
+
+00:00:09.270 --> 00:00:09.280 align:start position:0%
+is a free open- source alternative to
+ 
+
+00:00:09.280 --> 00:00:12.430 align:start position:0%
+is a free open- source alternative to
+perplexity<00:00:10.080><c> it</c><00:00:10.240><c> is</c><00:00:10.440><c> called</c><00:00:10.800><c> GPT</c><00:00:11.719><c> researcher</c>
+
+00:00:12.430 --> 00:00:12.440 align:start position:0%
+perplexity it is called GPT researcher
+ 
+
+00:00:12.440 --> 00:00:14.910 align:start position:0%
+perplexity it is called GPT researcher
+say<00:00:12.719><c> goodbye</c><00:00:13.080><c> to</c><00:00:13.320><c> hours</c><00:00:13.759><c> of</c><00:00:14.040><c> research</c><00:00:14.679><c> say</c>
+
+00:00:14.910 --> 00:00:14.920 align:start position:0%
+say goodbye to hours of research say
+ 
+
+00:00:14.920 --> 00:00:17.390 align:start position:0%
+say goodbye to hours of research say
+hello<00:00:15.480><c> to</c><00:00:15.679><c> GPT</c><00:00:16.480><c> researcher</c><00:00:17.119><c> I'm</c><00:00:17.199><c> going</c><00:00:17.320><c> to</c>
+
+00:00:17.390 --> 00:00:17.400 align:start position:0%
+hello to GPT researcher I'm going to
+ 
+
+00:00:17.400 --> 00:00:18.950 align:start position:0%
+hello to GPT researcher I'm going to
+show<00:00:17.520><c> you</c><00:00:17.600><c> how</c><00:00:17.680><c> you</c><00:00:17.760><c> can</c><00:00:17.880><c> self-host</c><00:00:18.439><c> it</c><00:00:18.680><c> let's</c>
+
+00:00:18.950 --> 00:00:18.960 align:start position:0%
+show you how you can self-host it let's
+ 
+
+00:00:18.960 --> 00:00:22.970 align:start position:0%
+show you how you can self-host it let's
+dive<00:00:19.320><c> right</c><00:00:19.520><c> into</c>
+
+00:00:22.970 --> 00:00:22.980 align:start position:0%
+ 
+ 
+
+00:00:22.980 --> 00:00:28.509 align:start position:0%
+ 
+[Music]
+
+00:00:28.509 --> 00:00:28.519 align:start position:0%
+ 
+ 
+
+00:00:28.519 --> 00:00:30.589 align:start position:0%
+ 
+it<00:00:29.519><c> all</c><00:00:29.599><c> right</c><00:00:29.759><c> guys</c><00:00:30.000><c> so</c><00:00:30.080><c> some</c><00:00:30.199><c> of</c><00:00:30.279><c> you</c><00:00:30.439><c> guys</c>
+
+00:00:30.589 --> 00:00:30.599 align:start position:0%
+it all right guys so some of you guys
+ 
+
+00:00:30.599 --> 00:00:32.190 align:start position:0%
+it all right guys so some of you guys
+may<00:00:30.800><c> have</c><00:00:30.920><c> seen</c><00:00:31.199><c> some</c><00:00:31.320><c> of</c><00:00:31.439><c> my</c><00:00:31.640><c> other</c><00:00:31.880><c> videos</c>
+
+00:00:32.190 --> 00:00:32.200 align:start position:0%
+may have seen some of my other videos
+ 
+
+00:00:32.200 --> 00:00:33.830 align:start position:0%
+may have seen some of my other videos
+and<00:00:32.360><c> I've</c><00:00:32.520><c> done</c><00:00:32.719><c> videos</c><00:00:33.079><c> on</c><00:00:33.280><c> a</c><00:00:33.440><c> lot</c><00:00:33.640><c> of</c>
+
+00:00:33.830 --> 00:00:33.840 align:start position:0%
+and I've done videos on a lot of
+ 
+
+00:00:33.840 --> 00:00:35.270 align:start position:0%
+and I've done videos on a lot of
+different<00:00:34.120><c> perplexity</c><00:00:34.640><c> Alternatives</c><00:00:35.120><c> so</c>
+
+00:00:35.270 --> 00:00:35.280 align:start position:0%
+different perplexity Alternatives so
+ 
+
+00:00:35.280 --> 00:00:38.190 align:start position:0%
+different perplexity Alternatives so
+I've<00:00:35.440><c> done</c><00:00:35.600><c> videos</c><00:00:36.000><c> on</c><00:00:36.800><c> uh</c><00:00:36.920><c> open</c><00:00:37.280><c> perplex</c><00:00:38.040><c> I've</c>
+
+00:00:38.190 --> 00:00:38.200 align:start position:0%
+I've done videos on uh open perplex I've
+ 
+
+00:00:38.200 --> 00:00:40.750 align:start position:0%
+I've done videos on uh open perplex I've
+done<00:00:38.399><c> videos</c><00:00:38.800><c> on</c><00:00:39.480><c> local</c><00:00:39.879><c> search</c><00:00:40.399><c> I've</c><00:00:40.520><c> done</c>
+
+00:00:40.750 --> 00:00:40.760 align:start position:0%
+done videos on local search I've done
+ 
+
+00:00:40.760 --> 00:00:43.389 align:start position:0%
+done videos on local search I've done
+videos<00:00:41.160><c> on</c><00:00:41.520><c> morphic</c><00:00:42.280><c> I've</c><00:00:42.440><c> done</c><00:00:42.640><c> videos</c><00:00:43.120><c> on</c>
+
+00:00:43.389 --> 00:00:43.399 align:start position:0%
+videos on morphic I've done videos on
+ 
+
+00:00:43.399 --> 00:00:45.790 align:start position:0%
+videos on morphic I've done videos on
+llm<00:00:44.000><c> answer</c><00:00:44.360><c> engine</c><00:00:44.840><c> I've</c><00:00:44.960><c> done</c><00:00:45.160><c> videos</c><00:00:45.440><c> on</c>
+
+00:00:45.790 --> 00:00:45.800 align:start position:0%
+llm answer engine I've done videos on
+ 
+
+00:00:45.800 --> 00:00:48.229 align:start position:0%
+llm answer engine I've done videos on
+perlex<00:00:46.800><c> we've</c><00:00:47.000><c> covered</c><00:00:47.280><c> a</c><00:00:47.399><c> lot</c><00:00:47.559><c> of</c><00:00:47.719><c> different</c>
+
+00:00:48.229 --> 00:00:48.239 align:start position:0%
+perlex we've covered a lot of different
+ 
+
+00:00:48.239 --> 00:00:50.350 align:start position:0%
+perlex we've covered a lot of different
+perplexity<00:00:49.039><c> Alternatives</c><00:00:49.760><c> and</c><00:00:49.920><c> I'll</c><00:00:50.079><c> leave</c>
+
+00:00:50.350 --> 00:00:50.360 align:start position:0%
+perplexity Alternatives and I'll leave
+ 
+
+00:00:50.360 --> 00:00:52.270 align:start position:0%
+perplexity Alternatives and I'll leave
+links<00:00:50.680><c> to</c><00:00:50.960><c> these</c><00:00:51.160><c> videos</c><00:00:51.480><c> as</c><00:00:51.600><c> well</c><00:00:51.840><c> down</c><00:00:52.000><c> below</c>
+
+00:00:52.270 --> 00:00:52.280 align:start position:0%
+links to these videos as well down below
+ 
+
+00:00:52.280 --> 00:00:53.950 align:start position:0%
+links to these videos as well down below
+so<00:00:52.440><c> if</c><00:00:52.520><c> you</c><00:00:52.640><c> are</c><00:00:52.800><c> looking</c><00:00:53.000><c> for</c><00:00:53.239><c> open</c><00:00:53.520><c> source</c>
+
+00:00:53.950 --> 00:00:53.960 align:start position:0%
+so if you are looking for open source
+ 
+
+00:00:53.960 --> 00:00:55.470 align:start position:0%
+so if you are looking for open source
+gxy<00:00:54.280><c> Alternatives</c><00:00:54.800><c> you</c><00:00:54.879><c> can</c><00:00:55.000><c> check</c><00:00:55.199><c> some</c><00:00:55.320><c> of</c>
+
+00:00:55.470 --> 00:00:55.480 align:start position:0%
+gxy Alternatives you can check some of
+ 
+
+00:00:55.480 --> 00:00:57.029 align:start position:0%
+gxy Alternatives you can check some of
+those<00:00:55.680><c> out</c><00:00:56.120><c> but</c><00:00:56.239><c> in</c><00:00:56.359><c> today's</c><00:00:56.680><c> video</c><00:00:56.879><c> we're</c>
+
+00:00:57.029 --> 00:00:57.039 align:start position:0%
+those out but in today's video we're
+ 
+
+00:00:57.039 --> 00:00:59.069 align:start position:0%
+those out but in today's video we're
+going<00:00:57.120><c> to</c><00:00:57.239><c> be</c><00:00:57.359><c> looking</c><00:00:57.559><c> at</c><00:00:57.719><c> GPT</c><00:00:58.280><c> researcher</c>
+
+00:00:59.069 --> 00:00:59.079 align:start position:0%
+going to be looking at GPT researcher
+ 
+
+00:00:59.079 --> 00:01:01.389 align:start position:0%
+going to be looking at GPT researcher
+and<00:00:59.519><c> here</c><00:00:59.680><c> is</c><00:01:00.079><c> their</c><00:01:00.280><c> website</c><00:01:01.079><c> uh</c><00:01:01.199><c> you</c><00:01:01.280><c> can</c>
+
+00:01:01.389 --> 00:01:01.399 align:start position:0%
+and here is their website uh you can
+ 
+
+00:01:01.399 --> 00:01:02.950 align:start position:0%
+and here is their website uh you can
+check<00:01:01.600><c> it</c><00:01:01.680><c> out</c><00:01:01.879><c> all</c><00:01:02.039><c> links</c><00:01:02.280><c> will</c><00:01:02.399><c> be</c><00:01:02.559><c> linked</c>
+
+00:01:02.950 --> 00:01:02.960 align:start position:0%
+check it out all links will be linked
+ 
+
+00:01:02.960 --> 00:01:04.950 align:start position:0%
+check it out all links will be linked
+down<00:01:03.199><c> below</c><00:01:03.719><c> they</c><00:01:03.840><c> claim</c><00:01:04.280><c> to</c><00:01:04.400><c> be</c><00:01:04.600><c> the</c><00:01:04.720><c> number</c>
+
+00:01:04.950 --> 00:01:04.960 align:start position:0%
+down below they claim to be the number
+ 
+
+00:01:04.960 --> 00:01:07.429 align:start position:0%
+down below they claim to be the number
+one<00:01:05.239><c> open-</c><00:01:05.600><c> source</c><00:01:06.040><c> AI</c><00:01:06.439><c> research</c><00:01:06.920><c> agent</c>
+
+00:01:07.429 --> 00:01:07.439 align:start position:0%
+one open- source AI research agent
+ 
+
+00:01:07.439 --> 00:01:09.190 align:start position:0%
+one open- source AI research agent
+elevate<00:01:07.759><c> your</c><00:01:08.000><c> application</c><00:01:08.600><c> capabilities</c>
+
+00:01:09.190 --> 00:01:09.200 align:start position:0%
+elevate your application capabilities
+ 
+
+00:01:09.200 --> 00:01:10.870 align:start position:0%
+elevate your application capabilities
+with<00:01:09.320><c> the</c><00:01:09.439><c> leading</c><00:01:09.759><c> autonomous</c><00:01:10.320><c> specialized</c>
+
+00:01:10.870 --> 00:01:10.880 align:start position:0%
+with the leading autonomous specialized
+ 
+
+00:01:10.880 --> 00:01:12.950 align:start position:0%
+with the leading autonomous specialized
+research<00:01:11.320><c> agent</c><00:01:11.680><c> built</c><00:01:11.880><c> for</c><00:01:12.159><c> multi-agent</c>
+
+00:01:12.950 --> 00:01:12.960 align:start position:0%
+research agent built for multi-agent
+ 
+
+00:01:12.960 --> 00:01:15.030 align:start position:0%
+research agent built for multi-agent
+Frameworks<00:01:13.560><c> delivering</c><00:01:14.040><c> real-time</c><00:01:14.720><c> accurate</c>
+
+00:01:15.030 --> 00:01:15.040 align:start position:0%
+Frameworks delivering real-time accurate
+ 
+
+00:01:15.040 --> 00:01:17.390 align:start position:0%
+Frameworks delivering real-time accurate
+and<00:01:15.240><c> factual</c><00:01:15.680><c> results</c><00:01:16.080><c> at</c><00:01:16.320><c> speed</c><00:01:16.960><c> over</c><00:01:17.200><c> 1</c>
+
+00:01:17.390 --> 00:01:17.400 align:start position:0%
+and factual results at speed over 1
+ 
+
+00:01:17.400 --> 00:01:18.910 align:start position:0%
+and factual results at speed over 1
+million<00:01:17.799><c> downloads</c><00:01:18.240><c> and</c><00:01:18.400><c> hundreds</c><00:01:18.720><c> of</c>
+
+00:01:18.910 --> 00:01:18.920 align:start position:0%
+million downloads and hundreds of
+ 
+
+00:01:18.920 --> 00:01:21.030 align:start position:0%
+million downloads and hundreds of
+contributions<00:01:19.600><c> worldwide</c><00:01:20.400><c> for</c><00:01:20.600><c> support</c><00:01:20.880><c> for</c>
+
+00:01:21.030 --> 00:01:21.040 align:start position:0%
+contributions worldwide for support for
+ 
+
+00:01:21.040 --> 00:01:23.510 align:start position:0%
+contributions worldwide for support for
+all<00:01:21.240><c> llms</c><00:01:21.880><c> use</c><00:01:22.119><c> any</c><00:01:22.360><c> search</c><00:01:22.680><c> engine</c><00:01:23.079><c> research</c>
+
+00:01:23.510 --> 00:01:23.520 align:start position:0%
+all llms use any search engine research
+ 
+
+00:01:23.520 --> 00:01:25.630 align:start position:0%
+all llms use any search engine research
+local<00:01:23.960><c> documents</c><00:01:24.479><c> generate</c><00:01:24.840><c> long</c><00:01:25.119><c> reports</c>
+
+00:01:25.630 --> 00:01:25.640 align:start position:0%
+local documents generate long reports
+ 
+
+00:01:25.640 --> 00:01:29.190 align:start position:0%
+local documents generate long reports
+export<00:01:26.040><c> to</c><00:01:26.200><c> any</c><00:01:26.479><c> format</c><00:01:27.439><c> multi-agent</c><00:01:28.360><c> support</c>
+
+00:01:29.190 --> 00:01:29.200 align:start position:0%
+export to any format multi-agent support
+ 
+
+00:01:29.200 --> 00:01:30.670 align:start position:0%
+export to any format multi-agent support
+and<00:01:29.320><c> one</c><00:01:29.439><c> of</c><00:01:29.520><c> the</c><00:01:29.600><c> reasons</c><00:01:30.079><c> I</c><00:01:30.159><c> decided</c><00:01:30.439><c> to</c><00:01:30.520><c> do</c>
+
+00:01:30.670 --> 00:01:30.680 align:start position:0%
+and one of the reasons I decided to do
+ 
+
+00:01:30.680 --> 00:01:32.950 align:start position:0%
+and one of the reasons I decided to do
+an<00:01:30.920><c> video</c><00:01:31.280><c> on</c><00:01:31.479><c> this</c><00:01:31.640><c> tool</c><00:01:32.280><c> is</c><00:01:32.479><c> because</c><00:01:32.720><c> if</c><00:01:32.799><c> we</c>
+
+00:01:32.950 --> 00:01:32.960 align:start position:0%
+an video on this tool is because if we
+ 
+
+00:01:32.960 --> 00:01:34.630 align:start position:0%
+an video on this tool is because if we
+look<00:01:33.079><c> at</c><00:01:33.280><c> the</c><00:01:33.439><c> example</c><00:01:33.880><c> here</c><00:01:34.040><c> you'll</c><00:01:34.280><c> see</c><00:01:34.520><c> that</c>
+
+00:01:34.630 --> 00:01:34.640 align:start position:0%
+look at the example here you'll see that
+ 
+
+00:01:34.640 --> 00:01:38.069 align:start position:0%
+look at the example here you'll see that
+it's<00:01:35.040><c> querying</c><00:01:35.759><c> the</c><00:01:35.960><c> gpg</c><00:01:36.640><c> researcher</c><00:01:37.240><c> agent</c>
+
+00:01:38.069 --> 00:01:38.079 align:start position:0%
+it's querying the gpg researcher agent
+ 
+
+00:01:38.079 --> 00:01:39.670 align:start position:0%
+it's querying the gpg researcher agent
+and<00:01:38.240><c> it's</c><00:01:38.399><c> pulling</c><00:01:38.840><c> a</c><00:01:39.000><c> bunch</c><00:01:39.240><c> of</c><00:01:39.399><c> different</c>
+
+00:01:39.670 --> 00:01:39.680 align:start position:0%
+and it's pulling a bunch of different
+ 
+
+00:01:39.680 --> 00:01:41.710 align:start position:0%
+and it's pulling a bunch of different
+sources<00:01:40.280><c> and</c><00:01:40.439><c> deploying</c><00:01:41.000><c> a</c><00:01:41.079><c> few</c><00:01:41.320><c> different</c>
+
+00:01:41.710 --> 00:01:41.720 align:start position:0%
+sources and deploying a few different
+ 
+
+00:01:41.720 --> 00:01:43.429 align:start position:0%
+sources and deploying a few different
+agents<00:01:42.280><c> and</c><00:01:42.439><c> it</c><00:01:42.560><c> looks</c><00:01:42.720><c> like</c><00:01:42.880><c> it's</c><00:01:43.000><c> doing</c><00:01:43.240><c> some</c>
+
+00:01:43.429 --> 00:01:43.439 align:start position:0%
+agents and it looks like it's doing some
+ 
+
+00:01:43.439 --> 00:01:45.910 align:start position:0%
+agents and it looks like it's doing some
+pretty<00:01:43.759><c> extensive</c><00:01:44.439><c> research</c><00:01:45.439><c> and</c><00:01:45.600><c> then</c><00:01:45.759><c> it's</c>
+
+00:01:45.910 --> 00:01:45.920 align:start position:0%
+pretty extensive research and then it's
+ 
+
+00:01:45.920 --> 00:01:48.550 align:start position:0%
+pretty extensive research and then it's
+going<00:01:46.000><c> to</c><00:01:46.200><c> provide</c><00:01:46.719><c> the</c><00:01:47.079><c> output</c><00:01:47.719><c> in</c><00:01:48.240><c> very</c>
+
+00:01:48.550 --> 00:01:48.560 align:start position:0%
+going to provide the output in very
+ 
+
+00:01:48.560 --> 00:01:50.350 align:start position:0%
+going to provide the output in very
+quickly<00:01:49.280><c> that's</c><00:01:49.439><c> what</c><00:01:49.560><c> kind</c><00:01:49.680><c> of</c><00:01:49.799><c> stood</c><00:01:50.079><c> out</c><00:01:50.200><c> to</c>
+
+00:01:50.350 --> 00:01:50.360 align:start position:0%
+quickly that's what kind of stood out to
+ 
+
+00:01:50.360 --> 00:01:51.990 align:start position:0%
+quickly that's what kind of stood out to
+me<00:01:50.560><c> with</c><00:01:50.759><c> this</c><00:01:50.920><c> tool</c><00:01:51.320><c> opposed</c><00:01:51.640><c> from</c><00:01:51.759><c> some</c><00:01:51.880><c> of</c>
+
+00:01:51.990 --> 00:01:52.000 align:start position:0%
+me with this tool opposed from some of
+ 
+
+00:01:52.000 --> 00:01:54.350 align:start position:0%
+me with this tool opposed from some of
+the<00:01:52.119><c> other</c><00:01:52.320><c> open</c><00:01:52.600><c> source</c><00:01:53.119><c> researching</c><00:01:54.119><c> uh</c>
+
+00:01:54.350 --> 00:01:54.360 align:start position:0%
+the other open source researching uh
+ 
+
+00:01:54.360 --> 00:01:56.230 align:start position:0%
+the other open source researching uh
+perplex<00:01:54.799><c> the</c><00:01:54.960><c> Alternatives</c><00:01:55.479><c> we</c><00:01:55.640><c> covered</c><00:01:55.920><c> on</c>
+
+00:01:56.230 --> 00:01:56.240 align:start position:0%
+perplex the Alternatives we covered on
+ 
+
+00:01:56.240 --> 00:01:57.830 align:start position:0%
+perplex the Alternatives we covered on
+here<00:01:56.520><c> this</c><00:01:56.640><c> seems</c><00:01:56.960><c> more</c><00:01:57.119><c> of</c><00:01:57.280><c> like</c><00:01:57.399><c> a</c>
+
+00:01:57.830 --> 00:01:57.840 align:start position:0%
+here this seems more of like a
+ 
+
+00:01:57.840 --> 00:01:59.910 align:start position:0%
+here this seems more of like a
+researching<00:01:58.600><c> Powerhouse</c><00:01:59.240><c> that's</c><00:01:59.399><c> the</c><00:01:59.520><c> angle</c>
+
+00:01:59.910 --> 00:01:59.920 align:start position:0%
+researching Powerhouse that's the angle
+ 
+
+00:01:59.920 --> 00:02:01.670 align:start position:0%
+researching Powerhouse that's the angle
+that<00:02:00.039><c> they're</c><00:02:00.200><c> going</c><00:02:00.399><c> for</c><00:02:00.840><c> all</c><00:02:00.920><c> right</c><00:02:01.039><c> so</c><00:02:01.159><c> GPT</c>
+
+00:02:01.670 --> 00:02:01.680 align:start position:0%
+that they're going for all right so GPT
+ 
+
+00:02:01.680 --> 00:02:03.270 align:start position:0%
+that they're going for all right so GPT
+researcher<00:02:02.159><c> is</c><00:02:02.280><c> an</c><00:02:02.479><c> autonomous</c><00:02:02.960><c> agent</c>
+
+00:02:03.270 --> 00:02:03.280 align:start position:0%
+researcher is an autonomous agent
+ 
+
+00:02:03.280 --> 00:02:04.749 align:start position:0%
+researcher is an autonomous agent
+designed<00:02:03.600><c> for</c><00:02:03.840><c> comprehensive</c><00:02:04.399><c> online</c>
+
+00:02:04.749 --> 00:02:04.759 align:start position:0%
+designed for comprehensive online
+ 
+
+00:02:04.759 --> 00:02:07.230 align:start position:0%
+designed for comprehensive online
+research<00:02:05.159><c> on</c><00:02:05.320><c> a</c><00:02:05.439><c> variety</c><00:02:05.799><c> of</c><00:02:06.000><c> tasks</c><00:02:06.759><c> the</c><00:02:06.920><c> agent</c>
+
+00:02:07.230 --> 00:02:07.240 align:start position:0%
+research on a variety of tasks the agent
+ 
+
+00:02:07.240 --> 00:02:08.910 align:start position:0%
+research on a variety of tasks the agent
+can<00:02:07.439><c> produce</c><00:02:07.880><c> detailed</c><00:02:08.360><c> factual</c><00:02:08.720><c> and</c>
+
+00:02:08.910 --> 00:02:08.920 align:start position:0%
+can produce detailed factual and
+ 
+
+00:02:08.920 --> 00:02:10.910 align:start position:0%
+can produce detailed factual and
+unbiased<00:02:09.479><c> research</c><00:02:09.959><c> reports</c><00:02:10.679><c> with</c>
+
+00:02:10.910 --> 00:02:10.920 align:start position:0%
+unbiased research reports with
+ 
+
+00:02:10.920 --> 00:02:12.869 align:start position:0%
+unbiased research reports with
+customization<00:02:11.680><c> options</c><00:02:12.040><c> for</c><00:02:12.239><c> focusing</c><00:02:12.640><c> on</c>
+
+00:02:12.869 --> 00:02:12.879 align:start position:0%
+customization options for focusing on
+ 
+
+00:02:12.879 --> 00:02:15.229 align:start position:0%
+customization options for focusing on
+relevant<00:02:13.319><c> resources</c><00:02:13.760><c> and</c><00:02:13.959><c> outlines</c><00:02:14.720><c> so</c><00:02:14.959><c> was</c>
+
+00:02:15.229 --> 00:02:15.239 align:start position:0%
+relevant resources and outlines so was
+ 
+
+00:02:15.239 --> 00:02:17.229 align:start position:0%
+relevant resources and outlines so was
+inspired<00:02:15.599><c> by</c><00:02:15.720><c> the</c><00:02:15.879><c> recent</c><00:02:16.200><c> plan</c><00:02:16.480><c> and</c><00:02:16.720><c> solve</c>
+
+00:02:17.229 --> 00:02:17.239 align:start position:0%
+inspired by the recent plan and solve
+ 
+
+00:02:17.239 --> 00:02:19.550 align:start position:0%
+inspired by the recent plan and solve
+and<00:02:17.400><c> rag</c><00:02:17.800><c> papers</c><00:02:18.319><c> which</c><00:02:18.440><c> I'll</c><00:02:18.640><c> leave</c><00:02:18.959><c> links</c><00:02:19.280><c> to</c>
+
+00:02:19.550 --> 00:02:19.560 align:start position:0%
+and rag papers which I'll leave links to
+ 
+
+00:02:19.560 --> 00:02:21.270 align:start position:0%
+and rag papers which I'll leave links to
+down<00:02:19.760><c> below</c><00:02:20.120><c> so</c><00:02:20.280><c> you</c><00:02:20.360><c> can</c><00:02:20.480><c> check</c><00:02:20.720><c> these</c><00:02:20.879><c> out</c><00:02:21.160><c> if</c>
+
+00:02:21.270 --> 00:02:21.280 align:start position:0%
+down below so you can check these out if
+ 
+
+00:02:21.280 --> 00:02:23.550 align:start position:0%
+down below so you can check these out if
+you'd<00:02:21.560><c> like</c><00:02:22.040><c> GPT</c><00:02:22.560><c> researcher</c><00:02:23.080><c> addresses</c>
+
+00:02:23.550 --> 00:02:23.560 align:start position:0%
+you'd like GPT researcher addresses
+ 
+
+00:02:23.560 --> 00:02:25.550 align:start position:0%
+you'd like GPT researcher addresses
+issues<00:02:24.040><c> of</c><00:02:24.239><c> misinformation</c><00:02:25.040><c> speed</c>
+
+00:02:25.550 --> 00:02:25.560 align:start position:0%
+issues of misinformation speed
+ 
+
+00:02:25.560 --> 00:02:27.750 align:start position:0%
+issues of misinformation speed
+determinism<00:02:26.239><c> and</c><00:02:26.440><c> reliability</c><00:02:27.319><c> offering</c><00:02:27.640><c> a</c>
+
+00:02:27.750 --> 00:02:27.760 align:start position:0%
+determinism and reliability offering a
+ 
+
+00:02:27.760 --> 00:02:29.470 align:start position:0%
+determinism and reliability offering a
+more<00:02:28.000><c> stable</c><00:02:28.400><c> performance</c><00:02:28.840><c> and</c><00:02:29.040><c> increased</c>
+
+00:02:29.470 --> 00:02:29.480 align:start position:0%
+more stable performance and increased
+ 
+
+00:02:29.480 --> 00:02:32.430 align:start position:0%
+more stable performance and increased
+speed<00:02:29.920><c> to</c><00:02:30.120><c> paralyzed</c><00:02:30.760><c> agent</c><00:02:31.200><c> work</c><00:02:31.640><c> opposed</c><00:02:32.080><c> to</c>
+
+00:02:32.430 --> 00:02:32.440 align:start position:0%
+speed to paralyzed agent work opposed to
+ 
+
+00:02:32.440 --> 00:02:34.670 align:start position:0%
+speed to paralyzed agent work opposed to
+synchronous<00:02:33.280><c> operations</c><00:02:34.280><c> so</c><00:02:34.519><c> the</c>
+
+00:02:34.670 --> 00:02:34.680 align:start position:0%
+synchronous operations so the
+ 
+
+00:02:34.680 --> 00:02:36.750 align:start position:0%
+synchronous operations so the
+architecture<00:02:35.360><c> the</c><00:02:35.519><c> main</c><00:02:35.800><c> idea</c><00:02:36.120><c> is</c><00:02:36.239><c> to</c><00:02:36.440><c> run</c>
+
+00:02:36.750 --> 00:02:36.760 align:start position:0%
+architecture the main idea is to run
+ 
+
+00:02:36.760 --> 00:02:39.670 align:start position:0%
+architecture the main idea is to run
+planner<00:02:37.360><c> and</c><00:02:37.640><c> execution</c><00:02:38.519><c> agents</c><00:02:39.200><c> whereas</c><00:02:39.519><c> the</c>
+
+00:02:39.670 --> 00:02:39.680 align:start position:0%
+planner and execution agents whereas the
+ 
+
+00:02:39.680 --> 00:02:41.869 align:start position:0%
+planner and execution agents whereas the
+planner<00:02:40.120><c> generates</c><00:02:40.640><c> questions</c><00:02:41.000><c> to</c><00:02:41.280><c> research</c>
+
+00:02:41.869 --> 00:02:41.879 align:start position:0%
+planner generates questions to research
+ 
+
+00:02:41.879 --> 00:02:43.949 align:start position:0%
+planner generates questions to research
+and<00:02:42.040><c> the</c><00:02:42.239><c> execution</c><00:02:42.760><c> agent</c><00:02:43.080><c> seeks</c><00:02:43.440><c> the</c><00:02:43.599><c> most</c>
+
+00:02:43.949 --> 00:02:43.959 align:start position:0%
+and the execution agent seeks the most
+ 
+
+00:02:43.959 --> 00:02:46.070 align:start position:0%
+and the execution agent seeks the most
+related<00:02:44.519><c> information</c><00:02:45.120><c> based</c><00:02:45.400><c> on</c><00:02:45.599><c> each</c>
+
+00:02:46.070 --> 00:02:46.080 align:start position:0%
+related information based on each
+ 
+
+00:02:46.080 --> 00:02:47.910 align:start position:0%
+related information based on each
+generated<00:02:46.599><c> research</c><00:02:47.040><c> questions</c><00:02:47.400><c> so</c><00:02:47.640><c> similar</c>
+
+00:02:47.910 --> 00:02:47.920 align:start position:0%
+generated research questions so similar
+ 
+
+00:02:47.920 --> 00:02:50.070 align:start position:0%
+generated research questions so similar
+to<00:02:48.080><c> perplexity</c><00:02:49.000><c> finally</c><00:02:49.280><c> the</c><00:02:49.400><c> planner</c><00:02:49.800><c> agent</c>
+
+00:02:50.070 --> 00:02:50.080 align:start position:0%
+to perplexity finally the planner agent
+ 
+
+00:02:50.080 --> 00:02:52.550 align:start position:0%
+to perplexity finally the planner agent
+filters<00:02:50.560><c> and</c><00:02:50.840><c> Aggregates</c><00:02:51.599><c> all</c><00:02:52.080><c> related</c>
+
+00:02:52.550 --> 00:02:52.560 align:start position:0%
+filters and Aggregates all related
+ 
+
+00:02:52.560 --> 00:02:54.190 align:start position:0%
+filters and Aggregates all related
+information<00:02:53.120><c> and</c><00:02:53.280><c> creates</c><00:02:53.560><c> a</c><00:02:53.680><c> research</c>
+
+00:02:54.190 --> 00:02:54.200 align:start position:0%
+information and creates a research
+ 
+
+00:02:54.200 --> 00:02:56.390 align:start position:0%
+information and creates a research
+report<00:02:54.760><c> a</c><00:02:54.840><c> few</c><00:02:55.040><c> features</c><00:02:55.519><c> generates</c><00:02:56.000><c> research</c>
+
+00:02:56.390 --> 00:02:56.400 align:start position:0%
+report a few features generates research
+ 
+
+00:02:56.400 --> 00:02:59.270 align:start position:0%
+report a few features generates research
+outlines<00:02:57.000><c> resources</c><00:02:57.640><c> and</c><00:02:57.840><c> lessons</c><00:02:58.560><c> reports</c>
+
+00:02:59.270 --> 00:02:59.280 align:start position:0%
+outlines resources and lessons reports
+ 
+
+00:02:59.280 --> 00:03:01.630 align:start position:0%
+outlines resources and lessons reports
+with<00:02:59.440><c> local</c><00:02:59.879><c> documents</c><00:03:00.239><c> and</c><00:03:00.480><c> web</c><00:03:00.720><c> sources</c><00:03:01.480><c> and</c>
+
+00:03:01.630 --> 00:03:01.640 align:start position:0%
+with local documents and web sources and
+ 
+
+00:03:01.640 --> 00:03:03.350 align:start position:0%
+with local documents and web sources and
+generate<00:03:02.040><c> long</c><00:03:02.239><c> and</c><00:03:02.440><c> detailed</c><00:03:02.920><c> research</c>
+
+00:03:03.350 --> 00:03:03.360 align:start position:0%
+generate long and detailed research
+ 
+
+00:03:03.360 --> 00:03:07.110 align:start position:0%
+generate long and detailed research
+reports<00:03:03.840><c> over</c><00:03:04.159><c> 2K</c><00:03:04.760><c> words</c><00:03:05.680><c> Aggregates</c><00:03:06.280><c> over</c><00:03:06.599><c> 20</c>
+
+00:03:07.110 --> 00:03:07.120 align:start position:0%
+reports over 2K words Aggregates over 20
+ 
+
+00:03:07.120 --> 00:03:09.309 align:start position:0%
+reports over 2K words Aggregates over 20
+web<00:03:07.400><c> sources</c><00:03:08.080><c> per</c><00:03:08.319><c> research</c><00:03:08.760><c> to</c><00:03:08.959><c> form</c>
+
+00:03:09.309 --> 00:03:09.319 align:start position:0%
+web sources per research to form
+ 
+
+00:03:09.319 --> 00:03:11.110 align:start position:0%
+web sources per research to form
+objective<00:03:09.720><c> and</c><00:03:09.920><c> factual</c><00:03:10.319><c> conclusions</c>
+
+00:03:11.110 --> 00:03:11.120 align:start position:0%
+objective and factual conclusions
+ 
+
+00:03:11.120 --> 00:03:13.830 align:start position:0%
+objective and factual conclusions
+includes<00:03:11.519><c> both</c><00:03:11.720><c> lightweight</c><00:03:12.200><c> HTML</c><00:03:12.840><c> CSS</c><00:03:13.360><c> JS</c>
+
+00:03:13.830 --> 00:03:13.840 align:start position:0%
+includes both lightweight HTML CSS JS
+ 
+
+00:03:13.840 --> 00:03:16.509 align:start position:0%
+includes both lightweight HTML CSS JS
+and<00:03:14.000><c> production</c><00:03:14.360><c> ready</c><00:03:14.599><c> nextjs</c><00:03:15.319><c> plus</c><00:03:15.560><c> tailin</c>
+
+00:03:16.509 --> 00:03:16.519 align:start position:0%
+and production ready nextjs plus tailin
+ 
+
+00:03:16.519 --> 00:03:19.030 align:start position:0%
+and production ready nextjs plus tailin
+uxui<00:03:17.519><c> okay</c><00:03:17.680><c> so</c><00:03:17.840><c> let's</c><00:03:18.040><c> get</c><00:03:18.159><c> into</c><00:03:18.480><c> the</c><00:03:18.680><c> actual</c>
+
+00:03:19.030 --> 00:03:19.040 align:start position:0%
+uxui okay so let's get into the actual
+ 
+
+00:03:19.040 --> 00:03:20.430 align:start position:0%
+uxui okay so let's get into the actual
+install<00:03:19.440><c> of</c><00:03:19.599><c> this</c><00:03:19.799><c> so</c><00:03:19.920><c> there's</c><00:03:20.040><c> a</c><00:03:20.159><c> couple</c>
+
+00:03:20.430 --> 00:03:20.440 align:start position:0%
+install of this so there's a couple
+ 
+
+00:03:20.440 --> 00:03:21.949 align:start position:0%
+install of this so there's a couple
+different<00:03:20.640><c> ways</c><00:03:20.840><c> to</c><00:03:21.080><c> install</c><00:03:21.519><c> you</c><00:03:21.599><c> could</c><00:03:21.760><c> use</c>
+
+00:03:21.949 --> 00:03:21.959 align:start position:0%
+different ways to install you could use
+ 
+
+00:03:21.959 --> 00:03:23.910 align:start position:0%
+different ways to install you could use
+Docker<00:03:22.400><c> you</c><00:03:22.480><c> could</c><00:03:22.640><c> use</c><00:03:22.920><c> pip</c><00:03:23.440><c> or</c><00:03:23.640><c> just</c><00:03:23.799><c> going</c>
+
+00:03:23.910 --> 00:03:23.920 align:start position:0%
+Docker you could use pip or just going
+ 
+
+00:03:23.920 --> 00:03:25.949 align:start position:0%
+Docker you could use pip or just going
+to<00:03:24.080><c> do</c><00:03:24.360><c> the</c><00:03:24.840><c> uh</c><00:03:24.959><c> basic</c><00:03:25.280><c> install</c><00:03:25.680><c> here</c><00:03:25.840><c> so</c>
+
+00:03:25.949 --> 00:03:25.959 align:start position:0%
+to do the uh basic install here so
+ 
+
+00:03:25.959 --> 00:03:28.830 align:start position:0%
+to do the uh basic install here so
+you're<00:03:26.080><c> going</c><00:03:26.200><c> to</c><00:03:26.280><c> need</c><00:03:26.640><c> python</c><00:03:27.640><c> 3.11</c><00:03:28.640><c> or</c>
+
+00:03:28.830 --> 00:03:28.840 align:start position:0%
+you're going to need python 3.11 or
+ 
+
+00:03:28.840 --> 00:03:31.030 align:start position:0%
+you're going to need python 3.11 or
+later<00:03:29.319><c> so</c><00:03:29.439><c> you</c><00:03:29.519><c> can</c><00:03:29.840><c> go</c><00:03:30.040><c> here</c><00:03:30.239><c> and</c><00:03:30.400><c> download</c><00:03:30.799><c> it</c>
+
+00:03:31.030 --> 00:03:31.040 align:start position:0%
+later so you can go here and download it
+ 
+
+00:03:31.040 --> 00:03:32.949 align:start position:0%
+later so you can go here and download it
+if<00:03:31.200><c> needed</c><00:03:32.200><c> and</c><00:03:32.280><c> then</c><00:03:32.400><c> you're</c><00:03:32.560><c> going</c><00:03:32.720><c> to</c>
+
+00:03:32.949 --> 00:03:32.959 align:start position:0%
+if needed and then you're going to
+ 
+
+00:03:32.959 --> 00:03:34.949 align:start position:0%
+if needed and then you're going to
+download<00:03:33.400><c> the</c><00:03:33.599><c> project</c><00:03:33.959><c> and</c><00:03:34.120><c> navigate</c><00:03:34.560><c> to</c><00:03:34.720><c> its</c>
+
+00:03:34.949 --> 00:03:34.959 align:start position:0%
+download the project and navigate to its
+ 
+
+00:03:34.959 --> 00:03:36.509 align:start position:0%
+download the project and navigate to its
+directory<00:03:35.400><c> so</c><00:03:35.480><c> you're</c><00:03:35.599><c> going</c><00:03:35.720><c> to</c><00:03:35.879><c> get</c><00:03:36.080><c> clone</c>
+
+00:03:36.509 --> 00:03:36.519 align:start position:0%
+directory so you're going to get clone
+ 
+
+00:03:36.519 --> 00:03:39.509 align:start position:0%
+directory so you're going to get clone
+the<00:03:36.640><c> repo</c><00:03:37.159><c> right</c><00:03:37.319><c> here</c><00:03:37.599><c> and</c><00:03:37.760><c> then</c><00:03:37.959><c> CD</c><00:03:38.519><c> into</c><00:03:38.920><c> GPT</c>
+
+00:03:39.509 --> 00:03:39.519 align:start position:0%
+the repo right here and then CD into GPT
+ 
+
+00:03:39.519 --> 00:03:41.149 align:start position:0%
+the repo right here and then CD into GPT
+researcher<00:03:40.159><c> so</c><00:03:40.280><c> I</c><00:03:40.439><c> actually</c><00:03:40.640><c> already</c><00:03:40.920><c> did</c>
+
+00:03:41.149 --> 00:03:41.159 align:start position:0%
+researcher so I actually already did
+ 
+
+00:03:41.159 --> 00:03:43.030 align:start position:0%
+researcher so I actually already did
+that<00:03:41.599><c> so</c><00:03:41.799><c> once</c><00:03:41.920><c> you</c><00:03:42.080><c> do</c><00:03:42.280><c> this</c><00:03:42.480><c> you</c><00:03:42.560><c> can</c><00:03:42.760><c> set</c><00:03:42.920><c> up</c>
+
+00:03:43.030 --> 00:03:43.040 align:start position:0%
+that so once you do this you can set up
+ 
+
+00:03:43.040 --> 00:03:44.589 align:start position:0%
+that so once you do this you can set up
+your<00:03:43.239><c> environment</c><00:03:43.720><c> variables</c><00:03:44.159><c> so</c><00:03:44.280><c> you</c><00:03:44.360><c> can</c>
+
+00:03:44.589 --> 00:03:44.599 align:start position:0%
+your environment variables so you can
+ 
+
+00:03:44.599 --> 00:03:48.470 align:start position:0%
+your environment variables so you can
+either<00:03:45.080><c> do</c><00:03:45.519><c> code</c><00:03:46.239><c> dot</c><00:03:46.560><c> to</c><00:03:46.840><c> open</c><00:03:47.239><c> it</c><00:03:47.480><c> up</c><00:03:47.680><c> in</c><00:03:47.920><c> vs</c>
+
+00:03:48.470 --> 00:03:48.480 align:start position:0%
+either do code dot to open it up in vs
+ 
+
+00:03:48.480 --> 00:03:51.149 align:start position:0%
+either do code dot to open it up in vs
+code<00:03:48.879><c> like</c><00:03:49.120><c> so</c><00:03:49.840><c> and</c><00:03:49.959><c> you'll</c><00:03:50.159><c> see</c><00:03:50.760><c> um</c><00:03:51.040><c> there</c>
+
+00:03:51.149 --> 00:03:51.159 align:start position:0%
+code like so and you'll see um there
+ 
+
+00:03:51.159 --> 00:03:52.869 align:start position:0%
+code like so and you'll see um there
+will<00:03:51.360><c> be</c><00:03:51.599><c> a</c>
+
+00:03:52.869 --> 00:03:52.879 align:start position:0%
+will be a
+ 
+
+00:03:52.879 --> 00:03:56.149 align:start position:0%
+will be a
+env.<00:03:53.879><c> example</c><00:03:54.599><c> and</c><00:03:54.720><c> you</c><00:03:54.799><c> can</c><00:03:55.000><c> just</c><00:03:55.200><c> either</c><00:03:56.040><c> um</c>
+
+00:03:56.149 --> 00:03:56.159 align:start position:0%
+env. example and you can just either um
+ 
+
+00:03:56.159 --> 00:03:58.030 align:start position:0%
+env. example and you can just either um
+change<00:03:56.480><c> the</c><00:03:56.680><c> name</c><00:03:56.920><c> or</c><00:03:57.200><c> copy</c><00:03:57.480><c> it</c><00:03:57.640><c> then</c><00:03:57.799><c> change</c>
+
+00:03:58.030 --> 00:03:58.040 align:start position:0%
+change the name or copy it then change
+ 
+
+00:03:58.040 --> 00:04:00.789 align:start position:0%
+change the name or copy it then change
+the<00:03:58.280><c> name</c><00:03:58.680><c> and</c><00:03:58.840><c> then</c><00:03:59.200><c> put</c><00:03:59.360><c> your</c><00:04:00.000><c> uh</c><00:04:00.120><c> open</c><00:04:00.400><c> AI</c>
+
+00:04:00.789 --> 00:04:00.799 align:start position:0%
+the name and then put your uh open AI
+ 
+
+00:04:00.799 --> 00:04:02.670 align:start position:0%
+the name and then put your uh open AI
+API<00:04:01.239><c> key</c><00:04:01.519><c> here</c><00:04:01.959><c> and</c><00:04:02.079><c> you're</c><00:04:02.280><c> also</c><00:04:02.480><c> going</c><00:04:02.560><c> to</c>
+
+00:04:02.670 --> 00:04:02.680 align:start position:0%
+API key here and you're also going to
+ 
+
+00:04:02.680 --> 00:04:05.550 align:start position:0%
+API key here and you're also going to
+need<00:04:02.799><c> a</c><00:04:03.079><c> Tav</c><00:04:03.760><c> API</c><00:04:04.319><c> key</c><00:04:05.000><c> okay</c><00:04:05.159><c> or</c><00:04:05.319><c> you</c><00:04:05.400><c> could</c>
+
+00:04:05.550 --> 00:04:05.560 align:start position:0%
+need a Tav API key okay or you could
+ 
+
+00:04:05.560 --> 00:04:08.110 align:start position:0%
+need a Tav API key okay or you could
+just<00:04:05.799><c> export</c><00:04:06.159><c> it</c><00:04:06.360><c> to</c><00:04:07.200><c> uh</c><00:04:07.280><c> run</c><00:04:07.519><c> these</c><00:04:07.760><c> commands</c>
+
+00:04:08.110 --> 00:04:08.120 align:start position:0%
+just export it to uh run these commands
+ 
+
+00:04:08.120 --> 00:04:09.750 align:start position:0%
+just export it to uh run these commands
+to<00:04:08.319><c> export</c><00:04:08.599><c> it</c><00:04:08.760><c> to</c><00:04:09.040><c> your</c><00:04:09.280><c> environment</c>
+
+00:04:09.750 --> 00:04:09.760 align:start position:0%
+to export it to your environment
+ 
+
+00:04:09.760 --> 00:04:13.030 align:start position:0%
+to export it to your environment
+variables<00:04:10.159><c> in</c><00:04:10.319><c> your</c><00:04:10.599><c> OS</c><00:04:11.599><c> either</c><00:04:11.879><c> way</c><00:04:12.159><c> works</c>
+
+00:04:13.030 --> 00:04:13.040 align:start position:0%
+variables in your OS either way works
+ 
+
+00:04:13.040 --> 00:04:15.750 align:start position:0%
+variables in your OS either way works
+now<00:04:13.239><c> tavali</c><00:04:13.720><c> search</c><00:04:14.040><c> API</c><00:04:14.599><c> is</c><00:04:14.720><c> a</c><00:04:14.920><c> search</c><00:04:15.200><c> engine</c>
+
+00:04:15.750 --> 00:04:15.760 align:start position:0%
+now tavali search API is a search engine
+ 
+
+00:04:15.760 --> 00:04:18.349 align:start position:0%
+now tavali search API is a search engine
+specifically<00:04:16.359><c> optimized</c><00:04:16.880><c> for</c><00:04:17.040><c> llms</c><00:04:17.600><c> and</c><00:04:17.799><c> rag</c>
+
+00:04:18.349 --> 00:04:18.359 align:start position:0%
+specifically optimized for llms and rag
+ 
+
+00:04:18.359 --> 00:04:20.069 align:start position:0%
+specifically optimized for llms and rag
+aimed<00:04:18.600><c> at</c><00:04:18.799><c> efficient</c><00:04:19.239><c> quick</c><00:04:19.440><c> and</c><00:04:19.680><c> persistent</c>
+
+00:04:20.069 --> 00:04:20.079 align:start position:0%
+aimed at efficient quick and persistent
+ 
+
+00:04:20.079 --> 00:04:21.990 align:start position:0%
+aimed at efficient quick and persistent
+search<00:04:20.440><c> results</c><00:04:21.079><c> now</c><00:04:21.199><c> it</c><00:04:21.280><c> says</c><00:04:21.600><c> here</c><00:04:21.799><c> the</c>
+
+00:04:21.990 --> 00:04:22.000 align:start position:0%
+search results now it says here the
+ 
+
+00:04:22.000 --> 00:04:25.230 align:start position:0%
+search results now it says here the
+default<00:04:22.400><c> llm</c><00:04:22.960><c> is</c><00:04:23.160><c> GPT</c><00:04:23.840><c> for</c><00:04:24.000><c> open</c><00:04:24.280><c> AI</c><00:04:24.880><c> but</c><00:04:25.000><c> you</c>
+
+00:04:25.230 --> 00:04:25.240 align:start position:0%
+default llm is GPT for open AI but you
+ 
+
+00:04:25.240 --> 00:04:27.550 align:start position:0%
+default llm is GPT for open AI but you
+can<00:04:25.479><c> use</c><00:04:25.880><c> any</c><00:04:26.120><c> llama</c><00:04:26.600><c> or</c><00:04:26.800><c> any</c><00:04:27.000><c> model</c><00:04:27.400><c> pretty</c>
+
+00:04:27.550 --> 00:04:27.560 align:start position:0%
+can use any llama or any model pretty
+ 
+
+00:04:27.560 --> 00:04:29.990 align:start position:0%
+can use any llama or any model pretty
+much<00:04:27.800><c> such</c><00:04:27.960><c> as</c><00:04:28.199><c> Claude</c><00:04:28.639><c> o</c><00:04:28.960><c> llama</c><00:04:29.360><c> Gemini</c><00:04:29.800><c> I</c>
+
+00:04:29.990 --> 00:04:30.000 align:start position:0%
+much such as Claude o llama Gemini I
+ 
+
+00:04:30.000 --> 00:04:32.909 align:start position:0%
+much such as Claude o llama Gemini I
+mistro<00:04:30.639><c> you</c><00:04:30.759><c> can</c><00:04:30.960><c> visit</c><00:04:31.320><c> the</c><00:04:31.560><c> L</c><00:04:32.199><c> documentation</c>
+
+00:04:32.909 --> 00:04:32.919 align:start position:0%
+mistro you can visit the L documentation
+ 
+
+00:04:32.919 --> 00:04:34.510 align:start position:0%
+mistro you can visit the L documentation
+right<00:04:33.039><c> here</c><00:04:33.199><c> I'll</c><00:04:33.360><c> leave</c><00:04:33.520><c> a</c><00:04:33.639><c> link</c><00:04:33.840><c> to</c><00:04:33.960><c> the</c><00:04:34.160><c> docs</c>
+
+00:04:34.510 --> 00:04:34.520 align:start position:0%
+right here I'll leave a link to the docs
+ 
+
+00:04:34.520 --> 00:04:37.029 align:start position:0%
+right here I'll leave a link to the docs
+down<00:04:34.759><c> below</c><00:04:35.360><c> and</c><00:04:35.560><c> same</c><00:04:35.800><c> thing</c><00:04:36.000><c> for</c><00:04:36.280><c> the</c><00:04:36.600><c> search</c>
+
+00:04:37.029 --> 00:04:37.039 align:start position:0%
+down below and same thing for the search
+ 
+
+00:04:37.039 --> 00:04:39.909 align:start position:0%
+down below and same thing for the search
+retriever<00:04:37.800><c> the</c><00:04:37.960><c> default</c><00:04:38.400><c> is</c><00:04:38.600><c> Tav</c><00:04:39.520><c> but</c><00:04:39.680><c> you</c><00:04:39.759><c> can</c>
+
+00:04:39.909 --> 00:04:39.919 align:start position:0%
+retriever the default is Tav but you can
+ 
+
+00:04:39.919 --> 00:04:42.310 align:start position:0%
+retriever the default is Tav but you can
+use<00:04:40.199><c> things</c><00:04:40.400><c> like</c><00:04:40.600><c> Duck</c><00:04:40.880><c> ducko</c><00:04:41.479><c> Google</c><00:04:41.919><c> Bing</c>
+
+00:04:42.310 --> 00:04:42.320 align:start position:0%
+use things like Duck ducko Google Bing
+ 
+
+00:04:42.320 --> 00:04:46.469 align:start position:0%
+use things like Duck ducko Google Bing
+search<00:04:42.759><c> API</c><00:04:43.479><c> serper</c><00:04:44.440><c> search</c><00:04:44.840><c> X</c><00:04:45.280><c> archive</c><00:04:45.960><c> even</c>
+
+00:04:46.469 --> 00:04:46.479 align:start position:0%
+search API serper search X archive even
+ 
+
+00:04:46.479 --> 00:04:48.390 align:start position:0%
+search API serper search X archive even
+right<00:04:46.600><c> so</c><00:04:46.880><c> pretty</c><00:04:47.120><c> cool</c><00:04:47.440><c> stuff</c><00:04:48.080><c> um</c><00:04:48.160><c> you</c><00:04:48.240><c> can</c>
+
+00:04:48.390 --> 00:04:48.400 align:start position:0%
+right so pretty cool stuff um you can
+ 
+
+00:04:48.400 --> 00:04:50.350 align:start position:0%
+right so pretty cool stuff um you can
+visit<00:04:48.639><c> the</c><00:04:48.800><c> retriever</c><00:04:49.360><c> documentation</c><00:04:50.120><c> right</c>
+
+00:04:50.350 --> 00:04:50.360 align:start position:0%
+visit the retriever documentation right
+ 
+
+00:04:50.360 --> 00:04:53.029 align:start position:0%
+visit the retriever documentation right
+here<00:04:51.039><c> um</c><00:04:51.199><c> Tav</c><00:04:51.639><c> is</c><00:04:51.800><c> good</c><00:04:52.280><c> I</c><00:04:52.440><c> believe</c><00:04:52.759><c> they</c><00:04:52.919><c> give</c>
+
+00:04:53.029 --> 00:04:53.039 align:start position:0%
+here um Tav is good I believe they give
+ 
+
+00:04:53.039 --> 00:04:54.909 align:start position:0%
+here um Tav is good I believe they give
+you<00:04:53.199><c> a</c><00:04:53.320><c> bunch</c><00:04:53.639><c> uh</c><00:04:53.880><c> a</c><00:04:54.080><c> decent</c><00:04:54.400><c> amount</c><00:04:54.560><c> of</c><00:04:54.680><c> free</c>
+
+00:04:54.909 --> 00:04:54.919 align:start position:0%
+you a bunch uh a decent amount of free
+ 
+
+00:04:54.919 --> 00:04:56.430 align:start position:0%
+you a bunch uh a decent amount of free
+credits<00:04:55.240><c> to</c><00:04:55.400><c> start</c><00:04:55.680><c> off</c><00:04:55.919><c> so</c><00:04:56.039><c> you</c><00:04:56.080><c> can</c><00:04:56.240><c> pretty</c>
+
+00:04:56.430 --> 00:04:56.440 align:start position:0%
+credits to start off so you can pretty
+ 
+
+00:04:56.440 --> 00:04:58.029 align:start position:0%
+credits to start off so you can pretty
+much<00:04:56.600><c> use</c><00:04:56.759><c> it</c><00:04:56.880><c> for</c><00:04:57.080><c> free</c><00:04:57.360><c> if</c><00:04:57.440><c> you</c><00:04:57.560><c> want</c><00:04:57.639><c> to</c><00:04:57.840><c> test</c>
+
+00:04:58.029 --> 00:04:58.039 align:start position:0%
+much use it for free if you want to test
+ 
+
+00:04:58.039 --> 00:04:59.990 align:start position:0%
+much use it for free if you want to test
+it<00:04:58.199><c> out</c><00:04:58.600><c> or</c><00:04:58.759><c> if</c><00:04:58.840><c> you</c><00:04:58.960><c> want</c><00:04:59.080><c> to</c><00:04:59.199><c> try</c><00:04:59.800><c> of</c><00:04:59.880><c> the</c>
+
+00:04:59.990 --> 00:05:00.000 align:start position:0%
+it out or if you want to try of the
+ 
+
+00:05:00.000 --> 00:05:02.029 align:start position:0%
+it out or if you want to try of the
+other<00:05:00.160><c> ones</c><00:05:00.360><c> you</c><00:05:00.479><c> can</c><00:05:00.639><c> do</c><00:05:00.840><c> so</c><00:05:01.360><c> okay</c><00:05:01.520><c> once</c><00:05:01.680><c> you</c>
+
+00:05:02.029 --> 00:05:02.039 align:start position:0%
+other ones you can do so okay once you
+ 
+
+00:05:02.039 --> 00:05:03.909 align:start position:0%
+other ones you can do so okay once you
+once<00:05:02.160><c> you</c><00:05:02.280><c> do</c><00:05:02.479><c> that</c><00:05:02.600><c> you're</c><00:05:02.720><c> going</c><00:05:02.840><c> to</c><00:05:02.960><c> want</c><00:05:03.120><c> to</c>
+
+00:05:03.909 --> 00:05:03.919 align:start position:0%
+once you do that you're going to want to
+ 
+
+00:05:03.919 --> 00:05:06.629 align:start position:0%
+once you do that you're going to want to
+uh<00:05:04.320><c> install</c><00:05:04.720><c> the</c><00:05:04.919><c> requirements</c><00:05:05.720><c> so</c><00:05:06.160><c> for</c><00:05:06.360><c> me</c><00:05:06.520><c> I</c>
+
+00:05:06.629 --> 00:05:06.639 align:start position:0%
+uh install the requirements so for me I
+ 
+
+00:05:06.639 --> 00:05:08.629 align:start position:0%
+uh install the requirements so for me I
+did<00:05:06.800><c> so</c><00:05:07.039><c> in</c><00:05:07.160><c> a</c><00:05:07.320><c> virtual</c><00:05:07.759><c> environment</c><00:05:08.360><c> so</c><00:05:08.520><c> I</c>
+
+00:05:08.629 --> 00:05:08.639 align:start position:0%
+did so in a virtual environment so I
+ 
+
+00:05:08.639 --> 00:05:10.629 align:start position:0%
+did so in a virtual environment so I
+just<00:05:08.800><c> set</c><00:05:08.960><c> up</c><00:05:09.120><c> a</c><00:05:09.280><c> virtual</c><00:05:09.600><c> environment</c><00:05:10.479><c> right</c>
+
+00:05:10.629 --> 00:05:10.639 align:start position:0%
+just set up a virtual environment right
+ 
+
+00:05:10.639 --> 00:05:14.230 align:start position:0%
+just set up a virtual environment right
+here<00:05:10.840><c> you</c><00:05:10.960><c> can</c><00:05:11.080><c> do</c><00:05:11.360><c> python</c><00:05:11.880><c> DM</c><00:05:12.680><c> and</c><00:05:12.800><c> then</c><00:05:13.240><c> venv</c>
+
+00:05:14.230 --> 00:05:14.240 align:start position:0%
+here you can do python DM and then venv
+ 
+
+00:05:14.240 --> 00:05:16.870 align:start position:0%
+here you can do python DM and then venv
+and<00:05:14.320><c> then</c><00:05:14.600><c> I</c><00:05:14.680><c> just</c><00:05:14.880><c> named</c><00:05:15.160><c> it</c><00:05:15.320><c> my</c><00:05:15.800><c> EnV</c><00:05:16.680><c> and</c><00:05:16.800><c> then</c>
+
+00:05:16.870 --> 00:05:16.880 align:start position:0%
+and then I just named it my EnV and then
+ 
+
+00:05:16.880 --> 00:05:18.710 align:start position:0%
+and then I just named it my EnV and then
+I<00:05:17.039><c> just</c><00:05:17.280><c> activated</c><00:05:17.720><c> it</c><00:05:17.919><c> right</c><00:05:18.120><c> here</c><00:05:18.400><c> which</c><00:05:18.520><c> is</c>
+
+00:05:18.710 --> 00:05:18.720 align:start position:0%
+I just activated it right here which is
+ 
+
+00:05:18.720 --> 00:05:20.749 align:start position:0%
+I just activated it right here which is
+this<00:05:18.880><c> script</c><00:05:19.199><c> if</c><00:05:19.319><c> you're</c><00:05:19.440><c> on</c><00:05:19.680><c> Windows</c><00:05:20.560><c> if</c><00:05:20.680><c> you</c>
+
+00:05:20.749 --> 00:05:20.759 align:start position:0%
+this script if you're on Windows if you
+ 
+
+00:05:20.759 --> 00:05:22.629 align:start position:0%
+this script if you're on Windows if you
+need<00:05:20.960><c> help</c><00:05:21.199><c> searching</c><00:05:21.720><c> setting</c><00:05:22.000><c> up</c><00:05:22.120><c> a</c><00:05:22.280><c> virtual</c>
+
+00:05:22.629 --> 00:05:22.639 align:start position:0%
+need help searching setting up a virtual
+ 
+
+00:05:22.639 --> 00:05:25.230 align:start position:0%
+need help searching setting up a virtual
+environment<00:05:23.160><c> just</c><00:05:23.360><c> ask</c><00:05:23.720><c> chat</c><00:05:24.039><c> gbt</c><00:05:24.960><c> you</c><00:05:25.080><c> could</c>
+
+00:05:25.230 --> 00:05:25.240 align:start position:0%
+environment just ask chat gbt you could
+ 
+
+00:05:25.240 --> 00:05:27.710 align:start position:0%
+environment just ask chat gbt you could
+use<00:05:25.600><c> this</c><00:05:26.199><c> um</c><00:05:26.800><c> this</c><00:05:26.960><c> way</c><00:05:27.240><c> right</c><00:05:27.400><c> here</c><00:05:27.600><c> you</c>
+
+00:05:27.710 --> 00:05:27.720 align:start position:0%
+use this um this way right here you
+ 
+
+00:05:27.720 --> 00:05:29.990 align:start position:0%
+use this um this way right here you
+could<00:05:27.840><c> also</c><00:05:28.039><c> use</c><00:05:28.240><c> cond</c><00:05:28.680><c> of</c><00:05:28.880><c> course</c><00:05:29.720><c> and</c><00:05:29.840><c> then</c>
+
+00:05:29.990 --> 00:05:30.000 align:start position:0%
+could also use cond of course and then
+ 
+
+00:05:30.000 --> 00:05:31.710 align:start position:0%
+could also use cond of course and then
+once<00:05:30.360><c> you</c><00:05:30.520><c> do</c><00:05:30.800><c> that</c><00:05:31.120><c> you're</c><00:05:31.280><c> just</c><00:05:31.400><c> going</c><00:05:31.560><c> to</c>
+
+00:05:31.710 --> 00:05:31.720 align:start position:0%
+once you do that you're just going to
+ 
+
+00:05:31.720 --> 00:05:35.590 align:start position:0%
+once you do that you're just going to
+run<00:05:32.120><c> pip</c><00:05:32.440><c> install</c><00:05:33.000><c> D</c><00:05:33.240><c> r-</c><00:05:33.919><c> requirements.txt</c><00:05:34.840><c> to</c>
+
+00:05:35.590 --> 00:05:35.600 align:start position:0%
+run pip install D r- requirements.txt to
+ 
+
+00:05:35.600 --> 00:05:37.790 align:start position:0%
+run pip install D r- requirements.txt to
+install<00:05:36.400><c> all</c><00:05:36.560><c> the</c><00:05:36.720><c> different</c><00:05:37.039><c> requirements</c>
+
+00:05:37.790 --> 00:05:37.800 align:start position:0%
+install all the different requirements
+ 
+
+00:05:37.800 --> 00:05:39.309 align:start position:0%
+install all the different requirements
+right<00:05:38.000><c> here</c><00:05:38.400><c> and</c><00:05:38.520><c> then</c><00:05:38.680><c> once</c><00:05:38.960><c> that's</c><00:05:39.160><c> done</c>
+
+00:05:39.309 --> 00:05:39.319 align:start position:0%
+right here and then once that's done
+ 
+
+00:05:39.319 --> 00:05:41.469 align:start position:0%
+right here and then once that's done
+you're<00:05:39.479><c> going</c><00:05:39.680><c> to</c><00:05:39.840><c> run</c><00:05:40.120><c> this</c><00:05:40.280><c> command</c><00:05:40.840><c> python</c>
+
+00:05:41.469 --> 00:05:41.479 align:start position:0%
+you're going to run this command python
+ 
+
+00:05:41.479 --> 00:05:46.790 align:start position:0%
+you're going to run this command python
+DM<00:05:42.479><c> uvi</c><00:05:43.479><c> corn</c><00:05:44.160><c> Main</c><00:05:45.039><c> and</c><00:05:45.160><c> then</c><00:05:45.360><c> colon</c><00:05:45.880><c> app--</c>
+
+00:05:46.790 --> 00:05:46.800 align:start position:0%
+DM uvi corn Main and then colon app--
+ 
+
+00:05:46.800 --> 00:05:49.390 align:start position:0%
+DM uvi corn Main and then colon app--
+reload<00:05:47.680><c> right</c><00:05:47.880><c> here</c><00:05:48.120><c> this</c><00:05:48.240><c> is</c><00:05:48.360><c> going</c><00:05:48.520><c> to</c><00:05:48.840><c> start</c>
+
+00:05:49.390 --> 00:05:49.400 align:start position:0%
+reload right here this is going to start
+ 
+
+00:05:49.400 --> 00:05:52.390 align:start position:0%
+reload right here this is going to start
+the<00:05:49.720><c> fast</c><00:05:50.240><c> API</c><00:05:51.240><c> and</c><00:05:51.440><c> it's</c><00:05:51.600><c> going</c><00:05:51.759><c> to</c><00:05:51.919><c> start</c><00:05:52.199><c> the</c>
+
+00:05:52.390 --> 00:05:52.400 align:start position:0%
+the fast API and it's going to start the
+ 
+
+00:05:52.400 --> 00:05:56.150 align:start position:0%
+the fast API and it's going to start the
+agent<00:05:52.720><c> on</c><00:05:52.960><c> Local</c><00:05:53.440><c> Host</c><00:05:53.880><c> Port</c><00:05:54.720><c> 8000</c><00:05:55.720><c> so</c><00:05:55.919><c> now</c><00:05:56.039><c> I'm</c>
+
+00:05:56.150 --> 00:05:56.160 align:start position:0%
+agent on Local Host Port 8000 so now I'm
+ 
+
+00:05:56.160 --> 00:05:58.710 align:start position:0%
+agent on Local Host Port 8000 so now I'm
+on<00:05:56.360><c> Local</c><00:05:56.720><c> Host</c><00:05:57.039><c> 8000</c><00:05:57.919><c> and</c><00:05:58.039><c> you</c><00:05:58.120><c> can</c><00:05:58.280><c> see</c><00:05:58.520><c> here</c>
+
+00:05:58.710 --> 00:05:58.720 align:start position:0%
+on Local Host 8000 and you can see here
+ 
+
+00:05:58.720 --> 00:06:00.950 align:start position:0%
+on Local Host 8000 and you can see here
+we<00:05:58.960><c> got</c><00:05:59.160><c> it</c><00:05:59.319><c> set</c><00:05:59.680><c> set</c><00:05:59.919><c> up</c><00:06:00.440><c> all</c><00:06:00.560><c> right</c><00:06:00.680><c> so</c><00:06:00.880><c> I</c>
+
+00:06:00.950 --> 00:06:00.960 align:start position:0%
+we got it set set up all right so I
+ 
+
+00:06:00.960 --> 00:06:03.110 align:start position:0%
+we got it set set up all right so I
+could<00:06:01.160><c> go</c><00:06:01.280><c> ahead</c><00:06:01.479><c> and</c><00:06:01.800><c> ask</c><00:06:02.000><c> it</c><00:06:02.280><c> a</c><00:06:02.479><c> query</c><00:06:02.960><c> right</c>
+
+00:06:03.110 --> 00:06:03.120 align:start position:0%
+could go ahead and ask it a query right
+ 
+
+00:06:03.120 --> 00:06:05.350 align:start position:0%
+could go ahead and ask it a query right
+here<00:06:03.319><c> so</c><00:06:03.479><c> I'm</c><00:06:03.600><c> going</c><00:06:03.720><c> to</c><00:06:03.919><c> ask</c><00:06:04.120><c> it</c><00:06:04.800><c> uh</c><00:06:04.919><c> to</c>
+
+00:06:05.350 --> 00:06:05.360 align:start position:0%
+here so I'm going to ask it uh to
+ 
+
+00:06:05.360 --> 00:06:07.870 align:start position:0%
+here so I'm going to ask it uh to
+research<00:06:05.880><c> about</c><00:06:06.160><c> Elon</c><00:06:06.560><c> musk's</c><00:06:07.039><c> new</c><00:06:07.319><c> robots</c>
+
+00:06:07.870 --> 00:06:07.880 align:start position:0%
+research about Elon musk's new robots
+ 
+
+00:06:07.880 --> 00:06:10.670 align:start position:0%
+research about Elon musk's new robots
+launched<00:06:08.319><c> in</c><00:06:08.560><c> October</c><00:06:09.360><c> 2024</c><00:06:10.360><c> which</c><00:06:10.479><c> was</c>
+
+00:06:10.670 --> 00:06:10.680 align:start position:0%
+launched in October 2024 which was
+ 
+
+00:06:10.680 --> 00:06:13.950 align:start position:0%
+launched in October 2024 which was
+launched<00:06:11.639><c> yesterday</c><00:06:12.639><c> um</c><00:06:13.080><c> and</c><00:06:13.199><c> then</c><00:06:13.440><c> what</c><00:06:13.720><c> type</c>
+
+00:06:13.950 --> 00:06:13.960 align:start position:0%
+launched yesterday um and then what type
+ 
+
+00:06:13.960 --> 00:06:15.990 align:start position:0%
+launched yesterday um and then what type
+of<00:06:14.160><c> report</c><00:06:14.639><c> would</c><00:06:14.800><c> you</c><00:06:14.960><c> like</c><00:06:15.199><c> to</c><00:06:15.520><c> uh</c><00:06:15.720><c> like</c><00:06:15.880><c> me</c>
+
+00:06:15.990 --> 00:06:16.000 align:start position:0%
+of report would you like to uh like me
+ 
+
+00:06:16.000 --> 00:06:17.589 align:start position:0%
+of report would you like to uh like me
+to<00:06:16.160><c> generate</c><00:06:16.560><c> so</c><00:06:16.720><c> we</c><00:06:16.800><c> have</c><00:06:17.000><c> different</c><00:06:17.240><c> options</c>
+
+00:06:17.589 --> 00:06:17.599 align:start position:0%
+to generate so we have different options
+ 
+
+00:06:17.599 --> 00:06:19.430 align:start position:0%
+to generate so we have different options
+here<00:06:17.759><c> we</c><00:06:17.880><c> could</c><00:06:18.000><c> do</c><00:06:18.280><c> summary</c><00:06:18.840><c> which</c><00:06:18.960><c> is</c><00:06:19.120><c> short</c>
+
+00:06:19.430 --> 00:06:19.440 align:start position:0%
+here we could do summary which is short
+ 
+
+00:06:19.440 --> 00:06:22.870 align:start position:0%
+here we could do summary which is short
+and<00:06:19.880><c> fast</c><00:06:20.880><c> um</c><00:06:21.319><c> 2</c><00:06:21.560><c> minutes</c><00:06:21.919><c> and</c><00:06:22.080><c> then</c><00:06:22.319><c> detailed</c>
+
+00:06:22.870 --> 00:06:22.880 align:start position:0%
+and fast um 2 minutes and then detailed
+ 
+
+00:06:22.880 --> 00:06:25.589 align:start position:0%
+and fast um 2 minutes and then detailed
+which<00:06:23.000><c> is</c><00:06:23.240><c> in</c><00:06:23.479><c> dep</c><00:06:23.720><c> then</c><00:06:23.919><c> longer</c><00:06:24.520><c> 5</c><00:06:24.759><c> minutes</c>
+
+00:06:25.589 --> 00:06:25.599 align:start position:0%
+which is in dep then longer 5 minutes
+ 
+
+00:06:25.599 --> 00:06:27.950 align:start position:0%
+which is in dep then longer 5 minutes
+and<00:06:25.759><c> then</c><00:06:25.960><c> research</c><00:06:26.440><c> report</c><00:06:26.880><c> so</c><00:06:27.120><c> just</c><00:06:27.280><c> for</c><00:06:27.840><c> you</c>
+
+00:06:27.950 --> 00:06:27.960 align:start position:0%
+and then research report so just for you
+ 
+
+00:06:27.960 --> 00:06:29.710 align:start position:0%
+and then research report so just for you
+know<00:06:28.120><c> to</c><00:06:28.319><c> test</c><00:06:28.599><c> this</c><00:06:28.720><c> out</c><00:06:28.880><c> to</c><00:06:29.039><c> start</c><00:06:29.240><c> we</c><00:06:29.360><c> can</c><00:06:29.599><c> do</c>
+
+00:06:29.710 --> 00:06:29.720 align:start position:0%
+know to test this out to start we can do
+ 
+
+00:06:29.720 --> 00:06:31.670 align:start position:0%
+know to test this out to start we can do
+short<00:06:29.919><c> and</c><00:06:30.160><c> fast</c><00:06:30.960><c> and</c><00:06:31.080><c> then</c><00:06:31.199><c> we</c><00:06:31.280><c> can</c><00:06:31.440><c> change</c>
+
+00:06:31.670 --> 00:06:31.680 align:start position:0%
+short and fast and then we can change
+ 
+
+00:06:31.680 --> 00:06:33.670 align:start position:0%
+short and fast and then we can change
+the<00:06:31.880><c> tone</c><00:06:32.280><c> so</c><00:06:32.440><c> we</c><00:06:32.520><c> could</c><00:06:32.639><c> do</c><00:06:32.960><c> informative</c>
+
+00:06:33.670 --> 00:06:33.680 align:start position:0%
+the tone so we could do informative
+ 
+
+00:06:33.680 --> 00:06:35.390 align:start position:0%
+the tone so we could do informative
+providing<00:06:34.080><c> clear</c><00:06:34.319><c> and</c><00:06:34.599><c> comprehensive</c>
+
+00:06:35.390 --> 00:06:35.400 align:start position:0%
+providing clear and comprehensive
+ 
+
+00:06:35.400 --> 00:06:38.670 align:start position:0%
+providing clear and comprehensive
+information<00:06:35.960><c> on</c><00:06:36.240><c> topic</c><00:06:37.039><c> persuasive</c><00:06:38.039><c> we</c><00:06:38.160><c> could</c>
+
+00:06:38.670 --> 00:06:38.680 align:start position:0%
+information on topic persuasive we could
+ 
+
+00:06:38.680 --> 00:06:40.029 align:start position:0%
+information on topic persuasive we could
+have<00:06:38.840><c> a</c><00:06:38.960><c> bunch</c><00:06:39.120><c> of</c><00:06:39.280><c> different</c><00:06:39.520><c> options</c><00:06:39.880><c> here</c>
+
+00:06:40.029 --> 00:06:40.039 align:start position:0%
+have a bunch of different options here
+ 
+
+00:06:40.039 --> 00:06:41.870 align:start position:0%
+have a bunch of different options here
+which<00:06:40.160><c> is</c><00:06:40.360><c> pretty</c><00:06:40.639><c> nice</c><00:06:41.120><c> that</c><00:06:41.240><c> it</c><00:06:41.479><c> gives</c><00:06:41.680><c> you</c>
+
+00:06:41.870 --> 00:06:41.880 align:start position:0%
+which is pretty nice that it gives you
+ 
+
+00:06:41.880 --> 00:06:43.710 align:start position:0%
+which is pretty nice that it gives you
+all<00:06:42.120><c> these</c><00:06:42.319><c> different</c><00:06:42.680><c> options</c><00:06:43.199><c> a</c><00:06:43.280><c> lot</c><00:06:43.400><c> of</c><00:06:43.520><c> the</c>
+
+00:06:43.710 --> 00:06:43.720 align:start position:0%
+all these different options a lot of the
+ 
+
+00:06:43.720 --> 00:06:45.990 align:start position:0%
+all these different options a lot of the
+other<00:06:43.960><c> open-</c><00:06:44.319><c> source</c><00:06:45.000><c> perplexity</c><00:06:45.639><c> tools</c>
+
+00:06:45.990 --> 00:06:46.000 align:start position:0%
+other open- source perplexity tools
+ 
+
+00:06:46.000 --> 00:06:47.589 align:start position:0%
+other open- source perplexity tools
+don't<00:06:46.280><c> give</c><00:06:46.440><c> you</c><00:06:46.639><c> options</c><00:06:47.000><c> like</c><00:06:47.160><c> this</c><00:06:47.319><c> so</c><00:06:47.479><c> this</c>
+
+00:06:47.589 --> 00:06:47.599 align:start position:0%
+don't give you options like this so this
+ 
+
+00:06:47.599 --> 00:06:49.270 align:start position:0%
+don't give you options like this so this
+is<00:06:47.759><c> pretty</c><00:06:48.000><c> useful</c><00:06:48.680><c> are</c><00:06:48.800><c> you</c><00:06:48.919><c> tired</c><00:06:49.160><c> of</c>
+
+00:06:49.270 --> 00:06:49.280 align:start position:0%
+is pretty useful are you tired of
+ 
+
+00:06:49.280 --> 00:06:50.629 align:start position:0%
+is pretty useful are you tired of
+pouring<00:06:49.599><c> thousands</c><00:06:49.960><c> of</c><00:06:50.120><c> dollars</c><00:06:50.360><c> into</c>
+
+00:06:50.629 --> 00:06:50.639 align:start position:0%
+pouring thousands of dollars into
+ 
+
+00:06:50.639 --> 00:06:52.469 align:start position:0%
+pouring thousands of dollars into
+appointment<00:06:51.000><c> Setters</c><00:06:51.440><c> only</c><00:06:51.680><c> to</c><00:06:51.880><c> watch</c><00:06:52.120><c> leads</c>
+
+00:06:52.469 --> 00:06:52.479 align:start position:0%
+appointment Setters only to watch leads
+ 
+
+00:06:52.479 --> 00:06:54.950 align:start position:0%
+appointment Setters only to watch leads
+slip<00:06:52.840><c> away</c><00:06:53.240><c> imagine</c><00:06:53.599><c> having</c><00:06:53.800><c> a</c><00:06:53.960><c> team</c><00:06:54.360><c> of</c><00:06:54.520><c> elite</c>
+
+00:06:54.950 --> 00:06:54.960 align:start position:0%
+slip away imagine having a team of elite
+ 
+
+00:06:54.960 --> 00:06:56.869 align:start position:0%
+slip away imagine having a team of elite
+sales<00:06:55.319><c> agents</c><00:06:55.759><c> booking</c><00:06:56.199><c> qualified</c>
+
+00:06:56.869 --> 00:06:56.879 align:start position:0%
+sales agents booking qualified
+ 
+
+00:06:56.879 --> 00:06:58.830 align:start position:0%
+sales agents booking qualified
+appointments<00:06:57.360><c> for</c><00:06:57.560><c> you</c><00:06:57.800><c> around</c><00:06:58.160><c> the</c><00:06:58.319><c> clock</c><00:06:58.720><c> no</c>
+
+00:06:58.830 --> 00:06:58.840 align:start position:0%
+appointments for you around the clock no
+ 
+
+00:06:58.840 --> 00:07:00.909 align:start position:0%
+appointments for you around the clock no
+more<00:06:59.000><c> wasted</c><00:06:59.319><c> time</c><00:06:59.639><c> on</c><00:06:59.840><c> training</c><00:07:00.440><c> no</c><00:07:00.599><c> more</c>
+
+00:07:00.909 --> 00:07:00.919 align:start position:0%
+more wasted time on training no more
+ 
+
+00:07:00.919 --> 00:07:03.029 align:start position:0%
+more wasted time on training no more
+frustration<00:07:01.560><c> with</c><00:07:01.840><c> performance</c><00:07:02.560><c> and</c><00:07:02.680><c> no</c><00:07:02.800><c> more</c>
+
+00:07:03.029 --> 00:07:03.039 align:start position:0%
+frustration with performance and no more
+ 
+
+00:07:03.039 --> 00:07:05.510 align:start position:0%
+frustration with performance and no more
+draining<00:07:03.560><c> your</c><00:07:03.800><c> budget</c><00:07:04.160><c> on</c><00:07:04.479><c> inconsistent</c><00:07:05.240><c> and</c>
+
+00:07:05.510 --> 00:07:05.520 align:start position:0%
+draining your budget on inconsistent and
+ 
+
+00:07:05.520 --> 00:07:07.550 align:start position:0%
+draining your budget on inconsistent and
+expensive<00:07:06.080><c> call</c><00:07:06.319><c> centers</c><00:07:06.840><c> introducing</c>
+
+00:07:07.550 --> 00:07:07.560 align:start position:0%
+expensive call centers introducing
+ 
+
+00:07:07.560 --> 00:07:09.430 align:start position:0%
+expensive call centers introducing
+stride<00:07:07.960><c> agents</c><00:07:08.520><c> AI</c><00:07:08.840><c> powered</c><00:07:09.080><c> appointment</c>
+
+00:07:09.430 --> 00:07:09.440 align:start position:0%
+stride agents AI powered appointment
+ 
+
+00:07:09.440 --> 00:07:12.189 align:start position:0%
+stride agents AI powered appointment
+Setters<00:07:09.720><c> that</c><00:07:09.879><c> work</c><00:07:10.280><c> 24/7</c><00:07:11.280><c> never</c><00:07:11.560><c> get</c><00:07:11.800><c> tired</c>
+
+00:07:12.189 --> 00:07:12.199 align:start position:0%
+Setters that work 24/7 never get tired
+ 
+
+00:07:12.199 --> 00:07:14.189 align:start position:0%
+Setters that work 24/7 never get tired
+and<00:07:12.440><c> book</c><00:07:12.720><c> appointments</c><00:07:13.319><c> while</c><00:07:13.520><c> you</c><00:07:13.680><c> sleep</c>
+
+00:07:14.189 --> 00:07:14.199 align:start position:0%
+and book appointments while you sleep
+ 
+
+00:07:14.199 --> 00:07:15.990 align:start position:0%
+and book appointments while you sleep
+trained<00:07:14.520><c> on</c><00:07:14.759><c> thousands</c><00:07:15.199><c> of</c><00:07:15.360><c> successful</c>
+
+00:07:15.990 --> 00:07:16.000 align:start position:0%
+trained on thousands of successful
+ 
+
+00:07:16.000 --> 00:07:18.390 align:start position:0%
+trained on thousands of successful
+conversations<00:07:16.800><c> our</c><00:07:17.080><c> AI</c><00:07:17.400><c> agents</c><00:07:17.720><c> outperform</c>
+
+00:07:18.390 --> 00:07:18.400 align:start position:0%
+conversations our AI agents outperform
+ 
+
+00:07:18.400 --> 00:07:21.309 align:start position:0%
+conversations our AI agents outperform
+human<00:07:18.680><c> teams</c><00:07:19.160><c> at</c><00:07:19.319><c> just</c><00:07:19.599><c> oneth</c><00:07:20.520><c> of</c><00:07:20.639><c> the</c><00:07:20.879><c> cost</c>
+
+00:07:21.309 --> 00:07:21.319 align:start position:0%
+human teams at just oneth of the cost
+ 
+
+00:07:21.319 --> 00:07:22.670 align:start position:0%
+human teams at just oneth of the cost
+join<00:07:21.560><c> the</c><00:07:21.639><c> ranks</c><00:07:21.879><c> of</c><00:07:22.039><c> businesses</c><00:07:22.520><c> that</c>
+
+00:07:22.670 --> 00:07:22.680 align:start position:0%
+join the ranks of businesses that
+ 
+
+00:07:22.680 --> 00:07:24.589 align:start position:0%
+join the ranks of businesses that
+doubled<00:07:23.080><c> their</c><00:07:23.280><c> appointments</c><00:07:24.039><c> and</c><00:07:24.280><c> booking</c>
+
+00:07:24.589 --> 00:07:24.599 align:start position:0%
+doubled their appointments and booking
+ 
+
+00:07:24.599 --> 00:07:26.550 align:start position:0%
+doubled their appointments and booking
+rates<00:07:25.000><c> in</c><00:07:25.199><c> just</c><00:07:25.360><c> a</c><00:07:25.520><c> matter</c><00:07:25.759><c> of</c><00:07:25.919><c> weeks</c><00:07:26.400><c> don't</c>
+
+00:07:26.550 --> 00:07:26.560 align:start position:0%
+rates in just a matter of weeks don't
+ 
+
+00:07:26.560 --> 00:07:28.469 align:start position:0%
+rates in just a matter of weeks don't
+get<00:07:26.720><c> left</c><00:07:26.919><c> behind</c><00:07:27.199><c> in</c><00:07:27.319><c> the</c><00:07:27.440><c> AI</c><00:07:27.759><c> Revolution</c>
+
+00:07:28.469 --> 00:07:28.479 align:start position:0%
+get left behind in the AI Revolution
+ 
+
+00:07:28.479 --> 00:07:30.029 align:start position:0%
+get left behind in the AI Revolution
+visit<00:07:28.720><c> stride</c><00:07:29.080><c> agent</c>
+
+00:07:30.029 --> 00:07:30.039 align:start position:0%
+visit stride agent
+ 
+
+00:07:30.039 --> 00:07:32.270 align:start position:0%
+visit stride agent
+now<00:07:30.319><c> and</c><00:07:30.560><c> transform</c><00:07:31.120><c> your</c><00:07:31.360><c> entire</c><00:07:31.800><c> sales</c>
+
+00:07:32.270 --> 00:07:32.280 align:start position:0%
+now and transform your entire sales
+ 
+
+00:07:32.280 --> 00:07:34.749 align:start position:0%
+now and transform your entire sales
+process<00:07:32.639><c> with</c><00:07:32.840><c> cuttingedge</c><00:07:33.639><c> AI</c><00:07:34.080><c> technology</c>
+
+00:07:34.749 --> 00:07:34.759 align:start position:0%
+process with cuttingedge AI technology
+ 
+
+00:07:34.759 --> 00:07:36.710 align:start position:0%
+process with cuttingedge AI technology
+it's<00:07:34.919><c> time</c><00:07:35.080><c> to</c><00:07:35.319><c> accelerate</c><00:07:35.759><c> your</c><00:07:35.879><c> stride</c><00:07:36.440><c> with</c>
+
+00:07:36.710 --> 00:07:36.720 align:start position:0%
+it's time to accelerate your stride with
+ 
+
+00:07:36.720 --> 00:07:38.909 align:start position:0%
+it's time to accelerate your stride with
+AI<00:07:37.120><c> agents</c><00:07:37.960><c> and</c><00:07:38.080><c> then</c><00:07:38.240><c> what</c><00:07:38.400><c> sources</c><00:07:38.800><c> would</c>
+
+00:07:38.909 --> 00:07:38.919 align:start position:0%
+AI agents and then what sources would
+ 
+
+00:07:38.919 --> 00:07:41.070 align:start position:0%
+AI agents and then what sources would
+you<00:07:39.039><c> like</c><00:07:39.199><c> me</c><00:07:39.280><c> to</c><00:07:39.440><c> research</c><00:07:39.919><c> from</c><00:07:40.280><c> so</c><00:07:40.800><c> you</c><00:07:40.919><c> can</c>
+
+00:07:41.070 --> 00:07:41.080 align:start position:0%
+you like me to research from so you can
+ 
+
+00:07:41.080 --> 00:07:43.629 align:start position:0%
+you like me to research from so you can
+use<00:07:41.360><c> the</c><00:07:41.599><c> web</c><00:07:42.360><c> um</c><00:07:42.479><c> you</c><00:07:42.560><c> can</c><00:07:42.800><c> also</c><00:07:43.240><c> add</c>
+
+00:07:43.629 --> 00:07:43.639 align:start position:0%
+use the web um you can also add
+ 
+
+00:07:43.639 --> 00:07:46.189 align:start position:0%
+use the web um you can also add
+documents<00:07:44.199><c> so</c><00:07:44.479><c> please</c><00:07:44.720><c> make</c><00:07:44.919><c> sure</c><00:07:45.159><c> to</c><00:07:45.639><c> add</c><00:07:45.960><c> the</c>
+
+00:07:46.189 --> 00:07:46.199 align:start position:0%
+documents so please make sure to add the
+ 
+
+00:07:46.199 --> 00:07:48.149 align:start position:0%
+documents so please make sure to add the
+dock<00:07:46.599><c> path</c><00:07:46.879><c> in</c><00:07:47.039><c> the</c><00:07:47.199><c> environment</c><00:07:47.720><c> variable</c>
+
+00:07:48.149 --> 00:07:48.159 align:start position:0%
+dock path in the environment variable
+ 
+
+00:07:48.159 --> 00:07:49.869 align:start position:0%
+dock path in the environment variable
+pointing<00:07:48.479><c> to</c><00:07:48.639><c> the</c><00:07:48.800><c> documents</c><00:07:49.240><c> folder</c><00:07:49.599><c> so</c><00:07:49.759><c> this</c>
+
+00:07:49.869 --> 00:07:49.879 align:start position:0%
+pointing to the documents folder so this
+ 
+
+00:07:49.879 --> 00:07:51.830 align:start position:0%
+pointing to the documents folder so this
+is<00:07:50.080><c> pretty</c><00:07:50.319><c> cool</c><00:07:50.599><c> as</c><00:07:50.759><c> well</c><00:07:51.360><c> that</c><00:07:51.479><c> you</c><00:07:51.560><c> could</c>
+
+00:07:51.830 --> 00:07:51.840 align:start position:0%
+is pretty cool as well that you could
+ 
+
+00:07:51.840 --> 00:07:53.790 align:start position:0%
+is pretty cool as well that you could
+actually<00:07:52.159><c> add</c><00:07:52.400><c> your</c><00:07:52.560><c> own</c><00:07:52.960><c> documents</c><00:07:53.520><c> and</c><00:07:53.639><c> set</c>
+
+00:07:53.790 --> 00:07:53.800 align:start position:0%
+actually add your own documents and set
+ 
+
+00:07:53.800 --> 00:07:56.510 align:start position:0%
+actually add your own documents and set
+up<00:07:54.000><c> like</c><00:07:54.159><c> your</c><00:07:54.319><c> own</c><00:07:54.680><c> rag</c><00:07:55.560><c> so</c><00:07:55.720><c> you</c><00:07:55.840><c> could</c><00:07:56.319><c> have</c>
+
+00:07:56.510 --> 00:07:56.520 align:start position:0%
+up like your own rag so you could have
+ 
+
+00:07:56.520 --> 00:08:00.510 align:start position:0%
+up like your own rag so you could have
+your<00:07:56.639><c> own</c><00:07:57.199><c> documents</c><00:07:58.199><c> and</c><00:07:59.000><c> also</c><00:07:59.599><c> do</c><00:07:59.759><c> the</c><00:07:59.960><c> web</c>
+
+00:08:00.510 --> 00:08:00.520 align:start position:0%
+your own documents and also do the web
+ 
+
+00:08:00.520 --> 00:08:02.749 align:start position:0%
+your own documents and also do the web
+so<00:08:00.680><c> you</c><00:08:00.800><c> could</c><00:08:01.159><c> do</c><00:08:01.440><c> the</c><00:08:01.639><c> just</c><00:08:01.879><c> the</c><00:08:02.080><c> web</c><00:08:02.639><c> which</c>
+
+00:08:02.749 --> 00:08:02.759 align:start position:0%
+so you could do the just the web which
+ 
+
+00:08:02.759 --> 00:08:04.629 align:start position:0%
+so you could do the just the web which
+is<00:08:02.960><c> kind</c><00:08:03.080><c> of</c><00:08:03.199><c> like</c><00:08:03.319><c> a</c><00:08:03.440><c> perplexity</c><00:08:04.039><c> search</c><00:08:04.520><c> you</c>
+
+00:08:04.629 --> 00:08:04.639 align:start position:0%
+is kind of like a perplexity search you
+ 
+
+00:08:04.639 --> 00:08:06.550 align:start position:0%
+is kind of like a perplexity search you
+could<00:08:04.800><c> do</c><00:08:05.120><c> just</c><00:08:05.360><c> your</c><00:08:05.680><c> documents</c><00:08:06.280><c> which</c><00:08:06.400><c> is</c>
+
+00:08:06.550 --> 00:08:06.560 align:start position:0%
+could do just your documents which is
+ 
+
+00:08:06.560 --> 00:08:08.830 align:start position:0%
+could do just your documents which is
+pretty<00:08:06.759><c> much</c><00:08:07.000><c> like</c><00:08:07.319><c> somewhat</c><00:08:07.720><c> of</c><00:08:07.800><c> a</c><00:08:07.960><c> Rags</c><00:08:08.560><c> type</c>
+
+00:08:08.830 --> 00:08:08.840 align:start position:0%
+pretty much like somewhat of a Rags type
+ 
+
+00:08:08.840 --> 00:08:11.589 align:start position:0%
+pretty much like somewhat of a Rags type
+search<00:08:09.840><c> um</c><00:08:10.280><c> and</c><00:08:10.440><c> then</c><00:08:10.759><c> or</c><00:08:10.960><c> you</c><00:08:11.080><c> could</c><00:08:11.240><c> do</c><00:08:11.360><c> a</c>
+
+00:08:11.589 --> 00:08:11.599 align:start position:0%
+search um and then or you could do a
+ 
+
+00:08:11.599 --> 00:08:14.469 align:start position:0%
+search um and then or you could do a
+hybrid<00:08:12.080><c> approach</c><00:08:12.759><c> so</c><00:08:13.120><c> you</c><00:08:13.199><c> could</c><00:08:13.440><c> probably</c><00:08:14.319><c> uh</c>
+
+00:08:14.469 --> 00:08:14.479 align:start position:0%
+hybrid approach so you could probably uh
+ 
+
+00:08:14.479 --> 00:08:16.749 align:start position:0%
+hybrid approach so you could probably uh
+get<00:08:14.919><c> some</c><00:08:15.360><c> pretty</c><00:08:15.680><c> interesting</c><00:08:16.159><c> results</c><00:08:16.639><c> if</c>
+
+00:08:16.749 --> 00:08:16.759 align:start position:0%
+get some pretty interesting results if
+ 
+
+00:08:16.759 --> 00:08:18.749 align:start position:0%
+get some pretty interesting results if
+you<00:08:17.199><c> maybe</c><00:08:17.440><c> were</c><00:08:17.599><c> doing</c><00:08:17.800><c> a</c><00:08:17.960><c> hybrid</c><00:08:18.400><c> approach</c>
+
+00:08:18.749 --> 00:08:18.759 align:start position:0%
+you maybe were doing a hybrid approach
+ 
+
+00:08:18.759 --> 00:08:20.589 align:start position:0%
+you maybe were doing a hybrid approach
+you<00:08:18.960><c> give</c><00:08:19.120><c> it</c><00:08:19.240><c> some</c><00:08:19.479><c> basic</c><00:08:19.879><c> context</c><00:08:20.360><c> within</c>
+
+00:08:20.589 --> 00:08:20.599 align:start position:0%
+you give it some basic context within
+ 
+
+00:08:20.599 --> 00:08:23.070 align:start position:0%
+you give it some basic context within
+your<00:08:20.800><c> documents</c><00:08:21.360><c> some</c><00:08:21.639><c> personal</c><00:08:22.599><c> uh</c><00:08:22.800><c> stuff</c>
+
+00:08:23.070 --> 00:08:23.080 align:start position:0%
+your documents some personal uh stuff
+ 
+
+00:08:23.080 --> 00:08:25.270 align:start position:0%
+your documents some personal uh stuff
+that<00:08:23.199><c> is</c><00:08:23.479><c> customed</c><00:08:23.919><c> to</c><00:08:24.440><c> whatever</c><00:08:24.720><c> you're</c>
+
+00:08:25.270 --> 00:08:25.280 align:start position:0%
+that is customed to whatever you're
+ 
+
+00:08:25.280 --> 00:08:27.070 align:start position:0%
+that is customed to whatever you're
+researching<00:08:25.879><c> on</c><00:08:26.159><c> whether</c><00:08:26.400><c> it's</c><00:08:26.759><c> something</c>
+
+00:08:27.070 --> 00:08:27.080 align:start position:0%
+researching on whether it's something
+ 
+
+00:08:27.080 --> 00:08:30.270 align:start position:0%
+researching on whether it's something
+related<00:08:27.440><c> to</c><00:08:27.639><c> school</c><00:08:28.080><c> or</c><00:08:28.319><c> a</c><00:08:28.479><c> coding</c><00:08:28.960><c> project</c>
+
+00:08:30.270 --> 00:08:30.280 align:start position:0%
+related to school or a coding project
+ 
+
+00:08:30.280 --> 00:08:32.430 align:start position:0%
+related to school or a coding project
+your<00:08:30.560><c> business</c><00:08:31.199><c> and</c><00:08:31.280><c> then</c><00:08:31.440><c> you</c><00:08:31.639><c> also</c><00:08:32.200><c> are</c>
+
+00:08:32.430 --> 00:08:32.440 align:start position:0%
+your business and then you also are
+ 
+
+00:08:32.440 --> 00:08:34.589 align:start position:0%
+your business and then you also are
+asking<00:08:32.719><c> at</c><00:08:32.959><c> stuff</c><00:08:33.159><c> that</c><00:08:33.279><c> it</c><00:08:33.399><c> would</c><00:08:34.039><c> uh</c><00:08:34.200><c> want</c><00:08:34.399><c> to</c>
+
+00:08:34.589 --> 00:08:34.599 align:start position:0%
+asking at stuff that it would uh want to
+ 
+
+00:08:34.599 --> 00:08:35.990 align:start position:0%
+asking at stuff that it would uh want to
+search<00:08:34.880><c> on</c><00:08:35.000><c> the</c><00:08:35.159><c> web</c><00:08:35.399><c> and</c><00:08:35.479><c> you</c><00:08:35.560><c> can</c><00:08:35.760><c> probably</c>
+
+00:08:35.990 --> 00:08:36.000 align:start position:0%
+search on the web and you can probably
+ 
+
+00:08:36.000 --> 00:08:38.110 align:start position:0%
+search on the web and you can probably
+get<00:08:36.080><c> some</c><00:08:36.279><c> pretty</c><00:08:36.599><c> custom</c><00:08:37.039><c> stuff</c><00:08:37.320><c> there</c><00:08:37.640><c> so</c>
+
+00:08:38.110 --> 00:08:38.120 align:start position:0%
+get some pretty custom stuff there so
+ 
+
+00:08:38.120 --> 00:08:39.589 align:start position:0%
+get some pretty custom stuff there so
+and<00:08:38.240><c> then</c><00:08:38.320><c> you</c><00:08:38.440><c> just</c><00:08:38.599><c> click</c><00:08:38.800><c> on</c><00:08:39.000><c> Research</c><00:08:39.479><c> so</c>
+
+00:08:39.589 --> 00:08:39.599 align:start position:0%
+and then you just click on Research so
+ 
+
+00:08:39.599 --> 00:08:41.589 align:start position:0%
+and then you just click on Research so
+we're<00:08:39.719><c> just</c><00:08:39.839><c> going</c><00:08:39.959><c> to</c><00:08:40.080><c> do</c><00:08:40.240><c> the</c><00:08:40.360><c> web</c><00:08:40.599><c> for</c><00:08:40.839><c> now</c>
+
+00:08:41.589 --> 00:08:41.599 align:start position:0%
+we're just going to do the web for now
+ 
+
+00:08:41.599 --> 00:08:43.350 align:start position:0%
+we're just going to do the web for now
+if<00:08:41.719><c> I</c><00:08:41.880><c> click</c><00:08:42.120><c> research</c><00:08:42.560><c> we</c><00:08:42.640><c> can</c><00:08:42.760><c> see</c><00:08:43.000><c> thinking</c>
+
+00:08:43.350 --> 00:08:43.360 align:start position:0%
+if I click research we can see thinking
+ 
+
+00:08:43.360 --> 00:08:45.630 align:start position:0%
+if I click research we can see thinking
+about<00:08:43.680><c> research</c><00:08:44.159><c> questions</c><00:08:44.519><c> to</c><00:08:44.920><c> ask</c><00:08:45.519><c> then</c>
+
+00:08:45.630 --> 00:08:45.640 align:start position:0%
+about research questions to ask then
+ 
+
+00:08:45.640 --> 00:08:47.590 align:start position:0%
+about research questions to ask then
+starting<00:08:46.000><c> the</c><00:08:46.200><c> research</c><00:08:46.800><c> task</c><00:08:47.320><c> and</c><00:08:47.440><c> then</c>
+
+00:08:47.590 --> 00:08:47.600 align:start position:0%
+starting the research task and then
+ 
+
+00:08:47.600 --> 00:08:50.190 align:start position:0%
+starting the research task and then
+using<00:08:47.880><c> the</c><00:08:48.120><c> technology</c><00:08:48.720><c> agent</c><00:08:49.200><c> right</c><00:08:49.440><c> here</c>
+
+00:08:50.190 --> 00:08:50.200 align:start position:0%
+using the technology agent right here
+ 
+
+00:08:50.200 --> 00:08:51.350 align:start position:0%
+using the technology agent right here
+okay<00:08:50.320><c> it's</c><00:08:50.440><c> saying</c><00:08:50.680><c> it's</c><00:08:50.800><c> going</c><00:08:50.880><c> to</c><00:08:51.040><c> conduct</c>
+
+00:08:51.350 --> 00:08:51.360 align:start position:0%
+okay it's saying it's going to conduct
+ 
+
+00:08:51.360 --> 00:08:53.190 align:start position:0%
+okay it's saying it's going to conduct
+the<00:08:51.519><c> research</c><00:08:52.320><c> now</c><00:08:52.480><c> it's</c><00:08:52.680><c> conducting</c>
+
+00:08:53.190 --> 00:08:53.200 align:start position:0%
+the research now it's conducting
+ 
+
+00:08:53.200 --> 00:08:55.870 align:start position:0%
+the research now it's conducting
+different<00:08:53.959><c> research</c><00:08:54.600><c> right</c><00:08:54.839><c> here</c><00:08:55.519><c> all</c><00:08:55.640><c> right</c>
+
+00:08:55.870 --> 00:08:55.880 align:start position:0%
+different research right here all right
+ 
+
+00:08:55.880 --> 00:08:57.949 align:start position:0%
+different research right here all right
+getting<00:08:56.240><c> different</c><00:08:56.600><c> sources</c><00:08:57.600><c> getting</c>
+
+00:08:57.949 --> 00:08:57.959 align:start position:0%
+getting different sources getting
+ 
+
+00:08:57.959 --> 00:09:00.630 align:start position:0%
+getting different sources getting
+relevant<00:08:58.959><c> information</c>
+
+00:09:00.630 --> 00:09:00.640 align:start position:0%
+relevant information
+ 
+
+00:09:00.640 --> 00:09:02.030 align:start position:0%
+relevant information
+okay<00:09:00.839><c> now</c><00:09:01.000><c> it's</c><00:09:01.200><c> actually</c><00:09:01.440><c> building</c><00:09:01.720><c> out</c><00:09:01.880><c> the</c>
+
+00:09:02.030 --> 00:09:02.040 align:start position:0%
+okay now it's actually building out the
+ 
+
+00:09:02.040 --> 00:09:05.069 align:start position:0%
+okay now it's actually building out the
+research<00:09:02.640><c> report</c><00:09:03.240><c> here</c><00:09:03.560><c> so</c><00:09:03.760><c> we</c><00:09:03.839><c> can</c><00:09:04.040><c> see</c><00:09:04.680><c> Elon</c>
+
+00:09:05.069 --> 00:09:05.079 align:start position:0%
+research report here so we can see Elon
+ 
+
+00:09:05.079 --> 00:09:08.069 align:start position:0%
+research report here so we can see Elon
+mus<00:09:05.320><c> new</c><00:09:05.560><c> robots</c><00:09:06.040><c> launched</c><00:09:06.360><c> in</c><00:09:06.600><c> October</c><00:09:07.600><c> Robo</c>
+
+00:09:08.069 --> 00:09:08.079 align:start position:0%
+mus new robots launched in October Robo
+ 
+
+00:09:08.079 --> 00:09:11.430 align:start position:0%
+mus new robots launched in October Robo
+van<00:09:08.640><c> Optimus</c><00:09:09.279><c> humanoid</c><00:09:10.000><c> robots</c><00:09:11.000><c> challenges</c>
+
+00:09:11.430 --> 00:09:11.440 align:start position:0%
+van Optimus humanoid robots challenges
+ 
+
+00:09:11.440 --> 00:09:14.150 align:start position:0%
+van Optimus humanoid robots challenges
+and<00:09:11.640><c> skepticism</c><00:09:12.600><c> conclusion</c><00:09:13.440><c> references</c><00:09:14.040><c> so</c>
+
+00:09:14.150 --> 00:09:14.160 align:start position:0%
+and skepticism conclusion references so
+ 
+
+00:09:14.160 --> 00:09:16.750 align:start position:0%
+and skepticism conclusion references so
+we<00:09:14.279><c> can</c><00:09:14.360><c> see</c><00:09:14.519><c> all</c><00:09:14.600><c> the</c><00:09:14.720><c> references</c><00:09:15.440><c> here</c><00:09:16.440><c> now</c>
+
+00:09:16.750 --> 00:09:16.760 align:start position:0%
+we can see all the references here now
+ 
+
+00:09:16.760 --> 00:09:18.550 align:start position:0%
+we can see all the references here now
+cool<00:09:17.000><c> thing</c><00:09:17.240><c> is</c><00:09:17.399><c> too</c><00:09:17.760><c> we</c><00:09:17.880><c> can</c><00:09:18.079><c> copy</c><00:09:18.360><c> the</c>
+
+00:09:18.550 --> 00:09:18.560 align:start position:0%
+cool thing is too we can copy the
+ 
+
+00:09:18.560 --> 00:09:21.030 align:start position:0%
+cool thing is too we can copy the
+clipboard<00:09:19.079><c> in</c><00:09:19.320><c> markdown</c><00:09:20.079><c> we</c><00:09:20.200><c> can</c><00:09:20.399><c> download</c><00:09:20.839><c> as</c>
+
+00:09:21.030 --> 00:09:21.040 align:start position:0%
+clipboard in markdown we can download as
+ 
+
+00:09:21.040 --> 00:09:23.790 align:start position:0%
+clipboard in markdown we can download as
+markdown<00:09:21.920><c> or</c><00:09:22.120><c> we</c><00:09:22.200><c> can</c><00:09:22.399><c> download</c><00:09:22.760><c> as</c><00:09:22.959><c> PDF</c><00:09:23.519><c> or</c>
+
+00:09:23.790 --> 00:09:23.800 align:start position:0%
+markdown or we can download as PDF or
+ 
+
+00:09:23.800 --> 00:09:25.990 align:start position:0%
+markdown or we can download as PDF or
+docks<00:09:24.399><c> which</c><00:09:24.480><c> is</c><00:09:24.680><c> pretty</c><00:09:24.959><c> cool</c><00:09:25.680><c> all</c><00:09:25.760><c> right</c><00:09:25.880><c> so</c>
+
+00:09:25.990 --> 00:09:26.000 align:start position:0%
+docks which is pretty cool all right so
+ 
+
+00:09:26.000 --> 00:09:27.509 align:start position:0%
+docks which is pretty cool all right so
+now<00:09:26.120><c> we</c><00:09:26.240><c> can</c><00:09:26.360><c> do</c><00:09:26.480><c> a</c><00:09:26.600><c> different</c><00:09:26.880><c> one</c><00:09:27.079><c> here</c><00:09:27.360><c> such</c>
+
+00:09:27.509 --> 00:09:27.519 align:start position:0%
+now we can do a different one here such
+ 
+
+00:09:27.519 --> 00:09:30.910 align:start position:0%
+now we can do a different one here such
+as<00:09:27.680><c> open</c><00:09:28.000><c> ai's</c><00:09:28.480><c> new</c><00:09:28.760><c> AI</c><00:09:29.079><c> AG</c><00:09:29.560><c> framework</c><00:09:30.040><c> swarm</c>
+
+00:09:30.910 --> 00:09:30.920 align:start position:0%
+as open ai's new AI AG framework swarm
+ 
+
+00:09:30.920 --> 00:09:32.470 align:start position:0%
+as open ai's new AI AG framework swarm
+and<00:09:31.079><c> I'll</c><00:09:31.240><c> probably</c><00:09:31.480><c> do</c><00:09:31.600><c> some</c><00:09:31.760><c> videos</c><00:09:32.040><c> on</c><00:09:32.240><c> this</c>
+
+00:09:32.470 --> 00:09:32.480 align:start position:0%
+and I'll probably do some videos on this
+ 
+
+00:09:32.480 --> 00:09:35.430 align:start position:0%
+and I'll probably do some videos on this
+too<00:09:32.880><c> in</c><00:09:33.200><c> in</c><00:09:33.640><c> very</c><00:09:34.000><c> soon</c><00:09:34.800><c> um</c><00:09:35.000><c> because</c><00:09:35.120><c> this</c><00:09:35.200><c> is</c>
+
+00:09:35.430 --> 00:09:35.440 align:start position:0%
+too in in very soon um because this is
+ 
+
+00:09:35.440 --> 00:09:36.829 align:start position:0%
+too in in very soon um because this is
+pretty<00:09:35.680><c> interesting</c><00:09:36.200><c> if</c><00:09:36.279><c> you</c><00:09:36.399><c> don't</c><00:09:36.600><c> know</c>
+
+00:09:36.829 --> 00:09:36.839 align:start position:0%
+pretty interesting if you don't know
+ 
+
+00:09:36.839 --> 00:09:38.990 align:start position:0%
+pretty interesting if you don't know
+about<00:09:37.120><c> that</c><00:09:37.399><c> they</c><00:09:37.560><c> just</c><00:09:37.680><c> dropped</c><00:09:38.120><c> that</c><00:09:38.360><c> and</c>
+
+00:09:38.990 --> 00:09:39.000 align:start position:0%
+about that they just dropped that and
+ 
+
+00:09:39.000 --> 00:09:41.550 align:start position:0%
+about that they just dropped that and
+pretty<00:09:39.440><c> it's</c><00:09:39.600><c> open</c><00:09:39.920><c> source</c><00:09:40.320><c> framework</c><00:09:40.880><c> for</c><00:09:41.200><c> AI</c>
+
+00:09:41.550 --> 00:09:41.560 align:start position:0%
+pretty it's open source framework for AI
+ 
+
+00:09:41.560 --> 00:09:44.230 align:start position:0%
+pretty it's open source framework for AI
+agents<00:09:41.920><c> and</c><00:09:42.160><c> AI</c><00:09:42.440><c> swarms</c><00:09:43.079><c> so</c><00:09:43.920><c> um</c><00:09:44.040><c> we're</c><00:09:44.160><c> going</c>
+
+00:09:44.230 --> 00:09:44.240 align:start position:0%
+agents and AI swarms so um we're going
+ 
+
+00:09:44.240 --> 00:09:47.590 align:start position:0%
+agents and AI swarms so um we're going
+to<00:09:44.360><c> do</c><00:09:44.600><c> a</c><00:09:44.839><c> detailed</c><00:09:45.560><c> in-depth</c><00:09:46.079><c> and</c><00:09:46.360><c> longer</c><00:09:47.360><c> um</c>
+
+00:09:47.590 --> 00:09:47.600 align:start position:0%
+to do a detailed in-depth and longer um
+ 
+
+00:09:47.600 --> 00:09:50.350 align:start position:0%
+to do a detailed in-depth and longer um
+report<00:09:48.079><c> this</c><00:09:48.279><c> time</c><00:09:48.959><c> and</c><00:09:49.279><c> all</c><00:09:49.440><c> the</c><00:09:50.040><c> uh</c><00:09:50.200><c> other</c>
+
+00:09:50.350 --> 00:09:50.360 align:start position:0%
+report this time and all the uh other
+ 
+
+00:09:50.360 --> 00:09:51.550 align:start position:0%
+report this time and all the uh other
+stuff<00:09:50.560><c> is</c><00:09:50.680><c> going</c><00:09:50.760><c> to</c><00:09:50.880><c> be</c><00:09:51.000><c> the</c><00:09:51.120><c> same</c><00:09:51.279><c> we're</c><00:09:51.440><c> just</c>
+
+00:09:51.550 --> 00:09:51.560 align:start position:0%
+stuff is going to be the same we're just
+ 
+
+00:09:51.560 --> 00:09:53.590 align:start position:0%
+stuff is going to be the same we're just
+going<00:09:51.680><c> to</c><00:09:51.839><c> research</c><00:09:52.360><c> now</c><00:09:52.839><c> okay</c><00:09:52.959><c> so</c><00:09:53.120><c> we</c><00:09:53.240><c> can</c><00:09:53.399><c> see</c>
+
+00:09:53.590 --> 00:09:53.600 align:start position:0%
+going to research now okay so we can see
+ 
+
+00:09:53.600 --> 00:09:56.069 align:start position:0%
+going to research now okay so we can see
+it's<00:09:53.800><c> generating</c><00:09:54.279><c> different</c><00:09:54.560><c> queries</c><00:09:55.160><c> here</c>
+
+00:09:56.069 --> 00:09:56.079 align:start position:0%
+it's generating different queries here
+ 
+
+00:09:56.079 --> 00:09:58.110 align:start position:0%
+it's generating different queries here
+searching<00:09:56.560><c> different</c><00:09:56.920><c> sources</c><00:09:57.880><c> all</c><00:09:58.000><c> right</c>
+
+00:09:58.110 --> 00:09:58.120 align:start position:0%
+searching different sources all right
+ 
+
+00:09:58.120 --> 00:10:00.670 align:start position:0%
+searching different sources all right
+getting<00:09:58.480><c> subtopics</c><00:09:59.440><c> here</c><00:09:59.720><c> writing</c>
+
+00:10:00.670 --> 00:10:00.680 align:start position:0%
+getting subtopics here writing
+ 
+
+00:10:00.680 --> 00:10:03.069 align:start position:0%
+getting subtopics here writing
+introduction<00:10:01.680><c> potential</c><00:10:02.200><c> applications</c>
+
+00:10:03.069 --> 00:10:03.079 align:start position:0%
+introduction potential applications
+ 
+
+00:10:03.079 --> 00:10:05.269 align:start position:0%
+introduction potential applications
+future<00:10:03.519><c> prospects</c><00:10:03.920><c> and</c><00:10:04.200><c> developments</c><00:10:05.200><c> all</c>
+
+00:10:05.269 --> 00:10:05.279 align:start position:0%
+future prospects and developments all
+ 
+
+00:10:05.279 --> 00:10:06.670 align:start position:0%
+future prospects and developments all
+right<00:10:05.399><c> so</c><00:10:05.560><c> when</c><00:10:05.640><c> you</c><00:10:05.760><c> do</c><00:10:05.920><c> the</c><00:10:06.040><c> long</c><00:10:06.279><c> one</c><00:10:06.600><c> as</c>
+
+00:10:06.670 --> 00:10:06.680 align:start position:0%
+right so when you do the long one as
+ 
+
+00:10:06.680 --> 00:10:08.310 align:start position:0%
+right so when you do the long one as
+you'll<00:10:06.880><c> see</c><00:10:07.120><c> right</c><00:10:07.279><c> here</c><00:10:07.600><c> it</c><00:10:07.680><c> can</c><00:10:07.959><c> actually</c>
+
+00:10:08.310 --> 00:10:08.320 align:start position:0%
+you'll see right here it can actually
+ 
+
+00:10:08.320 --> 00:10:11.470 align:start position:0%
+you'll see right here it can actually
+get<00:10:08.640><c> pretty</c><00:10:08.920><c> long</c><00:10:09.800><c> which</c><00:10:09.920><c> is</c><00:10:10.160><c> kind</c><00:10:10.279><c> of</c><00:10:10.480><c> cool</c><00:10:11.240><c> um</c>
+
+00:10:11.470 --> 00:10:11.480 align:start position:0%
+get pretty long which is kind of cool um
+ 
+
+00:10:11.480 --> 00:10:13.910 align:start position:0%
+get pretty long which is kind of cool um
+but<00:10:11.640><c> it's</c><00:10:11.839><c> also</c><00:10:12.279><c> like</c><00:10:12.800><c> going</c><00:10:12.920><c> to</c><00:10:13.120><c> use</c><00:10:13.560><c> more</c>
+
+00:10:13.910 --> 00:10:13.920 align:start position:0%
+but it's also like going to use more
+ 
+
+00:10:13.920 --> 00:10:16.030 align:start position:0%
+but it's also like going to use more
+tokens<00:10:14.560><c> so</c><00:10:15.040><c> and</c><00:10:15.160><c> like</c><00:10:15.360><c> I</c><00:10:15.440><c> said</c><00:10:15.600><c> I'll</c><00:10:15.720><c> leave</c><00:10:15.920><c> the</c>
+
+00:10:16.030 --> 00:10:16.040 align:start position:0%
+tokens so and like I said I'll leave the
+ 
+
+00:10:16.040 --> 00:10:18.230 align:start position:0%
+tokens so and like I said I'll leave the
+docks<00:10:16.399><c> down</c><00:10:16.600><c> below</c><00:10:17.040><c> because</c><00:10:17.320><c> you</c><00:10:17.399><c> can</c><00:10:17.560><c> do</c><00:10:18.160><c> you</c>
+
+00:10:18.230 --> 00:10:18.240 align:start position:0%
+docks down below because you can do you
+ 
+
+00:10:18.240 --> 00:10:20.030 align:start position:0%
+docks down below because you can do you
+know<00:10:18.560><c> customize</c><00:10:19.120><c> this</c><00:10:19.240><c> in</c><00:10:19.399><c> different</c><00:10:19.720><c> ways</c>
+
+00:10:20.030 --> 00:10:20.040 align:start position:0%
+know customize this in different ways
+ 
+
+00:10:20.040 --> 00:10:22.110 align:start position:0%
+know customize this in different ways
+you<00:10:20.120><c> can</c><00:10:20.279><c> set</c><00:10:20.440><c> it</c><00:10:20.560><c> up</c><00:10:20.680><c> with</c><00:10:20.880><c> Docker</c><00:10:21.800><c> you</c><00:10:21.920><c> can</c>
+
+00:10:22.110 --> 00:10:22.120 align:start position:0%
+you can set it up with Docker you can
+ 
+
+00:10:22.120 --> 00:10:24.310 align:start position:0%
+you can set it up with Docker you can
+customize<00:10:22.640><c> with</c><00:10:22.800><c> Lang</c><00:10:23.160><c> Chang</c><00:10:23.640><c> in</c><00:10:23.920><c> Vector</c>
+
+00:10:24.310 --> 00:10:24.320 align:start position:0%
+customize with Lang Chang in Vector
+ 
+
+00:10:24.320 --> 00:10:27.350 align:start position:0%
+customize with Lang Chang in Vector
+stores<00:10:25.320><c> you</c><00:10:25.440><c> can</c><00:10:25.560><c> change</c><00:10:25.959><c> the</c><00:10:26.120><c> llm</c><00:10:26.680><c> provider</c>
+
+00:10:27.350 --> 00:10:27.360 align:start position:0%
+stores you can change the llm provider
+ 
+
+00:10:27.360 --> 00:10:29.750 align:start position:0%
+stores you can change the llm provider
+you<00:10:27.440><c> can</c><00:10:27.600><c> use</c><00:10:27.800><c> AMA</c><00:10:28.440><c> run</c><00:10:28.680><c> everything</c><00:10:29.000><c> Loc</c>
+
+00:10:29.750 --> 00:10:29.760 align:start position:0%
+you can use AMA run everything Loc
+ 
+
+00:10:29.760 --> 00:10:32.430 align:start position:0%
+you can use AMA run everything Loc
+change<00:10:30.040><c> the</c><00:10:30.519><c> retrievers</c><00:10:31.519><c> multi-step</c><00:10:32.120><c> agent</c>
+
+00:10:32.430 --> 00:10:32.440 align:start position:0%
+change the retrievers multi-step agent
+ 
+
+00:10:32.440 --> 00:10:34.590 align:start position:0%
+change the retrievers multi-step agent
+Frameworks<00:10:33.079><c> a</c><00:10:33.200><c> bunch</c><00:10:33.360><c> of</c><00:10:33.519><c> different</c><00:10:33.880><c> stuff</c><00:10:34.200><c> so</c>
+
+00:10:34.590 --> 00:10:34.600 align:start position:0%
+Frameworks a bunch of different stuff so
+ 
+
+00:10:34.600 --> 00:10:36.550 align:start position:0%
+Frameworks a bunch of different stuff so
+I<00:10:34.680><c> think</c><00:10:34.839><c> this</c><00:10:35.000><c> a</c><00:10:35.160><c> pretty</c><00:10:35.360><c> cool</c><00:10:35.920><c> project</c><00:10:36.440><c> they</c>
+
+00:10:36.550 --> 00:10:36.560 align:start position:0%
+I think this a pretty cool project they
+ 
+
+00:10:36.560 --> 00:10:39.430 align:start position:0%
+I think this a pretty cool project they
+have<00:10:36.680><c> over</c><00:10:36.880><c> 14,000</c><00:10:37.560><c> stars</c><00:10:37.839><c> on</c><00:10:38.040><c> GitHub</c><00:10:38.600><c> so</c><00:10:39.240><c> um</c>
+
+00:10:39.430 --> 00:10:39.440 align:start position:0%
+have over 14,000 stars on GitHub so um
+ 
+
+00:10:39.440 --> 00:10:41.230 align:start position:0%
+have over 14,000 stars on GitHub so um
+pretty<00:10:39.680><c> interesting</c><00:10:40.279><c> pretty</c><00:10:40.519><c> cool</c><00:10:40.920><c> all</c><00:10:41.079><c> in</c>
+
+00:10:41.230 --> 00:10:41.240 align:start position:0%
+pretty interesting pretty cool all in
+ 
+
+00:10:41.240 --> 00:10:42.710 align:start position:0%
+pretty interesting pretty cool all in
+all<00:10:41.440><c> I</c><00:10:41.519><c> think</c><00:10:41.680><c> it</c><00:10:41.839><c> has</c><00:10:41.959><c> its</c><00:10:42.160><c> strengths</c><00:10:42.560><c> and</c>
+
+00:10:42.710 --> 00:10:42.720 align:start position:0%
+all I think it has its strengths and
+ 
+
+00:10:42.720 --> 00:10:44.629 align:start position:0%
+all I think it has its strengths and
+weaknesses<00:10:43.399><c> just</c><00:10:43.519><c> like</c><00:10:43.760><c> all</c><00:10:43.920><c> the</c><00:10:44.079><c> other</c><00:10:44.320><c> open</c>
+
+00:10:44.629 --> 00:10:44.639 align:start position:0%
+weaknesses just like all the other open
+ 
+
+00:10:44.639 --> 00:10:46.470 align:start position:0%
+weaknesses just like all the other open
+source<00:10:44.920><c> perplexity</c><00:10:45.480><c> Alternatives</c><00:10:46.200><c> do</c><00:10:46.360><c> I</c>
+
+00:10:46.470 --> 00:10:46.480 align:start position:0%
+source perplexity Alternatives do I
+ 
+
+00:10:46.480 --> 00:10:47.870 align:start position:0%
+source perplexity Alternatives do I
+think<00:10:46.560><c> it</c><00:10:46.680><c> beats</c>
+
+00:10:47.870 --> 00:10:47.880 align:start position:0%
+think it beats
+ 
+
+00:10:47.880 --> 00:10:50.389 align:start position:0%
+think it beats
+perplexity<00:10:48.880><c> I</c><00:10:48.959><c> mean</c><00:10:49.160><c> I'd</c><00:10:49.360><c> probably</c><00:10:49.959><c> prefer</c>
+
+00:10:50.389 --> 00:10:50.399 align:start position:0%
+perplexity I mean I'd probably prefer
+ 
+
+00:10:50.399 --> 00:10:52.350 align:start position:0%
+perplexity I mean I'd probably prefer
+perplexity<00:10:50.920><c> over</c><00:10:51.160><c> this</c><00:10:51.320><c> but</c><00:10:51.440><c> I</c><00:10:51.560><c> think</c><00:10:51.760><c> this</c><00:10:52.120><c> is</c>
+
+00:10:52.350 --> 00:10:52.360 align:start position:0%
+perplexity over this but I think this is
+ 
+
+00:10:52.360 --> 00:10:54.269 align:start position:0%
+perplexity over this but I think this is
+definitely<00:10:52.760><c> it</c><00:10:52.959><c> has</c><00:10:53.160><c> its</c><00:10:53.320><c> own</c><00:10:53.519><c> use</c><00:10:53.880><c> case</c><00:10:54.120><c> and</c>
+
+00:10:54.269 --> 00:10:54.279 align:start position:0%
+definitely it has its own use case and
+ 
+
+00:10:54.279 --> 00:10:56.389 align:start position:0%
+definitely it has its own use case and
+it<00:10:54.720><c> kind</c><00:10:54.839><c> of</c><00:10:54.959><c> like</c><00:10:55.160><c> that</c><00:10:55.680><c> Powerhouse</c>
+
+00:10:56.389 --> 00:10:56.399 align:start position:0%
+it kind of like that Powerhouse
+ 
+
+00:10:56.399 --> 00:10:58.190 align:start position:0%
+it kind of like that Powerhouse
+researcher<00:10:57.200><c> and</c><00:10:57.320><c> it's</c><00:10:57.519><c> great</c><00:10:57.800><c> because</c><00:10:58.040><c> it's</c>
+
+00:10:58.190 --> 00:10:58.200 align:start position:0%
+researcher and it's great because it's
+ 
+
+00:10:58.200 --> 00:11:00.389 align:start position:0%
+researcher and it's great because it's
+open<00:10:58.480><c> source</c><00:10:58.760><c> too</c><00:10:58.959><c> you</c><00:10:59.040><c> can</c><00:10:59.320><c> self</c><00:10:59.600><c> host</c><00:10:59.839><c> it</c><00:11:00.240><c> can</c>
+
+00:11:00.389 --> 00:11:00.399 align:start position:0%
+open source too you can self host it can
+ 
+
+00:11:00.399 --> 00:11:02.550 align:start position:0%
+open source too you can self host it can
+change<00:11:00.800><c> different</c><00:11:01.040><c> models</c><00:11:02.040><c> um</c><00:11:02.279><c> other</c><00:11:02.440><c> than</c>
+
+00:11:02.550 --> 00:11:02.560 align:start position:0%
+change different models um other than
+ 
+
+00:11:02.560 --> 00:11:04.470 align:start position:0%
+change different models um other than
+that<00:11:02.760><c> I</c><00:11:02.839><c> think</c><00:11:03.000><c> it</c><00:11:03.160><c> is</c><00:11:03.399><c> really</c><00:11:03.720><c> good</c><00:11:04.120><c> in</c><00:11:04.240><c> terms</c>
+
+00:11:04.470 --> 00:11:04.480 align:start position:0%
+that I think it is really good in terms
+ 
+
+00:11:04.480 --> 00:11:06.110 align:start position:0%
+that I think it is really good in terms
+of<00:11:04.680><c> that</c><00:11:05.000><c> but</c><00:11:05.120><c> when</c><00:11:05.240><c> it</c><00:11:05.320><c> comes</c><00:11:05.519><c> to</c><00:11:05.680><c> doing</c><00:11:05.959><c> the</c>
+
+00:11:06.110 --> 00:11:06.120 align:start position:0%
+of that but when it comes to doing the
+ 
+
+00:11:06.120 --> 00:11:07.710 align:start position:0%
+of that but when it comes to doing the
+research<00:11:06.560><c> it</c><00:11:06.720><c> actually</c><00:11:06.920><c> does</c><00:11:07.040><c> a</c><00:11:07.279><c> pretty</c><00:11:07.480><c> good</c>
+
+00:11:07.710 --> 00:11:07.720 align:start position:0%
+research it actually does a pretty good
+ 
+
+00:11:07.720 --> 00:11:09.110 align:start position:0%
+research it actually does a pretty good
+job<00:11:08.240><c> all</c><00:11:08.360><c> right</c><00:11:08.440><c> so</c><00:11:08.560><c> that's</c><00:11:08.720><c> pretty</c><00:11:08.880><c> much</c><00:11:09.000><c> it</c>
+
+00:11:09.110 --> 00:11:09.120 align:start position:0%
+job all right so that's pretty much it
+ 
+
+00:11:09.120 --> 00:11:10.350 align:start position:0%
+job all right so that's pretty much it
+for<00:11:09.240><c> this</c><00:11:09.399><c> video</c><00:11:09.680><c> guys</c><00:11:09.800><c> if</c><00:11:09.920><c> you're</c><00:11:10.000><c> new</c><00:11:10.160><c> to</c><00:11:10.240><c> the</c>
+
+00:11:10.350 --> 00:11:10.360 align:start position:0%
+for this video guys if you're new to the
+ 
+
+00:11:10.360 --> 00:11:11.670 align:start position:0%
+for this video guys if you're new to the
+channel<00:11:10.560><c> we</c><00:11:10.680><c> upload</c><00:11:10.959><c> videos</c><00:11:11.240><c> every</c><00:11:11.399><c> single</c>
+
+00:11:11.670 --> 00:11:11.680 align:start position:0%
+channel we upload videos every single
+ 
+
+00:11:11.680 --> 00:11:13.910 align:start position:0%
+channel we upload videos every single
+day<00:11:11.839><c> on</c><00:11:12.120><c> AI</c><00:11:12.560><c> automation</c><00:11:13.320><c> business</c><00:11:13.600><c> growth</c>
+
+00:11:13.910 --> 00:11:13.920 align:start position:0%
+day on AI automation business growth
+ 
+
+00:11:13.920 --> 00:11:15.550 align:start position:0%
+day on AI automation business growth
+Marketing<00:11:14.279><c> sales</c><00:11:14.600><c> Etc</c><00:11:15.079><c> if</c><00:11:15.160><c> you</c><00:11:15.279><c> like</c><00:11:15.440><c> that</c>
+
+00:11:15.550 --> 00:11:15.560 align:start position:0%
+Marketing sales Etc if you like that
+ 
+
+00:11:15.560 --> 00:11:16.949 align:start position:0%
+Marketing sales Etc if you like that
+type<00:11:15.680><c> of</c><00:11:15.800><c> content</c><00:11:16.120><c> then</c><00:11:16.240><c> make</c><00:11:16.360><c> sure</c><00:11:16.480><c> to</c><00:11:16.600><c> drop</c><00:11:16.839><c> a</c>
+
+00:11:16.949 --> 00:11:16.959 align:start position:0%
+type of content then make sure to drop a
+ 
+
+00:11:16.959 --> 00:11:18.389 align:start position:0%
+type of content then make sure to drop a
+like<00:11:17.200><c> And</c><00:11:17.360><c> subscribe</c><00:11:17.720><c> to</c><00:11:17.839><c> the</c><00:11:17.959><c> channel</c><00:11:18.240><c> to</c>
+
+00:11:18.389 --> 00:11:18.399 align:start position:0%
+like And subscribe to the channel to
+ 
+
+00:11:18.399 --> 00:11:20.230 align:start position:0%
+like And subscribe to the channel to
+stay<00:11:18.560><c> up</c><00:11:18.680><c> to</c><00:11:18.800><c> date</c><00:11:18.959><c> with</c><00:11:19.040><c> the</c><00:11:19.160><c> daily</c><00:11:19.519><c> uploads</c>
+
+00:11:20.230 --> 00:11:20.240 align:start position:0%
+stay up to date with the daily uploads
+ 
+
+00:11:20.240 --> 00:11:21.949 align:start position:0%
+stay up to date with the daily uploads
+got<00:11:20.399><c> a</c><00:11:20.480><c> couple</c><00:11:20.760><c> cool</c><00:11:20.959><c> videos</c><00:11:21.279><c> coming</c><00:11:21.519><c> shortly</c>
+
+00:11:21.949 --> 00:11:21.959 align:start position:0%
+got a couple cool videos coming shortly
+ 
+
+00:11:21.959 --> 00:11:23.829 align:start position:0%
+got a couple cool videos coming shortly
+guys<00:11:22.120><c> that</c><00:11:22.240><c> I've</c><00:11:22.360><c> been</c><00:11:22.519><c> working</c><00:11:22.800><c> on</c><00:11:23.399><c> so</c><00:11:23.680><c> stay</c>
+
+00:11:23.829 --> 00:11:23.839 align:start position:0%
+guys that I've been working on so stay
+ 
+
+00:11:23.839 --> 00:11:25.389 align:start position:0%
+guys that I've been working on so stay
+tuned<00:11:24.120><c> for</c><00:11:24.279><c> that</c><00:11:24.480><c> should</c><00:11:24.680><c> be</c><00:11:24.800><c> in</c><00:11:24.920><c> the</c><00:11:25.040><c> next</c>
+
+00:11:25.389 --> 00:11:25.399 align:start position:0%
+tuned for that should be in the next
+ 
+
+00:11:25.399 --> 00:11:26.990 align:start position:0%
+tuned for that should be in the next
+couple<00:11:25.760><c> days</c><00:11:25.959><c> or</c><00:11:26.160><c> so</c><00:11:26.600><c> and</c><00:11:26.680><c> then</c><00:11:26.800><c> if</c><00:11:26.920><c> you</c>
+
+00:11:26.990 --> 00:11:27.000 align:start position:0%
+couple days or so and then if you
+ 
+
+00:11:27.000 --> 00:11:28.110 align:start position:0%
+couple days or so and then if you
+haven't<00:11:27.240><c> already</c><00:11:27.480><c> joined</c><00:11:27.760><c> the</c><00:11:27.880><c> free</c>
+
+00:11:28.110 --> 00:11:28.120 align:start position:0%
+haven't already joined the free
+ 
+
+00:11:28.120 --> 00:11:30.389 align:start position:0%
+haven't already joined the free
+community<00:11:28.519><c> stri</c><00:11:28.959><c> community</c><00:11:29.519><c> .</c><00:11:29.959><c> our</c><00:11:30.120><c> free</c>
+
+00:11:30.389 --> 00:11:30.399 align:start position:0%
+community stri community . our free
+ 
+
+00:11:30.399 --> 00:11:32.190 align:start position:0%
+community stri community . our free
+Facebook<00:11:30.720><c> group</c><00:11:30.959><c> free</c><00:11:31.160><c> Discord</c><00:11:31.519><c> Channel</c><00:11:32.040><c> link</c>
+
+00:11:32.190 --> 00:11:32.200 align:start position:0%
+Facebook group free Discord Channel link
+ 
+
+00:11:32.200 --> 00:11:33.509 align:start position:0%
+Facebook group free Discord Channel link
+for<00:11:32.360><c> that</c><00:11:32.440><c> will</c><00:11:32.560><c> be</c><00:11:32.680><c> in</c><00:11:32.760><c> the</c><00:11:32.920><c> description</c><00:11:33.320><c> down</c>
+
+00:11:33.509 --> 00:11:33.519 align:start position:0%
+for that will be in the description down
+ 
+
+00:11:33.519 --> 00:11:35.190 align:start position:0%
+for that will be in the description down
+below<00:11:34.040><c> let</c><00:11:34.160><c> me</c><00:11:34.279><c> know</c><00:11:34.399><c> if</c><00:11:34.480><c> you</c><00:11:34.600><c> guys</c><00:11:34.760><c> have</c><00:11:34.880><c> tried</c>
+
+00:11:35.190 --> 00:11:35.200 align:start position:0%
+below let me know if you guys have tried
+ 
+
+00:11:35.200 --> 00:11:37.470 align:start position:0%
+below let me know if you guys have tried
+GPT<00:11:35.760><c> researcher</c><00:11:36.399><c> down</c><00:11:36.600><c> below</c><00:11:37.040><c> or</c><00:11:37.200><c> if</c><00:11:37.320><c> youve</c>
+
+00:11:37.470 --> 00:11:37.480 align:start position:0%
+GPT researcher down below or if youve
+ 
+
+00:11:37.480 --> 00:11:38.870 align:start position:0%
+GPT researcher down below or if youve
+tried<00:11:37.760><c> some</c><00:11:37.839><c> of</c><00:11:37.959><c> the</c><00:11:38.120><c> other</c><00:11:38.360><c> open</c><00:11:38.639><c> source</c>
+
+00:11:38.870 --> 00:11:38.880 align:start position:0%
+tried some of the other open source
+ 
+
+00:11:38.880 --> 00:11:41.870 align:start position:0%
+tried some of the other open source
+flexity<00:11:39.440><c> Alternatives</c><00:11:40.040><c> like</c><00:11:40.360><c> perplex</c><00:11:41.360><c> llm</c>
+
+00:11:41.870 --> 00:11:41.880 align:start position:0%
+flexity Alternatives like perplex llm
+ 
+
+00:11:41.880 --> 00:11:43.710 align:start position:0%
+flexity Alternatives like perplex llm
+search<00:11:42.639><c> all</c><00:11:42.800><c> the</c><00:11:42.920><c> other</c><00:11:43.120><c> different</c><00:11:43.360><c> ones</c><00:11:43.600><c> I</c>
+
+00:11:43.710 --> 00:11:43.720 align:start position:0%
+search all the other different ones I
+ 
+
+00:11:43.720 --> 00:11:45.110 align:start position:0%
+search all the other different ones I
+mentioned<00:11:44.279><c> and</c><00:11:44.399><c> let</c><00:11:44.519><c> me</c><00:11:44.600><c> know</c><00:11:44.760><c> which</c><00:11:44.880><c> one</c><00:11:45.000><c> is</c>
+
+00:11:45.110 --> 00:11:45.120 align:start position:0%
+mentioned and let me know which one is
+ 
+
+00:11:45.120 --> 00:11:47.030 align:start position:0%
+mentioned and let me know which one is
+your<00:11:45.399><c> favorite</c><00:11:45.959><c> or</c><00:11:46.279><c> do</c><00:11:46.399><c> you</c><00:11:46.519><c> just</c><00:11:46.680><c> prefer</c>
+
+00:11:47.030 --> 00:11:47.040 align:start position:0%
+your favorite or do you just prefer
+ 
+
+00:11:47.040 --> 00:11:48.870 align:start position:0%
+your favorite or do you just prefer
+perplexity<00:11:47.880><c> and</c><00:11:48.000><c> then</c><00:11:48.120><c> also</c><00:11:48.279><c> too</c><00:11:48.560><c> guys</c><00:11:48.680><c> if</c><00:11:48.760><c> you</c>
+
+00:11:48.870 --> 00:11:48.880 align:start position:0%
+perplexity and then also too guys if you
+ 
+
+00:11:48.880 --> 00:11:50.470 align:start position:0%
+perplexity and then also too guys if you
+run<00:11:49.040><c> a</c><00:11:49.240><c> business</c><00:11:49.480><c> and</c><00:11:49.600><c> you</c><00:11:49.839><c> have</c><00:11:50.000><c> leads</c><00:11:50.360><c> and</c>
+
+00:11:50.470 --> 00:11:50.480 align:start position:0%
+run a business and you have leads and
+ 
+
+00:11:50.480 --> 00:11:52.350 align:start position:0%
+run a business and you have leads and
+you<00:11:50.560><c> need</c><00:11:50.839><c> AI</c><00:11:51.200><c> appointment</c><00:11:51.600><c> Setters</c><00:11:52.000><c> booking</c>
+
+00:11:52.350 --> 00:11:52.360 align:start position:0%
+you need AI appointment Setters booking
+ 
+
+00:11:52.360 --> 00:11:54.230 align:start position:0%
+you need AI appointment Setters booking
+appointments<00:11:52.760><c> for</c><00:11:52.959><c> you</c><00:11:53.120><c> on</c><00:11:53.440><c> autopilot</c><00:11:54.079><c> then</c>
+
+00:11:54.230 --> 00:11:54.240 align:start position:0%
+appointments for you on autopilot then
+ 
+
+00:11:54.240 --> 00:11:56.069 align:start position:0%
+appointments for you on autopilot then
+check<00:11:54.399><c> out</c><00:11:54.560><c> stride</c><00:11:54.959><c> agents.com</c><00:11:55.519><c> I'll</c><00:11:55.800><c> leave</c><00:11:55.959><c> a</c>
+
+00:11:56.069 --> 00:11:56.079 align:start position:0%
+check out stride agents.com I'll leave a
+ 
+
+00:11:56.079 --> 00:11:57.949 align:start position:0%
+check out stride agents.com I'll leave a
+link<00:11:56.320><c> down</c><00:11:56.519><c> below</c><00:11:57.200><c> other</c><00:11:57.399><c> than</c><00:11:57.519><c> that</c><00:11:57.720><c> guys</c><00:11:57.880><c> I</c>
+
+00:11:57.949 --> 00:11:57.959 align:start position:0%
+link down below other than that guys I
+ 
+
+00:11:57.959 --> 00:11:59.829 align:start position:0%
+link down below other than that guys I
+will<00:11:58.120><c> see</c><00:11:58.240><c> you</c><00:11:58.360><c> in</c><00:11:58.519><c> tomorrow's</c><00:11:58.959><c> video</c><00:11:59.639><c> keep</c>
+
+00:11:59.829 --> 00:11:59.839 align:start position:0%
+will see you in tomorrow's video keep
+ 
+
+00:11:59.839 --> 00:12:01.710 align:start position:0%
+will see you in tomorrow's video keep
+hustling<00:12:00.360><c> keep</c><00:12:00.560><c> grinding</c><00:12:01.120><c> and</c><00:12:01.279><c> of</c><00:12:01.399><c> course</c>
+
+00:12:01.710 --> 00:12:01.720 align:start position:0%
+hustling keep grinding and of course
+ 
+
+00:12:01.720 --> 00:12:06.360 align:start position:0%
+hustling keep grinding and of course
+guys<00:12:01.959><c> accelerate</c><00:12:02.360><c> your</c><00:12:02.519><c> stride</c><00:12:03.120><c> take</c><00:12:03.360><c> care</c>
+

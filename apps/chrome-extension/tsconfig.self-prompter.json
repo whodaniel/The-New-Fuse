@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["chrome", "node", "jest"],
+    "noEmit": true
+  },
+  "include": [
+    "src/shared/progressive-self-prompter.ts",
+    "src/shared/__tests__/progressive-self-prompter.test.ts",
+    "src/v5/content/self-prompting.ts",
+    "src/v6/content/self-prompting.ts",
+    "src/v5/content/index.ts",
+    "src/v6/content/index.ts",
+    "src/v5/content/adapters/SimpleChatBridge.ts",
+    "src/v6/content/adapters/SimpleChatBridge.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "src/_legacy/**",
+    "src/**/_archive/**"
+  ]
+}

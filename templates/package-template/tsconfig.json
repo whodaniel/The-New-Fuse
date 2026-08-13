@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.standard.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "composite": true,
+    "ignoreDeprecations": "5.0"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../types"
+    }
+  ]
+}

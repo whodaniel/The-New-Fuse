@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "typeRoots": ["./node_modules/@types", "../node_modules/@types"],
+    "ignoreDeprecations": "5.0"
+  },
+  "include": ["./"]
+}

@@ -1,0 +1,478 @@
+// @ts-nocheck
+/**
+ * Agent Service - Production ready service for agent management
+ * Dynamically fetches both active agent instances and system-defined agent templates.
+ */
+
+export interface Agent {
+  id: string;
+  name: string;
+  type: string;
+  description?: string;
+  capabilities: string[];
+  status: 'active' | 'inactive' | 'error' | 'standby';
+  version: string;
+  model?: string;
+  provider?: string;
+  systemPrompt?: string;
+  profile?: Record<string, any>;
+  config?: Record<string, any>;
+  configuration: Record<string, any>;
+  metadata: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AgentTemplate {
+  id: string;
+  name: string;
+  bank: 'tnf' | 'claude';
+  filename: string;
+  size: number;
+  lastModified: Date | string;
+  description?: string;
+  category?: string;
+  sourcePath?: string;
+}
+
+export interface AgentExecution {
+  id: string;
+  agentId: string;
+  taskId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  startTime: Date;
+  endTime?: Date;
+  input: Record<string, any>;
+  output?: Record<string, any>;
+  error?: string;
+  logs: string[];
+}
+
+export interface AgentCapability {
+  id: string;
+  name: string;
+  description: string;
+  parameters: Record<string, any>;
+  category: string;
+}
+
+export interface SwarmCapabilityStatus {
+  available: Record<string, boolean>;
+  unavailable: Record<string, boolean>;
+  reason?: string;
+}
+
+export interface LocalAICapabilityStatus {
+  enabled: boolean;
+  reason?: string;
+  endpoints?: Record<string, boolean>;
+}
+
+class AgentService {
+  private baseUrl: string;
+  private apiKey?: string;
+
+  constructor(baseUrl: string = '/api', apiKey?: string) {
+    this.baseUrl = baseUrl;
+    this.apiKey = apiKey;
+  }
+
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const { authFetch, getAuthTokenCandidates } = await import('@/utils/authToken');
+    const url = `${this.baseUrl}${endpoint}`;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string, string>) || {}),
+    };
+
+    // Prefer explicit constructor apiKey; otherwise authFetch attaches session JWT.
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    } else {
+      const candidates = await getAuthTokenCandidates();
+      if (!candidates.length) {
+        const err = new Error('Agent API Error: 401 Authentication required');
+        (err as Error & { status?: number }).status = 401;
+        throw err;
+      }
+    }
+
+    try {
+      const response = await authFetch(url, {
+        ...options,
+        headers,
+      });
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        throw new Error('Received HTML instead of JSON (likely 404/Proxy error)');
+      }
+
+      if (!response.ok) {
+        const err = new Error(`Agent API Error: ${response.status} ${response.statusText}`);
+        (err as Error & { status?: number }).status = response.status;
+        throw err;
+      }
+
+      return await response.json();
+    } catch (error) {
+      const status = (error as Error & { status?: number })?.status;
+      // 401/403 are expected when signed out or session expired — callers soft-fallback.
+      if (status !== 401 && status !== 403) {
+        console.warn('API request to %s failed. Error:', url, error);
+      }
+      throw error;
+    }
+  }
+
+  private isAuthFailure(error: unknown): boolean {
+    const status = (error as Error & { status?: number })?.status;
+    if (status === 401 || status === 403) return true;
+    const message = error instanceof Error ? error.message : String(error || '');
+    return /\b401\b|\b403\b|authentication required|unauthorized/i.test(message);
+  }
+
+  private isSoftFleetFailure(error: unknown): boolean {
+    if (this.isAuthFailure(error)) return true;
+    const status = (error as Error & { status?: number })?.status;
+    // Schema-drift / empty-tenant 400s should not hard-fail the dashboard shell.
+    return status === 400;
+  }
+
+  /** Live DB instances for the signed-in user (Fleet). */
+  async getFleetAgents(): Promise<Agent[]> {
+    try {
+      const instances = await this.request<any[]>('/agents');
+      return (Array.isArray(instances) ? instances : []).map((a) => this.transformAgent(a));
+    } catch (error) {
+      if (this.isSoftFleetFailure(error)) {
+        return [];
+      }
+      console.error('Failed to get fleet agents', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Stock persona bank (Library). Prefers API bank; falls back to packaged catalog.
+   */
+  async getLibraryTemplates(bank: 'tnf' | 'claude' | 'all' = 'all'): Promise<AgentTemplate[]> {
+    const query = bank && bank !== 'all' ? `?bank=${bank}` : '';
+    try {
+      const templates = await this.request<AgentTemplate[]>(`/agents/bank/templates${query}`);
+      if (Array.isArray(templates) && templates.length > 0) {
+        return templates;
+      }
+    } catch (error) {
+      if (!this.isAuthFailure(error)) {
+        console.warn('Agent bank API unavailable, trying packaged catalog');
+      }
+    }
+
+    return this.loadPackagedCatalog(bank);
+  }
+
+  private async loadPackagedCatalog(
+    bank: 'tnf' | 'claude' | 'all' = 'all'
+  ): Promise<AgentTemplate[]> {
+    try {
+      const response = await fetch('/agent-bank/catalog.json', { credentials: 'same-origin' });
+      if (!response.ok) return [];
+      const payload = await response.json();
+      const templates: AgentTemplate[] = Array.isArray(payload?.templates)
+        ? payload.templates
+        : Array.isArray(payload)
+          ? payload
+          : [];
+      return templates
+        .filter((t) => (bank === 'all' ? true : t.bank === bank))
+        .map((t) => ({
+          ...t,
+          lastModified: t.lastModified ? new Date(t.lastModified) : new Date(),
+        }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * @deprecated Prefer getFleetAgents + getLibraryTemplates.
+   * Kept for callers that still expect a merged list.
+   */
+  async getAgents(): Promise<Agent[]> {
+    try {
+      const [instancesResult, templatesResult] = await Promise.allSettled([
+        this.getFleetAgents(),
+        this.getLibraryTemplates('all'),
+      ]);
+
+      const activeAgents = instancesResult.status === 'fulfilled' ? instancesResult.value : [];
+      const templates = templatesResult.status === 'fulfilled' ? templatesResult.value : [];
+      const systemAgents = templates.map((t) => this.transformTemplateToAgent(t));
+
+      const merged = [...activeAgents];
+      for (const sa of systemAgents) {
+        if (!merged.find((ma) => ma.name === sa.name)) {
+          merged.push(sa);
+        }
+      }
+
+      return merged;
+    } catch (error) {
+      console.error('Failed to get agents', error);
+      return [];
+    }
+  }
+
+  async getAgentTemplates(): Promise<AgentTemplate[]> {
+    return this.getLibraryTemplates('all');
+  }
+
+  async getAgent(id: string): Promise<Agent> {
+    try {
+      const agent = await this.request<any>(`/agents/${id}`);
+      return this.transformAgent(agent);
+    } catch (error) {
+      const templatesResult = await this.getAgentTemplates();
+      const template = templatesResult.find((t) => t.id === id);
+      if (template) return this.transformTemplateToAgent(template);
+      throw error;
+    }
+  }
+
+  async createAgent(agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> {
+    const created = await this.request<any>('/agents', {
+      method: 'POST',
+      body: JSON.stringify(agent),
+    });
+    return this.transformAgent(created);
+  }
+
+  async updateAgent(id: string, updates: Partial<Agent>): Promise<Agent> {
+    const updated = await this.request<any>(`/agents/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+    return this.transformAgent(updated);
+  }
+
+  async deleteAgent(id: string): Promise<void> {
+    await this.request(`/agents/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async startAgent(id: string): Promise<Agent> {
+    const agent = await this.request<any>(`/agents/${id}/start`, {
+      method: 'POST',
+    });
+    return this.transformAgent(agent);
+  }
+
+  async stopAgent(id: string): Promise<Agent> {
+    const agent = await this.request<any>(`/agents/${id}/stop`, {
+      method: 'POST',
+    });
+    return this.transformAgent(agent);
+  }
+
+  async executeAgent(
+    agentId: string,
+    task: string,
+    parameters?: Record<string, any>
+  ): Promise<AgentExecution> {
+    const execution = await this.request<any>('/agents/execute', {
+      method: 'POST',
+      body: JSON.stringify({
+        agentId,
+        task,
+        parameters,
+      }),
+    });
+    return this.transformExecution(execution);
+  }
+
+  async getExecution(executionId: string): Promise<AgentExecution> {
+    const execution = await this.request<any>(`/agents/executions/${executionId}`);
+    return this.transformExecution(execution);
+  }
+
+  async getExecutions(agentId?: string): Promise<AgentExecution[]> {
+    const endpoint = agentId ? `/agents/${agentId}/executions` : '/agents/executions';
+    const executions = await this.request<any[]>(endpoint);
+    return executions.map((e) => this.transformExecution(e));
+  }
+
+  async getCapabilities(): Promise<AgentCapability[]> {
+    return await this.request<AgentCapability[]>('/agents/capabilities');
+  }
+
+  async getAgentCapabilities(agentId: string): Promise<AgentCapability[]> {
+    return await this.request<AgentCapability[]>(`/agents/${agentId}/capabilities`);
+  }
+
+  async getAgentStatus(agentId: string): Promise<{ status: string; health: any }> {
+    return await this.request<{ status: string; health: any }>(`/agents/${agentId}/status`);
+  }
+
+  async pingAgent(agentId: string): Promise<boolean> {
+    try {
+      await this.request(`/agents/${agentId}/ping`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getAgentConfig(agentId: string): Promise<Record<string, any>> {
+    return await this.request<Record<string, any>>(`/agents/${agentId}/config`);
+  }
+
+  async updateAgentConfig(
+    agentId: string,
+    config: Record<string, any>
+  ): Promise<Record<string, any>> {
+    return await this.request<Record<string, any>>(`/agents/${agentId}/config`, {
+      method: 'PATCH',
+      body: JSON.stringify(config),
+    });
+  }
+
+  getHumanConnectionOptions(): HumanConnectionOption[] {
+    return [
+      {
+        name: 'Telegram Bot',
+        url: 'https://t.me/thenewfuse_bot',
+        icon: 'Send',
+        description: 'Direct status updates and approvals via Telegram.',
+      },
+      {
+        name: 'Discord (W3MARKETING)',
+        url: 'https://discord.gg/4GUHgFYr6',
+        icon: 'MessageSquare',
+        description: 'Collaborate with the swarm in the community DAO.',
+      },
+      {
+        name: 'Discord (BizSynth)',
+        url: 'https://discord.gg/hWt48aBE2',
+        icon: 'MessageSquare',
+        description: 'Business and specialized agent coordination.',
+      },
+    ];
+  }
+
+  async getSwarmActivity(): Promise<SwarmActivity[]> {
+    try {
+      const response = await this.request<{ success: boolean; data: SwarmLog[] }>(
+        '/autonomous/swarm/logs'
+      );
+      if (!response.success || !Array.isArray(response.data)) return [];
+
+      return response.data.map((log, index) => ({
+        id: `${log.timestamp || 'no-ts'}:${log.eventType || 'event'}:${index}`,
+        type: this.mapLogTypeToActivity(log.eventType || ''),
+        title: log.content || 'System Event',
+        agent: log.metadata?.source || log.metadata?.actor || 'System',
+        timestamp: new Date(log.timestamp),
+        status: String(log.eventType || '').includes('completed') ? 'completed' : 'active',
+      }));
+    } catch (error) {
+      console.error('Failed to fetch real swarm activity:', error);
+      return [];
+    }
+  }
+
+  async getSwarmCapabilityStatus(): Promise<SwarmCapabilityStatus | null> {
+    try {
+      return await this.request<SwarmCapabilityStatus>('/swarm/status');
+    } catch (error) {
+      console.error('Failed to fetch swarm capability status:', error);
+      return null;
+    }
+  }
+
+  async getLocalAICapabilityStatus(): Promise<LocalAICapabilityStatus | null> {
+    try {
+      return await this.request<LocalAICapabilityStatus>('/local-ai/status');
+    } catch (error) {
+      console.error('Failed to fetch local AI capability status:', error);
+      return null;
+    }
+  }
+
+  private mapLogTypeToActivity(eventType: string): 'auction' | 'scan' | 'award' {
+    const type = String(eventType || '').toLowerCase();
+    if (type.includes('auction') || type.includes('bidding')) return 'auction';
+    if (type.includes('award') || type.includes('contract')) return 'award';
+    return 'scan';
+  }
+
+  private transformAgent(apiAgent: any): Agent {
+    const configuration = apiAgent.configuration || apiAgent.config || {};
+    const profile = apiAgent.profile || {};
+    const rawStatus = String(apiAgent.status || 'inactive').toUpperCase();
+    const normalizedStatus: Agent['status'] =
+      rawStatus === 'ACTIVE'
+        ? 'active'
+        : rawStatus === 'ERROR'
+          ? 'error'
+          : rawStatus === 'BUSY' || rawStatus === 'IDLE' || rawStatus === 'READY'
+            ? 'standby'
+            : 'inactive';
+    const metadata = {
+      ...(apiAgent.metadata || {}),
+      ...(profile.avatar && !apiAgent?.metadata?.pfpUrl ? { pfpUrl: profile.avatar } : {}),
+      ...(configuration.skills && !apiAgent?.metadata?.skills
+        ? { skills: configuration.skills }
+        : {}),
+      ...(configuration.tools && !apiAgent?.metadata?.tools ? { tools: configuration.tools } : {}),
+    };
+
+    return {
+      ...apiAgent,
+      status: normalizedStatus,
+      model: apiAgent.model || configuration?.llm?.primary?.model,
+      provider: apiAgent.provider || configuration?.llm?.primary?.provider,
+      systemPrompt: apiAgent.systemPrompt || configuration?.prompts?.system,
+      config: configuration,
+      configuration,
+      profile,
+      metadata,
+      createdAt: new Date(apiAgent.createdAt || Date.now()),
+      updatedAt: new Date(apiAgent.updatedAt || Date.now()),
+    };
+  }
+
+  private transformTemplateToAgent(template: AgentTemplate): Agent {
+    const modified = template.lastModified ? new Date(template.lastModified) : new Date();
+    return {
+      id: template.id,
+      name: template.name,
+      type: template.category || 'System',
+      description: template.description || 'System-defined agent persona.',
+      capabilities: [],
+      status: 'standby',
+      version: '1.0.0',
+      configuration: {},
+      metadata: {
+        bank: template.bank,
+        filename: template.filename,
+        sourcePath: template.sourcePath,
+        isLibraryTemplate: true,
+      },
+      createdAt: modified,
+      updatedAt: modified,
+    };
+  }
+
+  private transformExecution(apiExecution: any): AgentExecution {
+    return {
+      ...apiExecution,
+      startTime: new Date(apiExecution.startTime),
+      endTime: apiExecution.endTime ? new Date(apiExecution.endTime) : undefined,
+    };
+  }
+}
+
+export const agentService = new AgentService();
+export default AgentService;

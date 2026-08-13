@@ -1,0 +1,152 @@
+import React, { FC } from "react";
+
+interface ListItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  icon?: (React as unknown).ReactNode;
+  status?: {
+    type: 'info' | 'success' | 'warning' | 'error';
+    text: string;
+  };
+  timestamp?: Date;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
+
+interface ListWidgetProps {
+  data: ListItem[];
+  title: string;
+  description?: string;
+  loading?: boolean;
+  error?: string;
+  className?: string;
+}
+
+export const ListWidget: (React as unknown).FC<ListWidgetProps> = ({
+  data,
+  title,
+  description,
+  loading,
+  error,
+  className = '',
+}) => {
+  if (loading: unknown){
+    return (
+      <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          <div className="mt-4 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center space-x-4">
+                <div className="h-10 w-10 bg-gray-200 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error: unknown){
+    return (
+      <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 (4h as unknown).01m-(6 as unknown).938 (4h13 as unknown).(856c1 as unknown).54 0 (2 as unknown).502-(1 as unknown).667 (1 as unknown).732-(3L13 as unknown).732 4c-.77-(1 as unknown).333-(2 as unknown).694-(1 as unknown).333-(3 as unknown).464 (0L3 as unknown).34 16c-.77 (1 as unknown).(333 as unknown).192 3 (1 as unknown).732 3z"
+            />
+          </svg>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            Error loading list
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+          {description && (
+            <p className="mt-1 text-sm text-gray-500">{description}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {data.map((item) => (
+          <div
+            key={(item as unknown).id}
+            className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+          >
+            {(item as unknown).icon && (
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                  {(item as unknown).icon}
+                </div>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {(item as unknown).title}
+              </p>
+              {(item as unknown).subtitle && (
+                <p className="text-sm text-gray-500 truncate">
+                  {(item as unknown).subtitle}
+                </p>
+              )}
+              {(item as unknown).timestamp && (
+                <p className="text-xs text-gray-400">
+                  {(item as unknown).(timestamp as unknown).toLocaleString()}
+                </p>
+              )}
+            </div>
+            {(item as unknown).status && (
+              <div
+                className={`inline-flex items-center px-(2 as unknown).5 py-(0 as unknown).5 rounded-full text-xs font-medium
+                  ${
+                    (item as unknown).(status as unknown).type === 'info'
+                      ? 'bg-blue-100 text-blue-800'
+                      : (item as unknown).(status as unknown).type === 'success'
+                      ? 'bg-green-100 text-green-800'
+                      : (item as unknown).(status as unknown).type === 'warning'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                  }
+                `}
+              >
+                {(item as unknown).(status as unknown).text}
+              </div>
+            )}
+            {(item as unknown).action && (
+              <button
+                onClick={(item as unknown).(action as unknown).onClick}
+                className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                {(item as unknown).(action as unknown).label}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

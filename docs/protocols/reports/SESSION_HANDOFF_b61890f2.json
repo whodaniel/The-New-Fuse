@@ -1,0 +1,73 @@
+{
+  "spec": "tnf/session-handoff/0.1",
+  "handoff_id": "b61890f2-3a47-41d0-9e3c-1de7500cd6a6",
+  "created_at": "2026-07-14T19:01:14.000Z",
+  "supersedes": "eaaf0c4d-1f33-4080-871c-351f9a86e28f",
+  "supersedes_attempted_but_preview_only": "f81589d6-f361-46a5-a1a8-dcd13ec5895b",
+  "repository": "The-New-Fuse",
+  "branch": "main",
+  "head_sha": "8a2e3f606e",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "agent": "tnf-local-terminal-ttys009",
+  "work_summary": [
+    "Reconciled AGENT_STATUS_LEDGER.md (commit b41822c99f)",
+    "Removed orphaned .git/index.lock from ~14:39 UTC (lsof-verified)",
+    "Snapshotted .agent testing-status/rolling-summary (commit 9b19947fc2)",
+    "Adjacent commits by autonomous-improver landed in-flight: browser_webview.rs (.build(&app) change), relay.log, tsconfig.tsbuildinfo",
+    "Attempted to lift handoff in 3a4f5965dc but lint-staged swept 3 dirty files into it; reverted via git reset --hard HEAD~1 to restore clean boundary"
+  ],
+  "completed_commits": [
+    "b41822c99f chore(status): advance AGENT_STATUS_LEDGER to handoff eaaf0c4d + drop webview min_size",
+    "9b19947fc2 chore(status): snapshot .agent testing ledgers (iter 531 + rolling summary)"
+  ],
+  "remaining_uncommitted": [
+    {
+      "path": "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
+      "classification": "external_vendor_clone_ambiguous",
+      "rationale": "Tracked third-party clone; commit would push megabytes — operator decision required"
+    },
+    {
+      "path": "apps/external/gemini-cli-source",
+      "classification": "external_vendor_clone_ambiguous",
+      "rationale": "Same as above — vendor clone"
+    },
+    {
+      "path": "apps/virtual-library-blueprints",
+      "classification": "external_vendor_clone_ambiguous",
+      "rationale": "Same as above — pinned external source"
+    }
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "git_index_lock_clean": true,
+    "worktree_clean_for_my_files": true,
+    "notes": "After reset of 3a4f5965dc, worktree only shows 3 vendor-source paths as modified; all autonomous-rewritten files have been committed by other agents. Use git add with explicit paths in future commits to avoid lint-staged sweep."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_b61890f2.md",
+      "Decide vendor clone policy for apps/external/* and apps/virtual-library-blueprints",
+      "Confirm cross-agent commit hygiene (lint-staged sweep) — see notes"
+    ]
+  },
+  "next_actions": [
+    "Operator review of 3 remaining uncommitted vendor paths",
+    "Decide whether to commit, add submodule markers, or revert vendor churn"
+  ],
+  "artifacts": {
+    "commits": [
+      "b41822c99f",
+      "9b19947fc2"
+    ],
+    "deployment_urls": [],
+    "database_migrations": []
+  }
+}

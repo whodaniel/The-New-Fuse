@@ -1,0 +1,12 @@
+{
+  "skillName": "algorithm-adaptation-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/algorithm-adaptation-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/algorithm-adaptation-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/algorithm-adaptation-agent.json",
+  "status": "present"
+}

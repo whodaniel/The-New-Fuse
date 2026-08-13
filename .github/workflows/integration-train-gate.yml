@@ -1,0 +1,24 @@
+name: Integration Train Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  release-train-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce integration train promotion policy
+        run: |
+          node scripts/protocols/validate-release-train.cjs \
+            --allowed-head-prefixes=integration/,hotfix/ \
+            --train-ref=origin/integration/main \
+            --allow-missing-train=true

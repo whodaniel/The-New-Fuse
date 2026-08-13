@@ -1,0 +1,60 @@
+{
+  "pass": "Dirty tree classification (2026-07-17T23:10Z verify session)",
+  "total_short_lines": 47,
+  "classes": {
+    "harness_work_commit_candidate": [
+      ".dockerignore",
+      "docs/protocols/TNF_AUTONOMOUS_CONTINUITY_PROTOCOL.md",
+      "docs/protocols/TNF_SELF_HEALING_PROTOCOL.md",
+      "packages/tnf-cli/README.md",
+      "packages/tnf-cli/src/boot/pipeline.test.ts",
+      "packages/tnf-cli/src/boot/pipeline.ts",
+      "packages/tnf-cli/src/cli.ts",
+      "scripts/gemini-redis-wrapper.cjs",
+      "scripts/pi-redis-wrapper.cjs",
+      "scripts/pi-wrapper-launchd.sh",
+      "scripts/runtime/launch-agent-wrapper.sh",
+      "scripts/runtime/resolve-harness-context.cjs",
+      "scripts/runtime/tnf-anti-stall.sh",
+      "scripts/start-agent-network.sh",
+      "scripts/protocols/validate-local-runtime-boundary.test.cjs",
+      "scripts/gemini-wrapper-launchd.sh"
+    ],
+    "protocol_state_updates": [
+      "docs/protocols/AGENT_STATUS_LEDGER.md",
+      "docs/protocols/LIVING_STATE.md",
+      "docs/protocols/reports/DOC_AUDIT_DIRTY_TREE_CLASSIFY.json",
+      "docs/protocols/reports/DOC_AUDIT_SKILLS_VERIFY.json",
+      "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+      "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    ],
+    "do_not_commit_secrets": ["packages/tnf-browser/extension/token.json"],
+    "artifact_noise": [
+      ".agent/test-reports/_rolling-summary.json",
+      ".agent/testing-status.json",
+      ".verifier/process-atlas.*",
+      "apps/frontend/node_modules/.vite/vitest/*/results.json",
+      "docs/operations/tnf-full-auto-*",
+      "packages/relay-core/relay.log",
+      "packages/types/dist/*",
+      "packages/types/tsconfig.tsbuildinfo"
+    ],
+    "submodule_drift": [
+      "apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent",
+      "apps/external/gemini-cli-source",
+      "apps/virtual-library-blueprints"
+    ],
+    "separate_review": [
+      "apps/frontend/docs/audits/live-link-crawl.*",
+      "apps/frontend/src/data/codebase_map.json",
+      "docs/core/AGENTS.md",
+      "packages/tnf-browser/extension/service-worker.js",
+      "packages/tnf-browser/index.js",
+      "packages/tnf-browser/lib/launcher.js"
+    ],
+    "local_only_gitignore": [
+      ".agent/context/HARDCODED_AGENT_BOOT_PROMPT.md (fixed personal paths; gitignored via .agent/*)"
+    ]
+  },
+  "recommended_next_commit": "Focused harness/spam-loop + continuity + boundary-test fix only; exclude secrets/noise/submodules"
+}

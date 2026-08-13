@@ -1,0 +1,11 @@
+{
+  "$schema": "https://cloud_runtime.app/cloud_runtime.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "apps/frontend/Dockerfile"
+  },
+  "deploy": {
+    "healthcheckPath": "/",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

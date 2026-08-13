@@ -1,0 +1,2768 @@
+{
+  "version": "1.0.0",
+  "started_at": "2026-05-06T17:55:37.925Z",
+  "mode": "full",
+  "current_sector": "OTHER",
+  "current_batch": 1,
+  "batch_size": 50,
+  "checkpoint_interval": 10,
+  "nodes_reviewed": 15707,
+  "total_nodes": 15707,
+  "paused": false,
+  "pause_reason": null,
+  "human_gate_queue": [],
+  "completed_sectors": ["PROTO", "DOMAIN", "AGENT", "CODE", "OTHER"],
+  "log": [
+    {
+      "timestamp": "2026-05-06T18:30:05.552Z",
+      "message": "INITIATING FULL CODEBASE AUDIT",
+      "sector": null,
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.566Z",
+      "message": "Total nodes: 15707",
+      "sector": null,
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.566Z",
+      "message": "Batch size: 50",
+      "sector": null,
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.566Z",
+      "message": "Checkpoint interval: 10 batches",
+      "sector": null,
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.607Z",
+      "message": "ENTERING SECTOR: Protocol Documents (undefined nodes)",
+      "sector": "PROTO",
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.607Z",
+      "message": "Starting discovery cycle for Protocol Documents sector",
+      "sector": "PROTO",
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.608Z",
+      "message": "Processing batch 0: 36 nodes (discovery cycle)",
+      "sector": "PROTO",
+      "batch": 0,
+      "nodes_reviewed": 0
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.612Z",
+      "message": "Completed discovery cycle for Protocol Documents",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.616Z",
+      "message": "Starting adversarial cycle for Protocol Documents sector",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.617Z",
+      "message": "Completed adversarial cycle for Protocol Documents",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.617Z",
+      "message": "Starting synthesis cycle for Protocol Documents sector",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.617Z",
+      "message": "Completed synthesis cycle for Protocol Documents",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.617Z",
+      "message": "SECTOR COMPLETE: Protocol Documents",
+      "sector": "PROTO",
+      "batch": 1,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.640Z",
+      "message": "ENTERING SECTOR: Domain Roots (undefined nodes)",
+      "sector": "DOMAIN",
+      "batch": 0,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.642Z",
+      "message": "Starting discovery cycle for Domain Roots sector",
+      "sector": "DOMAIN",
+      "batch": 0,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Processing batch 0: 3 nodes (discovery cycle)",
+      "sector": "DOMAIN",
+      "batch": 0,
+      "nodes_reviewed": 36
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Completed discovery cycle for Domain Roots",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Starting adversarial cycle for Domain Roots sector",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Completed adversarial cycle for Domain Roots",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Starting synthesis cycle for Domain Roots sector",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "Completed synthesis cycle for Domain Roots",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.658Z",
+      "message": "SECTOR COMPLETE: Domain Roots",
+      "sector": "DOMAIN",
+      "batch": 1,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.666Z",
+      "message": "ENTERING SECTOR: Agent Skills (undefined nodes)",
+      "sector": "AGENT",
+      "batch": 0,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.666Z",
+      "message": "Starting discovery cycle for Agent Skills sector",
+      "sector": "AGENT",
+      "batch": 0,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.666Z",
+      "message": "Processing batch 0: 3 nodes (discovery cycle)",
+      "sector": "AGENT",
+      "batch": 0,
+      "nodes_reviewed": 39
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.682Z",
+      "message": "Completed discovery cycle for Agent Skills",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.683Z",
+      "message": "Starting adversarial cycle for Agent Skills sector",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.684Z",
+      "message": "Completed adversarial cycle for Agent Skills",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.684Z",
+      "message": "Starting synthesis cycle for Agent Skills sector",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.684Z",
+      "message": "Completed synthesis cycle for Agent Skills",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.684Z",
+      "message": "SECTOR COMPLETE: Agent Skills",
+      "sector": "AGENT",
+      "batch": 1,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "ENTERING SECTOR: Code Nodes (undefined nodes)",
+      "sector": "CODE",
+      "batch": 0,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "Starting discovery cycle for Code Nodes sector",
+      "sector": "CODE",
+      "batch": 0,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "Processing batch 0: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 0,
+      "nodes_reviewed": 42
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "Processing batch 1: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 1,
+      "nodes_reviewed": 92
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "Processing batch 2: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 2,
+      "nodes_reviewed": 142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.726Z",
+      "message": "Processing batch 3: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 3,
+      "nodes_reviewed": 192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 4: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 4,
+      "nodes_reviewed": 242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 5: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 5,
+      "nodes_reviewed": 292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 6: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 6,
+      "nodes_reviewed": 342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 7: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 7,
+      "nodes_reviewed": 392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 8: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 8,
+      "nodes_reviewed": 442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:05.727Z",
+      "message": "Processing batch 9: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 9,
+      "nodes_reviewed": 492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.280Z",
+      "message": "Checkpoint saved: batch 10",
+      "sector": "CODE",
+      "batch": 10,
+      "nodes_reviewed": 542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.280Z",
+      "message": "Processing batch 10: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 10,
+      "nodes_reviewed": 542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.280Z",
+      "message": "Processing batch 11: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 11,
+      "nodes_reviewed": 592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.280Z",
+      "message": "Processing batch 12: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 12,
+      "nodes_reviewed": 642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.281Z",
+      "message": "Processing batch 13: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 13,
+      "nodes_reviewed": 692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.281Z",
+      "message": "Processing batch 14: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 14,
+      "nodes_reviewed": 742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.282Z",
+      "message": "Processing batch 15: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 15,
+      "nodes_reviewed": 792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.282Z",
+      "message": "Processing batch 16: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 16,
+      "nodes_reviewed": 842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.283Z",
+      "message": "Processing batch 17: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 17,
+      "nodes_reviewed": 892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.283Z",
+      "message": "Processing batch 18: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 18,
+      "nodes_reviewed": 942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.283Z",
+      "message": "Processing batch 19: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 19,
+      "nodes_reviewed": 992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.964Z",
+      "message": "Checkpoint saved: batch 20",
+      "sector": "CODE",
+      "batch": 20,
+      "nodes_reviewed": 1042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.964Z",
+      "message": "Processing batch 20: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 20,
+      "nodes_reviewed": 1042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.964Z",
+      "message": "Processing batch 21: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 21,
+      "nodes_reviewed": 1092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 22: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 22,
+      "nodes_reviewed": 1142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 23: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 23,
+      "nodes_reviewed": 1192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 24: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 24,
+      "nodes_reviewed": 1242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 25: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 25,
+      "nodes_reviewed": 1292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 26: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 26,
+      "nodes_reviewed": 1342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.965Z",
+      "message": "Processing batch 27: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 27,
+      "nodes_reviewed": 1392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.966Z",
+      "message": "Processing batch 28: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 28,
+      "nodes_reviewed": 1442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06.966Z",
+      "message": "Processing batch 29: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 29,
+      "nodes_reviewed": 1492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.349Z",
+      "message": "Checkpoint saved: batch 30",
+      "sector": "CODE",
+      "batch": 30,
+      "nodes_reviewed": 1542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.349Z",
+      "message": "Processing batch 30: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 30,
+      "nodes_reviewed": 1542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.349Z",
+      "message": "Processing batch 31: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 31,
+      "nodes_reviewed": 1592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.350Z",
+      "message": "Processing batch 32: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 32,
+      "nodes_reviewed": 1642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.350Z",
+      "message": "Processing batch 33: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 33,
+      "nodes_reviewed": 1692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.350Z",
+      "message": "Processing batch 34: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 34,
+      "nodes_reviewed": 1742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.350Z",
+      "message": "Processing batch 35: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 35,
+      "nodes_reviewed": 1792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.351Z",
+      "message": "Processing batch 36: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 36,
+      "nodes_reviewed": 1842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.351Z",
+      "message": "Processing batch 37: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 37,
+      "nodes_reviewed": 1892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.351Z",
+      "message": "Processing batch 38: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 38,
+      "nodes_reviewed": 1942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.351Z",
+      "message": "Processing batch 39: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 39,
+      "nodes_reviewed": 1992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.880Z",
+      "message": "Checkpoint saved: batch 40",
+      "sector": "CODE",
+      "batch": 40,
+      "nodes_reviewed": 2042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.880Z",
+      "message": "Processing batch 40: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 40,
+      "nodes_reviewed": 2042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.880Z",
+      "message": "Processing batch 41: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 41,
+      "nodes_reviewed": 2092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.880Z",
+      "message": "Processing batch 42: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 42,
+      "nodes_reviewed": 2142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.880Z",
+      "message": "Processing batch 43: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 43,
+      "nodes_reviewed": 2192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 44: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 44,
+      "nodes_reviewed": 2242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 45: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 45,
+      "nodes_reviewed": 2292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 46: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 46,
+      "nodes_reviewed": 2342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 47: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 47,
+      "nodes_reviewed": 2392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 48: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 48,
+      "nodes_reviewed": 2442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:07.881Z",
+      "message": "Processing batch 49: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 49,
+      "nodes_reviewed": 2492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.416Z",
+      "message": "Checkpoint saved: batch 50",
+      "sector": "CODE",
+      "batch": 50,
+      "nodes_reviewed": 2542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.418Z",
+      "message": "Processing batch 50: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 50,
+      "nodes_reviewed": 2542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.422Z",
+      "message": "Processing batch 51: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 51,
+      "nodes_reviewed": 2592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.430Z",
+      "message": "Processing batch 52: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 52,
+      "nodes_reviewed": 2642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 53: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 53,
+      "nodes_reviewed": 2692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 54: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 54,
+      "nodes_reviewed": 2742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 55: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 55,
+      "nodes_reviewed": 2792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 56: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 56,
+      "nodes_reviewed": 2842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 57: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 57,
+      "nodes_reviewed": 2892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 58: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 58,
+      "nodes_reviewed": 2942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.432Z",
+      "message": "Processing batch 59: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 59,
+      "nodes_reviewed": 2992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.689Z",
+      "message": "Checkpoint saved: batch 60",
+      "sector": "CODE",
+      "batch": 60,
+      "nodes_reviewed": 3042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.689Z",
+      "message": "Processing batch 60: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 60,
+      "nodes_reviewed": 3042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.689Z",
+      "message": "Processing batch 61: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 61,
+      "nodes_reviewed": 3092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.690Z",
+      "message": "Processing batch 62: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 62,
+      "nodes_reviewed": 3142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.690Z",
+      "message": "Processing batch 63: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 63,
+      "nodes_reviewed": 3192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.690Z",
+      "message": "Processing batch 64: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 64,
+      "nodes_reviewed": 3242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.690Z",
+      "message": "Processing batch 65: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 65,
+      "nodes_reviewed": 3292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.691Z",
+      "message": "Processing batch 66: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 66,
+      "nodes_reviewed": 3342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.691Z",
+      "message": "Processing batch 67: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 67,
+      "nodes_reviewed": 3392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.691Z",
+      "message": "Processing batch 68: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 68,
+      "nodes_reviewed": 3442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:08.691Z",
+      "message": "Processing batch 69: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 69,
+      "nodes_reviewed": 3492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.214Z",
+      "message": "Checkpoint saved: batch 70",
+      "sector": "CODE",
+      "batch": 70,
+      "nodes_reviewed": 3542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.214Z",
+      "message": "Processing batch 70: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 70,
+      "nodes_reviewed": 3542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.214Z",
+      "message": "Processing batch 71: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 71,
+      "nodes_reviewed": 3592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.214Z",
+      "message": "Processing batch 72: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 72,
+      "nodes_reviewed": 3642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.215Z",
+      "message": "Processing batch 73: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 73,
+      "nodes_reviewed": 3692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.215Z",
+      "message": "Processing batch 74: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 74,
+      "nodes_reviewed": 3742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.215Z",
+      "message": "Processing batch 75: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 75,
+      "nodes_reviewed": 3792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.215Z",
+      "message": "Processing batch 76: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 76,
+      "nodes_reviewed": 3842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.221Z",
+      "message": "Processing batch 77: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 77,
+      "nodes_reviewed": 3892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.221Z",
+      "message": "Processing batch 78: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 78,
+      "nodes_reviewed": 3942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.222Z",
+      "message": "Processing batch 79: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 79,
+      "nodes_reviewed": 3992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.563Z",
+      "message": "Checkpoint saved: batch 80",
+      "sector": "CODE",
+      "batch": 80,
+      "nodes_reviewed": 4042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.563Z",
+      "message": "Processing batch 80: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 80,
+      "nodes_reviewed": 4042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.563Z",
+      "message": "Processing batch 81: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 81,
+      "nodes_reviewed": 4092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.563Z",
+      "message": "Processing batch 82: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 82,
+      "nodes_reviewed": 4142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 83: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 83,
+      "nodes_reviewed": 4192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 84: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 84,
+      "nodes_reviewed": 4242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 85: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 85,
+      "nodes_reviewed": 4292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 86: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 86,
+      "nodes_reviewed": 4342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 87: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 87,
+      "nodes_reviewed": 4392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 88: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 88,
+      "nodes_reviewed": 4442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:09.564Z",
+      "message": "Processing batch 89: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 89,
+      "nodes_reviewed": 4492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.204Z",
+      "message": "Checkpoint saved: batch 90",
+      "sector": "CODE",
+      "batch": 90,
+      "nodes_reviewed": 4542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.204Z",
+      "message": "Processing batch 90: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 90,
+      "nodes_reviewed": 4542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.204Z",
+      "message": "Processing batch 91: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 91,
+      "nodes_reviewed": 4592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.204Z",
+      "message": "Processing batch 92: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 92,
+      "nodes_reviewed": 4642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.206Z",
+      "message": "Processing batch 93: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 93,
+      "nodes_reviewed": 4692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.206Z",
+      "message": "Processing batch 94: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 94,
+      "nodes_reviewed": 4742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.206Z",
+      "message": "Processing batch 95: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 95,
+      "nodes_reviewed": 4792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.207Z",
+      "message": "Processing batch 96: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 96,
+      "nodes_reviewed": 4842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.207Z",
+      "message": "Processing batch 97: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 97,
+      "nodes_reviewed": 4892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.207Z",
+      "message": "Processing batch 98: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 98,
+      "nodes_reviewed": 4942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.207Z",
+      "message": "Processing batch 99: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 99,
+      "nodes_reviewed": 4992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.549Z",
+      "message": "Checkpoint saved: batch 100",
+      "sector": "CODE",
+      "batch": 100,
+      "nodes_reviewed": 5042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.549Z",
+      "message": "Processing batch 100: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 100,
+      "nodes_reviewed": 5042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.549Z",
+      "message": "Processing batch 101: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 101,
+      "nodes_reviewed": 5092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.549Z",
+      "message": "Processing batch 102: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 102,
+      "nodes_reviewed": 5142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.549Z",
+      "message": "Processing batch 103: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 103,
+      "nodes_reviewed": 5192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 104: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 104,
+      "nodes_reviewed": 5242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 105: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 105,
+      "nodes_reviewed": 5292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 106: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 106,
+      "nodes_reviewed": 5342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 107: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 107,
+      "nodes_reviewed": 5392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 108: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 108,
+      "nodes_reviewed": 5442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:10.550Z",
+      "message": "Processing batch 109: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 109,
+      "nodes_reviewed": 5492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.080Z",
+      "message": "Checkpoint saved: batch 110",
+      "sector": "CODE",
+      "batch": 110,
+      "nodes_reviewed": 5542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.080Z",
+      "message": "Processing batch 110: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 110,
+      "nodes_reviewed": 5542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.080Z",
+      "message": "Processing batch 111: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 111,
+      "nodes_reviewed": 5592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 112: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 112,
+      "nodes_reviewed": 5642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 113: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 113,
+      "nodes_reviewed": 5692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 114: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 114,
+      "nodes_reviewed": 5742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 115: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 115,
+      "nodes_reviewed": 5792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 116: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 116,
+      "nodes_reviewed": 5842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 117: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 117,
+      "nodes_reviewed": 5892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 118: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 118,
+      "nodes_reviewed": 5942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.081Z",
+      "message": "Processing batch 119: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 119,
+      "nodes_reviewed": 5992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.344Z",
+      "message": "Checkpoint saved: batch 120",
+      "sector": "CODE",
+      "batch": 120,
+      "nodes_reviewed": 6042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.344Z",
+      "message": "Processing batch 120: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 120,
+      "nodes_reviewed": 6042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.346Z",
+      "message": "Processing batch 121: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 121,
+      "nodes_reviewed": 6092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.346Z",
+      "message": "Processing batch 122: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 122,
+      "nodes_reviewed": 6142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.346Z",
+      "message": "Processing batch 123: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 123,
+      "nodes_reviewed": 6192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.346Z",
+      "message": "Processing batch 124: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 124,
+      "nodes_reviewed": 6242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.346Z",
+      "message": "Processing batch 125: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 125,
+      "nodes_reviewed": 6292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.347Z",
+      "message": "Processing batch 126: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 126,
+      "nodes_reviewed": 6342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.347Z",
+      "message": "Processing batch 127: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 127,
+      "nodes_reviewed": 6392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.348Z",
+      "message": "Processing batch 128: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 128,
+      "nodes_reviewed": 6442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.348Z",
+      "message": "Processing batch 129: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 129,
+      "nodes_reviewed": 6492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.671Z",
+      "message": "Checkpoint saved: batch 130",
+      "sector": "CODE",
+      "batch": 130,
+      "nodes_reviewed": 6542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.671Z",
+      "message": "Processing batch 130: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 130,
+      "nodes_reviewed": 6542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.671Z",
+      "message": "Processing batch 131: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 131,
+      "nodes_reviewed": 6592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.671Z",
+      "message": "Processing batch 132: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 132,
+      "nodes_reviewed": 6642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.675Z",
+      "message": "Processing batch 133: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 133,
+      "nodes_reviewed": 6692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.675Z",
+      "message": "Processing batch 134: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 134,
+      "nodes_reviewed": 6742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.675Z",
+      "message": "Processing batch 135: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 135,
+      "nodes_reviewed": 6792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.675Z",
+      "message": "Processing batch 136: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 136,
+      "nodes_reviewed": 6842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.675Z",
+      "message": "Processing batch 137: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 137,
+      "nodes_reviewed": 6892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.676Z",
+      "message": "Processing batch 138: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 138,
+      "nodes_reviewed": 6942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:11.676Z",
+      "message": "Processing batch 139: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 139,
+      "nodes_reviewed": 6992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Checkpoint saved: batch 140",
+      "sector": "CODE",
+      "batch": 140,
+      "nodes_reviewed": 7042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 140: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 140,
+      "nodes_reviewed": 7042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 141: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 141,
+      "nodes_reviewed": 7092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 142: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 142,
+      "nodes_reviewed": 7142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 143: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 143,
+      "nodes_reviewed": 7192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 144: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 144,
+      "nodes_reviewed": 7242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 145: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 145,
+      "nodes_reviewed": 7292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 146: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 146,
+      "nodes_reviewed": 7342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 147: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 147,
+      "nodes_reviewed": 7392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 148: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 148,
+      "nodes_reviewed": 7442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.063Z",
+      "message": "Processing batch 149: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 149,
+      "nodes_reviewed": 7492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.523Z",
+      "message": "Checkpoint saved: batch 150",
+      "sector": "CODE",
+      "batch": 150,
+      "nodes_reviewed": 7542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.523Z",
+      "message": "Processing batch 150: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 150,
+      "nodes_reviewed": 7542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.523Z",
+      "message": "Processing batch 151: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 151,
+      "nodes_reviewed": 7592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.523Z",
+      "message": "Processing batch 152: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 152,
+      "nodes_reviewed": 7642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.523Z",
+      "message": "Processing batch 153: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 153,
+      "nodes_reviewed": 7692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 154: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 154,
+      "nodes_reviewed": 7742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 155: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 155,
+      "nodes_reviewed": 7792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 156: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 156,
+      "nodes_reviewed": 7842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 157: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 157,
+      "nodes_reviewed": 7892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 158: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 158,
+      "nodes_reviewed": 7942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.524Z",
+      "message": "Processing batch 159: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 159,
+      "nodes_reviewed": 7992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.946Z",
+      "message": "Checkpoint saved: batch 160",
+      "sector": "CODE",
+      "batch": 160,
+      "nodes_reviewed": 8042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.951Z",
+      "message": "Processing batch 160: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 160,
+      "nodes_reviewed": 8042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.951Z",
+      "message": "Processing batch 161: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 161,
+      "nodes_reviewed": 8092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.951Z",
+      "message": "Processing batch 162: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 162,
+      "nodes_reviewed": 8142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.951Z",
+      "message": "Processing batch 163: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 163,
+      "nodes_reviewed": 8192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.952Z",
+      "message": "Processing batch 164: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 164,
+      "nodes_reviewed": 8242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.952Z",
+      "message": "Processing batch 165: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 165,
+      "nodes_reviewed": 8292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.952Z",
+      "message": "Processing batch 166: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 166,
+      "nodes_reviewed": 8342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.952Z",
+      "message": "Processing batch 167: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 167,
+      "nodes_reviewed": 8392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.953Z",
+      "message": "Processing batch 168: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 168,
+      "nodes_reviewed": 8442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:12.954Z",
+      "message": "Processing batch 169: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 169,
+      "nodes_reviewed": 8492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.621Z",
+      "message": "Checkpoint saved: batch 170",
+      "sector": "CODE",
+      "batch": 170,
+      "nodes_reviewed": 8542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.621Z",
+      "message": "Processing batch 170: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 170,
+      "nodes_reviewed": 8542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 171: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 171,
+      "nodes_reviewed": 8592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 172: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 172,
+      "nodes_reviewed": 8642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 173: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 173,
+      "nodes_reviewed": 8692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 174: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 174,
+      "nodes_reviewed": 8742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 175: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 175,
+      "nodes_reviewed": 8792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 176: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 176,
+      "nodes_reviewed": 8842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 177: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 177,
+      "nodes_reviewed": 8892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.622Z",
+      "message": "Processing batch 178: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 178,
+      "nodes_reviewed": 8942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.630Z",
+      "message": "Processing batch 179: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 179,
+      "nodes_reviewed": 8992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.984Z",
+      "message": "Checkpoint saved: batch 180",
+      "sector": "CODE",
+      "batch": 180,
+      "nodes_reviewed": 9042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.984Z",
+      "message": "Processing batch 180: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 180,
+      "nodes_reviewed": 9042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 181: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 181,
+      "nodes_reviewed": 9092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 182: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 182,
+      "nodes_reviewed": 9142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 183: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 183,
+      "nodes_reviewed": 9192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 184: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 184,
+      "nodes_reviewed": 9242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 185: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 185,
+      "nodes_reviewed": 9292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 186: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 186,
+      "nodes_reviewed": 9342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 187: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 187,
+      "nodes_reviewed": 9392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 188: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 188,
+      "nodes_reviewed": 9442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:13.985Z",
+      "message": "Processing batch 189: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 189,
+      "nodes_reviewed": 9492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.176Z",
+      "message": "Checkpoint saved: batch 190",
+      "sector": "CODE",
+      "batch": 190,
+      "nodes_reviewed": 9542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.176Z",
+      "message": "Processing batch 190: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 190,
+      "nodes_reviewed": 9542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.176Z",
+      "message": "Processing batch 191: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 191,
+      "nodes_reviewed": 9592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 192: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 192,
+      "nodes_reviewed": 9642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 193: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 193,
+      "nodes_reviewed": 9692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 194: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 194,
+      "nodes_reviewed": 9742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 195: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 195,
+      "nodes_reviewed": 9792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 196: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 196,
+      "nodes_reviewed": 9842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 197: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 197,
+      "nodes_reviewed": 9892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 198: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 198,
+      "nodes_reviewed": 9942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.177Z",
+      "message": "Processing batch 199: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 199,
+      "nodes_reviewed": 9992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.401Z",
+      "message": "Checkpoint saved: batch 200",
+      "sector": "CODE",
+      "batch": 200,
+      "nodes_reviewed": 10042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.401Z",
+      "message": "Processing batch 200: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 200,
+      "nodes_reviewed": 10042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.401Z",
+      "message": "Processing batch 201: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 201,
+      "nodes_reviewed": 10092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.401Z",
+      "message": "Processing batch 202: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 202,
+      "nodes_reviewed": 10142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.401Z",
+      "message": "Processing batch 203: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 203,
+      "nodes_reviewed": 10192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.403Z",
+      "message": "Processing batch 204: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 204,
+      "nodes_reviewed": 10242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.403Z",
+      "message": "Processing batch 205: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 205,
+      "nodes_reviewed": 10292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.403Z",
+      "message": "Processing batch 206: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 206,
+      "nodes_reviewed": 10342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.404Z",
+      "message": "Processing batch 207: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 207,
+      "nodes_reviewed": 10392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.404Z",
+      "message": "Processing batch 208: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 208,
+      "nodes_reviewed": 10442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.404Z",
+      "message": "Processing batch 209: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 209,
+      "nodes_reviewed": 10492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.686Z",
+      "message": "Checkpoint saved: batch 210",
+      "sector": "CODE",
+      "batch": 210,
+      "nodes_reviewed": 10542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.686Z",
+      "message": "Processing batch 210: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 210,
+      "nodes_reviewed": 10542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.686Z",
+      "message": "Processing batch 211: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 211,
+      "nodes_reviewed": 10592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.686Z",
+      "message": "Processing batch 212: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 212,
+      "nodes_reviewed": 10642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.689Z",
+      "message": "Processing batch 213: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 213,
+      "nodes_reviewed": 10692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.689Z",
+      "message": "Processing batch 214: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 214,
+      "nodes_reviewed": 10742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.689Z",
+      "message": "Processing batch 215: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 215,
+      "nodes_reviewed": 10792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.690Z",
+      "message": "Processing batch 216: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 216,
+      "nodes_reviewed": 10842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.690Z",
+      "message": "Processing batch 217: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 217,
+      "nodes_reviewed": 10892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.701Z",
+      "message": "Processing batch 218: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 218,
+      "nodes_reviewed": 10942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:14.701Z",
+      "message": "Processing batch 219: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 219,
+      "nodes_reviewed": 10992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.015Z",
+      "message": "Checkpoint saved: batch 220",
+      "sector": "CODE",
+      "batch": 220,
+      "nodes_reviewed": 11042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.016Z",
+      "message": "Processing batch 220: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 220,
+      "nodes_reviewed": 11042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.016Z",
+      "message": "Processing batch 221: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 221,
+      "nodes_reviewed": 11092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.016Z",
+      "message": "Processing batch 222: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 222,
+      "nodes_reviewed": 11142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 223: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 223,
+      "nodes_reviewed": 11192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 224: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 224,
+      "nodes_reviewed": 11242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 225: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 225,
+      "nodes_reviewed": 11292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 226: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 226,
+      "nodes_reviewed": 11342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 227: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 227,
+      "nodes_reviewed": 11392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 228: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 228,
+      "nodes_reviewed": 11442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.017Z",
+      "message": "Processing batch 229: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 229,
+      "nodes_reviewed": 11492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.150Z",
+      "message": "Checkpoint saved: batch 230",
+      "sector": "CODE",
+      "batch": 230,
+      "nodes_reviewed": 11542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.151Z",
+      "message": "Processing batch 230: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 230,
+      "nodes_reviewed": 11542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.151Z",
+      "message": "Processing batch 231: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 231,
+      "nodes_reviewed": 11592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.151Z",
+      "message": "Processing batch 232: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 232,
+      "nodes_reviewed": 11642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.152Z",
+      "message": "Processing batch 233: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 233,
+      "nodes_reviewed": 11692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.152Z",
+      "message": "Processing batch 234: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 234,
+      "nodes_reviewed": 11742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.152Z",
+      "message": "Processing batch 235: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 235,
+      "nodes_reviewed": 11792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.152Z",
+      "message": "Processing batch 236: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 236,
+      "nodes_reviewed": 11842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.153Z",
+      "message": "Processing batch 237: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 237,
+      "nodes_reviewed": 11892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.154Z",
+      "message": "Processing batch 238: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 238,
+      "nodes_reviewed": 11942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.154Z",
+      "message": "Processing batch 239: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 239,
+      "nodes_reviewed": 11992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Checkpoint saved: batch 240",
+      "sector": "CODE",
+      "batch": 240,
+      "nodes_reviewed": 12042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 240: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 240,
+      "nodes_reviewed": 12042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 241: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 241,
+      "nodes_reviewed": 12092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 242: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 242,
+      "nodes_reviewed": 12142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 243: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 243,
+      "nodes_reviewed": 12192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 244: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 244,
+      "nodes_reviewed": 12242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 245: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 245,
+      "nodes_reviewed": 12292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.540Z",
+      "message": "Processing batch 246: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 246,
+      "nodes_reviewed": 12342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.541Z",
+      "message": "Processing batch 247: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 247,
+      "nodes_reviewed": 12392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.541Z",
+      "message": "Processing batch 248: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 248,
+      "nodes_reviewed": 12442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.541Z",
+      "message": "Processing batch 249: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 249,
+      "nodes_reviewed": 12492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.815Z",
+      "message": "Checkpoint saved: batch 250",
+      "sector": "CODE",
+      "batch": 250,
+      "nodes_reviewed": 12542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.815Z",
+      "message": "Processing batch 250: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 250,
+      "nodes_reviewed": 12542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.815Z",
+      "message": "Processing batch 251: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 251,
+      "nodes_reviewed": 12592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.815Z",
+      "message": "Processing batch 252: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 252,
+      "nodes_reviewed": 12642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 253: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 253,
+      "nodes_reviewed": 12692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 254: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 254,
+      "nodes_reviewed": 12742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 255: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 255,
+      "nodes_reviewed": 12792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 256: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 256,
+      "nodes_reviewed": 12842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 257: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 257,
+      "nodes_reviewed": 12892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 258: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 258,
+      "nodes_reviewed": 12942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:15.816Z",
+      "message": "Processing batch 259: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 259,
+      "nodes_reviewed": 12992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.086Z",
+      "message": "Checkpoint saved: batch 260",
+      "sector": "CODE",
+      "batch": 260,
+      "nodes_reviewed": 13042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.086Z",
+      "message": "Processing batch 260: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 260,
+      "nodes_reviewed": 13042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.088Z",
+      "message": "Processing batch 261: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 261,
+      "nodes_reviewed": 13092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.088Z",
+      "message": "Processing batch 262: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 262,
+      "nodes_reviewed": 13142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.088Z",
+      "message": "Processing batch 263: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 263,
+      "nodes_reviewed": 13192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.088Z",
+      "message": "Processing batch 264: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 264,
+      "nodes_reviewed": 13242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.088Z",
+      "message": "Processing batch 265: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 265,
+      "nodes_reviewed": 13292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.089Z",
+      "message": "Processing batch 266: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 266,
+      "nodes_reviewed": 13342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.089Z",
+      "message": "Processing batch 267: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 267,
+      "nodes_reviewed": 13392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.089Z",
+      "message": "Processing batch 268: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 268,
+      "nodes_reviewed": 13442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.089Z",
+      "message": "Processing batch 269: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 269,
+      "nodes_reviewed": 13492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.267Z",
+      "message": "Checkpoint saved: batch 270",
+      "sector": "CODE",
+      "batch": 270,
+      "nodes_reviewed": 13542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.267Z",
+      "message": "Processing batch 270: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 270,
+      "nodes_reviewed": 13542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.267Z",
+      "message": "Processing batch 271: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 271,
+      "nodes_reviewed": 13592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.268Z",
+      "message": "Processing batch 272: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 272,
+      "nodes_reviewed": 13642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.268Z",
+      "message": "Processing batch 273: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 273,
+      "nodes_reviewed": 13692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.268Z",
+      "message": "Processing batch 274: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 274,
+      "nodes_reviewed": 13742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.268Z",
+      "message": "Processing batch 275: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 275,
+      "nodes_reviewed": 13792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.269Z",
+      "message": "Processing batch 276: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 276,
+      "nodes_reviewed": 13842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.269Z",
+      "message": "Processing batch 277: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 277,
+      "nodes_reviewed": 13892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.269Z",
+      "message": "Processing batch 278: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 278,
+      "nodes_reviewed": 13942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.269Z",
+      "message": "Processing batch 279: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 279,
+      "nodes_reviewed": 13992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.460Z",
+      "message": "Checkpoint saved: batch 280",
+      "sector": "CODE",
+      "batch": 280,
+      "nodes_reviewed": 14042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.460Z",
+      "message": "Processing batch 280: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 280,
+      "nodes_reviewed": 14042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.460Z",
+      "message": "Processing batch 281: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 281,
+      "nodes_reviewed": 14092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.460Z",
+      "message": "Processing batch 282: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 282,
+      "nodes_reviewed": 14142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.460Z",
+      "message": "Processing batch 283: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 283,
+      "nodes_reviewed": 14192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.461Z",
+      "message": "Processing batch 284: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 284,
+      "nodes_reviewed": 14242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.461Z",
+      "message": "Processing batch 285: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 285,
+      "nodes_reviewed": 14292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.461Z",
+      "message": "Processing batch 286: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 286,
+      "nodes_reviewed": 14342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.461Z",
+      "message": "Processing batch 287: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 287,
+      "nodes_reviewed": 14392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.461Z",
+      "message": "Processing batch 288: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 288,
+      "nodes_reviewed": 14442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.462Z",
+      "message": "Processing batch 289: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 289,
+      "nodes_reviewed": 14492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.706Z",
+      "message": "Checkpoint saved: batch 290",
+      "sector": "CODE",
+      "batch": 290,
+      "nodes_reviewed": 14542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.706Z",
+      "message": "Processing batch 290: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 290,
+      "nodes_reviewed": 14542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 291: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 291,
+      "nodes_reviewed": 14592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 292: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 292,
+      "nodes_reviewed": 14642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 293: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 293,
+      "nodes_reviewed": 14692
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 294: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 294,
+      "nodes_reviewed": 14742
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 295: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 295,
+      "nodes_reviewed": 14792
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 296: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 296,
+      "nodes_reviewed": 14842
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 297: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 297,
+      "nodes_reviewed": 14892
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.707Z",
+      "message": "Processing batch 298: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 298,
+      "nodes_reviewed": 14942
+    },
+    {
+      "timestamp": "2026-05-06T18:30:16.708Z",
+      "message": "Processing batch 299: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 299,
+      "nodes_reviewed": 14992
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.004Z",
+      "message": "Checkpoint saved: batch 300",
+      "sector": "CODE",
+      "batch": 300,
+      "nodes_reviewed": 15042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.004Z",
+      "message": "Processing batch 300: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 300,
+      "nodes_reviewed": 15042
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.004Z",
+      "message": "Processing batch 301: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 301,
+      "nodes_reviewed": 15092
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.004Z",
+      "message": "Processing batch 302: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 302,
+      "nodes_reviewed": 15142
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.004Z",
+      "message": "Processing batch 303: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 303,
+      "nodes_reviewed": 15192
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 304: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 304,
+      "nodes_reviewed": 15242
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 305: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 305,
+      "nodes_reviewed": 15292
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 306: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 306,
+      "nodes_reviewed": 15342
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 307: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 307,
+      "nodes_reviewed": 15392
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 308: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 308,
+      "nodes_reviewed": 15442
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.005Z",
+      "message": "Processing batch 309: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 309,
+      "nodes_reviewed": 15492
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.317Z",
+      "message": "Checkpoint saved: batch 310",
+      "sector": "CODE",
+      "batch": 310,
+      "nodes_reviewed": 15542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.317Z",
+      "message": "Processing batch 310: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 310,
+      "nodes_reviewed": 15542
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.318Z",
+      "message": "Processing batch 311: 50 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 311,
+      "nodes_reviewed": 15592
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.318Z",
+      "message": "Processing batch 312: 47 nodes (discovery cycle)",
+      "sector": "CODE",
+      "batch": 312,
+      "nodes_reviewed": 15642
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "Completed discovery cycle for Code Nodes",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "Starting adversarial cycle for Code Nodes sector",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "Completed adversarial cycle for Code Nodes",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "Starting synthesis cycle for Code Nodes sector",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "Completed synthesis cycle for Code Nodes",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.321Z",
+      "message": "SECTOR COMPLETE: Code Nodes",
+      "sector": "CODE",
+      "batch": 313,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "ENTERING SECTOR: Other Nodes (undefined nodes)",
+      "sector": "OTHER",
+      "batch": 0,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Starting discovery cycle for Other Nodes sector",
+      "sector": "OTHER",
+      "batch": 0,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Processing batch 0: 18 nodes (discovery cycle)",
+      "sector": "OTHER",
+      "batch": 0,
+      "nodes_reviewed": 15689
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Completed discovery cycle for Other Nodes",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Starting adversarial cycle for Other Nodes sector",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Completed adversarial cycle for Other Nodes",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Starting synthesis cycle for Other Nodes sector",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "Completed synthesis cycle for Other Nodes",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "SECTOR COMPLETE: Other Nodes",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    },
+    {
+      "timestamp": "2026-05-06T18:30:17.336Z",
+      "message": "FULL AUDIT COMPLETE",
+      "sector": "OTHER",
+      "batch": 1,
+      "nodes_reviewed": 15707
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+name: Protocol Schema Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "docs/protocols/**"
+      - "scripts/validate-protocol-schemas.cjs"
+      - "scripts/protocols/twip-conformance.cjs"
+      - "scripts/protocols/enforce-session-handoff.cjs"
+      - "scripts/protocols/emit-session-handoff.cjs"
+      - "scripts/protocols/validate-handoff-source-drift.cjs"
+      - "scripts/protocols/validate-turn-zero-authority.cjs"
+      - "scripts/protocols/validate-locked-doc-ledger.cjs"
+      - ".github/workflows/protocol-schema-gate.yml"
+      - "package.json"
+  push:
+    branches: [main, develop]
+    paths:
+      - "docs/protocols/**"
+      - "scripts/validate-protocol-schemas.cjs"
+      - "scripts/protocols/twip-conformance.cjs"
+      - "scripts/protocols/enforce-session-handoff.cjs"
+      - "scripts/protocols/emit-session-handoff.cjs"
+      - "scripts/protocols/validate-handoff-source-drift.cjs"
+      - "scripts/protocols/validate-turn-zero-authority.cjs"
+      - "scripts/protocols/validate-locked-doc-ledger.cjs"
+      - ".github/workflows/protocol-schema-gate.yml"
+      - "package.json"
+  workflow_dispatch:
+
+jobs:
+  validate-protocol-schemas:
+    name: Validate Protocol Schemas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Validate protocol schemas
+        run: node scripts/validate-protocol-schemas.cjs
+
+      - name: Run TWIP conformance suite
+        run: node scripts/protocols/twip-conformance.cjs
+
+      - name: Validate handoff source drift
+        run: node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci
+
+      - name: Validate Turn Zero authority
+        run: node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci
+
+      - name: Validate locked-doc ledger
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before || 'HEAD~1' }}"
+          node scripts/protocols/validate-locked-doc-ledger.cjs --mode=ci --base="$BASE_REF"

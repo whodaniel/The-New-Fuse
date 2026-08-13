@@ -1,0 +1,12 @@
+{
+  "skillName": "ad-network-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/ad-network-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/ad-network-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/ad-network-manager-agent.json",
+  "status": "present"
+}

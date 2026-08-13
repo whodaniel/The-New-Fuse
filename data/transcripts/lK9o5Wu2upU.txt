@@ -1,0 +1,839 @@
+Time to dive into Pi. This is a coding
+agent. It's been around for a while now,
+like at least a few months, but I've
+just started to like really really pay
+attention to it, especially because of
+how bad the rate limits have been for
+other coding agents right now. And so,
+the idea behind Pi is it is a minimal
+coding agent. It's made to be a coding
+agent that you build on top of instead
+of taking a really massive bloated tool
+and trying to retrofit it to how you
+like to code. So the idea here is that
+we adapt PI to our workflows instead of
+the other way around. And if you've been
+following my channel at all, you know
+that uh this is really in line with my
+ethos, right? Like I am generally a fan
+of building your own systems because
+then you can really take control of it
+and mold it and customize it to how you
+like to work. And so a lot of the work
+that I've been doing with Archon and
+just generally teaching on harness
+engineering recently, it fits really
+really well with Pi. So honestly, it's
+kind of crazy that I haven't covered
+this more until now. So I did do one
+video on my channel where I used Pi with
+Archon and I showed the integration that
+I built with Pi and Archon. So, if you
+look at the providers that we support in
+Archon, let me just go down in the read
+me here. Um, goodness, there we go.
+Okay, so for AI assistant clients, we
+support Claude, Codeex, and Pi. So,
+Archon is my open source tool that helps
+you build your own harnesses. It's very
+in line with PI because both are all
+about, you know, create your own
+process, build your own workflows and
+trying instead of trying to just use
+something off the shelf that can be
+pretty hard to work with. Uh, and so
+yeah, I'm going to do quite a few things
+with Pi in our live stream today. And
+I'm gonna keep the stream pretty casual
+overall. I think one thing with the live
+streams I've been doing the past couple
+of weeks is I've been trying too hard to
+like explain everything really
+thoroughly as I'm doing it. And so it
+makes the stream move kind of slow. So I
+think my long form, you know, YouTube
+content, the videos I put out, that's
+where I should really be explaining
+things. But here, I just want to build
+live with you. So, we're going to
+explore Pi. I've obviously done quite a
+bit of exploration with it already, just
+as I've been getting it integrated with
+Archon and trying out initially, but
+I've never built my own custom extension
+before. That's one of the things that I
+want to do with Pi. And I haven't
+explored the different extensions
+available as much as I could. And so,
+we're going to do that as well. So
+really like for this live stream
+together, we're just going to get like a
+super comprehensive overview of how Pi
+works, how we can build on top of it,
+and really take advantage of the fact
+that it's a minimal coding harness. And
+the other thing that I'm going to test
+out with this is running PI with some
+different models. Another really big
+value proposition of PI is that they
+support a ton of different providers
+right out of the box. And so you don't
+have to have some kind of workaround
+like cloud code in order to use your you
+know Kimmy or Miniax subscription. We
+can use Quen through open router.
+There's a lot of possibilities for
+models that we can use. We can also use
+our codec subscription. This is how I've
+mostly been using PI up until this
+point. Technically you can use your
+anthropic claude pro or max subscription
+but that is against the enthropic terms
+of service. And so I I highly don't
+recommend doing that with PI. I'm
+surprised their readme still says that
+you can. Well, you can also use GitHub
+Copilot if that's your jam. I know it's
+more of like an enterprise tool, but
+yeah, as far as like the API keys you
+can set, there are so many providers
+that are available. And uh Kimmy for
+coding is the one that I want to test
+here. Uh Kimmy for coding console. I
+don't have this up already, but I do
+have a uh Kimmy subscription that I
+wanted to test using within Pi. So,
+we'll try that out as well. I just have
+like the $40 a month plan with Kimmy
+because I got this subscription when I
+was working on the Dark Factory, which
+more live streams on that coming soon by
+the way. But right now, I just wanted to
+spend our Saturday here playing around
+with Pi, which I might actually change
+the Dark Factory to run on Pi, by the
+way, just because I can really mold it
+to the workflows that I need for the
+Dark Factory, which is that
+self-evolving code base that I've been
+covering more recently. But yeah, there
+are a ton of uh different models that we
+can add in. And then if we look at the
+Pi extensions, they have like a whole uh
+marketplace here. I think this is the
+No, not this page. I think it's the
+package catalog. So they have sort of
+like a marketplace. It's kind of like
+the archon workflow marketplace that I
+was working on in a couple of live
+streams recently. And so all the
+extensions to Pi that people have built
+for themselves, they have the
+opportunity to share it as well. And so
+you really don't get as much out of the
+box with PI as you do with claude code.
+There's certain things that aren't
+shipped like sub aents for example. They
+don't actually ship natively with PI cuz
+it's made to just be like very minimal
+and then you build in or install the
+things that you need. And so there is a
+PI sub aents extension for example. MCP
+adapter giving it access to the web. A
+couple of different ones for that
+actually. So there's just a couple that
+I want to play around with here. And um
+there's definitely some really really
+neat ones that um might take a bit to
+set up and get running, but I want to
+try at least with one or two today and
+then build my own extension as well.
+And uh so that yeah, that's pretty much
+the the plan for the live stream here.
+Just doing a lot of exploring uh Pi
+together. And let me pop over to the
+chat here and um just see what people
+have been saying. Uh what's up Dynamus?
+Hey Sean, good to see you here. Good to
+see you as well, Eric.
+So glad you're doing this session.
+Thanks, James. Yeah, I'm excited for
+this. Um, especially because I've been
+pretty frustrated with Anthropic
+recently. Like I I don't get me wrong, I
+still love Claude Code, but man, my rate
+limits have been rough. They they seem
+actually better this week compared to
+last week. So, it it's for some reason
+looking up compared to I I was like
+really doom and gloom last week. I hit
+my rate limit in like three days. Like
+my weekly rate limit in three days. I've
+never even been close to that before.
+But I just think that like the industry
+is heading to the point where models are
+getting more and more expensive. These
+subscriptions that we got really spoiled
+with up front with Codeex and Anthropic,
+they're getting worse over time with the
+model uh output quality and just like
+how many tokens we get every single week
+or within those 5 hour limits. Um, and
+so I think there's going to be a big
+shift in the industry that's already
+starting to happen where we're only
+going to use the most powerful models
+for certain parts of our software
+development life cycle. Like maybe
+you'll use Opus to help you create a
+very comprehensive plan, but all of your
+research and implementation and
+validation. All of that is going to be
+using smaller models that are cheaper
+and faster. Cheaper being the more
+important thing there. And so PI is
+great because it really is this minimal
+agent that allows us to use any model we
+could possibly dream of. Like we can use
+Kimmy K 2.6 for example, like I'll use
+in the stream today. But then we can
+also mold the workflow kind of like
+optimize so that even though we're using
+a weaker model, we can still get really
+good results. And that's kind of the
+idea of harness engineering is the the
+harness is actually more important than
+the model when it comes to getting good
+results with AI coding assistance. And
+so we've been spoiled so much recently
+with just being able to, you know, use
+Opus for everything or GPT 5.4 for
+everything. But when it comes time where
+that's not really realistic anymore, we
+can still get as good of results if we
+work on the harness engineering. And
+that's really what I want my channel to
+be focused on going forward, at least in
+the foreseeable future here. And then I
+think PI at least right now I want to
+explore it being the possibility of like
+this is the core tool that I'm going to
+be using for my harness engineering as I
+test out using different models and like
+you know essentially what I want to do
+and I think this is like and I'm curious
+what you guys think of this a good idea
+for content in the next couple months
+here is trying to build PI to the point
+where I can reliably get Opus level
+results with Kimmy K 2.6 six or maybe,
+you know, a couple other models like
+Miniax or Quinn or whatever. I mean, I'm
+I'm kind of open to what that model is,
+but I want something cheap. I want
+something open source that I can just
+use through Open Router or a
+subscription like the Kimmy subscription
+and then I can test it because I have a
+very complex codebase. I have Archon.
+So, I I'm already working on a lot of
+harness engineering for handling issues
+and pull requests and continuing to
+evolve Archon like I've been showing in
+live streams. And so I have a lot of
+cannon fodder, if you will, like a a lot
+of fuel to test out these workflows as
+I'm working on the harness and really
+doing like comparisons between Opus and
+some of these other models as I build
+this up with Pi. So that's what that's
+what I'm kind of shooting for here.
+All right. So yeah, let's go ahead and
+I'll show you what I have set up in my
+environment already. So, I have uh Pi
+already installed obviously because I've
+been playing around with it already. Uh
+but like I said, I don't have it set up
+to use my Kimmy subscription. I don't
+have uh very many extensions installed.
+Like I played around with a couple of
+them that I was showcasing in Archon
+workflows in that one YouTube video I
+did, but I want to try some other ones.
+Um like these are the ones that I have
+right now. And then I want to try
+building my own extension for the first
+time. And the idea with pi is it has
+really good meta reasoning like it
+understands how to evolve itself. So if
+I say like I want to you know um
+goodness I can't type today. I want to
+work wow work on a pi extension like
+that would kick off a conversation where
+it would look at its own codebase
+internally and I think there's even like
+a skill built into it. I'm not sure on
+that exactly to walk you through
+basically evolving itself. So, Pi knows
+how to walk you through evolving itself.
+So, that's what I want to try. Um, but
+actually the first thing that I want to
+do is I want to set up Pi to use my
+Kimmy code subscription.
+And, uh, like I said, this live stream
+is just casual exploration together. I'm
+going to try something. I don't really
+know if it's going to work, but I'm
+going to be using my Aqua voice here, my
+speech to text, and I'm going to use
+this just to kind of give like a brain
+dump here. I'm going to do this a couple
+of times throughout the stream. So, I'm
+going to go in here and say, uh, I want
+to change PI, the coding agent that you
+are right now, to use my Kimmy code
+subscription instead of codeex. That's
+what I'm using right now. So, I want you
+I don't know if you have access to your
+own documentation or what, but I want
+you to look at how I could do that. Uh,
+which this is also useful for me to to
+see like generally how it's able to
+reason about its its own process. So,
+let's see. It says it's reviewing the
+Pi. Um, okay. Oh, yeah. Okay. So, it
+does have access to read its own
+documentation.
+Cool. So, this should be easy. And then
+I have my um API key ready to go. So, I
+can just copy that. Let me uh actually
+I'll copy that in a little bit, but I
+have that ready on another monitor here
+for when it tells me like where I need
+to put my API key. So, it it's kind of
+different than Anthropic. With the Kimmy
+subscription, you still have an API key.
+Uh but so like with the Anthropic
+subscription and Codeex, you just like
+log into your account. So you like do
+the Google Oath or whatever. Uh so with
+Kimmy, you need an API key, but it's not
+like I pay per token like most APIs
+work. You know what I mean? So I still
+get to like use my subscription. You can
+see that I have my 5h hour limit and I
+have my weekly usage just like you'd
+have with Cloud Code, for example. I
+think that's how the Mini Max
+subscription works as well. Um, which I
+I don't want to buy that right now, but
+that is another one that I'm interested
+in testing. I just want to do a ton of
+testing with these like faster, smaller
+models and see what kind of results I
+get.
+Okay.
+Um, yeah, Pi can use Kimmy, but the docs
+show an important limitation.
+Uh, not as a login subscription
+provider. Yeah. So, I guess it doesn't
+really understand. See, it thinks that
+it's going to be pay per token, but it's
+not. Uh, if your subscription gives you
+an API key, you can use it in Pi
+directly.
+Uh, easiest setup.
+Um, let's see if you want Kimmy to be
+your default.
+Let's see.
+Adam custom provider. Yes. Uh, I want
+you to update models.json
+and then give me the path so I can add
+the API key there. Then also, actually,
+I should just use my speech to text
+here.
+Then um also even though I have to set
+an API key, I believe it is actually
+using my subscription and set a paper
+token. So I want you to confirm that
+with Kimmy and search the web as well,
+which because I I think I gave it to the
+web search extension, right? Uh no.
+Okay. So it might not actually have the
+ability to search the web until I
+install that extension, which I might
+actually do that right away. That could
+be really useful. So let me go to the
+package catalog. If I just go to the PI
+web access,
+this is a pretty cool one. Web search,
+URL fetching, GitHub repo cloning, PDF
+extraction, YouTube video understanding,
+and local video analysis. Uh, that's
+pretty cool. Literally, all you have to
+do to install this is um run the PI
+install and then the ID for the mpm
+package. So, I can copy that because I I
+think it's going to fail. Yeah. Yeah.
+See, you can see that in order to do web
+research, this is super jank. It created
+Python scripts to uh just make requests
+like get requests out to the web. So
+that that's not ideal.
+All right, I'll let it run right now.
+Well, actually, in the meantime, what I
+can do is I can just install this. So,
+pi install mpm pi web access.
+So, at least for the next session, it'll
+have access to this. Check this out. So
+now if I do pi
+um it take a little bit to load.
+Um okay. So there's an error here
+because it's in the middle of setting
+things up. But anyway, we can see the
+extension has PI web access now. So if I
+say like search the web for the latest
+news on cloud code. Now it should be
+able to not just create a stupid Python
+script.
+Yeah, there you go. So now now this
+looks a lot better. So that's also a
+cool quick demonstration of how easy it
+is to extend Pi as long as you trust the
+extension. That's the other thing to
+keep in mind is this marketplace is not
+like officially vetted. You have to be
+careful what you install. I guess for
+this case I'm just trusting the fact
+that it has, you know, almost 45,000
+installations a month that it's probably
+good. Uh because people would have
+reported it if it isn't or at least I'm
+hoping so. So we'll see. All right. So
+yeah, that was a very efficient that was
+also super fast. Another really cool
+thing about Pi is it's a lot faster than
+any other bloated coding agent out
+there. That's one of the benefits of it
+being minimal besides it being very
+customizable is it's also just fast. So
+we got the new agent view and cloud
+code. Uh /go was added. So yeah, this
+looks very accurate. Cool.
+Okay. Uh so now it created the
+models.json. It has a place for me to
+paste my API key. U I cannot confirm the
+claim that PI would consume your Kimmy
+subscription instead of API billing.
+Uh, well, I mean, I'm just going to I I
+know it will. I just thought that it
+would find that. It probably didn't just
+because it didn't have the right web
+search tool. Okay, so next step, I have
+to open up this file and then added my
+API key. So, let's go ahead and do that.
+I'm going to do that off camera, though,
+obviously, because that has my API key.
+So, let me open this up.
+My other camera or I keep saying camera,
+my other monitor. Goodness. Uh,
+model.json. JSON.
+Okay. And then let me pull up my key.
+All right. Where's my Kimmy key?
+There it is. Okay. Copy
+and then paste.
+All right.
+Okay.
+Good. Done. Now, verify. I'm curious if
+it's going to be able to verify or if
+I'd have to restart the session. Um,
+[laughter]
+wow. It just it just it just wrote out
+the entire key in plain text. All right.
+Well, that sucks.
+So, [laughter]
+I'm going to have to I'm going to have
+to delete the key right now. That is
+hilarious. [laughter]
+Uh, wow. All right. Well, I'm going to
+create a new API key.
+Factory v2. That's That's insane
+cuz I just shared it for the world.
+Okay. Uh, done. Delete the old key.
+Delete. Okay, it's deleted. So, you guys
+can't use that for anything now. But,
+wow, it just displayed that for the
+world to see. Thank you very much. I I
+love I love you so much, Pi. I mean, I
+think any coding agent might have done
+that. That's funny though that it just
+Okay. All right. All right. That's
+great. So, we got our I I reset the pi
+key. Why did I paste the key on camera?
+I didn't paste it on camera.
+It It's just that uh Pi Pi showed it
+uh when it when it read it. [laughter]
+Someone wrote a cool tool to blur
+private info in Pi. That That's pretty
+neat. I mean, honestly, I would I would
+want to use that.
+uh right now. [laughter]
+Oh man.
+All right. Um loving the Dynamus
+community, Cole. I appreciate a lot.
+Thank you very much. And uh appreciate
+the donation as well. Very generous of
+you.
+All right.
+Okay. So, anyway, I need to I need to
+reset that. That is so unfortunate.
+So, um Okay.
+Current Kimmy key is not accepted by the
+Kimmy API.
+Let's see.
+Oh, I need to edit the O.JSON now,
+apparently. Let me open that up.
+Give me the key. Okay, so I set the key
+and then
+let's Okay, let's just try this. So, I'm
+going to I'm going to try a new session
+here.
+I'm going to clear. I'll go back into pi
+and then I'll do a slashmodel.
+Can I use Kimmy? I have all the Gemini
+mod. Okay. Yeah. Yeah. Kimmy for coding.
+Hi. Let's see if this works.
+I'll just test it myself instead of
+asking it. Okay. Yeah. Yeah. So, we're
+good. We're good. Uh, very cool. So, our
+Kimmy is working now. That was just a
+stupid hiccup where it it showed my key.
+So, okay, going back to the browser
+here. I have the new one created. You
+can't see the full thing.
+And uh if I look at usage history,
+we should see some requests that came
+in.
+There we go. Yep. Yep. All right. Cool.
+So, it's working. We're using We're
+using Kimmy.
+Thank goodness, though. That was
+annoying. So, anyway, we we got it
+figured out. So, we're using Kimmy now,
+which is pretty cool. Um, nice. So, I
+also don't have to worry about blowing
+through my entropic rate limit for our
+live stream today. All right. So, I'm
+going to close this pie here. I don't
+need this one anymore. So, now we're
+working on Kimmy. We have a uh 262,000
+token uh context window, which is pretty
+good. So, what's next? Uh well, next I
+actually want to play around with a
+couple of extensions here.
+So, if we go back to the marketplace,
+uh there's a there's another
+conversation that I was having with my
+second brain just prepping for our live
+stream today. Uh what extensions did I
+want to try today? I forget what cuz I I
+was like going through some work with um
+with my second brain just like you know
+figuring out like what would be some
+cool extensions to try. So, I'm just
+going to ask it for a reminder really
+quick.
+Okay. Uh PI agent extension and then PI
+extensions.
+Uh okay, let's try this out. So, uh I
+will do this one first.
+What all does
+this give me? All right. So, then I'll
+go back to my pi here and then wait,
+hold on. Let me check one thing. Okay.
+There we go. Cool. And paste this in.
+All right. Wait, no, I have to do this
+in a new terminal. So, pi install PI
+agent extension
+and then let's see
+what's the Okay, so it doesn't have the
+summary yet. So, I'll wait for that.
+We'll get this installed.
+So, this extension, it has like a lot of
+different things built in, which is why
+I chose it. Um, so if we go into Pi now,
+let's see, make sure we have it
+installed.
+And by the way, this is just one of them
+that I found from the marketplace. Uh
+what was it called again?
+Extensions. Uh PI agent extensions. It
+was called like we have like slow mode,
+notify, permission gates, questionnaire,
+status line. There's a lot that it
+installed. So like if I search for
+status line for example,
+uh we should be able to find the exact
+one that I just installed.
+I think this is it. a fixed twoline
+status footer for Pi with model thinking
+context get token or get token work tree
+skill indicators.
+Okay. Yeah, sure enough we can see that
+uh we have an updated status line here.
+So this is working. That's good. And
+then what else do we have here? Stash uh
+slow mode notify. I'm going to go back
+to my second brain and see if we got a
+summary.
+Um let's see. PIM MCP adapter is also
+useful. Yeah, for if I want to use MCP
+servers 100%. I wasn't really planning
+on using any for the live stream today,
+but uh maybe if we have time. We'll see
+how far we get. Uh okay.
+Well, let's see. Give me a summary. So,
+status line gives us the con then status
+bar. So, we saw that already. Uh
+permission gate configurable danger
+command gate. So, this I actually love
+this a lot. Usually with Claude, you
+have to do this with hooks, but having
+this as a built-in extension is really
+neat. So being able to control the
+actions that we don't want our PI agent
+to do. Um slow mode is a review gate for
+writeedit tool calls.
+Approve reject the diff before it hits
+disk. Uh stash save restore editor text.
+Okay. Notify desktop notification when
+the agent finishes. That's pretty cool.
+Uh which we can't really see that
+because when I do a live stream, OBS
+disables my uh my Windows notifications.
+But I mean anyway, this is just one of
+the many extensions we have here.
+um LLM callable multi-question tool with
+the tabed UI. That's pretty cool. It's
+kind of like the ask user question tool
+in cloud code. So you can see that like
+a lot of these extensions are building
+things that are already in these other
+tools like cloud code and codeex. But
+the powerful thing is just the
+customization that we can do here. Like
+we could even build on top of these
+extensions if we wanted to. Uh fetch dur
+autoloads EMRC environment variables
+into every bash call. Okay, that's oddly
+specific. Uh TUI to view, filter, toggle
+every extension from your installed
+packages. Okay, that's cool. So just
+like a quality of life. Um and then uh
+do the same for the other extension list
+cuz there was that that second one as
+well.
+Um this gives us a dashboard, live
+token, and cost widget, artifacts,
+visual file preview, interactive
+question tool. I guess I don't need to
+install that one as well, especially
+because this is already there. But let's
+actually test this right now. So I'll go
+in here and I'll say like ask me a
+couple questions about uh different um
+models I want to try with pi. Use the
+extension. I I hope I don't have to
+explicitly say use the extension, but I
+just want to test this here to make sure
+that it it like this thing that we
+installed is really loaded in.
+Okay. Uh however, the extension likely
+refers to the planotator. Okay. So I
+think it got it actually got confused
+here.
+None of these seem directly applicable.
+Um,
+well,
+yeah, I wanted to use the questionnaire.
+I think it's really confused. I'm going
+to edit here just to use the
+questionnaire.
+All right. It's a little unfortunate
+that I have to
+Okay, so it's working now. But I guess
+Pi by itself didn't really fully
+understand the extensions it had access
+to, which is kind of unfortunate. So
+maybe there's something in my global
+rules where I'd have to specify like
+when I want it to ask me questions, I'm
+referring specifically to using the
+questionnaire extension.
+So okay, yep, this this actually looks
+great. This literally looks just like
+cloud code. Which LM providers are you
+most interested in trying? I will do uh
+open router
+and uh Kimmy and Miniax through
+the subscription.
+All right. Top priority. What's your
+best code quality? Uh general coding
+assistance. Actually, all of these
+uh compare several models side by side.
+Okay, good. So, yeah, this is actually
+working really well. So, very cool.
+All right.
+Let's see. Let's see what else. Uh I'm
+just looking at the chat really quick
+here.
+Um I've been diving into the dark
+factory. Curious how pi could help.
+So the the reason pi could be really
+helpful for the dark factory is because
+I have a very specific workflow for the
+way that I have the coding agent evolve
+the codebase, right? kind a specific way
+to triage my issues and handle each one
+of them and validate the pull requests
+and then I do like a weekly regression
+testing where I make sure the coding
+agent didn't like break things
+significantly with all the changes it's
+making. So I feel like pi could just
+like mold my workflow better versus me
+just trying to like force cla code to go
+through everything. I mean it's not like
+super concrete in my mind what that
+actually looks like. But that's one of
+the things that I want to explore today
+is building a custom extension for pi.
+And I want to build an extension
+basically for it to manage archon. And I
+think that could be really cool for the
+dark factory as well.
+All right.
+Pi versus Jcode. I have not heard of
+JCode actually.
+Uh let's here I'll Google it quick. I'm
+curious. Uh Jode I have not heard of it.
+A coding agent harness. Okay. Oh, so
+this is put out pretty recently, huh?
+Uh, next generation coding agent harness
+to raise the skill ceiling. Built for
+multi-session workflows, infinite
+customizability and performance. So, it
+does it I mean it sounds similar. The
+initial value proposition at the top of
+the repo.
+Uh, Jode is built to be as performant
+and resource efficient as possible.
+Every metric is optimized to the bone.
+Okay.
+Um,
+Jcode.
+Sure. So I they Okay. So you can see
+that Pi is the second best, but
+apparently J-code is better with local
+embeddings off.
+I don't care that much about speed. Like
+here, here's the thing. Coding agents,
+you care the most about output quality
+over everything. And then like obviously
+token management and cost. But I don't
+care about speed that much. Like when I
+have a workflow that I want my coding
+agent to go through, I just want it to
+do the best job possible. and I'll do a
+sort of fire and forget like I'll send
+it off to write the plan or do the
+implementation, validate the poll
+request, whatever it is. And I don't
+really care how long it takes as long as
+it's not an absurdly long thing that's
+like consuming a ton of tokens.
+But yeah, like time to first frame for
+AI coding just doesn't matter to me. I I
+don't really care. Time to first input,
+like who cares if it's 50 milliseconds
+versus 500. Like if if it's less than a
+second, then we're good. Apparently,
+cloud code is three and a half seconds,
+which is crazy. So, I mean, matters to
+an extent. So, like I appreciate this,
+but I don't know if I would like care so
+much about a tool that's like just
+focused on being the fastest user
+experience. I just want the best
+results, right?
+But it's interesting.
+All right. Uh, there's a reload
+extensions command. Oh, okay. That's
+good to know. I will definitely use that
+when I install more things. I don't just
+restart the session. Okay.
+Cool. So, let's see what it outputed
+here. Uh, it says that Claude Sonnet 4
+is the best,
+which I don't really want to use Sonnet
+right now, but otherwise, Deep Seek
+Chat, Gemini 2.5, Kimmy K2. It looks
+like,
+yeah, I don't really like its research
+here because I mean, this is my fault
+because I need to be specific on the
+models, but it's looking at some pretty
+outdated models. Like, Kimmy K2 is a lot
+older obviously than uh Kimmy K 2.6.
+and we have Gemini 3. So why is it
+talking about Gemini 2.5? So anyway, I
+was just more exploring the
+questionnaire extension. I wasn't really
+caring about the results that we got
+here. So that's fine.
+Uh reload.
+Yeah. Okay. So this is the command
+reload key bindings extension skills
+prompts and themes. Okay, that's nice.
+Yeah, this is convenient. I'll
+definitely use that going forward.
+Okay, cool. Uh so what else do we have
+here? Um, one of the things I wanted to
+try to do is run an archon workflow with
+PI itself. So, I wanted to ask it here.
+Um, do you have access to skills? So, I
+don't really know like within the archon
+repository, I have my skills in theclad
+skills folder. I don't know if that's
+compatible with pi or if I would need to
+move it somewhere.
+Yeah, it looks like it doesn't know. And
+I guess that makes sense because if I
+look up here or where did it go?
+Yeah, it does. We can see that it's not
+loading any of the skills from thecloud
+folder. So it only has access to these
+ones. So basically, I'm going to point
+it to this. I'll copy the full path and
+say if um I want you to access these
+skills as well,
+what do we have to do? because I wanted
+to have access to the archon skill.
+What? Actually, it actually called out
+something here. What is this? That's
+completely pi skills are MD files and
+agent skills orcloud skills. Oh, so
+apparently it's supposed to be able to
+read from these automatically, but it
+didn't. So, that's kind of strange.
+Um, okay. I lost where I was in the
+terminal because it like it like jacked
+me up to the top for some reason. Uh,
+okay. So, what was it saying here?
+Pi loads into its context window. I
+don't use those. I use the skill system
+defined above.
+Okay. Okay. Ah, it keeps bringing me to
+the top of my terminal here.
+So, I think
+[TRUNCATED]

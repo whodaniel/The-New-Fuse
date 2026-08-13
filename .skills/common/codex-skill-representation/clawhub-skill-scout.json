@@ -1,0 +1,12 @@
+{
+  "skillName": "clawhub-skill-scout",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/clawhub-skill-scout/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/clawhub-skill-scout/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/clawhub-skill-scout.json",
+  "status": "present"
+}

@@ -1,0 +1,1322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/sgp/0.1/envelope.schema.json",
+  "title": "SGP Message Envelope",
+  "anyOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "cursor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "filter": {
+              "additionalProperties": {},
+              "properties": {
+                "owner": {
+                  "type": "string"
+                },
+                "tags": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "limit": {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "limit"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DISCOVER.REQUEST",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "items": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "capabilities": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "kind": {
+                    "enum": [
+                      "workbook",
+                      "sheet",
+                      "table",
+                      "column"
+                    ],
+                    "type": "string"
+                  },
+                  "resource": {
+                    "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "updated_at": {
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "resource",
+                  "kind",
+                  "title",
+                  "updated_at",
+                  "capabilities"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "next_cursor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "next_cursor"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DISCOVER.RESPONSE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "entry_tables": {
+              "items": {
+                "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "manifest_version": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "timezone": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "manifest_version",
+            "owner",
+            "timezone",
+            "entry_tables"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "MANIFEST.PUBLISH",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "nullable": {
+                    "type": "boolean"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "type",
+                  "nullable"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "compatibility": {
+              "enum": [
+                "backward",
+                "forward",
+                "full",
+                "none"
+              ],
+              "type": "string"
+            },
+            "primary_key": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "schema_version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema_version",
+            "columns",
+            "compatibility"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SCHEMA.PUBLISH",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "cursor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "from": {
+              "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+              "type": "string"
+            },
+            "limit": {
+              "maximum": 50000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "order_by": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "col": {
+                    "type": "string"
+                  },
+                  "dir": {
+                    "enum": [
+                      "asc",
+                      "desc"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "col",
+                  "dir"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "select": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "where": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "col": {
+                    "type": "string"
+                  },
+                  "op": {
+                    "enum": [
+                      "=",
+                      "!=",
+                      ">",
+                      ">=",
+                      "<",
+                      "<=",
+                      "in",
+                      "contains"
+                    ],
+                    "type": "string"
+                  },
+                  "value": {}
+                },
+                "required": [
+                  "col",
+                  "op",
+                  "value"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "select",
+            "from"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "QUERY.REQUEST",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "next_cursor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rows": {
+              "items": {
+                "items": {},
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "schema": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "type"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "stats": {
+              "additionalProperties": false,
+              "properties": {
+                "latency_ms": {
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "rows_returned": {
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "rows_scanned": {
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "rows_scanned",
+                "rows_returned",
+                "latency_ms"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "schema",
+            "rows",
+            "next_cursor",
+            "stats"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "QUERY.RESPONSE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "from_offset": {
+              "type": "string"
+            },
+            "resource": {
+              "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource",
+            "from_offset"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SUBSCRIBE.REQUEST",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "after": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "before": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "changed_at": {
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+              "type": "string"
+            },
+            "lineage": {
+              "additionalProperties": false,
+              "properties": {
+                "upstream": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "offset": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "insert",
+                "update",
+                "delete",
+                "upsert"
+              ],
+              "type": "string"
+            },
+            "pk": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "source": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "offset",
+            "op",
+            "pk",
+            "changed_at",
+            "source"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "CHANGE.EVENT",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "roles": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "roles"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "enum": [
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "NOT_FOUND",
+                "INVALID_REQUEST",
+                "SCHEMA_MISMATCH",
+                "CONFLICT",
+                "RATE_LIMITED",
+                "INTERNAL"
+              ],
+              "type": "string"
+            },
+            "details": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "type": "object"
+        },
+        "resource": {
+          "pattern": "^sgp:\\/\\/[^/]+\\/[^/]+\\/[^/]+\\/[^/]+$",
+          "type": "string"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        },
+        "spec": {
+          "const": "sgp/0.1",
+          "type": "string"
+        },
+        "tenant": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "trace": {
+          "additionalProperties": false,
+          "properties": {
+            "causation_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "correlation_id": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correlation_id",
+            "causation_id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ERROR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec",
+        "tenant",
+        "resource",
+        "sent_at",
+        "actor",
+        "trace",
+        "type",
+        "payload"
+      ],
+      "type": "object"
+    }
+  ],
+  "type": "object"
+}

@@ -1,0 +1,115 @@
+{
+  "runId": "2026-02-23T09-59-40-328Z",
+  "createdAt": "2026-02-23T10:02:27.880Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "totals": {
+    "pass": 10,
+    "fail": 2,
+    "blocked": 0,
+    "total": 12
+  },
+  "checks": [
+    {
+      "id": "panel_open_only_qwen_baseline",
+      "status": "PASS",
+      "details": {
+        "qwenPanel": {
+          "usedInjection": true,
+          "injected": {
+            "success": true
+          },
+          "show": {
+            "success": true
+          }
+        },
+        "geminiPanelVisibleBefore": false
+      }
+    },
+    {
+      "id": "qwen_send_works",
+      "status": "PASS",
+      "details": {
+        "panelSend": {
+          "success": true
+        },
+        "qwenPromptVisible": true
+      }
+    },
+    {
+      "id": "qwen_response_captured",
+      "status": "PASS",
+      "details": {
+        "lastResponsePreview": "By logging in, you agree to our Terms of Service and Privacy Policy."
+      }
+    },
+    {
+      "id": "green_broadcast_qwen_inject",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771840896092"
+      }
+    },
+    {
+      "id": "no_cross_tab_injection_when_gemini_panel_hidden",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771840896092",
+        "geminiPanelHidden": true
+      }
+    },
+    {
+      "id": "gemini_injection_when_panel_open",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_B_1771840901857"
+      }
+    },
+    {
+      "id": "channel_isolation_green_vs_red",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_WHILE_RED_1771840907316"
+      }
+    },
+    {
+      "id": "pause_green_blocks_injection",
+      "status": "FAIL",
+      "details": {
+        "token": "TNF_GREEN_PAUSED_1771840910645"
+      }
+    },
+    {
+      "id": "resume_green_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_RESUMED_1771840913817"
+      }
+    },
+    {
+      "id": "pause_red_blocks_injection",
+      "status": "FAIL",
+      "details": {
+        "token": "TNF_RED_PAUSED_1771840919195"
+      }
+    },
+    {
+      "id": "resume_red_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_RESUMED_1771840922368"
+      }
+    },
+    {
+      "id": "pause_state_sync_after_refresh",
+      "status": "PASS",
+      "details": {
+        "pausedAfterReload": ["Red"]
+      }
+    }
+  ],
+  "failures": [
+    "Fatal runner error: page.goto: net::ERR_BLOCKED_BY_CLIENT at chrome-extension://www.googletagmanager.com/popup/index.html\nCall log:\n\u001b[2m  - navigating to \"chrome-extension://www.googletagmanager.com/popup/index.html\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at openPopup (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:90:23)\n    at async main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:538:7)",
+    "pause_green_blocks_injection: {\"token\":\"TNF_GREEN_PAUSED_1771840910645\"}",
+    "pause_red_blocks_injection: {\"token\":\"TNF_RED_PAUSED_1771840919195\"}"
+  ]
+}

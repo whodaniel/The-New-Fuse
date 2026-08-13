@@ -1,0 +1,12 @@
+{
+  "skillName": "meta-agent-architect",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/meta-agent-architect/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/meta-agent-architect/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/meta-agent-architect.json",
+  "status": "present"
+}

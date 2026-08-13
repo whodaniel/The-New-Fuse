@@ -1,0 +1,12 @@
+{
+  "skillName": "notion-spec-to-implementation",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/notion-spec-to-implementation/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/notion-spec-to-implementation/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/notion-spec-to-implementation.json",
+  "status": "present"
+}

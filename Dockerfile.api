@@ -1,0 +1,180 @@
+# Multi-stage Dockerfile for TNF API Server
+# Build context: monorepo root
+
+# Stage 1: Build
+FROM node:22-alpine AS builder
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Copy package files first for caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY tsconfig.base.json ./
+COPY .agent ./.agent
+COPY .claude ./.claude
+COPY packages/tsconfig.base.json packages/
+
+# Copy API and workspace packages
+COPY apps/api/package.json apps/api/
+COPY packages/a2a-core/package.json packages/a2a-core/
+COPY packages/agent/package.json packages/agent/
+COPY packages/ap2-protocol/package.json packages/ap2-protocol/
+COPY packages/api-types/package.json packages/api-types/
+COPY packages/core/package.json packages/core/
+COPY packages/core-error-handling/package.json packages/core-error-handling/
+COPY packages/core-monitoring/package.json packages/core-monitoring/
+COPY packages/core-vector-db/package.json packages/core-vector-db/
+COPY packages/database/package.json packages/database/
+COPY packages/eslint-config-custom/package.json packages/eslint-config-custom/
+COPY packages/fairtable-adapters/package.json packages/fairtable-adapters/
+COPY packages/fairtable-components/package.json packages/fairtable-components/
+COPY packages/fairtable-core/package.json packages/fairtable-core/
+COPY packages/fairtable-utils/package.json packages/fairtable-utils/
+COPY packages/infrastructure/package.json packages/infrastructure/
+COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/mcp-core/package.json packages/mcp-core/
+COPY packages/n8n-workflows/package.json packages/n8n-workflows/
+COPY packages/port-management/package.json packages/port-management/
+COPY packages/proto-definitions/package.json packages/proto-definitions/
+COPY packages/protocol-contracts/package.json packages/protocol-contracts/
+COPY packages/relay-core/package.json packages/relay-core/
+COPY packages/security/package.json packages/security/
+COPY packages/shared/package.json packages/shared/
+COPY packages/tnf-browser/package.json packages/tnf-browser/
+COPY packages/tnf-cli/package.json packages/tnf-cli/
+COPY packages/tnf-core/package.json packages/tnf-core/
+COPY packages/tnf-note-taking/package.json packages/tnf-note-taking/
+COPY packages/workflow-engine/package.json packages/workflow-engine/
+COPY packages/types/package.json packages/types/
+COPY packages/utils/package.json packages/utils/
+COPY packages/web-scraping/package.json packages/web-scraping/
+
+# Install dependencies (ignoring lockfile mismatches to ensure build succeeds)
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Copy source code
+COPY apps/api/ apps/api/
+COPY data/agent-bank/ data/agent-bank/
+COPY packages/a2a-core/ packages/a2a-core/
+COPY packages/agent/ packages/agent/
+COPY packages/ap2-protocol/ packages/ap2-protocol/
+COPY packages/api-types/ packages/api-types/
+COPY packages/core/ packages/core/
+COPY packages/core-error-handling/ packages/core-error-handling/
+COPY packages/core-monitoring/ packages/core-monitoring/
+COPY packages/core-vector-db/ packages/core-vector-db/
+COPY packages/database/ packages/database/
+COPY packages/eslint-config-custom/ packages/eslint-config-custom/
+COPY packages/fairtable-adapters/ packages/fairtable-adapters/
+COPY packages/fairtable-components/ packages/fairtable-components/
+COPY packages/fairtable-core/ packages/fairtable-core/
+COPY packages/fairtable-utils/ packages/fairtable-utils/
+COPY packages/infrastructure/ packages/infrastructure/
+COPY packages/jules-skill/ packages/jules-skill/
+COPY packages/mcp-core/ packages/mcp-core/
+COPY packages/n8n-workflows/ packages/n8n-workflows/
+COPY packages/port-management/ packages/port-management/
+COPY packages/proto-definitions/ packages/proto-definitions/
+COPY packages/protocol-contracts/ packages/protocol-contracts/
+COPY packages/relay-core/ packages/relay-core/
+COPY packages/security/ packages/security/
+COPY packages/shared/ packages/shared/
+COPY packages/tnf-browser/ packages/tnf-browser/
+COPY packages/tnf-cli/ packages/tnf-cli/
+COPY packages/tnf-core/ packages/tnf-core/
+COPY packages/tnf-note-taking/ packages/tnf-note-taking/
+COPY packages/workflow-engine/ packages/workflow-engine/
+COPY packages/types/ packages/types/
+COPY packages/utils/ packages/utils/
+COPY packages/web-scraping/ packages/web-scraping/
+
+# Build required workspace packages and api service.
+# Clean Cloud Build contexts do not ship local dist/, so runtime deps like
+# a2a-core must be compiled here (otherwise Cloud Run exits with MODULE_NOT_FOUND).
+RUN pnpm --filter @the-new-fuse/infrastructure run build && \
+    pnpm --filter @the-new-fuse/types run build && \
+    pnpm --filter @the-new-fuse/shared run build && \
+    pnpm --filter @the-new-fuse/security run build && \
+    pnpm --filter @the-new-fuse/ap2-protocol run build && \
+    pnpm --filter @the-new-fuse/a2a-core run build && \
+    pnpm --filter @the-new-fuse/database run build && \
+    pnpm --filter @the-new-fuse/api-server run build
+
+RUN test -f apps/api/dist/main.js \
+  && test -f packages/a2a-core/dist/index.js
+
+# Verify the build output exists
+RUN ls -la apps/api/dist/ || echo "Build output check"
+
+# Stage 2: Production
+FROM node:22-alpine AS production
+
+# Install pnpm for production
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY tsconfig.base.json ./
+COPY packages/tsconfig.base.json packages/
+
+# Copy API and workspace packages  
+COPY apps/api/package.json apps/api/
+COPY packages/a2a-core/package.json packages/a2a-core/
+COPY packages/agent/package.json packages/agent/
+COPY packages/ap2-protocol/package.json packages/ap2-protocol/
+COPY packages/api-types/package.json packages/api-types/
+COPY packages/core/package.json packages/core/
+COPY packages/core-error-handling/package.json packages/core-error-handling/
+COPY packages/core-monitoring/package.json packages/core-monitoring/
+COPY packages/core-vector-db/package.json packages/core-vector-db/
+COPY packages/database/package.json packages/database/
+COPY packages/eslint-config-custom/package.json packages/eslint-config-custom/
+COPY packages/fairtable-adapters/package.json packages/fairtable-adapters/
+COPY packages/fairtable-components/package.json packages/fairtable-components/
+COPY packages/fairtable-core/package.json packages/fairtable-core/
+COPY packages/fairtable-utils/package.json packages/fairtable-utils/
+COPY packages/infrastructure/package.json packages/infrastructure/
+COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/mcp-core/package.json packages/mcp-core/
+COPY packages/n8n-workflows/package.json packages/n8n-workflows/
+COPY packages/port-management/package.json packages/port-management/
+COPY packages/proto-definitions/package.json packages/proto-definitions/
+COPY packages/protocol-contracts/package.json packages/protocol-contracts/
+COPY packages/relay-core/package.json packages/relay-core/
+COPY packages/security/package.json packages/security/
+COPY packages/shared/package.json packages/shared/
+COPY packages/tnf-browser/package.json packages/tnf-browser/
+COPY packages/tnf-cli/package.json packages/tnf-cli/
+COPY packages/tnf-core/package.json packages/tnf-core/
+COPY packages/tnf-note-taking/package.json packages/tnf-note-taking/
+COPY packages/workflow-engine/package.json packages/workflow-engine/
+COPY packages/types/package.json packages/types/
+COPY packages/utils/package.json packages/utils/
+COPY packages/web-scraping/package.json packages/web-scraping/
+
+# Install production dependencies only
+RUN pnpm install --no-frozen-lockfile --ignore-scripts --prod
+
+# Copy built files from builder
+COPY --from=builder /app/apps/api/dist/ /app/apps/api/dist/
+COPY --from=builder /app/packages/ /app/packages/
+COPY --from=builder /app/.agent/ /app/.agent/
+COPY --from=builder /app/.claude/ /app/.claude/
+# Packaged Library catalog (Cloud Run fallback when bank dirs are slim/empty)
+COPY --from=builder /app/apps/api/assets/agent-bank/ /app/apps/api/assets/agent-bank/
+COPY --from=builder /app/data/agent-bank/ /app/data/agent-bank/
+
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Start the app
+WORKDIR /app/apps/api
+CMD ["node", "dist/main.js"]

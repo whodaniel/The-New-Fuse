@@ -1,0 +1,12 @@
+{
+  "skillName": "openclaw-onboarding-wizard",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/openclaw-onboarding-wizard/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/openclaw-onboarding-wizard/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/openclaw-onboarding-wizard.json",
+  "status": "present"
+}

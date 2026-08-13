@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "types": ["jest", "node", "selenium-webdriver"],
+    "esModuleInterop": true,
+    "module": "ESNext"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/test/**/*.ts"],
+  "exclude": ["node_modules"]
+}

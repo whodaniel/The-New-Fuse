@@ -1,0 +1,175 @@
+{
+  "spec": "tnf/agent-definition-consistency-review/0.1",
+  "review_id": "review-2026-06-14-agent-definition-vocabulary",
+  "created_at": "2026-06-14T00:00:00Z",
+  "operator_session": "agent:local-subdirector:session:2026-06-12T03:17:10.901505Z",
+  "scope": "verify-whether-my-last-7-phases-of-work-uses-the-same-vocabulary-as-the-rest-of-tnf",
+  "verdict": "PARTIALLY INCONSISTENT. Multiple authoritative surfaces exist; my new terminology overlaps but is NOT aligned with the canonical runtime vocabulary.",
+  "summary": "There are at least four overlapping agent-definition surfaces in TNF. My work addressed the DB-vendor side but missed the runtime 'traits' vocabulary that `tnf register`, `tnf traits list`, `tnf agents bank reconcile`, and `DACC-v1 ROLE_DEFINITIONS.md` already speak.",
+  "vocabulary_surfaces_found": [
+    {
+      "surface": "DACC-v1 Role Hierarchy",
+      "source": ".agent/ROLE_DEFINITIONS.md",
+      "fields": [
+        "DIRECTOR",
+        "ORCHESTRATOR (master-clock, baton holder)",
+        "BROKER (per channel)",
+        "AGENT (worker, AGENT-XX signed)"
+      ],
+      "scope": "organizational hierarchy; identity and message-signing",
+      "my_work_alignment": "MISSED. None of {role, fulfillment, qualities} map onto DACC roles."
+    },
+    {
+      "surface": "Runtime Traits Vocabulary",
+      "source": "packages/tnf-cli/src/cli.ts:2958-2967",
+      "fields": {
+        "AGENT_ROLE_TRAITS": [
+          "orchestrator",
+          "broker",
+          "worker",
+          "participant"
+        ],
+        "AGENT_PLATFORM_TRAITS": [
+          "antigravity",
+          "gemini",
+          "claude",
+          "jules",
+          "pi",
+          "vscode",
+          "browser"
+        ]
+      },
+      "scope": "runtime CLI default arguments, `tnf traits list` output, `tnf register` defaults",
+      "my_work_alignment": "PARTIAL. I added 4 new enum values CLI_KILO/CLI_OPENCODE/CLI_PI/API_CLAUDE_CODE inside the legacy 110-value agentTypeEnum — these do NOT coincide with the canonical AGENT_PLATFORM_TRAITS list, and 'kilo'/'opencode' still cannot be passed to `tnf register <platform>`."
+    },
+    {
+      "surface": "Agent Bank Targets",
+      "source": "packages/tnf-cli/src/cli.ts:9818 and scripts/agents/reconcile-agent-banks.cjs:293-306",
+      "fields": [
+        "codex",
+        "claude",
+        "gemini",
+        "opencode",
+        "kilo",
+        "augment",
+        "tnf",
+        "hermes",
+        "project",
+        "all"
+      ],
+      "scope": "cross-runtime persona distribution (skills copies)",
+      "my_work_alignment": "OK for kilo+opencode (matches); MISSED for 'project' as a bank target vs my enum mapping."
+    },
+    {
+      "surface": "AgentType Enum (DB legacy)",
+      "source": "packages/database/src/drizzle/schema/enums.ts:25-141",
+      "fields": "110+ flat values mixing role+platform+product",
+      "scope": "persistent DB canonical",
+      "my_work_alignment": "This is the surface I tried to fix with role+fulfillment split. PPE: my AgentRole enum (60 values) collides with both DACC and AGENT_ROLE_TRAITS."
+    },
+    {
+      "surface": "New: role + fulfillment + qualities (Phase 1-3)",
+      "source": "this audit's work",
+      "fields": [
+        "role (AgentRole enum, 60 values)",
+        "fulfillment (vendor/model/transport/protocol_version/prompt_doc_uri/tools/endpoint/raw)",
+        "qualities (observability/subAgent_capable/orchestrates_agents/persona_source/autonomy_level)"
+      ],
+      "scope": "DB column + in-memory + broker dispatch tie-breaker",
+      "my_work_alignment": "INTERNAL CONSISTENT, but conflicts with established vocabularies."
+    }
+  ],
+  "inconsistencies_found": [
+    {
+      "id": "INC-1",
+      "title": "`role` is overloaded across four vocabularies",
+      "details": [
+        "DACC: director / orchestrator / broker / agent (hierarchy)",
+        "AGENT_ROLE_TRAITS (cli.ts:2958): orchestrator / broker / worker / participant",
+        "agentTypeEnum (DB, legacy): 110+ flat values",
+        "My AgentRole enum (0006): code_generation / orchestrator / cli_coder / etc. (worker-action primitives)"
+      ],
+      "impact": "An agent registered with role='orchestrator' (mine) is technically compatible with role='orchestrator' (DACC and traits) but means DIFFERENT things. With DACC, 'orchestrator' is the master-clock baton holder. With my schema, 'orchestrator' is just a worker that coordinates things. The agent-bank/broker layers see only one of these.",
+      "remediation": "Add a new column `dacc_role` enum with ('director','orchestrator','broker','worker','participant'). Keep my role enum as `worker_action` or rename to `action_primitive`. Make DACC the canonical identity axis; make my enum the action-this-worker-performs axis."
+    },
+    {
+      "id": "INC-2",
+      "title": "`platform` is split across two vocabularies",
+      "details": [
+        "AGENT_PLATFORM_TRAITS (cli.ts:2959): antigravity, gemini, claude, jules, pi, vscode, browser (7 values)",
+        "Bank targets (cli.ts:9818): codex, claude, gemini, opencode, kilo, augment, tnf, hermes, project (9 values)",
+        "My fulfillment.vendor: free-form (string)",
+        "My agentTypeEnum additions: CLI_KILO, CLI_OPENCODE, CLI_PI, API_CLAUDE_CODE",
+        "MISSING from AGENT_PLATFORM_TRAITS: kilo, opencode, hermes (works against canonical `tnf register <platform>`)",
+        "MISSING from agent-bank targets: pi, vscode, browser"
+      ],
+      "impact": "If a user runs `tnf register myagent worker kilo`, the CLI rejects or silently ignores 'kilo' because it isn't in AGENT_PLATFORM_TRAITS. My fix added enum values for DB persistence but did not expose kilo/opencode through `tnf register`.",
+      "remediation": "Update AGENT_PLATFORM_TRAITS to include 'kilo','opencode','hermes','codex','augment'. Sync with the bank target map (probably the bank-target list should BE the merged platform taxonomy)."
+    },
+    {
+      "id": "INC-3",
+      "title": "`traits` is a canonical term I silently replaced",
+      "details": "TNF already uses 'traits' (tnf traits list, AGENT_ROLE_TRAITS, AGENT_PLATFORM_TRAITS, REDIS_COMMAND_TRAITS, PROVIDER_ROUTED_COMMAND_TRAITS). My new field is called 'qualities' — different name, overlapping concept.",
+      "remediation": "Rename my `qualities` field -> `traits`. Keep the type structure but expose via `tnf agents traits list`."
+    },
+    {
+      "id": "INC-4",
+      "title": "manifestations of 'metadata' exist but I did not mine them",
+      "details": [
+        "agents table: column `metadata` (jsonb, exists pre-audit) and `config` (jsonb)",
+        "agents_metadata table (separate 1:1), `config` (jsonb)",
+        "agents.profile (jsonb with about/personality/avatar/emoji/tags/creator/version)",
+        "users.preferences (jsonb)",
+        "agent_tracking.metadata (jsonb)",
+        "agent_sessions.metadata (jsonb)",
+        "TNF reserved AGENT_METADATA, HTTP_AGENT_REGISTRY_KEY, broker metadata-flow"
+      ],
+      "impact": "I added `fulfillment` and `qualities` as new jsonb columns when the codebase already has 'metadata' as a reserved-but-unstructured bag. Several places (e.g. master_agent_registry.ts MasterAgentProfile.metadata) already use 'metadata' as the catch-all for personality/version/communicationStyle/etc.",
+      "remediation": "Decide policy: are `fulfillment` and `qualities` top-level columns (good for indexing) or should they nest inside `agents.metadata`? Both choices have merit; the choice must be explicit and paired with the existing `agents_metadata` table semantics."
+    },
+    {
+      "id": "INC-5",
+      "title": "Promoted but not in LIVING_STATE / Active Agents",
+      "details": "My Phase 4 seeder inserts kilo-cli, opencode-cli, pi-coding-agent, claude-code, tnf-hermes, jules as TB rows in the registry with the SYSTEM user. The AGENT_STATUS_LEDGER.md, however, has canonical named agents like Antigravity, Historian/Journalist, Forge Agent, Codex, Orchestrator. My new entries are stored in DB but not 'visible' to the existing ledger view that operators actually read.",
+      "remediation": "When seeding, also append to AGENT_STATUS_LEDGER.md as a standing-by entry. Or — better — make `tnf traits list agent_roles` derive from the registry so the two views cannot drift."
+    },
+    {
+      "id": "INC-6",
+      "title": "Fulfillment is a UNIQUE new concept — risk of single-source-of-truth leak",
+      "details": "Fulfillment{model,transport,protocol_version,prompt_doc_uri,tools,endpoint,vendor}  is a real, useful concept — but I have not yet ratified it as the canonical term. Other places (multi-agent-integration protocol docs, twip, and possibly further registry work) may use the same idea under different names: 'runtime', 'engine', 'binder', 'driver', 'execution-stack'.",
+      "remediation": "Search docs/protocols/MULTI_AGENT_INTEGRATION_PROTOCOL.md and TWIP docs for existing terminology; explicitly state 'fulfillment' as the canonical term in the audit doc and link to it from ROLE_DEFINITIONS.md."
+    }
+  ],
+  "is_consistency_now_true": false,
+  "summary_user_facing": "No, there is not full consistency. The Phase 1-7 work added DB-schema rigor and made the broker fulfillment-aware, but the resulting taxonomy overlaps and partially conflicts with the canonical runtime vocabulary in `tnf traits` and DACC-v1 ROLE_DEFINITIONS. Specifically: 'role' is overloaded (4 meanings), 'platform' lives in 2 different vocabularies, the term 'traits' should replace my 'qualities', and the ledger / trait-list views cannot see my new entries.",
+  "do_now_options": [
+    {
+      "option": "A (recommended)",
+      "action": "Run Phase 8: a consistency-alignment pass that (a) renames qualities->traits, (b) adds explicit dacc_role enum (director/orchestrator/broker/worker/participant), keeps my agent_role enum as a separate field called worker_action, (c) compiles a single merged PLATFORM vocabulary from AGENT_PLATFORM_TRAITS + bank-targets, and (d) wires `tnf traits list` to derive from the registry instead of being a hard-coded JS array. About 4-6 hours of work."
+    },
+    {
+      "option": "B",
+      "action": "Document the divergence in a compatibility note (already partially done in this file) and accept that there are two vocabularies until a future cleanup. Lower cost, higher ongoing technical debt."
+    },
+    {
+      "option": "C",
+      "action": "Revert Phase 1-7 and replace with a single Phase-8 that ONLY edits the runtime trait arrays + tweaks the in-memory registry — never touching the DB schema. Smaller blast radius, loses DB-tier classification work."
+    }
+  ],
+  "key_files_referenced_in_this_review": [
+    ".agent/ROLE_DEFINITIONS.md (DACC-v1 hierarchy)",
+    ".agent/context/tnf-alignment-summary.md",
+    ".agent/context/relay-protocol.md",
+    "packages/tnf-cli/src/cli.ts:2958 (AGENT_ROLE_TRAITS), 2959 (AGENT_PLATFORM_TRAITS), 4596 (tnf register defaults), 9618 (tnf traits cmd), 9808-9850 (tnf agents bank reconcile)",
+    "scripts/agents/reconcile-agent-banks.cjs:293-306 (target map)",
+    "packages/database/src/drizzle/schema/agents.ts",
+    "packages/database/src/drizzle/schema/users.ts",
+    "packages/database/src/drizzle/schema/enums.ts (AgentType 110+ values)",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/TNF_GOVERNANCE_SYNTHESIS_v2.0.md (lines 191-300 mention agent metadata/registry/capability gates)",
+    "packages/relay-core/src/services/agent-registry.service.ts (my Phase 2 work)",
+    "packages/relay-core/src/broker-agent.ts (my Phase 3 work)",
+    "packages/tnf-cli/src/commands/agents-classify.ts (my Phase 7 work)"
+  ],
+  "next_move_recommended": "Option A. TNF protocol mandates non-temporal proliferation; vocabulary drift is exactly the kind of thing that should be unified at the source. Run a Phase 8 with the changes above before announcing 'consistency achieved'."
+}

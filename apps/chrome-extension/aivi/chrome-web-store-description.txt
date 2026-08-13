@@ -1,0 +1,20 @@
+THE NEW FUSE - CHROME EXTENSION
+
+Unified AI workflow extension for ChatGPT, Claude, Gemini, AI Studio, YouTube, and NotebookLM.
+
+Core capabilities:
+- Queue-based YouTube playlist processing
+- AI Studio processing workflow
+- NotebookLM export handoff
+- Multi-agent relay and channel coordination
+- Processing history and export controls
+
+Support:
+- https://thenewfuse.com
+- support@thenewfuse.com
+
+Privacy:
+- https://thenewfuse.com/privacy-policy
+
+Terms:
+- https://thenewfuse.com/terms-of-service

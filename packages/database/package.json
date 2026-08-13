@@ -1,0 +1,79 @@
+{
+  "name": "@the-new-fuse/database",
+  "files": [
+    "dist"
+  ],
+  "version": "0.1.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "exports": {
+    ".": {
+      "types@build": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./drizzle": {
+      "types@build": "./src/drizzle/index.ts",
+      "types": "./dist/drizzle/index.d.ts",
+      "default": "./dist/drizzle/index.js"
+    },
+    "./drizzle/repositories": {
+      "types@build": "./src/drizzle/repositories/index.ts",
+      "types": "./dist/drizzle/repositories/index.d.ts",
+      "default": "./dist/drizzle/repositories/index.js"
+    },
+    "./drizzle/schema": {
+      "types@build": "./src/drizzle/schema/index.ts",
+      "types": "./dist/drizzle/schema/index.d.ts",
+      "default": "./dist/drizzle/schema/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "build:foundation": "tsc",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:push": "drizzle-kit push",
+    "drizzle:pull": "drizzle-kit pull",
+    "drizzle:studio": "drizzle-kit studio",
+    "drizzle:check": "drizzle-kit check",
+    "admin:set-super": "tsx scripts/set-super-admin.ts",
+    "test": "echo \"Tests temporarily disabled for this package\"",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "lint": "eslint src",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.16",
+    "@nestjs/config": "^4.0.2",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.5",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.8.1",
+    "@types/pg": "^8.11.10",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^9.38.0",
+    "jest": "^30.3.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}

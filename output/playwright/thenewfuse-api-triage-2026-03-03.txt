@@ -1,0 +1,32 @@
+Date: 2026-03-03
+Scope: API triage for https://thenewfuse.com
+
+Root cause confirmed from CloudRuntime logs (TheNewFuse service):
+- nginx upstream target was stale internal host: api-1f0e909a.cloud_runtime.internal:5000
+- Errors observed before fix:
+  - upstream timed out while connecting to upstream
+  - no live upstreams while connecting to upstream
+  - mixed 502/504/timeouts on /api/*
+
+Change applied:
+- Service: TheNewFuse (CloudRuntime project TNF, production)
+- Variables updated:
+  - BACKEND_URL=https://api-production-48f1.thenewfuse.com
+  - BACKEND_INTERNAL_URL=https://api-production-48f1.thenewfuse.com
+- Deployment triggered:
+  - deployment id: e7e8b47f-3533-41b7-9e4a-db4ae6255ce4
+  - status: SUCCESS
+
+Post-fix validation:
+- / -> 200
+- /api/health -> 200
+- /api -> 200
+- /api/community/stats -> 404 (functional route missing, no upstream timeout)
+- /api/community/posts -> 404 (functional route missing, no upstream timeout)
+- /api/auth/session -> 404 (functional route missing, no upstream timeout)
+- /api/docs -> 404 (functional route missing, no upstream timeout)
+- /api/agents/registry -> 500 (application error)
+
+Conclusion:
+- Infrastructure outage resolved (proxy target fixed; no more upstream timeout/no-live-upstream errors)
+- Remaining issues are application route coverage/handler errors, not gateway connectivity.

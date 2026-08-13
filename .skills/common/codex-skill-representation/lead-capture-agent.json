@@ -1,0 +1,12 @@
+{
+  "skillName": "lead-capture-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/lead-capture-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/lead-capture-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/lead-capture-agent.json",
+  "status": "present"
+}

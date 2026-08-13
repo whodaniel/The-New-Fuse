@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/agent-card.schema.json",
+  "title": "TNF AgentCard",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "displayName",
+    "agentType",
+    "status",
+    "sourceFile",
+    "categoriesNormalized",
+    "classification"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "agentType": {
+      "type": "string",
+      "enum": [
+        "local",
+        "external",
+        "api",
+        "mcp"
+      ]
+    },
+    "status": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "sourceFile": {
+      "type": "string"
+    },
+    "sourceVariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceFile": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceId",
+          "sourceFile"
+        ]
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inferredTools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "categoriesNormalized": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "categoriesRaw": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unknownTags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "classification": {
+      "type": "object",
+      "required": [
+        "domain",
+        "workflowStage",
+        "complexity",
+        "riskTier"
+      ],
+      "properties": {
+        "domain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workflowStage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complexity": {
+          "type": "string"
+        },
+        "riskTier": {
+          "type": "string"
+        },
+        "aarsScore": {
+          "type": "number",
+          "description": "Agentic AI Risk Score ( multiplier to standard CVSS )"
+        },
+        "aarsFactors": {
+          "type": "object",
+          "properties": {
+            "autonomy": {
+              "type": "number"
+            },
+            "toolUse": {
+              "type": "number"
+            },
+            "persistence": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "tnf": {
+          "type": "object"
+        },
+        "extensions": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "additionalProperties": true,
+  "x-tnf-relationship": "CANONICAL internal agent definition (Phase 8 vocabulary). Projected to the A2A Agent Card (packages/a2a-protocol/agent-card.schema.json) for external interop by scripts/protocols/agent-card-projection.cjs. Field mapping: id->agentId, displayName->name, version||schemaVersion->version, skills+capabilities+tools->skills, classification.aarsScore->aars.score, classification.aarsFactors->aars.factors, endpoint synthesised as tnf://agent/<id>."
+}

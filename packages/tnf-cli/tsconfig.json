@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "composite": true,
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@the-new-fuse/*": ["../*/src"]
+    }
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../tnf-core"
+    },
+    {
+      "path": "../infrastructure"
+    },
+    {
+      "path": "../tnf-note-taking"
+    },
+    {
+      "path": "../shared"
+    }
+  ],
+  "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
+}

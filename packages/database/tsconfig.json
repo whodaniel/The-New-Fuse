@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "customConditions": ["build"],
+    "strict": true
+  },
+  "include": ["src/**/*", "generated*"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"],
+  "references": [
+    {
+      "path": "../types"
+    }
+  ]
+}

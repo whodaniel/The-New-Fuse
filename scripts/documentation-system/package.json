@@ -1,0 +1,26 @@
+{
+  "name": "@the-new-fuse/documentation-system",
+  "version": "1.0.0",
+  "description": "Living Documentation System - 5-stage pipeline for systematic documentation processing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "discover": "bash 01-discover-simple.sh",
+    "classify": "tsx 02-classify-advanced.ts",
+    "classify:sample": "tsx 02-classify-advanced.ts --sample",
+    "classify:basic": "tsx 02-classify-rules.ts",
+    "classify:ai": "tsx 02-classify.ts",
+    "classify:ai:sample": "tsx 02-classify.ts --sample",
+    "analyze": "tsx 03-analyze-local.ts",
+    "consolidate": "tsx 04-consolidate-fast.ts",
+    "evolve": "tsx 05-evolve.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^6.0.2"
+  }
+}

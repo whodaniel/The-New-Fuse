@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Relationship Autopilot"
+  short_description: "Automate agent relationship graph ops"
+  default_prompt: "Use $agent-relationship-autopilot to rebuild graph artifacts, compute temporal deltas, and evaluate drift alerts."

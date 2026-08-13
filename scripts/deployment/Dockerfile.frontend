@@ -1,0 +1,110 @@
+# Dockerfile.frontend - Generic Frontend build for CloudRuntime deployments
+# This file should be used from the monorepo root with NO root directory set in CloudRuntime
+
+ARG NODE_VERSION=22
+
+#------------------------------------------------------------------------------
+# Builder stage
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS builder
+
+ARG SERVICE_PATH=apps/frontend
+ARG VITE_API_URL
+ARG VITE_BACKEND_URL
+ARG VITE_API_GATEWAY_URL
+ARG VITE_WS_URL
+ARG GEMINI_API_KEY
+
+# Accept Firebase environment variables as build args
+ARG VITE_FIREBASE_API_KEY
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ARG VITE_FIREBASE_PROJECT_ID
+ARG VITE_FIREBASE_STORAGE_BUCKET
+ARG VITE_FIREBASE_MESSAGING_SENDER_ID
+ARG VITE_FIREBASE_APP_ID
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+
+# Install build dependencies for canvas/native modules
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    pkgconfig \
+    pixman-dev \
+    cairo-dev \
+    pango-dev \
+    libjpeg-turbo-dev \
+    giflib-dev
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Copy workspace files first for better caching
+COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
+COPY tsconfig.standard.json ./
+COPY scripts ./scripts
+
+# Copy all necessary workspace packages
+COPY packages ./packages
+COPY apps ./apps
+
+# Install all dependencies
+RUN pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+
+# Build foundational types first
+RUN pnpm --filter @the-new-fuse/types build || echo "Types built"
+
+# Build dependencies based on the target service (rough approximation, or build all)
+# To be safe, we build all packages that are common dependencies
+RUN pnpm --filter "@the-new-fuse/*" build || echo "Packages built"
+
+# Build the specific frontend application
+WORKDIR /app/${SERVICE_PATH}
+ENV NODE_ENV=production
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_API_GATEWAY_URL=$VITE_API_GATEWAY_URL
+ENV VITE_WS_URL=$VITE_WS_URL
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
+
+ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
+ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
+ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
+ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
+ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
+ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
+RUN pnpm run build
+
+#------------------------------------------------------------------------------
+# Runner stage - Production image
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS runner
+
+# Install serve globally for serving static files
+RUN npm install -g serve
+
+WORKDIR /app
+
+ARG SERVICE_PATH=apps/frontend
+# Copy built files from builder stage
+COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
+
+# Expose port (CloudRuntime will inject PORT env var)
+EXPOSE ${PORT:-3000}
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1
+
+# Start command - serve the built static files
+CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]

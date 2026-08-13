@@ -1,0 +1,44 @@
+{
+  "product_and_service_catalog": [
+    {
+      "name": "Free Growth Playbook",
+      "type": "lead_magnet",
+      "price_usd": 0,
+      "description": "Quick-win framework to capture leads.",
+      "audience_stage": "cold",
+      "delivery_model": "self-serve"
+    },
+    {
+      "name": "Starter Toolkit",
+      "type": "tripwire",
+      "price_usd": 27,
+      "description": "Templates and checklists for implementation.",
+      "audience_stage": "warm",
+      "delivery_model": "self-serve"
+    },
+    {
+      "name": "Core Accelerator Program",
+      "type": "core_offer",
+      "price_usd": 997,
+      "description": "Flagship transformation program.",
+      "audience_stage": "warm",
+      "delivery_model": "group"
+    },
+    {
+      "name": "Elite Advisory",
+      "type": "high_ticket",
+      "price_usd": 12000,
+      "description": "Premium strategic support.",
+      "audience_stage": "hot",
+      "delivery_model": "1:1"
+    },
+    {
+      "name": "Insider Membership",
+      "type": "continuity",
+      "price_usd": 97,
+      "description": "Retention and recurring value.",
+      "audience_stage": "warm",
+      "delivery_model": "group"
+    }
+  ]
+}

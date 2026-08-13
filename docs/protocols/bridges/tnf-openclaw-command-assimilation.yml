@@ -1,0 +1,76 @@
+bridge:
+  name: tnf-openclaw-command-assimilation
+  version: 1
+  status: active
+  source_skills:
+    - orchestrator-agent
+    - openclaw-wizard-cli-reference
+    - openclaw-wizard-cli-automation
+  target_skills:
+    - tnf-skill-bridging
+  objective: >
+    Preserve full OpenClaw command-surface reachability inside TNF while
+    reducing migration friction, protecting existing TNF command semantics,
+    and exposing a TNF-managed control plane over OpenClaw config and cron state.
+  handoff_contract:
+    inputs:
+      - name: openclaw_help_text
+        format: plain_text
+        producer: openclaw --no-color --help
+      - name: tnf_registered_commands
+        format: command_name_set
+        producer: packages/tnf-cli/src/cli.ts runtime command registry
+    outputs:
+      - name: compatibility_entries
+        format: json_array
+        schema:
+          command: string
+          mode: implicit|explicit-only
+          directPath: string|null
+          explicitPath: string
+      - name: managed_openclaw_inventory
+        format: json_object
+        schema:
+          targets: json_array
+          selection:
+            installationId: string|null
+            instanceId: string|null
+            allInstances: boolean
+      - name: managed_mutation_paths
+        format: command_surface
+        schema:
+          instance_inventory: tnf compat openclaw instances
+          config_read: tnf compat openclaw config
+          config_write: tnf compat openclaw config-set|config-unset
+          cron_read: tnf compat openclaw cron
+          cron_write: tnf compat openclaw cron-enable|cron-disable|cron-schedule
+      - name: migration_policy
+        format: prose
+        rules:
+          - Non-conflicting OpenClaw top-level commands may be reached directly as tnf <command>.
+          - Conflicting command names remain owned by TNF and must use tnf openclaw <command>.
+          - Full parity fallback remains tnf openclaw <args...> or tnf claw <args...>.
+          - TNF may read and mutate OpenClaw's persisted config and cron files without replacing the raw OpenClaw CLI.
+          - TNF target resolution must distinguish installation from instance/profile.
+          - One OpenClaw installation may expose many isolated instances, and TNF must also support separately declared installations.
+          - Sensitive settings must be redacted on TNF read paths.
+  validation:
+    success_criteria:
+      - tnf openclaw --help must execute successfully.
+      - tnf compat openclaw must enumerate current OpenClaw top-level commands.
+      - tnf compat openclaw instances must list known installations and instances.
+      - tnf compat openclaw inventory must emit redacted OpenClaw config and cron inventory.
+      - tnf compat openclaw config and cron commands must map per-instance OpenClaw runtime state into TNF-readable surfaces.
+      - Non-conflicting commands such as tnf channels and tnf status must resolve to OpenClaw.
+      - Conflicting commands such as tnf doctor, tnf agents, and tnf skills must preserve TNF behavior.
+    failure_handling:
+      - If OpenClaw help parsing fails, keep explicit passthrough intact and report zero implicit commands.
+      - If a new OpenClaw command collides with a TNF command, classify it as explicit-only until TNF owns it natively.
+  migration_guidance:
+    nativeization_rule: >
+      Any OpenClaw capability not yet implemented natively in TNF must remain
+      reachable through the compatibility bridge until TNF provides a stable
+      native replacement.
+    replacement_rule: >
+      When TNF ships a native equivalent, preserve behavior compatibility or
+      document the divergence before changing the migration route.

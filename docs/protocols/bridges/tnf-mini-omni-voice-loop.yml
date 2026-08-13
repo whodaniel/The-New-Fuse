@@ -1,0 +1,56 @@
+bridge:
+  name: tnf-mini-omni-voice-loop
+  version: 1
+  status: active
+  source_skills:
+    - tnf-skill-bridging
+    - tnf-task-production-pipeline
+  target_skills:
+    - orchestrator-agent
+    - tnf-execution-audit-trail
+  objective: >
+    Provide a deterministic TNF bridge for local Mini-Omni speech-to-speech
+    inference so orchestrators can run voice loop checks with a clear handoff
+    contract, bounded runtime policy, and reproducible smoke validation.
+  handoff_contract:
+    inputs:
+      - name: mini_omni_endpoint
+        format: url
+        producer: MINI_OMNI_API_URL or default http://127.0.0.1:60808/chat
+      - name: sample_wav_path
+        format: filesystem_path
+        producer: MINI_OMNI_SAMPLE_WAV or local default sample discovery
+      - name: inference_controls
+        format: json
+        schema:
+          stream_stride: number
+          max_tokens: number
+          timeout_ms: number
+    outputs:
+      - name: voice_stream_result
+        format: json
+        schema:
+          ok: boolean
+          statusCode: number
+          bytes: number
+          chunks: number
+          durationMs: number
+      - name: optional_output_wav
+        format: filesystem_path
+        producer: scripts/protocols/mini-omni-bridge-smoke.cjs --output
+      - name: relay_bridge_run_record
+        format: json
+        producer: MiniOmniBridgeService.run()
+  validation:
+    success_criteria:
+      - `scripts/protocols/mini-omni-bridge-smoke.cjs` exits 0 in a healthy voice loop run.
+      - voice stream response contains `bytes > 0`.
+      - relay bridge result records request controls and status metadata.
+    failure_handling:
+      - If endpoint is unreachable, fail bridge run with explicit endpoint and timeout context.
+      - If sample path is missing, fail with actionable guidance (`--sample` or `MINI_OMNI_SAMPLE_WAV`).
+      - If stream returns zero bytes, classify as voice-loop failure and block promotion.
+  logging:
+    artifacts:
+      - scripts/protocols/mini-omni-bridge-smoke.cjs output
+      - docs/protocols/bridges/reports/tnf-mini-omni-voice-loop.md

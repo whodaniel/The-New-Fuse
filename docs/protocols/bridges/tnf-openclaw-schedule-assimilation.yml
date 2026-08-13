@@ -1,0 +1,65 @@
+spec: tnf/openclaw-schedule-assimilation/0.1
+generated_at: 2026-03-19T10:00:00.000Z
+title: TNF OpenClaw Schedule Assimilation
+intent: >
+  Formally assimilate the legacy OpenClaw TNF cron fleet into TNF's native
+  Master Clock scheduler so that recurring work is governed by one conductor.
+principles:
+  - Master Clock owns cadence evaluation and execution.
+  - Chronological registry is the authoritative schedule contract.
+  - OpenClaw cron is legacy source material, not runtime executor.
+  - Imported jobs dispatch into TNF-native queues and relay surfaces.
+  - Disabled legacy jobs remain disabled after import unless explicitly re-enabled.
+  - OpenClaw targets are modeled as installation -> instance, not as a single ~/.openclaw root.
+legacy_source:
+  files:
+    - ~/.openclaw/cron/jobs.json
+    - ~/.openclaw-dev/cron/jobs.json
+    - ~/.openclaw-sandbox/cron/jobs.json
+  registry: data/protocols/openclaw-installations.registry.json
+  captured_jobs:
+    - TNF Daily Priority Plan
+    - TNF Nightly Maintenance
+    - TNF Orchestrator Pulse
+    - TNF Self-Improve Loop
+    - TNF Continuous QA Loop
+    - TNF Hourly Attribution Audit
+    - TNF Knowledge Scout Sprint
+    - TNF Loop Watchdog
+    - TNF Launch Validation
+assimilation_targets:
+  - schedule_id: tenant-daily-priority-plan
+    legacy_job: TNF Daily Priority Plan
+  - schedule_id: tenant-nightly-maintenance
+    legacy_job: TNF Nightly Maintenance
+  - schedule_id: tenant-orchestrator-pulse
+    legacy_job: TNF Orchestrator Pulse
+  - schedule_id: tenant-self-improvement-loop
+    legacy_job: TNF Self-Improve Loop
+  - schedule_id: tenant-continuous-qa-loop
+    legacy_job: TNF Continuous QA Loop
+  - schedule_id: tenant-hourly-attribution-audit
+    legacy_job: TNF Hourly Attribution Audit
+  - schedule_id: tenant-knowledge-scout-sprint
+    legacy_job: TNF Knowledge Scout Sprint
+  - schedule_id: tenant-loop-watchdog
+    legacy_job: TNF Loop Watchdog
+    imported_enabled: false
+  - schedule_id: tenant-launch-validation
+    legacy_job: TNF Launch Validation
+    imported_enabled: false
+execution_contract:
+  scheduler: packages/relay-core/src/master-clock.ts
+  runner: scripts/protocols/run-chronological-process.cjs
+  dispatch: scripts/protocols/chronological-dispatch.cjs
+  runtime_sync: scripts/openclaw/tnf-openclaw-control.cjs sync-control-plane
+  instance_registry: data/protocols/openclaw-installations.registry.json
+  registry: data/protocols/cron-jobs.registry.json
+  catalog: data/protocols/chronological-process-catalog.json
+  dispatch_profiles: data/protocols/chronological-dispatch-profiles.json
+verification:
+  - TNF chronological control plane lists imported jobs.
+  - TNF control-plane records ingest live OpenClaw cron/config state across all discovered instances on a recurring sync cadence.
+  - Master Clock heartbeats imported jobs into super-cycle state.
+  - Imported jobs dispatch into TNF Redis queues instead of OpenClaw agent turns.
+  - Disabled legacy jobs remain disabled in TNF control-plane state.

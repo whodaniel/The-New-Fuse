@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "./tnf-shell-gate.sh",
+        "failClosed": false
+      }
+    ],
+    "stop": [
+      {
+        "command": "./tnf-stop-handoff.sh"
+      }
+    ]
+  }
+}

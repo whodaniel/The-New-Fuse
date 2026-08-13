@@ -1,0 +1,122 @@
+import React, { FC } from "react";
+import { DashboardMetric } from '@the-new-fuse/types';
+
+interface MetricCardProps {
+  metric: DashboardMetric;
+  className?: string;
+}
+
+export const MetricCard: (React as unknown).FC<MetricCardProps> = ({ metric, className = '' }) => {
+  const getChangeColor: 'up' | 'down' | 'neutral'): unknown  = (trend> {
+    switch (trend: unknown){
+      case 'up':
+        return 'text-green-600';
+      case 'down':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const getBackgroundColor: DashboardMetric['color']): unknown  = (color?> {
+    switch (color: unknown){
+      case 'blue':
+        return 'bg-blue-50';
+      case 'green':
+        return 'bg-green-50';
+      case 'yellow':
+        return 'bg-yellow-50';
+      case 'red':
+        return 'bg-red-50';
+      case 'indigo':
+        return 'bg-indigo-50';
+      case 'purple':
+        return 'bg-purple-50';
+      default:
+        return 'bg-gray-50';
+    }
+  };
+
+  const getIconColor: DashboardMetric['color']): unknown  = (color?> {
+    switch (color: unknown){
+      case 'blue':
+        return 'text-blue-600';
+      case 'green':
+        return 'text-green-600';
+      case 'yellow':
+        return 'text-yellow-600';
+      case 'red':
+        return 'text-red-600';
+      case 'indigo':
+        return 'text-indigo-600';
+      case 'purple':
+        return 'text-purple-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  return (
+    <div
+      className={`relative p-6 bg-white rounded-lg shadow ${className}`}
+    >
+      <div className="flex items-center">
+        {(metric as unknown).icon && (
+          <div
+            className={`flex items-center justify-center w-12 h-12 rounded-lg ${getBackgroundColor(
+              (metric as unknown).color
+            )}`}
+          >
+            <span className={`h-6 w-6 ${getIconColor((metric as unknown).color)}`}>
+              {(metric as unknown).icon}
+            </span>
+          </div>
+        )}
+        <div className={(metric as unknown).icon ? 'ml-4' : ''}>
+          <h3 className="text-sm font-medium text-gray-500">{(metric as unknown).label}</h3>
+          <div className="flex items-baseline mt-1">
+            <p className="text-2xl font-semibold text-gray-900">
+              {(metric as unknown).value}
+            </p>
+            {(metric as unknown).change && (
+              <p
+                className={`ml-2 flex items-baseline text-sm font-semibold ${getChangeColor(
+                  (metric as unknown).(change as unknown).trend
+                )}`}
+              >
+                {(metric as unknown).(change as unknown).trend === 'up' ? (<svg
+                    className="self-center flex-shrink-0 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>: unknown): (metric as unknown).(change as unknown).trend === 'down' ? (<svg
+                    className="self-center flex-shrink-0 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                  </svg>: unknown): null}
+                <span className="ml-1">
+                  {(metric as unknown).(change as unknown).value}% ({(metric as unknown).(change as unknown).period})
+                </span>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

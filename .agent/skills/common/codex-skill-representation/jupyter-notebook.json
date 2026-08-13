@@ -1,0 +1,12 @@
+{
+  "skillName": "jupyter-notebook",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/jupyter-notebook/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/jupyter-notebook/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/jupyter-notebook.json",
+  "status": "present"
+}

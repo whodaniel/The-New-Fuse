@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": [],
+    "composite": true,
+    "declaration": true
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__tests__/**"
+  ],
+  "references": [
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../core"
+    }
+  ]
+}

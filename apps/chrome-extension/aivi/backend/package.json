@@ -1,0 +1,35 @@
+{
+  "name": "ai-video-intelligence-backend",
+  "version": "1.0.0",
+  "description": "Legacy AIVI backend (TNF-adapted; billing delegated to TNF API module)",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "PORT=$(node ../../../../packages/port-management/scripts/find-available-port.cjs aivi-backend) nodemon server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "billing:notice": "echo 'Use TNF billing: apps/api/src/modules/billing/paypal.service.ts'"
+  },
+  "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "googleapis": "^171.0.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "stripe": "^14.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

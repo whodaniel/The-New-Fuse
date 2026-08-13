@@ -1,0 +1,201 @@
+{
+  "filters": {
+    "core": {
+      "description": "Core packages that other packages depend on",
+      "pattern": "./packages/{core,types,utils,shared}",
+      "examples": [
+        "pnpm --filter './packages/{core,types,utils,shared}' run build",
+        "pnpm --filter './packages/{core,types,utils,shared}' run test"
+      ]
+    },
+    "api": {
+      "description": "API and backend packages",
+      "pattern": "./packages/{backend,api,server,workflow-engine,mcp-core}",
+      "examples": [
+        "pnpm --filter './packages/{backend,api,server,workflow-engine,mcp-core}' run build",
+        "pnpm --filter './packages/{backend,api,server,workflow-engine,mcp-core}' run test"
+      ]
+    },
+    "frontend": {
+      "description": "Frontend applications and UI packages",
+      "pattern": "./apps/{frontend,ide-ide,electron-desktop}",
+      "examples": [
+        "pnpm --filter './apps/{frontend,ide-ide,electron-desktop}' run build",
+        "pnpm --filter './apps/{frontend,ide-ide,electron-desktop}' run dev"
+      ]
+    },
+    "packages": {
+      "description": "All packages (excluding apps and tools)",
+      "pattern": "./packages/*",
+      "examples": [
+        "pnpm --filter './packages/*' run build",
+        "pnpm --filter './packages/*' run test"
+      ]
+    },
+    "apps": {
+      "description": "All applications",
+      "pattern": "./apps/*",
+      "examples": [
+        "pnpm --filter './apps/*' run build",
+        "pnpm --filter './apps/*' run dev"
+      ]
+    },
+    "tools": {
+      "description": "Development and build tools",
+      "pattern": "./tools/*",
+      "examples": [
+        "pnpm --filter './tools/*' run build",
+        "pnpm --filter './tools/*' run test"
+      ]
+    },
+    "extensions": {
+      "description": "Browser extensions and MCP extensions",
+      "pattern": "./apps/electron-desktop/extensions/*",
+      "examples": [
+        "pnpm --filter './apps/electron-desktop/extensions/*' run build",
+        "pnpm --filter './apps/electron-desktop/extensions/*' run test"
+      ]
+    },
+    "changed": {
+      "description": "Packages changed since last commit",
+      "pattern": "[HEAD^1]",
+      "examples": [
+        "pnpm --filter '[HEAD^1]' run build",
+        "pnpm --filter '[HEAD^1]' run test"
+      ]
+    },
+    "affected": {
+      "description": "Packages affected by changes since origin/main",
+      "pattern": "...[origin/main]",
+      "examples": [
+        "pnpm --filter '...[origin/main]' run build",
+        "pnpm --filter '...[origin/main]' run test"
+      ]
+    },
+    "dependents": {
+      "description": "Packages that depend on a specific package",
+      "pattern": "...{package-name}",
+      "examples": [
+        "pnpm --filter '...@the-new-fuse/core' run build",
+        "pnpm --filter '...@the-new-fuse/types' run test"
+      ]
+    },
+    "dependencies": {
+      "description": "Dependencies of a specific package",
+      "pattern": "{package-name}...",
+      "examples": [
+        "pnpm --filter '@the-new-fuse/frontend...' run build",
+        "pnpm --filter '@the-new-fuse/backend...' run test"
+      ]
+    }
+  },
+  "common_commands": {
+    "build_core_first": {
+      "description": "Build core packages first, then everything else",
+      "commands": [
+        "pnpm --filter './packages/{core,types,utils,shared}' run build",
+        "pnpm --filter '!./packages/{core,types,utils,shared}' run build"
+      ]
+    },
+    "test_fast": {
+      "description": "Run fast tests on core packages",
+      "commands": [
+        "pnpm --filter './packages/{core,types,utils}' --parallel run test"
+      ]
+    },
+    "test_integration": {
+      "description": "Run integration tests on apps",
+      "commands": [
+        "pnpm --filter './apps/*' --parallel run test"
+      ]
+    },
+    "dev_frontend": {
+      "description": "Start frontend development servers",
+      "commands": [
+        "pnpm --filter './apps/{frontend,ide-ide}' --parallel run dev"
+      ]
+    },
+    "build_production": {
+      "description": "Production build with proper dependency order",
+      "commands": [
+        "pnpm --filter './packages/*' run build",
+        "pnpm --filter './apps/*' run build"
+      ]
+    }
+  },
+  "workspace_patterns": {
+    "by_scope": {
+      "@the-new-fuse/core": "./packages/core",
+      "@the-new-fuse/types": "./packages/types",
+      "@the-new-fuse/utils": "./packages/utils",
+      "@the-new-fuse/shared": "./packages/shared",
+      "@the-new-fuse/backend": "./packages/backend",
+      "@the-new-fuse/workflow-engine": "./packages/workflow-engine",
+      "@the-new-fuse/mcp-core": "./packages/mcp-core",
+      "@the-new-fuse/extension-system": "./packages/extension-system",
+      "@the-new-fuse/features": "./packages/features",
+      "@the-new-fuse/feature-tracker": "./packages/feature-tracker",
+      "@the-new-fuse/frontend": "./apps/frontend",
+      "@the-new-fuse/ide-ide": "./apps/ide-ide",
+      "@the-new-fuse/electron-desktop": "./apps/electron-desktop",
+      "@the-new-fuse/port-manager": "./tools/port-manager"
+    },
+    "by_category": {
+      "infrastructure": ["core", "types", "utils", "shared"],
+      "backend": ["backend", "workflow-engine", "mcp-core", "extension-system"],
+      "frontend": ["frontend", "ide-ide", "electron-desktop"],
+      "features": ["features", "feature-tracker"],
+      "tools": ["port-manager"],
+      "extensions": ["browser-mcp", "browser-tools-mcp"]
+    }
+  },
+  "performance_tips": [
+    "Use --parallel for independent packages",
+    "Use --workspace-concurrency to limit parallel jobs",
+    "Use --filter with specific patterns to reduce scope",
+    "Use changed/affected filters for incremental builds",
+    "Build dependencies before dependents",
+    "Use --reporter=append-only for cleaner CI output"
+  ],
+  "examples": {
+    "selective_testing": [
+      "# Test only changed packages",
+      "pnpm --filter '[HEAD^1]' run test",
+      "",
+      "# Test packages affected by changes",
+      "pnpm --filter '...[origin/main]' run test",
+      "",
+      "# Test specific package and its dependents",
+      "pnpm --filter '...@the-new-fuse/core' run test",
+      "",
+      "# Test frontend apps only",
+      "pnpm --filter './apps/{frontend,ide-ide}' --parallel run test"
+    ],
+    "selective_building": [
+      "# Build core packages first",
+      "pnpm --filter './packages/{core,types,utils}' run build",
+      "",
+      "# Build everything except tests",
+      "pnpm --filter '!./packages/*test*' run build",
+      "",
+      "# Build with dependency order",
+      "pnpm -r run build",
+      "",
+      "# Build only what changed",
+      "pnpm --filter '[HEAD^1]' run build"
+    ],
+    "development_workflows": [
+      "# Start all dev servers",
+      "pnpm --filter './apps/*' --parallel run dev",
+      "",
+      "# Start specific services",
+      "pnpm --filter './apps/{frontend,backend}' --parallel run dev",
+      "",
+      "# Watch mode for packages",
+      "pnpm --filter './packages/*' --parallel run dev",
+      "",
+      "# Development with hot reload",
+      "pnpm --filter './apps/frontend' run dev"
+    ]
+  }
+}

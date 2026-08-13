@@ -1,0 +1,40 @@
+# App SPA routes — rewrite to React shell when the edge function is unavailable.
+# Domain-aware routing lives in functions/[[path]].js; these are the static fallback.
+# Do NOT add a catch-all /* → /index.html here — that hijacks /auth/login onto the marketing page.
+
+# Auth
+/auth            /app.html  200
+/auth/*          /app.html  200
+/login           /app.html  200
+/register        /app.html  200
+/oauth           /app.html  200
+/oauth/*         /app.html  200
+
+# Marketing SPA pages (also used on thenewfuse.com)
+/about           /app.html  200
+/blog            /app.html  200
+/blog/*          /app.html  200
+/brand           /app.html  200
+/contact         /app.html  200
+/legal/privacy   /app.html  200
+/legal/terms     /app.html  200
+
+# Core app surfaces
+/dashboard       /app.html  200
+/dashboard/*     /app.html  200
+/agents          /app.html  200
+/agents/*        /app.html  200
+/workflows       /app.html  200
+/workflows/*     /app.html  200
+/chat            /app.html  200
+/chat/*          /app.html  200
+/settings        /app.html  200
+/settings/*      /app.html  200
+/workspace       /app.html  200
+/workspace/*     /app.html  200
+/marketplace     /app.html  200
+/marketplace/*   /app.html  200
+/hub             /app.html  200
+/hub/*           /app.html  200
+/onboarding      /app.html  200
+/onboarding/*    /app.html  200

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>The New Fuse — AI Agent Orchestration Platform</title>
+  <meta name="description" content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols.">
+  <meta name="keywords" content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration">
+  <meta name="author" content="The New Fuse Team">
+  <meta name="theme-color" content="#3b82f6">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The New Fuse — AI Agent Orchestration Platform">
+  <meta property="og:description" content="Build intelligent AI workflows. Orchestrate multi-agent systems with MCP protocol support.">
+  <meta property="og:site_name" content="The New Fuse">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script>
+    (function routeStaticHostingToSpa() {
+      var AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
+      var AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
+
+      // Keep auth links canonical while leaving app links as clean path-based routes.
+      // The frontend server handles SPA fallback to app.html.
+      document.addEventListener('DOMContentLoaded', function () {
+        var links = document.querySelectorAll('a[href^="/"]');
+        links.forEach(function (link) {
+          var href = link.getAttribute('href');
+          if (!href) return;
+          if (href === '/' || href.startsWith('/#') || href.startsWith('/visualizations/')) return;
+          if (href === '/auth/login' || href === '/login') {
+            link.setAttribute('href', AUTH_LOGIN_URL);
+            return;
+          }
+          if (href === '/auth/register' || href === '/register') {
+            link.setAttribute('href', AUTH_REGISTER_URL);
+            return;
+          }
+        });
+      });
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       CSS Variables — The New Fuse Design System
+       ═══════════════════════════════════════════════ */
+    :root {
+      --bg-deep: #020617;
+      --bg-surface: #0f172a;
+      --bg-card: rgba(15,23,42,0.6);
+      --border: rgba(148,163,184,0.08);
+      --border-hover: rgba(59,130,246,0.4);
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --accent-green: #22c55e;
+      --gradient-primary: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+      --gradient-btn: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --gradient-btn-hover: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Reset & Base
+       ═══════════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; color-scheme: dark; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; }
+
+    /* ═══════════════════════════════════════════════
+       Background Effects
+       ═══════════════════════════════════════════════ */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 0%, rgba(168,85,247,0.05), transparent),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(236,72,153,0.04), transparent);
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-size: 60px 60px;
+      background-image:
+        linear-gradient(rgba(148,163,184,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.03) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Layout
+       ═══════════════════════════════════════════════ */
+    .wrapper { position: relative; z-index: 1; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+
+    /* ═══════════════════════════════════════════════
+       Navbar
+       ═══════════════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(2,6,23,0.7);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+    }
+    .nav-logo {
+      width: 36px; height: 36px; border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(59,130,246,0.3);
+    }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+    /* ═══════════════════════════════════════════════
+       Buttons
+       ═══════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--gradient-btn); color: white;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.2);
+    }
+    .btn-primary:hover {
+      background: var(--gradient-btn-hover);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.05); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--text-secondary);
+      padding: 10px 16px;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-lg { padding: 16px 32px; font-size: 16px; border-radius: 14px; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; }
+    .btn-icon { font-size: 18px; }
+
+    /* ═══════════════════════════════════════════════
+       Hero
+       ═══════════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse-dot 2s infinite;
+    }
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -3px; margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+    .hero h1 .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-secondary); max-width: 640px;
+      margin: 0 auto 40px; line-height: 1.7;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+    .hero-metrics {
+      display: flex; gap: 48px; justify-content: center;
+      margin-top: 64px; animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+    .hero-metric { text-align: center; }
+    .hero-metric .value {
+      font-size: 32px; font-weight: 800; letter-spacing: -1px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-metric .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ═══════════════════════════════════════════════
+       Social Proof Bar
+       ═══════════════════════════════════════════════ */
+    .proof-bar {
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+      padding: 40px 24px; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .proof-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; color: var(--text-muted); font-weight: 500;
+    }
+    .proof-item .icon { font-size: 18px; }
+
+    /* ═══════════════════════════════════════════════
+       Section Headers
+       ═══════════════════════════════════════════════ */
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-tag.blue { color: var(--accent-blue); }
+    .section-tag.purple { color: var(--accent-purple); }
+    .section-tag.green { color: var(--accent-green); }
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 18px; color: var(--text-secondary);
+      max-width: 600px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Feature Grid
+       ═══════════════════════════════════════════════ */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent-blue)), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card.span-2 { grid-column: span 2; }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: grid; place-items: center; font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════════
+       Bento Grid (Product Showcase)
+       ═══════════════════════════════════════════════ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 16px;
+    }
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-card:hover { border-color: var(--border-hover); }
+    .bento-card.b1 { grid-column: span 7; }
+    .bento-card.b2 { grid-column: span 5; }
+    .bento-card.b3 { grid-column: span 4; }
+    .bento-card.b4 { grid-column: span 4; }
+    .bento-card.b5 { grid-column: span 4; }
+    .bento-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .bento-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .bento-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .code-preview {
+      background: rgba(0,0,0,0.4); border-radius: 12px;
+      padding: 20px; margin-top: 20px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px; line-height: 1.8; color: #7dd3fc;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow-x: auto;
+    }
+    .code-preview .kw { color: #c084fc; }
+    .code-preview .fn { color: #60a5fa; }
+    .code-preview .str { color: #4ade80; }
+    .code-preview .cm { color: #475569; }
+    .code-preview .num { color: #fbbf24; }
+
+    /* ═══════════════════════════════════════════════
+       Pricing
+       ═══════════════════════════════════════════════ */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1000px; margin: 0 auto; }
+    .pricing-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px 32px;
+      display: flex; flex-direction: column;
+      transition: all 0.3s;
+    }
+    .pricing-card.featured {
+      border-color: rgba(139,92,246,0.4);
+      background: linear-gradient(180deg, rgba(139,92,246,0.08) 0%, var(--bg-card) 50%);
+      box-shadow: 0 0 60px -20px rgba(139,92,246,0.15);
+      transform: scale(1.02);
+    }
+    .pricing-card:hover { border-color: var(--border-hover); }
+    .pricing-badge {
+      display: inline-flex; padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      font-size: 11px; font-weight: 600; color: white;
+      margin-bottom: 16px; align-self: flex-start;
+    }
+    .pricing-card .name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .pricing-card .desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+    .pricing-card .price {
+      font-size: 48px; font-weight: 900; letter-spacing: -2px;
+      margin-bottom: 4px;
+    }
+    .pricing-card .period { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+    .pricing-features { list-style: none; flex: 1; margin-bottom: 32px; }
+    .pricing-features li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--text-secondary);
+      padding: 8px 0;
+    }
+    .pricing-features li::before {
+      content: '✓'; display: flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(34,197,94,0.12); color: var(--accent-green);
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CTA Section
+       ═══════════════════════════════════════════════ */
+    .cta-section {
+      text-align: center; padding: 120px 24px;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.06), transparent);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900; letter-spacing: -2px; margin-bottom: 20px;
+    }
+    .cta-section p { font-size: 18px; color: var(--text-secondary); margin-bottom: 40px; }
+
+    /* ═══════════════════════════════════════════════
+       Footer
+       ═══════════════════════════════════════════════ */
+    .footer {
+      border-top: 1px solid var(--border); padding: 64px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 48px;
+    }
+    .footer-brand p { font-size: 14px; color: var(--text-muted); margin-top: 12px; line-height: 1.6; max-width: 280px; }
+    .footer-col h4 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 14px; color: var(--text-muted); padding: 6px 0; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1200px; margin: 40px auto 0;
+      padding-top: 24px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Animations
+       ═══════════════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .fade-in { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ═══════════════════════════════════════════════
+       Responsive
+       ═══════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .feature-card.span-2 { grid-column: span 2; }
+      .bento-card.b1, .bento-card.b2, .bento-card.b3,
+      .bento-card.b4, .bento-card.b5 { grid-column: span 6; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .pricing-card.featured { transform: none; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero h1 { letter-spacing: -2px; }
+      .hero-metrics { gap: 24px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-card.span-2 { grid-column: span 1; }
+      .bento-card.b1, .bento-card.b2, .bento-card.b3,
+      .bento-card.b4, .bento-card.b5 { grid-column: span 12; }
+      .proof-bar { gap: 20px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="grid-bg"></div>
+
+  <div class="wrapper">
+    <!-- ═══ NAVBAR ═══ -->
+    <nav class="nav" id="navbar">
+      <div class="nav-inner">
+        <a href="/" class="nav-brand">
+          <img src="assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo">
+          The New Fuse
+        </a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#product">Product</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/visualizations/dashboard.html">Visualizations</a>
+        </div>
+        <div class="nav-actions">
+          <a href="https://thenewfuse.com/auth/login" class="btn btn-ghost">Sign In</a>
+          <a href="https://thenewfuse.com/auth/register" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Announcing The New Fuse 2.0
+        </div>
+        <h1>
+          Build Intelligent<br>
+          <span class="gradient-text">AI Workflows</span>
+        </h1>
+        <p class="hero-sub">
+          The autonomous development ecosystem where AI minds unite. Bridge high-level reasoning with native OS execution using the Lux Protocol, federate agents across browsers, and scale via the Redis Synaptic Bus.
+        </p>
+        <div class="hero-actions">
+          <a href="https://thenewfuse.com/auth/register" class="btn btn-primary btn-lg">
+            <span class="btn-icon">🚀</span> Start Building Free
+          </a>
+          <a href="/workflows/builder" class="btn btn-secondary btn-lg">
+            <span class="btn-icon">▶</span> Try Builder
+          </a>
+        </div>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <div class="value">113</div>
+            <div class="label">AI Agents</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">&lt;100ms</div>
+            <div class="label">Latency</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">MCP + A2A</div>
+            <div class="label">Protocols</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">∞</div>
+            <div class="label">Scale</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SOCIAL PROOF BAR ═══ -->
+    <div class="proof-bar">
+      <div class="proof-item"><span class="icon">✅</span> Open Source</div>
+      <div class="proof-item"><span class="icon">👁️</span> Virtual + DOM Vision</div>
+      <div class="proof-item"><span class="icon">💻</span> Native Tauri Desktop</div>
+      <div class="proof-item"><span class="icon">🔌</span> Universal MCP Native</div>
+      <div class="proof-item"><span class="icon">🤝</span> A2A Redis Federation</div>
+    </div>
+
+    <!-- ═══ FEATURES ═══ -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag blue">⚡ Why Developers Choose Us</div>
+          <h2 class="section-title">Stop duct-taping APIs.<br>Start orchestrating intelligence.</h2>
+          <p class="section-desc">Everything you need to build, deploy, and scale autonomous AI agent systems.</p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card span-2 fade-in" style="--card-accent: var(--accent-cyan)">
+            <div class="feature-icon" style="background: rgba(6,182,212,0.12)">🔌</div>
+            <h3>Universal MCP & A2A Integration</h3>
+            <p>Compatible with any Model Context Protocol agent out of the box. Connect to Claude, GPT-4, Gemini, and orchestrate them as a swarm via our A2A Redis Synaptic Bus.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-purple)">
+            <div class="feature-icon" style="background: rgba(168,85,247,0.12)">👁️</div>
+            <h3>Lux Bridge Intelligence</h3>
+            <p>Combine "text-first" DOM exactness with OpenAGI Lux's "visual-first" pixel reasoning for unmatched desktop and browser automation.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-green)">
+            <div class="feature-icon" style="background: rgba(34,197,94,0.12)">☁️</div>
+            <h3>SkIDEancer Cloud IDE</h3>
+            <p>The autonomous, AI-driven development environment where your agents code, test, and deploy seamlessly. Code smarter, not harder.</p>
+          </div>
+          <div class="feature-card span-2 fade-in" style="--card-accent: var(--accent-pink)">
+            <div class="feature-icon" style="background: rgba(236,72,153,0.12)">🧠</div>
+            <h3>Persistent Knowledge Graph (PKG)</h3>
+            <p>Cross-session memory that learns from every interaction. Your agent fleet shares context, recognizes patterns, and compounds evolutionary knowledge over time.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-blue)">
+            <div class="feature-icon" style="background: rgba(59,130,246,0.12)">🌐</div>
+            <h3>Ecosystem Federation</h3>
+            <p>Group sessions across your Chrome tabs, VS Code workspaces, and the <strong>Fuse Desktop</strong> native app into unified, collaborative communication channels.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon" style="background: rgba(245,158,11,0.12)">⚡</div>
+            <h3>Predictive Enhancement</h3>
+            <p>Go beyond assistive tools. The Autonomous Enhancement Engine (AEE) monitors telemetry and proactively proposes systemic performance and code improvements.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRODUCT SHOWCASE (Bento) ═══ -->
+    <section class="section" id="product">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag purple">🎯 Product</div>
+          <h2 class="section-title">Everything you need to build<br><span class="gradient-text">Superintelligence</span></h2>
+        </div>
+
+        <div class="bento-grid">
+          <div class="bento-card b1 fade-in">
+            <div class="bento-label" style="color: var(--accent-cyan)">WORKSPACE INTEGRATION</div>
+            <h3>The Central Nervous System</h3>
+            <p>Debug, deploy, and direct your swarm from the <strong>Fuse Connect</strong> Chrome Extension or our native VS Code package.</p>
+            <div class="code-preview">
+              <span class="cm">// Initialize swarm with Auto-Scaling & Quality selection</span><br>
+              <span class="kw">import</span> { <span class="fn">swarmService</span> } <span class="kw">from</span> <span class="str">'@the-new-fuse/core'</span>;<br><br>
+              <span class="kw">await</span> swarmService.<span class="fn">initializeAgencySwarm</span>(<span class="str">'my-agency'</span>);<br>
+              <span class="kw">const</span> agent = <span class="kw">await</span> swarmService.<span class="fn">registerAgent</span>(<span class="str">'my-agency'</span>, {<br>
+              &nbsp;&nbsp;name: <span class="str">'Architect'</span>,<br>
+              &nbsp;&nbsp;capabilities: [<span class="str">'planning'</span>, <span class="str">'delegation'</span>],<br>
+              &nbsp;&nbsp;qualityScore: <span class="num">0.95</span><br>
+              });<br><br>
+              <span class="kw">await</span> broker.<span class="fn">sendMessage</span>({ to: <span class="str">'worker-pool'</span>, action: <span class="str">'build'</span> });
+            </div>
+          </div>
+          <div class="bento-card b2 fade-in">
+            <div class="bento-label" style="color: var(--accent-purple)">MULTI-AGENT MESH</div>
+            <h3>Autonomous Collaboration</h3>
+            <p>An Orchestrator assigns tasks to Brokers who decompose them for Workers. The ecosystem determines the optimal team.</p>
+          </div>
+          <div class="bento-card b3 fade-in">
+            <div class="bento-label" style="color: var(--accent-green)">PREDICTIVE OPS</div>
+            <h3>Predictive Development</h3>
+            <p>Anticipates your needs before you ask. Preloads contexts, recommends refactoring, and auto-generates test suites proactively.</p>
+          </div>
+          <div class="bento-card b4 fade-in">
+            <div class="bento-label" style="color: var(--accent-blue)">DESKTOP NATIVE</div>
+            <h3>OS-Level Automation</h3>
+            <p>Beyond APIs. Fuse Desktop uses Rust/Tauri to inject mouse clicks, keyboard events, and screen captures exactly as a human would.</p>
+          </div>
+          <div class="bento-card b5 fade-in">
+            <div class="bento-label" style="color: var(--accent-pink)">ANALYTICS</div>
+            <h3>Relationship Visualizations</h3>
+            <p>Deep interactive mapping of agent topologies, system architectures, and live temporal diff tracking.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRICING ═══ -->
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag green">💰 Pricing</div>
+          <h2 class="section-title">Simple, Transparent Pricing</h2>
+          <p class="section-desc">Start free. Scale when you're ready.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Starter -->
+          <div class="pricing-card fade-in">
+            <div class="name">Starter</div>
+            <div class="desc">For individuals and side projects</div>
+            <div class="price">Free</div>
+            <div class="period">forever</div>
+            <ul class="pricing-features">
+              <li>Up to 5 AI Agents</li>
+              <li>Basic Workflow Automation</li>
+              <li>Community Support</li>
+              <li>1,000 Messages/Month</li>
+            </ul>
+            <a href="https://thenewfuse.com/auth/register" class="btn btn-secondary" style="width:100%; justify-content:center;">Get Started</a>
+          </div>
+
+          <!-- Professional -->
+          <div class="pricing-card featured fade-in">
+            <div class="pricing-badge">Most Popular</div>
+            <div class="name">Professional</div>
+            <div class="desc">For teams building production agents</div>
+            <div class="price">$30</div>
+            <div class="period">per month</div>
+            <ul class="pricing-features">
+              <li>Up to 25 AI Agents</li>
+              <li>Advanced Workflow Automation</li>
+              <li>Priority Support</li>
+              <li>10,000 Messages/Month</li>
+              <li>API Access</li>
+            </ul>
+            <a href="https://thenewfuse.com/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="pricing-card fade-in">
+            <div class="name">Enterprise</div>
+            <div class="desc">For organizations at scale</div>
+            <div class="price">Custom</div>
+            <div class="period">contact sales</div>
+            <ul class="pricing-features">
+              <li>Unlimited AI Agents</li>
+              <li>Enterprise Workflows</li>
+              <li>24/7 Dedicated Support</li>
+              <li>Custom Integrations</li>
+              <li>SLA Guarantees</li>
+            </ul>
+            <a href="mailto:sales@thenewfuse.com" class="btn btn-secondary" style="width:100%; justify-content:center;">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-section">
+      <h2>Ready to Build<br><span class="gradient-text">The Future?</span></h2>
+      <p>Join developers shipping AI-powered products with The New Fuse.</p>
+      <div class="hero-actions">
+        <a href="https://thenewfuse.com/auth/register" class="btn btn-primary btn-lg">
+          <span class="btn-icon">🚀</span> Start Building Now
+        </a>
+        <a href="https://github.com/whodaniel" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
+          <span class="btn-icon">⭐</span> Star on GitHub
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="nav-brand">
+            <img src="assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo">
+            The New Fuse
+          </a>
+          <p>The AI Agent Orchestration Platform. Build, deploy, and scale multi-agent systems with MCP and A2A protocols.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/visualizations/dashboard.html">Visualizations</a>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Developers</h4>
+          <a href="https://github.com/whodaniel" target="_blank" rel="noopener">GitHub</a>
+          <a href="/docs">Documentation</a>
+          <a href="/docs">API Reference</a>
+          <a href="/agents">Agent Registry</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="/about">About</a>
+          <a href="/blog">Blog</a>
+          <a href="/legal/privacy">Privacy</a>
+          <a href="/legal/terms">Terms</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 The New Fuse. All rights reserved.</span>
+        <span>Built with ⚡ for the AI era</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script>
+    // Scroll-triggered fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(2,6,23,0.92)';
+        navbar.style.borderBottomColor = 'rgba(148,163,184,0.12)';
+      } else {
+        navbar.style.background = 'rgba(2,6,23,0.7)';
+        navbar.style.borderBottomColor = 'rgba(148,163,184,0.08)';
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>

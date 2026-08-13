@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-frontload-protocols",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-frontload-protocols/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-frontload-protocols/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-frontload-protocols.json",
+  "status": "present"
+}

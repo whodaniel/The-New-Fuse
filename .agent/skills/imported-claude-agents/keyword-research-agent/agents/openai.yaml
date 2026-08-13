@@ -1,0 +1,4 @@
+interface:
+  display_name: "Keyword Research Agent"
+  short_description: "Help with Keyword Research Agent tasks"
+  default_prompt: "Run the Keyword Research Agent workflow using SKILL.md instructions."

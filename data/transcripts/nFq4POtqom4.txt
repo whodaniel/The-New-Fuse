@@ -1,0 +1,611 @@
+Today we're looking at one of the best
+AI coding frameworks on planet Earth.
+It's a spectrum and tool called Open
+Spec and it solves some of the biggest
+problems that I have faced with other
+vibe coding frameworks and plugins and
+tools. So if you've never used it before
+and you're tired of screaming into the
+void as Claude code doesn't do what you
+said to do for the millionth time, well,
+you clicked on the right video. And if
+you have used it before, they've
+recently added a new expanded workflow
+which we will take a look at later. So
+really quickly, where does this tool sit
+in the ecosystem of all of these
+different tools that we have like Obra
+and GitHub Spec Kit and B Mad and all of
+these other things? I think these tools
+kind of work out into like roughly three
+different categories. Now the first
+category which this one falls into I
+would consider like spec driven tools.
+So these are going to be things like
+GitHub Spec Kit and obviously Open Spec
+which we are looking at now where this
+spec that you create is the primary
+artifact that drives everything and so a
+lot of time is typically spent making
+sure you're aligned on exactly what you
+are going to build and then everything
+typically follows through nicely from
+there. So the mental model is mostly the
+human is orchestrating the thing but the
+agent is assisting. I personally think
+this is the best approach if you are a
+vibe coder or if you're new to AI coding
+in general because it forces you to get
+really clear on what it is exactly that
+you are building and what it needs to
+do. The second category I would call
+software development life cycle
+enforcement. So these are things like
+agent skills, Obra superpowers, and
+compound engineering where yes, they
+have certain workflows that they move
+you through but the real value in these
+tools from my perspective is that they
+enforce best practices and discipline
+onto the actual coding process. So for
+example with Obra, something like the
+test driven development their red green
+refactor is a really strong thing to do
+anytime you're going to build something
+and that is not something for example
+that's going to be built in necessarily
+to these other tools. And so the third
+group I would call like the more
+autonomous pipeline and these are where
+we tend to see tools like B Mad for
+example or get done where there's a
+lot of tooling around like you being
+able to define something and then
+literally walk away and come back and
+hey, now it's built something from you
+without like necessarily a ton of
+intervention. So now obviously there's
+crossover between a lot of these
+categories but what we are going to be
+looking at today is Open Spec and how it
+works. So what we're going to be doing
+in this video is solving a problem that
+I hear from a lot of people especially
+in my free group paid group but also in
+the comments on my videos, which is you
+get this like first version of something
+like this and you end up thinking like
+this is kind of ugly and it's not really
+looking like what I want it to look like
+but you spent a lot of work, you know,
+building things and you really want to
+make it pop. And so in this case, I went
+into Claude design and I spent a little
+bit of time going through and trying to
+build things out so that it looks a lot
+more professional and is something I
+would actually want to use. So for
+example, this is what the recipe page
+looks like right now and this is ideally
+what it would end up looking like. And
+so we're going to try to use a spec
+driven development tool to bridge this
+gap and build all of these screens out
+step by step. And so something I'm
+really big on is that you can chain
+skills together like just because you're
+using one of these doesn't mean you
+can't use the others. So I'm still going
+to use Obra's working with get work
+trees skill in order to spin up this
+work tree, run all of my tests and make
+sure we have a clean baseline before we
+start. So to get this thing working,
+it's pretty simple. All you need to do
+is install the package via this command
+and then you come down, move into your
+project and just type in Open Spec in
+it, choose your environment, and then
+from there you are ready to go. So one
+of the things that's really cool that I
+like about this library is they have
+this onboarding skill. So if you're new
+to this and this is going to be the
+first time using it and you want it to
+kind of guide you through the process,
+if you use this onboard command, it's
+going to actually take you through
+building your first feature with this
+system. But for purposes of showing you
+all the steps and how we're going to use
+them, I'm going to run this thing
+manually. What I'm going to do is I'm
+going to hop back into Claude design and
+I'm just going to copy the command that
+they give you to allow Claude code to
+fetch these designs and then I'm going
+to come through and I'm going to run the
+first command which is explore. So I'm
+going to kick this thing off and then we
+can chat about it. So like most good
+libraries, it has this optional
+exploration phase where you can actually
+think about the ideas before you commit
+to like exactly how you want to move
+through and do it. And so the thing that
+I really like is you're not locked into
+like some very specific way of doing
+things and with a lot of other tools,
+that's what happens. Like they have
+their opinionated approach to how you
+should move through and do exploration
+and that gets tied like very
+specifically to the rest of the process
+and so there's not like a ton of
+flexibility in being able to use those
+things sometimes but you can call this
+command at really any point in the
+process when you want to dive deeper
+into what you're about to change. And so
+this is a nice benefit over something
+like Spec Kit that kind of assumes that
+you're going to hop in directly to the
+spec and like know the thing that you
+want to build. It has this opportunity
+for you to really like hash that thing
+out ahead of time. So if you've used
+other libraries like compound
+engineering, they have that ideate
+function. This is like kind of similar
+but again, a little bit more flexible.
+So once it's read through all of that
+context, it's going to start like
+reasoning about like what we asked for.
+And so in this case, there were a few
+different ambiguities that we need to go
+through and answer because we're
+completely changing the established
+design system that we have documented
+inside of design.markdown
+and that gets referenced to be used in
+agents.markdown.
+So all of those things need to be
+updated obviously and then we're going
+to have to also change like the
+structure of the repo because based on
+the information architecture that's in
+the new designs, that's not going to map
+very cleanly onto what we have. So
+there's a good amount of work that's
+going to need to be done. I pasted in a
+little bit of extra context that it
+needed and now it is working on
+clarifying pieces of the plan and one
+thing that I really like about this it
+will flag things that we need to be
+aware of before we move forward. And so
+this process is really valuable because
+too many people tend to jump straight
+into like trying to build the thing and
+what that means is that any of these
+assumptions that are surfacing as we
+have this conversation, the language
+model's just going to decide what to do
+at the time of building the thing and
+then you might not be happy with the
+output. So this explore feature is a
+really nice way to side step those
+problems without like a ton of ceremony
+and processes that we tend to have in
+other tools like Spec Kit or B Mad or
+some of those other systems. But what do
+we do from here? Once we have this fully
+explored, the next step is to generate a
+proposal. And so what you're going to
+get out the other side is this proposal
+markdown file, a system design markdown
+file, and then your task list. So in
+this design system file, we're going to
+get a few different things. Number one,
+they're going to be like the primary
+architecture decisions. So for example
+in this case for this project, how are
+we going to migrate over all of the
+tokens for the design system? How are we
+going to actually like build these
+components inside of our system because
+they're obviously different from what
+was inside of Claude design? How is our
+like app routing and like the actual
+architecture of the like the app itself
+going to change? So we get a bunch of
+cool details like that. Then the
+proposal is more about like well, what
+is going to actually change inside of
+this project? So for example, design
+system migration, building out the new
+screens, building out the new component
+library, making sure that we're keeping
+note of how our data models and our APIs
+are going to need to change based on the
+new UI that we're building because I
+told it that I didn't want to do all the
+back end changes right now, right? So
+it's like a very clear change log of
+like what exactly are we intending to
+change with this spec? And then we get a
+phase by phase series of actual tasks
+that need to be done in order to
+implement this thing. So we're getting
+the what and the why of what we're doing
+from the proposal, the how it's going to
+be done on a high level from the design
+markdown file, and then we get the
+implementation steps from the task file.
+So this convention is awesome because
+all of the assumptions and all of the
+decisions are very clearly documented
+and we have really concrete tasks at
+each step. And so the last piece of
+this, we get this new specs directory
+where for every major chunk of what we
+need to do. So for example, the
+bookmarks migration, the discovery page,
+the people that you're following, the
+actual like design system migration,
+each of these gets an individual spec
+that has very clear scenarios about like
+exactly what needs to be there. Now
+before we move on to actually like apply
+these changes and show what the work
+process looks like, one thing that I
+really love about this tool is that they
+have this validate function. And so in
+this case, I wanted to make sure it has
+an extra pass where it is going to
+actually verify its work using the
+Chrome browser extension MCP. And that's
+not something that's like built into the
+process. A lot of these tools, they tend
+to like functionally describe how
+something should work but they do not
+often describe like visually how the
+thing really needs to look and that
+becomes a problem if you're trying to
+migrate a design system from another
+tool. And so all we asked it to do was
+to add a step where it has to verify
+that and now that it's made this new
+spec, it's going to run through and
+validate it to make sure that we haven't
+lost any of the critical details inside
+of our spec that we're going to be using
+to actually build this stuff with. So
+now we're going to run the final command
+which is apply and then we're just going
+to pass in the directory that it gave us
+for this project or like the identifier
+for this project and we are going to let
+it run. Now one little note, I did boot
+up Claude with the Chrome flag so that
+it can actually like interact with the
+browser as it's going through and
+verifying its work. Now this process of
+having like a front end visual check is
+actually one of the things that is in
+the Claude code creators stack of tips
+that can have some of the biggest
+improvement on what you get out the
+other side of these types of vibe coding
+tasks. All right, guys. So, this thing
+ran through for about 2 hours straight
+without really any intervention taken
+from me. The only thing I did was at a
+certain point I turned on auto mode so
+that it would stop pausing to ask me
+questions. So, in reality with those
+stops in place this took maybe 3 or 4
+hours to actually do. But, if we had it
+on auto mode, the actual time like
+processing time it would have taken 2
+hours and 8 minutes. And so, again, this
+includes like actually doing all of the
+work as well as doing the verification
+that we put in place where it was using
+Chrome to actually look at the screens.
+And so, we haven't seen what this is
+going to look like yet, but it should be
+at least pretty close to our designs.
+So, let's go check it out real quick and
+then we'll come back and do the final
+step. So, there's a few different things
+that I specifically want to look at
+because they were some of the aspects of
+the app that was bothering me the most.
+The first is this discovery page that we
+have. So, we can see it's like a very
+clear design. We have the sidebar.
+Obviously, the sidebar needs to be
+cleaned up a little bit because it
+didn't do it to spec. But, then we have
+this hero section, what's cooking now.
+We have these little filter search
+options. Then we have this like kind of
+hero section which are like updated more
+recent things. And then it kind of
+continues through in like a little bit
+of an editorial way. So, if we pop over
+into the screen, it is looking pretty
+close to that. So, I'm on like a very
+large screen and so some of like the
+spacing of how close the sidebar
+actually is to like this this middle
+column, that spacing is a little messed
+up. So, we can address those sorts of
+things, but overall like this top
+section, how it's styled, the little
+details of like having the person's name
+and what the recipe was, the trending
+forks, the editorial pick, all of that
+stuff [snorts] is
+pretty spot on. So, I'm really happy
+with that. The other thing that was
+really bothering me was the user profile
+page. So, if we were to click into
+Ren, for example, before this was like
+very vanilla like it it was nothing. And
+now if we pop in and go look at what the
+design was supposed to be. So, we can
+see here there's a few things that are
+off. This is supposed to be like an
+accent color, the alignment on like some
+of these buttons, these should be like
+roughly the same size, one should be
+accented. So, there's like a few things
+that we would need to dial in on this.
+But, overall for doing like such a
+large-scale refactor of the design
+system, it got like very close to what
+we were asking it to do. Even this
+recipe page is like a huge update from
+what was there in the past. So, like I'm
+very pleased with how it got through
+like that first version of what we are
+asking it to do. And again, the spectrum
+of an aspect of what we were doing is
+why it was able to do this so
+effectively. So, it had like the clear
+functional requirements and clear
+verification steps. And then it also had
+those reference designs that it knew to
+go check. So, this is great things work,
+but one of the surprisingly helpful
+things is how they finish up a feature
+branch. And that is one of the things
+that makes this an awesome tool to use.
+So, if we were to come through here now
+and run the archive command, basically
+what this does is it's now going to sync
+all of the different specs and the
+context that was built up and gathered
+around it with the root source of truth
+about your app. And that's one of the
+things that I really love about this
+library. A lot of people complain about
+how it's difficult to manage the
+documentation of their app over time.
+And this is how Open Spec helps you
+manage that. So, if we were to go look
+at this Open Spec folder where all of
+this lives, you'll notice that all of
+the work we were doing was inside of
+this changes folder. And so, the way
+this works is that every single like net
+new feature that you have built, in this
+case we built out a few of them. So, we
+had like this new bookmarks view, we had
+the discovery page, we had the following
+page, we had the update to the design
+system. All of those different things
+are going to get their own spec file.
+And the reason that this is valuable is
+when a change gets made then in the
+future, we're going to have a persistent
+source of truth that describes how this
+thing should actually work. So, for
+example, if we were to come down now and
+look at the bookmarks spec, we have a
+very clear set of requirements and then
+like user story scenarios that explain
+like functionally what should be
+happening in this area. Now, the reason
+that this is valuable is that down the
+line if we were to go make a change to
+our bookmarks functionality in the app,
+when we go to then like archive that
+change like we just did, if we've done
+something that now breaks a critical
+piece of this spec, it is going to
+surface that issue and force us to
+reconcile it there. So, we don't get
+these sort of like black swans or things
+that are just like hidden now inside of
+our project that we don't realize we
+broke. So, again, it forces you to have
+like this living set of specifications
+for all of the major features of your
+app. And so, after all of that is done,
+we get this archive folder. And if we
+were to click into this, anything now
+that we have worked on, so for example,
+this design system migration, all of
+that information actually gets stored so
+that we can always go back and reference
+it if we need to. So, all of the tasks
+we worked on, the proposal, how we were
+going to make sure there was like visual
+fidelity in place, all of that stuff is
+now saved for us so we can always go
+back and look at it later. So, this is
+the base workflow, but there's three
+other workflows you can use that solve a
+lot of problems that you get with other
+tools. So, the first one up is actually
+two different workflows that you use
+together. And they are new and continue.
+One of the paradigms of this tool that I
+think really make it stand out compared
+with others is that it takes an
+iterative approach to planning. Like you
+might have some idea, you start planning
+it out, but then information pops up
+along the way and you want to
+reintegrate that information into your
+plan moving forward. So, one of the ways
+that they solve that is through these
+two new commands, new and continue. So,
+we're going to kick off this new command
+and basically we're going to say now
+that we have this front-end change made,
+we need to build out the back-end
+functionality so that the API routes are
+there, the data models are in place, and
+everything is good for us to be able to
+actually, you know, do this thing. And
+so, we're going to kick off with the new
+command to start moving in that
+direction. And so, what this does is it
+sets up a shell for us to move through a
+similar process that we moved through
+earlier. So, what we would do to
+continue through this process now is
+type in opsx continue. And then if there
+are any questions that we need to answer
+based on this, we can put our responses
+in here. So, in this case I have two
+options. One is I can do one huge change
+with everything in it. And number two is
+that I can slice these changes up into
+more focused changes and then take them
+piece by piece where every single change
+gets its own proposal, specs, and tasks.
+Now, since this is touching like the
+back-end logic, I really want to make
+sure that we don't miss anything
+important here. So, I chose to go
+through and slice it that way, which
+means it's going to take more time, but
+it's probably going to be done better.
+So, now in this case since we have all
+of these different slices that we're
+going to move through, we can run this
+new command again. But, in this case
+we're saying, "Well, what do we want to
+kick off?" Well, in this specific
+instance we're trying to work slice by
+slice. And so, we're going to go through
+that entire process of creating the
+proposal, applying the changes, and
+archiving them for each of these
+individual pieces. So, we can see
+similar to how we had that scaffolding
+for this broader plan, we now have the
+same scaffolding for this very specific
+change. So, now if we were to come down
+and run this continue command, what it's
+going to do is it's going to draft the
+proposal. So, similar to how earlier we
+ran that propose command, we're now
+doing that in this stepwise fashion.
+Instead of us having to call the
+specific command, we are just moving
+through the process using this continue
+command. So, the difference that we can
+see now is when we go into this specific
+like change instance for wiring the
+public profile reads, instead of having
+generated all of those things at once
+like we did last time, now we have just
+the proposal piece. And so, we could go
+through, we can read this, we can make
+sure that we're on the same page. And
+then from here if we move through and
+run the continue command, it's going to
+move on and generate the specs. Now, the
+reason that this is really valuable is
+that earlier on we looked at that
+explore command. So, if at any point
+we're in the middle of doing this and
+something crops up that we kind of don't
+know the best way to handle it, we can
+run the explore command, we can talk
+through the problem, and then we can
+integrate that change into whatever
+stage we're at now. So, this library is
+really good at generating the context,
+storing it in a really intelligent way,
+and then letting you move through the
+next stage really easily. So, one of the
+things that's really nice is that if at
+any point we think we're already good
+enough with the plan and we just want it
+to run through the rest of the stages,
+we can run this fast forward command.
+And so, this is going to allow us to go
+a lot faster, but still remain on rails.
+Like it's still following the system,
+which is enforcing like the best way of
+doing things and having your spec in
+place and then developing from that spec
+and doing everything that you defined
+there. And so, this is very similar to
+what we were doing in that new and
+continue paradigm, except it's just
+going to continue to move through it
+automatically. So, this is now complete
+and that brings us to the final feature,
+which I think is one of the most
+valuable things about how this library
+works. And that is the sync command. So,
+basically what this does is it helps you
+keep a running tab of the actual state
+of all of the different features of your
+app so that you don't need to worry
+about documentation going off the rails
+and quickly becoming out of date. So, if
+we were to come back into that master
+specs folder and we were to scroll down
+now to public profile, we can see that
+it has been updated based on this work.
+So, all of this extra information in
+here about like the requirements and
+what the database needs to look like and
+all of those things, these are all based
+on the work that we just did in this
+change. So we already had the public
+profile spec that existed, but now it's
+been updated with the work that just
+happened. So anytime we make any change
+that touches something that already
+exists, we have this built-in step
+that's going to go back and actually
+update the documentation so that things
+never get lost and never fall out of
+touch with the reality of what is there.
+And that is a huge value add that you
+don't get with a lot of other tools
+natively. So this library is pretty
+great and I think for having like a
+daily driver type of workflow,
+specifically one that calls these other
+plugins like Obra or similar libraries
+in when you need them. For example, with
+like sub-agent execution or test-driven
+development, this is for sure a new
+daily driver, especially if you're
+working on an established project. So if
+you like this video, I'm going to link
+to a playlist of other breakdowns of
+tools like this one that I have done,
+but that is it for this video. I will
+see you in the next one.

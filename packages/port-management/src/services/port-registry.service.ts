@@ -1,0 +1,635 @@
+// packages/port-management/src/services/port-registry.service.ts
+
+import { EventEmitter } from 'events';
+import * as net from 'net';
+import { execFileSync } from 'node:child_process';
+import * as portfinder from 'portfinder';
+import { createClient, type RedisClientType } from 'redis';
+
+/**
+ * Port locks MUST carry a TTL.
+ *
+ * These were plain SETNX keys with no expiry, released only on the happy path.
+ * Any crash, kill, or Ctrl-C between acquire and release left the key in Redis
+ * forever — permanently poisoning that port for every future run. Because the
+ * allocator scans upward from portRangeMin, the poisoned low ports are the
+ * first ones retried every time, so a handful of interrupted runs was enough
+ * to make findAvailablePort fail outright across a 7000-port range.
+ *
+ * A self-expiring lock makes an interrupted run cost `ttlMs`, not forever.
+ */
+const PORT_LOCK_TTL_MS = 30_000;
+
+interface PortLockClient {
+  connect(): Promise<void>;
+  disconnect(): Promise<void>;
+  /** Acquire `key` only if unset, expiring after `ttlMs`. Returns 1 on acquire. */
+  setnx(key: string, value: string, ttlMs: number): Promise<number>;
+  del(key: string): Promise<number>;
+}
+
+function createLocalPortLockClient(): PortLockClient {
+  const locks = new Map<string, { value: string; expiresAt: number }>();
+  return {
+    connect: async () => {},
+    disconnect: async () => {
+      locks.clear();
+    },
+    setnx: async (key: string, value: string, ttlMs: number) => {
+      const existing = locks.get(key);
+      if (existing && existing.expiresAt > Date.now()) return 0;
+      locks.set(key, { value, expiresAt: Date.now() + ttlMs });
+      return 1;
+    },
+    del: async (key: string) => (locks.delete(key) ? 1 : 0),
+  };
+}
+
+async function createPortLockClient(): Promise<PortLockClient> {
+  const url = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+  const client: RedisClientType = createClient({ url });
+  client.on('error', () => {});
+  try {
+    await client.connect();
+    return {
+      connect: async () => {},
+      disconnect: async () => {
+        await client.disconnect();
+      },
+      setnx: async (key: string, value: string, ttlMs: number) => {
+        const result = await client.set(key, value, { NX: true, PX: ttlMs });
+        return result ? 1 : 0;
+      },
+      del: async (key: string) => await client.del(key),
+    };
+  } catch {
+    return createLocalPortLockClient();
+  }
+}
+
+export interface PortRegistration {
+  id: string;
+  port: number;
+  serviceName: string;
+  serviceType: 'frontend' | 'api' | 'backend' | 'broker' | 'database' | 'other';
+  environment: 'development' | 'staging' | 'production' | 'test';
+  status: 'active' | 'reserved' | 'conflict' | 'inactive';
+  processId?: number;
+  host: string;
+  protocol: 'http' | 'https' | 'ws' | 'wss' | 'tcp' | 'udp';
+  healthCheckUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  reservedUntil?: Date;
+  metadata: Record<string, any>;
+}
+
+export interface PortConflict {
+  port: number;
+  conflictingServices: PortRegistration[];
+  suggestedResolutions: PortResolution[];
+}
+
+export interface PortResolution {
+  type: 'reassign' | 'terminate' | 'merge';
+  targetService: string;
+  newPort?: number;
+  description: string;
+}
+
+export interface ServiceConfiguration {
+  serviceName: string;
+  environment: string;
+  preferredPort?: number;
+  fallbackPorts: number[];
+  autoAssign: boolean;
+  portRangeMin: number;
+  portRangeMax: number;
+  healthCheck?: {
+    path: string;
+    interval: number;
+    timeout: number;
+  };
+}
+
+export interface RuntimePortCatalogEntry {
+  port: number;
+  serviceName: string;
+  protected: boolean;
+}
+
+export interface RuntimePortProcess {
+  pid: number;
+  command: string;
+}
+
+export interface RuntimePortInspection extends RuntimePortCatalogEntry {
+  status: 'clear' | 'occupied';
+  processes: RuntimePortProcess[];
+}
+
+export interface RuntimePortPreflightResult {
+  ok: boolean;
+  blocked: RuntimePortInspection[];
+  allowedOccupiedPorts: number[];
+}
+
+const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
+  { port: 3000, serviceName: 'relay-core', protected: false },
+  { port: 3001, serviceName: 'api/backend', protected: false },
+  { port: 3004, serviceName: 'backend', protected: false },
+  { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },
+  { port: 3006, serviceName: 'skideancer/ws', protected: false },
+  { port: 3007, serviceName: 'skideancer/ide', protected: false },
+  { port: 3008, serviceName: 'skideancer websocket', protected: true },
+  { port: 1420, serviceName: 'tauri-desktop', protected: false },
+  { port: 5173, serviceName: 'vite', protected: false },
+  { port: 5174, serviceName: 'vite-alt', protected: false },
+  { port: 5555, serviceName: 'drizzle-studio', protected: true },
+  { port: 6379, serviceName: 'redis', protected: true },
+  { port: 5432, serviceName: 'postgres', protected: true },
+];
+
+function run(command: string, args: string[]): string {
+  try {
+    return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch {
+    return '';
+  }
+}
+
+function parsePortList(value: string | undefined): number[] {
+  return String(value || '')
+    .split(',')
+    .map((item) => Number.parseInt(item.trim(), 10))
+    .filter(Number.isInteger);
+}
+
+export class PortRegistryService extends EventEmitter {
+  private redisClient: PortLockClient | null = null;
+  private redisInitPromise: Promise<void> | null = null;
+
+  private registry: Map<string, PortRegistration> = new Map();
+  private configurations: Map<string, ServiceConfiguration> = new Map();
+  private monitoringInterval: NodeJS.Timeout | null = null;
+  private temporaryReservations: Map<number, net.Server> = new Map();
+
+  constructor() {
+    super();
+    this.redisInitPromise = this.initializeRedisClient();
+    this.loadConfigurations();
+  }
+
+  private async initializeRedisClient(): Promise<void> {
+    this.redisClient = await createPortLockClient();
+    await this.redisClient.connect();
+  }
+
+  private async getRedisClient(): Promise<PortLockClient> {
+    if (!this.redisInitPromise) {
+      this.redisInitPromise = this.initializeRedisClient();
+    }
+    await this.redisInitPromise;
+    if (!this.redisClient) {
+      this.redisClient = createLocalPortLockClient();
+      await this.redisClient.connect();
+    }
+    return this.redisClient;
+  }
+
+  /**
+   * Register a port for a service
+   */
+  async registerPort(config: {
+    serviceName: string;
+    serviceType: PortRegistration['serviceType'];
+    environment: PortRegistration['environment'];
+    port?: number;
+    host?: string;
+    protocol?: PortRegistration['protocol'];
+    healthCheckUrl?: string;
+    metadata?: Record<string, any>;
+  }): Promise<PortRegistration> {
+    const {
+      serviceName,
+      serviceType,
+      environment,
+      host = '127.0.0.1',
+      protocol = 'http',
+      healthCheckUrl,
+      metadata = {},
+    } = config;
+
+    let { port } = config;
+
+    let preReservedPort = false;
+
+    // If no port specified, find an available one using the new robust method
+    if (!port) {
+      port = await this.findAvailablePort(serviceName, environment);
+      preReservedPort = true; // Flag that this port was temporarily reserved by findAvailablePort
+    } else {
+      // MODIFIED: Directly attempt to temporarily reserve the explicitly provided port
+      const reservedServer = await this.reservePortTemporarily(port);
+      if (!reservedServer) {
+        throw new Error(
+          `Failed to acquire temporary reservation or lock for explicitly provided port ${port}. It might be in use or have been taken concurrently.`
+        );
+      }
+      preReservedPort = true; // Mark as pre-reserved
+      const lockAcquired = await this.acquirePortLock(port);
+      if (!lockAcquired) {
+        throw new Error(
+          `Failed to acquire a lock for explicitly provided port ${port}. Another process might be holding it.`
+        );
+      }
+    }
+
+    const registration: PortRegistration = {
+      id: `${serviceName}-${environment}-${port}`,
+      port: port!,
+      serviceName,
+      serviceType,
+      environment: environment as PortRegistration['environment'],
+      status: 'active',
+      host,
+      protocol,
+      healthCheckUrl,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      metadata,
+    };
+
+    this.registry.set(registration.id, registration);
+    this.emit('portRegistered', registration);
+
+    // If the port was pre-reserved by this instance, release the temporary hold
+    if (preReservedPort) {
+      this.releaseTemporaryReservation(port!);
+    } else {
+      // If not pre-reserved, but an explicit port was given and locked, release the lock
+      await this.releasePortLock(port!);
+    }
+
+    return registration;
+  }
+
+  // New helper to release temporary reservation
+  private releaseTemporaryReservation(port: number): void {
+    const server = this.temporaryReservations.get(port);
+    if (server) {
+      server.close(() => {
+        this.temporaryReservations.delete(port);
+        // console.log(`Temporary reservation for port ${port} released by PortRegistryService.`);
+      });
+    }
+  }
+
+  /**
+   * Find an available port for a service
+   */
+  async findAvailablePort(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): Promise<number> {
+    const config = this.getServiceConfiguration(serviceName, environment);
+
+    // Retry finding and reserving a port until successful
+    for (let i = 0; i < 20; i++) {
+      // Max 20 retries
+      try {
+        const potentialPort = await portfinder.getPortPromise({
+          port: config.preferredPort || config.portRangeMin,
+          stopPort: config.portRangeMax,
+        });
+
+        // Lock first, then bind — reservePortTemporarily opens and HOLDS a real
+        // socket, so calling it twice on the same port guarantees the second
+        // call hits EADDRINUSE against our own reservation. That is what used
+        // to happen here (an unconditional bind before the lock, then a second
+        // bind inside it, the inner `const` shadowing the outer): every
+        // candidate port failed, every iteration leaked a bound socket, and a
+        // range of 7000 free ports reported "no available ports found".
+        const lockAcquired = await this.acquirePortLock(potentialPort);
+        if (lockAcquired) {
+          const reservedServer = await this.reservePortTemporarily(potentialPort);
+          // The lock only has to serialize check-and-bind. Once we hold the
+          // bound socket, that socket IS the exclusion, so release the lock on
+          // both paths — holding it past the bind made every subsequent caller
+          // block for the full acquire timeout on a port that was already
+          // decided.
+          await this.releasePortLock(potentialPort);
+          if (reservedServer) {
+            return potentialPort;
+          }
+        }
+      } catch (err: unknown) {
+        // Log the error but continue retrying
+        console.error(`Error in findAvailablePort for ${serviceName}-${environment}:`, err);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50 * (i + 1))); // Exponential backoff before retrying
+    }
+
+    throw new Error(
+      `No available and reservable ports found for service ${serviceName} in environment ${environment} within range ${config.portRangeMin}-${config.portRangeMax} after multiple attempts.`
+    );
+  }
+
+  /**
+   * Check if a port is available
+   */
+  async isPortAvailable(port: number, host: string = '127.0.0.1'): Promise<boolean> {
+    // Prefer IPv4 loopback — binding `localhost` can succeed on ::1 while
+    // 127.0.0.1 (or vice versa) is already occupied (see tauri HMR / relay clash).
+    return new Promise((resolve) => {
+      const server = net.createServer();
+      server.once('error', () => resolve(false));
+      server.once('listening', () => {
+        server.close();
+        resolve(true);
+      });
+      server.listen(port, host);
+    });
+  }
+
+  /**
+   * Detect port conflicts
+   */
+  async detectConflicts(): Promise<PortConflict[]> {
+    const byPort = new Map<number, PortRegistration[]>();
+    for (const registration of this.registry.values()) {
+      const registrations = byPort.get(registration.port) || [];
+      registrations.push(registration);
+      byPort.set(registration.port, registrations);
+    }
+
+    return Array.from(byPort.entries())
+      .filter(([, registrations]) => registrations.length > 1)
+      .map(([port, conflictingServices]) => ({
+        port,
+        conflictingServices,
+        suggestedResolutions: conflictingServices.slice(1).map((registration) => ({
+          type: 'reassign' as const,
+          targetService: registration.id,
+          description: `Reassign ${registration.serviceName} from shared port ${port}`,
+        })),
+      }));
+  }
+
+  getRuntimePortCatalog(extraPorts: RuntimePortCatalogEntry[] = []): RuntimePortCatalogEntry[] {
+    const byPort = new Map<number, RuntimePortCatalogEntry>();
+    for (const entry of [...DEFAULT_RUNTIME_PORTS, ...extraPorts]) {
+      byPort.set(entry.port, entry);
+    }
+    return Array.from(byPort.values()).sort((a, b) => a.port - b.port);
+  }
+
+  inspectRuntimePorts(extraPorts: RuntimePortCatalogEntry[] = []): RuntimePortInspection[] {
+    return this.getRuntimePortCatalog(extraPorts).map((entry) => {
+      const processes = this.findProcessesOnPort(entry.port);
+      return {
+        ...entry,
+        status: processes.length > 0 ? 'occupied' : 'clear',
+        processes,
+      };
+    });
+  }
+
+  detectRuntimeConflicts(
+    options: {
+      includeProtected?: boolean;
+      allowOccupiedPorts?: number[];
+      extraPorts?: RuntimePortCatalogEntry[];
+    } = {}
+  ): RuntimePortPreflightResult {
+    const allowed = new Set([
+      ...parsePortList(process.env.TNF_PORTS_ALLOW_OCCUPIED),
+      ...(options.allowOccupiedPorts || []),
+    ]);
+    const blocked = this.inspectRuntimePorts(options.extraPorts).filter((entry) => {
+      if (entry.status !== 'occupied') return false;
+      if (entry.protected && !options.includeProtected) return false;
+      return !allowed.has(entry.port);
+    });
+
+    return {
+      ok: blocked.length === 0,
+      blocked,
+      allowedOccupiedPorts: Array.from(allowed).sort((a, b) => a - b),
+    };
+  }
+
+  /**
+   * Reassign a port
+   */
+  async reassignPort(serviceId: string, newPort: number): Promise<void> {
+    const registration = this.registry.get(serviceId);
+    if (!registration) {
+      throw new Error(`Service registration ${serviceId} not found`);
+    }
+
+    registration.port = newPort;
+    registration.updatedAt = new Date();
+    this.registry.set(serviceId, registration);
+  }
+
+  /**
+   * Get service configuration
+   */
+  private getServiceConfiguration(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): ServiceConfiguration {
+    const key = `${serviceName}-${environment}`;
+    return (
+      this.configurations.get(key) || {
+        serviceName,
+        environment,
+        fallbackPorts: [],
+        autoAssign: true,
+        portRangeMin: 3000,
+        portRangeMax: 9999,
+      }
+    );
+  }
+
+  /**
+   * Load service configurations
+   */
+  private async loadConfigurations(): Promise<void> {
+    const defaultConfigs: ServiceConfiguration[] = [
+      {
+        serviceName: 'relay-core',
+        environment: 'development',
+        preferredPort: 3000,
+        fallbackPorts: [3010, 3020, 3030],
+        autoAssign: false,
+        portRangeMin: 3000,
+        portRangeMax: 3000,
+      },
+      {
+        serviceName: 'tauri-desktop',
+        environment: 'development',
+        preferredPort: 1420,
+        fallbackPorts: [1421, 1422, 1423, 5173],
+        autoAssign: true,
+        portRangeMin: 1420,
+        portRangeMax: 1499,
+      },
+      {
+        serviceName: 'frontend',
+        environment: 'development',
+        preferredPort: 5173,
+        fallbackPorts: [5174, 5175, 3010],
+        autoAssign: true,
+        portRangeMin: 5173,
+        portRangeMax: 5199,
+      },
+      {
+        serviceName: 'api',
+        environment: 'development',
+        preferredPort: 3001,
+        fallbackPorts: [3011, 3021, 3031],
+        autoAssign: true,
+        portRangeMin: 3001,
+        portRangeMax: 3199,
+      },
+      {
+        serviceName: 'api-gateway/ws-bridge',
+        environment: 'development',
+        preferredPort: 3005,
+        fallbackPorts: [3015, 3025, 3035],
+        autoAssign: true,
+        portRangeMin: 3005,
+        portRangeMax: 3105,
+      },
+    ];
+
+    for (const config of defaultConfigs) {
+      const key = `${config.serviceName}-${config.environment}`;
+      this.configurations.set(key, config);
+    }
+  }
+
+  getAllRegistrations(): PortRegistration[] {
+    return Array.from(this.registry.values());
+  }
+
+  findByPort(port: number): PortRegistration | undefined {
+    return Array.from(this.registry.values()).find((reg) => reg.port === port);
+  }
+
+  private findProcessesOnPort(port: number): RuntimePortProcess[] {
+    const pids = this.findPidsWithLsof(port);
+    const fallbackPids = pids.length > 0 ? [] : this.findPidsWithSs(port);
+    return Array.from(new Set([...pids, ...fallbackPids])).map((pid) => ({
+      pid,
+      command: this.getPidCommand(pid),
+    }));
+  }
+
+  private findPidsWithLsof(port: number): number[] {
+    return run('lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t'])
+      .split(/\s+/)
+      .map((value) => Number.parseInt(value, 10))
+      .filter(Number.isInteger);
+  }
+
+  private findPidsWithSs(port: number): number[] {
+    const pids = new Set<number>();
+    for (const match of run('ss', ['-ltnp', `sport = :${port}`]).matchAll(/pid=(\d+)/g)) {
+      pids.add(Number.parseInt(match[1], 10));
+    }
+    return Array.from(pids);
+  }
+
+  private getPidCommand(pid: number): string {
+    return run('ps', ['-p', String(pid), '-o', 'comm=']).trim() || 'unknown';
+  }
+
+  /**
+   * Temporarily binds to a port to reserve it. Keeps the server open.
+   * Returns the server instance if the port was successfully reserved, null otherwise.
+   */
+  /**
+   * Temporarily binds to a port to reserve it. Keeps the server open.
+   * Assumes a lock for this port has already been acquired if this is called after findAvailablePort.
+   * Returns the server instance if the port was successfully reserved, null otherwise.
+   */
+  private async reservePortTemporarily(port: number): Promise<net.Server | null> {
+    return new Promise((resolve) => {
+      // No need to acquire lock here, as it should be acquired before calling this function.
+      // This function only attempts to bind the port physically.
+      const server = net.createServer();
+      server.listen(port, '127.0.0.1', () => {
+        // Port successfully bound, keep it open temporarily.
+        //
+        // unref() so an outstanding reservation never keeps the process alive.
+        // The socket still holds the port for as long as this process runs —
+        // which is the semantic callers want — but Node can exit once its real
+        // work is done. Without this, `PORT=$(find-available-port.cjs …)` in
+        // api-gateway's start:dev hangs forever: the reservation pins the event
+        // loop, the process never exits, and command substitution never returns.
+        server.unref();
+        this.temporaryReservations.set(port, server);
+        resolve(server); // Return the server instance
+      });
+      server.on('error', (err: any) => {
+        // Port not available or other error
+        if (err.code === 'EADDRINUSE') {
+          resolve(null); // Port in use
+        } else {
+          console.error(`Error attempting to temporarily reserve port ${port}:`, err);
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  getByService(serviceName: string, environment?: string): PortRegistration[] {
+    return Array.from(this.registry.values()).filter(
+      (reg) => reg.serviceName === serviceName && (!environment || reg.environment === environment)
+    );
+  }
+
+  private async acquirePortLock(port: number, timeoutMs: number = 2000): Promise<boolean> {
+    const lockKey = `port_lock:${port}`;
+    const startTime = Date.now();
+    const redisClient = await this.getRedisClient();
+    while (Date.now() - startTime < timeoutMs) {
+      try {
+        const acquired = await redisClient.setnx(lockKey, 'locked', PORT_LOCK_TTL_MS);
+        if (acquired === 1) {
+          return true;
+        }
+      } catch (err) {
+        console.error(`Error acquiring Redis lock for port ${port}:`, err);
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    console.warn(`Failed to acquire lock for port ${port} after ${timeoutMs}ms.`);
+    return false;
+  }
+
+  private async releasePortLock(port: number): Promise<void> {
+    const lockKey = `port_lock:${port}`;
+    try {
+      const redisClient = await this.getRedisClient();
+      await redisClient.del(lockKey);
+    } catch (err) {
+      console.error(`Error releasing Redis lock for port ${port}:`, err);
+    }
+  }
+
+  destroy(): void {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = null;
+    }
+    this.removeAllListeners();
+    if (this.redisClient) {
+      this.redisClient.disconnect().catch(console.error);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "render-deploy",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/render-deploy/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/render-deploy/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/render-deploy.json",
+  "status": "present"
+}

@@ -1,0 +1,58 @@
+# 🛠️ Skill: Forge-Intelligence (FORGE-INTEL)
+**Namespace:** tnf:forge:intelligence
+**Status:** ACTIVE [CLASS:PRIME]
+**Source:** 184 Procedural Artifacts (Traversal: INFRA-002)
+
+## 1. Overview
+The Forge-Intelligence skill enables agents to execute high-fidelity codebase implementation, refactoring, and debugging by utilizing the most effective patterns distilled from the TNF Intelligence Pipeline.
+
+---
+
+## 2. Core Implementation Patterns
+
+### A. Recursive Debugging Loop (Artifact #584)
+When encountering a complex logic error or unknown data flow:
+1. **Plan:** Identify the hypothesized failure point.
+2. **Instrument:** Inject temporary `console.log` or `print` statements to trace real-time variable state.
+3. **Execute:** Run the failing routine.
+4. **Analyze:** Capture the TTY output and use it to refine the implementation.
+5. **Purge:** Remove all instrumentation once the fix is verified.
+
+### B. Context Engineering Frames (Artifact #18, #98)
+To prevent "38MB Context Crashes" and maximize reasoning depth:
+- **Frame 1 (Strategic):** Read only `GEMINI.md` and `LIVING_STATE.md`.
+- **Frame 2 (Structural):** Read the `KNOWLEDGE_TREE.json` and directory structure.
+- **Frame 3 (Execution):** Read only the specific file-segment being modified (targeted line-range).
+- **Mandate:** Prune the active context between turns by summarizing progress into a `PROJECT_LOG.md`.
+
+### C. Skill-Supervisor Pattern (Artifact #70, #178)
+When a task exceeds the complexity of a single turn:
+1. **Supervisor:** Generate a master implementation plan.
+2. **Delegator:** Invoke specialized sub-skills (e.g., `code-editor`, `test-runner`) for discrete sub-tasks.
+3. **Validator:** Aggregate results and perform a final consensus check before reporting completion.
+
+---
+
+## 3. High-Fidelity Constraints
+
+### A. The "No-Omission" Mandate (Artifact #372)
+- **Rule:** NEVER provide placeholders like `// ... rest of code` or `unchanged code`.
+- **Action:** Agents MUST provide exact literal code for every modified block to ensure merge integrity.
+
+### B. Deterministic Verification Gating (Artifact #76, #471)
+- **Rule:** Every implementation turn MUST be followed by a verification turn.
+- **Action:** Run unit tests or a syntax-check binary. No commit is authorized without a 100% pass report.
+
+---
+
+## 4. Technical Payloads (CLI/Config)
+- **Status Sync:** `node scripts/tnf-doctor.cjs --mode local` (Artifact # doctor).
+- **Merkle Update:** `./brain_sync.sh` (Librarian role).
+- **Semantic Search:** `SELECT * FROM match_documents(...)` (Artifact #333).
+
+---
+
+## 5. Metadata
+- **ID Number:** `ID#:SKILL-FORGE-INTEL-2026`
+- **Revision:** 1.0.0
+- **Attribution:** Distilled from 647 YouTube Intelligence Resources.

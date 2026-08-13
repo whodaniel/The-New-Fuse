@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-05-07T23:22:37Z",
+  "hardware": "Intel(R) Core(TM) i7-5557U CPU @ 3.10GHz",
+  "benchmarks": [
+    {
+      "name": "Pipeline (Python MSS + Native TurboJPEG)",
+      "fps": 33.8,
+      "latency_ms": 29.59
+    },
+    {
+      "name": "Pipeline (Native Forge Tier -1 One-Shot)",
+      "fps": 22.48,
+      "latency_ms": 44.49,
+      "speedup": 0.66
+    }
+  ]
+}

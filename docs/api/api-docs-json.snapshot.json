@@ -1,0 +1,2777 @@
+{
+  "components": {
+    "schemas": {
+      "AgentCapability": {
+        "enum": [
+          "natural_language",
+          "code_generation",
+          "data_analysis",
+          "image_processing",
+          "web_scraping",
+          "api_integration",
+          "workflow_execution"
+        ],
+        "type": "string"
+      },
+      "AgentResponseDto": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/AgentCapability"
+            },
+            "type": "array"
+          },
+          "configuration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "example": "agent123",
+            "type": "string"
+          },
+          "lastActiveAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "metrics": {
+            "properties": {
+              "avgResponseTime": {
+                "format": "float",
+                "type": "number"
+              },
+              "satisfaction": {
+                "format": "float",
+                "type": "number"
+              },
+              "uptime": {
+                "format": "float",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentStatus"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AgentType"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AgentStatus": {
+        "enum": ["active", "inactive", "paused", "busy", "error"],
+        "type": "string"
+      },
+      "AgentType": {
+        "enum": [
+          "BASIC",
+          "CHAT",
+          "WORKFLOW",
+          "TASK",
+          "ASSISTANT",
+          "ANALYSIS",
+          "CONVERSATIONAL",
+          "IDE_EXTENSION",
+          "API"
+        ],
+        "type": "string"
+      },
+      "AuthResponse": {
+        "properties": {
+          "accessToken": {
+            "description": "JWT access token (15 minutes expiry)",
+            "type": "string"
+          },
+          "expiresIn": {
+            "description": "Token expiration time in seconds",
+            "example": 900,
+            "type": "integer"
+          },
+          "refreshToken": {
+            "description": "JWT refresh token (7 days expiry)",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "type": "object"
+      },
+      "ChatRoom": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["public", "private", "group"],
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateAgentDto": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/AgentCapability"
+            },
+            "type": "array"
+          },
+          "configuration": {
+            "additionalProperties": true,
+            "example": {
+              "maxConcurrent": 10,
+              "responseTimeout": 30
+            },
+            "type": "object"
+          },
+          "description": {
+            "example": "Handles customer inquiries and support tickets",
+            "maxLength": 500,
+            "type": "string"
+          },
+          "name": {
+            "example": "Customer Support Bot",
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string"
+          },
+          "systemPrompt": {
+            "example": "You are a helpful customer support assistant",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AgentType"
+          }
+        },
+        "required": ["name", "type"],
+        "type": "object"
+      },
+      "CreateMessageDto": {
+        "properties": {
+          "content": {
+            "maxLength": 10000,
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "replyTo": {
+            "description": "ID of message being replied to",
+            "type": "string"
+          },
+          "type": {
+            "enum": ["text", "image", "file", "system"],
+            "type": "string"
+          }
+        },
+        "required": ["content", "type"],
+        "type": "object"
+      },
+      "CreateWalletDto": {
+        "properties": {
+          "chainId": {
+            "example": 1,
+            "type": "integer"
+          },
+          "enableSmartAccount": {
+            "default": true,
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userType": {
+            "default": "HUMAN",
+            "enum": ["HUMAN", "AI"],
+            "type": "string"
+          },
+          "verifierId": {
+            "type": "string"
+          }
+        },
+        "required": ["userId", "verifierId"],
+        "type": "object"
+      },
+      "CreateWorkflowDto": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "edges": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["name"],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "LoginDto": {
+        "properties": {
+          "email": {
+            "example": "user@example.com",
+            "format": "email",
+            "type": "string"
+          },
+          "password": {
+            "example": "SecurePass123!",
+            "format": "password",
+            "minLength": 8,
+            "type": "string"
+          }
+        },
+        "required": ["email", "password"],
+        "type": "object"
+      },
+      "MCPServer": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": ["online", "offline", "error"],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Message": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "reactions": {
+            "items": {
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "emoji": {
+                  "type": "string"
+                },
+                "users": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "sender": {
+            "properties": {
+              "avatar": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Pagination": {
+        "properties": {
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "page": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "RegisterDto": {
+        "properties": {
+          "email": {
+            "example": "newuser@example.com",
+            "format": "email",
+            "type": "string"
+          },
+          "firstName": {
+            "example": "John",
+            "maxLength": 50,
+            "minLength": 2,
+            "type": "string"
+          },
+          "lastName": {
+            "example": "Doe",
+            "maxLength": 50,
+            "minLength": 2,
+            "type": "string"
+          },
+          "password": {
+            "example": "SecurePass123!",
+            "format": "password",
+            "minLength": 8,
+            "type": "string"
+          },
+          "phone": {
+            "example": "+1234567890",
+            "format": "phone",
+            "type": "string"
+          }
+        },
+        "required": ["email", "password", "firstName", "lastName"],
+        "type": "object"
+      },
+      "Resource": {
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "downloads": {
+            "type": "integer"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "previewImage": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reviews": {
+            "type": "integer"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type",
+          "category",
+          "tags",
+          "author",
+          "version",
+          "downloads",
+          "rating",
+          "reviews",
+          "featured",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ResourceSearchEnvelope": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            },
+            "type": "array"
+          },
+          "traitScreen": {
+            "$ref": "#/components/schemas/ResourceSearchMeta"
+          }
+        },
+        "required": ["items"],
+        "type": "object"
+      },
+      "ResourceSearchMeta": {
+        "properties": {
+          "afterTraitCount": {
+            "type": "integer"
+          },
+          "beforeTraitCount": {
+            "type": "integer"
+          },
+          "confidence": {
+            "enum": ["high", "medium", "low"],
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "fallbackToBroadSearch": {
+            "type": "boolean"
+          },
+          "requiredAgentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "traitFilters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "used": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "used",
+          "confidence",
+          "traitFilters",
+          "requiredAgentIds",
+          "fallbackToBroadSearch",
+          "beforeTraitCount",
+          "afterTraitCount"
+        ],
+        "type": "object"
+      },
+      "ResourceSearchProtocolActor": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ResourceSearchProtocolRequestEnvelope": {
+        "properties": {
+          "actor": {
+            "$ref": "#/components/schemas/ResourceSearchProtocolActor"
+          },
+          "id": {
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ResourceSearchRequest"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "sent_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "spec": {
+            "example": "sgp/0.1",
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "trace": {
+            "$ref": "#/components/schemas/ResourceSearchProtocolTrace"
+          },
+          "type": {
+            "enum": ["RESOURCE.SEARCH.REQUEST"],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "spec",
+          "type",
+          "tenant",
+          "resource",
+          "sent_at",
+          "trace",
+          "payload"
+        ],
+        "type": "object"
+      },
+      "ResourceSearchProtocolResponseEnvelope": {
+        "properties": {
+          "actor": {
+            "$ref": "#/components/schemas/ResourceSearchProtocolActor"
+          },
+          "id": {
+            "type": "string"
+          },
+          "payload": {
+            "oneOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Resource"
+                },
+                "type": "array"
+              },
+              {
+                "$ref": "#/components/schemas/ResourceSearchEnvelope"
+              }
+            ]
+          },
+          "resource": {
+            "type": "string"
+          },
+          "sent_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "spec": {
+            "example": "sgp/0.1",
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "trace": {
+            "$ref": "#/components/schemas/ResourceSearchProtocolTrace"
+          },
+          "type": {
+            "enum": ["RESOURCE.SEARCH.RESPONSE"],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "spec",
+          "type",
+          "tenant",
+          "resource",
+          "sent_at",
+          "trace",
+          "payload"
+        ],
+        "type": "object"
+      },
+      "ResourceSearchProtocolTrace": {
+        "properties": {
+          "causation_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          }
+        },
+        "required": ["correlation_id", "causation_id"],
+        "type": "object"
+      },
+      "ResourceSearchProtocolValidationError": {
+        "properties": {
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "message": {
+            "example": "Invalid RESOURCE.SEARCH.REQUEST envelope",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ResourceSearchRequest": {
+        "properties": {
+          "category": {
+            "default": "all",
+            "enum": [
+              "development",
+              "productivity",
+              "communication",
+              "data",
+              "automation",
+              "ai",
+              "other",
+              "all"
+            ],
+            "type": "string"
+          },
+          "featured": {
+            "default": false,
+            "type": "boolean"
+          },
+          "includeTraitMeta": {
+            "default": false,
+            "description": "When true, returns envelope with trait metadata",
+            "type": "boolean"
+          },
+          "search": {
+            "description": "Free-text search string",
+            "example": "alpha workflow",
+            "type": "string"
+          },
+          "sortBy": {
+            "default": "popular",
+            "enum": ["popular", "recent", "rating", "name"],
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "traitLimit": {
+            "example": 8,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "traitScreen": {
+            "default": true,
+            "description": "Enable trait-based screening/ranking",
+            "type": "boolean"
+          },
+          "traitThreshold": {
+            "example": 0.42,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "type": {
+            "default": "all",
+            "enum": [
+              "skill",
+              "workflow",
+              "template",
+              "tool",
+              "integration",
+              "all"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Transaction": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": ["PENDING", "SUCCESS", "FAILED"],
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "txHash": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "walletId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TransactionDto": {
+        "properties": {
+          "data": {
+            "example": "0x",
+            "type": "string"
+          },
+          "to": {
+            "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+            "type": "string"
+          },
+          "useSmartAccount": {
+            "default": false,
+            "type": "boolean"
+          },
+          "value": {
+            "example": "1000000000000000000",
+            "type": "string"
+          }
+        },
+        "required": ["to", "value"],
+        "type": "object"
+      },
+      "UpdateAgentDto": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/AgentCapability"
+            },
+            "type": "array"
+          },
+          "configuration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentStatus"
+          },
+          "systemPrompt": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "User": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "id": {
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid",
+            "type": "string"
+          },
+          "lastLogin": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "role": {
+            "enum": ["user", "admin", "agent"],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Wallet": {
+        "properties": {
+          "address": {
+            "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+            "type": "string"
+          },
+          "chainId": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "smartAccountEnabled": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userType": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Workflow": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "edges": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkflowStatus"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "WorkflowExecution": {
+        "properties": {
+          "createdBy": {
+            "type": "string"
+          },
+          "endTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "output": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "startTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": ["running", "completed", "failed", "cancelled", "paused"],
+            "type": "string"
+          },
+          "workflowId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "WorkflowStatus": {
+        "enum": [
+          "draft",
+          "active",
+          "paused",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "JWT authentication token obtained from /auth/login",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@thenewfuse.com",
+      "name": "The New Fuse API Support",
+      "url": "https://thenewfuse.com/support"
+    },
+    "description": "Comprehensive API documentation for The New Fuse platform - a multi-agent orchestration system with blockchain integration, workflow automation, and AI-powered capabilities.\n\n## Features\n- **Agent Management**: Create, manage, and orchestrate AI agents\n- **Workflow Engine**: Build and execute complex workflows\n- **Chat System**: Real-time messaging and communication\n- **Web3 Integration**: Wallet management, transactions, and smart accounts (ERC-4337)\n- **MCP Protocol**: Model Context Protocol for agent communication\n- **Authentication**: JWT-based secure authentication\n- **Rate Limiting**: Tiered rate limiting based on user roles\n\n## Authentication\nMost endpoints require JWT authentication. Include the Bearer token in the Authorization header:\n```\nAuthorization: Bearer <your-jwt-token>\n```\n\n## Base URLs\n- Development: `http://localhost:3001/api`\n- API Gateway: `http://localhost:4000/api/v1`\n- Production: `https://api.thenewfuse.com/api`\n",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "title": "The New Fuse API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/agents": {
+      "get": {
+        "operationId": "getAgents",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "$ref": "#/components/schemas/AgentType"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "$ref": "#/components/schemas/AgentStatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgentResponseDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of agents"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get all agents",
+        "tags": ["Agents"]
+      },
+      "post": {
+        "operationId": "createAgent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponseDto"
+                }
+              }
+            },
+            "description": "Agent created successfully"
+          },
+          "400": {
+            "description": "Invalid agent data"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create a new agent",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/active": {
+      "get": {
+        "operationId": "getActiveAgents",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgentResponseDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of active agents"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get active agents",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/stats/types": {
+      "get": {
+        "operationId": "getAgentTypeCounts",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Agent counts by type"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get agent count by type",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/{id}": {
+      "delete": {
+        "operationId": "deleteAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Agent deleted successfully"
+          },
+          "404": {
+            "description": "Agent not found"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete agent",
+        "tags": ["Agents"]
+      },
+      "get": {
+        "operationId": "getAgentById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponseDto"
+                }
+              }
+            },
+            "description": "Agent details"
+          },
+          "404": {
+            "description": "Agent not found"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get agent by ID",
+        "tags": ["Agents"]
+      },
+      "put": {
+        "operationId": "updateAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponseDto"
+                }
+              }
+            },
+            "description": "Agent updated successfully"
+          },
+          "404": {
+            "description": "Agent not found"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update agent",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/{id}/activate": {
+      "put": {
+        "operationId": "activateAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponseDto"
+                }
+              }
+            },
+            "description": "Agent activated successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Activate agent",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/{id}/deactivate": {
+      "put": {
+        "operationId": "deactivateAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent deactivated successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Deactivate agent",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/{id}/pause": {
+      "put": {
+        "operationId": "pauseAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent paused successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Pause agent",
+        "tags": ["Agents"]
+      }
+    },
+    "/agents/{id}/stats": {
+      "get": {
+        "operationId": "getAgentStats",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "avgResponseTime": {
+                      "type": "number"
+                    },
+                    "completedTasks": {
+                      "type": "integer"
+                    },
+                    "failedTasks": {
+                      "type": "integer"
+                    },
+                    "satisfaction": {
+                      "type": "number"
+                    },
+                    "successRate": {
+                      "type": "number"
+                    },
+                    "totalTasks": {
+                      "type": "integer"
+                    },
+                    "uptime": {
+                      "type": "number"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Agent statistics"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get agent statistics",
+        "tags": ["Agents"]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Authenticate user and generate JWT tokens",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "Login successful"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Invalid credentials"
+          },
+          "429": {
+            "description": "Too many requests - rate limit exceeded"
+          }
+        },
+        "summary": "User login",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Logout successful"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "User logout",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Current user information"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get current user",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "refreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                },
+                "required": ["refreshToken"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "Token refreshed successfully"
+          },
+          "401": {
+            "description": "Invalid refresh token"
+          }
+        },
+        "summary": "Refresh authentication token",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "description": "Create a new user account",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "Registration successful"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Invalid registration data"
+          },
+          "409": {
+            "description": "Email already registered"
+          }
+        },
+        "summary": "User registration",
+        "tags": ["auth"]
+      }
+    },
+    "/chat/analytics": {
+      "get": {
+        "operationId": "getChatAnalytics",
+        "responses": {
+          "200": {
+            "description": "Chat analytics data"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get chat analytics",
+        "tags": ["chat"]
+      }
+    },
+    "/chat/rooms": {
+      "get": {
+        "operationId": "getChatRooms",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ChatRoom"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of chat rooms"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get all chat rooms",
+        "tags": ["chat"]
+      }
+    },
+    "/chat/rooms/{roomId}": {
+      "get": {
+        "operationId": "getChatRoom",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoom"
+                }
+              }
+            },
+            "description": "Chat room details"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get chat room by ID",
+        "tags": ["chat"]
+      }
+    },
+    "/chat/rooms/{roomId}/messages": {
+      "get": {
+        "operationId": "getChatMessages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "messages": {
+                      "items": {
+                        "$ref": "#/components/schemas/Message"
+                      },
+                      "type": "array"
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "List of messages"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get messages in room",
+        "tags": ["chat"]
+      },
+      "post": {
+        "operationId": "sendMessage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMessageDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Message sent successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Send message to room",
+        "tags": ["chat"]
+      }
+    },
+    "/mcp/servers": {
+      "get": {
+        "operationId": "getMcpServers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MCPServer"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of MCP servers"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get MCP server configurations",
+        "tags": ["mcp"]
+      },
+      "post": {
+        "operationId": "registerMcpServer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "capabilities": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "MCP server registered successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Register a new MCP server",
+        "tags": ["mcp"]
+      }
+    },
+    "/mcp/servers/{id}": {
+      "delete": {
+        "operationId": "removeMcpServer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "MCP server removed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Remove MCP server configuration",
+        "tags": ["mcp"]
+      },
+      "put": {
+        "operationId": "updateMcpServer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "MCP server updated successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update MCP server configuration",
+        "tags": ["mcp"]
+      }
+    },
+    "/mcp/servers/{id}/status": {
+      "get": {
+        "operationId": "getMcpServerStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MCP server status"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get MCP server status",
+        "tags": ["mcp"]
+      }
+    },
+    "/resources/search": {
+      "post": {
+        "description": "Returns a legacy resource array by default.\nWhen `includeTraitMeta=true`, returns an envelope with `{ items, traitScreen }`.\n",
+        "operationId": "searchResources",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ResourceSearchEnvelope"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Resource search results"
+          },
+          "400": {
+            "description": "Invalid request body"
+          }
+        },
+        "summary": "Search resources with optional trait screening",
+        "tags": ["resources"]
+      }
+    },
+    "/resources/search/protocol": {
+      "post": {
+        "description": "Accepts either:\n- `RESOURCE.SEARCH.REQUEST` protocol envelope, or\n- plain `ResourceSearchRequest` filter object.\n\nAlways returns a `RESOURCE.SEARCH.RESPONSE` envelope.\n",
+        "operationId": "searchResourcesProtocol",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ResourceSearchProtocolRequestEnvelope"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ResourceSearchRequest"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceSearchProtocolResponseEnvelope"
+                }
+              }
+            },
+            "description": "Protocol-envelope search response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceSearchProtocolValidationError"
+                }
+              }
+            },
+            "description": "Invalid protocol envelope"
+          }
+        },
+        "summary": "Protocol-envelope resource search bridge",
+        "tags": ["resources"]
+      }
+    },
+    "/smart-accounts/deploy/{walletId}": {
+      "post": {
+        "operationId": "deploySmartAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Smart account deployed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Deploy smart account",
+        "tags": ["smart-accounts"]
+      }
+    },
+    "/smart-accounts/enable/{walletId}": {
+      "post": {
+        "operationId": "enableSmartAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Smart account enabled successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Enable smart account for wallet",
+        "tags": ["smart-accounts"]
+      }
+    },
+    "/smart-accounts/execute/{walletId}": {
+      "post": {
+        "operationId": "executeSmartAccountTransaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction executed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Execute smart account transaction",
+        "tags": ["smart-accounts"]
+      }
+    },
+    "/smart-accounts/info/{walletId}": {
+      "get": {
+        "operationId": "getSmartAccountInfo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Smart account information"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get smart account info",
+        "tags": ["smart-accounts"]
+      }
+    },
+    "/transactions/execute-batch/{walletId}": {
+      "post": {
+        "operationId": "executeBatchTransaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "transactions": {
+                    "items": {
+                      "$ref": "#/components/schemas/TransactionDto"
+                    },
+                    "type": "array"
+                  },
+                  "useSmartAccount": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Batch transaction executed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Execute batch transaction",
+        "tags": ["transactions"]
+      }
+    },
+    "/transactions/execute/{walletId}": {
+      "post": {
+        "operationId": "executeTransaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction executed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Execute a transaction",
+        "tags": ["transactions"]
+      }
+    },
+    "/transactions/wallet/{walletId}": {
+      "get": {
+        "operationId": "getTransactionsByWallet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of transactions"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get transactions by wallet",
+        "tags": ["transactions"]
+      }
+    },
+    "/wallets/address/{address}": {
+      "get": {
+        "operationId": "getWalletByAddress",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            },
+            "description": "Wallet details"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get wallet by address",
+        "tags": ["wallets"]
+      }
+    },
+    "/wallets/create": {
+      "post": {
+        "operationId": "createWallet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWalletDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            },
+            "description": "Wallet created successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create a new wallet",
+        "tags": ["wallets"]
+      }
+    },
+    "/wallets/user/{userId}": {
+      "get": {
+        "operationId": "getWalletsByUserId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Wallet"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of user wallets"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get wallets by user ID",
+        "tags": ["wallets"]
+      }
+    },
+    "/workflows": {
+      "get": {
+        "operationId": "getWorkflows",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "$ref": "#/components/schemas/WorkflowStatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "workflows": {
+                      "items": {
+                        "$ref": "#/components/schemas/Workflow"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "List of workflows"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get all workflows",
+        "tags": ["workflows"]
+      },
+      "post": {
+        "operationId": "createWorkflow",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkflowDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            },
+            "description": "Workflow created successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create a new workflow",
+        "tags": ["workflows"]
+      }
+    },
+    "/workflows/execute": {
+      "post": {
+        "operationId": "executeWorkflow",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "input": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "workflowId": {
+                    "type": "string"
+                  }
+                },
+                "required": ["workflowId"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowExecution"
+                }
+              }
+            },
+            "description": "Workflow execution started"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Execute a workflow",
+        "tags": ["workflows"]
+      }
+    },
+    "/workflows/executions/{executionId}": {
+      "get": {
+        "operationId": "getExecution",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "executionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowExecution"
+                }
+              }
+            },
+            "description": "Execution details"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get execution details",
+        "tags": ["workflows"]
+      }
+    },
+    "/workflows/executions/{executionId}/cancel": {
+      "post": {
+        "operationId": "cancelExecution",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "executionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Execution cancelled successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Cancel execution",
+        "tags": ["workflows"]
+      }
+    },
+    "/workflows/{id}": {
+      "delete": {
+        "operationId": "deleteWorkflow",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Workflow deleted successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete workflow",
+        "tags": ["workflows"]
+      },
+      "get": {
+        "operationId": "getWorkflow",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            },
+            "description": "Workflow details"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get workflow by ID",
+        "tags": ["workflows"]
+      },
+      "patch": {
+        "operationId": "updateWorkflow",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkflowDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Workflow updated successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update workflow",
+        "tags": ["workflows"]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Development API Server",
+      "url": "http://localhost:3001/api"
+    },
+    {
+      "description": "API Gateway (Development)",
+      "url": "http://localhost:4000/api/v1"
+    },
+    {
+      "description": "Production API Server",
+      "url": "https://api.thenewfuse.com/api"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Authentication and authorization endpoints",
+      "name": "auth"
+    },
+    {
+      "description": "Agent management and orchestration",
+      "name": "Agents"
+    },
+    {
+      "description": "Chat rooms and messaging",
+      "name": "chat"
+    },
+    {
+      "description": "Workflow creation and execution",
+      "name": "workflows"
+    },
+    {
+      "description": "Web3 wallet management",
+      "name": "wallets"
+    },
+    {
+      "description": "Blockchain transaction operations",
+      "name": "transactions"
+    },
+    {
+      "description": "ERC-4337 Smart Account operations",
+      "name": "smart-accounts"
+    },
+    {
+      "description": "Model Context Protocol operations",
+      "name": "mcp"
+    },
+    {
+      "description": "Resource catalog search and retrieval",
+      "name": "resources"
+    },
+    {
+      "description": "Webhook management",
+      "name": "webhooks"
+    },
+    {
+      "description": "System monitoring and health checks",
+      "name": "monitoring"
+    }
+  ]
+}

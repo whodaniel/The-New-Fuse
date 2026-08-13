@@ -1,0 +1,268 @@
+openapi: 3.1.0
+info:
+  title: Spreadsheet Graph Protocol HTTP Binding
+  version: 0.1.0-draft
+  description: >-
+    Draft HTTP bindings for SGP v0.1 control and query operations.
+servers:
+  - url: https://api.example.com/sgp
+paths:
+  /v0/discover:
+    post:
+      summary: Discover SGP resources
+      operationId: discoverResources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiscoverRequest"
+      responses:
+        "200":
+          description: Discovery response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoverResponse"
+  /v0/manifest:publish:
+    post:
+      summary: Publish or update a manifest
+      operationId: publishManifest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManifestPublish"
+      responses:
+        "202":
+          description: Accepted
+  /v0/schema:publish:
+    post:
+      summary: Publish or update a schema contract
+      operationId: publishSchema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SchemaPublish"
+      responses:
+        "202":
+          description: Accepted
+  /v0/query:
+    post:
+      summary: Execute a read query
+      operationId: runQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueryRequest"
+      responses:
+        "200":
+          description: Query result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResponse"
+  /v0/subscribe:
+    post:
+      summary: Negotiate stream subscription
+      operationId: subscribe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscribeRequest"
+      responses:
+        "200":
+          description: Subscription handshake response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stream_url:
+                    type: string
+                    format: uri
+                  from_offset:
+                    type: string
+                required:
+                  - stream_url
+                  - from_offset
+components:
+  schemas:
+    DiscoverRequest:
+      type: object
+      required: [limit]
+      properties:
+        filter:
+          type: object
+          additionalProperties: true
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 500
+        cursor:
+          type: [string, "null"]
+    DiscoverResponse:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [resource, kind, title, updated_at, capabilities]
+            properties:
+              resource:
+                type: string
+                pattern: "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+              kind:
+                type: string
+                enum: [workbook, sheet, table, column]
+              title:
+                type: string
+              updated_at:
+                type: string
+                format: date-time
+              capabilities:
+                type: array
+                items:
+                  type: string
+        next_cursor:
+          type: [string, "null"]
+    ManifestPublish:
+      type: object
+      required: [manifest_version, owner, timezone, entry_tables]
+      properties:
+        manifest_version:
+          type: string
+        owner:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        timezone:
+          type: string
+        entry_tables:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            pattern: "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+    SchemaPublish:
+      type: object
+      required: [schema_version, columns, compatibility]
+      properties:
+        schema_version:
+          type: string
+        primary_key:
+          type: array
+          items:
+            type: string
+        columns:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [name, type, nullable]
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              nullable:
+                type: boolean
+              unit:
+                type: string
+        compatibility:
+          type: string
+          enum: [backward, forward, full, none]
+    QueryRequest:
+      type: object
+      required: [select, from]
+      properties:
+        select:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        from:
+          type: string
+          pattern: "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+        where:
+          type: array
+          items:
+            type: object
+            required: [col, op, value]
+            properties:
+              col:
+                type: string
+              op:
+                type: string
+                enum: ["=", "!=", ">", ">=", "<", "<=", in, contains]
+              value: {}
+        order_by:
+          type: array
+          items:
+            type: object
+            required: [col, dir]
+            properties:
+              col:
+                type: string
+              dir:
+                type: string
+                enum: [asc, desc]
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50000
+        cursor:
+          type: [string, "null"]
+    QueryResponse:
+      type: object
+      required: [schema, rows, next_cursor, stats]
+      properties:
+        schema:
+          type: array
+          items:
+            type: object
+            required: [name, type]
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+        rows:
+          type: array
+          items:
+            type: array
+        next_cursor:
+          type: [string, "null"]
+        stats:
+          type: object
+          required: [rows_scanned, rows_returned, latency_ms]
+          properties:
+            rows_scanned:
+              type: integer
+              minimum: 0
+            rows_returned:
+              type: integer
+              minimum: 0
+            latency_ms:
+              type: integer
+              minimum: 0
+    SubscribeRequest:
+      type: object
+      required: [resource, from_offset]
+      properties:
+        resource:
+          type: string
+          pattern: "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+        from_offset:
+          type: string

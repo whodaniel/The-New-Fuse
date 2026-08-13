@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audio Recording Agent"
+  short_description: "Help with Audio Recording Agent tasks"
+  default_prompt: "Run the Audio Recording Agent workflow using SKILL.md instructions."

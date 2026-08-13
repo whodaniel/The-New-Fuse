@@ -1,0 +1,43 @@
+{
+  "name": "@the-new-fuse/gemini-browser-skill",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "description": "TNF Skill for automating Chrome's built-in Gemini AI",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc --watch",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [
+    "gemini",
+    "chrome",
+    "ai",
+    "automation",
+    "tnf",
+    "skill"
+  ],
+  "author": "The New Fuse",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "playwright-chromium": "^1.40.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

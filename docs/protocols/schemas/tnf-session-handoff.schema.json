@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-session-handoff.schema.json",
+  "title": "TNF Session Handoff",
+  "description": "Canonical machine-readable handoff artifact for TNF session continuity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec",
+    "handoff_id",
+    "created_at",
+    "repository",
+    "branch",
+    "head_sha",
+    "protocol_ack",
+    "sensitive_scope",
+    "work_summary",
+    "changed_paths",
+    "verification",
+    "continuation",
+    "next_actions"
+  ],
+  "properties": {
+    "spec": {
+      "type": "string",
+      "const": "tnf/session-handoff/0.1"
+    },
+    "handoff_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "protocol_ack": {
+      "type": "string",
+      "const": "TNF_PROTOCOL_ACK"
+    },
+    "sensitive_scope": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "private"
+      ]
+    },
+    "project_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "work_summary": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changed_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "privacy_guard",
+        "secret_sweep",
+        "docs_pii_guard",
+        "supabase_rls_audit"
+      ],
+      "properties": {
+        "privacy_guard": {
+          "$ref": "#/$defs/checkState"
+        },
+        "secret_sweep": {
+          "$ref": "#/$defs/checkState"
+        },
+        "docs_pii_guard": {
+          "$ref": "#/$defs/checkState"
+        },
+        "supabase_rls_audit": {
+          "$ref": "#/$defs/checkState"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "continuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "targets",
+        "priority",
+        "resume_checklist"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "resume_checklist": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "deployment_urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "uniqueItems": true
+        },
+        "database_migrations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "checkState": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "na"
+      ]
+    }
+  }
+}

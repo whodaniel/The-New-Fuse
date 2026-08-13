@@ -1,0 +1,13 @@
+{
+  "skillName": "skill-creator",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/.system/skill-creator/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/skill-creator/SKILL.md",
+    ".skills/.system/skill-creator/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/skill-creator.json",
+  "status": "present"
+}

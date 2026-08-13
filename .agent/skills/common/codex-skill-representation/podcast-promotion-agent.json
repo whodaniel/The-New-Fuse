@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-promotion-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-promotion-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-promotion-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-promotion-agent.json",
+  "status": "present"
+}

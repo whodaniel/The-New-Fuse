@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-05-07T16:30:15.952Z",
+  "scanRoots": [
+    "supabase/tables",
+    "supabase/migrations",
+    "apps/virtual-library-blueprints/supabase/migrations"
+  ],
+  "missingRls": [
+    "public.collective_contributions",
+    "public.performance_metrics",
+    "public.prime_directive_priorities",
+    "public.prompt_executions",
+    "public.prompt_schedules",
+    "public.prompt_templates",
+    "public.self_assessment_metrics"
+  ],
+  "missingPolicy": []
+}

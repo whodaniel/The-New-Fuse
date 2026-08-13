@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "isolatedModules": true,
+    "types": ["node", "jest"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../../packages/types" },
+
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" }
+  ]
+}

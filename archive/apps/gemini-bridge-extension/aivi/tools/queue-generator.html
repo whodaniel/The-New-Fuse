@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Library Queue Generator</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        button.secondary {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+        }
+        
+        button.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .video-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        
+        .video-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .video-item:last-child {
+            border-bottom: none;
+        }
+        
+        .video-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 12px;
+            margin-bottom: 0;
+        }
+        
+        .video-index {
+            width: 40px;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+        
+        .video-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .video-title a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .video-title a:hover {
+            text-decoration: underline;
+        }
+        
+        #jsonOutput {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            color: var(--success);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+        }
+        
+        .hidden { display: none; }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .instructions {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+        
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 AI Video Library Queue Generator</h1>
+        <p class="subtitle">Extract videos from your library and generate a queue for the AI Video Intelligence Suite</p>
+        
+        <div class="instructions">
+            <h3>📋 How to Use</h3>
+            <ol>
+                <li><strong>Load your library</strong>: Enter the path to your ai_video_library.html file or paste the HTML content</li>
+                <li><strong>Select range</strong>: Choose which videos to process (e.g., #633 down to #1)</li>
+                <li><strong>Generate queue</strong>: Click to create the JSON queue</li>
+                <li><strong>Copy to extension</strong>: Use the generated JSON with the AI Video Intelligence Suite</li>
+            </ol>
+        </div>
+        
+        <div class="card">
+            <h2>📁 Load Video Library</h2>
+            <label>Paste HTML content from ai_video_library.html:</label>
+            <textarea id="htmlInput" rows="6" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text-primary); font-family: monospace; font-size: 0.85rem;"></textarea>
+            <button onclick="parseHtml()">Parse HTML</button>
+            <button class="secondary" onclick="loadSample()">Load Sample Data</button>
+        </div>
+        
+        <div id="configSection" class="card hidden">
+            <h2>⚙️ Configuration</h2>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVideos">0</div>
+                    <div class="stat-label">Total Videos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="selectedVideos">0</div>
+                    <div class="stat-label">Selected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="estimatedTime">0h</div>
+                    <div class="stat-label">Est. Time</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <label>Start from video #:</label>
+                    <input type="number" id="startIndex" value="633" min="1">
+                </div>
+                <div>
+                    <label>End at video #:</label>
+                    <input type="number" id="endIndex" value="1" min="1">
+                </div>
+            </div>
+            
+            <div>
+                <label>Processing order:</label>
+                <select id="orderDirection">
+                    <option value="descending">Descending (#633 → #1)</option>
+                    <option value="ascending">Ascending (#1 → #633)</option>
+                </select>
+            </div>
+            
+            <button onclick="selectRange()">Apply Range</button>
+            <button class="secondary" onclick="selectAll()">Select All</button>
+            <button class="secondary" onclick="selectNone()">Select None</button>
+        </div>
+        
+        <div id="videoListSection" class="card hidden">
+            <h2>📹 Video List</h2>
+            <div class="video-list" id="videoList"></div>
+        </div>
+        
+        <div id="outputSection" class="card hidden">
+            <h2>📤 Generated Queue JSON</h2>
+            <button class="success" onclick="generateQueue()">Generate Queue JSON</button>
+            <button onclick="copyToClipboard()">Copy to Clipboard</button>
+            <button class="secondary" onclick="downloadJson()">Download JSON</button>
+            <button class="secondary" onclick="syncToExtension()">Sync to Extension</button>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <textarea id="jsonOutput" readonly></textarea>
+        </div>
+    </div>
+    
+    <script>
+        let allVideos = [];
+        let selectedVideos = new Set();
+        
+        function parseHtml() {
+            const html = document.getElementById('htmlInput').value;
+            if (!html) {
+                alert('Please paste HTML content first');
+                return;
+            }
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Find all table rows with video data
+            const rows = doc.querySelectorAll('tr');
+            allVideos = [];
+            
+            rows.forEach(row => {
+                const indexCell = row.querySelector('.index-col');
+                const titleCell = row.querySelector('.title-col a');
+                
+                if (indexCell && titleCell) {
+                    const index = parseInt(indexCell.textContent.trim());
+                    const title = titleCell.textContent.trim();
+                    const url = titleCell.getAttribute('href');
+                    
+                    if (index && title && url && url.includes('youtube.com')) {
+                        // Extract video ID from URL
+                        const videoIdMatch = url.match(/[?&]v=([^&]+)/);
+                        const videoId = videoIdMatch ? videoIdMatch[1] : null;
+                        
+                        allVideos.push({
+                            index: index,
+                            id: videoId,
+                            title: title,
+                            url: url,
+                            selected: true
+                        });
+                    }
+                }
+            });
+            
+            // Sort by index
+            allVideos.sort((a, b) => a.index - b.index);
+            
+            // Select all by default
+            allVideos.forEach(v => selectedVideos.add(v.index));
+            
+            updateUI();
+        }
+        
+        function updateUI() {
+            if (allVideos.length === 0) return;
+            
+            // Show sections
+            document.getElementById('configSection').classList.remove('hidden');
+            document.getElementById('videoListSection').classList.remove('hidden');
+            document.getElementById('outputSection').classList.remove('hidden');
+            
+            // Update stats
+            document.getElementById('totalVideos').textContent = allVideos.length;
+            document.getElementById('selectedVideos').textContent = selectedVideos.size;
+            
+            // Estimate time (assume 5 min avg per video)
+            const estimatedMinutes = selectedVideos.size * 5;
+            const hours = Math.floor(estimatedMinutes / 60);
+            const mins = estimatedMinutes % 60;
+            document.getElementById('estimatedTime').textContent = 
+                hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            
+            // Update range inputs
+            document.getElementById('startIndex').max = allVideos.length;
+            document.getElementById('endIndex').max = allVideos.length;
+            
+            // Render video list
+            renderVideoList();
+        }
+        
+        function renderVideoList() {
+            const container = document.getElementById('videoList');
+            container.innerHTML = '';
+            
+            allVideos.forEach(video => {
+                const div = document.createElement('div');
+                div.className = 'video-item';
+                div.innerHTML = `
+                    <input type="checkbox" 
+                           ${selectedVideos.has(video.index) ? 'checked' : ''} 
+                           onchange="toggleVideo(${video.index}, this.checked)">
+                    <span class="video-index">#${video.index}</span>
+                    <span class="video-title">
+                        <a href="${video.url}" target="_blank">${video.title}</a>
+                    </span>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function toggleVideo(index, checked) {
+            if (checked) {
+                selectedVideos.add(index);
+            } else {
+                selectedVideos.delete(index);
+            }
+            updateUI();
+        }
+        
+        function selectRange() {
+            const start = parseInt(document.getElementById('startIndex').value);
+            const end = parseInt(document.getElementById('endIndex').value);
+            
+            const minIdx = Math.min(start, end);
+            const maxIdx = Math.max(start, end);
+            
+            selectedVideos.clear();
+            allVideos.forEach(v => {
+                if (v.index >= minIdx && v.index <= maxIdx) {
+                    selectedVideos.add(v.index);
+                }
+            });
+            
+            updateUI();
+        }
+        
+        function selectAll() {
+            allVideos.forEach(v => selectedVideos.add(v.index));
+            updateUI();
+        }
+        
+        function selectNone() {
+            selectedVideos.clear();
+            updateUI();
+        }
+        
+        function generateQueue() {
+            const order = document.getElementById('orderDirection').value;
+            
+            let selected = allVideos.filter(v => selectedVideos.has(v.index));
+            
+            // Sort based on order
+            if (order === 'descending') {
+                selected.sort((a, b) => b.index - a.index);
+            } else {
+                selected.sort((a, b) => a.index - b.index);
+            }
+            
+            // Create queue format
+            const queue = selected.map((v, i) => ({
+                id: v.id || `video-${v.index}`,
+                url: v.url,
+                title: v.title,
+                index: v.index,
+                status: 'pending',
+                addedAt: Date.now()
+            }));
+            
+            const output = JSON.stringify(queue, null, 2);
+            document.getElementById('jsonOutput').value = output;
+            
+            // Animate progress bar
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = '0%';
+            setTimeout(() => progressFill.style.width = '100%', 100);
+        }
+        
+        function copyToClipboard() {
+            const output = document.getElementById('jsonOutput');
+            output.select();
+            document.execCommand('copy');
+            alert('Queue JSON copied to clipboard!');
+        }
+        
+        function downloadJson() {
+            const json = document.getElementById('jsonOutput').value;
+            if (!json) {
+                alert('Generate queue first');
+                return;
+            }
+            
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `video_queue_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function syncToExtension() {
+            const json = document.getElementById('jsonOutput').value;
+            if (!json) {
+                alert('Generate queue first');
+                return;
+            }
+            
+            try {
+                const queue = JSON.parse(json);
+                
+                // Send to extension via postMessage
+                window.postMessage({
+                    type: 'SYNC_TO_EXTENSION',
+                    data: {
+                        videoQueue: queue,
+                        reverseOrder: false,
+                        segmentDuration: 45
+                    }
+                }, '*');
+                
+                // Also try chrome.storage if available
+                if (typeof chrome !== 'undefined' && chrome.storage) {
+                    chrome.storage.local.set({
+                        videoQueue: queue,
+                        syncTimestamp: Date.now()
+                    }, () => {
+                        alert('Queue synced to extension storage!');
+                    });
+                } else {
+                    alert('Message sent to extension. Open the extension popup to verify.');
+                }
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+        
+        function loadSample() {
+            // Sample data for testing
+            const sampleVideos = [];
+            for (let i = 1; i <= 10; i++) {
+                sampleVideos.push({
+                    index: i,
+                    id: `sample${i}`,
+                    title: `Sample Video #${i} - AI Concepts`,
+                    url: `https://www.youtube.com/watch?v=sample${i}`,
+                    selected: true
+                });
+            }
+            allVideos = sampleVideos;
+            allVideos.forEach(v => selectedVideos.add(v.index));
+            updateUI();
+        }
+    </script>
+</body>
+</html>

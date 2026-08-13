@@ -1,0 +1,12 @@
+{
+  "skillName": "agent-relationship-autopilot",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/agent-relationship-autopilot/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/agent-relationship-autopilot/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/agent-relationship-autopilot.json",
+  "status": "present"
+}

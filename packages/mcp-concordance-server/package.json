@@ -1,0 +1,45 @@
+{
+  "name": "@the-new-fuse/mcp-concordance-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server exposing TNF codebase concordance — identifier frequencies, power phrases, communication patterns",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tnf-concordance-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [
+    "mcp",
+    "concordance",
+    "vocabulary",
+    "agent",
+    "ai"
+  ],
+  "author": "The New Fuse",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "tsx": "^4.19.2",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

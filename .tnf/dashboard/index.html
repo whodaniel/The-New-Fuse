@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNF Phase 7 Dashboard</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e0e0f0;
+    --muted: #8888a0;
+    --accent: #6c63ff;
+    --green: #00e5a0;
+    --yellow: #ffc107;
+    --red: #ff5252;
+    --blue: #4fc3f7;
+    --orange: #ff9800;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 13px; line-height: 1.5; padding: 24px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .header-icon { width: 48px; height: 48px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .header-title h1 { font-size: 20px; font-weight: 600; color: var(--text); }
+  .header-title p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+  .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 700; }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.yellow { color: var(--yellow); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-value.blue { color: var(--blue); }
+  .kpi-value.accent { color: var(--accent); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .panel-meta { font-size: 11px; color: var(--muted); }
+
+  .state-bar { display: flex; height: 32px; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+  .state-segment { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; transition: filter 0.2s; min-width: 0; overflow: hidden; white-space: nowrap; }
+  .state-segment:hover { filter: brightness(1.2); }
+  .state-landed { background: var(--green); color: #000; }
+  .state-verified { background: #00b377; color: #000; }
+  .state-ready { background: var(--accent); color: #fff; }
+  .state-claimed { background: var(--blue); color: #000; }
+  .state-running { background: #29b6f6; color: #000; }
+  .state-blocked { background: var(--red); color: #fff; }
+  .state-failed { background: #b71c1c; color: #fff; }
+
+  .state-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 10px; border-bottom: 1px solid #1e1e2e; font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .mono { font-family: inherit; }
+
+  .score-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .score-5 { background: var(--green); color: #000; }
+  .score-4 { background: var(--accent); color: #fff; }
+
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; background: var(--surface2); color: var(--muted); margin: 1px; }
+  .tag.hermes { background: #1a3a2a; color: var(--green); }
+  .tag.mcp { background: #1a2a3a; color: var(--blue); }
+  .tag.prompt { background: #2a1a3a; color: #ce93d8; }
+  .tag.directive { background: #2a2a1a; color: var(--yellow); }
+
+  .channel-status { display: flex; flex-direction: column; gap: 8px; }
+  .channel-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .channel-indicator { width: 8px; height: 8px; border-radius: 50%; }
+  .channel-ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .channel-warn { background: var(--yellow); }
+  .channel-error { background: var(--red); }
+
+  .proc-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #1e1e2e; font-size: 12px; }
+  .proc-row:last-child { border-bottom: none; }
+  .proc-pid { color: var(--muted); font-size: 11px; min-width: 60px; }
+  .proc-name { color: var(--accent); font-weight: 600; }
+  .proc-cmd { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .lock-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 11px; }
+  .lock-icon { color: var(--yellow); }
+  .lock-name { color: var(--text); }
+  .lock-time { color: var(--muted); margin-left: auto; }
+
+  .retriage-box { background: linear-gradient(135deg, #1a2a1a 0%, #1a1a2a 100%); border: 1px solid #2a4a2a; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  .retriage-title { font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .retriage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .retriage-stat { text-align: center; }
+  .retriage-stat-value { font-size: 22px; font-weight: 700; color: var(--green); }
+  .retriage-stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+
+  .footer { margin-top: 32px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .live { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">&#9651;</div>
+  <div class="header-title">
+    <h1>TNF Phase 7 — Directive Conversion Dashboard</h1>
+    <p>Federated agent operations · Real-time · <span class="live">● LIVE</span></p>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="kpi-label">Conversion Rate</div>
+    <div class="kpi-value green">6.82%</div>
+    <div class="kpi-sub">47 / 689 converted (46 landed + 1 verified)</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Directives</div>
+    <div class="kpi-value">689</div>
+    <div class="kpi-sub">From AI5 + Notes ingestion</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ready / Dispatch</div>
+    <div class="kpi-value accent">171</div>
+    <div class="kpi-sub">Batch-003 promoted · retriage v3</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Blocked</div>
+    <div class="kpi-value red">471</div>
+    <div class="kpi-sub">Still awaiting evaluation</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Landed</div>
+    <div class="kpi-value green">46</div>
+    <div class="kpi-sub">Evidence verified + closed</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Pending Evidence</div>
+    <div class="kpi-value yellow">218</div>
+    <div class="kpi-sub">Files in evidence/ directory</div>
+  </div>
+</div>
+
+<!-- RETRIAGE BANNER -->
+<div class="retriage-box">
+  <div class="retriage-title">&#10003; Batch-003 Retriage Applied — 165 Directives Promoted</div>
+  <div class="retriage-grid">
+    <div class="retriage-stat">
+      <div class="retriage-stat-value">605</div>
+      <div class="retriage-stat-label">irrelevant-context examined</div>
+    </div>
+    <div class="retriage-stat">
+      <div class="retriage-stat-value">171</div>
+      <div class="retriage-stat-label">promoted to ready (165+6)</div>
+    </div>
+    <div class="retriage-stat">
+      <div class="retriage-stat-value">20</div>
+      <div class="retriage-stat-label">score=5 (Hermes/MCP/agents.md)</div>
+    </div>
+    <div class="retriage-stat">
+      <div class="retriage-stat-value">471</div>
+      <div class="retriage-stat-label">still blocked (not-dispatch-eligible)</div>
+    </div>
+  </div>
+  <div style="font-size: 11px; color: var(--muted); margin-top: 10px;">
+    Root cause: Antigravity blanket-block (2026-06-11) targeted only high+critical pool — all genuine TNF-content (Hermes, MCP, agents.md) was medium priority and escaped review.
+    Retriage v3 fixed: full pool scan, all priorities, threshold ≥ 4.
+  </div>
+</div>
+
+<!-- STATE DISTRIBUTION + LANES -->
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">State Distribution</div>
+      <div class="panel-meta">689 total directives</div>
+    </div>
+    <div class="state-bar">
+      <div class="state-segment state-landed" style="width: 6.7%;" title="Landed: 46">46</div>
+      <div class="state-segment state-verified" style="width: 0.1%;" title="Verified: 1">1</div>
+      <div class="state-segment state-ready" style="width: 24.8%;" title="Ready: 171">171</div>
+      <div class="state-segment state-claimed" style="width: 0%;" title="Claimed: 0"></div>
+      <div class="state-segment state-running" style="width: 0%;" title="Running: 0"></div>
+      <div class="state-segment state-blocked" style="width: 68.4%;" title="Blocked: 471">471</div>
+      <div class="state-segment state-failed" style="width: 0%;" title="Failed: 0"></div>
+    </div>
+    <div class="state-legend">
+      <div class="legend-item"><div class="legend-dot" style="background: var(--green)"></div> Landed (46)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #00b377"></div> Verified (1)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div> Ready (165)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--red)"></div> Blocked (471)</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Lane Breakdown</div>
+    </div>
+    <table>
+      <tr><th>Lane</th><th>Count</th><th>Share</th></tr>
+      <tr><td>orchestration-runtime</td><td>182</td><td>26.4%</td></tr>
+      <tr><td>product-intel-activation</td><td>211</td><td>30.6%</td></tr>
+      <tr><td>backend-contracts</td><td>114</td><td>16.5%</td></tr>
+      <tr><td>frontend-p0-truth</td><td>90</td><td>13.1%</td></tr>
+      <tr><td>platform-release</td><td>32</td><td>4.6%</td></tr>
+      <tr><td>security-audit</td><td>35</td><td>5.1%</td></tr>
+      <tr><td>performance-budget</td><td>25</td><td>3.6%</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- TOP BATCH-003 CANDIDATES -->
+<div class="panel" style="margin-bottom: 20px;">
+  <div class="panel-header">
+    <div class="panel-title">Top 20 Batch-003 Candidates (score=5) — Ready for Dispatch</div>
+    <div class="panel-meta">Hermes Pantheon · MCP Integration · agents.md Infrastructure</div>
+  </div>
+  <table>
+    <tr>
+      <th>Score</th>
+      <th>Title</th>
+      <th>TNF Terms</th>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Configure Obsidian Vault for Hermes Reference</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Enable Agent to Create and Update Skills</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Initiate Hermes Installation via Claude AI Command</td>
+      <td><span class="tag hermes">hermes</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Create a Custom AI Persona in Hermes Pantheon</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Create and Populate Hermes Agent's Soul.md Knowledge File</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Utilize Hermes Video Analyze Tool</td>
+      <td><span class="tag hermes">hermes</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Automate Daily Proactive Improvement Briefing via Hermes Cron Job</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Validate NA10 MCP Integration and Grant Access</td>
+      <td><span class="tag mcp">mcp</span><span class="tag hermes">hermes</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Validate Hermes' Access to NA10 MCP</td>
+      <td><span class="tag mcp">mcp</span><span class="tag hermes">hermes</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Add NA10 MCP Access Token to Hermes Configuration</td>
+      <td><span class="tag mcp">mcp</span><span class="tag hermes">hermes</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Reinforce Tool Usage in Agent System Prompt</td>
+      <td><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Inject Skill Usage Directive into Agent System Prompt</td>
+      <td><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Compose Agent with Configured LLM and ESQL Search Tool</td>
+      <td><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Engage Development Team for AI Agent Evaluation and Integration Planning</td>
+      <td><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Re-evaluate Agent Task on Message Edit</td>
+      <td><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Establish and Maintain a Product 'Truth Layer' for AI Agents</td>
+      <td><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Activate Notebook LM Skill in Hermes Agent Chat</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Schedule a Cron Job with Hermes Agent</td>
+      <td><span class="tag hermes">hermes</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Structure AI Prompts to Reference agents.md</td>
+      <td><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+    <tr>
+      <td><span class="score-badge score-5">5</span></td>
+      <td>[AI5] Generate AI-Enhanced Video Content</td>
+      <td><span class="tag hermes">hermes</span><span class="tag prompt">prompt</span><span class="tag directive">directive</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- FEDERATED CHANNELS + EVIDENCE + PROCESSES -->
+<div class="grid-3">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Federated Channel Health</div>
+      <div class="panel-meta">Redis Pub/Sub + WS Bridge</div>
+    </div>
+    <div class="channel-status">
+      <div class="channel-row">
+        <div class="channel-indicator channel-ok"></div>
+        <span>WS → Redis (ingress)</span>
+        <span style="color: var(--green); margin-left: auto;">verified</span>
+      </div>
+      <div class="channel-row">
+        <div class="channel-indicator channel-ok"></div>
+        <span>Redis → WS (egress)</span>
+        <span style="color: var(--green); margin-left: auto;">verified</span>
+      </div>
+      <div class="channel-row">
+        <div class="channel-indicator channel-ok"></div>
+        <span>Ingress subscribers</span>
+        <span style="color: var(--blue); margin-left: auto;">6</span>
+      </div>
+      <div class="channel-row">
+        <div class="channel-indicator channel-ok"></div>
+        <span>Egress channels</span>
+        <span style="color: var(--blue); margin-left: auto;">7</span>
+      </div>
+      <div class="channel-row">
+        <div class="channel-indicator channel-ok"></div>
+        <span>Total pub/sub channels</span>
+        <span style="color: var(--blue); margin-left: auto;">13</span>
+      </div>
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted);">
+        Daemon crash fixed with reconnect logic. Two-way bridge verified with test envelopes.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Evidence Files</div>
+      <div class="panel-meta">218 total in ai5-phase7-evidence/</div>
+    </div>
+    <table>
+      <tr><th>State</th><th>Count</th></tr>
+      <tr><td><span style="color: var(--accent)">ready</span></td><td>171</td></tr>
+      <tr><td><span style="color: var(--green)">landed</span></td><td>46</td></tr>
+      <tr><td><span style="color: var(--yellow)">verified</span></td><td>1</td></tr>
+    </table>
+    <div style="margin-top: 10px; font-size: 11px; color: var(--muted);">
+      Evidence pruned: 453 stale blocked files removed. 218 evidence files retained (landed/verified/ready).
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Active Processes</div>
+      <div class="panel-meta">TNF agent network</div>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">33264</span>
+      <span class="proc-name">daemon</span>
+      <span class="proc-cmd">tnf-agent-daemon.py (live)</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">59740</span>
+      <span class="proc-name">relay</span>
+      <span class="proc-cmd">standalone-relay.js</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">35318</span>
+      <span class="proc-name">master-clock</span>
+      <span class="proc-cmd">master-clock.js</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">35386</span>
+      <span class="proc-name">broker</span>
+      <span class="proc-cmd">broker-agent.js</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">1070</span>
+      <span class="proc-name">ws-bridge</span>
+      <span class="proc-cmd">redis-ws-bridge.cjs</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">72515</span>
+      <span class="proc-name">pi</span>
+      <span class="proc-cmd">pi-redis-wrapper.cjs</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">35409</span>
+      <span class="proc-name">director</span>
+      <span class="proc-cmd">director-agent.js</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">1100</span>
+      <span class="proc-name">gemini</span>
+      <span class="proc-cmd">gemini-redis-wrapper.cjs</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">31572</span>
+      <span class="proc-name">kilo</span>
+      <span class="proc-cmd">kilo CLI</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">17463</span>
+      <span class="proc-name">hermes</span>
+      <span class="proc-cmd">hermes-agent</span>
+    </div>
+    <div class="proc-row">
+      <span class="proc-pid">25760</span>
+      <span class="proc-name">redis</span>
+      <span class="proc-cmd">redis-server 127.0.0.1:6379</span>
+    </div>
+  </div>
+</div>
+
+<!-- FRAMEWORK LOCKS + REMAINING TASKS -->
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Framework Harness — Active Locks</div>
+      <div class="panel-meta">14 lock files detected</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-director-loop.lock</span><span class="lock-time">Jun 17 13:15</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">llm-test-flywheel.lock</span><span class="lock-time">Jun 17 08:37</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">project-planner.lock</span><span class="lock-time">Jun 17 08:17</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">news-scout.lock</span><span class="lock-time">Jun 17 08:37</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">llm-provider-tester.lock</span><span class="lock-time">Jun 17 08:17</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">integration-test-agent.lock</span><span class="lock-time">Jun 17 08:36</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-chrono-dispatch loop-watchdog</span><span class="lock-time">Jun 16 14:00</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-chrono-dispatch orchestrator-pulse</span><span class="lock-time">Jun 16 14:00</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-chrono-dispatch self-improvement</span><span class="lock-time">Jun 16 14:00</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-chrono-dispatch continuous-qa</span><span class="lock-time">Jun 16 14:00</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">tnf-chrono-dispatch knowledge-scout</span><span class="lock-time">Jun 16 12:00</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">uiux-testing-agent.lock</span><span class="lock-time">Jun 17 08:36</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">kilo-zeroturn-lock.json</span><span class="lock-time">Jun 9 12:13</span></div>
+      <div class="lock-row"><span class="lock-icon">&#9678;</span><span class="lock-name">frontend-apps-frontend.lock</span><span class="lock-time">May 28 16:32</span></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Remaining Work</div>
+    </div>
+<table>
+      <tr><th>Priority</th><th>Task</th><th>Status</th></tr>
+      <tr>
+        <td><span style="color: var(--accent)">high</span></td>
+        <td>Dispatch and execute 171 ready directives</td>
+        <td><span style="color: var(--accent)">ready</span></td>
+      </tr>
+      <tr>
+        <td><span style="color: var(--green)">done</span></td>
+        <td>Evolve relevance rubric — new gates: freshness, verifiability, density</td>
+        <td><span style="color: var(--green)">done</span></td>
+      </tr>
+      <tr>
+        <td><span style="color: var(--green)">done</span></td>
+        <td>Audit YouTube pipeline — fix block_reason, rebuild clean ledger</td>
+        <td><span style="color: var(--green)">done</span></td>
+      </tr>
+      <tr>
+        <td><span style="color: var(--green)">done</span></td>
+        <td>Prune stale evidence files (453 deleted)</td>
+        <td><span style="color: var(--green)">done</span></td>
+      </tr>
+      <tr>
+        <td><span style="color: var(--muted)">low</span></td>
+        <td>Activate dormant framework harness components</td>
+        <td><span style="color: var(--muted)">pending</span></td>
+      </tr>
+      <tr>
+        <td><span style="color: var(--muted)">low</span></td>
+        <td>Establish automated evolution flywheel (cron retriage + KPI regen)</td>
+        <td><span style="color: var(--muted)">pending</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <span>TNF Phase 7 Directive Conversion · Federated Agent Network</span>
+  <span>Dashboard updated 2026-06-17 · Batch-003 retriage v3 · Clean ledger rebuilt</span>
+</div>
+
+</body>
+</html>

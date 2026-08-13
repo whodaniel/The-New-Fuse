@@ -1,0 +1,141 @@
+name: Frontload Nightly
+
+on:
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+    inputs:
+      run_live_probe:
+        description: "Run strict frontload probe on a self-hosted runner"
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - "scripts/verify_frontload_state.sh"
+      - ".github/workflows/frontload-nightly.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-frontload-contract:
+    name: Verify Frontload Contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build isolated frontload fixture
+        run: |
+          set -euo pipefail
+          FIXTURE_DIR="${RUNNER_TEMP}/frontload-fixture"
+          mkdir -p "${FIXTURE_DIR}/.tnf" "${FIXTURE_DIR}/.openclaw/workspace/handoff"
+
+          cat > "${FIXTURE_DIR}/.zshrc" <<'EOF'
+          # BEGIN TNF FRONTLOAD
+          # TNF Frontload Integration: Auto-display status on shell startup (once per session)
+          if [ -z "$TNF_STATUS_SHOWN" ]; then
+            export TNF_STATUS_SHOWN=1
+            if [ ! -f "$HOME/.tnf/handoff-current.json" ] && [ -x "$HOME/.tnf/update-from-latest.sh" ]; then
+              "$HOME/.tnf/update-from-latest.sh" >/dev/null 2>&1 || true
+            fi
+            if [ -x "$HOME/.tnf/tnf-status" ]; then
+              "$HOME/.tnf/tnf-status" || true
+            fi
+          fi
+          # END TNF FRONTLOAD
+          EOF
+
+          cat > "${FIXTURE_DIR}/.tnf/tnf-status" <<'EOF'
+          #!/usr/bin/env bash
+          echo "tnf-status fixture"
+          EOF
+          chmod +x "${FIXTURE_DIR}/.tnf/tnf-status"
+
+          cat > "${FIXTURE_DIR}/.tnf/update-from-latest.sh" <<'EOF'
+          #!/usr/bin/env bash
+          echo "update fixture"
+          EOF
+          chmod +x "${FIXTURE_DIR}/.tnf/update-from-latest.sh"
+
+          cat > "${FIXTURE_DIR}/.tnf/handoff-current.json" <<'EOF'
+          {"sessionKey":"agent:main:main","generatedAt":"2026-03-19T00:00:00Z"}
+          EOF
+
+          cat > "${FIXTURE_DIR}/.openclaw/workspace/handoff/LATEST.md" <<'EOF'
+          sessionKey: agent:main:main
+          generatedAt: 2026-03-19T00:00:00Z
+          EOF
+
+          echo "FIXTURE_DIR=${FIXTURE_DIR}" >> "$GITHUB_ENV"
+
+      - name: Run frontload verifier against fixture
+        run: |
+          FRONTLOAD_ZSHRC="${FIXTURE_DIR}/.zshrc" \
+          FRONTLOAD_TNF_DIR="${FIXTURE_DIR}/.tnf" \
+          FRONTLOAD_OPENCLAW_HANDOFF_DIR="${FIXTURE_DIR}/.openclaw/workspace/handoff" \
+          FRONTLOAD_REQUIRE_COMMAND=0 \
+          bash scripts/verify_frontload_state.sh
+
+      - name: Verify failure mode catches missing markers
+        run: |
+          set -euo pipefail
+          sed -i '/BEGIN TNF FRONTLOAD/d;/END TNF FRONTLOAD/d' "${FIXTURE_DIR}/.zshrc"
+          if FRONTLOAD_ZSHRC="${FIXTURE_DIR}/.zshrc" \
+             FRONTLOAD_TNF_DIR="${FIXTURE_DIR}/.tnf" \
+             FRONTLOAD_OPENCLAW_HANDOFF_DIR="${FIXTURE_DIR}/.openclaw/workspace/handoff" \
+             FRONTLOAD_REQUIRE_COMMAND=0 \
+             bash scripts/verify_frontload_state.sh; then
+            echo "Expected verifier to fail when markers are missing"
+            exit 1
+          fi
+
+  verify-frontload-live:
+    name: Verify Frontload Live (Self-hosted)
+    needs: verify-frontload-contract
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_live_probe }}
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Strict frontload verifier
+        run: bash scripts/verify_frontload_state.sh
+
+      - name: Capture machine-readable frontload status
+        run: |
+          set -euo pipefail
+          bash scripts/verify_frontload_state.sh --json | tee frontload-verifier.json
+          ~/.tnf/tnf-status --json | tee frontload-status.json
+
+      - name: Enforce cache freshness threshold
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import sys
+
+          payload = json.loads(subprocess.check_output(
+              ["/bin/bash", "-lc", "~/.tnf/tnf-status --json"],
+              text=True
+          ))
+          if payload.get("cacheStale"):
+              print("Frontload cache is stale", file=sys.stderr)
+              sys.exit(1)
+          print("Frontload cache freshness check passed")
+          PY
+
+      - name: Upload live probe artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontload-live-${{ github.run_id }}
+          path: |
+            frontload-verifier.json
+            frontload-status.json
+          retention-days: 14

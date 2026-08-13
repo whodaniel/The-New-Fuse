@@ -1,0 +1,938 @@
+{
+  "name": "the-new-fuse",
+  "displayName": "The New Fuse",
+  "description": "AI-Powered Development Assistant with Multi-Provider LLM Support, A2A Protocol, MCP Integration & Agent Federation",
+  "version": "9.2.0",
+  "publisher": "TheNewFuse",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-New-Fuse/vscode-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "categories": [
+    "AI",
+    "Chat",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "chat",
+    "assistant",
+    "copilot",
+    "llm",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt",
+    "mcp",
+    "a2a",
+    "agent",
+    "orchestration",
+    "federation",
+    "relay",
+    "ag-ui",
+    "protocol"
+  ],
+  "icon": "media/icon.png",
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "theNewFuse",
+          "title": "The New Fuse",
+          "icon": "media/activity-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "theNewFuse": [
+        {
+          "type": "webview",
+          "id": "theNewFuse.chatView",
+          "name": "AI Chat",
+          "icon": "$(comment-discussion)"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.browserView",
+          "name": "Browser",
+          "icon": "$(globe)"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "theNewFuse.sendMessage",
+        "title": "Send Message",
+        "category": "The New Fuse",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "theNewFuse.newChat",
+        "title": "New Chat",
+        "category": "The New Fuse",
+        "icon": "$(add)"
+      },
+      {
+        "command": "theNewFuse.clearChat",
+        "title": "Clear Chat",
+        "category": "The New Fuse",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "theNewFuse.explainCode",
+        "title": "Explain Code",
+        "category": "The New Fuse",
+        "icon": "$(info)"
+      },
+      {
+        "command": "theNewFuse.fixCode",
+        "title": "Fix Code",
+        "category": "The New Fuse",
+        "icon": "$(wrench)"
+      },
+      {
+        "command": "theNewFuse.improveCode",
+        "title": "Improve Code",
+        "category": "The New Fuse",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "theNewFuse.addToContext",
+        "title": "Add to Context",
+        "category": "The New Fuse",
+        "icon": "$(link)"
+      },
+      {
+        "command": "theNewFuse.generateCommitMessage",
+        "title": "Generate Commit Message",
+        "category": "The New Fuse",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "theNewFuse.mcpConnect",
+        "title": "Connect MCP Server",
+        "category": "The New Fuse",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "theNewFuse.mcpStatus",
+        "title": "MCP Status",
+        "category": "The New Fuse",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "theNewFuse.historyButtonClicked",
+        "title": "Chat History",
+        "category": "The New Fuse",
+        "icon": "$(history)"
+      },
+      {
+        "command": "theNewFuse.marketplaceButtonClicked",
+        "title": "MCP Marketplace",
+        "category": "The New Fuse",
+        "icon": "$(extensions)"
+      },
+      {
+        "command": "theNewFuse.profileButtonClicked",
+        "title": "Configure API Keys",
+        "category": "The New Fuse",
+        "icon": "$(key)"
+      },
+      {
+        "command": "theNewFuse.settingsButtonClicked",
+        "title": "Settings",
+        "category": "The New Fuse",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "theNewFuse.helpButtonClicked",
+        "title": "Help",
+        "category": "The New Fuse",
+        "icon": "$(question)"
+      },
+      {
+        "command": "theNewFuse.openInNewTab",
+        "title": "Open in New Tab",
+        "category": "The New Fuse",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "theNewFuse.attachFiles",
+        "title": "Attach Files",
+        "category": "The New Fuse",
+        "icon": "$(file-add)"
+      },
+      {
+        "command": "theNewFuse.agentFederation",
+        "title": "Agent Federation",
+        "category": "The New Fuse",
+        "icon": "$(organization)"
+      },
+      {
+        "command": "theNewFuse.openWorkflowBuilder",
+        "title": "Workflow Builder",
+        "category": "The New Fuse",
+        "icon": "$(workflow)"
+      },
+      {
+        "command": "theNewFuse.terminalOrchestration",
+        "title": "Terminal",
+        "category": "The New Fuse",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "theNewFuse.planManager",
+        "title": "Plan Manager",
+        "category": "The New Fuse",
+        "icon": "$(list-ordered)"
+      },
+      {
+        "command": "theNewFuse.securityDashboard",
+        "title": "Security Dashboard",
+        "category": "The New Fuse",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "theNewFuse.securityScan",
+        "title": "Security Scan",
+        "category": "The New Fuse",
+        "icon": "$(search)"
+      },
+      {
+        "command": "theNewFuse.emergencyMode",
+        "title": "Emergency Mode",
+        "category": "The New Fuse",
+        "icon": "$(warning)"
+      },
+      {
+        "command": "theNewFuse.systemStatus",
+        "title": "System Status",
+        "category": "The New Fuse",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "theNewFuse.autoApprove",
+        "title": "Auto-Approve Mode",
+        "category": "The New Fuse",
+        "icon": "$(check)"
+      },
+      {
+        "command": "theNewFuse.codeMode",
+        "title": "Code Mode",
+        "category": "The New Fuse",
+        "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.databaseMode",
+        "title": "Database Mode",
+        "category": "The New Fuse",
+        "icon": "$(database)"
+      },
+      {
+        "command": "theNewFuse.inlineSuggestions",
+        "title": "Inline Suggestions",
+        "category": "The New Fuse",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "theNewFuse.codeActions",
+        "title": "Code Actions",
+        "category": "The New Fuse",
+        "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.openLiteLLMConfig",
+        "title": "LiteLLM Configuration",
+        "category": "The New Fuse",
+        "icon": "$(settings)"
+      },
+      {
+        "command": "theNewFuse.cli.runAgent",
+        "title": "Run CLI Agent",
+        "category": "The New Fuse CLI",
+        "icon": "$(robot)"
+      },
+      {
+        "command": "theNewFuse.cli.initWorkspace",
+        "title": "Initialize Workspace",
+        "category": "The New Fuse CLI",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "theNewFuse.cli.showTasks",
+        "title": "Show Tasks",
+        "category": "The New Fuse CLI",
+        "icon": "$(tasklist)"
+      },
+      {
+        "command": "theNewFuse.cli.showHistory",
+        "title": "Task History",
+        "category": "The New Fuse CLI",
+        "icon": "$(history)"
+      },
+      {
+        "command": "theNewFuse.cli.chatSession",
+        "title": "CLI Chat Session",
+        "category": "The New Fuse CLI",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "theNewFuse.selectOpenRouterModel",
+        "title": "Browse OpenRouter Models",
+        "category": "The New Fuse",
+        "icon": "$(list-selection)"
+      },
+      {
+        "command": "theNewFuse.mcpImportConfig",
+        "title": "Import MCP Configuration",
+        "category": "The New Fuse",
+        "icon": "$(import)"
+      },
+      {
+        "command": "theNewFuse.mcpExportConfig",
+        "title": "Export MCP Configuration",
+        "category": "The New Fuse",
+        "icon": "$(export)"
+      },
+      {
+        "command": "theNewFuse.mcpMarketplace",
+        "title": "MCP Server Marketplace",
+        "category": "The New Fuse",
+        "icon": "$(package)"
+      },
+      {
+        "command": "theNewFuse.selectModel",
+        "title": "Select AI Model",
+        "category": "The New Fuse",
+        "icon": "$(symbol-enum)"
+      },
+      {
+        "command": "theNewFuse.openBrowser",
+        "title": "Open Embedded Browser",
+        "category": "The New Fuse",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "theNewFuse.navigateTo",
+        "title": "Navigate Browser To URL",
+        "category": "The New Fuse",
+        "icon": "$(link)"
+      },
+      {
+        "command": "theNewFuse.browserScreenshot",
+        "title": "Take Browser Screenshot",
+        "category": "The New Fuse",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "theNewFuse.browserExecuteScript",
+        "title": "Execute Script in Browser",
+        "category": "The New Fuse",
+        "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.a2aProtocol",
+        "title": "A2A Protocol Manager",
+        "category": "The New Fuse: A2A",
+        "icon": "$(broadcast)"
+      },
+      {
+        "command": "theNewFuse.a2aConnectAgent",
+        "title": "Connect to Agent",
+        "category": "The New Fuse: A2A",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "theNewFuse.a2aSendMessage",
+        "title": "Send A2A Message",
+        "category": "The New Fuse: A2A",
+        "icon": "$(send)"
+      },
+      {
+        "command": "theNewFuse.agentRegistry",
+        "title": "Agent Registry",
+        "category": "The New Fuse: Agents",
+        "icon": "$(register)"
+      },
+      {
+        "command": "theNewFuse.agentDiscover",
+        "title": "Discover Agents",
+        "category": "The New Fuse: Agents",
+        "icon": "$(search)"
+      },
+      {
+        "command": "theNewFuse.agentRegister",
+        "title": "Register Agent",
+        "category": "The New Fuse: Agents",
+        "icon": "$(add)"
+      },
+      {
+        "command": "theNewFuse.agentDirectory",
+        "title": "Agent Directory",
+        "category": "The New Fuse: Agents",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "theNewFuse.aguiProtocol",
+        "title": "AG-UI Protocol",
+        "category": "The New Fuse: AG-UI",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "theNewFuse.aguiVisualize",
+        "title": "Generate Visualization",
+        "category": "The New Fuse: AG-UI",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "theNewFuse.aguiSession",
+        "title": "AG-UI Sessions",
+        "category": "The New Fuse: AG-UI",
+        "icon": "$(connections)"
+      },
+      {
+        "command": "theNewFuse.relayServer",
+        "title": "Relay Server",
+        "category": "The New Fuse: Relay",
+        "icon": "$(server)"
+      },
+      {
+        "command": "theNewFuse.relayConnect",
+        "title": "Connect to Relay",
+        "category": "The New Fuse: Relay",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "theNewFuse.relayMonitor",
+        "title": "Monitor Agents",
+        "category": "The New Fuse: Relay",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "theNewFuse.protocolTranslation",
+        "title": "Protocol Translation",
+        "category": "The New Fuse: Protocol",
+        "icon": "$(translate)"
+      },
+      {
+        "command": "theNewFuse.translateProtocol",
+        "title": "Translate Message",
+        "category": "The New Fuse: Protocol",
+        "icon": "$(file-submodule)"
+      },
+      {
+        "command": "theNewFuse.memoryBank",
+        "title": "Memory Bank",
+        "category": "The New Fuse: Context",
+        "icon": "$(book)"
+      },
+      {
+        "command": "theNewFuse.memoryContext",
+        "title": "Active Context",
+        "category": "The New Fuse: Context",
+        "icon": "$(file-text)"
+      },
+      {
+        "command": "theNewFuse.memoryBrief",
+        "title": "Project Brief",
+        "category": "The New Fuse: Context",
+        "icon": "$(briefcase)"
+      },
+      {
+        "command": "theNewFuse.memoryPatterns",
+        "title": "System Patterns",
+        "category": "The New Fuse: Context",
+        "icon": "$(repo-push)"
+      },
+      {
+        "command": "theNewFuse.collectiveOrchestrator",
+        "title": "Collective Orchestrator",
+        "category": "The New Fuse: Collective",
+        "icon": "$(organization)"
+      },
+      {
+        "command": "theNewFuse.distributeTask",
+        "title": "Distribute Task",
+        "category": "The New Fuse: Collective",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "theNewFuse.federationNetwork",
+        "title": "Federation Network",
+        "category": "The New Fuse: Federation",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "theNewFuse.federationJoin",
+        "title": "Join Federation",
+        "category": "The New Fuse: Federation",
+        "icon": "$(join)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "theNewFuse.newChat",
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "theNewFuse.mcpConnect",
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "theNewFuse.historyButtonClicked",
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "theNewFuse.settingsButtonClicked",
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@4"
+        },
+        {
+          "command": "theNewFuse.clearChat",
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@5"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "theNewFuse.contextMenu",
+          "group": "z_theNewFuse"
+        }
+      ],
+      "theNewFuse.contextMenu": [
+        {
+          "command": "theNewFuse.explainCode",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "theNewFuse.fixCode",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "theNewFuse.improveCode",
+          "group": "1_actions@3"
+        },
+        {
+          "command": "theNewFuse.addToContext",
+          "group": "1_actions@4"
+        },
+        {
+          "command": "theNewFuse.securityScan",
+          "group": "2_security@1"
+        }
+      ],
+      "scm/input": [
+        {
+          "command": "theNewFuse.generateCommitMessage",
+          "group": "navigation"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "theNewFuse.contextMenu",
+        "label": "The New Fuse"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "theNewFuse.sendMessage",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      },
+      {
+        "command": "theNewFuse.newChat",
+        "key": "ctrl+shift+n",
+        "mac": "cmd+shift+n"
+      },
+      {
+        "command": "theNewFuse.inlineSuggestions",
+        "key": "ctrl+i",
+        "mac": "cmd+i",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "The New Fuse",
+      "properties": {
+        "theNewFuse.defaultProvider": {
+          "type": "string",
+          "default": "openai",
+          "enum": [
+            "openai",
+            "anthropic",
+            "gemini",
+            "deepseek",
+            "qwen",
+            "openrouter",
+            "litellm",
+            "copilot",
+            "opencode-cli",
+            "claude-cli",
+            "gemini-cli",
+            "jules-cli",
+            "aider-cli",
+            "custom-cli"
+          ],
+          "enumDescriptions": [
+            "OpenAI (GPT-5.2, GPT-5.1-Codex-Max)",
+            "Anthropic (Claude Opus 4.5, Sonnet 4.5)",
+            "Google Gemini (Gemini 3 Pro, Gemini 2.5 Flash)",
+            "DeepSeek (V3.2-Speciale, DeepSeek-R1)",
+            "Qwen (Qwen3-Coder, Qwen 2.5-Max)",
+            "OpenRouter (Multi-provider)",
+            "LiteLLM (Self-hosted proxy)",
+            "VS Code Copilot",
+            "Claude CLI (Local)",
+            "Gemini CLI (Local)",
+            "Jules CLI (Local)",
+            "Aider CLI (Local)",
+            "Custom CLI Command"
+          ],
+          "description": "Default AI provider - includes API and CLI-based options (December 2025)"
+        },
+        "theNewFuse.defaultModel": {
+          "type": "string",
+          "default": "gpt-5.2",
+          "description": "Default model to use"
+        },
+        "theNewFuse.autoConnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically connect to MCP servers on startup"
+        },
+        "theNewFuse.enableTelemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry"
+        },
+        "theNewFuse.theme": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "description": "Chat interface theme"
+        },
+        "theNewFuse.mcpServers": {
+          "type": "array",
+          "default": [],
+          "description": "MCP server configurations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Server name"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "remote",
+                  "sse",
+                  "ws"
+                ],
+                "default": "local",
+                "description": "Server type (local=stdio, remote=HTTP, sse=Server-Sent Events, ws=WebSocket)"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to start the server"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Command arguments"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Working directory for the server process"
+              },
+              "transport": {
+                "type": "string",
+                "enum": [
+                  "stdio",
+                  "sse",
+                  "ws"
+                ],
+                "default": "stdio",
+                "description": "Transport protocol for the MCP server"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL for SSE/WS transport servers"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether the server is enabled"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ]
+          }
+        },
+        "theNewFuse.providers.openai.baseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "OpenAI API base URL"
+        },
+        "theNewFuse.providers.openai.model": {
+          "type": "string",
+          "default": "gpt-5.2",
+          "description": "Default OpenAI model (December 2025: gpt-5.2, gpt-5.1-codex-max)"
+        },
+        "theNewFuse.providers.anthropic.baseUrl": {
+          "type": "string",
+          "default": "https://api.anthropic.com/v1",
+          "description": "Anthropic API base URL"
+        },
+        "theNewFuse.providers.anthropic.model": {
+          "type": "string",
+          "default": "claude-opus-4.5-20251124",
+          "description": "Default Anthropic model (December 2025: claude-opus-4.5, claude-sonnet-4.5)"
+        },
+        "theNewFuse.providers.gemini.model": {
+          "type": "string",
+          "default": "gemini-3-pro",
+          "description": "Default Gemini model (December 2025: gemini-3-pro, gemini-2.5-flash)"
+        },
+        "theNewFuse.providers.deepseek.baseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com/v1",
+          "description": "DeepSeek API base URL"
+        },
+        "theNewFuse.providers.deepseek.model": {
+          "type": "string",
+          "default": "deepseek-v3.2-speciale",
+          "description": "Default DeepSeek model (December 2025: deepseek-v3.2-speciale, deepseek-r1)"
+        },
+        "theNewFuse.providers.qwen.baseUrl": {
+          "type": "string",
+          "default": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+          "description": "Qwen/DashScope API base URL"
+        },
+        "theNewFuse.providers.qwen.model": {
+          "type": "string",
+          "default": "qwen3-coder-480b",
+          "description": "Default Qwen model (December 2025: qwen3-coder-480b, qwen-2.5-max)"
+        },
+        "theNewFuse.providers.openrouter.baseUrl": {
+          "type": "string",
+          "default": "https://openrouter.ai/api/v1",
+          "description": "OpenRouter API base URL"
+        },
+        "theNewFuse.providers.openrouter.model": {
+          "type": "string",
+          "default": "anthropic/claude-opus-4.5",
+          "description": "Default OpenRouter model"
+        },
+        "theNewFuse.providers.litellm.baseUrl": {
+          "type": "string",
+          "default": "http://localhost:4000",
+          "description": "LiteLLM proxy base URL"
+        },
+        "theNewFuse.providers.litellm.model": {
+          "type": "string",
+          "default": "gpt-5.2",
+          "description": "Default LiteLLM model"
+        },
+        "theNewFuse.maxTokens": {
+          "type": "number",
+          "default": 8192,
+          "description": "Maximum tokens for responses"
+        },
+        "theNewFuse.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Response temperature (creativity)"
+        },
+        "theNewFuse.cliAgents": {
+          "type": "array",
+          "default": [],
+          "description": "CLI-based AI agent configurations for local tools like claude, gemini, jules, aider",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Agent name (e.g., 'claude', 'gemini', 'jules', 'aider')"
+              },
+              "command": {
+                "type": "string",
+                "description": "CLI command to execute (e.g., 'claude', 'gemini')"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Command line arguments"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables"
+              },
+              "workingDirectory": {
+                "type": "string",
+                "description": "Working directory for the command"
+              },
+              "inputFormat": {
+                "type": "string",
+                "enum": [
+                  "stdin",
+                  "arg",
+                  "file"
+                ],
+                "default": "stdin",
+                "description": "How to pass the prompt to the CLI"
+              },
+              "outputFormat": {
+                "type": "string",
+                "enum": [
+                  "stdout",
+                  "file",
+                  "json"
+                ],
+                "default": "stdout",
+                "description": "How to read the response from the CLI"
+              },
+              "timeout": {
+                "type": "number",
+                "default": 120000,
+                "description": "Timeout in milliseconds"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether this agent is enabled"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ]
+          }
+        }
+      }
+    },
+    "theNewFuse.relayUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF Relay server WebSocket URL"
+    },
+    "theNewFuse.a2aUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF A2A protocol endpoint URL"
+    },
+    "theNewFuse.aguiUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF AG-UI protocol endpoint URL"
+    },
+    "theNewFuse.redisHost": {
+      "type": "string",
+      "default": "localhost",
+      "description": "Redis host for agent relay communication"
+    },
+    "theNewFuse.redisPort": {
+      "type": "number",
+      "default": 6379,
+      "description": "Redis port for agent relay communication"
+    },
+    "theNewFuse.cloudSandboxUrl": {
+      "type": "string",
+      "default": "wss://api-gateway.tnf.computer/ws/sync",
+      "description": "Cloud sandbox sync URL for workspace mirroring"
+    },
+    "theNewFuse.loadTnfProjectConfig": {
+      "type": "boolean",
+      "default": true,
+      "description": "Load tnf.jsonc from workspace root for project-level MCP, permissions, and model settings"
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "lint": "eslint src --ext ts",
+    "test": "echo \"Tests temporarily disabled for this package\"",
+    "package": "npm run compile && npx @vscode/vsce package --no-dependencies"
+  },
+  "vsce": {
+    "no-dependencies": true
+  },
+  "devDependencies": {
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/auth": "workspace:*",
+    "@the-new-fuse/data": "workspace:*",
+    "@the-new-fuse/sync-core": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "@types/dompurify": "^3.2.0",
+    "@types/node": "18.x",
+    "@types/uuid": "^11.0.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^3.7.1",
+    "esbuild": "^0.27.2",
+    "eslint": "^10.0.3",
+    "markdown-it": "^14.1.1",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^0.0.1-alpha.0",
+    "vitest": "^4.1.0",
+    "@stylistic/eslint-plugin": "*"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@vscode/codicons": "^0.0.36",
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
+    "lru-cache": "^11.2.4",
+    "tiktoken": "^1.0.22",
+    "zod": "^4.3.5",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "optionalDependencies": {
+    "electron": "^35.7.5"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/The-New-Fuse/vscode-extension/issues"
+  },
+  "homepage": "https://github.com/The-New-Fuse/vscode-extension#readme"
+}

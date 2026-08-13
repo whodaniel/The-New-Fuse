@@ -1,0 +1,12 @@
+{
+  "skillName": "influencer-media-kit-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/influencer-media-kit-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/influencer-media-kit-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/influencer-media-kit-agent.json",
+  "status": "present"
+}

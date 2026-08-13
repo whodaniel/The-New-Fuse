@@ -1,0 +1,29 @@
+(version 1)
+(deny default)
+
+; Template profile.
+; Replace __TNF_ROOT__ and __HOME__ before use.
+
+; Allow basics
+(allow process-exec)
+(allow process-fork)
+(allow sysctl-read)
+
+; Allow system libraries and resources
+(allow file-read*
+    (subpath "/usr/lib")
+    (subpath "/usr/share")
+    (subpath "/System/Library")
+    (subpath "/Library/Preferences")
+)
+
+; Allow the binary to read itself
+(allow file-read* (subpath "__TNF_ROOT__/scripts/bin/forged"))
+
+; Specifically deny access to the user's home directory sensitive files
+(deny file-read* (subpath "__HOME__/.zshrc"))
+(deny file-read* (subpath "__HOME__/.ssh"))
+
+; Allow write access only to specific temporary locations
+(allow file-write* (subpath "/private/var/folders"))
+(allow file-read* (subpath "/private/var/folders"))

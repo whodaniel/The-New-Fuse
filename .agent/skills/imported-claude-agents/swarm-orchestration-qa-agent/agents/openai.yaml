@@ -1,0 +1,8 @@
+agent:
+  name: swarm-orchestration-qa-agent
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the swarm-orchestration-qa-agent workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/swarm-orchestration-qa-agent.md

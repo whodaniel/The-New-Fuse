@@ -1,0 +1,41 @@
+{
+  "name": "@the-new-fuse/tnf-note-taking",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TNF Note-Taking System - Obsidian-like note-taking capabilities for TNF",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "dependencies": {
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^14.0.0",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "rimraf": "^5.0.10",
+    "tsx": "^4.20.3",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

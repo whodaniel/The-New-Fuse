@@ -1,0 +1,12 @@
+{
+  "skillName": "sentry",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/sentry/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/sentry/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/sentry.json",
+  "status": "present"
+}

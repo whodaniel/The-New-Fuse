@@ -1,0 +1,394 @@
+#!/usr/bin/env python3
+"""twipctl: TWIP v0.1 local identity prototype.
+
+Emits a merged terminal identity JSON object by combining:
+- PTY/kernel signals (tty, inode)
+- Process/session signals (shell pid, pgid, sid)
+- Multiplexer signals (tmux/screen)
+- Emulator env signals (TERM_PROGRAM, session vars)
+
+This is a local CLI prototype, not a full TWIP daemon.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+import os
+import secrets
+import shutil
+import socket
+import subprocess
+import sys
+import uuid
+from typing import Any
+
+
+TWIP_VERSION = "0.1-draft"
+TOOL_VERSION = "0.1.0"
+CACHE_DIR = os.path.expanduser("~/.cache/twipctl")
+CACHE_PATH = os.path.join(CACHE_DIR, "identities.json")
+
+
+def utc_now() -> str:
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def stable_host_id() -> str:
+    raw = f"{socket.gethostname()}:{uuid.getnode()}"
+    digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    return f"h:{digest[:8]}"
+
+
+def uuid7() -> str:
+    """Generate an RFC 9562 UUIDv7 value."""
+    ts_ms = int(dt.datetime.now(dt.timezone.utc).timestamp() * 1000) & ((1 << 48) - 1)
+    rand_a = secrets.randbits(12)
+    rand_b = secrets.randbits(62)
+    value = (ts_ms << 80) | (0x7 << 76) | (rand_a << 64) | (0b10 << 62) | rand_b
+    return str(uuid.UUID(int=value))
+
+
+def load_cache() -> dict[str, Any]:
+    if not os.path.exists(CACHE_PATH):
+        return {"entries": {}}
+    try:
+        with open(CACHE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict) and isinstance(data.get("entries"), dict):
+            return data
+    except Exception:
+        pass
+    return {"entries": {}}
+
+
+def save_cache(cache: dict[str, Any]) -> None:
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    tmp = f"{CACHE_PATH}.tmp.{os.getpid()}"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(cache, f, indent=2, sort_keys=True)
+        f.write("\n")
+    os.replace(tmp, CACHE_PATH)
+
+
+def detect_shell_pid() -> int:
+    val = os.environ.get("TWIP_SHELL_PID")
+    if val and val.isdigit():
+        return int(val)
+    return os.getppid()
+
+
+def try_tty() -> str | None:
+    for fd in (0, 1, 2):
+        try:
+            return os.ttyname(fd)
+        except OSError:
+            continue
+    return None
+
+
+def tty_from_ps(pid: int) -> str | None:
+    out = run_cmd(["ps", "-o", "tty=", "-p", str(pid)])
+    if not out:
+        return None
+    tty = out.strip()
+    if tty in ("?", "??"):
+        return None
+    if tty.startswith("/dev/"):
+        return tty
+    return f"/dev/{tty}"
+
+
+def try_inode(path: str | None) -> int | None:
+    if not path:
+        return None
+    try:
+        return int(os.stat(path).st_ino)
+    except OSError:
+        return None
+
+
+def try_int(func, *args) -> int | None:
+    try:
+        return int(func(*args))
+    except Exception:
+        return None
+
+
+def run_cmd(cmd: list[str]) -> str | None:
+    try:
+        out = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=1.5)
+    except Exception:
+        return None
+    text = out.stdout.strip()
+    return text if text else None
+
+
+def detect_emulator_id() -> str:
+    term_program = os.environ.get("TERM_PROGRAM")
+    if term_program:
+        return term_program.strip().lower().replace(" ", "_")
+    if os.environ.get("WEZTERM_PANE"):
+        return "wezterm"
+    if os.environ.get("KITTY_WINDOW_ID"):
+        return "kitty"
+    if os.environ.get("ALACRITTY_LOG"):
+        return "alacritty"
+    if os.environ.get("TERM"):
+        return os.environ.get("TERM", "unknown")
+    return "unknown"
+
+
+def parse_iterm_session(session: str | None) -> tuple[str | None, str | None, str | None]:
+    # iTerm2 commonly uses w<window>t<tab>p<pane> format.
+    if not session or "w" not in session or "t" not in session or "p" not in session:
+        return (None, None, None)
+    try:
+        w_pos = session.index("w")
+        t_pos = session.index("t", w_pos + 1)
+        p_pos = session.index("p", t_pos + 1)
+        w_val = session[w_pos + 1 : t_pos]
+        t_val = session[t_pos + 1 : p_pos]
+        p_val = session[p_pos + 1 :]
+        return (f"win:{w_val}" if w_val else None, f"tab:{t_val}" if t_val else None, f"pane:{p_val}" if p_val else None)
+    except Exception:
+        return (None, None, None)
+
+
+def tmux_details() -> dict[str, str] | None:
+    if not os.environ.get("TMUX"):
+        return None
+    if shutil.which("tmux") is None:
+        return {"kind": "tmux", "pane_id": os.environ.get("TMUX_PANE", "")}
+    fmt = "#{session_name}|#{window_index}|#{pane_index}|#{session_id}|#{window_id}|#{pane_id}"
+    out = run_cmd(["tmux", "display-message", "-p", "-F", fmt])
+    if not out:
+        return {"kind": "tmux", "pane_id": os.environ.get("TMUX_PANE", "")}
+    parts = out.split("|")
+    if len(parts) != 6:
+        return {"kind": "tmux", "pane_id": os.environ.get("TMUX_PANE", "")}
+    return {
+        "kind": "tmux",
+        "session_name": parts[0],
+        "window_index": parts[1],
+        "pane_index": parts[2],
+        "session_id": parts[3],
+        "window_id": parts[4],
+        "pane_id": parts[5],
+    }
+
+
+def screen_details() -> dict[str, str] | None:
+    sty = os.environ.get("STY")
+    if not sty:
+        return None
+    return {
+        "kind": "screen",
+        "session_id": sty,
+        "window_id": os.environ.get("WINDOW", ""),
+        "pane_id": os.environ.get("WINDOW", ""),
+    }
+
+
+def add_legacy(out: list[dict[str, Any]], key: str, value: Any, source: str, confidence: float, observed_at: str) -> None:
+    if value is None or value == "":
+        return
+    out.append(
+        {
+            "key": key,
+            "value": value,
+            "source": source,
+            "confidence": confidence,
+            "observed_at": observed_at,
+        }
+    )
+
+
+def resolve_identity(reincarnate: bool = False) -> dict[str, Any]:
+    observed_at = utc_now()
+
+    shell_pid = detect_shell_pid()
+    pgid = try_int(os.getpgid, shell_pid)
+    sid = try_int(os.getsid, shell_pid)
+    tty_path = try_tty() or tty_from_ps(shell_pid)
+    pty_inode = try_inode(tty_path)
+    host_id = stable_host_id()
+    emulator_id = detect_emulator_id()
+
+    tmux = tmux_details()
+    screen = screen_details()
+    mux = tmux or screen
+
+    window_id = None
+    tab_id = None
+    pane_id = None
+
+    if tmux:
+        window_id = tmux.get("window_id") or (f"win:{tmux['window_index']}" if tmux.get("window_index") else None)
+        pane_id = tmux.get("pane_id") or (f"pane:{tmux['pane_index']}" if tmux.get("pane_index") else None)
+    elif screen:
+        window_id = screen.get("window_id") or None
+        pane_id = screen.get("pane_id") or None
+
+    if not pane_id and os.environ.get("WEZTERM_PANE"):
+        pane_id = f"pane:{os.environ['WEZTERM_PANE']}"
+    if not tab_id and os.environ.get("WEZTERM_TAB_ID"):
+        tab_id = f"tab:{os.environ['WEZTERM_TAB_ID']}"
+    if not window_id and os.environ.get("WINDOWID"):
+        window_id = f"win:{os.environ['WINDOWID']}"
+    if not pane_id and os.environ.get("KITTY_WINDOW_ID"):
+        pane_id = f"pane:{os.environ['KITTY_WINDOW_ID']}"
+
+    iterm_session = os.environ.get("TERM_SESSION_ID") or os.environ.get("ITERM_SESSION_ID")
+    i_win, i_tab, i_pane = parse_iterm_session(iterm_session)
+    if not window_id:
+        window_id = i_win
+    if not tab_id:
+        tab_id = i_tab
+    if not pane_id:
+        pane_id = i_pane
+
+    cache = load_cache()
+    key_parts = [
+        host_id,
+        tty_path or "-",
+        os.environ.get("TERM_SESSION_ID", "-"),
+        os.environ.get("ITERM_SESSION_ID", "-"),
+        os.environ.get("WEZTERM_PANE", "-"),
+        os.environ.get("KITTY_WINDOW_ID", "-"),
+        os.environ.get("TMUX_PANE", "-"),
+        str(sid or "-"),
+    ]
+    cache_key = "|".join(key_parts)
+    entries = cache["entries"]
+    entry = entries.get(cache_key)
+    if entry and not reincarnate:
+        twid = entry["twid"]
+        created_at = entry["created_at"]
+        incarnation = int(entry.get("incarnation", 0))
+    else:
+        twid = uuid7()
+        created_at = observed_at
+        incarnation = int(entry.get("incarnation", 0) + 1) if entry else 0
+    entries[cache_key] = {
+        "twid": twid,
+        "created_at": created_at,
+        "incarnation": incarnation,
+        "last_seen_at": observed_at,
+    }
+    save_cache(cache)
+
+    legacy: list[dict[str, Any]] = []
+    add_legacy(legacy, "tty", tty_path, "kernel", 1.0, observed_at)
+    add_legacy(legacy, "pty_inode", pty_inode, "kernel", 1.0, observed_at)
+    add_legacy(legacy, "shell_pid", shell_pid, "process", 1.0, observed_at)
+    add_legacy(legacy, "pgid", pgid, "process", 1.0, observed_at)
+    add_legacy(legacy, "sid", sid, "process", 1.0, observed_at)
+    add_legacy(legacy, "iterm_session_id", os.environ.get("ITERM_SESSION_ID"), "env", 0.8, observed_at)
+    add_legacy(legacy, "term_session_id", os.environ.get("TERM_SESSION_ID"), "env", 0.8, observed_at)
+    add_legacy(legacy, "windowid", os.environ.get("WINDOWID"), "env", 0.7, observed_at)
+    add_legacy(legacy, "tmux_session", tmux.get("session_id") if tmux else None, "multiplexer", 0.95, observed_at)
+    add_legacy(legacy, "tmux_window", tmux.get("window_id") if tmux else None, "multiplexer", 0.95, observed_at)
+    add_legacy(legacy, "tmux_pane", tmux.get("pane_id") if tmux else os.environ.get("TMUX_PANE"), "multiplexer", 0.95, observed_at)
+    add_legacy(legacy, "screen_window", os.environ.get("WINDOW"), "multiplexer", 0.9, observed_at)
+    add_legacy(legacy, "gui_window_handle", os.environ.get("WINDOWID"), "gui", 0.6, observed_at)
+    add_legacy(legacy, "gui_window_title", os.environ.get("TERM_WINDOW_TITLE"), "gui", 0.4, observed_at)
+
+    process_block: dict[str, Any] = {}
+    if shell_pid:
+        process_block["shell_pid"] = shell_pid
+    if pgid is not None:
+        process_block["pgid"] = pgid
+    if sid is not None:
+        process_block["sid"] = sid
+
+    pty_block: dict[str, Any] = {}
+    if tty_path:
+        pty_block["path"] = tty_path
+    if pty_inode is not None:
+        pty_block["inode"] = pty_inode
+
+    mux_block: dict[str, Any] = {}
+    if tmux:
+        mux_block["kind"] = "tmux"
+        if tmux.get("session_id"):
+            mux_block["session_id"] = tmux["session_id"]
+        if tmux.get("window_id"):
+            mux_block["window_id"] = tmux["window_id"]
+        if tmux.get("pane_id"):
+            mux_block["pane_id"] = tmux["pane_id"]
+    elif screen:
+        mux_block["kind"] = "screen"
+        if screen.get("session_id"):
+            mux_block["session_id"] = screen["session_id"]
+        if screen.get("window_id"):
+            mux_block["window_id"] = screen["window_id"]
+        if screen.get("pane_id"):
+            mux_block["pane_id"] = screen["pane_id"]
+
+    identity = {
+        "twid": twid,
+        "created_at": created_at,
+        "incarnation": incarnation,
+        "scope": {
+            "host_id": host_id,
+            "emulator_id": emulator_id,
+            "window_id": window_id,
+            "tab_id": tab_id,
+            "pane_id": pane_id,
+        },
+        "process": process_block,
+        "pty": pty_block,
+        "multiplexer": mux_block if mux_block else None,
+        "legacy": legacy,
+        "meta": {
+            "twip_version": TWIP_VERSION,
+            "tool": "twipctl",
+            "tool_version": TOOL_VERSION,
+        },
+    }
+    return identity
+
+
+def capabilities(identity: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "twip_version": TWIP_VERSION,
+        "supports_gui_metadata": bool(os.environ.get("WINDOWID") or os.environ.get("TERM_WINDOW_TITLE")),
+        "supports_focus_events": False,
+        "supports_multiplexer_mapping": bool(identity.get("multiplexer")),
+        "supports_pty_inode": bool(identity.get("pty", {}).get("inode")),
+        "supports_remote_propagation": False,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="twipctl",
+        description="Emit TWIP v0.1 merged terminal identity JSON.",
+    )
+    parser.add_argument(
+        "command",
+        nargs="?",
+        default="identity",
+        choices=["identity", "capabilities"],
+        help="Output object type (default: identity).",
+    )
+    parser.add_argument("--compact", action="store_true", help="Output compact JSON.")
+    parser.add_argument("--reincarnate", action="store_true", help="Rotate TWID and increment incarnation for this context.")
+    args = parser.parse_args()
+
+    ident = resolve_identity(reincarnate=args.reincarnate)
+    obj = ident if args.command == "identity" else capabilities(ident)
+    if args.compact:
+        json.dump(obj, sys.stdout, separators=(",", ":"), sort_keys=False)
+        sys.stdout.write("\n")
+    else:
+        json.dump(obj, sys.stdout, indent=2, sort_keys=False)
+        sys.stdout.write("\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

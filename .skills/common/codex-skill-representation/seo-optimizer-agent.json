@@ -1,0 +1,12 @@
+{
+  "skillName": "seo-optimizer-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/seo-optimizer-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/seo-optimizer-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/seo-optimizer-agent.json",
+  "status": "present"
+}

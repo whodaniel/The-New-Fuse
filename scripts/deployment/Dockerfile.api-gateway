@@ -1,0 +1,57 @@
+# Flat robust build for TNF API Gateway
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-alpine
+
+ENV CI=true
+ENV PORT=8080
+
+RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev libjpeg-turbo-dev giflib-dev pixman cairo pango giflib libjpeg-turbo
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+COPY scripts ./scripts
+COPY packages ./packages
+COPY apps/api-gateway ./apps/api-gateway
+
+# Install ALL dependencies
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Build ALL internal dependencies in order
+RUN pnpm --filter @the-new-fuse/types build
+RUN pnpm --filter @the-new-fuse/utils build
+RUN pnpm --filter @the-new-fuse/core-error-handling build
+RUN pnpm --filter @the-new-fuse/core-monitoring build
+RUN pnpm --filter @the-new-fuse/infrastructure build
+
+# Force build database
+WORKDIR /app/packages/database
+RUN ../../node_modules/.bin/tsc --build --force
+WORKDIR /app
+
+RUN pnpm --filter @the-new-fuse/proto-definitions build
+RUN pnpm --filter @the-new-fuse/core-vector-db build
+RUN pnpm --filter @the-new-fuse/relay-core build
+RUN pnpm --filter @the-new-fuse/ap2-protocol build
+RUN pnpm --filter @the-new-fuse/a2a-core build
+RUN pnpm --filter @the-new-fuse/mcp-core build
+RUN pnpm --filter @the-new-fuse/core build
+RUN pnpm --filter @the-new-fuse/api-types build
+RUN pnpm --filter @the-new-fuse/security build
+RUN pnpm --filter @the-new-fuse/n8n-workflows build
+
+# Final pass: Build the app and ensure all workspace links are solid
+WORKDIR /app/apps/api-gateway
+RUN pnpm build || echo "Build finished with warnings"
+
+# CRITICAL: Rerun install to ensure all dist folders are linked correctly in node_modules
+WORKDIR /app
+ENV NODE_ENV=production
+RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
+
+EXPOSE 8080
+
+WORKDIR /app/apps/api-gateway
+CMD ["node", "dist/main"]

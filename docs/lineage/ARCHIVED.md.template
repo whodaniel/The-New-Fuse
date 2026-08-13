@@ -1,0 +1,29 @@
+# Archived Repository
+
+> This repository is **read-only** and preserved for lineage and narrative reconstruction.
+
+## Successor
+
+| Role | Repository |
+| ---- | ---------- |
+| Active development | [whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse) |
+| Open distribution | [whodaniel/fuse-open-runtime](https://github.com/whodaniel/fuse-open-runtime) |
+| Proprietary control plane | [whodaniel/fuse-control-plane](https://github.com/whodaniel/fuse-control-plane) |
+
+## Lineage registry
+
+See the monorepo lineage docs (in `the-new-fuse-next-gen`):
+
+- `docs/lineage/REPO_LINEAGE.md`
+- `docs/lineage/TAGS_BRANCHES_EXPORT.md`
+- `docs/lineage/REPO_PARITY_<this-repo>.md`
+
+## Cold backup
+
+An offline git bundle may exist at:
+
+`docs/lineage/bundles/<repo-name>.bundle` in the canonical monorepo.
+
+## Archive date
+
+_ARCHIVED_ON_: 2026-06-22

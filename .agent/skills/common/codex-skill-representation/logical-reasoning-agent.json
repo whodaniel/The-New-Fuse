@@ -1,0 +1,12 @@
+{
+  "skillName": "logical-reasoning-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/logical-reasoning-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/logical-reasoning-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/logical-reasoning-agent.json",
+  "status": "present"
+}

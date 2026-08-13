@@ -1,0 +1,61 @@
+{
+  "name": "@the-new-fuse/agent",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
+    "lint": "eslint src",
+    "test": "jest --config jest.config.js",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.16",
+    "@nestjs/core": "^11.1.16",
+    "@nestjs/graphql": "13.2.4",
+    "@the-new-fuse/api-types": "workspace:*",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/mcp-core": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "@the-new-fuse/utils": "workspace:*",
+    "ajv-formats": "^3.0.1",
+    "graphql": "^16.11.0",
+    "ioredis": "^5.8.2",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "redis": "^5.11.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.27",
+    "uuid": "^9.0.1",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.8.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^9.0.8",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

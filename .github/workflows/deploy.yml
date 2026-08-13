@@ -1,0 +1,38 @@
+# ⚠️ DISABLED — cloud_runtime CLI does not exist (legacy Railway rename).
+# TNF deploys via GCP Cloud Run + Cloudflare + Supabase + Upstash.
+# See packages/compounding-memory/wiki/doc-cloud-migration-blueprint.md
+# and scripts/deployment/gcp-deploy.sh
+name: Deploy to CloudRuntime (LEGACY — DISABLED)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ignored — workflow is disabled"
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+        default: production
+      services:
+        description: "Ignored — workflow is disabled"
+        required: false
+        default: "all"
+
+concurrency:
+  group: deploy-legacy-disabled-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refuse-legacy-cloud-runtime:
+    name: Refuse legacy cloud_runtime deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain retirement
+        run: |
+          echo "::error::This workflow is DISABLED."
+          echo "cloud_runtime is not a real CLI (Railway string-replace)."
+          echo "Deploy with: bash scripts/deployment/gcp-deploy.sh"
+          echo "Docs: packages/compounding-memory/wiki/doc-cloud-migration-blueprint.md"
+          exit 1

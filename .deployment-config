@@ -1,0 +1,74 @@
+# The New Fuse - Deployment Configuration
+# This file contains default configuration for automated deployments
+
+# Deployment Strategy
+# Options: rolling, blue-green, canary
+DEPLOYMENT_STRATEGY=rolling
+
+# Environment
+# Options: development, staging, production
+ENVIRONMENT=production
+
+# Build Configuration
+SKIP_TESTS=false
+SKIP_MIGRATIONS=false
+SKIP_VALIDATION=false
+
+# Rollback Configuration
+AUTO_ROLLBACK=true
+ROLLBACK_ON_SMOKE_TEST_FAILURE=true
+
+# Database Configuration
+BACKUP_BEFORE_MIGRATE=true
+COMPRESS_BACKUPS=true
+BACKUP_RETENTION_DAYS=30
+BACKUP_RETENTION_COUNT=10
+
+# Notification Configuration
+ENABLE_NOTIFICATIONS=true
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/placeholder
+
+# Health Check Configuration
+HEALTH_CHECK_TIMEOUT=30
+HEALTH_CHECK_RETRY_COUNT=3
+HEALTH_CHECK_RETRY_DELAY=5
+
+# CloudRuntime Configuration
+CLOUD_RUNTIME_PROJECT_ID=the-new-fuse-2025
+CLOUD_RUNTIME_ENVIRONMENT=production
+WAIT_FOR_CLOUD_RUNTIME_DEPLOY=true
+WATCH_CLOUD_RUNTIME_LOGS=false
+
+# Service Configuration
+SERVICES=api-gateway,backend,frontend,api
+
+# Service URLs (will be auto-populated after deployment)
+API_GATEWAY_URL=https://api.thenewfuse.com
+BACKEND_URL=https://api.thenewfuse.com
+FRONTEND_URL=https://thenewfuse.com
+API_URL=https://api.thenewfuse.com
+
+# Zero-Downtime Configuration
+ENABLE_ZERO_DOWNTIME=true
+GRADUAL_TRAFFIC_SHIFT=true
+TRAFFIC_SHIFT_INTERVAL=30
+CANARY_PERCENTAGE=10
+
+# Monitoring Configuration
+ENABLE_MONITORING=true
+METRICS_ENDPOINT=/metrics
+HEALTH_ENDPOINT=/health
+
+# Security Configuration
+ALLOW_BREAKING_CHANGES=false
+REQUIRE_APPROVAL=false
+ALLOW_TEST_FAILURES=false
+
+# Performance Configuration
+BUILD_MEMORY_LIMIT=4096
+BUILD_CONCURRENCY=4
+PARALLEL_DEPLOYMENTS=false
+
+# Logging Configuration
+LOG_LEVEL=info
+VERBOSE_LOGGING=false

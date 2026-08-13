@@ -1,0 +1,12 @@
+{
+  "skillName": "audio-recording-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/audio-recording-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/audio-recording-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/audio-recording-agent.json",
+  "status": "present"
+}

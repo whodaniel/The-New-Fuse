@@ -1,0 +1,175 @@
+import React, { FC } from "react";
+import {
+  Box,
+  Slider,
+  Typography,
+  IconButton,
+  Paper,
+  Tooltip,
+  useTheme
+} from '@mui/material';
+import {
+  PlayArrow,
+  Pause,
+  SkipPrevious,
+  SkipNext,
+  ZoomIn,
+  ZoomOut
+} from '@mui/icons-material';
+import { TimelineEvent } from '@the-new-fuse/types';
+
+interface TimelineSliderProps {
+  events: TimelineEvent[];
+  onEventSelect: (eventId: string) => void;
+  initialZoom?: number;
+  autoPlaySpeed?: number;
+}
+
+const TimelineSlider: FC<TimelineSliderProps> = ({
+  events,
+  onEventSelect,
+  initialZoom = 1,
+  autoPlaySpeed = 2000
+}) => {
+  const theme = useTheme();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [zoom, setZoom] = useState(initialZoom);
+  const playIntervalRef = useRef<NodeJS.Timeout>();
+
+  const sortedEvents = events.sort((a, b) => 
+    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+
+  useEffect(() => {
+    if (isPlaying) {
+      playIntervalRef.current = setInterval(() => {
+        setCurrentIndex(prev => {
+          const nextIndex = prev + 1;
+          if (nextIndex >= sortedEvents.length) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return nextIndex;
+        });
+      }, autoPlaySpeed / zoom);
+    }
+
+    return () => {
+      if (playIntervalRef.current) {
+        clearInterval(playIntervalRef.current);
+      }
+    };
+  }, [isPlaying, zoom, sortedEvents.length, autoPlaySpeed]);
+
+  useEffect(() => {
+    if (currentIndex < sortedEvents.length) {
+      onEventSelect(sortedEvents[currentIndex].id);
+    }
+  }, [currentIndex, sortedEvents, onEventSelect]);
+
+  const handleSliderChange = (_: Event, value: number | number[]) => {
+    setCurrentIndex(value as number);
+  };
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const getEventMarks = () => {
+    return sortedEvents.map((event, index) => ({
+      value: index,
+      label: '',
+      timestamp: event.timestamp
+    }));
+  };
+
+  return (
+    <Paper
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev / 1.5, 0.5));
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev / 1.5, 0.5));
+  };
+
+  return (
+    <Paper
+      sx={{ 
+        p: 3,
+        bgcolor: theme.palette.background.paper
+      }}
+    >
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h6" gutterBottom>
+          Timeline Navigation
+        </Typography>
+        
+        <Box sx={{ px: 2 }}>
+          <Slider
+            value={currentIndex}
+            min={0}
+            max={Math.max(0, sortedEvents.length - 1)}
+            step={1}
+            marks={getEventMarks()}
+            onChange={handleSliderChange}
+            valueLabelDisplay="auto"
+            valueLabelFormat={(index) => formatTimestamp(sortedEvents[index].timestamp)}
+          />
+        </Box>
+
+        <Box 
+          sx={{ 
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mt: 2
+          }}
+        >
+          <Tooltip title="Zoom Out">
+            <IconButton onClick={handleZoomOut}>
+              <ZoomOut />
+            </IconButton>
+          </Tooltip>
+
+          <IconButton onClick={handlePrevious}>
+            <SkipPrevious />
+          </IconButton>
+
+          <IconButton onClick={handlePlayPause}>
+            {isPlaying ? <Pause /> : <PlayArrow />}
+          </IconButton>
+
+          <IconButton onClick={handleNext}>
+            <SkipNext />
+          </IconButton>
+
+          <Tooltip title="Zoom In">
+            <IconButton onClick={handleZoomIn}>
+              <ZoomIn />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {currentIndex < sortedEvents.length && (
+          <Typography 
+            variant="body2" 
+            color="textSecondary"
+            align="center"
+            sx={{ mt: 1 }}
+          >
+            {sortedEvents[currentIndex].title} - {formatTimestamp(sortedEvents[currentIndex].timestamp)}
+          </Typography>
+        )}
+      </Box>
+    </Paper>
+  );
+};
+
+export default TimelineSlider;

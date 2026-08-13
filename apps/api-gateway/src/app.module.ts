@@ -1,0 +1,57 @@
+/**
+ * API Gateway App Module
+ * Consolidates all API modules into a unified gateway
+ */
+
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { AgentGatewayModule } from './gateway/agent-gateway.module';
+import { AnalyticsGatewayModule } from './gateway/analytics-gateway.module';
+import { ChatGatewayModule } from './gateway/chat-gateway.module';
+import { IdeGatewayModule } from './gateway/ide-gateway.module';
+import { LocalRuntimeGatewayModule } from './gateway/local-runtime-gateway.module';
+import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
+import { McpGatewayModule } from './gateway/mcp-gateway.module';
+import { PokerGatewayModule } from './gateway/poker-gateway.module';
+import { ResourcesGatewayModule } from './gateway/resources-gateway.module';
+import { SgpGatewayModule } from './gateway/sgp-gateway.module';
+import { SystemGatewayModule } from './gateway/system-gateway.module';
+import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
+import { TimelineGatewayModule } from './gateway/timeline-gateway.module';
+import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
+import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module';
+import { ProxyModule } from './proxy/proxy.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['../../.env', '.env.local', '.env'],
+    }),
+
+    // Authentication module
+    AuthModule,
+
+    // Service proxy module for routing requests
+    ProxyModule,
+
+    // Gateway modules for each service area
+    AgentGatewayModule,
+    AnalyticsGatewayModule,
+    WebhookGatewayModule,
+    ChatGatewayModule,
+    McpGatewayModule,
+    MarketplaceGatewayModule,
+    ResourcesGatewayModule,
+    IdeGatewayModule,
+    LocalRuntimeGatewayModule,
+    PokerGatewayModule,
+    SgpGatewayModule,
+    SystemGatewayModule,
+    TerminalsGatewayModule,
+    TimelineGatewayModule,
+    WorkspaceGatewayModule,
+  ],
+})
+export class AppModule {}

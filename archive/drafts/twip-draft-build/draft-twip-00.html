@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Terminal Window Identity Protocol (TWIP)</title>
+<meta content="TWIP Editors" name="author">
+<meta content='
+       
+        This document specifies the Terminal Window Identity Protocol
+        (TWIP), a unified identity model and discovery protocol for
+        terminal panes, tabs, and windows across terminal emulators,
+        shells, and multiplexers. TWIP defines a canonical identifier
+        ("twid"), a normalized schema for legacy identifiers (for
+        example, tty, process and session IDs, emulator-specific IDs,
+        and multiplexer IDs), and standardized discovery surfaces via
+        environment variables, OSC query and reply, and optional local
+        IPC APIs. TWIP also defines lifecycle events, capability
+        advertisement, security and privacy controls, and conformance
+        levels.
+       
+    ' name="description">
+<meta content="xml2rfc 3.32.0" name="generator">
+<meta content="terminal" name="keyword">
+<meta content="identity" name="keyword">
+<meta content="pty" name="keyword">
+<meta content="multiplexer" name="keyword">
+<meta content="draft-twip-00" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.32.0
+    Python 3.14.3
+    ConfigArgParse 1.7.5
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.0.2
+    platformdirs 4.9.4
+    pycountry 26.2.16
+    PyYAML 6.0.3
+    requests 2.32.5
+    wcwidth 0.6.0
+-->
+<link href="draft-twip-00.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://static.ietf.org/fonts/noto-sans/import.css'); /* Sans-serif */
+@import url('https://static.ietf.org/fonts/noto-serif/import.css'); /* Serif (print) */
+@import url('https://static.ietf.org/fonts/roboto-mono/import.css'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  overflow-wrap: break-word;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+@media print {
+  svg {
+    max-height: 850px;
+    max-width: 660px;
+  }
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+blockquote > *:last-child {
+  margin-bottom: 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+.xref {
+  overflow-wrap: normal;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    max-width: 100%;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.refSubseries {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: upper-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code, dt tt, dt code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > blockquote:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">TWIP</td>
+<td class="right">March 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Editors</td>
+<td class="center">Expires 19 September 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Independent</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-twip-00</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-03-18" class="published">18 March 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-09-19">19 September 2026</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">T. Editors</div>
+<div class="org">TWIP Community</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Terminal Window Identity Protocol (TWIP)</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">
+        This document specifies the Terminal Window Identity Protocol
+        (TWIP), a unified identity model and discovery protocol for
+        terminal panes, tabs, and windows across terminal emulators,
+        shells, and multiplexers. TWIP defines a canonical identifier
+        ("twid"), a normalized schema for legacy identifiers (for
+        example, tty, process and session IDs, emulator-specific IDs,
+        and multiplexer IDs), and standardized discovery surfaces via
+        environment variables, OSC query and reply, and optional local
+        IPC APIs. TWIP also defines lifecycle events, capability
+        advertisement, security and privacy controls, and conformance
+        levels.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 19 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-terminology" class="internal xref">Conventions and Terminology</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-design-goals-and-non-goals" class="internal xref">Design Goals and Non-Goals</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-goals" class="internal xref">Goals</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-non-goals" class="internal xref">Non-Goals</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-canonical-identity-object" class="internal xref">Canonical Identity Object</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-scope-object" class="internal xref">Scope Object</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-identity-stability" class="internal xref">Identity Stability</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-legacy-identifier-normaliza" class="internal xref">Legacy Identifier Normalization</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-discovery-mechanisms" class="internal xref">Discovery Mechanisms</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-environment-variables" class="internal xref">Environment Variables</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-osc-query-and-reply" class="internal xref">OSC Query and Reply</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-local-ipc-api" class="internal xref">Local IPC API</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-lifecycle-event-model" class="internal xref">Lifecycle Event Model</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-capability-advertisement" class="internal xref">Capability Advertisement</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-remote-propagation" class="internal xref">Remote Propagation</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-conformance-levels" class="internal xref">Conformance Levels</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-level-1-core" class="internal xref">Level 1 (Core)</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="auto internal xref">13.2</a>.  <a href="#name-level-2-observable" class="internal xref">Level 2 (Observable)</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3">
+                <p id="section-toc.1-1.13.2.3.1"><a href="#section-13.3" class="auto internal xref">13.3</a>.  <a href="#name-level-3-full" class="internal xref">Level 3 (Full)</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#section-15" class="auto internal xref">15</a>. <a href="#name-reference-identity-object" class="internal xref">Reference Identity Object</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#section-16" class="auto internal xref">16</a>. <a href="#name-deployment-guidance" class="internal xref">Deployment Guidance</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
+            <p id="section-toc.1-1.17.1"><a href="#section-17" class="auto internal xref">17</a>. <a href="#name-open-issues" class="internal xref">Open Issues</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.18">
+            <p id="section-toc.1-1.18.1"><a href="#section-18" class="auto internal xref">18</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.19">
+            <p id="section-toc.1-1.19.1"><a href="#section-19" class="auto internal xref">19</a>. <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.20">
+            <p id="section-toc.1-1.20.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="intro">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">
+        Terminal automation and observability workflows currently rely
+        on fragmented identity signals: kernel PTY and TTY paths,
+        process and session metadata, terminal-emulator-specific
+        environment variables, multiplexer-specific identifiers, and
+        optional GUI window metadata.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">
+        PTY and session terminology in this document follows common
+        POSIX process and terminal conventions <span>[<a href="#POSIX" class="cite xref">POSIX</a>]</span>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">
+        These signals are not standardized into one interoperable
+        object. TWIP defines a common protocol for deriving,
+        representing, and querying terminal runtime identity.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions">
+<section id="section-2">
+      <h2 id="name-conventions-and-terminology">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-terminology" class="section-name selfRef">Conventions and Terminology</a>
+      </h2>
+<p id="section-2-1">
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+        "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+        RECOMMENDED", "MAY", and "OPTIONAL" in this document are to
+        be interpreted as described in BCP 14
+        <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and
+        only when, they appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-2-2">
+        <dt id="section-2-2.1">Window</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.2">A top-level GUI terminal container.<a href="#section-2-2.2" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.3">Tab</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.4">A GUI tab within a terminal window.<a href="#section-2-2.4" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.5">Pane</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.6">A visual terminal region bound to one active PTY stream.<a href="#section-2-2.6" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.7">Session</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.8">A runtime grouping defined by an emulator or multiplexer.<a href="#section-2-2.8" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.9">twid</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.10">
+          The canonical TWIP pane identity, encoded as UUIDv7
+          <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>.<a href="#section-2-2.10" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.11">Incarnation</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.12">
+          A non-negative integer incremented when identity is explicitly
+          reconstituted (for example, clone or restore with rotation).<a href="#section-2-2.12" class="pilcrow">¶</a>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="goals">
+<section id="section-3">
+      <h2 id="name-design-goals-and-non-goals">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-design-goals-and-non-goals" class="section-name selfRef">Design Goals and Non-Goals</a>
+      </h2>
+<div id="goals-list">
+<section id="section-3.1">
+        <h3 id="name-goals">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-goals" class="section-name selfRef">Goals</a>
+        </h3>
+<ol start="1" type="1" class="normal type-1" id="section-3.1-1">
+          <li id="section-3.1-1.1">Provide one canonical twid per pane lifetime.<a href="#section-3.1-1.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.1-1.2">Normalize legacy identity sources into one schema.<a href="#section-3.1-1.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.1-1.3">Support portable local automation and telemetry tooling.<a href="#section-3.1-1.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.1-1.4">Operate with or without GUI and multiplexers.<a href="#section-3.1-1.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.1-1.5">Emit lifecycle events for machine-consumable transitions.<a href="#section-3.1-1.5" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="non-goals-list">
+<section id="section-3.2">
+        <h3 id="name-non-goals">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-non-goals" class="section-name selfRef">Non-Goals</a>
+        </h3>
+<ol start="1" type="1" class="normal type-1" id="section-3.2-1">
+          <li id="section-3.2-1.1">Replacing kernel PTY or process semantics.<a href="#section-3.2-1.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.2-1.2">Standardizing terminal rendering behavior.<a href="#section-3.2-1.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.2-1.3">Mandating GUI metadata exposure by default.<a href="#section-3.2-1.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="overview">
+<section id="section-4">
+      <h2 id="name-protocol-overview">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
+      </h2>
+<p id="section-4-1">TWIP defines three layers:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4-2">
+        <li id="section-4-2.1">Identity Object: canonical JSON structure.<a href="#section-4-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-4-2.2">Discovery Surfaces: environment variables, OSC, optional IPC.<a href="#section-4-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-4-2.3">Event and Capability Model: lifecycle streams and feature flags.<a href="#section-4-2.3" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="section-4-3">
+        A conformant implementation MAY expose only a subset of discovery
+        surfaces, subject to conformance levels in
+        <a href="#conformance" class="auto internal xref">Section 13</a>.<a href="#section-4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="identity">
+<section id="section-5">
+      <h2 id="name-canonical-identity-object">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-canonical-identity-object" class="section-name selfRef">Canonical Identity Object</a>
+      </h2>
+<p id="section-5-1">A TWIP identity object MUST include these top-level fields:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-2">
+        <li id="section-5-2.1">twid (UUIDv7 string; see <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>)<a href="#section-5-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.2">created_at (timestamp in RFC 3339 format; see <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>)<a href="#section-5-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.3">incarnation (non-negative integer)<a href="#section-5-2.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.4">scope<a href="#section-5-2.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.5">process (if available)<a href="#section-5-2.5" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.6">pty (if available)<a href="#section-5-2.6" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.7">multiplexer (if available)<a href="#section-5-2.7" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.8">legacy (normalized observations)<a href="#section-5-2.8" class="pilcrow">¶</a>
+</li>
+      </ol>
+<div id="scope-object">
+<section id="section-5.1">
+        <h3 id="name-scope-object">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-scope-object" class="section-name selfRef">Scope Object</a>
+        </h3>
+<p id="section-5.1-1">The scope object SHOULD include:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1-2">
+          <li id="section-5.1-2.1">host_id (pseudonymous host identifier)<a href="#section-5.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.1-2.2">emulator_id (implementation-defined terminal ID)<a href="#section-5.1-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.1-2.3">window_id (nullable)<a href="#section-5.1-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.1-2.4">tab_id (nullable)<a href="#section-5.1-2.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.1-2.5">pane_id (nullable)<a href="#section-5.1-2.5" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="identity-stability">
+<section id="section-5.2">
+        <h3 id="name-identity-stability">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-identity-stability" class="section-name selfRef">Identity Stability</a>
+        </h3>
+<ol start="1" type="1" class="normal type-1" id="section-5.2-1">
+          <li id="section-5.2-1.1">twid MUST remain stable for a pane lifetime.<a href="#section-5.2-1.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.2-1.2">
+            twid MUST rotate when a pane is duplicated into a distinct
+            runtime object.<a href="#section-5.2-1.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.2-1.3">
+            incarnation MUST increase when explicit identity
+            reconstitution occurs.<a href="#section-5.2-1.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="legacy">
+<section id="section-6">
+      <h2 id="name-legacy-identifier-normaliza">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-legacy-identifier-normaliza" class="section-name selfRef">Legacy Identifier Normalization</a>
+      </h2>
+<p id="section-6-1">
+        Each observed legacy identifier MUST be represented as a tuple
+        with key, value, source, confidence, and observed_at.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6-2">
+<pre>
+{
+  "key": "tty",
+  "value": "/dev/ttys003",
+  "source": "kernel",
+  "confidence": 1.0,
+  "observed_at": "2026-03-18T14:30:00Z"
+}
+</pre><a href="#section-6-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6-3">Required fields:<a href="#section-6-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-4">
+        <li id="section-6-4.1">key (string)<a href="#section-6-4.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-4.2">value (string, number, or scalar)<a href="#section-6-4.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-4.3">source (kernel, process, env, multiplexer, or gui)<a href="#section-6-4.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-4.4">confidence (0.0 to 1.0)<a href="#section-6-4.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-4.5">observed_at (timestamp in RFC 3339 format; see <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>)<a href="#section-6-4.5" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="section-6-5">Recommended key values:<a href="#section-6-5" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-6">
+        <li id="section-6-6.1">tty<a href="#section-6-6.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.2">pty_inode<a href="#section-6-6.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.3">shell_pid<a href="#section-6-6.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.4">pgid<a href="#section-6-6.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.5">sid<a href="#section-6-6.5" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.6">iterm_session_id<a href="#section-6-6.6" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.7">term_session_id<a href="#section-6-6.7" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.8">windowid<a href="#section-6-6.8" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.9">tmux_session (see <span>[<a href="#TMUX" class="cite xref">TMUX</a>]</span>)<a href="#section-6-6.9" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.10">tmux_window (see <span>[<a href="#TMUX" class="cite xref">TMUX</a>]</span>)<a href="#section-6-6.10" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.11">tmux_pane (see <span>[<a href="#TMUX" class="cite xref">TMUX</a>]</span>)<a href="#section-6-6.11" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.12">screen_window (see <span>[<a href="#SCREEN" class="cite xref">SCREEN</a>]</span>)<a href="#section-6-6.12" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.13">gui_window_handle<a href="#section-6-6.13" class="pilcrow">¶</a>
+</li>
+        <li id="section-6-6.14">gui_window_title<a href="#section-6-6.14" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<div id="discovery">
+<section id="section-7">
+      <h2 id="name-discovery-mechanisms">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-discovery-mechanisms" class="section-name selfRef">Discovery Mechanisms</a>
+      </h2>
+<div id="env-vars">
+<section id="section-7.1">
+        <h3 id="name-environment-variables">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-environment-variables" class="section-name selfRef">Environment Variables</a>
+        </h3>
+<p id="section-7.1-1">Implementations SHOULD expose:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-7.1-2">
+          <li id="section-7.1-2.1">TERMINAL_TWID<a href="#section-7.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.1-2.2">TERMINAL_TWIP_VERSION<a href="#section-7.1-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.1-2.3">TERMINAL_PANE_ID<a href="#section-7.1-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.1-2.4">TERMINAL_TAB_ID (optional)<a href="#section-7.1-2.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.1-2.5">TERMINAL_WINDOW_ID (optional)<a href="#section-7.1-2.5" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.1-2.6">TERMINAL_TWIP_SOCKET (optional)<a href="#section-7.1-2.6" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="osc-query">
+<section id="section-7.2">
+        <h3 id="name-osc-query-and-reply">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-osc-query-and-reply" class="section-name selfRef">OSC Query and Reply</a>
+        </h3>
+<p id="section-7.2-1">
+          Until control-sequence allocation is standardized,
+          implementations MAY use a vendor-private OSC envelope.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-7.2-2">
+          <li id="section-7.2-2.1">query type: twip.query<a href="#section-7.2-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.2-2.2">reply type: twip.reply<a href="#section-7.2-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.2-2.3">reply body: Base64URL-encoded UTF-8 JSON identity object<a href="#section-7.2-2.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-7.2-3">Receivers MUST ignore unknown fields.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="local-ipc">
+<section id="section-7.3">
+        <h3 id="name-local-ipc-api">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-local-ipc-api" class="section-name selfRef">Local IPC API</a>
+        </h3>
+<p id="section-7.3-1">
+          If TERMINAL_TWIP_SOCKET is present, it MUST reference a local
+          authenticated socket serving JSON.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-2">Required endpoints:<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-7.3-3">
+          <li id="section-7.3-3.1">GET /v1/identity<a href="#section-7.3-3.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.3-3.2">GET /v1/capabilities<a href="#section-7.3-3.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.3-3.3">GET /v1/events/stream<a href="#section-7.3-3.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="events">
+<section id="section-8">
+      <h2 id="name-lifecycle-event-model">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-lifecycle-event-model" class="section-name selfRef">Lifecycle Event Model</a>
+      </h2>
+<p id="section-8-1">Event emitters SHOULD publish:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8-2">
+        <li id="section-8-2.1">pane.created<a href="#section-8-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.2">pane.focused<a href="#section-8-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.3">pane.blurred<a href="#section-8-2.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.4">pane.split<a href="#section-8-2.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.5">pane.moved<a href="#section-8-2.5" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.6">tab.created<a href="#section-8-2.6" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.7">tab.closed<a href="#section-8-2.7" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.8">window.created<a href="#section-8-2.8" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.9">window.closed<a href="#section-8-2.9" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.10">pane.closed<a href="#section-8-2.10" class="pilcrow">¶</a>
+</li>
+        <li id="section-8-2.11">identity.reincarnated<a href="#section-8-2.11" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="section-8-3">Each event MUST include twid, timestamp, event_seq, and event_type.<a href="#section-8-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="capabilities">
+<section id="section-9">
+      <h2 id="name-capability-advertisement">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-capability-advertisement" class="section-name selfRef">Capability Advertisement</a>
+      </h2>
+<p id="section-9-1">/v1/capabilities MUST include:<a href="#section-9-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9-2">
+        <li id="section-9-2.1">twip_version<a href="#section-9-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-9-2.2">supports_gui_metadata<a href="#section-9-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-9-2.3">supports_focus_events<a href="#section-9-2.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-9-2.4">supports_multiplexer_mapping<a href="#section-9-2.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-9-2.5">supports_pty_inode<a href="#section-9-2.5" class="pilcrow">¶</a>
+</li>
+        <li id="section-9-2.6">supports_remote_propagation<a href="#section-9-2.6" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<div id="remote">
+<section id="section-10">
+      <h2 id="name-remote-propagation">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-remote-propagation" class="section-name selfRef">Remote Propagation</a>
+      </h2>
+<p id="section-10-1">Cross-host propagation MUST be disabled by default.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">When explicitly enabled, senders MAY forward:<a href="#section-10-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-10-3">
+        <li id="section-10-3.1">TWIP_ORIGIN_TWID<a href="#section-10-3.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-10-3.2">TWIP_ORIGIN_HOST_ID<a href="#section-10-3.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-10-3.3">TWIP_FORWARD_CHAIN<a href="#section-10-3.3" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="section-10-4">
+        Receivers MUST NOT overwrite local twid; they MAY append origin
+        linkage metadata.<a href="#section-10-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security">
+<section id="section-11">
+      <h2 id="name-security-considerations">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<ol start="1" type="1" class="normal type-1" id="section-11-1">
+        <li id="section-11-1.1">Local IPC MUST enforce same-user filesystem permission checks.<a href="#section-11-1.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-11-1.2">Session-bound tokens SHOULD be used for IPC clients.<a href="#section-11-1.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-11-1.3">Implementations MUST treat OSC payloads as untrusted input.<a href="#section-11-1.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-11-1.4">Event subscribers SHOULD be isolated from mutation endpoints.<a href="#section-11-1.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-11-1.5">Implementations SHOULD rate-limit query interfaces.<a href="#section-11-1.5" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<div id="privacy">
+<section id="section-12">
+      <h2 id="name-privacy-considerations">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
+      </h2>
+<ol start="1" type="1" class="normal type-1" id="section-12-1">
+        <li id="section-12-1.1">GUI title and handle exposure MUST be opt-in.<a href="#section-12-1.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-12-1.2">
+          Raw hostnames SHOULD NOT be exposed by default; pseudonymous
+          host_id SHOULD be used.<a href="#section-12-1.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-12-1.3">Forwarded origin fields SHOULD be minimized in multi-hop paths.<a href="#section-12-1.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-12-1.4">Implementations SHOULD support per-field redaction policies.<a href="#section-12-1.4" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<div id="conformance">
+<section id="section-13">
+      <h2 id="name-conformance-levels">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-conformance-levels" class="section-name selfRef">Conformance Levels</a>
+      </h2>
+<div id="l1">
+<section id="section-13.1">
+        <h3 id="name-level-1-core">
+<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-level-1-core" class="section-name selfRef">Level 1 (Core)</a>
+        </h3>
+<p id="section-13.1-1">Required:<a href="#section-13.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-13.1-2">
+          <li id="section-13.1-2.1">
+            identity object with twid, created_at, incarnation, scope,
+            and legacy;<a href="#section-13.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-13.1-2.2">environment variables TERMINAL_TWID and TERMINAL_TWIP_VERSION.<a href="#section-13.1-2.2" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="l2">
+<section id="section-13.2">
+        <h3 id="name-level-2-observable">
+<a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-level-2-observable" class="section-name selfRef">Level 2 (Observable)</a>
+        </h3>
+<p id="section-13.2-1">Level 1 plus capability endpoint and lifecycle event stream.<a href="#section-13.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="l3">
+<section id="section-13.3">
+        <h3 id="name-level-3-full">
+<a href="#section-13.3" class="section-number selfRef">13.3. </a><a href="#name-level-3-full" class="section-name selfRef">Level 3 (Full)</a>
+        </h3>
+<p id="section-13.3-1">
+          Level 2 plus multiplexer normalization, GUI privacy controls,
+          and explicit remote propagation controls.<a href="#section-13.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="iana">
+<section id="section-14">
+      <h2 id="name-iana-considerations">
+<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-14-1">This document has no IANA actions in this revision.<a href="#section-14-1" class="pilcrow">¶</a></p>
+<p id="section-14-2">
+        Future revisions may request standardized terminal control-
+        sequence allocation for TWIP query and reply semantics.<a href="#section-14-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example">
+<section id="section-15">
+      <h2 id="name-reference-identity-object">
+<a href="#section-15" class="section-number selfRef">15. </a><a href="#name-reference-identity-object" class="section-name selfRef">Reference Identity Object</a>
+      </h2>
+<div class="lang-json sourcecode" id="section-15-1">
+<pre>
+{
+  "twid": "0195f5f1-8f8f-7b1a-b1a4-9fa3d2b2d601",
+  "created_at": "2026-03-18T14:30:00Z",
+  "incarnation": 0,
+  "scope": {
+    "host_id": "h:9af31c2e",
+    "emulator_id": "wezterm",
+    "window_id": "win:42",
+    "tab_id": "tab:3",
+    "pane_id": "pane:7"
+  },
+  "process": {
+    "shell_pid": 84122,
+    "pgid": 84122,
+    "sid": 84122
+  },
+  "pty": {
+    "path": "/dev/ttys003",
+    "inode": 164889
+  },
+  "multiplexer": {
+    "kind": "tmux",
+    "session_id": "$1",
+    "window_id": "@12",
+    "pane_id": "%5"
+  },
+  "legacy": [
+    {
+      "key": "tty",
+      "value": "/dev/ttys003",
+      "source": "kernel",
+      "confidence": 1.0,
+      "observed_at": "2026-03-18T14:30:00Z"
+    }
+  ]
+}
+</pre><a href="#section-15-1" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="deployment">
+<section id="section-16">
+      <h2 id="name-deployment-guidance">
+<a href="#section-16" class="section-number selfRef">16. </a><a href="#name-deployment-guidance" class="section-name selfRef">Deployment Guidance</a>
+      </h2>
+<ol start="1" type="1" class="normal type-1" id="section-16-1">
+        <li id="section-16-1.1">Publish schema and conformance tests.<a href="#section-16-1.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-16-1.2">Ship local twipctl probe.<a href="#section-16-1.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-16-1.3">Add emulator and multiplexer adapters.<a href="#section-16-1.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-16-1.4">Collect interoperability test results.<a href="#section-16-1.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-16-1.5">Standardize control-sequence allocation.<a href="#section-16-1.5" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<div id="open-issues">
+<section id="section-17">
+      <h2 id="name-open-issues">
+<a href="#section-17" class="section-number selfRef">17. </a><a href="#name-open-issues" class="section-name selfRef">Open Issues</a>
+      </h2>
+<ol start="1" type="1" class="normal type-1" id="section-17-1">
+        <li id="section-17-1.1">Control-sequence registration strategy.<a href="#section-17-1.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-17-1.2">Default confidence calibration for GUI-derived fields.<a href="#section-17-1.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-17-1.3">Restored-session semantics across emulators.<a href="#section-17-1.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-17-1.4">Nested multiplexer identity mapping profile.<a href="#section-17-1.4" class="pilcrow">¶</a>
+</li>
+      </ol>
+</section>
+</div>
+<section id="section-18">
+      <h2 id="name-normative-references">
+<a href="#section-18" class="section-number selfRef">18. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      </h2>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+      <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3339">[RFC3339]</dt>
+      <dd>
+<span class="refAuthor">Klyne, G.</span> and <span class="refAuthor">C. Newman</span>, <span class="refTitle">"Date and Time on the Internet: Timestamps"</span>, <span class="seriesInfo">RFC 3339</span>, <span class="seriesInfo">DOI 10.17487/RFC3339</span>, <time datetime="2002-07" class="refDate">July 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3339">https://www.rfc-editor.org/info/rfc3339</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9562">[RFC9562]</dt>
+    <dd>
+<span class="refAuthor">Davis, K.</span>, <span class="refAuthor">Peabody, B.</span>, and <span class="refAuthor">P. Leach</span>, <span class="refTitle">"Universally Unique IDentifiers (UUIDs)"</span>, <span class="seriesInfo">RFC 9562</span>, <span class="seriesInfo">DOI 10.17487/RFC9562</span>, <time datetime="2024-05" class="refDate">May 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9562">https://www.rfc-editor.org/info/rfc9562</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<section id="section-19">
+      <h2 id="name-informative-references">
+<a href="#section-19" class="section-number selfRef">19. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      </h2>
+<dl class="references">
+<dt id="POSIX">[POSIX]</dt>
+      <dd>
+<span class="refAuthor">Group, T. O.</span>, <span class="refTitle">"POSIX.1-2017 Base Specifications, Issue 7"</span>, <time datetime="2018" class="refDate">2018</time>, <span>&lt;<a href="https://pubs.opengroup.org/onlinepubs/9699919799/">https://pubs.opengroup.org/onlinepubs/9699919799/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SCREEN">[SCREEN]</dt>
+      <dd>
+<span class="refAuthor">Project, G.</span>, <span class="refTitle">"GNU Screen Manual"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://www.gnu.org/software/screen/manual/">https://www.gnu.org/software/screen/manual/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TMUX">[TMUX]</dt>
+    <dd>
+<span class="refAuthor">Project, T.</span>, <span class="refTitle">"tmux Documentation"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://github.com/tmux/tmux/wiki">https://github.com/tmux/tmux/wiki</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">TWIP Editors</span></div>
+<div dir="auto" class="left"><span class="org">TWIP Community</span></div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>

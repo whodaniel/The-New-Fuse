@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+set -e
+
+# Committing is the SAFE path the mutation guard exists to steer agents toward,
+# and lint-staged parks unstaged changes with `git stash` as an implementation
+# detail of it. Without this, the guard would block its own commit pipeline.
+# Scoped to this hook's process tree only — it does not leak to the shell.
+export TNF_MUTATION_OK=1
+
+# Authority first: cheapest check, and the one that decides whether this
+# commit should exist at all. See .husky/tnf-authority.sh for what this does
+# and does not guarantee.
+. "$(git rev-parse --show-toplevel)/.husky/tnf-authority.sh"
+tnf_require_operator commit "staged=$(git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' ')"
+
+# Runs first: if a merge/rebase/cherry-pick is open, this commit would conclude
+# it. Cheap check, and it should fail before anything slower runs.
+# Authority surfaces (TURN_ZERO_MANDATE, DIRECTIVES, schemas, workflows,
+# sync-repos.sh, .gitignore) are approval-required for every agent per
+# data/protocols/agent-owned-docs.registry.json. TNF_OPERATOR_CONFIRM authorizes
+# committing this session; it does not authorize changing the rules. No-op
+# unless a staged path matches.
+pnpm run authority:surface:staged
+pnpm run merge:guard
+
+pnpm run privacy:guard:staged
+pnpm run secret:sweep:staged
+pnpm run docs:pii:guard:staged
+pnpm run lint:staged
+pnpm run validate:locked-doc-ledger:staged
+
+# Handoff artifacts were validated manually and in CI, but never at commit time.
+# On 2026-08-08 a concurrent process injected schema-invalid fields into
+# SESSION_HANDOFF_LATEST.json between the manual check and the commit; the
+# corrupted artifact committed cleanly and CI then blocked on a defect already
+# on the branch. Re-checking the staged content here keeps the commit-time and
+# CI verdicts from disagreeing. No-op unless critical paths are staged.
+pnpm run handoff:gate:staged
+
+# Runs last: the slowest check, so everything cheap fails first. Type-checks
+# only the packages you touched, and blocks only on errors this commit
+# introduces — pre-existing breakage elsewhere stays out of your way, because
+# a gate that blocks unrelated work gets bypassed and stops being a gate.
+pnpm run build:gate:staged

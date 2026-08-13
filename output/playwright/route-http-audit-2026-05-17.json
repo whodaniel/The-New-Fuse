@@ -1,0 +1,2292 @@
+{
+  "generatedAt": "2026-05-17T04:27:09.225Z",
+  "summary": {
+    "total": 174,
+    "statusBuckets": {
+      "200": 172,
+      "404": 2
+    },
+    "flags": {
+      "react185": 0,
+      "genericError": 0,
+      "authLogin": 0,
+      "notFound": 2
+    },
+    "non200": [
+      {
+        "route": "/api/admin/database",
+        "status": 404,
+        "effective": "https://app.thenewfuse.com/api/admin/database"
+      },
+      {
+        "route": "/api/admin/features",
+        "status": 404,
+        "effective": "https://app.thenewfuse.com/api/admin/features"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "route": "/",
+      "url": "https://app.thenewfuse.com/",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/dashboard",
+      "url": "https://app.thenewfuse.com/dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/home",
+      "url": "https://app.thenewfuse.com/home",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/home",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/multi-agent-chat",
+      "url": "https://app.thenewfuse.com/multi-agent-chat",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/multi-agent-chat",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-portal",
+      "url": "https://app.thenewfuse.com/ai-portal",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-portal",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-portal/pfp-studio",
+      "url": "https://app.thenewfuse.com/ai-portal/pfp-studio",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-portal/pfp-studio",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-portal/pfp-prompts",
+      "url": "https://app.thenewfuse.com/ai-portal/pfp-prompts",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-portal/pfp-prompts",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-agent-portal",
+      "url": "https://app.thenewfuse.com/ai-agent-portal",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-agent-portal",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/chat",
+      "url": "https://app.thenewfuse.com/chat",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/chat",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/chat-page",
+      "url": "https://app.thenewfuse.com/chat-page",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/chat-page",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-command-center",
+      "url": "https://app.thenewfuse.com/ai-command-center",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-command-center",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/live-view",
+      "url": "https://app.thenewfuse.com/live-view",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/live-view",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents",
+      "url": "https://app.thenewfuse.com/agents",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents/new",
+      "url": "https://app.thenewfuse.com/agents/new",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents/new",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents/nft-marketplace",
+      "url": "https://app.thenewfuse.com/agents/nft-marketplace",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents/nft-marketplace",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents/revenue-dashboard",
+      "url": "https://app.thenewfuse.com/agents/revenue-dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents/revenue-dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents/unified-creator",
+      "url": "https://app.thenewfuse.com/agents/unified-creator",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents/unified-creator",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/dashboard/agents",
+      "url": "https://app.thenewfuse.com/dashboard/agents",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/dashboard/agents",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/dashboard/agents/new",
+      "url": "https://app.thenewfuse.com/dashboard/agents/new",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/dashboard/agents/new",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/a2a-control",
+      "url": "https://app.thenewfuse.com/a2a-control",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/a2a-control",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/knowledge-hub",
+      "url": "https://app.thenewfuse.com/knowledge-hub",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/knowledge-hub",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/mcp-hub",
+      "url": "https://app.thenewfuse.com/mcp-hub",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/mcp-hub",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/overview",
+      "url": "https://app.thenewfuse.com/workspace/overview",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/overview",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/analytics",
+      "url": "https://app.thenewfuse.com/workspace/analytics",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/analytics",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/members",
+      "url": "https://app.thenewfuse.com/workspace/members",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/members",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/settings",
+      "url": "https://app.thenewfuse.com/workspace/settings",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/settings",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace-chat",
+      "url": "https://app.thenewfuse.com/workspace-chat",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace-chat",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/chat",
+      "url": "https://app.thenewfuse.com/workspace/chat",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/chat",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace/layout",
+      "url": "https://app.thenewfuse.com/workspace/layout",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace/layout",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/spaces",
+      "url": "https://app.thenewfuse.com/spaces",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/spaces",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/tasks",
+      "url": "https://app.thenewfuse.com/tasks",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/tasks",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/tasks/new",
+      "url": "https://app.thenewfuse.com/tasks/new",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/tasks/new",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/tasks-page",
+      "url": "https://app.thenewfuse.com/tasks-page",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/tasks-page",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/timeline",
+      "url": "https://app.thenewfuse.com/timeline",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/timeline",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/goals",
+      "url": "https://app.thenewfuse.com/goals",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/goals",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/plans",
+      "url": "https://app.thenewfuse.com/plans",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/plans",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows",
+      "url": "https://app.thenewfuse.com/workflows",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/builder",
+      "url": "https://app.thenewfuse.com/workflows/builder",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/builder",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/advanced-builder",
+      "url": "https://app.thenewfuse.com/workflows/advanced-builder",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/advanced-builder",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/templates",
+      "url": "https://app.thenewfuse.com/workflows/templates",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/templates",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/executions",
+      "url": "https://app.thenewfuse.com/workflows/executions",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/executions",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows-enhanced",
+      "url": "https://app.thenewfuse.com/workflows-enhanced",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows-enhanced",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/suggestions",
+      "url": "https://app.thenewfuse.com/suggestions",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/suggestions",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/suggestions/new",
+      "url": "https://app.thenewfuse.com/suggestions/new",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/suggestions/new",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin",
+      "url": "https://app.thenewfuse.com/admin",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/users",
+      "url": "https://app.thenewfuse.com/admin/users",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/users",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/workspaces",
+      "url": "https://app.thenewfuse.com/admin/workspaces",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/workspaces",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/system-health",
+      "url": "https://app.thenewfuse.com/admin/system-health",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/system-health",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/feature-flags",
+      "url": "https://app.thenewfuse.com/admin/feature-flags",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/feature-flags",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/port-management",
+      "url": "https://app.thenewfuse.com/admin/port-management",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/port-management",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/settings",
+      "url": "https://app.thenewfuse.com/admin/settings",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/settings",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/connect",
+      "url": "https://app.thenewfuse.com/connect",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/connect",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/onboarding",
+      "url": "https://app.thenewfuse.com/admin/onboarding",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/onboarding",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/dashboard",
+      "url": "https://app.thenewfuse.com/admin/dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/layout",
+      "url": "https://app.thenewfuse.com/admin/layout",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/layout",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/experimental-features",
+      "url": "https://app.thenewfuse.com/admin/experimental-features",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/experimental-features",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/agents/skills",
+      "url": "https://app.thenewfuse.com/admin/agents/skills",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/agents/skills",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/agents/web-search",
+      "url": "https://app.thenewfuse.com/admin/agents/web-search",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/agents/web-search",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/dashboard/analytics",
+      "url": "https://app.thenewfuse.com/dashboard/analytics",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/dashboard/analytics",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/dashboard/settings",
+      "url": "https://app.thenewfuse.com/dashboard/settings",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/dashboard/settings",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/analytics",
+      "url": "https://app.thenewfuse.com/analytics",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/analytics",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings",
+      "url": "https://app.thenewfuse.com/settings",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings/general",
+      "url": "https://app.thenewfuse.com/settings/general",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings/general",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings/appearance",
+      "url": "https://app.thenewfuse.com/settings/appearance",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings/appearance",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings/notifications",
+      "url": "https://app.thenewfuse.com/settings/notifications",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings/notifications",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings/security",
+      "url": "https://app.thenewfuse.com/settings/security",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings/security",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/settings/api",
+      "url": "https://app.thenewfuse.com/settings/api",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/settings/api",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/general-settings",
+      "url": "https://app.thenewfuse.com/general-settings",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/general-settings",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/general-settings/embedding",
+      "url": "https://app.thenewfuse.com/general-settings/embedding",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/general-settings/embedding",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/general-settings/community-hub",
+      "url": "https://app.thenewfuse.com/general-settings/community-hub",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/general-settings/community-hub",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace-settings/llm-selection",
+      "url": "https://app.thenewfuse.com/workspace-settings/llm-selection",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace-settings/llm-selection",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace-settings/chat-model",
+      "url": "https://app.thenewfuse.com/workspace-settings/chat-model",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace-settings/chat-model",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workspace-settings/agent-model",
+      "url": "https://app.thenewfuse.com/workspace-settings/agent-model",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workspace-settings/agent-model",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/login",
+      "url": "https://app.thenewfuse.com/login",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/login",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/register",
+      "url": "https://app.thenewfuse.com/register",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/register",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/login",
+      "url": "https://app.thenewfuse.com/auth/login",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/login",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/register",
+      "url": "https://app.thenewfuse.com/auth/register",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/register",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth",
+      "url": "https://app.thenewfuse.com/auth",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/sso",
+      "url": "https://app.thenewfuse.com/auth/sso",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/sso",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/google-callback",
+      "url": "https://app.thenewfuse.com/auth/google-callback",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/google-callback",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/oauth-callback",
+      "url": "https://app.thenewfuse.com/auth/oauth-callback",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/oauth-callback",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/forgot-password",
+      "url": "https://app.thenewfuse.com/auth/forgot-password",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/forgot-password",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/auth/reset-password",
+      "url": "https://app.thenewfuse.com/auth/reset-password",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/auth/reset-password",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/unauthorized",
+      "url": "https://app.thenewfuse.com/unauthorized",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/unauthorized",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/landing",
+      "url": "https://app.thenewfuse.com/landing",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/landing",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/landing-page",
+      "url": "https://app.thenewfuse.com/landing-page",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/landing-page",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/simple-landing",
+      "url": "https://app.thenewfuse.com/simple-landing",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/simple-landing",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/onboarding",
+      "url": "https://app.thenewfuse.com/onboarding",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/onboarding",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/preview/onboarding",
+      "url": "https://app.thenewfuse.com/preview/onboarding",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/preview/onboarding",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/legal/privacy",
+      "url": "https://app.thenewfuse.com/legal/privacy",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/legal/privacy",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/legal/terms",
+      "url": "https://app.thenewfuse.com/legal/terms",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/legal/terms",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/components",
+      "url": "https://app.thenewfuse.com/components",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/components",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/components-nav",
+      "url": "https://app.thenewfuse.com/components-nav",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/components-nav",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/components-showcase",
+      "url": "https://app.thenewfuse.com/components-showcase",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/components-showcase",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/timeline-demo",
+      "url": "https://app.thenewfuse.com/timeline-demo",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/timeline-demo",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/graph-demo",
+      "url": "https://app.thenewfuse.com/graph-demo",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/graph-demo",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/frontend-showcase",
+      "url": "https://app.thenewfuse.com/frontend-showcase",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/frontend-showcase",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/layout-example",
+      "url": "https://app.thenewfuse.com/layout-example",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/layout-example",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/simple-test",
+      "url": "https://app.thenewfuse.com/simple-test",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/simple-test",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/multi-agent-chat-demo",
+      "url": "https://app.thenewfuse.com/multi-agent-chat-demo",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/multi-agent-chat-demo",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/debug",
+      "url": "https://app.thenewfuse.com/debug",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/debug",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/build-info",
+      "url": "https://app.thenewfuse.com/build-info",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/build-info",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/debug-routing",
+      "url": "https://app.thenewfuse.com/debug-routing",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/debug-routing",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/all-pages",
+      "url": "https://app.thenewfuse.com/all-pages",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/all-pages",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/test",
+      "url": "https://app.thenewfuse.com/test",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/test",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/api/admin/database",
+      "url": "https://app.thenewfuse.com/api/admin/database",
+      "status": 404,
+      "size": 164,
+      "effective": "https://app.thenewfuse.com/api/admin/database",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": true
+      }
+    },
+    {
+      "route": "/api/admin/features",
+      "url": "https://app.thenewfuse.com/api/admin/features",
+      "status": 404,
+      "size": 164,
+      "effective": "https://app.thenewfuse.com/api/admin/features",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": true
+      }
+    },
+    {
+      "route": "/404",
+      "url": "https://app.thenewfuse.com/404",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/404",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/not-found",
+      "url": "https://app.thenewfuse.com/not-found",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/not-found",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/package/dashboard",
+      "url": "https://app.thenewfuse.com/package/dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/package/dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/package/login",
+      "url": "https://app.thenewfuse.com/package/login",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/package/login",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/package/agents",
+      "url": "https://app.thenewfuse.com/package/agents",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/package/agents",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/package/workflows",
+      "url": "https://app.thenewfuse.com/package/workflows",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/package/workflows",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/user/profile",
+      "url": "https://app.thenewfuse.com/user/profile",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/user/profile",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/dashboard",
+      "url": "https://app.thenewfuse.com/html/dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/admin",
+      "url": "https://app.thenewfuse.com/html/admin",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/admin",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/agents",
+      "url": "https://app.thenewfuse.com/html/agents",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/agents",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/chat",
+      "url": "https://app.thenewfuse.com/html/chat",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/chat",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/tasks",
+      "url": "https://app.thenewfuse.com/html/tasks",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/tasks",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/html/workflows",
+      "url": "https://app.thenewfuse.com/html/workflows",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/html/workflows",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/agent-management",
+      "url": "https://app.thenewfuse.com/admin/agent-management",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/agent-management",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/api-analytics",
+      "url": "https://app.thenewfuse.com/admin/api-analytics",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/api-analytics",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/audit-logs",
+      "url": "https://app.thenewfuse.com/admin/audit-logs",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/audit-logs",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/backup-restore",
+      "url": "https://app.thenewfuse.com/admin/backup-restore",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/backup-restore",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/configuration",
+      "url": "https://app.thenewfuse.com/admin/configuration",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/configuration",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/database",
+      "url": "https://app.thenewfuse.com/admin/database",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/database",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/openclaw-security",
+      "url": "https://app.thenewfuse.com/admin/openclaw-security",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/openclaw-security",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/system-metrics",
+      "url": "https://app.thenewfuse.com/admin/system-metrics",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/system-metrics",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/admin/user-management",
+      "url": "https://app.thenewfuse.com/admin/user-management",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/admin/user-management",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agency/dashboard",
+      "url": "https://app.thenewfuse.com/agency/dashboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agency/dashboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agency/onboard",
+      "url": "https://app.thenewfuse.com/agency/onboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agency/onboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agent-builder",
+      "url": "https://app.thenewfuse.com/agent-builder",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agent-builder",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agent-management",
+      "url": "https://app.thenewfuse.com/agent-management",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agent-management",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/agents/onboard",
+      "url": "https://app.thenewfuse.com/agents/onboard",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/agents/onboard",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ai-agents",
+      "url": "https://app.thenewfuse.com/ai-agents",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ai-agents",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/blog",
+      "url": "https://app.thenewfuse.com/blog",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/blog",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/brand",
+      "url": "https://app.thenewfuse.com/brand",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/brand",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/faq",
+      "url": "https://app.thenewfuse.com/faq",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/faq",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/comparisons",
+      "url": "https://app.thenewfuse.com/comparisons",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/comparisons",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/careers",
+      "url": "https://app.thenewfuse.com/careers",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/careers",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/ambassador",
+      "url": "https://app.thenewfuse.com/ambassador",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/ambassador",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/testimonials",
+      "url": "https://app.thenewfuse.com/testimonials",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/testimonials",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/command-center",
+      "url": "https://app.thenewfuse.com/command-center",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/command-center",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/community",
+      "url": "https://app.thenewfuse.com/community",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/community",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/contact",
+      "url": "https://app.thenewfuse.com/contact",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/contact",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/design-system",
+      "url": "https://app.thenewfuse.com/design-system",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/design-system",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/docs",
+      "url": "https://app.thenewfuse.com/docs",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/docs",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/main",
+      "url": "https://app.thenewfuse.com/main",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/main",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/observatory",
+      "url": "https://app.thenewfuse.com/observatory",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/observatory",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/onboarding/ai-agent",
+      "url": "https://app.thenewfuse.com/onboarding/ai-agent",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/onboarding/ai-agent",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/pricing",
+      "url": "https://app.thenewfuse.com/pricing",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/pricing",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/profile",
+      "url": "https://app.thenewfuse.com/profile",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/profile",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/marketplace",
+      "url": "https://app.thenewfuse.com/marketplace",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/marketplace",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/resources",
+      "url": "https://app.thenewfuse.com/resources",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/resources",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/files",
+      "url": "https://app.thenewfuse.com/files",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/files",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/tools",
+      "url": "https://app.thenewfuse.com/tools",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/tools",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/integrations",
+      "url": "https://app.thenewfuse.com/integrations",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/integrations",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/channels",
+      "url": "https://app.thenewfuse.com/channels",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/channels",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/models",
+      "url": "https://app.thenewfuse.com/models",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/models",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/skills",
+      "url": "https://app.thenewfuse.com/skills",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/skills",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/datasets",
+      "url": "https://app.thenewfuse.com/datasets",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/datasets",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/automations",
+      "url": "https://app.thenewfuse.com/automations",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/automations",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/chats",
+      "url": "https://app.thenewfuse.com/chats",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/chats",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/space",
+      "url": "https://app.thenewfuse.com/space",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/space",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/hosting",
+      "url": "https://app.thenewfuse.com/hosting",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/hosting",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/terminal",
+      "url": "https://app.thenewfuse.com/terminal",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/terminal",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/billing",
+      "url": "https://app.thenewfuse.com/billing",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/billing",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/bookmarks",
+      "url": "https://app.thenewfuse.com/bookmarks",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/bookmarks",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/platform-parity",
+      "url": "https://app.thenewfuse.com/platform-parity",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/platform-parity",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/system",
+      "url": "https://app.thenewfuse.com/system",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/system",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/support",
+      "url": "https://app.thenewfuse.com/support",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/support",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/console",
+      "url": "https://app.thenewfuse.com/workflows/console",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/console",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/detail",
+      "url": "https://app.thenewfuse.com/workflows/detail",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/detail",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    },
+    {
+      "route": "/workflows/execution",
+      "url": "https://app.thenewfuse.com/workflows/execution",
+      "status": 200,
+      "size": 26210,
+      "effective": "https://app.thenewfuse.com/workflows/execution",
+      "flags": {
+        "react185": false,
+        "genericError": false,
+        "authLogin": false,
+        "notFound": false
+      }
+    }
+  ]
+}

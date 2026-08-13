@@ -1,0 +1,3 @@
+interface:
+  display_name: "Hermes Snapshot Governor"
+  short_description: "Audit and safely prune Hermes state-snapshots"

@@ -1,0 +1,44 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "ES2020",
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "composite": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@the-new-fuse/*": ["../../packages/*"]
+    },
+    "types": ["jest", "node"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "coverage", "src/examples"],
+  "references": [
+    {
+      "path": "../extension-system"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../types"
+    }
+  ]
+}

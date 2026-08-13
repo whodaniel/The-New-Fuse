@@ -1,0 +1,70 @@
+{
+  "completed": [
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "timestamp": "2026-05-10T04:13:29.299Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "timestamp": "2026-05-10T04:13:50.955Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "timestamp": "2026-05-10T04:14:09.369Z"
+    }
+  ],
+  "failed": [
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T03:57:03.141Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T03:57:25.359Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T03:57:34.844Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T04:03:47.537Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T04:03:58.044Z"
+    },
+    {
+      "index": 682,
+      "videoId": "bSG9wUYaHWU",
+      "title": "Context Is the New Code — Patrick Debois, Tessl",
+      "error": "API Error: 404",
+      "timestamp": "2026-05-10T04:04:08.448Z"
+    }
+  ],
+  "skipped": [],
+  "lastProcessedIndex": 682,
+  "startTime": "2026-05-10T03:56:53.347Z",
+  "totalVideos": 764
+}

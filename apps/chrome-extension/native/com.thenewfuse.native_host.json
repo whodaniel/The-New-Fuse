@@ -1,0 +1,10 @@
+{
+  "name": "com.thenewfuse.native_host",
+  "description": "The New Fuse Native Messaging Host",
+  "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/native/host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://eeijfnjmjmnkhmkfjkllgnkkmnkhmkfj/",
+    "chrome-extension://gdgjcjkjkllgnkkmnkhmkfjkllgnkkm/"
+  ]
+}

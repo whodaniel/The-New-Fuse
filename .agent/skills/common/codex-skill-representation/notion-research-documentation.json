@@ -1,0 +1,12 @@
+{
+  "skillName": "notion-research-documentation",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/notion-research-documentation/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/notion-research-documentation/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/notion-research-documentation.json",
+  "status": "present"
+}

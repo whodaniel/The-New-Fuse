@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-cron-governance.schema.json",
+  "title": "TNF Cron Governance Request",
+  "description": "Policy envelope for creating or mutating cron jobs with scope/category RBAC and federation gate attestations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec",
+    "request_id",
+    "tenant_id",
+    "actor",
+    "target",
+    "cumulative_id",
+    "gate_decisions",
+    "created_at"
+  ],
+  "properties": {
+    "spec": {
+      "type": "string",
+      "const": "tnf/cron-governance/0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "roles"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["user", "agent", "system"]
+        },
+        "user_id": {
+          "type": ["string", "null"]
+        },
+        "agent_id": {
+          "type": ["string", "null"]
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "category", "schedule_id", "action"],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": ["system_framework", "tenant"]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "system_framework",
+            "orchestration_gate",
+            "federation_sync",
+            "self_improvement_core",
+            "observability",
+            "system_terminal_awareness",
+            "tenant_automation",
+            "tenant_agent_loop",
+            "tenant_experiment",
+            "tenant_terminal_awareness"
+          ]
+        },
+        "schedule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": ["create", "update", "pause", "resume", "delete"]
+        },
+        "cron_expression": {
+          "type": ["string", "null"]
+        },
+        "owner_user_id": {
+          "type": ["string", "null"]
+        },
+        "owner_agent_id": {
+          "type": ["string", "null"]
+        },
+        "enabled": {
+          "type": ["boolean", "null"]
+        },
+        "endpoint": {
+          "type": ["string", "null"]
+        },
+        "command": {
+          "type": ["string", "null"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "delegation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "delegated_by_super_admin": {
+          "type": "boolean",
+          "default": false
+        },
+        "super_admin_id": {
+          "type": ["string", "null"]
+        },
+        "directive_id": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "approved": {
+          "type": "boolean"
+        },
+        "approved_by": {
+          "type": ["string", "null"]
+        },
+        "approved_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "cumulative_id": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec", "id", "scope", "lineage"],
+      "properties": {
+        "spec": {
+          "type": "string",
+          "const": "tnf/mcid/0.1"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tenant_id"],
+          "properties": {
+            "tenant_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cron_namespace": {
+              "type": ["string", "null"]
+            },
+            "session_key": {
+              "type": ["string", "null"]
+            },
+            "workflow_id": {
+              "type": ["string", "null"]
+            },
+            "channel_id": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "lineage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["correlation_id", "causation_id"],
+          "properties": {
+            "trace_id": {
+              "type": ["string", "null"],
+              "format": "uuid"
+            },
+            "correlation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "causation_id": {
+              "type": ["string", "null"],
+              "format": "uuid"
+            },
+            "handoff_packet_id": {
+              "type": ["string", "null"],
+              "format": "uuid"
+            },
+            "twid": {
+              "type": ["string", "null"],
+              "format": "uuid"
+            },
+            "task_id": {
+              "type": ["string", "null"]
+            },
+            "schedule_id": {
+              "type": ["string", "null"]
+            },
+            "schedule_run_id": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "gate_decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate", "decision", "at"],
+        "properties": {
+          "gate": {
+            "type": "string",
+            "enum": [
+              "TENANT_SCOPE_GATE",
+              "TRACE_CONTINUITY_GATE",
+              "CHANNEL_MEMBERSHIP_GATE",
+              "CRON_SCOPE_GATE",
+              "CRON_CATEGORY_GATE",
+              "CRON_OWNERSHIP_GATE",
+              "WRITE_RATE_LIMIT_GATE",
+              "APPROVAL_GATE"
+            ]
+          },
+          "decision": {
+            "type": "string",
+            "enum": ["allow", "deny", "quarantine"]
+          },
+          "reason": {
+            "type": ["string", "null"]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

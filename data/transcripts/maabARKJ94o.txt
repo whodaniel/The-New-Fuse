@@ -1,0 +1,499 @@
+agent skills
+&gt;&gt; so hot right now.
+&gt;&gt; But which ones are non-negotiable for
+aspiring vibe coders? That is what we're
+going to go through in this video. From
+debugging your most painful issues, now
+it is moving through all of those stages
+that we looked at inside of that GitHub
+repository. So, it's going to try to
+understand the root cause, figure out
+what patterns are being used and what
+might be going wrong, come up with a
+hypothesis, and then test a fix to
+giving the AI access to your browser. We
+can have it run through this type of
+process and then actually perform an
+audit and tell us what it thinks we
+should improve and the methods to funnel
+it all into a powerful vibe coding
+system. Now, let's kick it off with the
+most botched piece of the vibe coding
+universe. So, the first skill up is one
+that I talk about anytime this topic
+comes up, the Ora superpowers library,
+brainstorming skill. So, the most
+important part of vibe coding anything
+is the planning process. So, there's
+this misconception that vibe coding
+means that you're just doing things
+mindlessly inside of some tool asking it
+to build Instagram for cats without
+really thinking about what you want to
+build and why. And that's simply not
+true. And so, the brainstorming skill
+helps us obliterate that claim by
+helping us explore the intent and
+requirements and design of the system
+before we try to start implementing it.
+And the translation is that we can
+actually build something real from it.
+So, let's say that we're here inside of
+this app, which is a social media
+management agent that I've been working
+on. And in this case, we want to make a
+pretty meaningful change, which is that
+I don't like this two panel layout. And
+I want to make this third panel over on
+the right hand side where I can add in
+more information and context just to see
+how far we can push this skill in this
+specific situation. I'm not just going
+to say, hey, add this other panel in
+there. Going to ask it to add a little
+bit of feature featurage to it. So, help
+me brainstorm changing this app into a
+three panel layout. On the right third,
+I want it to be a separate like command
+style window. And then inside of that
+window, I want to be able to load in
+additional context. Like maybe it's
+specific competitor videos, PDFs,
+resources, viral Twitter threads,
+whatever it might be. And the user from
+there can like plan this video, see the
+plan, track to-dos for it, stuff like
+that. So it might not be the most
+advanced thing in the world, but it's
+also, you know, it has different things
+going on there in terms of the backend,
+the agent logic, the front end. There's
+a lot of stuff that's going to need to
+be done. So we can see that it has
+called this brainstorming skill in and
+is now using that in the context of what
+I asked. And so once this thing has
+processed, what you can see begins to
+happen is it starts asking us questions.
+And the questions are trying to
+understand our intent for what we are
+building. Okay. So, now that I've gone
+back and forth with this a little bit
+and answered a lot of the questions and
+clarified a few things about what I
+really wanted, which is part of the key
+point of this entire thing, I can now
+move forward and actually write this
+plan to a document. So, the
+brainstorming part is complete, but Ora
+has other skills. So this is a little
+bit of a bonus skill that actually excel
+in writing specific plans and then
+executing those plans. But you can take
+the context of this implementation
+summary and then pass it in for example
+to a different planning system that you
+might have like claude codes builtin
+plan mode. So, if you want to move away
+from the vibe coder bro archetype to the
+vibe engineer that thinks about the
+things and plans them but doesn't write
+the code, this skill is an absolute
+must. But once we have this plan built
+out, what do we actually do from there?
+How do we actually move forward and
+build this thing in a contained way
+where we don't break other things that
+might already be working? So this
+specific way of working that I'm about
+to go through is actually validated by
+the guy who created Claude Code. And he
+said that this is one of the big
+productivity hacks that people
+internally at Anthropic use to do a lot
+more work a lot more quickly and still
+do it well. And the concept here is
+using Git work trees, which is the next
+skill we're going to look at. So Git
+work trees allow you to create isolated
+work environments. So imagine a scenario
+where you have three different plans
+that you just built with the
+brainstorming tool and you want to work
+at them all at the same time. One maybe
+one is like a new feature that you want
+to build, one is a bug fix, and one is a
+series of different UI fixes. Well, what
+would you do in that situation? What a
+lot of people might do is try to just
+kick all of that off to different agents
+within the same project. And the problem
+that creates is that the agents end up
+overwriting each other's work. So what
+would suck is that if you had just
+completed some UI work and you were
+happy with how it was looking and then 2
+seconds later another agent comes along
+and undoes the entire thing. Obviously
+we can't have that. And so one solution
+is using git work trees. So let's say
+that we just created this new plan which
+we worked on together and now we want to
+actually start building it. What we're
+going to do is we are going to call this
+git workree skill. And so what we can
+see now is that over on the lefth hand
+side, this new.work trees directory has
+been made and it basically has a clone
+of our entire project at the point in
+time that we asked it to create the
+tree. So if I was to go into a file for
+example like this content brainstorm and
+delete the entire thing and then pop
+back out into our main project and go
+down to that same file, we can see that
+the file is still there. So it's removed
+from the work tree, but our main core
+project has not been impacted. And so
+that's why the system of using work
+trees was number one on the list of
+things that the actual claude code team
+uses because again, you can spin up
+three to five different work trees at
+once and have them all working on
+different things that it can then bring
+together in the end. So it's a huge
+timesaver. So, if you really want to
+become a competent power user of tools
+like this, the get work tree skill is a
+huge benefit. So, this thing's off to
+the races and plans are all well and
+good. But the fact of reality is this is
+not always going to go to plan 100% of
+the time, and anyone that tells you
+otherwise is being slightly dishonest
+with you. But of all the methods I found
+to fix what is broken decisively, this
+one is by far the best I've encountered.
+It's a tool called systematic debugging.
+And the reason that I really like it is
+that it's a lot more advanced than
+simply saying, "Hey, go fix my bug and
+be thorough because it moves through
+multiple stages from trying to actually
+understand the root cause to
+understanding the patterns that are kind
+of working under the hood and how that
+might be resulting in something that's
+maybe broken to forming a hypothesis
+about what this root cause actually is
+and tests to actually fix this thing.
+And so it's a very systematic process
+and that's why it works really really
+well. And so one of the things that's
+slightly broken about this that has been
+bothering me that I need to fix is this.
+When I select the item from the chat and
+then say, "Hey, let's move forward with
+this one." It's supposed to be able to
+pull through the context of what is
+selected and automatically pass that to
+the agent. But it's not doing that,
+right? It's saying, "Oh, I'd love to
+move forward, but you need to let me
+know which one it is that you picked."
+That's not how that's supposed to
+happen. And so this would be a really
+good example of where we could use this
+skill. So in this case, we're going to
+say use the systematic debugging skill
+to help me fix this problem. When I
+select the option from this component,
+so I'm specifying what component it was
+specifically, it's not passing through
+the context properly, and it should be.
+And so now it is moving through all of
+those stages that we looked at inside of
+that GitHub repository. So, it's going
+to try to understand the root cause,
+figure out what patterns are being used
+and what might be going wrong, come up
+with a hypothesis, and then test a fix.
+Okay, so that debugging process is
+finished. I'm going to try that same
+prompt again, and then if this works, we
+will go back and look at what that
+process actually looked like. So, now
+that this thing has run through, we
+still have messages that are rendering
+out of order, but once I select this one
+and say, "Hey, I want to move forward
+with this one." it's able to properly
+pull through the context of which video
+it is that I was talking about. And so
+from here, I could now just move on to
+the next stage, which would be starting
+to think about like the the title that
+we're going to use. So, this bug was
+driving me crazy for a good amount of
+time. And with a little bit of back and
+forth and giving logs, we were able to
+solve this problem, which has honestly
+been plaguing me. So, we've all been in
+those death spirals before. They really
+suck. And this skill is a great way to
+help get us out of those situations. So
+that's why it should be a tool in your
+daily stack. But even if you do that
+properly and you're solving things that
+are like actually bugs, the one thing
+that there haven't been a lot of great
+tools or skills for are actually
+optimizing the performance of what
+you've built. And that's why the next
+skill that I want to go through with you
+guys is called Verscel's React best
+practices. Now, if you vibe code
+regularly, there's good odds that you
+build stuff with React or Nex.js. But if
+you don't, there are other versions of
+these types of tools from other
+providers. Now, for those that don't
+know, Verscell created Nex.js. And so,
+this skill is actually built by Versel's
+engineering team. So, when you run this
+thing, it's going to audit all of their
+best practices against your actual
+project. So, let's take a look at what
+this might look like. So, here we're
+looking at a different project that I
+use sometimes as examples here on the
+channel or inside of my free group. And
+it is an AI powered thumbnail tool which
+uses Gemini's nano banana under the
+hood. And the thing that's cool about it
+is you can actually select specific
+areas on the screen and send through
+specific edits based on like bounding
+box coordinates on the screen. But the
+front end here is built using Nex.js. So
+if we were to pop down into the project
+and actually run this thing, we can see
+what an optimization critique might look
+like. And so after only like two or
+three minutes, this skill audited my
+entire project against those best
+practices and it found some things that
+I should probably take some time to go
+in and fix at least if I wanted to put
+this thing in other people's hands. So,
+we have everything from critical issues
+like how I'm doing my image encoding and
+how some of the imports are working
+inside of the project and then some
+other issues that I would want to add to
+my backlog to go through and make sure I
+get all of these things cleaned up. So,
+ain't nobody got time for a vibecoded
+app that sucks and loads like it's9s
+dialup internet. So, just download this
+thing and run it or some version of it
+depending on how you build. But if
+there's one thing that ain't nobody got
+time for more than slow loading, it's
+getting your compromised by one of
+those maltbook bros. What I mean is you
+should have some sort of skills
+dedicated to security. And so the reason
+that I picked out this skill and use it
+frequently is that it's actually about
+five different skills in one. So these
+skills at least help make sure that you
+don't have some sort of giant very
+obvious gap in what you've built. And so
+there's a few different skills, like I
+said, that we can use inside of this.
+And this plugin also comes with agents
+that you can run, which is another cool
+bonus. But for example, if we were to
+run this static analysis of our
+codebase, it's going to run through and
+it is going to analyze our project
+against known security vulnerabilities.
+Okay. So now that that is done, let's
+look at what the report showed. So we
+have two critical things that need to be
+addressed. Now, this isn't a live
+project that I actually use, so I'm not
+as worried about this one. But we are
+missing rate limiting, right? So,
+somebody could, if they got access to
+our system, abuse the out of the
+endpoints inside of our project. So, we
+need to have rate limiting systems in
+place, right? And so, this is going to
+move through from critical issues to
+high severity issues to medium severity
+issues to low severity issues. And the
+thing that's nice is it's going to
+actually tell you what you should do
+about it. So don't be that guy that
+takes a lot of time to build something
+they really care about and then doesn't
+take a few hours to make sure that it's
+really locked down. So next up at number
+seven, one that is really powerful even
+outside of the context of vibe coding
+and that is Versel's browser automation.
+And so you can kind of think of this
+like an agent optimized tool for
+accessing a browser, being able to
+actually log in and fill in a password.
+So it can move around, it can take
+actions. You're basically giving an AI
+access to Google Chrome with very clear
+instructions about how to be able to do
+stuff. Now, you can use this for some
+really cool workflows. So, my old
+self-correcting UXUI system would apply
+here where you can take screenshots and
+have the system iteratively fix and
+grade itself. It's helpful in scraping
+situations where for some reason like
+you can't use an API, but you still want
+to mimic a human being actually going in
+and interacting with the stuff and
+scraping certain types of content. And
+then obviously automating testing inside
+of your app is a a really big use case
+of this. So sky is the limit. Those
+examples are just really scratching the
+surface. But let's take a look at one
+concrete use case. And so now that we're
+down in this project, we can do
+something like ask the agent to use the
+agent browser skill to analyze my
+project and critique the implementation
+of our app's design system or like
+against our app's design system and
+known best practices. And so now as this
+thing is running, we can see as it's
+taking screenshots in this headless kind
+of browser that it is running. So the
+thing that's really cool is we can have
+it run through this type of process and
+then actually perform an audit and tell
+us what it thinks we should improve. Now
+the thing that's really nice about this
+is this can be done again based on
+common UI skill libraries. So if you
+have another library that specializes
+in, for example, dialing in your UI, you
+can combine these two so that it uses
+the agent browser to take screenshots
+and then it uses the UI library to
+actually run the audit and make the
+fixes. So when you start stacking these
+things together, it can become super
+valuable tool. So in this case, one of
+the biggest high priority fixes in this
+app is how we're handling, for example,
+our loading states and empty states and
+giving better success and error feedback
+in the UI when users do certain types of
+things. So obviously we gave a really
+basic example here and a basic prompt,
+but you can take this thing and make it
+really awesome. So again, this is just
+scratching the surface, but I think out
+of everything on this list, this one, in
+addition to the one that I'm about to go
+through, has the most legs outside of
+just vibe coding. So you can use this
+practically in other areas of life or
+business, depending on what you're
+trying to do. So last up on the list,
+and definitely the most meta of all of
+them, is a skill for writing skills. So,
+there's a few different libraries that
+help you write skills or have their own
+skill creator skill, but this is the
+best one that I have found, and I want
+to explain why. So, this skill actually
+follows a process for creating skills
+that actually mirrors how you would
+create really good software, testdriven
+development. And so, here's why this is
+different than most other skill creation
+skills with other options. When you ask
+them to create a skill, mostly all it
+does is take whatever context you just
+gave it and turn it into something that
+is technically formatted as a skill and
+could be usable inside of a system that
+uses skills. And in a lot of situations,
+that's fine and that's all you need. But
+what it doesn't do is take the step to
+say, how effective is what you're
+telling me actually doing the thing it's
+meant to do? But the Obra writing skills
+skill does exactly that. And it does it
+with this testdriven approach. And it's
+able to do this because it tests how
+well the model is able to actually do
+the work before your skill and then how
+it complies with the skill after the
+fact. And then based on that gap, it is
+going to refactor the skill and make it
+better in order to close those
+loopholes. And so the TLDDR of all of
+that, it makes the skills better by
+filling in the gaps between the state
+before you even had the skill and the
+state you had after the skill and
+whether or not that's actually
+accomplishing the goal you wanted it to
+accomplish. And here's why this matters.
+If I may stand upon my soap box for a
+moment. Editor, put me uh standing on a
+soap box. Four score. I'm just kidding.
+People that are able to master agent
+loops will be powerhouse performers. in
+the coming years. That's not just in
+vibe coding, but that's in anything that
+you do. And the one thing that makes
+agent loops really strong are skills.
+So, if you can learn to make skills
+better than other people, you're going
+to have a significant advantage. And so,
+my general rule of thumb is this. If I
+find myself doing a task more than a few
+times per week, I try to turn it into a
+skill. And if it's something that
+benefits from best practices, your
+opinionated way of doing something, or
+someone that you trust's opinionated way
+of doing something, even better. And all
+of these skills that we've gone through
+on the list are a really good example of
+that. There are people that are really
+talented at what they do that created a
+skill that gave an opinionated way to do
+something that I'm now able to vibe code
+and build stuff better because I use
+those skills. And there's no better way
+to learn how these types of skills
+actually work than to actually build
+some yourself and see how far you can
+push it, what breaks, what doesn't work
+as expected. So honestly, of everything
+on this list, if you used only one, it's
+probably this one. So, if you like this
+video and want to squeeze even more
+juice out of tools like Clawude Code,
+check out the video popping up somewhere
+around my head right now where I break
+down the 15 best Clawed Code power-ups
+coming directly from Anthropic. That is
+it for this video, though. I will see
+you in the next

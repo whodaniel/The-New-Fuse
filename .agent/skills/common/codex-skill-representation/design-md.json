@@ -1,0 +1,12 @@
+{
+  "skillName": "design-md",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/design-md/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/design-md/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/design-md.json",
+  "status": "present"
+}

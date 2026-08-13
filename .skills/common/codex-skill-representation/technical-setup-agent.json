@@ -1,0 +1,12 @@
+{
+  "skillName": "technical-setup-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/technical-setup-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/technical-setup-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/technical-setup-agent.json",
+  "status": "present"
+}

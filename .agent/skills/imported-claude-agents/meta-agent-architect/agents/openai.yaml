@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meta Agent Architect"
+  short_description: "Help with Meta Agent Architect tasks"
+  default_prompt: "Run the Meta Agent Architect workflow using SKILL.md instructions."

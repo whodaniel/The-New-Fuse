@@ -1,0 +1,50 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "Node",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "types": ["node", "jest"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@the-new-fuse/database/drizzle/*": [
+        "../../packages/database/dist/drizzle/*"
+      ],
+      "@the-new-fuse/database/drizzle": [
+        "../../packages/database/dist/drizzle/index"
+      ],
+      "@the-new-fuse/n8n-workflows": [
+        "../../packages/n8n-workflows/dist/index"
+      ],
+      "@the-new-fuse/n8n-workflows/*": ["../../packages/n8n-workflows/dist/*"],
+      "@the-new-fuse/relay-core": ["../../packages/relay-core/dist/index"],
+      "@the-new-fuse/relay-core/*": ["../../packages/relay-core/dist/*"],
+      "@the-new-fuse/types": ["../../packages/types/dist/index"],
+      "@the-new-fuse/*": ["../../packages/*/dist"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/scripts/**/*",
+    "src/modules/agent-tracking/**/*",
+    "src/middleware/agent-tracking.middleware.ts"
+  ],
+  "references": [
+    { "path": "../../packages/types" },
+
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" }
+  ]
+}

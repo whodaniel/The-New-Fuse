@@ -1,0 +1,722 @@
+{
+  "summary": {
+    "generatedAt": "2026-05-07T18:31:02.684Z",
+    "totalFiles": 78,
+    "counts": {
+      "publicAllowed": 63,
+      "internalOnly": 15,
+      "privateRestrict": 0
+    }
+  },
+  "results": [
+    {
+      "file": "apps/api/src/agents/implementer.service.ts",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "apps/api/src/controllers/__tests__/workspace.controller.spec.ts",
+      "classification": "internal-only",
+      "reasons": [
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "apps/api/src/controllers/workspace.controller.ts",
+      "classification": "internal-only",
+      "reasons": [
+        "contains private narrative project label"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "apps/api/src/modules/unified-ledger/unified-ledger.service.spec.ts",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 8
+    },
+    {
+      "file": "apps/api/src/modules/unified-ledger/unified-ledger.service.ts",
+      "classification": "internal-only",
+      "reasons": [
+        "contains private narrative project label",
+        "contains public GitHub handle/repository reference",
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 8
+    },
+    {
+      "file": "apps/api/src/services/auth.service.spec.ts",
+      "classification": "internal-only",
+      "reasons": [
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/_archive/2024-deployment-reports/DOCKER_HUB_DEPLOYMENT.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains public GitHub handle/repository reference",
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 8
+    },
+    {
+      "file": "docs/_archive/2024-pre-restructure/migration-docs/SETUP_INSTRUCTIONS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/_archive/redundant-near/2026-03-24/security/SECURITY-FIXES-SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/_archives/2024-migration/CLEANUP_COMPLETE_REPORT.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/agents/_archive/development-guide.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/agents/AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/API_DOCUMENTATION_README.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/architecture/MONOREPO_ARCHITECTURE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/archive/comprehensive_improvement_report.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/archive/DEPLOYMENT_STATUS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 3
+    },
+    {
+      "file": "docs/archive/deployment/DEPLOY_API_FIX.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/archive/EMERGENCY_FIXES_COMPLETE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 4
+    },
+    {
+      "file": "docs/archive/FINAL_VICTORY_REPORT.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/archive/HANDOFF_NEXT_SESSION.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/archive/jules/JULES_DELEGATION_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/archive/PR_MERGE_DECISIONS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/archive/PULL_REQUEST_REVIEW.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/archive/PUSH_INSTRUCTIONS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 5
+    },
+    {
+      "file": "docs/archive/session-reports/EXECUTION_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/audits/CLOUD_RUNTIME_TNF_SERVICE_INSPECTION_2026-03-09.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 8
+    },
+    {
+      "file": "docs/core/SECURITY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/deployment/DEPLOYMENT_STATUS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/deployment/DEPLOYMENT.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/deployment/MANUAL_SETUP_REQUIRED.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 5
+    },
+    {
+      "file": "docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_INSTRUCTIONS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 5
+    },
+    {
+      "file": "docs/development/BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/development/guide.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/FRONTEND_PRODUCTION_READINESS_STATUS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/getting-started/_archive/installation.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/guides/setup-instructions.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/HERMES_FEATURE_PARITY_PLAN.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/hermes_tnf_env.sh",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/IMPLEMENTATION_COMPLETE_JULES_INTEGRATION.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/integrations/API_DOCUMENTATION_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/integrations/github-timeline-sync.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 6
+    },
+    {
+      "file": "docs/JULES_AGENT_INTEGRATION.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/JULES_AUTONOMOUS_LOOP.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/JULES_PR_FOLLOWUP_PLAYBOOK.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/JULES_SESSIONS_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/library/COURSEFORGE_MANUSCRIPT_MAP_2026-05-05.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path",
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/library/LIBRARIAN_INTEGRITY_CHECKPOINT_2026-05-05.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains private narrative project label",
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/library/LIBRARIAN_RESUME_MAP.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains private narrative project label",
+        "contains absolute local filesystem path",
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 8
+    },
+    {
+      "file": "docs/operations/TNF_AUDIT_DIRECTOR_HANDOFF.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/operations/tnf-self-improvement-run-log.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/project-management/DELIVERABLES.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/project-management/PR_CREATION_GUIDE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/protocols/storage/tnf-virtual-library-surface-map.json",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/README.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 4
+    },
+    {
+      "file": "docs/reels_purchase_report.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/REPO_SEPARATION.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 8
+    },
+    {
+      "file": "docs/roadmaps/TNF_FEDERATED_CONTROL_PLANE_OUTLINE_2026-03-18.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/roadmaps/TNF_FEDERATED_ORCHESTRATION_GTM_PLAN_2026-03-18.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains bizsynth identity token"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/security/PRIVACY_HISTORY_AUDIT_2026-05-06.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains only low-risk public references"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/security/SECURITY_INCIDENT_RESPONSE.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/security/SECURITY-CLEANUP-SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/SKIDEANCER_DEPLOYMENT.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 3
+    },
+    {
+      "file": "docs/specifications/_archive/MCP_TROUBLESHOOTING.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/STRATEGIC_ANTHROPIC_INTEGRATION_PLAN.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/THEIA_502_FIX.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/THEIA_INTEGRATION_SUMMARY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/THEIA_ISOLATION_STRATEGY.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 8
+    },
+    {
+      "file": "docs/THEIA_CLOUD_RUNTIME_FIX.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    },
+    {
+      "file": "docs/TNF_HERMES_FEATURE_PARITY_REPORT.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 2
+    },
+    {
+      "file": "docs/TNF_HERMES_FEATURE_PARITY_SUMMARY.md",
+      "classification": "internal-only",
+      "reasons": [
+        "contains absolute local filesystem path"
+      ],
+      "action": "keep in internal/private docs set; avoid mirroring to public docs repos",
+      "evidenceCount": 4
+    },
+    {
+      "file": "docs/TNF_LEGACY_AND_CURRENT_STATE_SYNTHESIS.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 3
+    },
+    {
+      "file": "docs/TNF_LEGACY_TO_PRESENT_SYNTHESIS_v1.0.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 4
+    },
+    {
+      "file": "docs/TNF_MASTER_MANIFESTO.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 3
+    },
+    {
+      "file": "docs/WEBSITE_QA_TESTING_LOG.md",
+      "classification": "public-allowed",
+      "reasons": [
+        "contains public GitHub handle/repository reference"
+      ],
+      "action": "safe for public repo context",
+      "evidenceCount": 1
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-task-production-pipeline",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-task-production-pipeline/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-task-production-pipeline/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-task-production-pipeline.json",
+  "status": "present"
+}

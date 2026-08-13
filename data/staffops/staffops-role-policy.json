@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "tnf-staffops-role-policy/v1",
+  "visibility": "staffops-only",
+  "allowedActorIds": [
+    "tnf-local-subdirector",
+    "tnf-staffops-local-subdirector-01",
+    "tnf-staffops-llm-api-runner-01",
+    "tnf-staffops-staffing-director-01",
+    "tnf-staffops-staff-review-01"
+  ],
+  "allowedActorPatterns": ["tnf-staffops-*"],
+  "resources": {
+    "data/staffops/llm-provider-catalog.json": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "data/staffops/llm-provider-test-results.json": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "data/staffops/llm-quota-state.json": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-local-subdirector", "tnf-staffops-*"]
+    },
+    "logs/staffops-llm-routing.jsonl": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-local-subdirector", "tnf-staffops-*"]
+    },
+    "reports/protocols/staffing-director/staffing-director-latest.json": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "reports/protocols/staffing-director/staffing-director-latest.md": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "reports/protocols/staff-review/staff-review-latest.json": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "reports/protocols/staff-review/staff-review-latest.md": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "logs/staffops-staffing.jsonl": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    },
+    "logs/staffops-review.jsonl": {
+      "read": ["tnf-local-subdirector", "tnf-staffops-*"],
+      "write": ["tnf-staffops-*"]
+    }
+  }
+}

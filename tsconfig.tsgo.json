@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "worktrees",
+    "apps/external",
+    "archive",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "packages/core/hooks",
+    "packages/features",
+    "packages/utils/disabled_modules",
+    "packages/core/src/communication",
+    "packages/integration-tests/src/examples",
+    "packages/core/collaboration",
+    "packages/core/components",
+    "scripts"
+  ]
+}

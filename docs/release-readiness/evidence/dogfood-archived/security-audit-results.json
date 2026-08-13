@@ -1,0 +1,257 @@
+{
+  "app.thenewfuse.com": {
+    "domain": "app.thenewfuse.com",
+    "timestamp": "2026-05-05T15:15:53.876725Z",
+    "dns": {
+      "ips": ["172.67.166.88", "104.21.33.201"],
+      "resolved": true
+    },
+    "security_headers": {
+      "raw": "HTTP/2 200 \ndate: Tue, 05 May 2026 15:15:55 GMT\ncontent-type: text/html; charset=utf-8, text/html; charset=utf-8\naccess-control-allow-origin: *\ncache-control: public, max-age=0, must-revalidate\netag: \"418662913ac81e372f8415a73379d309\"\nx-tnf-routing: SPA-App\naccess-control-allow-headers: Content-Type, Authorization, X-Requested-With\naccess-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS\ncross-origin-opener-policy: same-origin-allow-popups\nreferrer-policy: strict-origin-when-cross-origin\nx-",
+      "checks": {
+        "x_frame_options": "present",
+        "x_content_type_options": "present",
+        "content_security_policy": "missing",
+        "strict_transport_security": "missing",
+        "referrer_policy": "present",
+        "permissions_policy": "missing",
+        "x_powered_by": "missing",
+        "server": "cloudflare\ncf-cache-status: dynamic\ncf-ray: 9f70b410185b338f-ord\nalt-svc: h3=\":443\"; ma=86400"
+      }
+    },
+    "cors": {
+      "evil_origin_test": {
+        "wildcard_detected": true,
+        "allow_origin_header": [
+          "HTTP/2 200 \ndate: Tue, 05 May 2026 15:15:57 GMT\ncontent-type: text/html; charset=utf-8, text/html; charset=utf-8\naccess-control-allow-origin: *\ncache-control: public, max-age=0, must-revalidate\netag: \"418662913ac81e372f8415a73379d309\"\nx-tnf-routing: SPA-App\naccess-control-allow-headers: Content-Type, Authorization, X-Requested-With\naccess-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS\ncross-origin-opener-policy: same-origin-allow-popups\nreferrer-policy: strict-origin-when-cross-origin\nx-content-type-options: nosniff\nx-frame-options: DENY\nreport-to: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=CsN0lOihCOvilYmWoUImr5yL1pM7hOgqIp0tS3tO7Hqmgf9OKIPeOCiwIWASDRTYZ2V8h4GvxlsxV5%2FtVpB8DP%2F20AQVh6PjTBJnBe1zEBzXquQw7nU13vO3uVF%2B7TPSJMw6cfU%3D\"}]}\nnel: {\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}\nserver: cloudflare\ncf-cache-status: DYNAMIC\ncf-ray: 9f70b41a0e29231b-ORD\nalt-svc: h3=\":443\"; ma=86400"
+        ]
+      },
+      "error_code": "200",
+      "returns_500_instead_of_403": false
+    },
+    "routes": {
+      "login": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "register": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "dashboard": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "pricing": {
+        "status_code": 301,
+        "is_404": false
+      },
+      "docs": {
+        "status_code": 301,
+        "is_404": false
+      },
+      "api/health": {
+        "status_code": 200,
+        "is_404": false
+      }
+    },
+    "info_disclosure": {
+      "version_info_detected": true,
+      "version_matches": ["build", "api-version", "Build"],
+      "json_disclosure": false
+    }
+  },
+  "extreamix.com": {
+    "domain": "extreamix.com",
+    "timestamp": "2026-05-05T15:16:03.881470Z",
+    "dns": {
+      "ips": ["172.67.158.53", "104.21.90.168"],
+      "resolved": true
+    },
+    "security_headers": {
+      "raw": "HTTP/2 200 \ndate: Tue, 05 May 2026 15:16:08 GMT\ncontent-type: text/html; charset=UTF-8\nvary: Accept-Encoding\nx-powered-by: Express\ncache-control: public, max-age=0\nset-cookie: GAESA=Cp4BMDAwN2I3MzRkOWQ2NjFjYjE1OTg4NzY5ZDY3YWZlYjRhNDFmNzI3NGMwNTM2NzA1NmFhZTAzNDA0MGEwZTMyNzYyODFiMmFmMGMwNjQ3ZDZjYjkxOTExNTQzODYyOGQ4NWRmYTI1YTE2OTA2OTZjOGYzOTNiNTNlYTVhMDU5ZDBlNzVlNDVlZmVhYzYwM2JlOGVhMTNhMzFiNTU5ZDMQ3e7Xxd8z; expires=Thu, 04-Jun-2026 15:16:08 GMT; path=/\nnel: {\"report_to\":\"cf-nel\",\"success_fraction\":",
+      "checks": {
+        "x_frame_options": "missing",
+        "x_content_type_options": "missing",
+        "content_security_policy": "missing",
+        "strict_transport_security": "missing",
+        "referrer_policy": "missing",
+        "permissions_policy": "missing",
+        "x_powered_by": "present",
+        "server": "cloudflare\nvia: 1.1 google\nalt-svc: h3=\":443\"; ma=86400\ncf-cache-status: dynamic\nreport-to: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=%2bniejbos%2faahhukeusgtf8irrtx1vwsounaxl96blk9ypu3ujxkikbjcivlfqhe9yayvw2bp%2f8rzjkzyzbsdbqrbmgfekqjjfglkunwtndlbzmz%2bg9wbm%2bfnlpn0b205\"}]}\ncf-ray: 9f70b458ade119b0-ord"
+      }
+    },
+    "cors": {
+      "evil_origin_test": {
+        "wildcard_detected": false,
+        "allow_origin_header": []
+      },
+      "error_code": "200",
+      "returns_500_instead_of_403": false
+    },
+    "routes": {
+      "login": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "register": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "dashboard": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "pricing": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "docs": {
+        "status_code": 200,
+        "is_404": false
+      },
+      "api/health": {
+        "status_code": 200,
+        "is_404": false
+      }
+    },
+    "info_disclosure": {
+      "version_info_detected": false,
+      "version_matches": [],
+      "json_disclosure": false
+    }
+  },
+  "api.thenewfuse.com": {
+    "domain": "api.thenewfuse.com",
+    "timestamp": "2026-05-05T15:16:14.963430Z",
+    "dns": {
+      "ips": ["ghs.googlehosted.com.", "142.250.191.19"],
+      "resolved": true
+    },
+    "security_headers": {
+      "raw": "HTTP/2 200 \nx-powered-by: Express\nvary: Origin\naccess-control-allow-credentials: true\naccess-control-expose-headers: Content-Length,ETag\ncontent-type: application/json; charset=utf-8\netag: W/\"e9-L4h4jmKqHzJ9JutgBFfjaocOsEw\"\nx-cloud-trace-context: 87d87f620f026c0da75cd157566b3138;o=1\ncontent-length: 233\ndate: Tue, 05 May 2026 15:16:16 GMT\nserver: Google Frontend\n\n",
+      "checks": {
+        "x_frame_options": "missing",
+        "x_content_type_options": "missing",
+        "content_security_policy": "missing",
+        "strict_transport_security": "missing",
+        "referrer_policy": "missing",
+        "permissions_policy": "missing",
+        "x_powered_by": "present",
+        "server": "google frontend"
+      }
+    },
+    "cors": {
+      "evil_origin_test": {
+        "wildcard_detected": false,
+        "allow_origin_header": []
+      },
+      "error_code": "500",
+      "returns_500_instead_of_403": true
+    },
+    "routes": {
+      "login": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "register": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "dashboard": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "pricing": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "docs": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "api/health": {
+        "status_code": 200,
+        "is_404": false
+      }
+    },
+    "info_disclosure": {
+      "version_info_detected": true,
+      "version_matches": ["version"],
+      "json_disclosure": true,
+      "json_keys": [
+        "name",
+        "version",
+        "status",
+        "timestamp",
+        "uptime",
+        "documentation",
+        "health",
+        "api",
+        "environment"
+      ]
+    }
+  },
+  "relay.thenewfuse.com": {
+    "domain": "relay.thenewfuse.com",
+    "timestamp": "2026-05-05T15:16:22.606885Z",
+    "dns": {
+      "ips": ["ghs.googlehosted.com.", "142.251.211.115"],
+      "resolved": true
+    },
+    "security_headers": {
+      "raw": "HTTP/2 404 \nx-powered-by: Express\naccess-control-allow-origin: *\naccess-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS\naccess-control-allow-headers: Content-Type, Authorization\ncontent-security-policy: default-src 'none'\nx-content-type-options: nosniff\ncontent-type: text/html; charset=utf-8\nx-cloud-trace-context: 248b4197bc2b375e40f92f03d276fdee;o=1\ncontent-length: 136\ndate: Tue, 05 May 2026 15:16:23 GMT\nserver: Google Frontend\n\n",
+      "checks": {
+        "x_frame_options": "missing",
+        "x_content_type_options": "present",
+        "content_security_policy": "present",
+        "strict_transport_security": "missing",
+        "referrer_policy": "missing",
+        "permissions_policy": "missing",
+        "x_powered_by": "present",
+        "server": "google frontend"
+      }
+    },
+    "cors": {
+      "evil_origin_test": {
+        "wildcard_detected": true,
+        "allow_origin_header": [
+          "HTTP/2 404 \nx-powered-by: Express\naccess-control-allow-origin: *\naccess-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS\naccess-control-allow-headers: Content-Type, Authorization\ncontent-security-policy: default-src 'none'\nx-content-type-options: nosniff\ncontent-type: text/html; charset=utf-8\nx-cloud-trace-context: 5b3a1a008eaf1e8bdb0edd820e6da749\ncontent-length: 136\ndate: Tue, 05 May 2026 15:16:24 GMT\nserver: Google Frontend"
+        ]
+      },
+      "error_code": "404",
+      "returns_500_instead_of_403": false
+    },
+    "routes": {
+      "login": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "register": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "dashboard": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "pricing": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "docs": {
+        "status_code": 404,
+        "is_404": true
+      },
+      "api/health": {
+        "status_code": 404,
+        "is_404": true
+      }
+    },
+    "info_disclosure": {
+      "version_info_detected": false,
+      "version_matches": [],
+      "json_disclosure": false
+    }
+  }
+}

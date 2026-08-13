@@ -1,0 +1,158 @@
+{
+  "runId": "2026-02-23T11-38-32-175Z",
+  "createdAt": "2026-02-23T11:41:49.101Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "totals": {
+    "pass": 16,
+    "fail": 1,
+    "blocked": 0,
+    "total": 17
+  },
+  "checks": [
+    {
+      "id": "panel_open_only_qwen_baseline",
+      "status": "PASS",
+      "details": {
+        "qwenPanel": {
+          "usedInjection": true,
+          "injected": {
+            "success": true
+          },
+          "show": {
+            "success": true
+          }
+        },
+        "geminiPanelVisibleBefore": false
+      }
+    },
+    {
+      "id": "qwen_send_works",
+      "status": "PASS",
+      "details": {
+        "panelSend": {
+          "success": true
+        },
+        "qwenPromptVisible": true
+      }
+    },
+    {
+      "id": "qwen_response_captured",
+      "status": "PASS",
+      "details": {
+        "lastResponsePreview": "By logging in, you agree to our Terms of Service and Privacy Policy."
+      }
+    },
+    {
+      "id": "green_broadcast_qwen_inject",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771846824433"
+      }
+    },
+    {
+      "id": "no_cross_tab_injection_when_gemini_panel_hidden",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771846824433",
+        "geminiPanelHidden": true
+      }
+    },
+    {
+      "id": "gemini_injection_when_panel_open",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_B_1771846829825"
+      }
+    },
+    {
+      "id": "channel_isolation_green_vs_red",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_WHILE_RED_1771846835366"
+      }
+    },
+    {
+      "id": "pause_green_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_PAUSED_1771846838455"
+      }
+    },
+    {
+      "id": "resume_green_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_RESUMED_1771846841511"
+      }
+    },
+    {
+      "id": "pause_red_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_PAUSED_1771846846904"
+      }
+    },
+    {
+      "id": "resume_red_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_RESUMED_1771846849936"
+      }
+    },
+    {
+      "id": "pause_state_sync_after_refresh",
+      "status": "PASS",
+      "details": {
+        "pausedAfterReload": ["Red"]
+      }
+    },
+    {
+      "id": "event_logs_retrieve_and_clear",
+      "status": "PASS",
+      "details": {
+        "before": 49,
+        "after": 0,
+        "hasUsefulCategories": true
+      }
+    },
+    {
+      "id": "no_wake_ping_starts_idle_channel",
+      "status": "PASS",
+      "details": {
+        "autoWakePing": false,
+        "wakePingEvents": 0
+      }
+    },
+    {
+      "id": "relay_connected_state",
+      "status": "PASS",
+      "details": {
+        "connectResp": {
+          "success": true
+        }
+      }
+    },
+    {
+      "id": "relay_disconnected_state",
+      "status": "PASS",
+      "details": {
+        "disconnectResp": {
+          "success": true
+        },
+        "stateAfterDisconnect": "disconnected"
+      }
+    },
+    {
+      "id": "extension_reload_recovery_no_phantom_injection",
+      "status": "FAIL",
+      "details": {
+        "beforeReloadConnection": "connected",
+        "extensionReloaded": false,
+        "postReloadNoPhantom": true
+      }
+    }
+  ],
+  "failures": [
+    "extension_reload_recovery_no_phantom_injection: {\"beforeReloadConnection\":\"connected\",\"extensionReloaded\":false,\"postReloadNoPhantom\":true}"
+  ]
+}

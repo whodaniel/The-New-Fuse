@@ -1,0 +1,12 @@
+{
+  "skillName": "web-game-deterministic-loop",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/web-game-deterministic-loop/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/web-game-deterministic-loop/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/web-game-deterministic-loop.json",
+  "status": "present"
+}

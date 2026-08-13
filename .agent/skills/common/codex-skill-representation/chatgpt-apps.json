@@ -1,0 +1,12 @@
+{
+  "skillName": "chatgpt-apps",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/chatgpt-apps/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/chatgpt-apps/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/chatgpt-apps.json",
+  "status": "present"
+}

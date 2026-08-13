@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-08-12T04:45:00.000Z",
+  "authority": [
+    "data/harness/harness-config.json",
+    "scripts/runtime/resolve-harness-context.cjs",
+    "DIRECTIVES.md D8"
+  ],
+  "description": "Single TNF control-plane failover policy for host LLM / CLI providers. Catalog order wins; disabled ids are skipped; hosts may pin a preferred family.",
+  "disabledProvidersEnv": [
+    "MODEL_WATCHDOG_DISABLED_PROVIDERS",
+    "TNF_DISABLED_PROVIDERS"
+  ],
+  "defaultChain": [
+    "catalog_primary",
+    "nvidia",
+    "openrouter",
+    "openai",
+    "anthropic",
+    "google",
+    "deepseek",
+    "neuralwatt"
+  ],
+  "hostPins": {
+    "cursor": { "prefer": ["catalog_primary"], "assimilate": "cursor" },
+    "claude": {
+      "prefer": ["anthropic", "catalog_primary"],
+      "assimilate": "claude"
+    },
+    "hermes": {
+      "prefer": ["catalog_primary", "openrouter"],
+      "assimilate": "hermes"
+    },
+    "pi": { "prefer": ["catalog_primary", "openai"], "assimilate": "pi" },
+    "agy": { "prefer": ["google", "catalog_primary"], "assimilate": "agy" },
+    "openclaw": { "prefer": ["catalog_primary"], "assimilate": "openclaw" }
+  },
+  "rules": [
+    {
+      "id": "catalog-before-cli-affinity",
+      "note": "Do not promote google solely because agy/gemini CLI is installed."
+    },
+    {
+      "id": "disable-list-honored",
+      "note": "Any id in disabledProvidersEnv CSV is skipped everywhere."
+    },
+    {
+      "id": "receipt-required",
+      "note": "Resolutions write data/harness/receipts/provider-failover-*.json"
+    }
+  ]
+}

@@ -1,0 +1,767 @@
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import chalk from 'chalk';
+import { Redis } from 'ioredis';
+import { v4 as uuidv4 } from 'uuid';
+
+import { buildWorkerTaskEnvelope, workerQueueKey } from './services/WorkerEnvelope.js';
+
+export interface AgentInfo {
+  id: string;
+  name: string;
+  role:
+    | 'director'
+    | 'orchestrator'
+    | 'broker'
+    | 'worker'
+    | 'participant'
+    | 'coordinator'
+    | 'bridge'
+    | string;
+  platform: 'antigravity' | 'gemini' | 'claude' | 'jules' | 'vscode' | 'browser' | string;
+  status: 'active' | 'idle' | 'offline';
+  capabilities: string[];
+  registeredAt: string;
+  lastSeen: string;
+  isOnline?: boolean;
+  daccRole?: string;
+  directorTier?: 'super' | 'sub' | 'local';
+}
+
+export interface AgentMessage {
+  id: string;
+  timestamp: string;
+  from: {
+    agentId: string;
+    agentName: string;
+    role: string;
+    platform: string;
+  };
+  to?: {
+    agentId?: string;
+    channel?: string;
+    role?: string;
+    broadcast?: boolean;
+  };
+  type:
+    | 'message'
+    | 'command'
+    | 'response'
+    | 'heartbeat'
+    | 'status'
+    | 'auction'
+    | 'bid'
+    | 'award'
+    | 'task'
+    | 'event'
+    | 'query';
+  content: string;
+  payload?: any;
+  conversationId?: string;
+  replyTo?: string;
+  expectsResponse?: boolean;
+  metadata?: any;
+}
+
+export const CONFIG = {
+  redis: {
+    host: process.env.REDIS_HOST || '127.0.0.1',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD,
+    url: process.env.REDIS_URL,
+    keyPrefix: 'tnf:',
+  },
+  channels: {
+    agents: 'tnf:agents',
+    conversations: 'tnf:conversations',
+    orchestrator: 'tnf:orchestrator',
+    broker: 'tnf:broker',
+    heartbeat: 'tnf:heartbeat',
+    directPrefix: 'tnf:direct',
+  },
+  heartbeatInterval: 30000, // 30 seconds
+};
+
+export class RedisAgentClient {
+  private publisher: any = null;
+  private subscriber: any = null;
+  private upstash: any = null;
+  private agentInfo: AgentInfo | null = null;
+  private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> =
+    new Map();
+  private heartbeatTimer: NodeJS.Timeout | null = null;
+  public currentConversation: string | null = null;
+  private lastRedisErrorLoggedAt = 0;
+  private static readonly REDIS_ERROR_LOG_COOLDOWN_MS = 30000;
+
+  constructor() {}
+
+  async initialize() {
+    try {
+      // Use unified standalone utilities
+      this.publisher = createStandaloneRedisClient({ lazyConnect: true } as any);
+      this.subscriber = createStandaloneRedisClient({ lazyConnect: true } as any);
+      this.upstash = createUpstashRestClient();
+
+      if (this.publisher instanceof Redis) {
+        this.publisher.on('error', async (error: Error) => {
+          this.logRedisClientError('publisher', error);
+          if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+            await this.reconnectWithBackoff(this.publisher, 'publisher');
+          }
+        });
+        await this.publisher.connect().catch(() => {});
+      }
+
+      if (this.subscriber instanceof Redis) {
+        this.subscriber.on('error', async (error: Error) => {
+          this.logRedisClientError('subscriber', error);
+          if (error?.message?.includes('ECONNREFUSED') || error?.message?.includes('Connection')) {
+            await this.reconnectWithBackoff(this.subscriber, 'subscriber');
+          }
+        });
+        await this.subscriber.connect().catch(() => {});
+
+        this.subscriber.on('message', (channel: string, message: string) => {
+          this.handleIncomingMessage(channel, message);
+        });
+        this.subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
+          this.handleIncomingMessage(channel, message);
+        });
+      }
+
+      // Check connection
+      if (this.upstash) {
+        await this.upstash.ping();
+      } else if (this.publisher) {
+        await this.publisher.ping();
+      }
+    } catch (err: any) {
+      console.warn(`⚠️ Could not connect to Redis: ${err.message}`);
+      throw err;
+    }
+  }
+
+  private logRedisClientError(kind: 'publisher' | 'subscriber', error: Error) {
+    const now = Date.now();
+    if (now - this.lastRedisErrorLoggedAt < RedisAgentClient.REDIS_ERROR_LOG_COOLDOWN_MS) return;
+    this.lastRedisErrorLoggedAt = now;
+    const details = error?.message || error?.name || 'unknown';
+    console.error(`Redis ${kind} error:`, details);
+  }
+
+  private async reconnectWithBackoff(
+    client: any,
+    kind: 'publisher' | 'subscriber',
+    maxRetries = 3
+  ): Promise<boolean> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+      console.log(
+        chalk.dim(
+          `  Redis ${kind}: reconnecting in ${delay}ms (attempt ${attempt}/${maxRetries})...`
+        )
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      try {
+        if (client instanceof Redis) {
+          await client.connect();
+          await client.ping();
+          console.log(chalk.green(`  ✅ Redis ${kind}: reconnected successfully`));
+          return true;
+        }
+      } catch {
+        // Try again
+      }
+    }
+    console.warn(
+      chalk.yellow(`  ⚠️  Redis ${kind}: reconnection failed after ${maxRetries} attempts`)
+    );
+    return false;
+  }
+
+  async register(
+    name: string,
+    role: any,
+    platform: string,
+    capabilities: string[] = [],
+    extra: Partial<AgentInfo> = {}
+  ) {
+    this.agentInfo = {
+      id: `agent_${name}_${Date.now()}`,
+      name,
+      role,
+      platform,
+      status: 'active',
+      capabilities:
+        capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(role, platform),
+      registeredAt: new Date().toISOString(),
+      lastSeen: new Date().toISOString(),
+      ...extra,
+    };
+
+    if (!this.publisher && !this.upstash) throw new Error('Client not initialized');
+
+    // Store in Redis
+    if (this.upstash) {
+      await this.upstash.hset('tnf:agent-registry', {
+        [this.agentInfo.id]: JSON.stringify(this.agentInfo),
+      });
+    } else if (this.publisher) {
+      await this.publisher.hset(
+        'tnf:agent-registry',
+        this.agentInfo.id,
+        JSON.stringify(this.agentInfo)
+      );
+    }
+
+    // Subscribe to channels
+    if (this.subscriber instanceof Redis) {
+      await this.subscriber.subscribe(
+        CONFIG.channels.agents,
+        CONFIG.channels.conversations,
+        CONFIG.channels.orchestrator,
+        CONFIG.channels.broker,
+        'tnf:bus:ingress' // Listen to global ingress for auctions
+      );
+      await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
+    }
+
+    // Announce registration
+    await this.broadcast({
+      type: 'status',
+      content: `Agent ${name} (${role}) is now online`,
+      metadata: { event: 'agent_registered', agentInfo: this.agentInfo },
+    });
+
+    // Start heartbeat
+    this.startHeartbeat();
+
+    return this.agentInfo;
+  }
+
+  /**
+   * Listen for task auctions
+   */
+  onAuction(callback: (auction: any) => void) {
+    this.onMessage('auction', (envelope: any) => {
+      callback(envelope.payload);
+    });
+  }
+
+  /**
+   * Submit a bid for an auction
+   */
+  async submitBid(taskId: string, suitability: number, metadata: any = {}) {
+    if (!this.agentInfo || (!this.publisher && !this.upstash))
+      throw new Error('Client not initialized');
+
+    const bid: AgentMessage = {
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
+      type: 'bid',
+      from: {
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        role: this.agentInfo.role,
+        platform: this.agentInfo.platform,
+      },
+      content: `Bid for task ${taskId}`,
+      payload: {
+        taskId,
+        suitability,
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        capabilities: this.agentInfo.capabilities,
+        ...metadata,
+      },
+    };
+
+    // Publish bid to broker channel
+    const payload = JSON.stringify(bid);
+    if (this.upstash) {
+      await this.upstash.publish(CONFIG.channels.broker, payload);
+    } else if (this.publisher) {
+      await this.publisher.publish(CONFIG.channels.broker, payload);
+    }
+    console.log(`[Agent] Submitted bid for task ${taskId} (Suitability: ${suitability})`);
+  }
+
+  /**
+   * Defaults are role ∪ platform. Role and platform are orthogonal axes —
+   * orchestration capabilities come from an orchestrator/coordinator *role*
+   * assignment (or explicit capabilities), never from platform alone.
+   */
+  private getDefaultCapabilities(role: string, platform: string): string[] {
+    const roleCapabilities: Record<string, string[]> = {
+      director: ['strategy', 'escalation', 'override'],
+      orchestrator: [
+        'orchestration',
+        'workflow_management',
+        'task_routing',
+        'result_aggregation',
+        'agent_coordination',
+      ],
+      broker: ['routing', 'mediation', 'channel_management'],
+      coordinator: ['coordinate', 'plan', 'delegate'],
+      bridge: ['bridge', 'translate', 'relay'],
+      worker: ['task_execution', 'report', 'collaborate'],
+      participant: ['message', 'observe', 'respond'],
+    };
+    const platformCapabilities: Record<string, string[]> = {
+      antigravity: ['code_assistance', 'planning', 'analysis'],
+      gemini: ['code_analysis', 'research', 'implementation', 'review'],
+      claude: ['reasoning', 'review', 'synthesis', 'documentation'],
+      grok: ['agent_client_protocol', 'external_cli', 'reasoning', 'coding'],
+      jules: ['parallel_execution', 'github_commits', 'refactoring', 'batch_processing'],
+      vscode: ['code_editing', 'terminal', 'debugging', 'extensions'],
+      browser: ['web_scraping', 'research', 'automation'],
+      pi: [
+        'autonomous_code_editing',
+        'multi_provider_inference',
+        'validation_pipeline',
+        'handoff_export',
+      ],
+    };
+    const roleCaps = roleCapabilities[String(role || '').toLowerCase()] || [];
+    const platformCaps = platformCapabilities[String(platform || '').toLowerCase()] || ['general'];
+    return Array.from(new Set([...roleCaps, ...platformCaps]));
+  }
+
+  async send(content: string, options: any = {}) {
+    if (!this.agentInfo || (!this.publisher && !this.upstash)) {
+      throw new Error('Agent not registered or publisher not initialized');
+    }
+
+    const message: AgentMessage = {
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
+      from: {
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        role: this.agentInfo.role,
+        platform: this.agentInfo.platform,
+      },
+      to: options.to,
+      type: options.type || 'message',
+      content,
+      conversationId: options.conversationId || this.currentConversation || undefined,
+      replyTo: options.replyTo,
+      expectsResponse: options.expectsResponse,
+      metadata: options.metadata,
+    };
+
+    const directAgentId = options.to?.agentId;
+    const channel = directAgentId
+      ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
+      : options.channel || CONFIG.channels.conversations;
+
+    const payload = JSON.stringify(message);
+    if (this.upstash) {
+      await this.upstash.publish(channel, payload);
+    } else if (this.publisher) {
+      await this.publisher.publish(channel, payload);
+    }
+
+    return message;
+  }
+
+  /**
+   * LPUSH a task envelope onto a sub-director worker inbox so cron drainers
+   * (run_one_envelope.py) can process it. Redis PUBLISH used by send() does not
+   * reach these LIST-backed queues.
+   */
+  async enqueueWorkerTask(
+    recipientAgentId: string,
+    content: string,
+    options: { title?: string; metadata?: Record<string, unknown> } = {}
+  ): Promise<{ queueKey: string; envelopeId: string }> {
+    if (!this.agentInfo || !this.publisher) {
+      throw new Error('Agent not registered or Redis publisher not initialized');
+    }
+
+    const envelope = buildWorkerTaskEnvelope({
+      recipientAgentId,
+      content,
+      senderAgentId: this.agentInfo.id,
+      title: options.title,
+      metadata: options.metadata,
+    });
+    const queueKey = workerQueueKey(recipientAgentId);
+    const payload = JSON.stringify(envelope);
+
+    if (this.publisher instanceof Redis) {
+      await this.publisher.lpush(queueKey, payload);
+    } else if (typeof this.publisher.lpush === 'function') {
+      await this.publisher.lpush(queueKey, payload);
+    } else {
+      throw new Error('Redis client does not support LPUSH for worker queue delivery');
+    }
+
+    return { queueKey, envelopeId: envelope.payload.id };
+  }
+
+  async broadcast(options: any) {
+    return this.send(options.content, {
+      ...options,
+      channel: CONFIG.channels.agents,
+      to: { broadcast: true },
+    });
+  }
+
+  async startConversation(topic: string) {
+    this.currentConversation = `convo_${topic}_${Date.now()}`;
+
+    await this.broadcast({
+      type: 'status',
+      content: `Started conversation: "${topic}"`,
+      metadata: {
+        event: 'conversation_started',
+        conversationId: this.currentConversation,
+        topic,
+      },
+    });
+
+    return this.currentConversation;
+  }
+
+  joinConversation(conversationId: string) {
+    this.currentConversation = conversationId;
+  }
+
+  private handleIncomingMessage(channel: string, messageStr: string) {
+    try {
+      const rawMessage = JSON.parse(messageStr);
+      const message = this.normalizeIncomingMessage(rawMessage);
+      if (!message) return;
+
+      if (message.from && message.from.agentId === this.agentInfo?.id) {
+        return;
+      }
+
+      const handlers = this.messageHandlers.get(message.type) || [];
+      handlers.forEach((handler) => handler(message, channel));
+
+      const allHandlers = this.messageHandlers.get('*') || [];
+      allHandlers.forEach((handler) => handler(message, channel));
+    } catch (error: any) {
+      console.error('Error parsing message:', error.message);
+    }
+  }
+
+  private normalizeIncomingMessage(rawMessage: any): AgentMessage | null {
+    if (!rawMessage || typeof rawMessage !== 'object') {
+      return null;
+    }
+
+    const hasEnvelopeShape =
+      typeof rawMessage.id === 'string' &&
+      typeof rawMessage.type === 'string' &&
+      rawMessage.from &&
+      typeof rawMessage.from === 'object' &&
+      rawMessage.payload &&
+      typeof rawMessage.payload === 'object' &&
+      (typeof rawMessage.traceId === 'string' ||
+        rawMessage.version === '1.0' ||
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'event' ||
+        rawMessage.type === 'query');
+
+    if (!hasEnvelopeShape) {
+      return rawMessage as AgentMessage;
+    }
+
+    const payload = rawMessage.payload || {};
+    const task = payload.task && typeof payload.task === 'object' ? payload.task : null;
+    const taskContent =
+      payload.message ||
+      payload.prompt ||
+      this.formatTaskForWorker(task) ||
+      task?.description ||
+      task?.title ||
+      task?.content ||
+      payload.action ||
+      null;
+
+    let content = '';
+    if (typeof taskContent === 'string' && taskContent.trim()) {
+      content = taskContent.trim();
+    } else {
+      content = JSON.stringify(payload);
+    }
+
+    return {
+      id: rawMessage.id || uuidv4(),
+      timestamp: rawMessage.timestamp || new Date().toISOString(),
+      from: {
+        agentId: rawMessage.from.agentId || rawMessage.from.id || 'unknown',
+        agentName:
+          rawMessage.from.agentName ||
+          rawMessage.from.operationalHandle ||
+          rawMessage.from.agentId ||
+          'unknown',
+        role: rawMessage.from.role || 'worker',
+        platform: rawMessage.from.platform || 'relay-core',
+      },
+      to: rawMessage.to,
+      type: rawMessage.type,
+      content,
+      payload,
+      conversationId:
+        rawMessage.context?.sessionId ||
+        rawMessage.context?.workflowId ||
+        rawMessage.conversationId,
+      replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
+      expectsResponse:
+        rawMessage.type === 'task' ||
+        rawMessage.type === 'query' ||
+        Boolean(rawMessage.expectsResponse),
+      metadata: {
+        ...(typeof rawMessage.metadata === 'object' ? rawMessage.metadata : {}),
+        payload,
+        tnfEnvelope: true,
+      },
+    } as AgentMessage;
+  }
+
+  private formatTaskForWorker(task: any): string | null {
+    if (!task || typeof task !== 'object') {
+      return null;
+    }
+
+    const lines: string[] = [];
+    const title = typeof task.title === 'string' ? task.title.trim() : '';
+    const description = typeof task.description === 'string' ? task.description.trim() : '';
+    const content = typeof task.content === 'string' ? task.content.trim() : '';
+
+    if (title) lines.push(`Task: ${title}`);
+    if (description && description !== title) lines.push(`Description: ${description}`);
+    if (content && content !== description && content !== title) lines.push(content);
+
+    const acceptanceCriteria = Array.isArray(task.acceptanceCriteria)
+      ? task.acceptanceCriteria
+      : Array.isArray(task.acceptance_criteria)
+        ? task.acceptance_criteria
+        : [];
+
+    const cleanCriteria = acceptanceCriteria
+      .map((item: unknown) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean);
+
+    if (cleanCriteria.length > 0) {
+      lines.push(
+        `Acceptance criteria:\n${cleanCriteria.map((item: string) => `- ${item}`).join('\n')}`
+      );
+    }
+
+    if (typeof task.priority === 'string' && task.priority.trim()) {
+      lines.push(`Priority: ${task.priority.trim()}`);
+    }
+
+    if (Array.isArray(task.requiredCapabilities) && task.requiredCapabilities.length > 0) {
+      const capabilities = task.requiredCapabilities
+        .map((item: unknown) => (typeof item === 'string' ? item.trim() : ''))
+        .filter(Boolean);
+      if (capabilities.length > 0) {
+        lines.push(`Required capabilities: ${capabilities.join(', ')}`);
+      }
+    }
+
+    return lines.length > 0 ? lines.join('\n\n') : null;
+  }
+
+  onMessage(type: string, handler: (message: AgentMessage, channel: string) => void) {
+    if (!this.messageHandlers.has(type)) {
+      this.messageHandlers.set(type, []);
+    }
+    this.messageHandlers.get(type)!.push(handler);
+  }
+
+  private startHeartbeat() {
+    this.heartbeatTimer = setInterval(async () => {
+      if (this.agentInfo && (this.publisher || this.upstash)) {
+        this.agentInfo.lastSeen = new Date().toISOString();
+
+        const agentData = JSON.stringify(this.agentInfo);
+        const heartbeatData = JSON.stringify({
+          agentId: this.agentInfo.id,
+          agentName: this.agentInfo.name,
+          timestamp: this.agentInfo.lastSeen,
+        });
+
+        if (this.upstash) {
+          await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
+          await this.upstash.publish(CONFIG.channels.heartbeat, heartbeatData);
+        } else if (this.publisher) {
+          await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
+          await this.publisher.publish(CONFIG.channels.heartbeat, heartbeatData);
+        }
+      }
+    }, CONFIG.heartbeatInterval);
+  }
+
+  async listAgents(): Promise<AgentInfo[]> {
+    let agents: Record<string, string> = {};
+    if (this.upstash) {
+      agents = (await this.upstash.hgetall('tnf:agent-registry')) || {};
+    } else if (this.publisher) {
+      agents = await this.publisher.hgetall('tnf:agent-registry');
+    }
+
+    const agentList: AgentInfo[] = [];
+
+    for (const [id, jsonStr] of Object.entries(agents)) {
+      try {
+        const agent = JSON.parse(jsonStr as string);
+        const lastSeen = new Date(agent.lastSeen);
+
+        // Liveness must be relative to how often the agent actually beats.
+        //
+        // The flat `heartbeatInterval * 2` (60s) rule assumes an in-process
+        // agent beating every 30s. The sub-director workers are cron-driven at
+        // */5 and */15, so a perfectly healthy codegen worker read offline for
+        // 240 of every 300 seconds (80%) and the infra worker for 840 of 900
+        // (93%). `tnf agents list` therefore flickered green/red for precisely
+        // the agents an operator would delegate to, and dispatch inherited the
+        // same noise.
+        //
+        // Agents may now declare `expectedCadenceSec` at registration; they are
+        // allowed two missed beats before being called stale. Agents that
+        // declare nothing keep the original rule, so this is backwards
+        // compatible with every existing registry row.
+        const cadenceSec = Number(agent.expectedCadenceSec);
+        const windowMs =
+          Number.isFinite(cadenceSec) && cadenceSec > 0
+            ? cadenceSec * 1000 * 2
+            : CONFIG.heartbeatInterval * 2;
+        const isOnline = Date.now() - lastSeen.getTime() < windowMs;
+
+        agentList.push({
+          ...agent,
+          isOnline,
+        });
+      } catch (e) {
+        // Skip invalid
+      }
+    }
+
+    return agentList;
+  }
+
+  async createChannel(channelName: string) {
+    const payload = JSON.stringify({
+      type: 'CHANNEL_CREATE',
+      source: this.agentInfo?.id || 'unknown',
+      channel: channelName,
+      timestamp: Date.now(),
+      payload: { name: channelName },
+    });
+
+    if (this.upstash) {
+      await this.upstash.publish('tnf:bus:ingress', payload);
+    } else if (this.publisher) {
+      await this.publisher.publish('tnf:bus:ingress', payload);
+    }
+
+    return channelName;
+  }
+
+  /**
+   * Log real-time activity to the swarm log
+   */
+  async logActivity(eventType: string, content: string, metadata: any = {}) {
+    const logEntry = JSON.stringify({
+      timestamp: new Date().toISOString(),
+      eventType,
+      content,
+      metadata: {
+        source: this.agentInfo?.name || 'System',
+        agentId: this.agentInfo?.id,
+        ...metadata,
+      },
+    });
+
+    if (this.upstash) {
+      await this.upstash.lpush('tnf:master:logs', logEntry);
+      await this.upstash.ltrim('tnf:master:logs', 0, 99);
+    } else if (this.publisher) {
+      await this.publisher.lpush('tnf:master:logs', logEntry);
+      await this.publisher.ltrim('tnf:master:logs', 0, 99);
+    }
+  }
+
+  async getChannels(): Promise<string[]> {
+    let channels: string[] = [];
+    if (this.upstash) {
+      channels = await this.upstash.smembers('tnf:master:channels');
+    } else if (this.publisher) {
+      channels = await this.publisher.smembers('tnf:master:channels');
+    }
+
+    const defaultChannels = ['Green', 'Blue', 'Red', 'Yellow', 'Purple', 'General'];
+    const allChannels = new Set([...defaultChannels, ...channels]);
+
+    return Array.from(allChannels);
+  }
+
+  /**
+   * Remove this agent's row from the registry entirely.
+   *
+   * `cleanup()` marks an agent `offline` but keeps its row, which is right for
+   * a long-lived agent whose history is worth seeing. It is wrong for a
+   * one-shot CLI invocation: every `tnf send` registered a `cli-sender`
+   * participant and left a permanent tombstone behind. Measured 2026-08-12 —
+   * 16 registry rows for roughly 7 real agents, the surplus being throwaway
+   * senders plus restarted agents that re-register under a new timestamped id
+   * and orphan the old row. A roster that is mostly ghosts is a roster nobody
+   * reads, and DispatchGuard's "did you mean" suggestions start pointing at
+   * ids that can never receive anything.
+   *
+   * Ephemeral clients should call this instead of relying on `cleanup()`.
+   */
+  async deregister(): Promise<boolean> {
+    if (!this.agentInfo) return false;
+    const id = this.agentInfo.id;
+    try {
+      if (this.upstash) {
+        await this.upstash.hdel('tnf:agent-registry', id);
+      } else if (this.publisher) {
+        await this.publisher.hdel('tnf:agent-registry', id);
+      } else {
+        return false;
+      }
+      return true;
+    } catch {
+      // Never let registry hygiene fail the operation the caller actually
+      // wanted; a leftover row is a nuisance, a thrown error is a broken send.
+      return false;
+    }
+  }
+
+  async cleanup() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+    }
+
+    if (this.agentInfo && (this.publisher || this.upstash)) {
+      this.agentInfo.status = 'offline';
+      const agentData = JSON.stringify(this.agentInfo);
+
+      if (this.upstash) {
+        await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
+      } else if (this.publisher) {
+        await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
+      }
+
+      await this.broadcast({
+        type: 'status',
+        content: `Agent ${this.agentInfo.name} is going offline`,
+        metadata: { event: 'agent_offline' },
+      });
+    }
+
+    if (this.subscriber) await this.subscriber.quit();
+    if (this.publisher) await this.publisher.quit();
+    this.upstash = null;
+  }
+}

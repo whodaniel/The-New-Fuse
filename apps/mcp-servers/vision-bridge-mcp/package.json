@@ -1,0 +1,22 @@
+{
+  "name": "@the-new-fuse/vision-bridge-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for TNF Native Vision Bridge (Forge Powered)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outdir=dist --sourcemap",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.22.4",
+    "axios": "^1.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,0 +1,43 @@
+name: tnf-cron-federation-gates
+from:
+  - skill: tnf-master-clock-sync
+    output: schedule mapping and trigger contracts
+  - skill: inter-agentic-workflow-definer
+    output: standardized cron mutation packets
+  - skill: orchestrator-agent
+    output: governance decision + delegation context
+to:
+  - skill: tnf-execution-audit-trail
+    input: cron gate outcomes and mutation lifecycle logs
+  - skill: tnf-task-production-pipeline
+    input: approved schedule changes with MCID lineage
+validate:
+  - request validates against docs/protocols/schemas/tnf-cron-governance.schema.json
+  - target.category scope aligns with target.scope
+  - tenant_id and cumulative_id.scope.tenant_id remain identical
+  - schedule_id continuity preserved in cumulative lineage
+  - system_framework scope changes require super-admin authorization or explicit delegated approval
+gates:
+  - name: TENANT_SCOPE_GATE
+    deny_code: TENANT_SCOPE_MISMATCH
+  - name: TRACE_CONTINUITY_GATE
+    deny_code: TRACE_BREAK
+  - name: CHANNEL_MEMBERSHIP_GATE
+    deny_code: CHANNEL_NOT_AUTHORIZED
+  - name: CRON_SCOPE_GATE
+    deny_code: CRON_SCOPE_NOT_ALLOWED
+  - name: CRON_CATEGORY_GATE
+    deny_code: CRON_CATEGORY_SCOPE_MISMATCH
+  - name: CRON_OWNERSHIP_GATE
+    deny_code: CRON_OWNER_MISMATCH
+  - name: WRITE_RATE_LIMIT_GATE
+    deny_code: CRON_WRITE_RATE_LIMIT
+  - name: APPROVAL_GATE
+    condition: system_framework scope OR category.requires_approval=true
+    action: require_super_admin_or_explicit_delegation
+fail:
+  - quarantine mutation request and emit POLICY.DECISION deny with cumulative_id attached
+  - append denial log to execution timeline with category cron_governance_gate
+  - route to orchestrator remediation queue
+log:
+  - docs/protocols/bridges/reports/tnf-cron-federation-gates.md

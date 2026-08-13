@@ -1,0 +1,35 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "composite": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+    "strictNullChecks": false,
+    "noImplicitReturns": false,
+    "paths": {
+      "@the-new-fuse/feature-tracker": ["../feature-tracker/src"],
+      "@the-new-fuse/types": ["../types/src"],
+      "@the-new-fuse/types/*": ["../types/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../feature-tracker"
+    }
+  ]
+}

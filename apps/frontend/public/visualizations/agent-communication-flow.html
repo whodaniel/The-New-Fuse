@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>The New Fuse - Agent Communication Flow</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            color: #2d3748;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        #controls {
+            position: absolute;
+            top: 130px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            min-width: 200px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        #legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid white;
+        }
+
+        .legend-line {
+            width: 30px;
+            height: 2px;
+            margin-right: 8px;
+        }
+
+        #stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .stat-item {
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        #graph {
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            cursor: pointer;
+            stroke: white;
+            stroke-width: 2px;
+        }
+
+        .node:hover {
+            stroke-width: 4px;
+        }
+
+        .link {
+            stroke-opacity: 0.6;
+        }
+
+        .link-active {
+            stroke-opacity: 1;
+            stroke-width: 3px;
+        }
+
+        .node-label {
+            font-size: 11px;
+            font-weight: 600;
+            fill: #2d3748;
+            text-anchor: middle;
+            pointer-events: none;
+            text-shadow:
+                -1px -1px 0 white,
+                1px -1px 0 white,
+                -1px 1px 0 white,
+                1px 1px 0 white;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(45, 55, 72, 0.95);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 20;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .tooltip-section {
+            margin-bottom: 6px;
+        }
+
+        .tooltip-label {
+            opacity: 0.7;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tooltip-value {
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>🤖 Agent Communication Flow</h1>
+            <p class="subtitle">The New Fuse - Real-time agent orchestration visualization</p>
+        </div>
+
+        <div id="controls">
+            <div class="control-group">
+                <span class="control-label">Layout</span>
+                <button onclick="resetSimulation()">Reset Layout</button>
+                <button onclick="togglePhysics()">Toggle Physics</button>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">Filter by Type</span>
+                <select onchange="filterByType(this.value)">
+                    <option value="all">All Agents</option>
+                    <option value="orchestrator">Orchestrators</option>
+                    <option value="task">Task Agents</option>
+                    <option value="service">Services</option>
+                    <option value="coordinator">Coordinators</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <button onclick="highlightCriticalPaths()">Highlight Critical Paths</button>
+                <button onclick="showBottlenecks()">Show Bottlenecks</button>
+            </div>
+        </div>
+
+        <div id="legend">
+            <div class="legend-title">Agent Types</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #667eea;"></div>
+                <span>Orchestrator</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f56565;"></div>
+                <span>Task Agent</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #48bb78;"></div>
+                <span>Service</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ed8936;"></div>
+                <span>Coordinator</span>
+            </div>
+            <div class="legend-title" style="margin-top: 15px;">Message Flow</div>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #4299e1;"></div>
+                <span>Request</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #9f7aea;"></div>
+                <span>Response</span>
+            </div>
+        </div>
+
+        <div id="stats">
+            <div class="stat-item">
+                <span>Active Agents: </span>
+                <span class="stat-value" id="agentCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Connections: </span>
+                <span class="stat-value" id="connectionCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Messages/sec: </span>
+                <span class="stat-value" id="messageRate">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Avg Latency: </span>
+                <span class="stat-value" id="avgLatency">0ms</span>
+            </div>
+        </div>
+
+        <svg id="graph"></svg>
+    </div>
+
+    <!-- Embedded D3.js v7 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <script>
+        // Sample data for The New Fuse agent ecosystem
+        const agentData = {
+            nodes: [
+                { id: 'orchestrator-agent', type: 'orchestrator', label: 'Orchestrator', connections: 8, latency: 12 },
+                { id: 'nestjs-endpoint-generator', type: 'task', label: 'NestJS Endpoint', connections: 3, latency: 45 },
+                { id: 'agent-flow-analyzer', type: 'task', label: 'Flow Analyzer', connections: 5, latency: 78 },
+                { id: 'mcp-server-integrator', type: 'task', label: 'MCP Integrator', connections: 4, latency: 34 },
+                { id: 'database-service', type: 'service', label: 'Database', connections: 6, latency: 15 },
+                { id: 'redis-cache', type: 'service', label: 'Redis Cache', connections: 7, latency: 8 },
+                { id: 'workflow-coordinator', type: 'coordinator', label: 'Workflow', connections: 4, latency: 23 },
+                { id: 'content-writer-agent', type: 'task', label: 'Content Writer', connections: 2, latency: 120 },
+                { id: 'seo-optimizer', type: 'task', label: 'SEO Optimizer', connections: 3, latency: 89 },
+                { id: 'api-gateway', type: 'service', label: 'API Gateway', connections: 9, latency: 11 },
+                { id: 'task-scheduler', type: 'coordinator', label: 'Task Scheduler', connections: 5, latency: 19 },
+            ],
+            links: [
+                { source: 'orchestrator-agent', target: 'nestjs-endpoint-generator', type: 'request' },
+                { source: 'orchestrator-agent', target: 'agent-flow-analyzer', type: 'request' },
+                { source: 'orchestrator-agent', target: 'mcp-server-integrator', type: 'request' },
+                { source: 'orchestrator-agent', target: 'workflow-coordinator', type: 'request' },
+                { source: 'nestjs-endpoint-generator', target: 'database-service', type: 'request' },
+                { source: 'agent-flow-analyzer', target: 'redis-cache', type: 'request' },
+                { source: 'mcp-server-integrator', target: 'api-gateway', type: 'request' },
+                { source: 'workflow-coordinator', target: 'task-scheduler', type: 'request' },
+                { source: 'task-scheduler', target: 'content-writer-agent', type: 'request' },
+                { source: 'task-scheduler', target: 'seo-optimizer', type: 'request' },
+                { source: 'content-writer-agent', target: 'seo-optimizer', type: 'response' },
+                { source: 'database-service', target: 'redis-cache', type: 'response' },
+                { source: 'api-gateway', target: 'orchestrator-agent', type: 'response' },
+            ]
+        };
+
+        // Setup SVG and force simulation
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3.select('#graph')
+            .attr('width', width)
+            .attr('height', height);
+
+        const g = svg.append('g');
+
+        // Color mapping for agent types
+        const colorMap = {
+            orchestrator: '#667eea',
+            task: '#f56565',
+            service: '#48bb78',
+            coordinator: '#ed8936'
+        };
+
+        // Create force simulation
+        const simulation = d3.forceSimulation(agentData.nodes)
+            .force('link', d3.forceLink(agentData.links).id(d => d.id).distance(150))
+            .force('charge', d3.forceManyBody().strength(-300))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(40));
+
+        // Draw links
+        const link = g.append('g')
+            .selectAll('line')
+            .data(agentData.links)
+            .join('line')
+            .attr('class', 'link')
+            .attr('stroke', d => d.type === 'request' ? '#4299e1' : '#9f7aea')
+            .attr('stroke-width', 2);
+
+        // Draw nodes
+        const node = g.append('g')
+            .selectAll('circle')
+            .data(agentData.nodes)
+            .join('circle')
+            .attr('class', 'node')
+            .attr('r', d => 15 + (d.connections * 2))
+            .attr('fill', d => colorMap[d.type])
+            .call(drag(simulation))
+            .on('mouseover', showTooltip)
+            .on('mouseout', hideTooltip);
+
+        // Add labels
+        const label = g.append('g')
+            .selectAll('text')
+            .data(agentData.nodes)
+            .join('text')
+            .attr('class', 'node-label')
+            .attr('dy', d => 20 + (d.connections * 2) + 10)
+            .text(d => d.label);
+
+        // Update positions on simulation tick
+        simulation.on('tick', () => {
+            link
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+
+            node
+                .attr('cx', d => d.x)
+                .attr('cy', d => d.y);
+
+            label
+                .attr('x', d => d.x)
+                .attr('y', d => d.y);
+        });
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('agentCount').textContent = agentData.nodes.length;
+            document.getElementById('connectionCount').textContent = agentData.links.length;
+            document.getElementById('messageRate').textContent = Math.floor(Math.random() * 50 + 20);
+
+            const avgLatency = agentData.nodes.reduce((sum, n) => sum + n.latency, 0) / agentData.nodes.length;
+            document.getElementById('avgLatency').textContent = Math.round(avgLatency) + 'ms';
+        }
+
+        updateStats();
+        setInterval(updateStats, 2000);
+
+        // Drag behavior
+        function drag(simulation) {
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
+            }
+
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+
+            return d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended);
+        }
+
+        // Tooltip
+        let tooltip;
+        function showTooltip(event, d) {
+            if (!tooltip) {
+                tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+            }
+
+            tooltip.html(`
+                <div class="tooltip-title">${d.label}</div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">ID</div>
+                    <div class="tooltip-value">${d.id}</div>
+                </div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Type</div>
+                    <div class="tooltip-value">${d.type}</div>
+                </div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Connections</div>
+                    <div class="tooltip-value">${d.connections}</div>
+                </div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Avg Latency</div>
+                    <div class="tooltip-value">${d.latency}ms</div>
+                </div>
+            `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 10) + 'px')
+            .style('display', 'block');
+        }
+
+        function hideTooltip() {
+            if (tooltip) {
+                tooltip.style('display', 'none');
+            }
+        }
+
+        // Control functions
+        function resetSimulation() {
+            simulation.alpha(1).restart();
+        }
+
+        let physicsEnabled = true;
+        function togglePhysics() {
+            physicsEnabled = !physicsEnabled;
+            if (physicsEnabled) {
+                simulation.alpha(1).restart();
+            } else {
+                simulation.stop();
+            }
+        }
+
+        function filterByType(type) {
+            if (type === 'all') {
+                node.style('opacity', 1);
+                label.style('opacity', 1);
+                link.style('opacity', 0.6);
+            } else {
+                node.style('opacity', d => d.type === type ? 1 : 0.2);
+                label.style('opacity', d => d.type === type ? 1 : 0.2);
+                link.style('opacity', d => {
+                    const sourceType = agentData.nodes.find(n => n.id === d.source.id)?.type;
+                    const targetType = agentData.nodes.find(n => n.id === d.target.id)?.type;
+                    return (sourceType === type || targetType === type) ? 0.6 : 0.1;
+                });
+            }
+        }
+
+        function highlightCriticalPaths() {
+            const criticalAgents = agentData.nodes.filter(n => n.connections >= 5);
+            const criticalIds = new Set(criticalAgents.map(n => n.id));
+
+            node.style('opacity', d => criticalIds.has(d.id) ? 1 : 0.3);
+            label.style('opacity', d => criticalIds.has(d.id) ? 1 : 0.3);
+            link.style('opacity', d =>
+                (criticalIds.has(d.source.id) || criticalIds.has(d.target.id)) ? 1 : 0.1
+            );
+        }
+
+        function showBottlenecks() {
+            const bottlenecks = agentData.nodes.filter(n => n.latency > 70);
+            const bottleneckIds = new Set(bottlenecks.map(n => n.id));
+
+            node.style('opacity', d => bottleneckIds.has(d.id) ? 1 : 0.3)
+                .attr('stroke', d => bottleneckIds.has(d.id) ? '#f56565' : 'white')
+                .attr('stroke-width', d => bottleneckIds.has(d.id) ? 4 : 2);
+            label.style('opacity', d => bottleneckIds.has(d.id) ? 1 : 0.3);
+            link.style('opacity', 0.3);
+        }
+
+        // Zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 3])
+            .on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
+
+        svg.call(zoom);
+    </script>
+</body>
+</html>

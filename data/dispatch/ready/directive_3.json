@@ -1,0 +1,14 @@
+{
+  "title": "Process Deep Sec Scan Findings with Language Model",
+  "steps": [
+    "Execute the `process` command."
+  ],
+  "target": "Deep Sec CLI tool",
+  "metrics": {
+    "specificity": 1.0,
+    "implementability": 1.0,
+    "testability": 1.0
+  },
+  "rationale": "This directive provides a direct and complete command to trigger the language model's analysis of previously scanned files, forming the second stage of the security assessment. No external parameters are needed as it operates on prior scan results.",
+  "dispatch_ready": true
+}

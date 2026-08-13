@@ -1,0 +1,313 @@
+{
+  "generatedAt": "2026-05-19T06:10:40.578Z",
+  "playlistId": "PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+  "channelsDiscovered": 15,
+  "results": [
+    {
+      "channelListedTitle": "BizSynth com",
+      "channelMeta": "@bizsynth",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "BizSynth com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "(1) YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create 1 Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "StarTree.TV",
+      "channelMeta": "@StarTreeNFT",
+      "wasInitiallyActiveInList": true,
+      "switchRes": {
+        "switched": true,
+        "activeName": "StarTree.TV"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "AI 5 - YouTube",
+        "unavailable": true,
+        "itemCount": 37,
+        "countTextCandidates": ["37 videos", "No views", "Updated today"],
+        "bodyCountMatch": "37 videos",
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You Play all AI 5 by StarTree.TV Playlist • Private • 37 videos • No views Play all Manual 12:09 Now playing Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256 ManuAGI - AutoGPT Tutorials • 3.5K views • 8 days ago 58:23 Now playing Hermes Agent: Zero to Personal AI Assistant (1 Hour Course) Nate Herk | AI Automation • 131K views • 9 days ago 27:28 Now playing Building Agentic RAG From Scratch in Pure Pyth",
+        "firstVideos": [
+          {
+            "title": "Top Open-Source GitHub Projects : Pixelle-Video, Multica, Archon, OpenSwarm & TokenSpeed #256",
+            "href": "https://www.youtube.com/watch?v=lAAcjj5fISE&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=1&pp=iAQBsAgC"
+          },
+          {
+            "title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+            "href": "https://www.youtube.com/watch?v=gb5TlGw6Uks&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=2&pp=iAQBsAgC"
+          },
+          {
+            "title": "Building Agentic RAG From Scratch in Pure Python",
+            "href": "https://www.youtube.com/watch?v=RxwjoegpI98&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=3&pp=iAQBsAgC"
+          },
+          {
+            "title": "My AI Design Workflow That Doesn't Ship Slop",
+            "href": "https://www.youtube.com/watch?v=oLu32YpiIJw&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=4&pp=iAQBsAgC"
+          },
+          {
+            "title": "Build an Enterprise RAG Pipeline in Minutes with Gemini New API",
+            "href": "https://www.youtube.com/watch?v=-Bp2Sz5xir4&list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS&index=5&pp=iAQBsAgC"
+          }
+        ]
+      }
+    },
+    {
+      "channelListedTitle": "Daniel Who?",
+      "channelMeta": "@whodaniel",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "Daniel Who?"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "BizOpps",
+      "channelMeta": "@bizopps2080",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "BizOpps"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "BizOpps.BizSynth.com",
+      "channelMeta": "@BizOppsBizSynthcom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "BizOpps.BizSynth.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "Test Channel",
+      "channelMeta": "@testchannel7587",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "Test Channel"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "ChoiceProductMarketing.com",
+      "channelMeta": "@ChoiceProductMarketingcom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "ChoiceProductMarketing.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "SocialSalez",
+      "channelMeta": "@SocialSalez",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "SocialSalez"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "YogaRainbow.org",
+      "channelMeta": "@YogaRainboworg",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "YogaRainbow.org"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "HempLifeStyle.Biz",
+      "channelMeta": "@HempLifeStyleBiz",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "HempLifeStyle.Biz"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "FineProductsAndServices.com",
+      "channelMeta": "@FineProductsAndServicescom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "FineProductsAndServices.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "ChoiceProductsAndServices.com",
+      "channelMeta": "@ChoiceProductsAndServicescom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "ChoiceProductsAndServices.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "Yoga Rainbow",
+      "channelMeta": "@yogarainbow3370",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "Yoga Rainbow"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "ChoiceServiceMarketing.com",
+      "channelMeta": "@ChoiceServiceMarketingcom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "ChoiceServiceMarketing.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    },
+    {
+      "channelListedTitle": "BizSynth.com",
+      "channelMeta": "@BizSynthcom",
+      "wasInitiallyActiveInList": false,
+      "switchRes": {
+        "switched": true,
+        "activeName": "BizOpps.BizSynth.com"
+      },
+      "playlist": {
+        "url": "https://www.youtube.com/playlist?list=PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
+        "title": "YouTube",
+        "unavailable": false,
+        "itemCount": 0,
+        "countTextCandidates": [],
+        "bodyCountMatch": null,
+        "bodySample": "Skip navigation Create Home Shorts Subscriptions You The playlist does not exist.",
+        "firstVideos": []
+      }
+    }
+  ]
+}

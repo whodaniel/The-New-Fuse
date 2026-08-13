@@ -1,0 +1,255 @@
+{
+  "total": 50,
+  "nodes": [
+    {
+      "id": "PROTO_19",
+      "type": "file",
+      "label": "Universal Timeline Protocol (UTP) - v1.0"
+    },
+    {
+      "id": "PROTO_8",
+      "type": "file",
+      "label": "Model Context Protocol (MCP) - Complete Guide"
+    },
+    {
+      "id": "PROTO_20",
+      "type": "file",
+      "label": "ACA Protocol Usage Examples"
+    },
+    {
+      "id": "PROTO_31",
+      "type": "file",
+      "label": "TWIP Orchestration Extension v0.1"
+    },
+    {
+      "id": "PROTO_5",
+      "type": "file",
+      "label": "🏗️ The Executable Intelligence Framework"
+    },
+    {
+      "id": "PROTO_13",
+      "type": "file",
+      "label": "🛠️ TNF Document Vetting & Gating Procedure"
+    },
+    {
+      "id": "PROTO_9",
+      "type": "file",
+      "label": "🏛️ MemPalace & TNF Information Processing Meta-Chart"
+    },
+    {
+      "id": "PROTO_26",
+      "type": "file",
+      "label": "Resource Search Revisions Implementation Plan"
+    },
+    {
+      "id": "PROTO_10",
+      "type": "file",
+      "label": "📘 The TNF Book of Axioms & Logical Building Blocks"
+    },
+    {
+      "id": "PROTO_23",
+      "type": "file",
+      "label": "RFC DRAFT-TWIP-0001: Terminal Window Identity Protocol (TWIP) v0.1"
+    },
+    {
+      "id": "PROTO_3",
+      "type": "file",
+      "label": "📑 Connective Journal Template: [ENTITY NAME]"
+    },
+    {
+      "id": "PROTO_32",
+      "type": "file",
+      "label": "TWIP Terminal Graph API (v0.1)"
+    },
+    {
+      "id": "PROTO_7",
+      "type": "file",
+      "label": "📍 LIVING_STATE.md - Active Session Synchronization"
+    },
+    {
+      "id": "PROTO_22",
+      "type": "file",
+      "label": "RFC DRAFT-SGP-0001: Spreadsheet Graph Protocol (SGP) v0.1"
+    },
+    {
+      "id": "PROTO_1",
+      "type": "file",
+      "label": "Agent Targeted Handoff V1"
+    },
+    {
+      "id": "DOMAIN_DIRECTIVES",
+      "type": "premium",
+      "label": "Engineering Principles & Directives"
+    },
+    {
+      "id": "DOMAIN_AGENTS",
+      "type": "premium",
+      "label": "Agent Matrix & Personas"
+    },
+    {
+      "id": "DOMAIN_PROTOCOLS",
+      "type": "premium",
+      "label": "Core Protocols & Directives"
+    },
+    {
+      "id": "N12410",
+      "type": "class",
+      "label": "Class: LoadingStateTracker"
+    },
+    {
+      "id": "N8886",
+      "type": "file",
+      "label": "File: TNFClaudeDevMCPServer.ts"
+    },
+    {
+      "id": "N1899",
+      "type": "class",
+      "label": "Class: AgentWorkflowService"
+    },
+    {
+      "id": "N250",
+      "type": "file",
+      "label": "File: monitor_bridge.ts"
+    },
+    {
+      "id": "N42",
+      "type": "class",
+      "label": "Class: ProtoA2AError"
+    },
+    {
+      "id": "N62",
+      "type": "class",
+      "label": "Class: ProtoA2AAuthorizationError"
+    },
+    {
+      "id": "N4059",
+      "type": "file",
+      "label": "File: audit-logs.ts"
+    },
+    {
+      "id": "N813",
+      "type": "file",
+      "label": "File: update-agent.dto.ts"
+    },
+    {
+      "id": "N811",
+      "type": "class",
+      "label": "Class: for"
+    },
+    {
+      "id": "N3541",
+      "type": "class",
+      "label": "Class: RateLimitBackoffStrategy"
+    },
+    {
+      "id": "N2454",
+      "type": "file",
+      "label": "File: OpenAIProvider.ts"
+    },
+    {
+      "id": "N2222",
+      "type": "class",
+      "label": "Class: ErrorRecoveryService"
+    },
+    {
+      "id": "N209",
+      "type": "class",
+      "label": "Class: PriorityQueue"
+    },
+    {
+      "id": "N779",
+      "type": "class",
+      "label": "Class: JwtAuthGuard"
+    },
+    {
+      "id": "N3428",
+      "type": "file",
+      "label": "File: workflow.module.ts"
+    },
+    {
+      "id": "N4195",
+      "type": "file",
+      "label": "File: CICDPipeline.ts"
+    },
+    {
+      "id": "N4217",
+      "type": "class",
+      "label": "Class: PipelineExecutor"
+    },
+    {
+      "id": "N172",
+      "type": "class",
+      "label": "Class: Bridge"
+    },
+    {
+      "id": "N2258",
+      "type": "file",
+      "label": "File: PatternRecognition.ts"
+    },
+    {
+      "id": "N913",
+      "type": "class",
+      "label": "Class: WorkflowExecutionRepository"
+    },
+    {
+      "id": "N4154",
+      "type": "file",
+      "label": "File: workflows.ts"
+    },
+    {
+      "id": "N264",
+      "type": "file",
+      "label": "File: protocol_bridge.ts"
+    },
+    {
+      "id": "N2347",
+      "type": "file",
+      "label": "File: VectorMemorySystem.ts"
+    },
+    {
+      "id": "N733",
+      "type": "file",
+      "label": "File: agent.dto.ts"
+    },
+    {
+      "id": "N2619",
+      "type": "class",
+      "label": "Class: evaluation"
+    },
+    {
+      "id": "N2280",
+      "type": "class",
+      "label": "Class: PromptCachingService"
+    },
+    {
+      "id": "N271",
+      "type": "file",
+      "label": "File: redis_bridge.ts"
+    },
+    {
+      "id": "N299",
+      "type": "class",
+      "label": "Class: MemoryTransportAdapter"
+    },
+    {
+      "id": "N3183",
+      "type": "class",
+      "label": "Class: FileVisualizer"
+    },
+    {
+      "id": "N4110",
+      "type": "file",
+      "label": "File: personal-skills.ts"
+    },
+    {
+      "id": "N4057",
+      "type": "file",
+      "label": "File: api-logs.ts"
+    },
+    {
+      "id": "N948",
+      "type": "class",
+      "label": "Class: AgentDiscoveryRegistry"
+    }
+  ]
+}

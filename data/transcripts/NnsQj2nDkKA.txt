@@ -1,0 +1,800 @@
+AI never sleeps and this week has been
+absolutely insane. Real life Gundams are
+coming soon. We have a new top
+open-source 3D generator with incredible
+details and accuracy. We have another
+model that can generate articulated 3D
+assets that can move realistically. We
+have not one but several new interactive
+world generators just like Google's
+Genie 3. We have some incredibly
+expressive texttospech generators that
+can handle different settings and
+emotions. We have a new open- source
+music generator that can create full
+songs from just a prompt. OpenAI adds
+some new features to chat GPT while
+Google reinvents the mouse cursor with
+AI. We have a new AI that can easily
+change the lighting of a video and
+another one that can change the camera
+movement and direction. This AI can
+easily redub a video into a new language
+and also adjust the lip sync. We have
+some ridiculous humanoid robot demos and
+a lot more. So, let's jump right in.
+First up, this AI is super useful. It's
+called Just Dub It. And this can take an
+existing video and not only dub the
+audio into a different language, but it
+can also adjust the person's lip
+movements to match the new language.
+Here are some examples. Tested every
+single one in this category, and it's
+not even close.
+category.
+&gt;&gt; Here's another example. I always knew
+this day would come, but I just didn't
+know it would feel quite like this.
+I see him now. One more round and I take
+him.
+As you can see, this can take an
+original video and make that person
+speak another language while keeping the
+facial motion and the voice and the lips
+sync aligned. So, this is actually based
+off of LTX 2.3, which is currently the
+leading open- source video model with
+audio. And it turns out that if you
+fine-tune this to do this for dubbing,
+it actually performs even better than
+other methods like Hijen. Now, at the
+bottom right corner, they have released
+a code button. So, if you click into
+this here, it takes you to this section.
+And note that here, they've already
+released the model to this. This is just
+based off of LTX 2.3. So, this is pretty
+small. It's only 2.5 GB. If you're
+interested in reading further, I'll link
+to this main page in the description
+below. Also, this week, this is one of
+the most powerful image to 3D generators
+we have so far. It's called Pixel 3D,
+and this can take a single image and
+turn it into a 3D model with super
+accurate geometry and realistic texture.
+So, here are some examples for your
+reference. If we take this image of a
+pizza, here is the 3D reconstruction of
+this pizza. Notice how accurate this is.
+And if you compare this with other
+competitors like Hunyen 3D, it's not
+even close. This new Pixel 3D is just
+way more accurate and detailed. Here are
+some examples comparing Pixel 3D to
+another competitor called Trellis 2. And
+again, Pixel 3D is just a lot better and
+more accurate. And it's able to do so
+because it tries to generate 3D models
+in a pixel aligned way. Basically,
+instead of loosely giving the model an
+image and hoping it understands which
+pixels belong in the 3D space, Pixel 3D
+explicitly connects the 2D pixels in the
+image with the 3D structure. So, the
+output is a really highfidelity 3D mesh
+with all the details from the original
+image. So, if you want to generate 3D
+models like for games or virtual
+production or product visualization,
+this is currently the best and most
+accurate 3D model generator you can use.
+The awesome thing is they've released
+this already. So, if you click on this
+code button and you scroll down a bit
+here, it contains all the instructions
+on how to download and run this locally
+on your computer. Notice that the total
+size of all these models are 24 GB in
+size. So, you'll need a mid to high-end
+GPU to run this. If you're interested in
+reading further, I'll link to this main
+page in the description below. Next up,
+this image model is super interesting.
+It's called asymmetric flow models and
+this is basically an image generator
+that can make images directly in the
+pixel space. You see how traditional
+image models work is it generates the
+image in what is called latent space. In
+theory this is supposed to save compute
+and make it simpler and then after it
+generates the image in that latent space
+then it uses something called a VAE to
+convert it back into pixel space which
+you and I can see. But here what they
+did is they completely bypassed this
+latent space and the need for a VAE.
+This just generates images directly in
+pixel space which you and I can see. And
+the advantage of working directly in
+pixel space instead of using the
+compressed latent space is that you can
+generate hyperrealistic images with
+sharper textures and better visual
+fidelity. If you compare it to just the
+base model that uses latent space plus
+another leading competitor Quinn image,
+you can see that the two traditional
+methods look way more plastic and fake,
+whereas this new method looks a lot more
+realistic. Or here's another example for
+your reference. Again, this new method
+seems to look more photorealistic with
+sharper details and textures. Now, the
+disadvantage of generating this in pixel
+space, at least previously, is that this
+takes up way more time and compute. But
+from some clever architecture tweaks,
+they were able to make this 40% faster.
+So, compute and speed isn't really the
+bottleneck anymore. And if you compare
+the performance of this new Asim Flow
+model against other competitor models
+that use latent space instead of pixel
+space, notice that in terms of image
+quality, this new one is on average the
+best. This might represent a paradigm
+shift in how future image models are
+designed. The awesome thing is they've
+released this already. So if you click
+on this code button at the top here and
+you scroll down a bit here, it contains
+all the instructions on how to download
+and run this locally on your computer.
+Plus, they've also released the training
+and evaluation code to this. If you're
+interested in reading further, I'll link
+to this main page in the description
+below. Also this week, Nvidia releases
+their own interactive world model. It's
+called Sonnet WM, and this is a super
+tiny 2.8 billion parameter open-source
+world model that can turn an image into
+an interactive world on just a single
+GPU. So, you start with an image and a
+text prompt plus the WD key presses, and
+it combines all those inputs into one
+video. Here's another example for your
+reference. It doesn't have to be just
+thirdp person point of view where you
+view the character from behind. This can
+also be first person like this. Notice
+that if you look away and look back, the
+scene still remains consistent. So, it
+seems to have at least some persistent
+memory of the overall scene. There are a
+ton of examples on this page. This is a
+very flexible tool that can generate a
+variety of different environments
+depending on your input image and what
+you specify in the prompt. They used
+over 200,000 public video clips with
+camera pose labels and it only took them
+15 days on 64 H100 GPUs to train this.
+Usually, it takes much longer to train a
+foundation model from scratch. They also
+made a distilled variant which can run
+on a single RTX 5090 with quantization.
+So, this can create a minute-long clip
+in just 34 seconds. Now, if you scroll
+up to the top of the page here, it says
+that it will be open- sourced and the
+models are coming soon. For now, if
+you're interested in reading further,
+I'll link to this main page in the
+description below. Now, that's not the
+only interactive world generator we have
+this week. There's yet another one
+called warp as history. This also takes
+in an image as the first frame, plus a
+text prompt and keyboard presses, and it
+would generate a video based on all
+those inputs. This can generate a
+variety of different environments and
+settings. And for the most part,
+everything does remain consistent as you
+move the camera around. Then here are
+some additional examples for your
+reference. The awesome thing is they've
+released the code and the models to this
+already. So if you click on this code
+button and you scroll down a bit here,
+it contains all the instructions on how
+to download and run this locally on your
+computer. Plus, they also released the
+script on how you can train and
+fine-tune this. If you're interested in
+reading further, I'll link to this main
+page in the description below. Also,
+this week we have a new AI called Fi
+Motion, which is pretty useful. This is
+trying to fix one of the weirdest
+problems in AI video right now. So, for
+most video generators, especially for
+anatomically tricky movements, like
+figure skating or doing yoga or kung fu,
+you can see that most video models fail
+to generate the movements correctly.
+Sometimes you get extra limbs, sometimes
+you get missing limbs, everything is
+just deformed and messed up. Well, fine
+motion is basically a new reward system
+to fix this. In simple terms, it asks,
+could this motion actually happen in the
+real world? The way it works is pretty
+clever. It takes the generated video and
+recovers a 3D human body from it and
+then it places that body in a physics
+simulator called Mujo Co. From there, it
+scores the movement. For example, are
+the joints moving in a believable way?
+Are the feet and body making proper
+contact with the ground? And does the
+motion make sense? And it rewards the
+model for movement that's physically
+correct. So, after applying this new fi
+motion to the video generators using the
+same prompt, you can see that everything
+is a lot more anatomically correct.
+There are still some subtle errors with
+the generations. It's not perfect, but
+it does fix a lot of these anatomy
+issues. Now, they released the code to
+this already. So, if you click on this
+code button and you scroll down a bit
+here, it contains the instructions on
+how to download and set this up on your
+computer. If you're interested in
+reading further, I'll link to this main
+page in the description below. Also,
+this week, Thinking Machines introduces
+what they call interaction models. These
+are real-time models that continuously
+take in audio, video, and text while
+also thinking and responding and acting
+at the same time. You see, currently
+when you talk to a real-time AI voice,
+it's kind of like texting it. You still
+have to take turns. But that's not how
+humans collaborate in real life, right?
+We interrupt and pause and react to
+things in real time. So these
+interaction models try to take a similar
+approach. It feels closer to actually
+collaborating with an AI instead of
+taking turns. It can notice silence,
+overlapping speech, interruptions, and
+visual cues as part of the actual
+conversation. Here are some examples.
+&gt;&gt; I heard mountain biking is a lot of fun,
+so I wanted to go mountain bike. And I
+was thinking to actually take my parents
+with me. They're pretty old. They're 70,
+almost 80, but I thought that would be a
+fun trip together.
+&gt;&gt; Wait, no, don't take them mountain
+biking at 80. That's incredibly risky.
+They could easily get seriously hurt.
+Pick something safer.
+&gt;&gt; H I think maybe, you know, if if it's
+risky on a normal mountain bike, we can
+do like tandem bikes. Maybe they're more
+sturdy and we can find like, you know,
+some volcano or better like an active
+volcano to go all together and do some
+&gt;&gt; Stop. An active volcano is deadly. You
+can't take elderly parents.
+&gt;&gt; I think you just don't want me to have
+fun.
+&gt;&gt; So, what are you having for breakfast
+these days?
+&gt;&gt; I really have been digging these Akai
+bowls.
+&gt;&gt; It's pronounced asai.
+&gt;&gt; Oh, sorry. Asai bowls.
+&gt;&gt; Oh, yeah. Asai bowls. Yeah. I really
+wonder where they originated from first.
+&gt;&gt; I think the asai bowls first came from
+Argentina, if I remember.
+&gt;&gt; Actually, Asai is from Brazil, not
+Argentina. Oh, so sorry. I think it was
+from Brazil, actually.
+&gt;&gt; Oh, yeah. They were from Amazon Fires.
+Yeah.
+&gt;&gt; Hi. So, I'm on a diet. Can you keep me
+away from caffeinated drinks or sweet
+treats?
+&gt;&gt; I've got you. We'll steer clear of the
+caffeine and sweets. Hm. That black cup
+you're holding looks like coffee.
+&gt;&gt; Maybe swap it for some herbal tea.
+Whoa, careful with that green can. Those
+are usually packed with sugar or
+caffeine.
+&gt;&gt; These are actually unsweetened green
+tea, so these should be fine.
+&gt;&gt; Gotcha. Unsweetened is perfect. Then
+keep an eye on the caffeine if you're
+having it late in the day.
+Oh man, put those sticks down. Those are
+way too sugary for your diet. Maybe try
+something that's option.
+&gt;&gt; Much better. A crisp green apple is a
+great choice. No added sugar, no
+caffeine, just a nice crunch.
+&gt;&gt; So, think of this as like the difference
+between emailing someone a problem and
+waiting for them to reply versus
+standing at a whiteboard and working
+something out together. The AI can jump
+in when it sees something, speak while
+listening, and translate in real time,
+react to visual cues, and even keep
+talking while a deeper background model
+handles longer reasoning or tool use.
+It's also time aware, so it has a
+built-in sense of how much time has gone
+by, which enables things like reminders
+and midtask prompts. So, how this works
+is the system actually consists of two
+different models. There's a lightweight
+interaction model that stays present for
+instant responses with the user. But
+then it could also route its context to
+a background model which is used for
+deeper reasoning or web search or tool
+use. Now currently you cannot access
+this yet. Here it says in the coming
+months we will open a limited research
+preview to collect feedback with a wider
+release later this year. For now if
+you're interested in reading further or
+checking out more demos I'll link to
+this main page in the description below.
+Also this week, this AI is pretty
+useful. It's called Causal Scene, and
+this is a video generation system that
+can create long interactive multi-shot
+videos in real time. Here's how it
+works. So, here's the interface, and
+here's a demo of it in action. This
+causal scene is designed to stream video
+in real time following shot level
+prompts from the user. Now, if you
+generate videos with multiple shots,
+they also need to be consistent, right?
+So this system also reuses memory from
+earlier shots. So the story and the
+scene remains consistent throughout the
+entire video. So this is almost like a
+director giving instructions. It's
+taking in a sequence of prompts and then
+it streams a multi-shot video. The key
+idea is this causal generation which
+means it generates forward in time
+without needing to recomputee everything
+from the beginning. So you can append a
+new direction while it's already
+generating with your prompt. and the
+system just keeps going. Now, if you
+compare this new causal scene with other
+long video generators like Infinity
+Rope, Long Live, Memlow, and Self-
+Forcing, which I've gone over on my
+channel before, notice that this new one
+is a lot more consistent. The character
+actually looks the same across these
+different shots, and there's a lot fewer
+errors and warping and distortion going
+on. Now, currently, they've only
+released a technical paper on this.
+There's no indication whether they will
+open source this or not. But for now, if
+you're interested in reading more or
+checking out more demos, I'll link to
+this main project page in the
+description below. Also, this week, this
+AI is really useful. It's called Reit
+Live, and this can take any video and
+relight it however you want. So, here
+are some examples. Not only can you
+change the warmth of the light, but you
+can also change the harshness of the
+light. In other words, should the
+shadows be hard or diffuse? You can also
+change the angle of the light. So, we
+can move a light to the left like this.
+Or we can add a white point light like
+this. Notice that the shadows are a lot
+harsher here because it's just a point
+light. Here are a bunch of other
+different scenarios. This even works
+with metallic surfaces and a ton of
+different lighting conditions. The
+really awesome thing is you can also
+input an environmental map like this and
+project the lighting of that map onto
+the input video. So you can get some
+really cool results like this. So if you
+need to like relight a certain video in
+a particular way, this is one of the
+best tools you can use. The awesome
+thing is they've released the code to
+this already. So if you click on this
+code button and you scroll down a bit
+here, it contains all the instructions
+on how to download and run this locally
+on your computer. Notice that here they
+recommend that you have a CUDA GPU with
+at least 24 GB of VRAM. If you're
+interested in reading further, I'll link
+to this main page in the description
+below. Also, this week, we have a new
+tiny and very efficient model that can
+just run on your phone. This is called
+Mini CPMv4.6.
+And I'm surprised people aren't talking
+about this more. This is really
+underrated. So, this is basically a tiny
+vision language model. So, not only does
+it take in text, but it can also
+understand images or video. So, you can
+even just stream your camera for it to
+process. And the awesome thing is this
+is lightweight enough to run on just
+your phone. And this works across all
+the mainstream mobile platforms
+including iOS, Android, and Harmony. So
+you can think of this as like a local
+visual assistant that lives on your
+phone. So here are some videos of this
+new mini CPMV in action. And it's able
+to handle all these different tasks very
+well. And the performance of this is
+actually very impressive. If you compare
+this to similars sized models, then it
+does outperform them across these
+different metrics in terms of general
+reasoning or STEM subjects, but
+especially in terms of analyzing
+documents and charts and text in images,
+as well as understanding graphical user
+interfaces and video understanding. This
+chart shows how impressive and efficient
+this new model is. So the y-axis is the
+intelligence index, the higher the
+better, and the x-axis is the output
+tokens used. So the lower the better.
+Ideally, you'd want to be in this upper
+left quadrant. And as you can see, mini
+CPM is up here, meaning it's incredibly
+efficient. Now, if you are interested in
+running this on your phone or any edge
+device, here it contains all the
+instructions on how to download and run
+this. Note that the total size of
+everything is only 2.6 GB. If you're
+interested in reading further, I'll link
+to this main page in the description
+below. Also this week we have a new
+image model called Korea 2. This is
+their first image foundation model built
+from scratch and it focuses less on raw
+prompt following and more on style and
+creative control. Think of this as a
+more artsy image generator. Here are
+some of its example generations. And as
+you can see this can generate a variety
+of different art styles. The poses and
+the faces are way more dynamic. Though
+this doesn't look as perfect or fake as
+some other image models. Everything
+looks a lot more unpolished and
+imperfect. What you can also do is
+upload a set of images to dictate the
+style that you want. And this is
+important because creative teams often
+need consistency. They need visuals that
+feel like they belong to the same
+campaign or the same product line. So
+for example, we can upload a set of
+minimalist line art images like this.
+And then from that we can get creat to
+generate all these different images in
+that style. Or here is futurist glam and
+again it's able to clone that style very
+well. Or here is a thermal airbrush
+style. So if you compare the results of
+Creata 2, notice that Nanobanana looks
+way too polished and realistic, whereas
+Creata 2 looks a lot more imperfect and
+natural. There's motion blur, there's
+noise, and the horse is in different
+dynamic poses. Here are some other
+examples for your reference. Now, this
+is closed source. Plus, overall, I don't
+think it's as performant as the leading
+model out there, GPT Image 2. So, I'm
+not going to spend too much time on it.
+If you're interested in trying this out,
+I'll link to this page in the
+description below. Also, this week,
+OpenAI is bringing their Aentic coding
+app, Codeex, to your phone. And the idea
+is simple. Your coding agent can keep
+working on your computer while you steer
+and control it from your phone. So, this
+takes the codeex workflow that normally
+lives on a laptop or your computer and
+lets you monitor, approve, or redirect
+and start tasks from just your phone,
+including Android or iOS. Think of it
+like a remote control for your coding
+agent. Your actual files, your
+credentials, and your permissions still
+stay on your computer where Codeex is
+running, but you can prompt it from your
+phone while you're away from your
+computer. You can ask Codeex to like fix
+a bug while you're away and approve a
+command or answer a question when it
+gets stuck just from your phone. If
+you've used Codeex before, sometimes it
+takes like 5 to 10 minutes on a certain
+task, especially if it requires multiple
+steps or some really long reasoning.
+Well, instead of waiting for it, you can
+just go off and do your own thing and
+then once it's done, it'll send a
+notification to your phone so you can
+see the result or prompt it further.
+Here it says, "Codeex in the chat GPT
+mobile app is rolling out in preview on
+both iOS and Android devices across all
+plans, including free plans in all
+supported regions. All you need to do is
+update the mobile app as well as the
+Codeex app on your computer to try it
+out. Note that this currently only works
+if you have Codeex on a Mac OS computer.
+If you're running Codeex on Windows,
+then support is coming soon. If you're
+interested in reading further, I'll link
+to this main page in the description
+below. If you want to supercharge your
+content and marketing pipeline,
+definitely check out Higsfield, the
+sponsor of this video. They just
+launched Higsfield MCP for agents like
+Claude, OpenClaw, or Hermes. What's
+really powerful here is that Claude can
+now generate, edit, and ship media
+endtoend through Higsfield. It's
+basically the first proper Claude to
+media pipeline. Think of it like this.
+The agent gives you the brain, but
+Higsfield MCP gives it the hands. Now
+your AI can actually do things with
+Higsfield, like generate videos, images,
+ads, landing pages, and ship them end to
+end with just a single prompt. And I
+mean everything. You can literally
+describe a product, and Claude will use
+the MCP to generate the creatives,
+including product photos, posters,
+social media posts, and even UGC videos,
+all in one thread. It's also the only
+way right now to get true agentic access
+to tools like seed dance 2.0 and even
+access GPT image directly within Claude,
+which is pretty wild. Or if you're in
+real estate, you can simply plug in some
+photos and Higsfield MCP can spin up an
+entire media kit of images and videos
+for you. I'm especially impressed by how
+seamless it is. There's no switching
+tools, no exporting files. Everything
+just lands directly in your working
+directory, just like any other file.
+videos, images, pages, all generated
+natively. It basically turns your agent
+into a full stack creative and growth
+engine. And the setup is ridiculously
+simple. Just connect the MCP endpoint
+once and it works across Claude,
+OpenClaw, and Hermes with zero config
+drift. So whether you're in content,
+marketing, or product, this is one of
+those tools that completely changes what
+one person can do. Check out Hicksfield
+MCP using the link in the description
+below. Also this week, we have a new
+open-source AI music generator. This can
+generate full songs with just a text
+prompt and some input lyrics. So, here
+are some examples. Here's a warm
+midtempo reggae groove driven by a deep
+melodic baseline, etc. And then here are
+the lyrics.
+The drones are beating through the
+morning.
+Concrete jungle burning but the root run
+deep tonight.
+Yeah.
+&gt;&gt; Here's another example. This time it's
+country with female vocals.
+Dust is kicking up behind these woods.
+Sun sinking low through the cotton wood
+trees.
+Windows down, radio huming low.
+Old blue got his nose to the wind as we
+go.
+Every mile feels like a heart.
+Ain't no map. I can drive this road with
+my eyes closed in the dark.
+Dirt road home. That's where I belong.
+Blue dog along
+every song. Tailgate rusted but the
+engine
+dirt road home.
+just carry me along.
+&gt;&gt; All right, so those were two quick
+examples. The song does sound quite
+clean and stereo. However, there are
+some slight misprononunciations of the
+lyrics at certain parts. I'm not sure if
+this is as good as the leading open-
+source music generator, which is
+currently a step 1.5 XL. In fact, if you
+want to learn more about that, see this
+video where I do a full installation
+tutorial. Anyways, I'm going to try to
+install this and test it some more. And
+if it is better than AEP, I might do a
+full video on it. Now, they've released
+this already. So, at the top right
+corner, if you click on this GitHub
+button and you scroll down a bit here,
+it contains all the instructions on how
+to download and run this locally on your
+computer. Note that here they do
+recommend an Nvidia GPU with 24 GB of
+VRAM or more. If you're interested in
+reading further, I'll link to this main
+page in the description below. In
+humanoid robot news, this robotics
+company called Zy Nova just launched
+their second generation super dextrous
+hand called Flex 2. The specs of this
+are very impressive. It has 23 degrees
+of freedom, making it super flexible
+with only a.1 mm repeatability, which
+means it can repeat actions with only
+a.1 mm error margin, making it super
+precise. It also has a grasp load of 12
+kg, meaning this can hold on to heavy
+objects very tightly. It also has
+multimodal sensing for adaptive grasping
+and slip detection. It also has really
+sensitive force control down to just 0.5
+newtons. The hand can dynamically detect
+if an object is dropping and tighten its
+grip or conversely back off its power
+instantly to safely hold something as
+fragile as an egg. This is way more than
+just a robotic hand. It's jam-packed
+with powerful tech like these microinear
+actuators, joint modules, sensing, and
+control. In fact, by shifting the heavy
+motors out of the fingers and into the
+forearm and the wrist using this
+tendon-driven configuration, the actual
+hand remains incredibly lightweight,
+under 400 g, which matches the weight of
+a human hand. Despite this low mass, the
+internal micro linear actuators deliver
+a huge punch up to 150 ntons of peak
+thrust with exceptional fingertip force
+output. In other robotics news, real
+life Mecca robots are coming soon. So
+Uni unveils the GD01, which is a manned
+transformable Mecca robot. Here you can
+see the dude crawling into the cockpit
+to control it. Or it can also just walk
+autonomously as well. The video notes
+that the total weight of the machine
+with the operator inside is
+approximately 500 kg. And they say the
+price of this starts at $650,000,
+which is significantly more expensive
+than other Uni Tree robots. Now, this
+thing actually packs quite the punch.
+With just a little elbow chop, it's able
+to knock down this block wall while
+maintaining balance. And this Mecca
+doesn't just walk on two legs. As you
+can see here, it can also switch to
+quadripedal movement. Now, this is just
+a prototype demo. I'm not sure what the
+exact use case of this is. I'm guessing
+it's for construction or related fields
+rather than, you know, combat and
+destruction. Now, this actually isn't
+the only Mecca robot out there. It turns
+out we already have other Mecca models
+from Japan and Korea, obviously, but
+these ones move painfully slow and
+require massive external tethers or
+crane supports to avoid falling.
+Definitely way clumsier than this new
+Unitere model. As you can see here, the
+ones from Japan and Korea can't even
+walk properly at all, whereas this new
+GD01 moves way more smoothly. Also, this
+week, we have an incredibly useful 3D
+model generator called Articcraft. This
+can generate articulated 3D objects. In
+other words, objects that actually move.
+So, these are 3D assets that are made of
+parts, joints, hinges, sliders, wheels,
+and other moving mechanisms. This takes
+a simple object description, such as the
+prompt over here, and outputs a working
+3D asset with separate parts and
+realistic motion. Here's an example of a
+desk lamp with a rectangular base. Or
+here is a three-link chain for compact
+mechanical linkage. Here's an even more
+impressive example of a mechanical
+keyboard. Or here's a jet engine. The
+clever part is that artic turns the 3D
+asset generation into a coding problem.
+Instead of asking the AI to directly
+imagine a final 3D mesh in one shot, it
+asks an AI coding agent like GPT 5.5 to
+write a program that builds the object.
+That program defines the geometry, the
+parts, the joints, and tests that check
+whether the object makes sense. So the
+AI is coding up all these separate parts
+and also checking to make sure that the
+parts are actually linked correctly
+together. And this matters because
+articulated objects are everywhere in
+the real world. So if you're designing
+3D assets, you also need to know how
+multiple parts move and work together.
+And Artcraft is trying to automate this
+entire pipeline. And the scale is the
+really impressive part. The team built a
+data set called Articcraft 10K, which
+contains more than 10,000 articulated 3D
+assets across 245 categories. This
+includes everyday objects, mechanical
+stuff, furniture, appliances, tools, and
+other stuff. So, this would be super
+useful for robotic simulation, like
+teaching robotic arms how to manipulate
+certain objects. Or this could also be
+useful for virtual reality and other
+applications. The awesome thing is
+they've released the code to this
+already. So, if you click on this code
+button and you scroll down a bit here,
+it contains all the instructions on how
+to download and run this on your
+computer. Note that this is agent
+a
+[TRUNCATED]

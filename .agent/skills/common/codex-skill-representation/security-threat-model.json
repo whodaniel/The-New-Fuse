@@ -1,0 +1,12 @@
+{
+  "skillName": "security-threat-model",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/security-threat-model/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/security-threat-model/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/security-threat-model.json",
+  "status": "present"
+}

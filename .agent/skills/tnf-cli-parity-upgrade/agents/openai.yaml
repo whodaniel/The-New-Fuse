@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF CLI Parity Upgrade"
+  short_description: "Close CLI parity gaps with contract-first delivery"
+  default_prompt: "Use $tnf-cli-parity-upgrade to close TNF CLI parity gaps against a reference CLI with explicit constraints and acceptance checks."

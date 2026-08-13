@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-06-11T18:27:41.721148+00:00",
+  "total_ingested": 84,
+  "transcript_complete": 37,
+  "total_extracted": 662,
+  "total_dispatch_ready": 651,
+  "dispatch_ready_rate": 98.34,
+  "yield_per_source": 7.75
+}

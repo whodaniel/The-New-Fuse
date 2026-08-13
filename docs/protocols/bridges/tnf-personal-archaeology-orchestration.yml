@@ -1,0 +1,75 @@
+bridge:
+  name: tnf-personal-archaeology-orchestration
+  version: 1
+  status: active
+  source_skills:
+    - orchestrator-agent
+    - personal-archaeology-orchestration
+    - personal-historical-archaeology
+    - tnf-master-clock-sync
+  target_skills:
+    - tnf-execution-audit-trail
+  objective: >
+    Operate a durable personal-history reconstruction program under a bounded
+    Master Orchestrator, with Team Orchestrators, investigator subagents,
+    heartbeat contracts, periodic reporting, and explicit human escalation for
+    authentication or approval blockers.
+  org_taxonomy:
+    master_director:
+      title: Master Director
+      authority: TNF-global protocol leadership
+      embodiment: tnf-cli-agent
+    master_orchestrator:
+      title: Master Orchestrator
+      authority: bounded program leadership
+      example: personal-archaeology-master-orchestrator
+    team_orchestrator:
+      title: Team Orchestrator
+      authority: bounded sub-fleet coordination
+    investigator:
+      title: Investigator
+      authority: source-specific evidence collection or synthesis
+  handoff_contract:
+    inputs:
+      - name: source_ledgers
+        format: json_or_markdown
+      - name: blocked_state
+        format: json_queue
+      - name: heartbeat_state
+        format: json_files
+      - name: human_escalation_channels
+        format: markdown_reference
+    outputs:
+      - name: periodic_digest
+        format: markdown
+      - name: heartbeat_records
+        format: json_files
+      - name: human_alert_queue
+        format: jsonl
+      - name: relay_outbox
+        format: jsonl
+      - name: blocked_action_queue
+        format: json_array
+  schedule_mapping:
+    - schedule_id: tenant-personal-archaeology-master-loop
+      cadence: "*/30 * * * *"
+      owner: personal-archaeology-master-orchestrator
+    - schedule_id: tenant-personal-archaeology-investigator-pulse
+      cadence: "15 */2 * * *"
+      owner: personal-archaeology-source-team-orchestrator
+    - schedule_id: tenant-personal-archaeology-digest
+      cadence: "0 */12 * * *"
+      owner: personal-archaeology-narrative-team-orchestrator
+    - schedule_id: tenant-personal-archaeology-blocker-watch
+      cadence: "*/15 * * * *"
+      owner: auth-blocker-sentinel
+  validation:
+    success_criteria:
+      - Master Director authority remains reserved for TNF-global roles only.
+      - Archaeology work is routed through the Master Orchestrator, not the Master Director.
+      - Every blocked auth or approval state creates a human alert record.
+      - Every pulse updates heartbeat state and appends progress.
+    failure_handling:
+      - If heartbeat freshness exceeds SLA, mark the agent stale and log an alert.
+      - If blocked state exists without a human alert, fail validation.
+      - If a Team Orchestrator assumes Master Director authority, quarantine the packet and correct role assignment.

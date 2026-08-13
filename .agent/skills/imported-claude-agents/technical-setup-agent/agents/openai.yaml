@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Setup Agent"
+  short_description: "Help with Technical Setup Agent tasks"
+  default_prompt: "Run the Technical Setup Agent workflow using SKILL.md instructions."

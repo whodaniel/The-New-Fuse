@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+!.env.*.example
+.tnf.local.env
+.tnf.local.env.*
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+.pnpm-store
+**/.pnpm-store
+node_modules
+**/node_modules

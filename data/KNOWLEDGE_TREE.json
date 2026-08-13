@@ -1,0 +1,3369 @@
+{
+  "root": "44f882ca7bb1bfddda354bc70d3b8455b455ecc8c554be16d1f13b53ad76b8fc",
+  "libraries": {
+    "Library:Intelligence": {
+      "hash": "574a2f1e5f043032b7f2398a84909e13e78f917ff64180affc74331ce0632d56",
+      "classes": {
+        "Strategic": {
+          "hash": "db811d185048ecbf5fa8b93c97866782cd0ff862367b4080c28b921adeab611e",
+          "count": 17,
+          "leaves": [
+            {
+              "index": 577,
+              "hash": "01e157413c1714d598f4458f2312dbbba07c880cc0c86ede7bec6fee9b84d800",
+              "vector_id": "ID#:CoUTcGUmcUi"
+            },
+            {
+              "index": 579,
+              "hash": "e763f2cd2052064915f9dc169dfe5f57d7e86c1122948a7204aee20205f8ac07",
+              "vector_id": "ID#:GMxxkLEKt89"
+            },
+            {
+              "index": 580,
+              "hash": "142ffd2dc0760d2ad32a87a14a0a5727e63d5b8118cd06dcfe17f11a23591312",
+              "vector_id": "ID#:BmjXAKCqs2S"
+            },
+            {
+              "index": 581,
+              "hash": "a4164ddf22e8f5c008871d2dd93b47d70da46081d9693efa0a40a3a5aaa1c336",
+              "vector_id": "ID#:Z2pdZMqnc6z"
+            },
+            {
+              "index": 588,
+              "hash": "b821d6beba67e5e20e60a74ed79be924e916277d2e3ced6ecacfa4fb514f89e2",
+              "vector_id": "ID#:9HsQojQ22n6"
+            },
+            {
+              "index": 592,
+              "hash": "4e8d328392930330194a8e0c7ce2b7f2b41794daacda6c19f2937b269540b16b",
+              "vector_id": "ID#:Jta2rAQmyj6"
+            },
+            {
+              "index": 595,
+              "hash": "63a790254c7f17d94bb92da93416d30ba1a53fba3c069440b4fb8726aee42753",
+              "vector_id": "ID#:bqzqjJZTBrv"
+            },
+            {
+              "index": 596,
+              "hash": "c874f9060af43f0e928962f09b47b5a12fc69db6b391dc6137dba37c99bbdc04",
+              "vector_id": "ID#:bM66k4pMP1w"
+            },
+            {
+              "index": 604,
+              "hash": "b897440a0037b2dc57ee30f69cbd487a91d9ba4a92eb1fe207f3118cf6b158c6",
+              "vector_id": "ID#:PGAEET1zPdR"
+            },
+            {
+              "index": 606,
+              "hash": "9259f77ebe2eff30ef7a3748a77794bd7ac86d2f50f247d6096e80f2572b22e6",
+              "vector_id": "ID#:9Tv9c6g1L8o"
+            },
+            {
+              "index": 622,
+              "hash": "c99f9dfeeee3978998fe25e2cf4b39a88ff6c8dd000e1c2a90d390e12d600fd9",
+              "vector_id": "ID#:8Jje3f4g5DA"
+            },
+            {
+              "index": 623,
+              "hash": "7d964a97efe455b2e818e87e5df263c1730157a42281a664e0d51682ddb8b284",
+              "vector_id": "ID#:QUezdDwMxbM"
+            },
+            {
+              "index": 624,
+              "hash": "d66b8baa3fe0581f3e61186287de282f10554bf20a7d1c09d354a1acca7213a9",
+              "vector_id": "ID#:fkHQ7jetivm"
+            },
+            {
+              "index": 627,
+              "hash": "5e932b0ed27c80c629b1b7593a87252731207f314afa55577571ffd2d489e6cf",
+              "vector_id": "ID#:Jb3kagPTnjj"
+            },
+            {
+              "index": 628,
+              "hash": "001f3daa171763678e6323bc04ab55fd9bffafc8597f73b9b1a282094e49d4ac",
+              "vector_id": "ID#:hZQa5aeAsZk"
+            },
+            {
+              "index": 629,
+              "hash": "0fddcb8098b57c11db6e8ab6be3098146f2bcc91817511d67603dba49a2cd7f2",
+              "vector_id": "ID#:HFtZiKefKcX"
+            },
+            {
+              "index": 633,
+              "hash": "ce7eed63f51ab7de85f6ea38ce7dc13f42a08018b3e209373d5748bc081e8389",
+              "vector_id": "ID#:WhWPv6KiAFY"
+            }
+          ]
+        },
+        "Procedural": {
+          "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "count": 0,
+          "leaves": []
+        },
+        "Governance": {
+          "hash": "0c20b11081a52d84b0dbaaa7a97136b19dad85cdc41e83e4e24149223f21872b",
+          "count": 471,
+          "leaves": [
+            {
+              "index": 1,
+              "hash": "95b14fe22e0004336ead4d0e95cb99659607ab8ea2268de3d684b9f3de4e7797",
+              "vector_id": "ID#:j9dQeD7pebz"
+            },
+            {
+              "index": 2,
+              "hash": "a2b621f078bca40cd45b37c832dbef29a2a6da4892a832643c3ca584f75097bd",
+              "vector_id": "ID#:KykhuZzMTFJ"
+            },
+            {
+              "index": 6,
+              "hash": "0e319053adba300a3b71fa42ea83e7b11a8919227aac45cd0abec255bb7c5e9b",
+              "vector_id": "ID#:cija1iERWhg"
+            },
+            {
+              "index": 7,
+              "hash": "0ccbbf9d3daee147283bdfa4ef6516bfbe524688979ee6236eb3d679585f5d75",
+              "vector_id": "ID#:eHBJeHCCib3"
+            },
+            {
+              "index": 8,
+              "hash": "1bb5c0d0285ec2b4cfe0301b4bee3a97c191c027ed969f84662fcff8959064b8",
+              "vector_id": "ID#:5eqPnedrGxR"
+            },
+            {
+              "index": 9,
+              "hash": "55feffa6d60cfd332669a983334eae4dd3202cd7c3d48b956a74c38dffbf32a4",
+              "vector_id": "ID#:7WQSdpQqPdT"
+            },
+            {
+              "index": 10,
+              "hash": "675f301750bb99ea8bf4c8693f179006342ec3aad4b4a7cae688643655723cb8",
+              "vector_id": "ID#:NigrPs4Bpjv"
+            },
+            {
+              "index": 11,
+              "hash": "0e5578e3488921990ff68ed16ba9f3207170a2e7c6d2a9cd0b1e4d64830d0130",
+              "vector_id": "ID#:NdXfYZeNAQk"
+            },
+            {
+              "index": 12,
+              "hash": "1699cb0f8e284930b012e085bd604dbf7c6237a089d426e676443bd0f28ed497",
+              "vector_id": "ID#:TGcSfphnAek"
+            },
+            {
+              "index": 13,
+              "hash": "744aa5b2d28d8902007122cb45a3ff5708d425a82b97fe49cd5e40a288bf505a",
+              "vector_id": "ID#:H7m6t5xqWZN"
+            },
+            {
+              "index": 14,
+              "hash": "1a030c401480a8fd9cd81cd3d25f6f579111e3eb4d0aba6e43d4025738c329bd",
+              "vector_id": "ID#:Rq8BbBHZ47b"
+            },
+            {
+              "index": 16,
+              "hash": "6dedc33eaa650e37c2f9d9ba7998c3da9b092710868549a67a65674ccb71fbbc",
+              "vector_id": "ID#:ez7zx1DevBv"
+            },
+            {
+              "index": 17,
+              "hash": "afe2beb4a629a4ec2ff665b73581cbca4c900731675b74b98d4803e4fde93bf1",
+              "vector_id": "ID#:3jYvtn77LBp"
+            },
+            {
+              "index": 18,
+              "hash": "1b547c740017ac8ee6d042fcc7077212c7a508862e36bfd5076320d7bf297b34",
+              "vector_id": "ID#:TazmxR144Qq"
+            },
+            {
+              "index": 19,
+              "hash": "b5010d5cedd37a67c1ffc2dd85070552236670c9685dd0e4b5835b7be9c5a09b",
+              "vector_id": "ID#:FYqgJnD5xtc"
+            },
+            {
+              "index": 20,
+              "hash": "5308f076eff07a88c3c83423825db3d2a4f3353a75b94743cc4048ca614a2dbf",
+              "vector_id": "ID#:FhdtvwYffqt"
+            },
+            {
+              "index": 21,
+              "hash": "551f662069e92b6337f370478c470b2461327178cfd7ba9705a3f1cb2ad1316f",
+              "vector_id": "ID#:2TAy4SRocjR"
+            },
+            {
+              "index": 22,
+              "hash": "7ea742cdefed3273ae07067f795a231e00a772e3bff32f37628a01dea1ad9a74",
+              "vector_id": "ID#:ZitygsFRCs1"
+            },
+            {
+              "index": 23,
+              "hash": "e83ff69c5fd9b84af6aaeeef7fd020e90ed4b69b0b6d99323752d2c2aacc199f",
+              "vector_id": "ID#:2dVZfCDi52H"
+            },
+            {
+              "index": 24,
+              "hash": "88c3a0ad8187da0fb46c8f2732e37894be281d9381202cff1f3e089ca10f1006",
+              "vector_id": "ID#:3DJjVpLzbG1"
+            },
+            {
+              "index": 26,
+              "hash": "c90177fc34f16f37265e4117bee3a6108c26a8c8e3d3289b67713eb104bc2ca2",
+              "vector_id": "ID#:aViHM3VS6Em"
+            },
+            {
+              "index": 27,
+              "hash": "09fa6293e8f801d00e3faac9021734dc12557b2c0fc9841ffe4e9c78c8a4592e",
+              "vector_id": "ID#:CZRYM64XvFr"
+            },
+            {
+              "index": 29,
+              "hash": "fc35aa75628a0bc8855ca7e2b872712bbf82e26864bfcbafcae31efe8946adf8",
+              "vector_id": "ID#:fKVwWZ9jTwc"
+            },
+            {
+              "index": 30,
+              "hash": "4301f4846046426306594f41d77f1ca2315615138deb0a2f0972f5cd02cbf10d",
+              "vector_id": "ID#:5Fv8QnatUJS"
+            },
+            {
+              "index": 31,
+              "hash": "d55c572fed1ea1b3ff7e08dd5665e6451c8ead31551602e04b248244ded20351",
+              "vector_id": "ID#:4UpwCfbMdeW"
+            },
+            {
+              "index": 32,
+              "hash": "a2bcc0f4c4ff13880b94f6a3b028c15bcc315c1d05df78970f3ae5b79064719b",
+              "vector_id": "ID#:72854YuoEta"
+            },
+            {
+              "index": 33,
+              "hash": "e86ec5cee99cb1e71a9acb25218aa815f26363472e4c512faf626a1c363d3619",
+              "vector_id": "ID#:MCNCLsBcjoe"
+            },
+            {
+              "index": 34,
+              "hash": "3169a4a526826015a1afd274f730f2ed159436f8c5b06dc8961994d5a5f34f2c",
+              "vector_id": "ID#:YNqAmsmCwCX"
+            },
+            {
+              "index": 35,
+              "hash": "4c41fc8be5dc797b7597e876c1045bb534e92fb3e039d92d8745f4fd5c1b539c",
+              "vector_id": "ID#:ivTaABb7vo5"
+            },
+            {
+              "index": 37,
+              "hash": "66f401c164e56c0686570e9af4f61fe1245f999ac05cdac157d01b843b38d966",
+              "vector_id": "ID#:jGY8QcrKQtc"
+            },
+            {
+              "index": 38,
+              "hash": "2885ddfe7ba9e4b23fe8b1c6888d06def4dee3a8cc43231036cc631d39a22d50",
+              "vector_id": "ID#:d2mgpxdgrSH"
+            },
+            {
+              "index": 39,
+              "hash": "c0de64d57aef233a7e7af61beccedffcf49ad7e5f11c891c3c2d454a55d23d27",
+              "vector_id": "ID#:SbrU4r6L2Z2"
+            },
+            {
+              "index": 40,
+              "hash": "c1b57a1683efe955cc1666a164c808f85bbd8d8077cd400f190cf48b3ae8a97f",
+              "vector_id": "ID#:AZup4FG2XDq"
+            },
+            {
+              "index": 41,
+              "hash": "fa7e289f23ff08d35a9e9630adb4b75312e2eb5aa766343d186fbcf276e56994",
+              "vector_id": "ID#:Ma7VGviPbpV"
+            },
+            {
+              "index": 43,
+              "hash": "030b7e806a0969705c14424d47edcbfba2299cbfec60be00d85c968bbd405c4e",
+              "vector_id": "ID#:2UkLyuFpUAj"
+            },
+            {
+              "index": 44,
+              "hash": "5cc7bfa6b1706621f941c3da5dfc1e7d4b267777a00728b76ef45b5a341e47ae",
+              "vector_id": "ID#:QokXHW3FMoM"
+            },
+            {
+              "index": 45,
+              "hash": "02c9178f0d097f30823069589b79486c4771c3989ab17b5b4124116fa4c21531",
+              "vector_id": "ID#:2QM1Mhv9Jxj"
+            },
+            {
+              "index": 46,
+              "hash": "c0b6d758febb5a38f23a520d33399a9ee5936c08e97dc3f350d3bad19b10b7ef",
+              "vector_id": "ID#:DRYNLoS7fjw"
+            },
+            {
+              "index": 47,
+              "hash": "952514c39eae000400a832675f61cd310187d430cb0d4dd1fc79d517e3919219",
+              "vector_id": "ID#:PXcaE81VQC3"
+            },
+            {
+              "index": 48,
+              "hash": "0b98eadab9dfe3d81e5c1e2ed228430aa508c2beb8e8ab8453bf314aedc65676",
+              "vector_id": "ID#:K5AMAgbck5B"
+            },
+            {
+              "index": 49,
+              "hash": "cb368bc03d85ac47ee0367dcde16a6f6d328917366ba4199c0d709ec6b21030b",
+              "vector_id": "ID#:YrKCNhPbyoG"
+            },
+            {
+              "index": 50,
+              "hash": "20658566b7facb29772317b62ed6c334a12f6ace0a192d8ddd5f7d20ded87396",
+              "vector_id": "ID#:2yRYuGoytrU"
+            },
+            {
+              "index": 52,
+              "hash": "31091991ec62c1bafc335247fb1c6ed434096ed88bc3ff2bb64005517b3d33dd",
+              "vector_id": "ID#:bhsseXMvros"
+            },
+            {
+              "index": 53,
+              "hash": "03dfd8b816a5a9e2c7c464082ca29f50ef07dc00b9e3a755a8b0dc501f5d375d",
+              "vector_id": "ID#:fR6EcGLqb6f"
+            },
+            {
+              "index": 54,
+              "hash": "ed5f8d434f7932053a9ba4dec13420e9c905f29a12e77af51bb4a853e89bfe5f",
+              "vector_id": "ID#:dP1znHThXes"
+            },
+            {
+              "index": 56,
+              "hash": "fc64f9f507d99af1f1a73dbe620796301f9dce12283506a2293c74cfb6b10576",
+              "vector_id": "ID#:KjhzFL61KhV"
+            },
+            {
+              "index": 57,
+              "hash": "7f7081e102ef8495369b1f2e5f41dce7bb91a722838c6353afc54c9c3b3da0c9",
+              "vector_id": "ID#:WJHRKZK1z42"
+            },
+            {
+              "index": 58,
+              "hash": "afb3020b30ad4d7d743152b027bf2e27dcbce0b22cf24c0ef7a69ae336113e2b",
+              "vector_id": "ID#:12hN7hZK8ig"
+            },
+            {
+              "index": 59,
+              "hash": "bae08e8b7ffed570c0b64bd7b09ac794808fb107339fbc1a0401c0767616b3b3",
+              "vector_id": "ID#:Z2Eb65a3chP"
+            },
+            {
+              "index": 60,
+              "hash": "7c35437b0fb8d9a735248d1f78168ae38415e52fbcb5c7f3ca7a103cae40c99d",
+              "vector_id": "ID#:jnpmpByddhQ"
+            },
+            {
+              "index": 61,
+              "hash": "658aca21a3098c26a07da0ac80131e7507d89fad6f1b216bc2143114596ec2de",
+              "vector_id": "ID#:8tRT2uRXSRZ"
+            },
+            {
+              "index": 63,
+              "hash": "c2a8b494e7edfd2e8c862c888ac49ac2bb2723102084b4dd68a56914b459f36f",
+              "vector_id": "ID#:ZPNpyLmQVGB"
+            },
+            {
+              "index": 64,
+              "hash": "3f0a9e501d012c3b4d92335a04d024f96ca7953b65d2cbd77c19deba975db577",
+              "vector_id": "ID#:aYukw3coRSX"
+            },
+            {
+              "index": 65,
+              "hash": "778bca41ca58e366f042f8262d60f8c51172342f80708b7fc64b2e16b294e40e",
+              "vector_id": "ID#:goYhdK8Mu7q"
+            },
+            {
+              "index": 66,
+              "hash": "3c434726f995c0075ef9a487491839ed74c802bc05a4f11f3a5a4a386d171741",
+              "vector_id": "ID#:BUUJFWanXQ7"
+            },
+            {
+              "index": 67,
+              "hash": "420248081010705de0a25488d8b61615bfb617c80760440471cbd50cedff9896",
+              "vector_id": "ID#:HcbBdEpLRyw"
+            },
+            {
+              "index": 68,
+              "hash": "2edcab1ca2f8bd395e7c646b530933737362bc22711997e28b488423bd3134d5",
+              "vector_id": "ID#:hTGyGqkWMHV"
+            },
+            {
+              "index": 69,
+              "hash": "4a1627d541c5ea40ed4f924c3de5f094b27eec639fae9b510cb99eb13a7689c3",
+              "vector_id": "ID#:d5kDzHu8kui"
+            },
+            {
+              "index": 70,
+              "hash": "3fd9a29b03171a3baaad68eae1ec993109665a37bac6c394c33b5ec0b614bec9",
+              "vector_id": "ID#:2yoxwsqJZ2F"
+            },
+            {
+              "index": 72,
+              "hash": "91ba0f612977582fcf0651767da849b11cfac4fde69f982ead689379dc419693",
+              "vector_id": "ID#:SQmx8aiZ9GH"
+            },
+            {
+              "index": 73,
+              "hash": "f844e17590317fba08965aba83bcc70f6f25157c25380651a26a2a61edc2e9b8",
+              "vector_id": "ID#:WpbySdTs5q3"
+            },
+            {
+              "index": 74,
+              "hash": "d8b22e04e829387ce7a66b39df1f4adad6803b0e9bdd28847447363e15e9a131",
+              "vector_id": "ID#:EpeyuaDJgHJ"
+            },
+            {
+              "index": 75,
+              "hash": "6fd03e9a87e664ba9cf68ad78e57945e8a8e4a36a71828a105d05bd57792fffd",
+              "vector_id": "ID#:e7yDoGTMoCK"
+            },
+            {
+              "index": 76,
+              "hash": "6173de2fd8197353aaa5cd193a2046d466fd633deb1930c76eab0e8dc4eea6f2",
+              "vector_id": "ID#:6TaUxnqr9YX"
+            },
+            {
+              "index": 77,
+              "hash": "ea3381e5bb505be0991778486a079f941b961af2b1e3afb93327435881c675d1",
+              "vector_id": "ID#:AzydKiKeniZ"
+            },
+            {
+              "index": 78,
+              "hash": "6462f33951d725d91828131e4cf205ee97c9eeffb05c94db20ca710414b694b2",
+              "vector_id": "ID#:jZXcRY7HvWo"
+            },
+            {
+              "index": 79,
+              "hash": "2377842683b9c22bdd6a97a9e1757f04150268d2af0b0ba7ac5006666b8ea445",
+              "vector_id": "ID#:FNRmax8zQHG"
+            },
+            {
+              "index": 80,
+              "hash": "f9b66a8505d96bd9154d403140b875ee096a66cadb657cd3faae3af157a3f801",
+              "vector_id": "ID#:axWgE483wpU"
+            },
+            {
+              "index": 81,
+              "hash": "fdf894587be4d5447155116fb51d8cfbe1e56c8f5ea8dae1b772fdab404c7f29",
+              "vector_id": "ID#:evVFbUohAUn"
+            },
+            {
+              "index": 82,
+              "hash": "7ecf2a3c94ba121c040eb9f91df82121e28a63d8e2ae51f35d504dc999c8affe",
+              "vector_id": "ID#:dnM8a5gsYz"
+            },
+            {
+              "index": 83,
+              "hash": "c7f89514931cff85b7d7013d6256c0c0aa6e24f3b92dacc4a90032935019bb91",
+              "vector_id": "ID#:YW44c6p54k1"
+            },
+            {
+              "index": 84,
+              "hash": "26f8c2b4968a8b428cba56e46af38c2e06588b08903b3d7a8a355196801c7a85",
+              "vector_id": "ID#:3XjTfN75VEp"
+            },
+            {
+              "index": 85,
+              "hash": "afec995d4c358cd4eafc67fac89816cfceda864b943d7f9593686e56f3fc663a",
+              "vector_id": "ID#:AnVKho8V6pU"
+            },
+            {
+              "index": 87,
+              "hash": "425a5e039689c58a6902de21c8dba98595e0b1c24e1b238f3e7693f40b0c0df9",
+              "vector_id": "ID#:TLRzcNgNcSP"
+            },
+            {
+              "index": 90,
+              "hash": "03d14c5cfbe5156c7a5019789f12036b1a3591c5b87f9c02dc07f66f9a593766",
+              "vector_id": "ID#:qNm5WA1bdN"
+            },
+            {
+              "index": 91,
+              "hash": "d4d09cb6daedbbd25606f1f3f933637ea0691ebf702705c37cd7f59f02bf2640",
+              "vector_id": "ID#:emz7GE5bZb6"
+            },
+            {
+              "index": 92,
+              "hash": "a903ca73a05daa1f42383d485981187dbfcb024c306999e8f5a95279a54268f5",
+              "vector_id": "ID#:FMrjYVSLsuY"
+            },
+            {
+              "index": 93,
+              "hash": "8ba0ffd1b9eefaa9ec638ee80f0a6b59ede4e384ac065c81e5d9bd46c9da7cc6",
+              "vector_id": "ID#:Jy7uUkKwy4i"
+            },
+            {
+              "index": 96,
+              "hash": "a6ac5242bfb32490afca9203d381273a4c98aa29030f449ddf9ee9db7cbcca5b",
+              "vector_id": "ID#:LmXbHbfFTWx"
+            },
+            {
+              "index": 97,
+              "hash": "81a1cc3e96f7217148468cf413708a3887241c414921e7063ac4a93ee7b61676",
+              "vector_id": "ID#:AewdasaYNHt"
+            },
+            {
+              "index": 98,
+              "hash": "9989eb39487bc75b3436da680f30a1811c856f2ff52237848b54bac68d36b99a",
+              "vector_id": "ID#:2aHmY8MmifB"
+            },
+            {
+              "index": 99,
+              "hash": "d55ca65bfa9df5544f33e37bda71f6c5831b1554782b99907dda3575b5fab7d3",
+              "vector_id": "ID#:MTy214mRCFH"
+            },
+            {
+              "index": 100,
+              "hash": "71f377989d674d47bbf1cb5782221139a93cbfc2388e3cd0cf033d5f1891ec0a",
+              "vector_id": "ID#:hhrwEEFz3Gf"
+            },
+            {
+              "index": 101,
+              "hash": "f25a76fbb6bf2cd4a3451ec036d72537813be911875aefeda7da5f730cda60a3",
+              "vector_id": "ID#:ZvqcT4XgDqK"
+            },
+            {
+              "index": 102,
+              "hash": "1b4efb760ef4e0af84b567a2e9c8c975c67908b638e806e31f8c5928fb7e1706",
+              "vector_id": "ID#:Xp5m8yVZeuQ"
+            },
+            {
+              "index": 103,
+              "hash": "8a3f7199b556eec8740e737bc926267abd34aa76dd16dbcbfdb389daaa830e10",
+              "vector_id": "ID#:TGYW4itCaqs"
+            },
+            {
+              "index": 104,
+              "hash": "a1547178ae9ad011d674537b7b91f34b07e3d123e1315fe08f49828d255886ed",
+              "vector_id": "ID#:2eMr9FoTkkq"
+            },
+            {
+              "index": 106,
+              "hash": "fd2b4c46eecc66e5b3896437fb68fba7465209ffe992f9bf6e9c7ba9317529ee",
+              "vector_id": "ID#:dpW1nZfnWX8"
+            },
+            {
+              "index": 107,
+              "hash": "9fc08c45f4e256496a3fe89257226b342281a899f72ea05d95c016c6b08f14e7",
+              "vector_id": "ID#:4EGTsU55nEd"
+            },
+            {
+              "index": 108,
+              "hash": "0a992edad9695344eafb90433a6548fe261cb1bee32b219970cb487ccf057cca",
+              "vector_id": "ID#:DocYbYmMMkW"
+            },
+            {
+              "index": 109,
+              "hash": "baf9afe82bf99e73c48cc000aca4cbd6bfa6dea0169cb089ace0798b418ee3f5",
+              "vector_id": "ID#:ZNNrfmiq2qo"
+            },
+            {
+              "index": 110,
+              "hash": "07ce6ad5710f97e1ca82ab5636e60685f2349943bdfcf354ad9ed62215d5b0a9",
+              "vector_id": "ID#:FDhAS6BsaA9"
+            },
+            {
+              "index": 111,
+              "hash": "ceedb8c3b315b47df8afd06c63109e10018c0c75f0e4c346eda1b3f8cfe330f1",
+              "vector_id": "ID#:VR3fRm3eyba"
+            },
+            {
+              "index": 112,
+              "hash": "40dea7b57f8c2ddc218bb2cbc597723f1e39fce8cf3dcef53109c6df989e3093",
+              "vector_id": "ID#:F6s4KUjmtM2"
+            },
+            {
+              "index": 113,
+              "hash": "06fb7a163f9bc5b6faa0d91081ffdce2a494bad9c05d9a298846cfa373f27e2b",
+              "vector_id": "ID#:AkdGo9SF2tX"
+            },
+            {
+              "index": 114,
+              "hash": "72e9b55252583d77edaa2f8e6ddffe937727f927917574bfd9d61433f5041354",
+              "vector_id": "ID#:gDBtRLDq1o6"
+            },
+            {
+              "index": 115,
+              "hash": "6369de23a3ac72b47f7db8d45b178666be6523af38e4bf7ddb1361c0c6812538",
+              "vector_id": "ID#:j6V4vGtXDuY"
+            },
+            {
+              "index": 116,
+              "hash": "3f326470a0598d361ab9c6bc10af8a2ba281d4bb9d07ac3b12898dafa0a182cd",
+              "vector_id": "ID#:6hDNmCg4wS5"
+            },
+            {
+              "index": 117,
+              "hash": "1548808c28f1ebfbad70347b8354acadd1947381ab8d9e5d12170073b9fbf17d",
+              "vector_id": "ID#:YPwMdMmCJEN"
+            },
+            {
+              "index": 118,
+              "hash": "db64814c97357d1e58879432b3d7a6e67ec99020853f41531c13d066e57478e2",
+              "vector_id": "ID#:74aYeUiGz29"
+            },
+            {
+              "index": 119,
+              "hash": "0fe2b4c7401df07a8f627377c3ae6eadb57a3e92f0838a4a2558d5e8ce6fd3e8",
+              "vector_id": "ID#:f8vwme5kW8U"
+            },
+            {
+              "index": 120,
+              "hash": "7a982546664b11653080e3cae8d0c83b27144fd1ed2bcec44a5b86e2f7744004",
+              "vector_id": "ID#:dVUCnRtFtpa"
+            },
+            {
+              "index": 121,
+              "hash": "ab4fc14c2c62656ba354cb4039f99883667ee495cb8b54e42bd5f66f94bb317c",
+              "vector_id": "ID#:RQSUWm9p6w7"
+            },
+            {
+              "index": 123,
+              "hash": "9b54791723c8cd56b140e091db100009c59683ee1064541bf0c857a550af6953",
+              "vector_id": "ID#:CjusqUFxLPF"
+            },
+            {
+              "index": 124,
+              "hash": "ec5f8ba1904162d97c104e048e364edd64aadfd173edb1ad1a8484419cbbbb1f",
+              "vector_id": "ID#:ah41yZLZLtM"
+            },
+            {
+              "index": 126,
+              "hash": "c338cd3ce3dcab9c030c2a5ce6fda31200e02ed7046bc194d3e01f1b39f48e2a",
+              "vector_id": "ID#:gpd1TkK9Tx5"
+            },
+            {
+              "index": 127,
+              "hash": "a4addc6b0f1771d9b9d7bbce9f48a858c64ce8fc05721e5cdfe15b66716148f0",
+              "vector_id": "ID#:GGYYu2Xzag9"
+            },
+            {
+              "index": 128,
+              "hash": "da01714fe53cece6c27e904d2c17b5d4ec022350079472c084e07250a6f2afa2",
+              "vector_id": "ID#:4gSeh98sbgi"
+            },
+            {
+              "index": 129,
+              "hash": "fa512f835e6e640b0d4cc78d1c6ce19a5b60f4517e34b6dc352e47133584e1fc",
+              "vector_id": "ID#:Hkjoj1SCJd7"
+            },
+            {
+              "index": 130,
+              "hash": "b1208c245abb173b66c5e7317263b36665ddec25d163c94659b6dc91bd76df8a",
+              "vector_id": "ID#:V9L1aUUjsE4"
+            },
+            {
+              "index": 133,
+              "hash": "56fdc2df15dec4644c3d5804a6d24f31b3934da729fbab60683bab467fccc289",
+              "vector_id": "ID#:jkEZFHKeFL6"
+            },
+            {
+              "index": 134,
+              "hash": "cb0ca50e35ecdb45a1f33dfd16f93a286d48a044393767a2998e4574cfd767f9",
+              "vector_id": "ID#:7yM5fddeRhq"
+            },
+            {
+              "index": 135,
+              "hash": "3ab6d7c4b5c8494c72f879de3032586109f3a4952d719b8b1a6f2d411d690489",
+              "vector_id": "ID#:9CW6rhpDmqF"
+            },
+            {
+              "index": 136,
+              "hash": "e962190e4ce0e6397590dc6b7c9731eb6a8136f4dcc88542b89a24a44659144f",
+              "vector_id": "ID#:6KdqEdafZ9R"
+            },
+            {
+              "index": 138,
+              "hash": "4a013e33e7caa093066885beed1b988b613953191fc1cc15ea2fdc1012f08ba2",
+              "vector_id": "ID#:MLfNmfr38fT"
+            },
+            {
+              "index": 139,
+              "hash": "e82b21e5a38317b8c546e634331ccd8da477c97ee9d987fc0768a6280fa4d7a8",
+              "vector_id": "ID#:VNG9hijCcML"
+            },
+            {
+              "index": 140,
+              "hash": "fd0b06b9b6e96c550da910cf370b87e76ea53c47afec87f5b697698db3828e87",
+              "vector_id": "ID#:2iPZFjaynYN"
+            },
+            {
+              "index": 143,
+              "hash": "ef3dab1b0d927c49470c3be6bc072ff438b1dc1a62c608c058a3e5b7e75a3c32",
+              "vector_id": "ID#:PW7rkYzahPU"
+            },
+            {
+              "index": 144,
+              "hash": "e798ee613c9dd436613a105152e59fe6dc31c3b3a6d4fd1786cd2b9e543c22f9",
+              "vector_id": "ID#:HA42S8LyRK6"
+            },
+            {
+              "index": 145,
+              "hash": "b1e5bd9e353da25535d305395676a0d97f8fda52d6e23b3df885d30ebc02af71",
+              "vector_id": "ID#:PbM2jkau2do"
+            },
+            {
+              "index": 146,
+              "hash": "228e2eeebf46f3410946ab5884717ffffc1af7d49bcfc6d03c56dbb0ec9e62d4",
+              "vector_id": "ID#:921o834LvbE"
+            },
+            {
+              "index": 147,
+              "hash": "f0a86a64afb9d3c15c4bc0507ebcbef8047a4a541bec1814c34dea76e007c4df",
+              "vector_id": "ID#:W6Jk7meBCto"
+            },
+            {
+              "index": 148,
+              "hash": "2c618ed86948bd5b5c508d9895c887be3084468f74c944a26218d4700f2a9eea",
+              "vector_id": "ID#:FBy7L2FMFL6"
+            },
+            {
+              "index": 149,
+              "hash": "b17c3690239da278ec008af46ef5012927df564bcc8fbffbebb9cb0076ef99e7",
+              "vector_id": "ID#:bS2mGu63aAJ"
+            },
+            {
+              "index": 150,
+              "hash": "087dbb4fd49f9dadac61a305eba1dbaa8694b25be0a1b533539a5c01b3bd50f4",
+              "vector_id": "ID#:VKGnB2DxFrk"
+            },
+            {
+              "index": 152,
+              "hash": "a7ef4f744945a2f06b1e74d665d28f3a4b7f4edc94bad816bad80b8b0ed3cde9",
+              "vector_id": "ID#:EFKdAmJaYRP"
+            },
+            {
+              "index": 153,
+              "hash": "4b93d15065ac21a55a6f11e179691e708f8fdf83e27ca7d853325ec9e548d6f3",
+              "vector_id": "ID#:JNqpt1yxcfX"
+            },
+            {
+              "index": 155,
+              "hash": "81e829c5d8f4bd778c4d721f7216306d676962d899efd4a5d4519ca2587c709b",
+              "vector_id": "ID#:XFPxe61mkyK"
+            },
+            {
+              "index": 156,
+              "hash": "235cd037e66e6ea7103a120d127a4f1af077f65e7ba94712afbaea76e3e57f3b",
+              "vector_id": "ID#:Poyseo5sCNB"
+            },
+            {
+              "index": 157,
+              "hash": "351dbe0fb92943e82ce001ca2a162bed07db3a181b7e0c53c5e2d1549a3c6823",
+              "vector_id": "ID#:EcSJi1XnbRu"
+            },
+            {
+              "index": 158,
+              "hash": "44814f97b45e2332c43f7e6f6fb279d71db9a79f7bd59016d884dd3f6cfac9b8",
+              "vector_id": "ID#:CWvHspaduGF"
+            },
+            {
+              "index": 159,
+              "hash": "b24ca1035806e23b59fc4833bc2f0716e5c07bb539922b8c5b4608a05958b311",
+              "vector_id": "ID#:cAwcoXDnMVF"
+            },
+            {
+              "index": 160,
+              "hash": "951ebf57acc77040fb45c0be83fae02a4bde7c8725b7b4ab1da2ed59000135d5",
+              "vector_id": "ID#:cgNoeXYuRf2"
+            },
+            {
+              "index": 162,
+              "hash": "10f8d897f0266419e51b23a9a441b2e27b22a2615dc5f63a602b18fc8710dd3d",
+              "vector_id": "ID#:c1L8PshheAP"
+            },
+            {
+              "index": 163,
+              "hash": "5d26514d58a2c9e2bede8f8c511a8fda87b1e1215a24a251b1ad566c0e8f6671",
+              "vector_id": "ID#:XEwy4ZLsVFm"
+            },
+            {
+              "index": 164,
+              "hash": "b3e6ad0ac51de448c50fd25b7c249fffba310ab2e45e9a5c74ca273d46713cd0",
+              "vector_id": "ID#:8UDbJMc1squ"
+            },
+            {
+              "index": 167,
+              "hash": "ff645bc0fef88d220e1ca0f630a197c1bead185a3e9826e7f76c91899cdaba13",
+              "vector_id": "ID#:UG3nkgB3UdG"
+            },
+            {
+              "index": 168,
+              "hash": "26f2888cf20289b496ba955d391a84d0047e39ce5f9368214f1ab8882e09a016",
+              "vector_id": "ID#:j3tuLDdbpHZ"
+            },
+            {
+              "index": 170,
+              "hash": "4422ae82befbe592ab5794de1444c2aa7b47596f8b2649b3864053e8acd492e4",
+              "vector_id": "ID#:dzJw1mbuA9p"
+            },
+            {
+              "index": 171,
+              "hash": "120ed872f023893218f9269606de28fc0ccc48c993b554d7e80c8a778737aa87",
+              "vector_id": "ID#:YsmfDBQcXQP"
+            },
+            {
+              "index": 172,
+              "hash": "c1e12e23060e5b1064a44019808cd16bd30fec5a21792b1dd823296caa28e934",
+              "vector_id": "ID#:Vqa2xzNJoJn"
+            },
+            {
+              "index": 174,
+              "hash": "c8aadae350392f74ff47b0e3b6987a53868de7b600b1a2477f04a82b6d07aff9",
+              "vector_id": "ID#:9Mzu8326bQr"
+            },
+            {
+              "index": 175,
+              "hash": "3d62e1fcda9420b50590e2c4364f022dacfe5eedba0f494642fe30be29f9c76e",
+              "vector_id": "ID#:5uNStBTAmkg"
+            },
+            {
+              "index": 176,
+              "hash": "dd80513e947a121d294851a9f18b41040334a657b41d686a81dd841bb545cc86",
+              "vector_id": "ID#:QqVtrmRtfW5"
+            },
+            {
+              "index": 177,
+              "hash": "eb46ae02d43d8b5421ea69a4933707063ebe513f681457cf97c0eb62329d73cf",
+              "vector_id": "ID#:M1RETUK8QXx"
+            },
+            {
+              "index": 178,
+              "hash": "6ba950715c3f2679f7dd577107fe5174c115e3189fcbd09b2497375deafdd440",
+              "vector_id": "ID#:ChaEcpVMdXA"
+            },
+            {
+              "index": 179,
+              "hash": "ecb09e706ad73b3f4cb731d361961ca872b16ccf2c45a1629ffae1d35ee7758f",
+              "vector_id": "ID#:961qgS2PjDA"
+            },
+            {
+              "index": 180,
+              "hash": "45741d6ed378540f500219e2c8f0ab1ea2a5e7169c9d2f8afc6d80a4d95d25a2",
+              "vector_id": "ID#:VW67qJ2KAq2"
+            },
+            {
+              "index": 181,
+              "hash": "627de3a828b53d069d0724210f9744d7839cb13062a2193c3d4d11c55d75c727",
+              "vector_id": "ID#:EMP13zcrLnN"
+            },
+            {
+              "index": 182,
+              "hash": "6dc5fafc0365982f7ef627aa7a689548617faa2031c1bcbe2bfcfed57db91e56",
+              "vector_id": "ID#:E6xaR8oikTc"
+            },
+            {
+              "index": 183,
+              "hash": "3b0d7dddedf3347e8bd798aac157c714af97312a329abcc52c79cb22b6d6d30e",
+              "vector_id": "ID#:RDVA6R81WaK"
+            },
+            {
+              "index": 184,
+              "hash": "074a7b01ad865a01cca4cb1ba0895491b03c8c78eebbd86b1d24251edf514451",
+              "vector_id": "ID#:aZUsENpAQVT"
+            },
+            {
+              "index": 187,
+              "hash": "8798ce8dad191748cb9ee08375211ae8c4b97e2c58d1ab3a4f8418c8dfa6401b",
+              "vector_id": "ID#:fajnxu3TX2S"
+            },
+            {
+              "index": 188,
+              "hash": "7323039abdd747f702c00a27db03526c4659b07852ea1a297ead4550821cf123",
+              "vector_id": "ID#:8F35TUA92hy"
+            },
+            {
+              "index": 190,
+              "hash": "03b3ce5fa420dce3917325a443a4355d868253d4c6025b7d95e18d1f488aff89",
+              "vector_id": "ID#:JJGsC3Q7cGs"
+            },
+            {
+              "index": 192,
+              "hash": "0ad734d6dc8d5bef271f6fce1368d22c40e08624db1ff8bbdc5c3b5bd5a7e7d6",
+              "vector_id": "ID#:998SdtD8LvT"
+            },
+            {
+              "index": 194,
+              "hash": "1c382c06f601aab5c6cef26a67bb48564fce7c73aa50f9287a3446124a7dbfbb",
+              "vector_id": "ID#:UiufYwSEv4i"
+            },
+            {
+              "index": 195,
+              "hash": "bca95de26be88edfc26f375ab71fa70190de190e5abbe7abeef4a2c371e6c40f",
+              "vector_id": "ID#:YrpQapwsJYG"
+            },
+            {
+              "index": 196,
+              "hash": "7d78d9234ee7f3fffe5c2f0d9d1a24c55f33b0481600877f7cc0c9b14bdc761c",
+              "vector_id": "ID#:E4tYKv24RiB"
+            },
+            {
+              "index": 198,
+              "hash": "ed7a65392b745c9dd13367beb6f9b5a8be0e594d3ee5a0581c761a4e420ad8cd",
+              "vector_id": "ID#:RtnvQpZ8BFH"
+            },
+            {
+              "index": 199,
+              "hash": "3e3732ab4fd066e9ab5dd22a427ca1bfced642a9976f26404707ad142be7fb0e",
+              "vector_id": "ID#:SBvV1zFvaxu"
+            },
+            {
+              "index": 201,
+              "hash": "4e44acc843c94cfdc6994cbf1b23fdccf2a0b44b4ba4f9895ce2753791b94bc9",
+              "vector_id": "ID#:XrDTzXGWmHo"
+            },
+            {
+              "index": 202,
+              "hash": "e2e589640adb956b693aaecc9bc6d715ccda6b436515158b2124bc5fb29f708f",
+              "vector_id": "ID#:AXJyg1mQwnc"
+            },
+            {
+              "index": 203,
+              "hash": "ef19cfb700659c71bf2a9724986356075aa69212c7167eed9aa6eaf13ea52ced",
+              "vector_id": "ID#:htAUWm3s8bM"
+            },
+            {
+              "index": 204,
+              "hash": "00f6123009ec7e1667d7b84276ea9613a70636b6a79722d1951d397f002e4543",
+              "vector_id": "ID#:Sr3HYQ2MHTM"
+            },
+            {
+              "index": 205,
+              "hash": "5d8d29f9e7cf211cb4c2dbe0a9a5399a53cd6567dae1400fa2c44f5631a21135",
+              "vector_id": "ID#:6RtThUm2VLu"
+            },
+            {
+              "index": 206,
+              "hash": "ba1e4c22743792d6b673d4e12a1ceea438c5bb2a80da4d23627315af23d9734e",
+              "vector_id": "ID#:3xPGM6RsWj3"
+            },
+            {
+              "index": 207,
+              "hash": "04d95f2be6e42656bad976df6d459d1829b6c26b947ce02a22fc6a5d0f196421",
+              "vector_id": "ID#:VzbRTMZTBJs"
+            },
+            {
+              "index": 208,
+              "hash": "a6371af54c7beef7c7f43919c533b075094c945049c7bef5cd8a0047ca320962",
+              "vector_id": "ID#:6B9Ea3GXugf"
+            },
+            {
+              "index": 209,
+              "hash": "c55c4d5d2bca2ffe2c9cf620203f80ed7eaf99e6633ddbca3eaf36bb525a7eef",
+              "vector_id": "ID#:21YZuDnBs3W"
+            },
+            {
+              "index": 210,
+              "hash": "53cf08a5b2007cf24cbf708e248aedc2a35e1ebc8f7a6e7beeb4a202d24f87da",
+              "vector_id": "ID#:TfyqXbFPxcp"
+            },
+            {
+              "index": 211,
+              "hash": "168bd572f891830d71b4379f2e399dcf0c8fefed828cc0a07bafd7a82ae895ac",
+              "vector_id": "ID#:ZzZJUraFmSB"
+            },
+            {
+              "index": 212,
+              "hash": "fca6a0b93b7c2e112896858cddd8cd1d1450104c81bcbe087dd83b15f6138b20",
+              "vector_id": "ID#:6Pyr4RkV1ju"
+            },
+            {
+              "index": 213,
+              "hash": "f734cd9d03d8198e37856547cb957b5a8fe58ebe9e149a514be007b5533923a1",
+              "vector_id": "ID#:TLxP1aXBbqZ"
+            },
+            {
+              "index": 214,
+              "hash": "22a40c4212878c34f9081d18a75a02e999a4641fb8a05b829ff936d9e1e9a67b",
+              "vector_id": "ID#:XsH329w17Po"
+            },
+            {
+              "index": 215,
+              "hash": "9fa1ea29ecee14d98d1c1cd63f27140ed1eb92c413b1d882370c1f78f5b0cca7",
+              "vector_id": "ID#:XzXx83ND5LX"
+            },
+            {
+              "index": 216,
+              "hash": "a3429df5c52c9313a132bafc7cd043a213f68141e0fb1ffcf82d9b453df9b0c1",
+              "vector_id": "ID#:KHVV7xAhEtD"
+            },
+            {
+              "index": 217,
+              "hash": "5916890a900b760ccbf100d00a86b489365d32bf637e78ea94507a190db4b335",
+              "vector_id": "ID#:E2cm1fGfEkr"
+            },
+            {
+              "index": 218,
+              "hash": "2210b6514574e0d3bb1ccced6e9c4454cfcfec21cccaf21015c0ccc719e7974d",
+              "vector_id": "ID#:h2TFNZGRwha"
+            },
+            {
+              "index": 220,
+              "hash": "fd5f20a12225f2cead210bff99d0611a6245b9e030866138ed44307aa1c1a42a",
+              "vector_id": "ID#:Po276VBjrBF"
+            },
+            {
+              "index": 221,
+              "hash": "3c135da7a878260bfaafd55aadb76f1274ce11d115ed2bc56a27c76eb982ab25",
+              "vector_id": "ID#:6Z8eFYSagcG"
+            },
+            {
+              "index": 222,
+              "hash": "215591ac7dae9f964e4292548e4f437cfe0c8b68c41654636d99b4535a1404b0",
+              "vector_id": "ID#:5qRe4RjAZfK"
+            },
+            {
+              "index": 223,
+              "hash": "5c28204c9402f5a109a0129ed68c151b8328ec41d436e944724295640e8d7378",
+              "vector_id": "ID#:TXWd1RSWev6"
+            },
+            {
+              "index": 225,
+              "hash": "3104bff4563306e73c9f6b8579a3e79eabd356a1213ece11fb93b94795bbff0c",
+              "vector_id": "ID#:2DwPNWxQbM2"
+            },
+            {
+              "index": 226,
+              "hash": "23db5649c508501b5a798abac0da9a4e77901418208f39bdc81875dda88a04e6",
+              "vector_id": "ID#:dor36yc6nxj"
+            },
+            {
+              "index": 227,
+              "hash": "1cc8632e13811196cb258c00914e807934a1a4c64dca76dcbe5767a82579b103",
+              "vector_id": "ID#:TbxkmEDthzZ"
+            },
+            {
+              "index": 228,
+              "hash": "7fcbc250353e76ba09de569defff822e31fec55aeaff0f15e882e97883458171",
+              "vector_id": "ID#:WSoo8WYQhQh"
+            },
+            {
+              "index": 230,
+              "hash": "e40a6eb420eed6a83bc23e3b32cd249d431d8743c1625b4cdc199177b7170ed5",
+              "vector_id": "ID#:XbnKLpgepZz"
+            },
+            {
+              "index": 231,
+              "hash": "60153d01aea6200d7c944546a3255b9144939afbcbae2a9d4f8184be9f5504e6",
+              "vector_id": "ID#:LrLE6399dn4"
+            },
+            {
+              "index": 232,
+              "hash": "8db0d9b2a4e493a1a933aa46ec0e9181f1c567921bc296f9f32c20307c469b3f",
+              "vector_id": "ID#:HCzNytD9gkc"
+            },
+            {
+              "index": 234,
+              "hash": "358a5f2bf47951ba92f67bb15b9ab8cc0b527087d2f60777094c1c4325f6030d",
+              "vector_id": "ID#:bPGBkGUKC8a"
+            },
+            {
+              "index": 237,
+              "hash": "8edd51d689346f06886613c87b6902dabd6bcb16fad268dc7c14d1c98ff94a0f",
+              "vector_id": "ID#:dewSY4hVQNV"
+            },
+            {
+              "index": 238,
+              "hash": "952d32a05bf402eb28942b30e1759ce310145cdf39ac3834d3b06e406898725c",
+              "vector_id": "ID#:TXgHm3K4TKs"
+            },
+            {
+              "index": 239,
+              "hash": "eb419ddd61ef24bc60bbe7a2a50c721181505ad1c1f592940ebc13601ddbc340",
+              "vector_id": "ID#:WZ4JwTUa1zL"
+            },
+            {
+              "index": 240,
+              "hash": "340ec00532859f911da895dc425bada5d2da7954e650e91bd02c1eec646bbc41",
+              "vector_id": "ID#:6SE7w4EnP7u"
+            },
+            {
+              "index": 241,
+              "hash": "6d6b410d807f4f9ab6fdd6eea30e4e83c65c729e6371b51c31aa216370a8fbee",
+              "vector_id": "ID#:WpubnTajr6g"
+            },
+            {
+              "index": 242,
+              "hash": "860f5e5f2990690aabee8e1246d8cc572e36a029516632c8087b1bcfdbac4076",
+              "vector_id": "ID#:eHyaueZSwQr"
+            },
+            {
+              "index": 243,
+              "hash": "72d72d7bf8e7f705e466f3e540a2ad24d97162c951952bd608254029f11b4c84",
+              "vector_id": "ID#:Eds41HLf7qf"
+            },
+            {
+              "index": 244,
+              "hash": "52e8c9a94074a1a4b3d5d13248ea01c90c55134562aea849056e36bf67ed7334",
+              "vector_id": "ID#:TVzfKuUtixj"
+            },
+            {
+              "index": 245,
+              "hash": "80f0c216114f18a80078dfa2f92719999227b84710b580d39075351b2dc36009",
+              "vector_id": "ID#:gEnLedHp8Sz"
+            },
+            {
+              "index": 247,
+              "hash": "6ce4ab8a9b02c11dd7bfdc4ad60a870434caa7baff5e1035231554658f008cf1",
+              "vector_id": "ID#:3S8UV69NGZV"
+            },
+            {
+              "index": 248,
+              "hash": "3f3405c02a219f1c2ae23e3b04649b98a50baaee581a9e02c6ae0a60dd474218",
+              "vector_id": "ID#:Kzypjttifvq"
+            },
+            {
+              "index": 250,
+              "hash": "7942f51cdb2debab5d7641d73ec9fafc5e2941b62d373d17511d63673f77f05b",
+              "vector_id": "ID#:18EJGZHYU5C"
+            },
+            {
+              "index": 251,
+              "hash": "cd7b00733850560f4535cea2c5bb95bca3a686ca3841746365d5b5b2ef3754c2",
+              "vector_id": "ID#:JxunAtxmJ77"
+            },
+            {
+              "index": 252,
+              "hash": "2b18e63b846322202b86595637e904856c5aad166f56efb6854ea27a7d337fa3",
+              "vector_id": "ID#:g4GmWJdrXmW"
+            },
+            {
+              "index": 253,
+              "hash": "561cb4d9be781a6fb39a1ac20f08607c8eb003d91bf92dc9c2616420f9345acf",
+              "vector_id": "ID#:2Z1DKZtPgQN"
+            },
+            {
+              "index": 254,
+              "hash": "d41f849ee205e7ce84519b35882733995c74217ac5c4bcfd0d49bd463b7f486d",
+              "vector_id": "ID#:Y6VS8LvSNRM"
+            },
+            {
+              "index": 255,
+              "hash": "73a06599c1b3c6d1523a699f7a7898279a151c03494ee10585d58e19cc5410cf",
+              "vector_id": "ID#:Bt3JMFJFipm"
+            },
+            {
+              "index": 256,
+              "hash": "1bb139ac7592685a0e85cb012e2a0069d89d9c8830c3a0ae7e92f30ba23a8e19",
+              "vector_id": "ID#:DfUUFeGV33z"
+            },
+            {
+              "index": 258,
+              "hash": "bfdf307fb98b251ef7f74556005176aa5b1f404392f08b1792aa6243f98f287a",
+              "vector_id": "ID#:9dzMgBrLweL"
+            },
+            {
+              "index": 259,
+              "hash": "38dadb73c87d8610c5461096eb5d4e032d9e9cefd409e0a1409930d27b690277",
+              "vector_id": "ID#:EPYZn8JNg9r"
+            },
+            {
+              "index": 261,
+              "hash": "b7ed73a294f97ea74b4a1718fe13817eceb18169b8772cbea7bfaf524e454354",
+              "vector_id": "ID#:UgVwCpbNDBj"
+            },
+            {
+              "index": 263,
+              "hash": "e2efea9a496ba075d73c0d7cac5b4bde27ac305ff40972cc24f3821bda2c8bb6",
+              "vector_id": "ID#:hH8g93nYHLr"
+            },
+            {
+              "index": 264,
+              "hash": "ae1df8464b58b8d2a19fc5964e79745d38e2b58c9798aedacfbc7d6d6921a4a0",
+              "vector_id": "ID#:j8rvSXErBYp"
+            },
+            {
+              "index": 265,
+              "hash": "81ae31488a2204fc899470536ab6938120fcc7db8e2ec746d83848d6c7fce6ec",
+              "vector_id": "ID#:inqDYc2qUf"
+            },
+            {
+              "index": 266,
+              "hash": "468718a1ff25472638b4a317758f975d13f9805607ff881ae8402d9dbe49e078",
+              "vector_id": "ID#:LaXPonJ1gz5"
+            },
+            {
+              "index": 267,
+              "hash": "6875a0209db7a9644e850103c77f5eb293e9470a67467dbfb915440e969755a9",
+              "vector_id": "ID#:ii2ozH3tvaN"
+            },
+            {
+              "index": 268,
+              "hash": "7e0f75a2752da576d245e2b65250803defd2739ae43439699bc8b640b0b77a0b",
+              "vector_id": "ID#:GSCREZwiBEH"
+            },
+            {
+              "index": 269,
+              "hash": "7f77d0cb69e843ef479ccf2fd1a8e52ade039f840c707131a25d2ce7ec0b1828",
+              "vector_id": "ID#:849jMCAqpRb"
+            },
+            {
+              "index": 270,
+              "hash": "bd2bc315c4bdcc478b78880c68a698999524a4616209641af2f945495f946203",
+              "vector_id": "ID#:9KACwpWTbL4"
+            },
+            {
+              "index": 272,
+              "hash": "3b5a8cc06c7324888f5e2834fad53d1fc3816a5bc9faff50aef1971d33acc974",
+              "vector_id": "ID#:J6Mg2nzTW9s"
+            },
+            {
+              "index": 273,
+              "hash": "82c171b3bd6645a9466183de28d274c186dbac065e33860602fb9a198d620441",
+              "vector_id": "ID#:Yq3z9W1r6TB"
+            },
+            {
+              "index": 275,
+              "hash": "3c7fc967fb52079f45cdb403ef98314ae80843161ad14602ff2abc5f395d2268",
+              "vector_id": "ID#:FKAAxxAhMok"
+            },
+            {
+              "index": 276,
+              "hash": "f184a24a2014e8e6d959052ded5a14e3eb5c4e1c9c0c2ccbcea8ecf453a3604d",
+              "vector_id": "ID#:SnbEto2iFLR"
+            },
+            {
+              "index": 278,
+              "hash": "ee794091f22a1dd3a4c830f0e62303e3950296e944b11cd907cd5c56964f727b",
+              "vector_id": "ID#:WmaTWWz8Sen"
+            },
+            {
+              "index": 279,
+              "hash": "bc9c18b86aea5af55153a244314f74c07bec9985405b4209653aad7479f97604",
+              "vector_id": "ID#:TF8Xre7nLZk"
+            },
+            {
+              "index": 280,
+              "hash": "c12d919f426c66747e7473dffdf2362785eec6c495d1677325e985ac437f6dac",
+              "vector_id": "ID#:Y9JMi6R7qYo"
+            },
+            {
+              "index": 282,
+              "hash": "726bc7cebd15a8b386c796f24f4ce97ea720057f2124f04a4de42066e3ace6fd",
+              "vector_id": "ID#:iD5r1PryQYA"
+            },
+            {
+              "index": 283,
+              "hash": "ea7fdd8046f03bf8c50c32ea7347fe15985cb3cb5314359b8c39a00c90a8f620",
+              "vector_id": "ID#:KhmKeRJrxeM"
+            },
+            {
+              "index": 284,
+              "hash": "4db9e4840a5dc98046d4468bd9fc479b78bf56ab51777831dd89a347cee12b1c",
+              "vector_id": "ID#:ULFEdQwFwuE"
+            },
+            {
+              "index": 285,
+              "hash": "d9fd543f4f2639c61870d141ec40aa15f5c13562dfa9e239ac7da8207a28a42d",
+              "vector_id": "ID#:Ci1oXW4EWCe"
+            },
+            {
+              "index": 287,
+              "hash": "707022fb0918271b838ba113edcb5cd323ca44194474d77052413b484783e6af",
+              "vector_id": "ID#:bn4e3StmCyK"
+            },
+            {
+              "index": 288,
+              "hash": "0f7de4a290bc6af2e5f3cf330beeb364b4490136beb7b7313538a1eb082f002d",
+              "vector_id": "ID#:S8es612aD33"
+            },
+            {
+              "index": 290,
+              "hash": "12870ba4e7e9e4b0fcc18cdc131f7b3895316a5f3f61d23ba1bdc0087c3d259a",
+              "vector_id": "ID#:UiA8STsAKUL"
+            },
+            {
+              "index": 292,
+              "hash": "3ca5cfe67568d8b3c0397e075040d7051685220631be53620b57c79a874c4142",
+              "vector_id": "ID#:UaUn68mzsc9"
+            },
+            {
+              "index": 293,
+              "hash": "3c9af8b81008445b1e91efe31131ec044226c1d456155b64a607672294b9b7db",
+              "vector_id": "ID#:idGMXRat8kr"
+            },
+            {
+              "index": 294,
+              "hash": "6faf68a9c81a64ff8198a8a32b73cbd647e6f867c273738d16790abb72df11a2",
+              "vector_id": "ID#:5xETYRRfBDW"
+            },
+            {
+              "index": 295,
+              "hash": "4c40a0f6bb1502bfa02a313934cb4d35cc796328545879011d4ba836e960b6d7",
+              "vector_id": "ID#:Mg1BtGHvZtW"
+            },
+            {
+              "index": 296,
+              "hash": "be9ba6a319aa31bdd937180bfb42a69d8dc6b5f5b44b46a271802495de8c5478",
+              "vector_id": "ID#:6GQ769vGFAJ"
+            },
+            {
+              "index": 297,
+              "hash": "5c1d7b1caafad425d7c576d068953f2a7008f9818d9445c5a0da299418cf801d",
+              "vector_id": "ID#:Ft6VJZC1W99"
+            },
+            {
+              "index": 298,
+              "hash": "1655b2b6562be5d08e87cd1849a55c1b88bb09381ff63f9936eb7c992222d5c4",
+              "vector_id": "ID#:JdztfoE38GQ"
+            },
+            {
+              "index": 300,
+              "hash": "a215e7848e8592be376db844ef35ef0884264341e946a1b352288445bc09f564",
+              "vector_id": "ID#:3oMaHtmUkLT"
+            },
+            {
+              "index": 301,
+              "hash": "3eb174e13adccba380db35337239d25cd9de2c18278ccf2cad2908c219299b8a",
+              "vector_id": "ID#:e4R3om8Pppu"
+            },
+            {
+              "index": 302,
+              "hash": "5bcc015e2360582e76fceb8beeb43b36453591aee48ba86bfc7fb34cfdabc613",
+              "vector_id": "ID#:BkJHqKQrtNS"
+            },
+            {
+              "index": 303,
+              "hash": "a13181174e0914071908c6abdb3ea68d8861f64053fa76fafac2758972f7680f",
+              "vector_id": "ID#:RdQnZWgijwC"
+            },
+            {
+              "index": 304,
+              "hash": "ada6a515befda79c8b6731671a733b0f2fdc45fb4f06a49769f315e8f889c0a6",
+              "vector_id": "ID#:NhNeGCwY6A3"
+            },
+            {
+              "index": 306,
+              "hash": "fe145b16c552281648a0be80cf05b887296a1f973d1d7d5407b2bf44328dae43",
+              "vector_id": "ID#:YcRd1PQuwCy"
+            },
+            {
+              "index": 307,
+              "hash": "6dbd1dd71adf3d6e93e000eeed818d8132f9b5af046f8c3aabd97d0b3e1a521b",
+              "vector_id": "ID#:RuVGJnmSzxN"
+            },
+            {
+              "index": 308,
+              "hash": "9615d6b9bb4afc6de653852c4561cea5b194b74f8e1620cb04807adaa43e4b53",
+              "vector_id": "ID#:YaizsdQHYGg"
+            },
+            {
+              "index": 309,
+              "hash": "68e9f4fc7f695c7904b54646d8af48d1c10a7c4131b32e320e890060c3ca9857",
+              "vector_id": "ID#:FHxFw2LksxL"
+            },
+            {
+              "index": 310,
+              "hash": "92e50df1bf6dcbf3c1cad96ebd7bf6cfd808b8602b3d450e6f6b8e10ec701120",
+              "vector_id": "ID#:Ah9f8ckkWyQ"
+            },
+            {
+              "index": 311,
+              "hash": "3787b244ae8e30666b3d69f13e7e2c66efc07257964f55673f3dff2b7ccfdd9a",
+              "vector_id": "ID#:QKGAPHdGXNR"
+            },
+            {
+              "index": 312,
+              "hash": "ec0ea3b08504cd2d9de5c4ff9941103f342afa165888620015c5b6d593b64a4e",
+              "vector_id": "ID#:PuTmPxwyjVp"
+            },
+            {
+              "index": 313,
+              "hash": "3921eb7143476e2c4c05458f40fe766f3ae859c9402c9fb7f05ac10ffa9a6bde",
+              "vector_id": "ID#:7YMWtLbGnuP"
+            },
+            {
+              "index": 314,
+              "hash": "08ce60c817b26b4cf20f6bc43c9ed473e8cd8ce0be8124a76a2139c51178488c",
+              "vector_id": "ID#:2X9TjUvLpeQ"
+            },
+            {
+              "index": 316,
+              "hash": "d7fc269d7cd50b15ff8bf549b6e796f9332dafa13e12cd3597a674c2fbd58a57",
+              "vector_id": "ID#:X85SKvCtVHu"
+            },
+            {
+              "index": 318,
+              "hash": "c8872704237e5c5578e393817a25776b12aea334e0b67e1a834e922e57f76130",
+              "vector_id": "ID#:LQhHTmZgf9i"
+            },
+            {
+              "index": 319,
+              "hash": "655151442cf4be24b1419a82af9739b9a0de4b96b607313fac74b13ca1405311",
+              "vector_id": "ID#:4QKzn38Fc6M"
+            },
+            {
+              "index": 320,
+              "hash": "90756a3d3194fee8890da7546e14b672b6c22d8f40e1a093f6a14fe11e10f427",
+              "vector_id": "ID#:LLVB2nHD91b"
+            },
+            {
+              "index": 322,
+              "hash": "e2088c1d8e5da413bfd49d20e308ae58063c91a51580d873f5b4ca5e0a0ec125",
+              "vector_id": "ID#:CxQAjUyWuCi"
+            },
+            {
+              "index": 323,
+              "hash": "35acacc2e95796e85b29f1a3161bb48d821a4d37d17fb3c65c14b1cea5addc0c",
+              "vector_id": "ID#:Y2gY4LERC2X"
+            },
+            {
+              "index": 324,
+              "hash": "a8007a4d86f6617f419e9dec223e0ed696f966bd3dee8f78a6c4e024f1b7c27d",
+              "vector_id": "ID#:BwJytrv1oXh"
+            },
+            {
+              "index": 325,
+              "hash": "cc39ec10fc7f8e921929b62dfda47aa26a64c87eb1aed63063868aafe683afd5",
+              "vector_id": "ID#:iUYzLMnmDLN"
+            },
+            {
+              "index": 326,
+              "hash": "c7b82ae001a75fefc47eaeda552546df88a65141083314a4548491d02ed7bc08",
+              "vector_id": "ID#:37FJ6hNyfUj"
+            },
+            {
+              "index": 328,
+              "hash": "477a56c7cda5941eb62638406451dcc0d1d73b2e300d8914de9c5346fa6be119",
+              "vector_id": "ID#:dCWKd6N7J55"
+            },
+            {
+              "index": 329,
+              "hash": "619325514b3d114d5244b1b0b6a1e4c16e709c93d06cc8bbf43d74739446d616",
+              "vector_id": "ID#:bkjtyaWDCH9"
+            },
+            {
+              "index": 331,
+              "hash": "2f07db64e72341a5d614820fae43b8a583f10508a0e59ab9375822ff1fd699d4",
+              "vector_id": "ID#:BYKja1LGMiy"
+            },
+            {
+              "index": 333,
+              "hash": "99500cb8e2e25a08c745088ed1aec4ff84f66f45519faf13f99ccdc46fa124c5",
+              "vector_id": "ID#:9VvBYPSHe6S"
+            },
+            {
+              "index": 335,
+              "hash": "fff9512e14bc6d0d279c40da700fe88dab10f3840c8f931f091a94cb4ccb4f72",
+              "vector_id": "ID#:ftUboBFBdMA"
+            },
+            {
+              "index": 338,
+              "hash": "bbf731b28826b3d7b15d89ced180554577fa075e3ae40e84812e49562c0196f8",
+              "vector_id": "ID#:UabHeYVAWNS"
+            },
+            {
+              "index": 339,
+              "hash": "4ef6d9cd7ee5ca19a858ad696db8a4da24011eb691ee37aed80b7656e26a8b8d",
+              "vector_id": "ID#:GC5EsfCETWy"
+            },
+            {
+              "index": 341,
+              "hash": "9844f5804e9fcc9a84ae9e0c267ee169c26b43970bb13e2a0835f56eaed21a36",
+              "vector_id": "ID#:jkrAahvd8sH"
+            },
+            {
+              "index": 342,
+              "hash": "aafe7ca337c8d3d59cc22267a821ddc84a41e3d97db2d17b705c13c5dc9ec517",
+              "vector_id": "ID#:a3fEFeMZqBL"
+            },
+            {
+              "index": 344,
+              "hash": "18ead9f3e72967c1ed16ea5df972c4dae45df5d4f41ddbb3d22d446262146a00",
+              "vector_id": "ID#:H9TAjzjLL5Y"
+            },
+            {
+              "index": 345,
+              "hash": "33f9ae8ed60159165395ec13b5df89c8fd9dd887b3e013b4610ed93c6f47855c",
+              "vector_id": "ID#:jWoSZKJ4zvy"
+            },
+            {
+              "index": 346,
+              "hash": "80012600db402fb1c2a8ac14dd7314311939e777d81c8f0510bb55b704c4c27b",
+              "vector_id": "ID#:iwx5jii38G2"
+            },
+            {
+              "index": 350,
+              "hash": "b55b41e1e50e544ebf6afe69b162610cb413b1733b2ab8749fff5131bb64658c",
+              "vector_id": "ID#:GdcRHxMWyh7"
+            },
+            {
+              "index": 351,
+              "hash": "d092379422b7a6d0d6b46d94d3d7113cb448389824fb7b6e6cf3cc2ed763fdd4",
+              "vector_id": "ID#:C3WQ181JE8d"
+            },
+            {
+              "index": 354,
+              "hash": "a874b8120f9e7e786cee421d0fcb9a828f348bd63cee806f7ce4e1ac8c654f86",
+              "vector_id": "ID#:iJ9wd6G72cP"
+            },
+            {
+              "index": 355,
+              "hash": "a782f679affdf1262c4eb352c3cd2975433cd00b69ae1f78e80173922fc1c3eb",
+              "vector_id": "ID#:YaQ95CoJtPZ"
+            },
+            {
+              "index": 356,
+              "hash": "d72ad54471fdf31bd14c5717ae0632826230e0105367f8fbe794096b6cffc2b5",
+              "vector_id": "ID#:hqBo8DVtnyw"
+            },
+            {
+              "index": 357,
+              "hash": "e3cb407e5b5939823548dcf69ecbfdaac6294bea91b68f1e4f141382ba81f646",
+              "vector_id": "ID#:RJqGmjuYB9b"
+            },
+            {
+              "index": 360,
+              "hash": "a9426723887cae48052a9a59b55c150e96a25e2f5ea0383ba833c7ac2e8c5649",
+              "vector_id": "ID#:86j5q38kBpw"
+            },
+            {
+              "index": 361,
+              "hash": "335b901fadec02ed7a3df239c0d690342c8793cfeb41d7e745bc5f8ec125d8f5",
+              "vector_id": "ID#:4hdTuUz7Khh"
+            },
+            {
+              "index": 362,
+              "hash": "18fdfe528db46a92c4657aaee8b617bf0c7f91c56f1ffd117baf0cb90a109dba",
+              "vector_id": "ID#:g4NJtNShsr2"
+            },
+            {
+              "index": 363,
+              "hash": "24d9aba6ba412c0e67f0baa93012c146ae3d9d94de3443d7b74e68f62fc03f74",
+              "vector_id": "ID#:DEB6Ao3tw5f"
+            },
+            {
+              "index": 364,
+              "hash": "cbc3df8c000c5216fc3744aa5a568e9867831e5ef1050d86c69ac0ddd9dda360",
+              "vector_id": "ID#:81cZVXPvPJw"
+            },
+            {
+              "index": 365,
+              "hash": "03e5929955e3fd4a0f366007b1748b2220333a96cf7ff9a63486e5ad0888d31f",
+              "vector_id": "ID#:cBBJCRuNay"
+            },
+            {
+              "index": 366,
+              "hash": "752d55c79361aca5bf319315ff6c86413af78ec6f38d4a695ae2ef22ceebee02",
+              "vector_id": "ID#:2cH7TW8SiEM"
+            },
+            {
+              "index": 367,
+              "hash": "5ab7706bb2f4ab623232a2f671d1fc6fdbe596b1c099ffd9384d5c1ec23af8c2",
+              "vector_id": "ID#:QmsaYaTzdRS"
+            },
+            {
+              "index": 369,
+              "hash": "fefa6973d2df46b1147ef428df324c1a0888a5e618a748fc6ab0bd6097ebdd34",
+              "vector_id": "ID#:BtnBZekcvNp"
+            },
+            {
+              "index": 370,
+              "hash": "ffb1521680d0d6f66f7e5864f5242e94b6af8829363277f19971180d9a078aa0",
+              "vector_id": "ID#:G5HoYV4gmG3"
+            },
+            {
+              "index": 371,
+              "hash": "93882f21309d75d2103283b01a19fee155002b38e0c8afc8212e488f8678867c",
+              "vector_id": "ID#:MJZFn1qoDLn"
+            },
+            {
+              "index": 372,
+              "hash": "29d954bc0469b5d8173eb75ff28b489f703d7d46c85031c9127277b74e826234",
+              "vector_id": "ID#:LejyS4WJaE3"
+            },
+            {
+              "index": 374,
+              "hash": "fe2100bd9c81e88a6c79070b677f3003e7ef30f8b67e60801ddf26b3c59167d4",
+              "vector_id": "ID#:AeHevRmk2NM"
+            },
+            {
+              "index": 375,
+              "hash": "0b1cf0924f557ebf79befdadd6980c9a53d038c33d069e482f087f7715b333f5",
+              "vector_id": "ID#:hCSLBcvyTzr"
+            },
+            {
+              "index": 376,
+              "hash": "d3d5e00c2dfded777bced00275e53d120845df24435d9cd088b39df92c82c13d",
+              "vector_id": "ID#:b69REb7jqmJ"
+            },
+            {
+              "index": 377,
+              "hash": "a9ff8c20de9a55aeeaed9092e80d39a8a3a785ec535a21c866b5bd89ca613e8d",
+              "vector_id": "ID#:ZJL7LoukRpR"
+            },
+            {
+              "index": 378,
+              "hash": "1b79a8b79d5750351808900920dcd82e6593661e7c67dfcd539f9a0096e26cef",
+              "vector_id": "ID#:JsMpUsYLvRi"
+            },
+            {
+              "index": 379,
+              "hash": "3deba960c1e7da76934275c517d840df04d9876a1994a4949c0ea42ede6cb836",
+              "vector_id": "ID#:dmxqh3SJ7KT"
+            },
+            {
+              "index": 380,
+              "hash": "d650ae328378f12d7910e5cc98cb726dbb571c58d4144c2e025ccdc926e3c0c7",
+              "vector_id": "ID#:P2RsLAGfbTa"
+            },
+            {
+              "index": 382,
+              "hash": "589bb29c73bec198b30083a01d07e54ac466eaf1b803fa3be06132317930cb2d",
+              "vector_id": "ID#:bqd7Qp4hLJP"
+            },
+            {
+              "index": 383,
+              "hash": "54f8efaf53e671659367f3a07330b75a306a6bbac0464c98d24750f0fc86ec0e",
+              "vector_id": "ID#:fJeQhCFpNXm"
+            },
+            {
+              "index": 385,
+              "hash": "79c8b5c777c1f0190fd212f3ab7e36c01927480d6695a7ddd22cdc85fc8d3400",
+              "vector_id": "ID#:8Cnz4MR4kju"
+            },
+            {
+              "index": 386,
+              "hash": "55018b10a70808ee92f1db429d9d94b0972241e96c31984db493e9f7af1e7f43",
+              "vector_id": "ID#:W4CRbFDj5RT"
+            },
+            {
+              "index": 387,
+              "hash": "c9dc25ee5e14434ba989ef2a847c00501a1287e909001be9bf21f486e00f2977",
+              "vector_id": "ID#:XudjnRwSpxn"
+            },
+            {
+              "index": 388,
+              "hash": "11df92c12af34f7005c42de2aa952ab63b2431cace72b60e9032932a018cc2e6",
+              "vector_id": "ID#:bsXxg1Vgtza"
+            },
+            {
+              "index": 390,
+              "hash": "2ffd83c2a0f582142c9079b8608bb51de4a87f9a0b5b44a3aaba0275fe3e87f3",
+              "vector_id": "ID#:ikVW7kcoTnD"
+            },
+            {
+              "index": 391,
+              "hash": "cd70e336b339eb716b860139c16404bbd8253118d274bbca24a04df84e7bbc58",
+              "vector_id": "ID#:4UpYakRwGxj"
+            },
+            {
+              "index": 392,
+              "hash": "4950544d8c80e49ae81aec52b0b71359a523648abf9b722e4045d14f28825906",
+              "vector_id": "ID#:iuAK62Ap5RH"
+            },
+            {
+              "index": 393,
+              "hash": "8430651d29957da5423725a428bfe0cee1976283d60b08daf1fb0510bd39d5e0",
+              "vector_id": "ID#:BmzC32XE9Ds"
+            },
+            {
+              "index": 395,
+              "hash": "035f1fd89430c034d71b9622548e0a90204b8342c36a342d6d176dcad26f5f9d",
+              "vector_id": "ID#:GvahdhPpBpH"
+            },
+            {
+              "index": 396,
+              "hash": "05d35108c4ac7e4d57fccab4d8f45adffbcf3c9049eb3e53defd68260166716e",
+              "vector_id": "ID#:A17VLHWfUZz"
+            },
+            {
+              "index": 397,
+              "hash": "c4962ee348957ccd22d7027c6bc5e6c033d6103daf8d410b4a5b6891f8afc797",
+              "vector_id": "ID#:VGmYt5TzRwb"
+            },
+            {
+              "index": 400,
+              "hash": "1c366744d34d4582282dab3d4a309a682729b14fe059dd12b6684e668cccaf12",
+              "vector_id": "ID#:2diA5NaQHYa"
+            },
+            {
+              "index": 401,
+              "hash": "62197752824a2371b48d01958d9f3a1740e99564b939abad57e1de6b888af6fd",
+              "vector_id": "ID#:RaMfcnQLjki"
+            },
+            {
+              "index": 402,
+              "hash": "527e726f1349bbee8dfb6810e2b7ba3ca44da6031599da2bc5a3fb14ed0dbd44",
+              "vector_id": "ID#:AQcXCx234cw"
+            },
+            {
+              "index": 403,
+              "hash": "b5b4432bfb37064e394ffb04fc9acd8bd93404be3fb69277609c5a4053b2aea8",
+              "vector_id": "ID#:dJKoYQjX1B3"
+            },
+            {
+              "index": 404,
+              "hash": "ac727aec792330ca7712abbc3aaef61ff78b73035616b09fe28a3fa0b6c09019",
+              "vector_id": "ID#:8VXyqsGusx9"
+            },
+            {
+              "index": 405,
+              "hash": "c005390c4e7a17ef3d8aa453e846f5c19f795beeaf9764d9e774c7d040e60f23",
+              "vector_id": "ID#:StAhfmGwJqp"
+            },
+            {
+              "index": 407,
+              "hash": "83cc65f43f75400bbe02091c96e69017dce374cca853cf5c5a060d4d62b9289b",
+              "vector_id": "ID#:9wTz3oEdPEG"
+            },
+            {
+              "index": 408,
+              "hash": "60abff296b803d2974da9382a641a9cb6c25d1b09f7f2cf9b5f6f880dbcca61a",
+              "vector_id": "ID#:R1hWFJEcGNs"
+            },
+            {
+              "index": 409,
+              "hash": "a78a9ac9968d89dcd07c6a8ef31f97703a09b95e889950f80d2c0ffacad17b90",
+              "vector_id": "ID#:QRjFSDVp9uw"
+            },
+            {
+              "index": 410,
+              "hash": "64fdc8a84381694c7967b058111ab59c7e31f9da37de0a89e00fb59a30d05bb6",
+              "vector_id": "ID#:hFBUYUP2hri"
+            },
+            {
+              "index": 411,
+              "hash": "fa540bcac99b4c720d049428f666d9be175f9f0a2c89fe41d570da38de316f56",
+              "vector_id": "ID#:MKVC7qRABqp"
+            },
+            {
+              "index": 412,
+              "hash": "95008a02b3f98a87ab6d9a12a3c652eeb29380dec2406ba16f7a1175a9ff06f3",
+              "vector_id": "ID#:4Qrr2926i5p"
+            },
+            {
+              "index": 413,
+              "hash": "7136bf34b08eb03938155e6909f35da4521155f749904a6c9acbb0e9eddff124",
+              "vector_id": "ID#:C36aSsr78Qb"
+            },
+            {
+              "index": 415,
+              "hash": "9be70a67f56232a36708867a312a31e3181181e287a4314ad7f6838b518b7253",
+              "vector_id": "ID#:2t7ZPTgH64W"
+            },
+            {
+              "index": 416,
+              "hash": "bda28a5e55df9c2f19589002092453fbd0236fef7d580ef5b2600f5ff6d3098d",
+              "vector_id": "ID#:NQYFBTExj5K"
+            },
+            {
+              "index": 417,
+              "hash": "51a744dac113969a1a6a5121f79b1aa5a25bdab0485e4dd9d81d0cd420c75646",
+              "vector_id": "ID#:CVGZVdLLYry"
+            },
+            {
+              "index": 419,
+              "hash": "c265c4b17f04585f874e057356bc434b0ca3598fb79813662e066087efa79dee",
+              "vector_id": "ID#:KGJe3EWCXuv"
+            },
+            {
+              "index": 420,
+              "hash": "71a5d8964a6e466ed1d2bf03cd343dbe5451b273e20c5d5385e5f394e9aca7dd",
+              "vector_id": "ID#:TPmvPTeRPnp"
+            },
+            {
+              "index": 422,
+              "hash": "af37428fa7c833d4a1d810b12564ffcf304772b216da22105af1a0cfb242cf21",
+              "vector_id": "ID#:6U8vbpCdb8Q"
+            },
+            {
+              "index": 425,
+              "hash": "9f3e8767ba773a043bdfbdffa22247128ef8e371da604bb576da9e809b3aeafa",
+              "vector_id": "ID#:Cb3vLQHJW55"
+            },
+            {
+              "index": 426,
+              "hash": "bb38a49a39c35a97f06bde7572a2e0c7cec2abc06a2360fa885e812eaa02ac00",
+              "vector_id": "ID#:4bYefBUnk87"
+            },
+            {
+              "index": 427,
+              "hash": "1ded5e35a10788be8353a4d791351827ed8a7f2141ebd2b1519af5e0813bf653",
+              "vector_id": "ID#:9tHBnbnm3RH"
+            },
+            {
+              "index": 428,
+              "hash": "ffb4c83257258320cbfb2d51f4ea612ae85786b04ef09c3263bc9041aed2581b",
+              "vector_id": "ID#:AQvo2urxdtW"
+            },
+            {
+              "index": 430,
+              "hash": "1c1c751bfa92f5b3463e1625123fb5d399c0c9a8c1278bb6cdb6682145df540c",
+              "vector_id": "ID#:EvFRJAsdbWd"
+            },
+            {
+              "index": 432,
+              "hash": "a210e6a20b92d97dae790067332ac5c6b041f9d87745f3bb4d7ae83911d65fbb",
+              "vector_id": "ID#:4JezfoJQfog"
+            },
+            {
+              "index": 433,
+              "hash": "cbeb5ba0830968d66b85388174dd8d2a9eee68c2c88b026b1c83a7588a5a7676",
+              "vector_id": "ID#:5cPh3jewEZH"
+            },
+            {
+              "index": 434,
+              "hash": "475ea34dd8042703e6db205cdbf3226721821dc3a39ceac0a958e323be390f0d",
+              "vector_id": "ID#:KXsnuTEFSUH"
+            },
+            {
+              "index": 435,
+              "hash": "9aba34f41d11999a0ecc93141aab9f832dca93dfa4cdd6aaceace699f1f24351",
+              "vector_id": "ID#:MJ9zKnw66vo"
+            },
+            {
+              "index": 437,
+              "hash": "9a83f6473fb855ec54ecf6f3868374f017b462c38004290f45b1f6415e1ef455",
+              "vector_id": "ID#:inaoZwMB98i"
+            },
+            {
+              "index": 438,
+              "hash": "7d073a4bc10f112482f4d814a461d1fb17e3e12981053df99d7259fd63d3ebb7",
+              "vector_id": "ID#:KQ4zhf4RonL"
+            },
+            {
+              "index": 439,
+              "hash": "965ae070fe6f27140b0eb96b330489ddbeea5100f3135e68bbafe910f0101fe4",
+              "vector_id": "ID#:UBD5xzotjCJ"
+            },
+            {
+              "index": 440,
+              "hash": "1f5476c8a40eede5575868352a88e83727a8e5995a9d4202c7ba4f0b319984a7",
+              "vector_id": "ID#:XmebVL2j6Tg"
+            },
+            {
+              "index": 442,
+              "hash": "b95f9f0cc806e0abcc708cd598598e37dbda9004f91576fb9ffe364f845b7b98",
+              "vector_id": "ID#:FZWA7dPzc3Q"
+            },
+            {
+              "index": 443,
+              "hash": "54238ab7a1387c7cbc3c7d7a990e849cb3df6062270f91da9782962f870bac21",
+              "vector_id": "ID#:B9u9Y9UXcCK"
+            },
+            {
+              "index": 444,
+              "hash": "e6c0891122c2cafa141b70745712a9853c453b22bbf86a6222ec12fa2ea7c617",
+              "vector_id": "ID#:D7E8aE4hkvz"
+            },
+            {
+              "index": 445,
+              "hash": "f9d9f868b938ca4e9a27505e4d6a9ba074b7e0d08943744e86fdf8017086d5a6",
+              "vector_id": "ID#:SWVKPVRNnEP"
+            },
+            {
+              "index": 446,
+              "hash": "63b4310477901e7914d1b8e1a617b39421bdab1951bfcceef4ed13f17392a4f1",
+              "vector_id": "ID#:6opkmtaV4XY"
+            },
+            {
+              "index": 447,
+              "hash": "a777d038a11a078ac3e762392ffd46dcadeb12b80c4200e49b8bb5ba136db6fd",
+              "vector_id": "ID#:64MsCMQ9auo"
+            },
+            {
+              "index": 448,
+              "hash": "c851046d0a23188682e270b72888f53d44d72ac0e3049053b000b28800aa4960",
+              "vector_id": "ID#:frnjwm4jH8d"
+            },
+            {
+              "index": 449,
+              "hash": "214a308419fb4ea1159c44d8a3c185348f924fd0cd7f7bd5353a24a0755cc42d",
+              "vector_id": "ID#:ahgeSLiv9m1"
+            },
+            {
+              "index": 450,
+              "hash": "0797528ca1218f259d618e57e566faf24030a8bb756d57949e83d6f3e5ecc2f9",
+              "vector_id": "ID#:Umb7wXujK8B"
+            },
+            {
+              "index": 451,
+              "hash": "17e5416d44bc974d902b8ccfdacf88ad8ebaf4a27f78f632735d48176e6122a1",
+              "vector_id": "ID#:6Sy1BuFwJib"
+            },
+            {
+              "index": 452,
+              "hash": "1c9349e96fb3ccb93596b5f396561b3382f90fa26b7faa39757fbf8138ca8fd9",
+              "vector_id": "ID#:fAAGZHCMvwh"
+            },
+            {
+              "index": 453,
+              "hash": "bc3911f28aff210fc30c707beee684b8b16da90dc63c3b95eedf86d0889bce70",
+              "vector_id": "ID#:QScSbhMBVXb"
+            },
+            {
+              "index": 454,
+              "hash": "38aaf37f2e53cff8d0a7dc0ba7f0aae6df61531ce98bf89332851a6693f6829e",
+              "vector_id": "ID#:A2c5zmcwrqa"
+            },
+            {
+              "index": 455,
+              "hash": "9675d83a47a78101a7d5d62eef1f492693916b3bf00668c757a9509abd8c0908",
+              "vector_id": "ID#:LKFX4fEasvJ"
+            },
+            {
+              "index": 456,
+              "hash": "87cc3d5721be1af0b181081ba3c82ae4ea2fb8fa58127d3e0595777b41bbf9b2",
+              "vector_id": "ID#:Q1zTedU16Kt"
+            },
+            {
+              "index": 457,
+              "hash": "d76d81d6dd69cb54e22ceada9d7e7a3aec91296a3eb81312d31d4623a0e8c57a",
+              "vector_id": "ID#:SnErqJY7Rxh"
+            },
+            {
+              "index": 458,
+              "hash": "43d87a5749c2cd0e91a06b4738526c9aece0bd232aaf39d2d7bb10247c8c0389",
+              "vector_id": "ID#:3D3NTMQs3vx"
+            },
+            {
+              "index": 459,
+              "hash": "d4588601cb78bd2220367ce53b35abf5e7e18c0068d19b778ccc96251ec62e62",
+              "vector_id": "ID#:XR913AH1apU"
+            },
+            {
+              "index": 460,
+              "hash": "5e13d9c76b2b9ef6d0ce2d47486e41594ebe5e6d3d707cb912d1935284417d23",
+              "vector_id": "ID#:Ddxf4Pohn63"
+            },
+            {
+              "index": 461,
+              "hash": "f67e6f3f2e55a71bba2901221ef60689d0caa8615a155a6b13db43eb8f6cf404",
+              "vector_id": "ID#:AhLS5aQXGvF"
+            },
+            {
+              "index": 462,
+              "hash": "2b0954e26b47b2d7b019018700249c245c217e2868795b45da321fe157035091",
+              "vector_id": "ID#:VJwT984oUuN"
+            },
+            {
+              "index": 463,
+              "hash": "470c1b07d35cf5057bf108cfdcce4ba80b85065ddb2f84685712b5f9e70606ff",
+              "vector_id": "ID#:RrkWYDFssXo"
+            },
+            {
+              "index": 464,
+              "hash": "3f4101aaae4184e3159b1e32382a0093206bfd172ea8d4d8605f03eb9fa96a6b",
+              "vector_id": "ID#:Fx3hCZh75tC"
+            },
+            {
+              "index": 466,
+              "hash": "a4555fed9eb7c39899b52760de378541bb2ddc8f9582b60538f832c4a8859d51",
+              "vector_id": "ID#:C17MtPRFukd"
+            },
+            {
+              "index": 467,
+              "hash": "3641a1e2a8c9cb851c3f234e9b2830703bb9e74173796257222455414aa3750f",
+              "vector_id": "ID#:N7LZ2pmwsfa"
+            },
+            {
+              "index": 468,
+              "hash": "4129ec75eaf177b8bd5a4b43fbe32f06926646529070c4ca6ee70a94caac7bfb",
+              "vector_id": "ID#:WVcQ4kyD9zq"
+            },
+            {
+              "index": 469,
+              "hash": "b15e4f06ed02d60c6af78110dc70fcfce1cde6192e114436c39023ee480601f9",
+              "vector_id": "ID#:HwJYxS4o3X1"
+            },
+            {
+              "index": 470,
+              "hash": "5bb8025bdbd14790a61b8f238ac0fc33354a09c559afd3696cf7ad61415ad578",
+              "vector_id": "ID#:UpVzo1djxrP"
+            },
+            {
+              "index": 471,
+              "hash": "2ecc73bc1fcbf75b0ddf29495fbfc382e38ff89eaec2601fab51f2ccab22e235",
+              "vector_id": "ID#:AXRgMw8C833"
+            },
+            {
+              "index": 473,
+              "hash": "63970de62bb57b32d485b408293b791d19be2bc59779acfc6b3343085190fa26",
+              "vector_id": "ID#:K1TcoTkZiSi"
+            },
+            {
+              "index": 474,
+              "hash": "8b9cbb19ec1acbafa53975216d48df6121ba30f371f947e83b141dc5a234a400",
+              "vector_id": "ID#:PfBwRvTxiYg"
+            },
+            {
+              "index": 475,
+              "hash": "86fb974dbdbd3ba3073a9220975668972b65817f596298861d5f5414560a20fc",
+              "vector_id": "ID#:VwUV8VtuUqc"
+            },
+            {
+              "index": 477,
+              "hash": "f8158ce3f120249ef40a0dc61d6a83a73bc9e5dcc34c71bc2eb6cdbd9752aa15",
+              "vector_id": "ID#:hyzbLz5N4on"
+            },
+            {
+              "index": 478,
+              "hash": "86ceeccbe6392f15da5c65883e0ac3c2ef05ea5ae7ca0fa5903547970d0abc41",
+              "vector_id": "ID#:X9BsyTtXGJZ"
+            },
+            {
+              "index": 479,
+              "hash": "586f068b1eea2dba3a902f3410705aa614cdd280e4a3dd4e5fa10e4484695100",
+              "vector_id": "ID#:8qKKdi3DDfr"
+            },
+            {
+              "index": 481,
+              "hash": "0af91fc1415ff02450f5e85413dfa4b3078a971d091159c5a5d0f59b6ca08ac0",
+              "vector_id": "ID#:K9TyiUFdux"
+            },
+            {
+              "index": 482,
+              "hash": "a952edd80b84f7c1ff58dfa7f072550384bebefd63bfbd7817187605fd39daff",
+              "vector_id": "ID#:bRf8mCR77cV"
+            },
+            {
+              "index": 485,
+              "hash": "04bad940eb269e853f8d1656de5b26d88bb2d7015c663b403434ef658bbaed83",
+              "vector_id": "ID#:QNvLpQWz2sw"
+            },
+            {
+              "index": 486,
+              "hash": "f9bc1ab7d512a19e175c465dcff0cf6e4554e48c6da3a707f3c278f4bd6bfb43",
+              "vector_id": "ID#:jPrQ7YwSeFV"
+            },
+            {
+              "index": 488,
+              "hash": "735b2e45d484a9f4b53315401289d10313516fac6c7e84d76d387150b682af35",
+              "vector_id": "ID#:6nqi46eWy6C"
+            },
+            {
+              "index": 490,
+              "hash": "14d8296e21154d7389076b79012ca8b4f7494b0125d8b51365df14538bddb6f2",
+              "vector_id": "ID#:baY4oKg8TuG"
+            },
+            {
+              "index": 492,
+              "hash": "ef448da5800a671560f888e04414c88690496dfae40779a8960ae256f7645830",
+              "vector_id": "ID#:YkkT3DhENff"
+            },
+            {
+              "index": 493,
+              "hash": "cbc2a47bf30161e066dd34a2862f468036ec08733900e3a42962c10e074d702f",
+              "vector_id": "ID#:HAdfnT4sLt5"
+            },
+            {
+              "index": 495,
+              "hash": "1b56a9990ead30f5e8954dee919c7b19048ff4056429af7a87498bd0e0a46681",
+              "vector_id": "ID#:2YnBcf4vcYk"
+            },
+            {
+              "index": 498,
+              "hash": "92e09d88aec960c7f72281d9d5d4883b1121471b5bbde10f4086e502f36988a8",
+              "vector_id": "ID#:MYcLSXL5ts"
+            },
+            {
+              "index": 499,
+              "hash": "4470b34d0528a138e6f03dfc87f62d47a386c19961d39dd6e53e7bfd01a6cb0f",
+              "vector_id": "ID#:8MR7BqbZ5Po"
+            },
+            {
+              "index": 500,
+              "hash": "5fb621bafaf4e4bd3723cdd6eccc9a9e884c0999b84af6398fd3006afcd82a07",
+              "vector_id": "ID#:Wqxq7GMNHM8"
+            },
+            {
+              "index": 502,
+              "hash": "4e930d645278d5f27db92823862d0c7a4c64b5503b065c15580e1ee8ca6851d7",
+              "vector_id": "ID#:i3qcaPnyBWt"
+            },
+            {
+              "index": 503,
+              "hash": "31a0297eff5405d02cfca682c6f56ceb7fdea25631dfb7ca60299424fdf8c9bd",
+              "vector_id": "ID#:KJRJm74sWL"
+            },
+            {
+              "index": 504,
+              "hash": "9dcd8fa9a3b5a0d7527a3b3cef19e56b387ebaa3c29eae4bf5daa5cb23244dd6",
+              "vector_id": "ID#:Lvwz4eSJ4Ym"
+            },
+            {
+              "index": 505,
+              "hash": "dafe93992d2d73201adb578e58b76568b469687318429b7296355fbe73e29e6d",
+              "vector_id": "ID#:E7SXdsXU6yV"
+            },
+            {
+              "index": 506,
+              "hash": "63c19d7e596c10e0b859f84bc97876b2291bc1f07be7cfd5d6daf84478f4887d",
+              "vector_id": "ID#:htP1EqUcxLE"
+            },
+            {
+              "index": 507,
+              "hash": "6899dd6b6bb7f217338b0b44bb3957f2df3fab17c9996a057984981a392a69e6",
+              "vector_id": "ID#:JL8VCw6MSc9"
+            },
+            {
+              "index": 508,
+              "hash": "c139c03be4cf09121689e54edbb7c02203c6f899ff21956653b6da7e4c62bb9b",
+              "vector_id": "ID#:DpVUaAQghc6"
+            },
+            {
+              "index": 509,
+              "hash": "149ad10289eb5f1f3eabe24e6cf31839776ba0d633a10e93623a1e7ac8585ca6",
+              "vector_id": "ID#:WPrMavLfzdj"
+            },
+            {
+              "index": 511,
+              "hash": "3595a9c6dc1fef229bdc25c32d86734a6b4741e76ec7a06c2a4c2172692ba6fa",
+              "vector_id": "ID#:FefjKyEBaZr"
+            },
+            {
+              "index": 513,
+              "hash": "d4bb8033a69d4e9af7bfea6d2d6dab10b220f260aeca642e6e6086cff83e4e24",
+              "vector_id": "ID#:QUWKyFCnbKa"
+            },
+            {
+              "index": 514,
+              "hash": "d0f58700b3b0b615a52303bc29259b0e0b9bae369727c9c32ec7468e8b4f0cc8",
+              "vector_id": "ID#:HU9HZueZGWR"
+            },
+            {
+              "index": 515,
+              "hash": "e85c797bcedc3feda6d243562380e1cdbf0c3823245855b86358939149ed52c8",
+              "vector_id": "ID#:YTYZW1pZeQp"
+            },
+            {
+              "index": 516,
+              "hash": "41926c251736c1e1f546426bf61cb0eeb9e2ac499c73e9118a382b54a031ba5b",
+              "vector_id": "ID#:QoShijofxQj"
+            },
+            {
+              "index": 517,
+              "hash": "0c6f7a5d803337037feaed35dff0b8ab2544528c3252d882259468d99b5248c6",
+              "vector_id": "ID#:dyEXwRw5QZ9"
+            },
+            {
+              "index": 518,
+              "hash": "a91c0d4d67aaf684da1b184137c70f7edfca033f0370c8aa4506cef7fe66b4cf",
+              "vector_id": "ID#:Y41Fem8V1nD"
+            },
+            {
+              "index": 519,
+              "hash": "fcb34225dc5bf853be599dc9644bfcd55bd23aab04fd7dd42346d72b1b31b823",
+              "vector_id": "ID#:fcrwAf1pcRx"
+            },
+            {
+              "index": 520,
+              "hash": "1b35da2f3509e8e6e88a98be9052b3a32291a22dcec7c14f72c7f3de6d056ba0",
+              "vector_id": "ID#:DYH5GaLjRdD"
+            },
+            {
+              "index": 521,
+              "hash": "452fa7b46b4c9a1863c4eaafc4ac8f59f805db07fbbe41207b1b35ab1269a81e",
+              "vector_id": "ID#:c8yVBmndN19"
+            },
+            {
+              "index": 523,
+              "hash": "270ca7a82600f3caecac61aa00d3f039094526f224d05b5ed7f9097c2dc27722",
+              "vector_id": "ID#:PrpnCpQ27Us"
+            },
+            {
+              "index": 524,
+              "hash": "91ce4a99bc039c3926ba9dc42442303f094f617865e8d0cb759172130641522b",
+              "vector_id": "ID#:Hp23R88nSr9"
+            },
+            {
+              "index": 525,
+              "hash": "e2a747acb64bcb054ae7d6da05f1e68d0230a3cd52133459dd585f376803a73e",
+              "vector_id": "ID#:CSKJGzW7nNQ"
+            },
+            {
+              "index": 527,
+              "hash": "c42f050561d15cf0e5864d03b7b32fdf0e76cd3273df50363a4c4b348be32486",
+              "vector_id": "ID#:V774djLUSFp"
+            },
+            {
+              "index": 528,
+              "hash": "df9bf85bce26c553c3e99e95f7b1f09caf753463bfded8cc11717f37a252ca7d",
+              "vector_id": "ID#:bLo7rHeRGwU"
+            },
+            {
+              "index": 530,
+              "hash": "942839cd7631b821398f143dcb1838f5a75a7c88c6c4e8d26c5b3c2f305b5d07",
+              "vector_id": "ID#:ASTQP4AcsC5"
+            },
+            {
+              "index": 531,
+              "hash": "e76326fe47fa6f3c665db126727413de9976d4abee16c3ee9f993b48e764863f",
+              "vector_id": "ID#:XSXL7vFYYB1"
+            },
+            {
+              "index": 532,
+              "hash": "404f1c81ccaae8ec456f321e67971c6e3ab2cbbddc827c98c2c44fe4d4b49f1f",
+              "vector_id": "ID#:DGqDdM9Ss4L"
+            },
+            {
+              "index": 533,
+              "hash": "a5de45d5a5999a37e567c52151418b1e41128ad56ed0a7cbbe2d3a6e9ecb9712",
+              "vector_id": "ID#:NDFcCCkcLVE"
+            },
+            {
+              "index": 534,
+              "hash": "ac0814536af3bfe9d2fd3c352c41aee1751a23b6aafb74d1f0cc1d01e843d3f9",
+              "vector_id": "ID#:EcmMDewXnph"
+            },
+            {
+              "index": 535,
+              "hash": "7c4371a13d15c0a82833e814d4b34d66e3def96c1d95f6a8740f25d9e7074831",
+              "vector_id": "ID#:2mECwdkDWVV"
+            },
+            {
+              "index": 536,
+              "hash": "e1cff598f9267fdcb1816de661bea2af88a59f2cc886e3c5f3d3422aa5b5b987",
+              "vector_id": "ID#:cY9PvrNNsEJ"
+            },
+            {
+              "index": 537,
+              "hash": "5fa46e3d88cabc2cf1e5c681230d324a9f437ae4cef58e9288d57c22142667a8",
+              "vector_id": "ID#:WD2HNJFMbsz"
+            },
+            {
+              "index": 538,
+              "hash": "1042d259ea9a58dd8a2b1dc42d7bfca4c51aede6fe86573ea8ece6b3b1b31eda",
+              "vector_id": "ID#:RXaVbKqqso3"
+            },
+            {
+              "index": 539,
+              "hash": "fc1febe14ac2566732459bfe6459401269780aa4fabc4fb4078d58cd786bdde1",
+              "vector_id": "ID#:PZTDy5dk7D2"
+            },
+            {
+              "index": 540,
+              "hash": "688a7cfa5b6d9bf8c80848f4ef8ccc29d08d2d31cc5edb419934236a6618769f",
+              "vector_id": "ID#:aEfK6rJwecV"
+            },
+            {
+              "index": 541,
+              "hash": "39a24815d8ebc3f9acc3181dbab6feb7dd5a5c1d42644eed120d130895a42d53",
+              "vector_id": "ID#:UbSTrCtrmeL"
+            },
+            {
+              "index": 542,
+              "hash": "a129858b4f6f992136d9a388423a6afd69b19645aa51cd924d62031399334a2b",
+              "vector_id": "ID#:iguCewicWHq"
+            },
+            {
+              "index": 545,
+              "hash": "f31c33c28ee1e61ab8c143cefc0e03e06c8ca0ea3caca5f385974e3c8836ac13",
+              "vector_id": "ID#:Zmh7Tk7ipMp"
+            },
+            {
+              "index": 546,
+              "hash": "bdee0ffa9bf62363ba0054b4437db7575f8c69b67c8e4d982a19a46103d9d043",
+              "vector_id": "ID#:C3YxSPGcq8j"
+            },
+            {
+              "index": 547,
+              "hash": "53a952233e828441bc71a72d97c8a831b29710145f6b017a1a3e6fbf6b2fcdb2",
+              "vector_id": "ID#:MvN7ZAA6xtv"
+            },
+            {
+              "index": 548,
+              "hash": "b3e47890dc02192a20f42bd2ea2fbcbce9e5a88ee5e66ed3815458ccf76dc04f",
+              "vector_id": "ID#:9mhwyM1wtgp"
+            },
+            {
+              "index": 549,
+              "hash": "4cdf0aae8a6af6ef62ee771ba0d4606c7ff23fcc6b5e5ddad6ee6fdc49feac1f",
+              "vector_id": "ID#:PkkD6wmac6m"
+            },
+            {
+              "index": 550,
+              "hash": "542a0c711e7c74b0cbc7dd5f4408e70dbe98939e9bf219a7cb8b07706712e50a",
+              "vector_id": "ID#:h5nvYv1B7h1"
+            },
+            {
+              "index": 551,
+              "hash": "5d290698f5e8f6cf8ac347471ecbd0b2b8ea8121b8b6318ab4c7a8fdadb951c6",
+              "vector_id": "ID#:8xSUpeTjoCR"
+            },
+            {
+              "index": 552,
+              "hash": "9246e4fac25269c571a6e7470fb8f7bccb1392d9c3b89790d115d17ff615f08e",
+              "vector_id": "ID#:Csn69qm7ouR"
+            },
+            {
+              "index": 553,
+              "hash": "afc5e7793b00aa8548c3c996863becbb5648f328061f39a62224f5cee8139706",
+              "vector_id": "ID#:6ySVmL6yE43"
+            },
+            {
+              "index": 554,
+              "hash": "e9576657fcc73dfe75661097cd9bf7f901fcf33973a72e97f61e5f73e95da3f3",
+              "vector_id": "ID#:Vk92c49LNUA"
+            },
+            {
+              "index": 555,
+              "hash": "38d0751f212865d85bd4b98e90e2236a36cc81ded4a5296d17d28d2d79bfc9d6",
+              "vector_id": "ID#:cF9Jd6VLoYu"
+            },
+            {
+              "index": 557,
+              "hash": "b2bf4e1deffb85255f1779da06517f94795cb0fb36320641f21318b4cf767080",
+              "vector_id": "ID#:VYcRnXe8s75"
+            },
+            {
+              "index": 558,
+              "hash": "cde90be8b668685eecb05bb97d27963480caabcc68351861343ee1181aedc670",
+              "vector_id": "ID#:98u3JfeGTkX"
+            },
+            {
+              "index": 559,
+              "hash": "cafed9aafec10e76288144837f29a21fbd81effe1d5593a7e78c31e0225171b6",
+              "vector_id": "ID#:WEnafZKEX38"
+            },
+            {
+              "index": 560,
+              "hash": "99256d5a95a1b5e9a266a2010527c2f28f578282901807ab03dbabb26b3ffd01",
+              "vector_id": "ID#:YWEufs31GzX"
+            },
+            {
+              "index": 561,
+              "hash": "ce8aca94a08b04874f9b96ae04ed21d6efd6a255030c7f93fbcc37fd879f420b",
+              "vector_id": "ID#:XczdmoJb9Uf"
+            },
+            {
+              "index": 562,
+              "hash": "b775305254660a16abe1937928c92fc4ee2e4132bec2d92ce1d2f43e5c899962",
+              "vector_id": "ID#:cpCnmo4krvZ"
+            },
+            {
+              "index": 564,
+              "hash": "60905a00d3ad67b45a820ec0185bc2f0f157419cdca8711476a8c90195447604",
+              "vector_id": "ID#:SXqqEYsKRFf"
+            },
+            {
+              "index": 565,
+              "hash": "efddfec82920d478e14a80bf00b21f408f3f06be5378e3b2ffa11f21b63212c0",
+              "vector_id": "ID#:SZ3ZxDEgLCD"
+            },
+            {
+              "index": 569,
+              "hash": "3363f4293c46d06180e35f58c5f903bcfef9202b593a9be8d82f44f5093eaac7",
+              "vector_id": "ID#:2EGheTfkgTS"
+            },
+            {
+              "index": 570,
+              "hash": "5292f8d905145d6019d14d285b292e7ef467053803795d3e8a6ecce3081c1d10",
+              "vector_id": "ID#:c34Ft3oqGXt"
+            },
+            {
+              "index": 573,
+              "hash": "e2801930234cbb41d3d51c1111d1dceb97b6852578ad326994bac423f374b249",
+              "vector_id": "ID#:CBhcTfnGxLJ"
+            },
+            {
+              "index": 574,
+              "hash": "5e011ef681595b25e96bd0d19ed6e620aa7aed7f656db9f0fcf13e8dd0f86379",
+              "vector_id": "ID#:NZHv9VqVxiA"
+            },
+            {
+              "index": 575,
+              "hash": "63f213a7fedaa636e75aa35d3b1ab38c131b4f0f29a23a45e1ef1b61d379b010",
+              "vector_id": "ID#:jQNQhGfhLjF"
+            },
+            {
+              "index": 576,
+              "hash": "570409796e483659187b5db4a73537b32107518a9421f647cc176e6d7ce60346",
+              "vector_id": "ID#:JYLhHkvZr44"
+            },
+            {
+              "index": 578,
+              "hash": "21cf39f1c9156cd27fb5cf1938cba45835ea154c1fde1875f009df1718aec2fd",
+              "vector_id": "ID#:GJGM2TaVG46"
+            },
+            {
+              "index": 582,
+              "hash": "f1e04627853889d98b2c6c37b580b6756f35bb6290777895087083f9b08ce237",
+              "vector_id": "ID#:QPzwkDx9hLY"
+            },
+            {
+              "index": 583,
+              "hash": "cf5595682009a745b803534a8fdbd8af23b8f28df7a25edba9db1a4cd653c9c0",
+              "vector_id": "ID#:563jpnCeuRy"
+            },
+            {
+              "index": 584,
+              "hash": "f92e239bf4b8a6a2fea9fdc919f469ecd03358f164997b159ba0be7c7ca927e5",
+              "vector_id": "ID#:cNex9ZdXLoe"
+            },
+            {
+              "index": 585,
+              "hash": "a8fd6c480d9c4ce94419f14f6f8a7842f114210092da62f63c89e759531ff70b",
+              "vector_id": "ID#:ZyaoPLdoekC"
+            },
+            {
+              "index": 597,
+              "hash": "9cbd33a3e5855318f4cbac48f0f5b2ad3dd506620b28c214bd023caeddc42077",
+              "vector_id": "ID#:UrsJe4GkWyK"
+            },
+            {
+              "index": 599,
+              "hash": "908690511d4768d281341bbe5df225bc1df7b986c30fe86eebabbbf2857a8958",
+              "vector_id": "ID#:gowGjdgw42u"
+            },
+            {
+              "index": 602,
+              "hash": "cacd5a5052906d6809fe2891522596f8996f155e07986af0c9f998b552642506",
+              "vector_id": "ID#:3JupczAZsdc"
+            },
+            {
+              "index": 603,
+              "hash": "2af6ee7f68a26e76277574acadfbb47ee699b9f3a558c12e080a6cf398a67914",
+              "vector_id": "ID#:P6AVgSW2zLL"
+            },
+            {
+              "index": 605,
+              "hash": "76dcedd6d9f0eb5e4a6394b2a412401a743625129e35a1091c63169125ca1aa2",
+              "vector_id": "ID#:hPcMMUv76ET"
+            },
+            {
+              "index": 608,
+              "hash": "d95a5ecd37899d748e484c9c40ff64a5ba1834e39338417d84ab1d70fe79074d",
+              "vector_id": "ID#:6y5kjebNcAf"
+            },
+            {
+              "index": 610,
+              "hash": "62e11c84d01caf304aaa11349d4dfcff2904fd5039b272f251d88f0562316802",
+              "vector_id": "ID#:B11guBsWdQC"
+            },
+            {
+              "index": 616,
+              "hash": "a0d9f27cf82a0b2be045f890090f5ffcaba8a63c8078bd829690269af3f4c96c",
+              "vector_id": "ID#:33x5Z7jQVox"
+            },
+            {
+              "index": 621,
+              "hash": "654d1e2fcc6df4f0a233871544aac93ef22210677448d9ce6d3226e8e27ff56b",
+              "vector_id": "ID#:guje8uBNGGs"
+            },
+            {
+              "index": 626,
+              "hash": "d9330029388ffa8afc9af9b972e6617db1e0b3f812562c164486540dbe0958ff",
+              "vector_id": "ID#:bpfkp3PFRiY"
+            },
+            {
+              "index": 631,
+              "hash": "ed9dfdca85d4058b9bf82e127bb62420bc34907c4e7d4f56c6ec00ff7fcc5007",
+              "vector_id": "ID#:h3qZEPhNRvi"
+            },
+            {
+              "index": 632,
+              "hash": "b23acc04e348a3a7c9c65291db1601a7f029c701260719cd905510054840f9e0",
+              "vector_id": "ID#:HBbVqGX2gsn"
+            }
+          ]
+        },
+        "Purged": {
+          "hash": "f7e6874354fe94d5105c9ca0679e8577b0d49d34b895349354516b45fbfc4898",
+          "count": 147,
+          "leaves": [
+            {
+              "index": 3,
+              "hash": "87f3628cf609f0196721ec747ab95db046f47e5b5659246675d91796eadc9218",
+              "vector_id": "ID#:56PJ6srWySh"
+            },
+            {
+              "index": 15,
+              "hash": "eab0781b9c3257f8632b810c5e07565af4597ab89a5ea89d2dc4872ddb3dc91b",
+              "vector_id": "ID#:ijdsttFxTAz"
+            },
+            {
+              "index": 25,
+              "hash": "4e2dbc761cf3a78b6b7f8fdedb86f7d43e14dadd702aa07c650d9c0e003fb9ae",
+              "vector_id": "ID#:GCb3FeKXS4A"
+            },
+            {
+              "index": 28,
+              "hash": "ce0b5352df2fc0adea700cd52e7f44ed3d1d74113fa5f78f106dbceec306f604",
+              "vector_id": "ID#:UBXLY8Z3bJU"
+            },
+            {
+              "index": 36,
+              "hash": "27b64da23fcfeb844493a57f8be5fad7c6b3bb454965748f0dbda3d2e1ab8048",
+              "vector_id": "ID#:fDgtpVBBP23"
+            },
+            {
+              "index": 42,
+              "hash": "8fe4024d3eb0865436387e77af0d4d5edc547db19f159615183404615730cb45",
+              "vector_id": "ID#:YWSmkudQLqv"
+            },
+            {
+              "index": 51,
+              "hash": "5a019ca686420bf25ec16758f53f0cb86ce2b384d5ab3244ba07f2f946cab1f3",
+              "vector_id": "ID#:MAFMmSA9BLz"
+            },
+            {
+              "index": 55,
+              "hash": "f4e48f981ec2bdc8682208b32c72418d2f6a6ac7026e6e5bf5af52d33e83a9a6",
+              "vector_id": "ID#:eoah1W26PNz"
+            },
+            {
+              "index": 62,
+              "hash": "d414515822a99bc90120a90c8bcdbf2022dfb178b358fa3d121382189d5e44de",
+              "vector_id": "ID#:NJAEAra782d"
+            },
+            {
+              "index": 71,
+              "hash": "fcd1cebf67e1b05271008b9c9f2b2dde0dcba7c7fe9a109a25e8484beb012274",
+              "vector_id": "ID#:ijCo4nWefm6"
+            },
+            {
+              "index": 86,
+              "hash": "5dddc8977a3b9e57edaa0a2cd9b9cb264108ecea0d81567b9b8425b5e8039dba",
+              "vector_id": "ID#:ief9jTCPHwS"
+            },
+            {
+              "index": 88,
+              "hash": "c88c475d4964cdb62dbdf44acf8d6580181dc00c7462e54325b175ceb936fe54",
+              "vector_id": "ID#:jVFNh6NSeja"
+            },
+            {
+              "index": 89,
+              "hash": "54f99dbd353d923ab294edd2f55f9d80169d42a6b3bb3f6de48ee63bfa194158",
+              "vector_id": "ID#:W4MXap7hMgB"
+            },
+            {
+              "index": 94,
+              "hash": "cfcafde8a7d58af983f3b304f76354dcc88435659a190245c66ad0c634be2eaa",
+              "vector_id": "ID#:HTVsfXEtusY"
+            },
+            {
+              "index": 95,
+              "hash": "62ed36cb84c4e7bc711a9ba3bb8890fb1fad906fb1a177f9b729db555f03aa9d",
+              "vector_id": "ID#:dGPcNz87jFg"
+            },
+            {
+              "index": 105,
+              "hash": "7fca0d9dd485a920ea58b453d89846b399c8f7e7c70078a6a13d2e54b328619b",
+              "vector_id": "ID#:4L5A9YSjaab"
+            },
+            {
+              "index": 122,
+              "hash": "2c1d6a9d8a81f907a249fc462a3d476764c6658aed1178a323a5bc22ff077d6a",
+              "vector_id": "ID#:erRU9CtJ2p1"
+            },
+            {
+              "index": 125,
+              "hash": "9120cc8642d17ad2533605ecef4852e59888afe7c03ab2a74db7a69391231763",
+              "vector_id": "ID#:7C931ndergn"
+            },
+            {
+              "index": 131,
+              "hash": "1c98b5d76f1b606158b72c13136192e854e2672860774caec4cff82a771de25a",
+              "vector_id": "ID#:SYwvY6GcQ3x"
+            },
+            {
+              "index": 132,
+              "hash": "52d84cac90f3e2f345e2b8031654125c986938c5caa68c0110ee780146d6b69e",
+              "vector_id": "ID#:RqgGqozD7GG"
+            },
+            {
+              "index": 137,
+              "hash": "30ad27edbb09ee42a222b24924aef883a566ddc56f609949573dd136e09beb3d",
+              "vector_id": "ID#:aZWvspB8Bie"
+            },
+            {
+              "index": 141,
+              "hash": "4299fb8a19719a61d23795b11ffd92809235579d786ffe85dfe7dae5ead06185",
+              "vector_id": "ID#:KW4x45zcwjf"
+            },
+            {
+              "index": 142,
+              "hash": "334d99c6fd949e82454e129cb3afc0c7a8db1c30687205d071d6760b1490ad23",
+              "vector_id": "ID#:cR3BgJS1Z6v"
+            },
+            {
+              "index": 151,
+              "hash": "34e24deb7bc306c30be4efc78716276a777f2f72b4d9cea68ce8ebb746d117fd",
+              "vector_id": "ID#:EaT4G4hG7Cp"
+            },
+            {
+              "index": 154,
+              "hash": "9ccc786238b998052ac3c893b3354d24c3484f6a3d9d0c14553886d7d59a1903",
+              "vector_id": "ID#:DokXNsQ1xLe"
+            },
+            {
+              "index": 161,
+              "hash": "c492137b4494d81c1ba00d83524a39f8e920ef9d63f3577e66969191f0b72210",
+              "vector_id": "ID#:epW8e8uTRTT"
+            },
+            {
+              "index": 165,
+              "hash": "5b3376b102723724a539a03591f73f836e44d8871c756e8724c7278a5835ec70",
+              "vector_id": "ID#:DuTssmnKcMG"
+            },
+            {
+              "index": 166,
+              "hash": "825f07ac5ff013ba9408d47e125e58b8be45eb830de4f2654da83be62728a479",
+              "vector_id": "ID#:EcA2ephH4kd"
+            },
+            {
+              "index": 169,
+              "hash": "f51ae44c59ea15ec8e0500fc51de8fa940937517055a1a0eafddc09a0c435815",
+              "vector_id": "ID#:SqN7BjjBMKr"
+            },
+            {
+              "index": 173,
+              "hash": "6d8372d0b3f9335e9bf6a5e55c9aaf01eb193959b84473035565b3b0ecccf612",
+              "vector_id": "ID#:bFtzW6ehh5h"
+            },
+            {
+              "index": 185,
+              "hash": "c31aa61a2f366ffa2f9558115e13590c12ffd9452b9f31fcf90ee39b3824fa87",
+              "vector_id": "ID#:6To8GT8Q2UN"
+            },
+            {
+              "index": 186,
+              "hash": "6563d9382f107f4ad1ef9dd0264c1488a3c356d146854d79ad54762c1d839578",
+              "vector_id": "ID#:3U6TpZei7hU"
+            },
+            {
+              "index": 191,
+              "hash": "ee5d79df5de12c2c67f1836bd1a26498d6302b5a9be55825e2aec7acfd402997",
+              "vector_id": "ID#:T9auzRmXUzA"
+            },
+            {
+              "index": 193,
+              "hash": "ec5a4818190589971a37b98e8a83ef4eec771c08007772aa9593614521dcd00c",
+              "vector_id": "ID#:Tkk1dm4peqU"
+            },
+            {
+              "index": 197,
+              "hash": "21fdb6058914e80e63776ae5f0a1e41e06cd47f95f2b7642bdc665a2d79a6a53",
+              "vector_id": "ID#:eqgwE2kSxtJ"
+            },
+            {
+              "index": 200,
+              "hash": "a188565b19a1b50a466a215ba5f264894080786a66273d69be098deb127e0abf",
+              "vector_id": "ID#:6qL9QKV3q2w"
+            },
+            {
+              "index": 219,
+              "hash": "03cee2e5bd3fed134c3f6a7562ca8c4e48991abce4b0537701ba6128087f5227",
+              "vector_id": "ID#:LaXecrAqi7z"
+            },
+            {
+              "index": 224,
+              "hash": "7c0e5c333e20347625c1276b6d4026b9d1ce82b4c4df3cd7a2a576111b30beaf",
+              "vector_id": "ID#:D3fS4YaatLq"
+            },
+            {
+              "index": 229,
+              "hash": "ec00e2ae0ed5d929aa94def035ae55c2dcb4230e7a39edb62236b88f149715b7",
+              "vector_id": "ID#:M8kRntSFtu1"
+            },
+            {
+              "index": 235,
+              "hash": "9bf1f86850c789df266db207e5a539930d077e110228de922cb4894b3a61187b",
+              "vector_id": "ID#:9mfqjf8BkWJ"
+            },
+            {
+              "index": 236,
+              "hash": "262e63b01d48c71ed02c874aa175362cbbd8df6422a459015cc725c7bfb08d7b",
+              "vector_id": "ID#:NcTNEbzabbv"
+            },
+            {
+              "index": 246,
+              "hash": "888c7f44523d6f811729183dcd0474260d3ad1187f3665e7db5b5e0828ed1d7e",
+              "vector_id": "ID#:dTjiMQF4GHu"
+            },
+            {
+              "index": 249,
+              "hash": "b46602c3bee8488f7d294d93569b46dcd6d29602d74b6b6add9b9b987b0f623b",
+              "vector_id": "ID#:YL12ZuAEKJV"
+            },
+            {
+              "index": 262,
+              "hash": "0c24a384a0f4f1af613159f55f64e24e8d443230e7efb72aa849d6587a3d3257",
+              "vector_id": "ID#:PN76oLd5eXX"
+            },
+            {
+              "index": 271,
+              "hash": "7d2edd269c652e15b3bde5f1e497429d345ab01a233a3e1859f57a01b57e0a64",
+              "vector_id": "ID#:dCdEbsda7nW"
+            },
+            {
+              "index": 274,
+              "hash": "1d211fdfea2e903600b2cf0d9868dff26e72fe70f7ef70a1bfa9caf31917159d",
+              "vector_id": "ID#:DyoBdoc9dmP"
+            },
+            {
+              "index": 277,
+              "hash": "5f4241eb1ed96fe50aff96196bc37c5ec6c4e95842759684cbcb8c1212406960",
+              "vector_id": "ID#:Rh8cmcGTrfH"
+            },
+            {
+              "index": 281,
+              "hash": "00ee5c89ae091e847c0a9f97c18a7b147a46b7f98e345d20a4e055395f34233d",
+              "vector_id": "ID#:hfBUeyViYdL"
+            },
+            {
+              "index": 286,
+              "hash": "f80c03abd97d75b12ea3a1716e7762474eb5df4841f88b174a91790afe99bcdf",
+              "vector_id": "ID#:asCejKp4KSF"
+            },
+            {
+              "index": 289,
+              "hash": "3fa63ed4879eaaa5047bf7dde98874b6c2686051bd6addd012412cfa03218187",
+              "vector_id": "ID#:HME19DmAU5r"
+            },
+            {
+              "index": 299,
+              "hash": "b64f9ae695221de7d4d540592c8af2bcb0b7844c405de1c5e63ed1e23a6fc3e5",
+              "vector_id": "ID#:ZeBZqV2dsX9"
+            },
+            {
+              "index": 305,
+              "hash": "d7ff21d02d7aca6bb6c34c5271f437bdbe20cb9f8c528cbe8b8d14186861a59f",
+              "vector_id": "ID#:LoawhUTgtXQ"
+            },
+            {
+              "index": 315,
+              "hash": "11e31d0da7f835210280a8274b0f6e5ca8bb8452d32c17266f5c4a27cb2d08c3",
+              "vector_id": "ID#:Kibfom2rZE1"
+            },
+            {
+              "index": 317,
+              "hash": "6db2dc12f5e833907f1aed4f9515e14866e8a4ef814725aed90cced98def4a56",
+              "vector_id": "ID#:KhsWZhtHvPz"
+            },
+            {
+              "index": 321,
+              "hash": "68b8d6d98672f92f138fc5d9f0bce59d9ea0021b1e9ff5763279f6a541688ea5",
+              "vector_id": "ID#:B3AM5T3AjoW"
+            },
+            {
+              "index": 327,
+              "hash": "ed1f5c79d388a429b905b23675a66a29c0fdb5780838d0bc1eda5081f12416fe",
+              "vector_id": "ID#:ZFELqEuyDFw"
+            },
+            {
+              "index": 330,
+              "hash": "d66378cbda2adb0f18e2529c50a48b40e7d2e62b4805fc946f40b526b0de1744",
+              "vector_id": "ID#:ZjcUFTVFYy8"
+            },
+            {
+              "index": 332,
+              "hash": "00769d45a6a0961b23daf4330215636552da4d7603545c2d86450182855ec740",
+              "vector_id": "ID#:Niqf6YXVR8M"
+            },
+            {
+              "index": 334,
+              "hash": "a8123f28e023a24f4ba113b57cf331d894de0b1da312399020f9538d0dd19d2d",
+              "vector_id": "ID#:WW1muEa7srr"
+            },
+            {
+              "index": 336,
+              "hash": "2f5877a65793e423fb1518a249af84738e117b9e3cf72d9a80e121afa065b802",
+              "vector_id": "ID#:jmUK9m7EWPj"
+            },
+            {
+              "index": 337,
+              "hash": "3ef32bb8730f1d521a45a103f6010444426274f9acb9c48a320645d3c1546889",
+              "vector_id": "ID#:DX21dzqQRUK"
+            },
+            {
+              "index": 340,
+              "hash": "4265e3f93a71ac171113dcd6ee7f69c5edeb1d9bef685ff5540ca587ad94e0f5",
+              "vector_id": "ID#:7vJcpS6CrNU"
+            },
+            {
+              "index": 343,
+              "hash": "19904524ddfeb56b032a0d15067bee7812884ca7b572620cd3ef40a4d58d6ca9",
+              "vector_id": "ID#:azkD7zYeHDi"
+            },
+            {
+              "index": 347,
+              "hash": "1d4cd10776234f9b728896d078d12ab00882837a8583d40c487c5b0bedadd271",
+              "vector_id": "ID#:CBpy2mJX7bS"
+            },
+            {
+              "index": 348,
+              "hash": "6039d42e963a3f5cef8032d568130089a4bb1e9d929d85cfbab777b897092b6c",
+              "vector_id": "ID#:5KtHNFpUaep"
+            },
+            {
+              "index": 349,
+              "hash": "298538a8d01a8f2238edbca2ee2b7f71daa479519203eb2e17c2388ce91865a3",
+              "vector_id": "ID#:V6DwEz5YSbW"
+            },
+            {
+              "index": 352,
+              "hash": "568f6c6d5082ad7121f4d779e3fce8205d5487dd91d19016dd080a3e1eb14e62",
+              "vector_id": "ID#:2SfWt2qaahS"
+            },
+            {
+              "index": 353,
+              "hash": "ee47a050aa699728be7e86b10e3dbbc6ca66cc8f2e930c8dd70499aea71b1029",
+              "vector_id": "ID#:Gbs774MzCh9"
+            },
+            {
+              "index": 358,
+              "hash": "7dc326e4b67aecd0a950a24b351a53752fd26c7863a3c65d29b18b86ba9f8efc",
+              "vector_id": "ID#:DzWbbc4xAht"
+            },
+            {
+              "index": 359,
+              "hash": "759fe3e79054aee93e9fae04156d8a7aa6ffd9925b529be8033645fb418fdf98",
+              "vector_id": "ID#:bmpPZ2Mvif7"
+            },
+            {
+              "index": 368,
+              "hash": "0ba803df573766e425665b764dd7f8b038310b728bb7a58fa7d01061448444bf",
+              "vector_id": "ID#:hRWzkDLxoww"
+            },
+            {
+              "index": 373,
+              "hash": "5d1dc06a01bbc3e281191c1bcf976dc083787b3596f2bf3203bb7d524ee5a395",
+              "vector_id": "ID#:EfiG3UkZtMQ"
+            },
+            {
+              "index": 381,
+              "hash": "dbaa09c8660638060ae07be5e862deb7c77e3615a1d7280f2d8e89928bcdec46",
+              "vector_id": "ID#:V1yjdg525YR"
+            },
+            {
+              "index": 384,
+              "hash": "8cf7addba1677e5b611c1b8bb0884a967622c882fcfe2aa4370464f03212085b",
+              "vector_id": "ID#:eCsWCiZuimc"
+            },
+            {
+              "index": 389,
+              "hash": "db51647080b399b79fe262e260f4e81c0d10656f60e17b480dc6a8e5eba5e470",
+              "vector_id": "ID#:WbjgYTKKVqF"
+            },
+            {
+              "index": 394,
+              "hash": "6d243e34510065e7091d5c0caaef48d373b9ed157c15ad326863a20fb489fe24",
+              "vector_id": "ID#:6ZW1k6161tZ"
+            },
+            {
+              "index": 398,
+              "hash": "6c65e23e61a588c2bee6fc0df3a9377579ebd099f186793969bdfd88d92ccc28",
+              "vector_id": "ID#:R1krREnmmu"
+            },
+            {
+              "index": 399,
+              "hash": "d40c19023bb0290f099a90d57a0baf881baced27c9bc0c24590e9073a10486b2",
+              "vector_id": "ID#:J5HHxGxJopj"
+            },
+            {
+              "index": 406,
+              "hash": "a19f5f5a984bf156224821f8bb82fe51647cbf6ad2ece82e925a3643042bdb37",
+              "vector_id": "ID#:FLRhJmGGoUf"
+            },
+            {
+              "index": 414,
+              "hash": "7856bbd7bc043eb5ca3a5361c9a89db7ce1b72e3de52442e038650bfa94e4074",
+              "vector_id": "ID#:3knrASjdoDQ"
+            },
+            {
+              "index": 418,
+              "hash": "75ad3daacace2cf880af8b1cd49b5c552cfc01a5dc30c199993a4847860d3b2a",
+              "vector_id": "ID#:X75NNCYQaBg"
+            },
+            {
+              "index": 421,
+              "hash": "745c821f40642871a6e3c944d98c9223d8178edf96e0d72aa05f77ccc8521714",
+              "vector_id": "ID#:Y57jAWkC5Df"
+            },
+            {
+              "index": 423,
+              "hash": "ab18dcf372fbbc0888940cb0ecb89047ce534007ae7d889e7a5b83c00cc3101e",
+              "vector_id": "ID#:G5iZP7fLmW2"
+            },
+            {
+              "index": 424,
+              "hash": "21873f0559916f24e170f5be3119a74cf8e716307a94e5a57946076b90680e5f",
+              "vector_id": "ID#:NwbSJaBLByA"
+            },
+            {
+              "index": 429,
+              "hash": "bd176c3f7d5e34ccff5adf1bb8fb69d6ae84d91bd8a780223f6576da29e58601",
+              "vector_id": "ID#:6WbRdfCANTf"
+            },
+            {
+              "index": 431,
+              "hash": "cc90b8644685f29faf75fdfe8c0020aadca97ef4fdd77651572c53ba26bd3b5d",
+              "vector_id": "ID#:iFzj4JhRmh5"
+            },
+            {
+              "index": 436,
+              "hash": "dc808121637f80979622c703e01bce1991dff9bb2402baeb24572dc06592f7f5",
+              "vector_id": "ID#:8RGSzaQ6K5H"
+            },
+            {
+              "index": 441,
+              "hash": "08d65ff43c0b4420ab2123ff87d3bd0a1638262c771b35d4ab4980df330c94a2",
+              "vector_id": "ID#:NmoaaGz1P7o"
+            },
+            {
+              "index": 465,
+              "hash": "651a3e3a24c6ae8a77363bb4aade5d6f565edb8bf4f0a9c41652cb5b18bc52a3",
+              "vector_id": "ID#:7Hiivj7K954"
+            },
+            {
+              "index": 472,
+              "hash": "c93327eb825a71fb7943903c6268428d82f21c862028c8762b962f222e575598",
+              "vector_id": "ID#:5pcEpfqUWUk"
+            },
+            {
+              "index": 476,
+              "hash": "1c66bd51a0699cca6c0a95ae31df91bcb3f8f1998d7a79e20423d038b6727ba9",
+              "vector_id": "ID#:QJpnPPs98XN"
+            },
+            {
+              "index": 480,
+              "hash": "a1cc6ab4ad8f6e4a22d325abb7fd13719486d7cf2d79ade53e3a9d438ba3fe2a",
+              "vector_id": "ID#:hLWBU3Nbv9N"
+            },
+            {
+              "index": 483,
+              "hash": "7cc839e9c83b6f73e9e680893c05ff86574dc2920726f243d5a2063c627086f2",
+              "vector_id": "ID#:7nAHMSp4TV3"
+            },
+            {
+              "index": 484,
+              "hash": "0ddd03a4867753d86a3b47bf2d00a60020bda968b415e40a8ead7d349661d6ad",
+              "vector_id": "ID#:JgDVqaHiVPU"
+            },
+            {
+              "index": 487,
+              "hash": "6ab9d6002849a305db154c1d6505e62a807f9d1fb644b668b273df05d3f55c0d",
+              "vector_id": "ID#:Rf1NvZrnX2A"
+            },
+            {
+              "index": 489,
+              "hash": "f54e74d06a82f99f319c8390ae903a688144a1b261e0d2da8e1defe79804ab3b",
+              "vector_id": "ID#:BkWspmPTEBz"
+            },
+            {
+              "index": 491,
+              "hash": "5e00f461445659add9edfa14b2b78037bc2779cd152680c5f9bb3d255dde703a",
+              "vector_id": "ID#:7BvPFUqECrr"
+            },
+            {
+              "index": 494,
+              "hash": "5a6889934a68093976c3af2c205a1250998afb76f4bcbde1e59e4b121d613aa6",
+              "vector_id": "ID#:JLx1t7Bp7Hb"
+            },
+            {
+              "index": 496,
+              "hash": "df9df3cccc15f140f92b75efdf54b3bb880fd15f73c64c4321b740f16d28cae1",
+              "vector_id": "ID#:XfR8qgwGGhK"
+            },
+            {
+              "index": 497,
+              "hash": "ca3ce2a120e2788a8a613aab89343d31c6df5df93a5e779bca0b795c457e772f",
+              "vector_id": "ID#:JnpZ3nBrzm"
+            },
+            {
+              "index": 501,
+              "hash": "b291cf26d3ae7c2c227a6571517c0a9dd374217ce801c992529e5a7ca6113724",
+              "vector_id": "ID#:8NHqak5vqz7"
+            },
+            {
+              "index": 510,
+              "hash": "f9ad1aa67ef8c9a86b682d826d81884042f036ca7c890f20b7a167f71e44b37b",
+              "vector_id": "ID#:7Rn9nkTWVJD"
+            },
+            {
+              "index": 512,
+              "hash": "74f1645916192c0e22fe2607a6fdc6cc2dce17b4c6d22c15dce259598e7ab67f",
+              "vector_id": "ID#:7WfFyoY9QjQ"
+            },
+            {
+              "index": 522,
+              "hash": "87551b403d0384b1e384c49b40bbd9bfa1c3b452cde56df49cc70605ca673674",
+              "vector_id": "ID#:T1itg98vXVs"
+            },
+            {
+              "index": 526,
+              "hash": "9c06b378256bc3834f736fbc94cb2da0e0bf4b68028e023610d0049bb634723a",
+              "vector_id": "ID#:fVQDJYHJhBM"
+            },
+            {
+              "index": 529,
+              "hash": "47e46fc8cfe24909a8c130081f1d9dfcad5b16e24d3c444e662f54189521131a",
+              "vector_id": "ID#:SNUiYWAZnEc"
+            },
+            {
+              "index": 544,
+              "hash": "2f41cd6dda05fc7fd4e2400592ff4d32e2034adc9a78ec4b61e34678bcb69156",
+              "vector_id": "ID#:RFBcKVBh8Yr"
+            },
+            {
+              "index": 556,
+              "hash": "015566caca908cd9d783854cd66fde5b1b77ae6d31d51859c36cccae93661f6d",
+              "vector_id": "ID#:X68N523yV4n"
+            },
+            {
+              "index": 563,
+              "hash": "380e1746b639d96ae8b01b3c9d88dcde9fe4437f49a0e7e07aa43bc4e7c7c934",
+              "vector_id": "ID#:VBUYrLjuQ6M"
+            },
+            {
+              "index": 566,
+              "hash": "1bf31f81a06fef37564a16a04fcf6481a818b376a2a26775c445265e1fbf140c",
+              "vector_id": "ID#:Rd9mAfrcWaA"
+            },
+            {
+              "index": 567,
+              "hash": "d760bafaed5e3a4a276e793859a32db79e03f913c92ab3c25bc94a47eb91c11a",
+              "vector_id": "ID#:PjgEg61XPAw"
+            },
+            {
+              "index": 568,
+              "hash": "35d10df3925d075bf4d948805cc4258ff0ef6a8883f60f373b30361348589918",
+              "vector_id": "ID#:WnpqAUjsDXJ"
+            },
+            {
+              "index": 571,
+              "hash": "f3be7ced09c7099cc460031998d208294ce0ceb74086e87e344805b113e02105",
+              "vector_id": "ID#:asFWi2m482Z"
+            },
+            {
+              "index": 572,
+              "hash": "16d82963f7e3d20e4f0abfffe63b89f08e94e56fbb8c0886773da42b9d6d709f",
+              "vector_id": "ID#:PqTiszPrKwS"
+            },
+            {
+              "index": 586,
+              "hash": "8d93370ddf48d6687d5b4e9d26621d2c468a3affd9ac0e11c720532079815c68",
+              "vector_id": "ID#:RP9tFJVKaE3"
+            },
+            {
+              "index": 587,
+              "hash": "9bd42aa539e742721d00c0136cad95fea41c97d5e624b94479997187858093ad",
+              "vector_id": "ID#:Sd71qDLs5b2"
+            },
+            {
+              "index": 589,
+              "hash": "c82a66aa02837e50d0ed2acc0ba55d1811408932fd1a1e981f1f59cbc9da85fd",
+              "vector_id": "ID#:SpaSmXQtsg8"
+            },
+            {
+              "index": 590,
+              "hash": "90dec7bebe5ff6b5773aa110eacbbd373f97ad3b07c5bf5700596cc782c55ee4",
+              "vector_id": "ID#:DjLDdTFos7Q"
+            },
+            {
+              "index": 591,
+              "hash": "068071665db638d08768bbddfa35afaecc6964e19e4afa947af965d27fb327ad",
+              "vector_id": "ID#:Z5eknMc8gqz"
+            },
+            {
+              "index": 593,
+              "hash": "84583de8932ec995ef31fa8a3cc592f1f2b993f253f6d1c8972f1958bd64899a",
+              "vector_id": "ID#:6jvFMEfv5wd"
+            },
+            {
+              "index": 594,
+              "hash": "60bedeaa360da0605f56b98eb59b099a6e6d49fdf1be513f14e07a3b064593b4",
+              "vector_id": "ID#:6oShMCTjxb7"
+            },
+            {
+              "index": 598,
+              "hash": "435fc50a7c33a12388d1b1229f9d3704f1cd2b365be7c13151ac4bd3cfc2f83a",
+              "vector_id": "ID#:7uBpdwgTNVX"
+            },
+            {
+              "index": 600,
+              "hash": "bdb52aec19f144cc79cf7dd42cf2a167a0508bc890a12bc24473f3e1b47f72e4",
+              "vector_id": "ID#:FTeAPgeCqCP"
+            },
+            {
+              "index": 601,
+              "hash": "5441506bf6b30be226cbb42efcd56fc41051c42474a9c4c733169563df2d3e52",
+              "vector_id": "ID#:QQmeYzq4TWg"
+            },
+            {
+              "index": 607,
+              "hash": "633f4c32e8286e4c57a1184785df8093a69fdd6df5f3a1428a06746187bd47f8",
+              "vector_id": "ID#:6be6TpBDtBm"
+            },
+            {
+              "index": 612,
+              "hash": "d9ad869b3d44c5708cc36ffff7c9803d0a55b72171307b3389ceeecdb24b5fb0",
+              "vector_id": "ID#:CgVJuiPnPLU"
+            },
+            {
+              "index": 613,
+              "hash": "a32a8267ca305ce6b44e8c2e146651c8fc26bdc7f853fbcb7fa61a45a3d5163b",
+              "vector_id": "ID#:3GLSJC6EtEg"
+            },
+            {
+              "index": 614,
+              "hash": "1e0a66d90824c63e9424b4cf990ee3dffa349e40f24186e527fd98abe3ee67c4",
+              "vector_id": "ID#:LMctecmwWtX"
+            },
+            {
+              "index": 615,
+              "hash": "b0f58f162df9e0ae7bed4bec1a84e05aa6da90e3164928f0c34637fe35dd8225",
+              "vector_id": "ID#:VXPhXd5v6YU"
+            },
+            {
+              "index": 617,
+              "hash": "02628fe08471bacddc57bfa41295eb98d455bf5c5339aa789954c5a63e745cb1",
+              "vector_id": "ID#:XcAQAoJdvTy"
+            },
+            {
+              "index": 618,
+              "hash": "c58dd00aa059e66dd2119eb6e89c180955ab64432f944521528f2f1edd9fae1d",
+              "vector_id": "ID#:Mh9AKmFn5vi"
+            },
+            {
+              "index": 619,
+              "hash": "0dbd7b1fb68a898884ba04c18e5f2981c19dbf1e1bc3a7ad9a6811e02674a481",
+              "vector_id": "ID#:dj3BeXyXjmb"
+            },
+            {
+              "index": 620,
+              "hash": "c74938304b43ca00bd80e60d0e858fa7722715cce003b866e0310a815b2ce790",
+              "vector_id": "ID#:MsuFuD79Yzm"
+            },
+            {
+              "index": 625,
+              "hash": "27b6d3c597c676cd2ecf47edcf9694f99463031d9e1c087b23a160ce22f5636b",
+              "vector_id": "ID#:CuPi4YmWk9M"
+            },
+            {
+              "index": 630,
+              "hash": "18c3c6c2fccc2456361f5923d19deec2d22a5c71d3e88f62f55e811358b8b6ae",
+              "vector_id": "ID#:dbNKtE2zZVn"
+            },
+            {
+              "index": 634,
+              "hash": "125ae1f58fa3f12ae090a241f0b062f54c4f7b336c77f34313c6fd7eb229bfa1",
+              "vector_id": "ID#:JZrKsBRbpCL"
+            },
+            {
+              "index": 636,
+              "hash": "89c8638ed5151857ce9b3efdaacee92a3d554b5b5c7a5ad4995e3ad7cd5116a8",
+              "vector_id": "ID#:VzfGmv653M"
+            },
+            {
+              "index": 637,
+              "hash": "12b7e39039af8178f477f786cd6f0e1c0e102182ce789fd90cab87824ced5861",
+              "vector_id": "ID#:Sc31ZSJ8hEk"
+            },
+            {
+              "index": 638,
+              "hash": "8cc440cdb4d1d9eb9a2363ed8b8f9d64c7638f4955372e8ba498bf8e69fa0599",
+              "vector_id": "ID#:57yE4LbfZd5"
+            },
+            {
+              "index": 639,
+              "hash": "3b576dfc0d47ac7c4b53cea97b02e574b8bf78cdf29aa3817286ef4b216cff83",
+              "vector_id": "ID#:BCdLdoEUWE8"
+            },
+            {
+              "index": 640,
+              "hash": "f0fc4ca2518e3c881909f59cdf6f9a1905572b40a79c677e3f1d91d5b2fabc3d",
+              "vector_id": "ID#:M9ZijgKCDzi"
+            },
+            {
+              "index": 641,
+              "hash": "1cb7c1e89ae14c13af0c70c503f3703e1cbac1d48e0db621ae33ccb1ef129864",
+              "vector_id": "ID#:fAuShi23eyv"
+            },
+            {
+              "index": 642,
+              "hash": "e0edb39dba3a35a078327c9aaba45875754192b66dabd60358cf683b3c944b3e",
+              "vector_id": "ID#:EWS1yT5p7jF"
+            },
+            {
+              "index": 644,
+              "hash": "9aadc3d88f9b1626625619b3b3d148a3299ce4f246db9824ce1077c0ccd01940",
+              "vector_id": "ID#:TALfU9mQo4J"
+            },
+            {
+              "index": 645,
+              "hash": "160b98ab357d949a4902f77489555378d30a9bdee34c1d5fde3a40537c2cf920",
+              "vector_id": "ID#:ZdxvXHsAwcT"
+            },
+            {
+              "index": 646,
+              "hash": "dec27e88624cd026b1c1ee02aab5e6592d59d4acba0e4380c51bae80c6fd7d52",
+              "vector_id": "ID#:cdEmM7qUqHo"
+            },
+            {
+              "index": 647,
+              "hash": "f5d0cc972580ea59f67087c8a4cad0c70565d33fbe00e9d6b8ff0c29f1a3c48f",
+              "vector_id": "ID#:LHj99rgZ3tz"
+            }
+          ]
+        },
+        "Duplicate": {
+          "hash": "cf244be4fedae907a2cc91afcda11a030264333a6b8b6d59d4d91d946d134e32",
+          "count": 10,
+          "leaves": [
+            {
+              "index": 4,
+              "hash": "614f3955ba16e9f159349e72d13c47e91277a3ca170cba41fc22b0ef210bcecc",
+              "vector_id": "ID#:SD6RmXpXpEr"
+            },
+            {
+              "index": 5,
+              "hash": "cc636247b9ba5307ba0d0c8e33a1c1bfbe7d1889fc8207c29f609ccce26b029e",
+              "vector_id": "ID#:N19AXh97F9U"
+            },
+            {
+              "index": 189,
+              "hash": "873c7c7622f02c71b7237ebd694508654e2d2dd5c1ad6bef76e306b54f1ebdbe",
+              "vector_id": "ID#:3bWs2gzSDiH"
+            },
+            {
+              "index": 233,
+              "hash": "cc3ef9f4d76a08b91431c906f954efc30595c44174411af304ea4f6c259ef73e",
+              "vector_id": "ID#:NUiYEsMP9EV"
+            },
+            {
+              "index": 257,
+              "hash": "3206f778db30c5bb73afda09bb4a1d2a2aace377f63977bd476469875147949a",
+              "vector_id": "ID#:8aohuh8LQFC"
+            },
+            {
+              "index": 260,
+              "hash": "c042f952c0193c920aba8d4a3f4d83ea6e7b9b95fd08d8fd1aa8a9e407307f2c",
+              "vector_id": "ID#:LbUyiUmz3MM"
+            },
+            {
+              "index": 291,
+              "hash": "adeef886e82e1b8919e596e2ed94d63546bbe395e1a1e41476d29514506dfea9",
+              "vector_id": "ID#:JYcnxSxyR94"
+            },
+            {
+              "index": 543,
+              "hash": "03e19adbc4f76f673325b12841204da3c768abaf97d8e61e9a26510cd4d484ab",
+              "vector_id": "ID#:3v9cE3G4cTh"
+            },
+            {
+              "index": 609,
+              "hash": "7ffc1b743f4321d88ea3fe781362459fd03c1a0e30dd3368255355dfe64d61b8",
+              "vector_id": "ID#:fFK1vZrk5BK"
+            },
+            {
+              "index": 611,
+              "hash": "c74c6f2608e16b39e3339f31dc06bd0cc8068c0c16985262cb01228891285108",
+              "vector_id": "ID#:Ya69UH4x8zu"
+            }
+          ]
+        }
+      }
+    },
+    "Library:Protocols": {
+      "hash": "c2adfed001ea85d999078441d7040257806bbe3aee65f8d18458e4732c8f6cf6",
+      "files": {
+        "AGENT_STATUS_LEDGER.md": {
+          "hash": "7deb931a7cd9d61473a39866e67e55d27aeff4e3ba2acee37a198f7f78756b76"
+        },
+        "AGENT_TARGETED_HANDOFF_V1.md": {
+          "hash": "2159d2ac8c40c68a46221c0446ffe14303a217f720e810e69e9b5d4b73f77709"
+        },
+        "AUDIT_PROTOCOL_TRANSITION_2026_04_29.md": {
+          "hash": "14a76e187154200e42639d016c7fe6db6339780b0c182e85e7760c4528e72c06"
+        },
+        "CONNECTIVE_JOURNAL_TEMPLATE.md": {
+          "hash": "f59aa61f8288a9b5cb0219d29d12b50cd24556ebceab36c7f37e3be9c99b9cbb"
+        },
+        "CORE_SYSTEM_PROMPT_ARCHITECTURE.md": {
+          "hash": "79150b46f7224037a3c6c905656889fed2ca0c1b8ccbdf405579356cd4928308"
+        },
+        "EXECUTABLE_INTELLIGENCE_FRAMEWORK.md": {
+          "hash": "ff0ec8d013301e3d32f0b2b611c2b1ac143df9aa7395fec26390a6d0fa0324f3"
+        },
+        "LIVING_STATE.md": {
+          "hash": "75f520f9bc9f0824e743aeba73c7a283f957c7478d9aa4e8a6faec1afbee1ec4"
+        },
+        "MCP-COMPLETE-GUIDE.md": {
+          "hash": "5e0afcf1d4c02dbe5f526d8355386182d6dce490fe7ba4500265fcdbeb309a79"
+        },
+        "MEMPALACE_META_CHART.md": {
+          "hash": "147f3ed016eee37169cb5a0d2d470238cc0b9f7660111f2538fa252077e4f912"
+        },
+        "TNF_BOOK_OF_AXIOMS.md": {
+          "hash": "bb716dd7ca7b526c8ef494b5148b75e7670be54e1391819726b5ede1a4c5130c"
+        },
+        "TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md": {
+          "hash": "2e651eb0c041ef0c40c328a492551a747d08eddb6f11839bcf84bf7a92858658"
+        },
+        "TNF_DOCUMENT_VETTING_PROCEDURE.md": {
+          "hash": "5f27f9bf908f1d8859f8d2714d8f30c37ab270008adf00b7ac0900b04aa59b34"
+        },
+        "TNF_GOVERNANCE_TENETS.md": {
+          "hash": "b0650c4ef52565dfeaf32c77d8bfe9a1d3a61a81cd8f299a002fc861b66d7c14"
+        },
+        "TNF_RESOURCE_STRATEGY.md": {
+          "hash": "9144ffdb8ea3e366ebfaf0f493e2ea17b82d2ce54b8736e72ca04ac829a854df"
+        },
+        "TNF_SYSTEM_LEXICON.md": {
+          "hash": "5d870fdfeeb01f3fd63fbe6689eb3a3602be9a3f2b3b4ff1cd1fb5e550ac0647"
+        },
+        "UTP_SPEC_v1.0.md": {
+          "hash": "f79090439dfcb9574a49781aa9b35bea4808b2875453cd16677d09c84103a08e"
+        },
+        "aca-usage.md": {
+          "hash": "f4b9c6019ea34c62b4f0b4678daf95c51900fc1aad8674bdd4145ebdcadd4a2f"
+        },
+        "agent-self-edit-protocol-v0.1.md": {
+          "hash": "2f8705c09349171bdefb6483ee8c2af7492149726dbc6e0d6b375c22879ddcd4"
+        },
+        "draft-sgp-0001.md": {
+          "hash": "985303358292f3cbd359001a71df520b0c908f08e474cdf30e78f852f0079732"
+        },
+        "draft-twip-0001.md": {
+          "hash": "627246afa1a41dca329a9667a26db316f764b1d8a162a81185b767be7db5442b"
+        },
+        "mcp-nestjs-integration.md": {
+          "hash": "4a7a8cb76cda002f1e7815579d92542a1c3c73f3ad544eece6c4ed14d8762d1e"
+        },
+        "resource-search-protocol-bridge.md": {
+          "hash": "1198dd5688c71b4865c6448daa3d0a5ba19bd20aefddc045b8619810fbbcab39"
+        },
+        "resource-search-revision-implementation-plan.md": {
+          "hash": "5323183d5c4a81000818597d8e652b4699d691a46b6dd4018cee42937eb120ca"
+        },
+        "tnf-cron-governance-protocol-v0.1.md": {
+          "hash": "3e80356edcf9cba142d695cbc51cd2b39bbb02775574c93893d5485617efdca2"
+        },
+        "tnf-log-to-dom-protocol.md": {
+          "hash": "32510e49528bd7988ff758cf3f090698cb20f679bc01d8616a55eb14f072541f"
+        },
+        "twip-federation-state-2026-03-18.md": {
+          "hash": "bd7902a5e98c60a4345f26e7cd3cf05adeaf2680f8917430cb2d22257e56e715"
+        },
+        "twip-operator-runbook.md": {
+          "hash": "38400a1b0bc726183f0ac19f3c0af727b489e5c97b820e303026525e13d718a5"
+        },
+        "twip-orchestration-extension-v0.1.md": {
+          "hash": "b0627317f8274e4427713c1237343493f4aa98833d9cb3e4b3ce1995888e1c5b"
+        },
+        "twip-terminal-graph-api.md": {
+          "hash": "248d77b814e3f26723ecff94ee46d8fab87fee905bce83be34c2f63656c3b063"
+        },
+        "twip-terminal-identification-surfaces.md": {
+          "hash": "eccc5f0cfaf676670e49f0bedac6842161a111a44322d853510851a7e3396c53"
+        },
+        "twip-terminal-macro-board.md": {
+          "hash": "630165a5945db52c5cf44a952c06c5e78cdd70529b9c997d40fbd4cbaffedfc0"
+        },
+        "twip-universalization-playbook.md": {
+          "hash": "ecc9f95c62046ecd8a6f21ba32f0f3aeea3c1d11b284ded290c80c399342b428"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-04-30T01:30Z",
+    "status": "[STATUS:SYNCHRONIZED]"
+  }
+}

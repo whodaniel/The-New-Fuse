@@ -1,0 +1,12 @@
+{
+  "skillName": "yt-niche-strategy-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/yt-niche-strategy-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/yt-niche-strategy-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/yt-niche-strategy-agent.json",
+  "status": "present"
+}

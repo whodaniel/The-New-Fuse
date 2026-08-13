@@ -1,0 +1,344 @@
+Every week developers release new open
+source tools that improve how we build,
+automate, and manage software systems.
+This weekly update highlights top
+trending open source and best dev tool
+projects this week, so you can quickly
+discover useful tools without spending
+hours searching. From AI workflow
+orchestration to deployment platforms
+and developer productivity tools, these
+projects are gaining attention in the
+open source community. Without wasting
+time, let's get started. Welcome back to
+Manu AGI tutorials. Here, we explore the
+exciting world of AI, latest AI tools
+for you, so don't forget to hit that
+subscribe button and the notification
+bell, so you don't miss out on the
+latest AI insights. So, let's start
+today's video. Project number one, Nine
+Router, multimodal router for AI request
+workflows. Nine Router is an open source
+routing system designed to manage and
+distribute requests across multiple AI
+models and providers. It acts as a
+middleware layer where developers define
+routing logic, provider selection, and
+request handling strategies for model
+execution. The system helps balance
+workloads and organize how prompts move
+between different AI backends.
+Developers can integrate it into local
+or cloud AI applications that require
+flexible model orchestration. This helps
+simplify multi-model infrastructure
+management. Try Nine Router to
+coordinate your AI request pipeline.
+Project number two, AIDLC, workflow
+templates for AI-driven software
+development. AIDLC is an open source
+workflow collection from AWS Labs that
+structures software development around
+AI-assisted processes. It provides
+reusable workflows that guide planning,
+coding, testing, and operational tasks
+through AI-enabled automation pipelines.
+Developers integrate the workflows into
+engineering environments to standardize
+how AI tools participate across the
+development life cycle. The repository
+focuses on repeatable execution patterns
+instead of isolated prompts. This helps
+teams operationalize AI-assisted
+engineering. Explore AI DLC workflows in
+your development process. Ush. Project
+number three, Trust framework for
+trustworthy AI agent workflows. Trust is
+an open-source framework focused on
+improving reliability and trust in AI
+agent systems. It provides structures
+for managing decisions, workflows, and
+interactions in a more controlled and
+auditable way. Developers use it to
+organize how agents reason, execute
+tasks, and validate outputs during
+runtime. The framework is useful for
+applications where predictable behavior
+matters. This helps teams build more
+dependable AI systems. Explore Trust for
+structured agent workflows. Project
+number four, AI agents rules from
+programming books, engineering
+principles for AI agents. AI agents
+rules from programming books is an
+open-source repository that adapts
+software engineering principles from
+programming books into guidelines for AI
+agents. It organizes concepts around
+maintainability, structure, and
+reasoning patterns that developers can
+apply to agent systems. The repository
+acts as a practical reference for
+designing more disciplined AI workflows.
+This helps developers bring traditional
+engineering thinking into agent design.
+Study the rules and apply them to your
+agents. Project number five, Gain AI to
+Earn, platform for AI-powered earning
+workflows. AI to Earn is an open-source
+platform focused on building workflows
+where AI systems assist with
+monetization and online earning tasks.
+It combines automation, AI processing,
+and operational workflows into a
+structured environment for developers
+and operators. The system helps
+coordinate tasks and AI-assisted actions
+inside earning-focused processes. This
+is useful for experimenting with
+automated online workflows. Explore AI
+to Earn to build AI-assisted operational
+systems.
+Project number six, Super Splat editor,
+browser editor for Gaussian Splat
+scenes. Super splat editor is an
+open-source web editor for viewing and
+editing Gaussian splat scenes in the
+browser. It provides tools for loading,
+adjusting, and exporting splat-based 3D
+assets through an interactive interface
+powered by PlayCanvas technologies.
+Developers and creators use it to
+manipulate scenes without requiring
+heavyweight desktop software. The editor
+runs directly in web environments and
+supports modern 3D workflows. This helps
+simplify editing for real-time 3D
+content. Try Super splat editor for
+browser-based splat editing. Project
+number seven, Easy Vibe, lightweight
+framework for vibe coding workflows.
+Easy Vibe is an open-source framework
+designed to simplify vibe coding
+workflows with AI-assisted development
+patterns. It provides structured project
+setups and guidance for developers
+experimenting with fast prompt-driven
+coding styles. The framework focuses on
+reducing setup complexity and improving
+iteration speed during AI-assisted
+development. This helps developers
+prototype ideas more quickly. Explore
+Easy Vibe for lightweight AI coding
+workflows. Project number eight, Open
+Human, local-first AI assistant with
+persistent memory. Open Human is an
+open-source AI assistant and agent
+platform designed to build long-term
+memory from a user's digital life. It
+connects with tools like Gmail, GitHub,
+Slack, Notion, Drive, and calendars
+through OAuth integrations, then
+continuously syncs and compresses data
+into structured markdown memory trees
+stored locally in SQLite and Obsidian
+style vaults. The system includes
+built-in web search, coding tools,
+browser control, voice interaction, and
+model routing across different LLMs with
+optional local AI through Ollama. This
+matters for developers building AI
+workflows that retain context across
+sessions instead of restarting from
+scratch every time. Try Open Human and
+give your AI agents persistent memory.
+Project number nine, React Doctor,
+diagnostic tool for React application
+performance. React Doctor is an
+open-source developer tool that analyzes
+React applications to identify rendering
+and performance issues. It inspects
+component behavior and highlights
+unnecessary renders or inefficient
+update patterns inside React projects.
+Developers use it during development to
+understand how state changes affect
+rendering performance. The tool
+integrates into local workflows and
+helps optimize application
+responsiveness. This improves debugging
+and front-end performance tuning. Run
+React Doctor to inspect your React app.
+Project number 10, Agent memory,
+persistent memory system for AI agents.
+Agent memory is an open-source memory
+layer that stores and retrieves
+contextual information for AI agents
+across sessions. It helps agents
+maintain continuity by preserving task
+history, facts, and interactions in
+structured storage. Developers integrate
+it into agent systems to improve
+long-running workflows and reduce
+repeated context rebuilding. The system
+supports persistent retrieval during
+execution. This helps create more
+consistent AI assistants. Add Agent
+memory to your agent workflow. Project
+number 11, InsurForge, framework for
+insurance AI automation workflows.
+InsurForge is an open-source framework
+designed to build AI-powered systems for
+insurance workflows. It provides
+components for document processing,
+information extraction, and task
+automation across insurance operations.
+Developers connect language models and
+workflow tools to process claims,
+policies, and related records in
+structured pipelines. The framework
+helps coordinate AI-assisted processing
+with operational workflows. This is
+useful for teams building
+insurance-focused AI systems. Explore
+InsurForge for insurance automation.
+Project number 12, Free Cloud Code,
+setup resource for cloud coding
+environments. Free Cloud Code is an
+open-source repository that explains how
+developers can configure and use
+cloud-based coding tools in alternative
+or local workflows. It provides setup
+instructions, usage examples, and
+workflow guidance for AI-assisted coding
+environments. Developers use it to
+experiment with Claude workflows without
+complex onboarding. This helps engineers
+start working with AI coding systems
+more easily. Explore the guide and run
+your own Claude coding setup. Project
+number 13, Open Generative AI,
+collection of generative AI learning
+resources. Open Generative AI is an
+open-source repository that organizes
+resources, examples, and learning
+material related to generative AI
+development. references for models,
+frameworks, workflows, and practical
+implementation patterns across AI
+applications. Developers and learners
+use it as a centralized knowledge base
+for understanding generative AI systems.
+This helps simplify discovery across the
+ecosystem. Browse Open Generative AI to
+explore generative AI tools and
+concepts. Project number 14, DFlash,
+lightweight flash storage and data
+handling system. DFlash is an
+open-source system focused on
+lightweight data storage and flash-based
+data workflows. It provides mechanisms
+for handling storage operations
+efficiently in constrained or
+performance-sensitive environments.
+Developers use it in systems where
+lightweight persistence and fast access
+are important. The project focuses on
+practical storage handling rather than
+large infrastructure layers. This helps
+simplify storage operations in embedded
+or lightweight systems. Explore DFlash
+for lightweight data handling. Project
+number 15, Turrax, AI workflow platform
+for autonomous task execution. Turrax is
+an open-source AI platform designed to
+coordinate autonomous workflows and task
+execution. It provides structures for
+managing agents, workflows, and
+AI-driven operations across connected
+systems. Developers define execution
+pipelines while the platform manages how
+tasks move through different stages.
+This helps teams build more organized AI
+automation systems. Try Turrax for
+structured AI workflows. Project number
+16, Features, feature showcase
+repository for temporal workflows.
+Features is an open-source repository
+from Temporal that demonstrates platform
+capabilities through practical examples
+and implementations. It helps developers
+explore workflow orchestration features
+such as retries, signals, activities,
+and long-running execution patterns. The
+repository acts as a reference for
+learning Temporal workflow design in
+real systems. This helps teams
+understand durable execution concepts
+more quickly. Explore the examples and
+experiment with Temporal features.
+Project number 17, Hunk, local-first
+collaboration tool for development
+workflows. Hunk is an open-source
+collaboration tool designed to support
+local-first development workflows and
+code collaboration. It helps developers
+manage changes, discussions, and
+workflow coordination while keeping work
+close to local environments. The project
+focuses on developer productivity and
+collaborative coding operations. This is
+useful for teams exploring alternative
+development collaboration models. Try
+Hunk in your workflow. Project number
+18, Files SDK, developer SDK for file
+management workflows. Files SDK is an
+open-source toolkit that helps
+developers integrate file management
+operations into applications. It
+provides APIs and utilities for
+uploading, organizing, retrieving, and
+processing files across workflows.
+Developers use it to simplify file
+handling in web and back-end systems.
+The SDK abstracts common file operations
+into reusable interfaces. This helps
+reduce implementation complexity in
+file-driven applications. Integrate
+Files SDK into your app. Project number
+19, Rady, terminal utility for system
+and network diagnostics. Rady is an
+open-source terminal tool focused on
+diagnostics and connectivity testing for
+developers and operators. It provides
+command-line utilities for checking
+network behavior, connectivity states,
+[music]
+and related system information. The tool
+runs locally and fits well into
+debugging and infrastructure workflows.
+This helps engineers investigate
+operational issues quickly. Use Ratty
+for lightweight diagnostics from the
+terminal. Project number 20, Doku.
+Self-hosted platform as a service for
+deployments. Doku is an open-source
+platform as a service that helps
+developers deploy and manage
+applications on their own
+infrastructure. It uses Docker
+containers and Git-based deployment
+workflows, so applications can be pushed
+directly to servers with minimal
+configuration. The platform handles
+application life cycle tasks, such as
+builds, process management, and service
+integration. Developers use it as a
+lightweight alternative to manage
+deployment platforms. This helps
+simplify self-hosted application
+operations. Deploy your app with Doku
+and manage it on your own server. Thanks
+for watching. See you in the next weekly
+Dev Tool Update.

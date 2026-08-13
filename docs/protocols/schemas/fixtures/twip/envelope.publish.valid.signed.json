@@ -1,0 +1,57 @@
+{
+  "id": "11111111-1111-4111-8111-111111111111",
+  "spec": "twip/0.1",
+  "type": "IDENTITY.PUBLISH",
+  "sent_at": "2026-03-18T00:00:00.000Z",
+  "scope": {
+    "tenant_id": "tenant-alpha",
+    "session_key": "tty:ttys001"
+  },
+  "trace": {
+    "correlation_id": "22222222-2222-4222-8222-222222222222",
+    "causation_id": "33333333-3333-4333-8333-333333333333"
+  },
+  "policy": {
+    "ttl_seconds": 300,
+    "allow_remote_propagation": false,
+    "redact_gui_fields": true
+  },
+  "payload": {
+    "identity": {
+      "twid": "44444444-4444-4444-8444-444444444444",
+      "spec": "twip/0.1",
+      "created_at": "2026-03-18T00:00:00.000Z",
+      "incarnation": 0,
+      "scope": {
+        "tenant_id": "tenant-alpha",
+        "host_id": "h:abc12345",
+        "emulator_id": "terminal.app",
+        "window_id": null,
+        "tab_id": null,
+        "pane_id": "tty:ttys001",
+        "session_key": "tty:ttys001"
+      },
+      "process": {
+        "shell_pid": 12345,
+        "pgid": 12345,
+        "sid": 12345
+      },
+      "pty": {
+        "path": "/dev/ttys001",
+        "inode": 1001
+      },
+      "multiplexer": null,
+      "provenance": [
+        {
+          "key": "tty",
+          "value": "/dev/ttys001",
+          "source": "kernel",
+          "confidence": 1,
+          "observed_at": "2026-03-18T00:00:00.000Z"
+        }
+      ],
+      "labels": ["fixture"]
+    }
+  },
+  "sig": "hmac-sha256:e37eec20a07380af3b15c32d58bcf27a5d46742bf9689e30818ca742eeffa70e"
+}

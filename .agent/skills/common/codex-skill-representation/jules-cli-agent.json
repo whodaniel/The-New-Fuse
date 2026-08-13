@@ -1,0 +1,12 @@
+{
+  "skillName": "jules-cli-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/jules-cli-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/jules-cli-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/jules-cli-agent.json",
+  "status": "present"
+}

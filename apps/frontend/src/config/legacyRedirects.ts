@@ -1,0 +1,49 @@
+export interface LegacyRedirect {
+  from: string;
+  to: string;
+}
+
+// Compatibility redirects to preserve legacy entry points while consolidating IA.
+// IMPORTANT: Do NOT add redirects here for paths that have explicit Route definitions
+// in ComprehensiveRouter.tsx. React Router v6 may resolve ambiguously when both
+// a redirect Route and an explicit Route share the same path.
+export const LEGACY_REDIRECTS: LegacyRedirect[] = [
+  // OpenClaw-style operational aliases
+  { from: '/overview', to: '/dashboard' },
+  { from: '/instances', to: '/workflows/nexus?layer=topology&from=observatory' },
+  { from: '/sessions', to: '/chat?mode=multi' },
+  { from: '/usage', to: '/analytics' },
+  { from: '/cron-jobs', to: '/tasks' },
+  { from: '/nodes', to: '/workflows/nexus?layer=topology&from=observatory' },
+  { from: '/config', to: '/settings' },
+  { from: '/logs', to: '/admin/audit-logs' },
+  { from: '/audit-logs', to: '/admin/audit-logs' },
+  { from: '/tnf-hub', to: '/hub' },
+
+  { from: '/admin/panel', to: '/admin' },
+  { from: '/team', to: '/workspace/members' },
+  { from: '/workspace', to: '/workspace/overview' },
+  // Agent/chat aliases that are NOT also declared as Routes in ComprehensiveRouter
+  { from: '/workspace/chat', to: '/chat?mode=workspace' },
+  { from: '/workspace/layout', to: '/workspace/overview' },
+  { from: '/integrations', to: '/connect' },
+  { from: '/ide', to: '/command-center' },
+  { from: '/privacy', to: '/legal/privacy' },
+  { from: '/terms', to: '/legal/terms' },
+  { from: '/forgot-password', to: '/auth/forgot-password' },
+  { from: '/api/docs', to: '/docs' },
+  { from: '/help/documentation', to: '/docs' },
+  { from: '/help/tutorials', to: '/docs' },
+  { from: '/help/faq', to: '/docs' },
+  { from: '/help/support', to: '/support' },
+  { from: '/help/community', to: '/community' },
+  { from: '/landing-page', to: '/landing' },
+  { from: '/simple-landing', to: '/landing' },
+  { from: '/components-nav', to: '/components' },
+  { from: '/tasks-page', to: '/tasks' },
+  { from: '/chat-page', to: '/chat' },
+  { from: '/admin/dashboard', to: '/admin' },
+  { from: '/admin/experimental-features', to: '/admin/feature-flags' },
+  { from: '/admin/onboarding', to: '/admin' },
+  { from: '/general-settings/community-hub', to: '/general-settings' },
+];

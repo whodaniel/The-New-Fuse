@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/twip-workstream-signal.schema.json",
+  "title": "TWIP Workstream Signal",
+  "description": "Sanitized macro terminal signal used by orchestration agents for assignment and risk-aware planning.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec",
+    "type",
+    "generated_at",
+    "scope",
+    "summary",
+    "active_sessions",
+    "safety_signals"
+  ],
+  "properties": {
+    "spec": {
+      "type": "string",
+      "const": "twip/0.1"
+    },
+    "type": {
+      "type": "string",
+      "const": "ORCH.WORKSTREAM.SIGNAL"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id"],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "host_id": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_terminals",
+        "active_terminals",
+        "idle_terminals",
+        "active_ratio"
+      ],
+      "properties": {
+        "total_terminals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_terminals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "idle_terminals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "top_work_executables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "count"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "active_sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["twid", "tty", "work_executables"],
+        "properties": {
+          "twid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tty": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pane_id": {
+            "type": ["string", "null"]
+          },
+          "work_executables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "safety_signals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approvals_bypass_terminals", "remote_mcp_terminals"],
+      "properties": {
+        "approvals_bypass_terminals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remote_mcp_terminals": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

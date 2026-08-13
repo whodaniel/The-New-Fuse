@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "base": "https://thenewfuse.com",
+    "audited_pages": 1,
+    "pages_with_issues": 1,
+    "http_4xx_5xx": 0,
+    "pages_missing_meta_description": 0,
+    "pages_missing_h1": 0,
+    "pages_multiple_h1": 0,
+    "pages_missing_lang": 0,
+    "pages_with_console_errors": 1,
+    "pages_with_failed_requests": 0,
+    "duplicate_title_groups": 0,
+    "generated_at_utc": "2026-03-03T02:51:53.758857Z"
+  },
+  "duplicate_titles": {},
+  "pages": [
+    {
+      "url": "https://thenewfuse.com/",
+      "final_url": "https://thenewfuse.com/",
+      "status": 200,
+      "load_ms": 1589,
+      "nav_error": null,
+      "console_errors": [
+        "TypeError: Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')\n    at https://thenewfuse.com/assets/js/utils.BOJBNOB0.js:85:3804"
+      ],
+      "page_errors": [],
+      "request_failures": [],
+      "issues": [
+        "Meta description too long (>160 chars)",
+        "Console errors (1)"
+      ],
+      "extracted_links": [],
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "title_len": 46,
+      "meta_description": "Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols.",
+      "meta_description_len": 172,
+      "lang": "en",
+      "has_viewport": true,
+      "canonical": "",
+      "h1_count": 1,
+      "image_count": 0,
+      "images_missing_alt_count": 0,
+      "images_missing_alt_samples": []
+    }
+  ]
+}

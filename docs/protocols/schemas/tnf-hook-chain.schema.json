@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-hook-chain.schema.json",
+  "title": "TNF HookChain Definition",
+  "description": "Contract for HookChain v2 definitions compiled into the TNF workflow-engine runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "const": "tnf.hooks/v2"
+    },
+    "kind": {
+      "type": "string",
+      "const": "HookChain"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "owner"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger", "execution", "context", "steps", "security"],
+      "properties": {
+        "trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["event", "mode"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(\\.[a-z0-9_]+)+$"
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["async", "sync_gate"]
+            },
+            "match": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "path_regex": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "command_regex": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source_in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              }
+            },
+            "dedupe": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["key", "window_ms"],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "window_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        "execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_run_time_ms", "concurrency", "on_chain_error"],
+          "properties": {
+            "max_run_time_ms": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "concurrency": {
+              "type": "string",
+              "enum": ["unbounded", "single_per_key", "fixed"]
+            },
+            "fixed_concurrency": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "on_chain_error": {
+              "type": "string",
+              "enum": ["fail", "continue"]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "concurrency": {
+                    "const": "fixed"
+                  }
+                },
+                "required": ["concurrency"]
+              },
+              "then": {
+                "required": ["fixed_concurrency"]
+              }
+            }
+          ]
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model", "write_root"],
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": ["immutable", "mutable"]
+            },
+            "write_root": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_.-]+$"
+            }
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "runner",
+              "timeout_ms",
+              "if",
+              "on_failure"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]([a-z0-9_-]{1,62}[a-z0-9])?$"
+              },
+              "runner": {
+                "type": "string",
+                "enum": ["shell", "node", "agent", "mcp", "webhook"]
+              },
+              "command": {
+                "type": "string",
+                "minLength": 1
+              },
+              "module": {
+                "type": "string",
+                "minLength": 1
+              },
+              "function": {
+                "type": "string",
+                "minLength": 1
+              },
+              "agent_selector": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "value"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["id", "role", "capability"]
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "prompt": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tool": {
+                "type": "string",
+                "minLength": 1
+              },
+              "args": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "body": {
+                "type": ["object", "array", "string", "number", "boolean", "null"]
+              },
+              "timeout_ms": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "retry": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["max_attempts"],
+                "properties": {
+                  "max_attempts": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "backoff_ms": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0
+                  }
+                }
+              },
+              "if": {
+                "type": "string",
+                "minLength": 1
+              },
+              "on_failure": {
+                "type": "string",
+                "enum": ["stop", "continue", "branch"]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "runner": {
+                      "const": "shell"
+                    }
+                  },
+                  "required": ["runner"]
+                },
+                "then": {
+                  "required": ["command"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "runner": {
+                      "const": "node"
+                    }
+                  },
+                  "required": ["runner"]
+                },
+                "then": {
+                  "required": ["module", "function"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "runner": {
+                      "const": "agent"
+                    }
+                  },
+                  "required": ["runner"]
+                },
+                "then": {
+                  "required": ["agent_selector", "prompt"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "runner": {
+                      "const": "mcp"
+                    }
+                  },
+                  "required": ["runner"]
+                },
+                "then": {
+                  "required": ["tool"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "runner": {
+                      "const": "webhook"
+                    }
+                  },
+                  "required": ["runner"]
+                },
+                "then": {
+                  "required": ["url", "method"]
+                }
+              }
+            ]
+          }
+        },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy_pack", "approval_policy"],
+          "properties": {
+            "policy_pack": {
+              "type": "string",
+              "minLength": 1
+            },
+            "approval_policy": {
+              "type": "string",
+              "enum": ["none", "on_high_risk", "always"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

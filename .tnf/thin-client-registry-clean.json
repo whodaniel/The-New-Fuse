@@ -1,0 +1,15 @@
+{
+  "cleanup": "autonomous-file-level-mutation-2026-08-10",
+  "authorization": "FULL_AUTONOMOUS_D1_D8_D14",
+  "before": 2122,
+  "after": 1,
+  "live_entry": {
+    "name": "tnf-thin-client",
+    "role": "worker",
+    "id": "agent_tnf-thin-client_1786324794053",
+    "last_seen": "2026-08-10T01:19:54.308Z",
+    "status": "alive"
+  },
+  "duplicates_removed": 2111,
+  "note": "File-level mutation completed; live swarm service restart required for full cleanup."
+}

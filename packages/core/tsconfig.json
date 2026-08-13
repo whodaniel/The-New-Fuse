@@ -1,0 +1,61 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "src/drizzle*",
+    "src/database/DatabaseModule.ts",
+    "src/database/DatabaseMonitor.ts",
+    "src/database/TransactionManager.ts",
+    "src/memory/VectorMemorySystem.ts",
+    "src/memory/MemoryManager.ts",
+    "src/services/AgentMetadataManager.ts",
+    "src/communication/MessagingService.ts",
+    "src/communication/NotificationService.ts",
+    "src/services/agent/websocket.ts",
+    "src/task/AgentInbox.ts",
+    "src/wizards/**",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/websocket/**"
+  ],
+  "references": [
+    {
+      "path": "../core-vector-db"
+    },
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../infrastructure"
+    }
+  ]
+}

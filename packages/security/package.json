@@ -1,0 +1,51 @@
+{
+  "name": "@the-new-fuse/security",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Security package for The New Fuse",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.16",
+    "@the-new-fuse/core": "workspace:*",
+    "@the-new-fuse/database": "workspace:*",
+    "bcrypt": "^6.0.0",
+    "express": "^4.22.0",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^13.0.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.8.1",
+    "@types/uuid": "^11.0.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

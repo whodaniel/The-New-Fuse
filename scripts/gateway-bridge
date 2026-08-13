@@ -1,0 +1,48 @@
+#!/bin/sh
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BRIDGE_SCRIPT="${BRIDGE_SCRIPT:-$SCRIPT_DIR/hermes-gateway-bridge.cjs}"
+
+start() {
+echo "🚀 Starting Hermes-TNF Gateway Bridge..."
+pkill -f "hermes-gateway-bridge" 2>/dev/null || true
+node "$BRIDGE_SCRIPT" &
+sleep 3
+echo "
+🔥 Gateway Bridge Started!
+🔌 Hermes Gateway: ws://localhost:7788
+🔌 TNF Relay: ws://localhost:3000
+🔌 Bridge Status: http://localhost:4000/health"
+}
+
+stop() {
+echo "⏹ Stopping Hermes-TNF Gateway Bridge..."
+pkill -f "hermes-gateway-bridge" 2>/dev/null || true
+echo "☑ Bridge stopped"
+}
+
+restart() {
+stop
+start
+}
+
+status() {
+if pgrep -f "hermes-gateway-bridge" >/dev/null; then echo "👍 Bridge is RUNNING"; else echo "❌ Bridge is STOPPED"; fi
+}
+
+case "$1" in
+start)
+ start
+ ;;
+stop)
+ stop
+ ;;
+restart)
+ restart
+ ;;
+status)
+ status
+ ;;
+*)
+echo "Usage: $0 {start|stop|restart|status}"
+ exit 1
+esac

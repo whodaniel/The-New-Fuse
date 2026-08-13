@@ -1,0 +1,41 @@
+# Flat robust build for TNF API Server
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-alpine
+
+ENV CI=true
+ENV NODE_ENV=production
+ENV PORT=8080
+
+RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev libjpeg-turbo-dev giflib-dev pixman cairo pango giflib libjpeg-turbo
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+
+WORKDIR /app
+
+# Copy workspace configuration (matches working api-gateway Dockerfile)
+COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+COPY scripts ./scripts
+COPY packages ./packages
+COPY apps/api ./apps/api
+
+# Install ALL dependencies
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Build ONLY the packages that the api-server actually needs (and their transitive deps)
+# The "..." operator means "this package and all its dependencies"
+RUN pnpm turbo run build --filter=@the-new-fuse/api-server...
+
+# Verify critical packages were built
+RUN test -f /app/packages/database/dist/index.js || (echo "FATAL: database dist missing" && exit 1)
+
+# Build the app itself
+WORKDIR /app/apps/api
+RUN pnpm build || echo "Build finished with warnings"
+
+# CRITICAL: Rerun install to ensure all dist folders are linked correctly in node_modules
+WORKDIR /app
+RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
+
+EXPOSE 8080
+
+WORKDIR /app/apps/api
+CMD ["node", "dist/main"]

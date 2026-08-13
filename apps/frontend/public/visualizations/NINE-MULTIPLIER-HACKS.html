@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Nine Multiplier Hacks - Claude Code at Scale — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>The Nine Multiplier Hacks - Claude Code at Scale</h1>
+<p><strong>Source:</strong> YouTube Video &quot;Using Claude Code at Scale - The Four-Act Blueprint&quot;
+<strong>Analysis Date:</strong> December 22, 2025
+<strong>Extracted via:</strong> Gemini CLI Analysis + Complete Transcript</p>
+<hr>
+<h2>Overview</h2>
+<p>These are <strong>intermediate to advanced</strong> techniques designed to <strong>10x your output</strong> without increasing effort. Even experienced developers might not be aware of some of these hacks.</p>
+<p><strong>Philosophy:</strong></p>
+<blockquote>
+<p>&quot;Most people using Claude Code are thinking way too small. These hacks help you create your own AI factory using Claude Code, not just for vibe coding but to create whatever you want.&quot;</p>
+</blockquote>
+<hr>
+<h2>The Complete Nine Multiplier Hacks</h2>
+<h3>Hack #1: The Global Brain (<code>claude.md</code> Manipulation)</h3>
+<p><strong>Problem:</strong> Having to repeat instructions in every session</p>
+<p><strong>Solution:</strong> Use the <code>#</code> command to permanently update the project&#39;s &quot;Command Center&quot;</p>
+<p><strong>How It Works:</strong></p>
+<pre><code class="language-bash"># ensure I write without periods
+# always use TypeScript strict mode
+# prefer functional programming patterns
+</code></pre>
+<p>Writing <code># [instruction]</code> forces Claude to update the <code>claude.md</code> file, creating a <strong>persistent memory</strong> for the project.</p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Instructions persist across all future sessions</li>
+<li>No need to repeat context</li>
+<li>Project-level consistency</li>
+<li>Works across all chat sessions</li>
+</ul>
+<p><strong>Example Use Case:</strong></p>
+<pre><code>First session:
+  # all API responses must include error handling
+  # use Zod for validation
+  # prefer named exports over default exports
+
+All future sessions:
+  Claude automatically follows these rules
+</code></pre>
+<p><strong>Key Insight:</strong> This creates a <strong>project-level brain</strong> rather than session-level memory.</p>
+<hr>
+<h3>Hack #2: Plugins and the Marketplace</h3>
+<p><strong>Problem:</strong> Manually installing tools and pasting prompts every time</p>
+<p><strong>Solution:</strong> Use Plugins as &quot;bundles&quot; containing both Agent instructions and MCP servers</p>
+<p><strong>How It Works:</strong></p>
+<pre><code class="language-bash">/plugins                    # Manage plugins
+/plugins add [github-url]   # Add plugin from GitHub
+</code></pre>
+<p><strong>Plugin Structure:</strong></p>
+<pre><code>Plugin
+  ├── Agent Instructions (behavior)
+  └── MCP Servers (capabilities)
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">/plugins add github.com/anthropic/claudecode/feature-dev
+</code></pre>
+<p>This installs an entire suite of capabilities in one shot:</p>
+<ul>
+<li>Feature development workflows</li>
+<li>Testing patterns</li>
+<li>Documentation generation</li>
+<li>Code review processes</li>
+</ul>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>One command installs multiple capabilities</li>
+<li>Pre-configured workflows</li>
+<li>Community-contributed expertise</li>
+<li>Instant skill upgrades</li>
+</ul>
+<p><strong>Real-World Impact:</strong>
+Instead of:</p>
+<ol>
+<li>Installing MCP server manually</li>
+<li>Pasting custom prompts</li>
+<li>Configuring behavior</li>
+<li>Testing integration</li>
+</ol>
+<p>You do:</p>
+<ol>
+<li><code>/plugins add [url]</code></li>
+<li>Done!</li>
+</ol>
+<hr>
+<h3>Hack #3: The <code>mcp.json</code> Shortcut</h3>
+<p><strong>Problem:</strong> Friction of installing MCP servers via CLI commands or chat (often leads to hallucinations where Claude claims something is installed when it isn&#39;t)</p>
+<p><strong>Solution:</strong> Create <code>mcp.json</code> in root directory with pre-configured settings</p>
+<p><strong>Step-by-Step:</strong></p>
+<pre><code class="language-bash">1. Create file: mcp.json
+2. Ask Perplexity (or another AI):
+   &quot;Give me the mcp.json payload for Chrome MCP server&quot;
+3. Paste the JSON into mcp.json
+4. Save
+5. Restart Claude Code session
+</code></pre>
+<p><strong>Example <code>mcp.json</code>:</strong></p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;chrome-devtools&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;-y&quot;, &quot;@modelcontextprotocol/server-chrome&quot;],
+      &quot;env&quot;: {
+        &quot;NODE_ENV&quot;: &quot;production&quot;
+      }
+    },
+    &quot;filesystem&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;-y&quot;, &quot;@modelcontextprotocol/server-filesystem&quot;, &quot;./&quot;],
+      &quot;env&quot;: {}
+    }
+  }
+}
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>No CLI installation friction</li>
+<li>Immediate detection by Claude Code</li>
+<li>No hallucinations about installed tools</li>
+<li>Version control friendly</li>
+<li>Team collaboration ready</li>
+</ul>
+<p><strong>Why This Matters:</strong>
+Claude Code detects the configuration <strong>immediately</strong> upon next session start, avoiding the common issue where Claude thinks a tool is available when it&#39;s not.</p>
+<hr>
+<h3>Hack #4: The Core Agent Rule (Task-Based vs. Role-Based)</h3>
+<p><strong>Old Way (Role-Based):</strong></p>
+<pre><code>❌ Create these agents:
+   - UI Designer
+   - Backend Engineer
+   - QA Tester
+</code></pre>
+<p><strong>New Way (Task-Based):</strong></p>
+<pre><code>✅ Create these agents:
+   - Hex code/Color optimization
+   - UX structure improvement
+   - Feature expansion analysis
+</code></pre>
+<p><strong>Key Principle:</strong> Agents should be <strong>aligned sub-tasks</strong> of a single goal, not simulated employees with job titles</p>
+<p><strong>Implementation:</strong></p>
+<pre><code>1. Define single goal: &quot;Improve user onboarding flow&quot;
+
+2. Create focused agents:
+   Agent 1: Analyze color accessibility and contrast
+   Agent 2: Optimize layout spacing and hierarchy
+   Agent 3: Identify missing micro-interactions
+   Agent 4: Suggest progressive disclosure patterns
+
+3. Send Unified Prompt:
+   &quot;@ColorAgent @LayoutAgent @InteractionAgent @DisclosureAgent
+    All of you: analyze the onboarding flow and suggest improvements
+    focused on your specialty. Work in parallel.&quot;
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>No conflicting incentives (unlike role-based agents)</li>
+<li>Parallel execution on same problem</li>
+<li>Different lenses on same feature</li>
+<li>More specific, actionable outputs</li>
+</ul>
+<p><strong>Example Comparison:</strong></p>
+<p><strong>Role-Based (Problems):</strong></p>
+<pre><code>Designer Agent: &quot;Make it blue&quot;
+Engineer Agent: &quot;Blue is hard to implement, use red&quot;
+QA Agent: &quot;Red fails accessibility tests&quot;
+→ Conflict, sequential work, slow progress
+</code></pre>
+<p><strong>Task-Based (Solution):</strong></p>
+<pre><code>Color Agent: &quot;Current palette has 4.2:1 contrast, suggest 7:1 alternatives&quot;
+Structure Agent: &quot;Hierarchy is flat, recommend 3-level structure&quot;
+Feature Agent: &quot;Missing email verification step&quot;
+→ Complementary insights, parallel work, fast progress
+</code></pre>
+<hr>
+<h3>Hack #5: Slash Rewind (<code>/re</code>)</h3>
+<p><strong>What It Is:</strong> An &quot;Undo&quot; button for your session, like Git for your chat history</p>
+<p><strong>How It Works:</strong></p>
+<pre><code class="language-bash">/re                    # Shows list of checkpoints (recent prompts)
+→ Select checkpoint    # Reverts project state to that moment
+</code></pre>
+<p><strong>Critical Use Case:</strong></p>
+<pre><code>Scenario: You implemented a feature that works correctly
+         but is poorly architected
+
+Problem: Can&#39;t just delete - you learned important insights
+Solution: /re to point before implementation
+         → Reprompt with better architecture
+         → Keep the insights, improve the structure
+</code></pre>
+<p><strong>Workflow:</strong></p>
+<pre><code>1. Build feature → Works but messy
+2. /re → Go back to before implementation
+3. New prompt: &quot;Build X using Y pattern instead of Z&quot;
+4. Claude rebuilds with better architecture
+5. Keep insights, improve implementation
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Non-destructive experimentation</li>
+<li>Learn without penalty</li>
+<li>Rapid iteration</li>
+<li>Context preservation</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>10:00 AM → &quot;Build authentication system&quot;
+10:15 AM → Feature works but uses outdated pattern
+10:16 AM → /re → Select &quot;10:00 AM: Build authentication system&quot;
+10:17 AM → &quot;Build authentication system using JWT with refresh tokens&quot;
+10:25 AM → Better implementation, same insights
+</code></pre>
+<hr>
+<h3>Hack #6: Slash Plan (<code>/plan</code>) with Phases &amp; External Tracking</h3>
+<p><strong>Problem:</strong> Large projects hit context window limits</p>
+<p><strong>Solution:</strong> Break into Phases tracked in Markdown files</p>
+<p><strong>Step-by-Step:</strong></p>
+<pre><code class="language-bash">1. Start project: &quot;Build onboarding modal system&quot;
+
+2. Instruct Claude:
+   &quot;Break this into distinct Phases
+    Create a Markdown file to track phases with checkboxes&quot;
+
+3. Claude creates phases.md:
+   - [ ] Phase 1: Modal component structure
+   - [ ] Phase 2: Animation system
+   - [ ] Phase 3: Form validation
+   - [ ] Phase 4: Integration testing
+
+4. Work on Phase 1 until complete
+
+5. Update phases.md:
+   - [x] Phase 1: Modal component structure ✓
+   - [ ] Phase 2: Animation system
+
+6. **Clear chat context** (start new session)
+
+7. New session reads phases.md → Knows where it left off
+
+8. Continue with Phase 2
+</code></pre>
+<p><strong>Key Innovation:</strong> The Markdown file acts as <strong>project memory</strong> across sessions</p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Overcome context window limits</li>
+<li>Work on massive projects</li>
+<li>Clear separation of concerns</li>
+<li>Progress tracking</li>
+<li>Team collaboration</li>
+</ul>
+<p><strong>Advanced Pattern:</strong></p>
+<pre><code>phases.md:
+  ├── Current Phase marker
+  ├── Completed phases (with notes)
+  ├── Pending phases
+  └── Blockers/Issues
+
+Each new session:
+  1. Read phases.md
+  2. Understand current state
+  3. Continue from checkpoint
+  4. Update phases.md when complete
+</code></pre>
+<p><strong>Real-World Example:</strong></p>
+<pre><code>Project: E-commerce platform (too large for one context window)
+
+Session 1:
+  Phase 1: Product catalog
+  Update phases.md: [x] Phase 1 complete
+
+Session 2 (fresh context):
+  Read phases.md → See Phase 1 done
+  Phase 2: Shopping cart
+  Update phases.md: [x] Phase 2 complete
+
+Session 3 (fresh context):
+  Read phases.md → See Phases 1-2 done
+  Phase 3: Checkout flow
+  ... and so on
+</code></pre>
+<hr>
+<h2>Hacks 7, 8, 9</h2>
+<p><strong>Status:</strong> Transcript cut off before revealing Hacks 7-9</p>
+<p><strong>What We Know:</strong></p>
+<ul>
+<li>They continue the pattern of intermediate/advanced techniques</li>
+<li>Likely cover Act 2 (Multimodal Mastery) and Act 3 (Replicate Framework)</li>
+<li>Focus on scaling beyond single projects to AI factories</li>
+</ul>
+<p><strong>Speculated Topics (Based on Act Descriptions):</strong></p>
+<ul>
+<li>Hack #7: Claude Code Web + Desktop orchestration</li>
+<li>Hack #8: Screenshot-driven development workflow</li>
+<li>Hack #9: Parallel session coordination</li>
+</ul>
+<p><strong>Recommendation:</strong> Watch the full video to get Hacks 7-9</p>
+<hr>
+<h2>Additional Techniques from Transcript</h2>
+<h3>Environment Setup</h3>
+<p><strong>Cursor Integration:</strong></p>
+<pre><code>Why: Access both Claude Code (Agentic CLI) and Cursor features simultaneously
+How: Run Claude Code inside Cursor terminal
+Benefit: Switch Cursor&#39;s models (GPT-5, O1) while Claude Code remains constant
+</code></pre>
+<p><strong>Parallel Sessions:</strong></p>
+<pre><code>Tool: &quot;Claude Code for VS Code&quot; extension
+Setup: Open multiple sessions in different tabs
+Usage: One session builds features, another fixes bugs, third writes docs
+Result: Asynchronous parallel work
+</code></pre>
+<p><strong>Configuration Hacking (<code>settings.local.json</code>):</strong></p>
+<pre><code>Problem: Plugin shows as installed but isn&#39;t working
+Solution: Manually edit settings.local.json
+Action: Set enabled: true for specific plugins
+Example:
+{
+  &quot;plugins&quot;: {
+    &quot;feature-dev&quot;: { &quot;enabled&quot;: true },
+    &quot;front-end-design&quot;: { &quot;enabled&quot;: true }
+  }
+}
+</code></pre>
+<hr>
+<h2>The &quot;Clone Yourself&quot; Workflow</h2>
+<p><strong>Goal:</strong> Make Claude write/code in your exact style</p>
+<p><strong>Steps:</strong></p>
+<pre><code>1. Data Capture
+   → Screenshot your work (emails, code, designs)
+
+2. Multimodal Processing
+   → Upload to Claude.ai (Web)
+   → Prompt: &quot;Create one comprehensive markdown file analyzing my style&quot;
+
+3. Ingestion
+   → Drag and drop markdown into Claude Code terminal
+   → Run /init
+
+4. Result
+   → Claude creates claude.md with your style guide
+   → All future outputs match your voice
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>Input: 10 screenshots of your emails
+Claude analyzes:
+  - Tone: Direct but friendly
+  - Structure: Short paragraphs
+  - Patterns: Always start with context
+  - Style: Use em-dashes, avoid semicolons
+  - Format: Bullet points for action items
+
+Output: claude.md with your complete style profile
+All future generations match this style automatically
+</code></pre>
+<hr>
+<h2>Chrome MCP Workflow (Visual Debugging)</h2>
+<p><strong>Goal:</strong> Let Claude see your UI visually, not just via code</p>
+<p><strong>Setup:</strong></p>
+<pre><code class="language-bash">1. Create mcp.json with Chrome MCP server config
+2. Restart Claude Code
+3. Chrome integration active
+</code></pre>
+<p><strong>Execution:</strong></p>
+<pre><code>You: &quot;Use the skill you have to pop up localhost&quot;
+
+Claude:
+  1. Opens browser window automatically
+  2. Visually inspects CSS/UI layout
+  3. Takes screenshot for itself
+  4. Analyzes visual appearance
+  5. Suggests improvements based on what it sees
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Visual feedback loop</li>
+<li>Catches layout issues code review misses</li>
+<li>Responsive design validation</li>
+<li>Real browser testing</li>
+</ul>
+<p><strong>Example Workflow:</strong></p>
+<pre><code>Build UI → Claude opens in Chrome → Sees button misaligned
+Claude: &quot;The submit button is 3px off center, fixing CSS&quot;
+→ More accurate than pure code analysis
+</code></pre>
+<hr>
+<h2>Essential Commands</h2>
+<h3>Core Commands</h3>
+<pre><code class="language-bash">/init              # Initialize repo, create claude.md
+/plan              # Enter planning mode with phases
+/re                # Rewind to previous checkpoint
+/plugins           # Manage plugins
+/compact           # Manage context window (implied)
+</code></pre>
+<h3>Magic Symbols</h3>
+<pre><code class="language-bash"># [instruction]    # Permanent instruction (updates claude.md)
+@ [agent-name]     # Invoke specific agent
+</code></pre>
+<h3>Settings</h3>
+<pre><code class="language-bash">Extended Thinking  # Toggle for complex tasks (uses more tokens)
+YOLO Mode         # Remove approval requirements (autonomous mode)
+</code></pre>
+<hr>
+<h2>Productivity Metrics</h2>
+<h3>Claimed Improvements</h3>
+<p><strong>Hack #1 (Global Brain):</strong></p>
+<ul>
+<li>Time Saved: 80% (no repeating instructions)</li>
+<li>Consistency: 100% (all sessions follow rules)</li>
+</ul>
+<p><strong>Hack #2 (Plugins):</strong></p>
+<ul>
+<li>Setup Time: Minutes → Seconds</li>
+<li>Capability Installation: 10 steps → 1 command</li>
+</ul>
+<p><strong>Hack #3 (mcp.json):</strong></p>
+<ul>
+<li>Installation Friction: High → Zero</li>
+<li>Hallucination Rate: High → Zero</li>
+</ul>
+<p><strong>Hack #4 (Task-Based Agents):</strong></p>
+<ul>
+<li>Conflict Resolution: Constant → Rare</li>
+<li>Parallel Work: Impossible → Standard</li>
+</ul>
+<p><strong>Hack #5 (Slash Rewind):</strong></p>
+<ul>
+<li>Experimentation Cost: High → Zero</li>
+<li>Iteration Speed: 10x faster</li>
+</ul>
+<p><strong>Hack #6 (Phases):</strong></p>
+<ul>
+<li>Project Size Limit: Context window → Unlimited</li>
+<li>Multi-Session Continuity: Broken → Seamless</li>
+</ul>
+<hr>
+<h2>Best Practices</h2>
+<h3>DO:</h3>
+<p>✅ <strong>Use <code>#</code> for project-level rules</strong> - Set once, benefit forever
+✅ <strong>Install plugins early</strong> - Instant capability upgrades
+✅ <strong>Create mcp.json first</strong> - Avoid installation friction
+✅ <strong>Think task-based, not role-based</strong> - Better agent coordination
+✅ <strong>/re frequently</strong> - Experimentation without penalty
+✅ <strong>Break large projects into phases</strong> - Overcome context limits
+✅ <strong>Clone your style</strong> - Consistent output quality
+✅ <strong>Use Chrome MCP</strong> - Visual debugging is powerful</p>
+<h3>DON&#39;T:</h3>
+<p>❌ <strong>Repeat instructions every session</strong> - Use <code>#</code> instead
+❌ <strong>Manual tool installation</strong> - Use plugins or mcp.json
+❌ <strong>Create role-based agents</strong> - Use task-based instead
+❌ <strong>Fear experimentation</strong> - <code>/re</code> makes it safe
+❌ <strong>Start huge projects without phases</strong> - You&#39;ll hit limits
+❌ <strong>Work sequentially when you can parallelize</strong> - Multiple sessions
+❌ <strong>Ignore visual feedback</strong> - Chrome MCP catches layout issues</p>
+<hr>
+<h2>Integration with Our Project</h2>
+<h3>Application to Self-Contained Visualizations</h3>
+<p><strong>Hack #1 (Global Brain):</strong></p>
+<pre><code># all visualizations must be self-contained
+# embed D3.js library, don&#39;t use CDN
+# always include fallback data
+# optimize for offline use
+</code></pre>
+<p><strong>Hack #2 (Plugins):</strong></p>
+<pre><code>/plugins add visualization-toolkit
+  → Installs: D3 helpers, template system, color schemes
+</code></pre>
+<p><strong>Hack #3 (mcp.json):</strong></p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;d3-documentation&quot;: { &quot;command&quot;: &quot;...&quot; },
+    &quot;color-analyzer&quot;: { &quot;command&quot;: &quot;...&quot; }
+  }
+}
+</code></pre>
+<p><strong>Hack #4 (Task-Based Agents):</strong></p>
+<pre><code>@DataStructureAgent: Optimize hierarchy format
+@LayoutAgent: Improve treemap algorithm
+@ColorAgent: Enhance accessibility
+@InteractionAgent: Add zoom/pan features
+</code></pre>
+<p><strong>Hack #5 (Slash Rewind):</strong></p>
+<pre><code>Try force-directed layout → Doesn&#39;t fit use case
+/re → Go back
+Try treemap layout → Perfect fit!
+</code></pre>
+<p><strong>Hack #6 (Phases):</strong></p>
+<pre><code>Phase 1: Core visualization engine
+Phase 2: Template system
+Phase 3: CLI tooling
+Phase 4: Documentation
+Phase 5: Example gallery
+</code></pre>
+<h3>Application to Capability Packaging Agent</h3>
+<p><strong>Project Phases:</strong></p>
+<pre><code class="language-markdown">- [x] Phase 1: Capability discovery system
+- [x] Phase 2: Interface generation (one-click, forms, wizards)
+- [ ] Phase 3: Advanced customization
+- [ ] Phase 4: Deployment automation
+- [ ] Phase 5: Analytics integration
+</code></pre>
+<p><strong>Task-Based Agents:</strong></p>
+<pre><code>@DiscoveryAgent: Find packageable capabilities
+@UIGeneratorAgent: Create interface templates
+@APIAgent: Build backend endpoints
+@DocumentationAgent: Write usage guides
+</code></pre>
+<hr>
+<h2>The AI Factory Vision</h2>
+<p><strong>Traditional Development:</strong></p>
+<pre><code>One Developer
+  → One Session
+  → One Project
+  → Sequential Progress
+</code></pre>
+<p><strong>AI Factory (With These Hacks):</strong></p>
+<pre><code>One Developer
+  ├── Global Brain (Hack #1)
+  ├── Plugin Marketplace (Hack #2)
+  ├── Zero-Friction Tools (Hack #3)
+  ├── Task-Based Agents (Hack #4)
+  ├── Risk-Free Experimentation (Hack #5)
+  ├── Unlimited Project Size (Hack #6)
+  ├── [Hacks 7-9 TBD]
+  └── Multiple Parallel Sessions
+      ├── Session 1: Feature A
+      ├── Session 2: Feature B
+      ├── Session 3: Documentation
+      ├── Session 4: Testing
+      └── Session 5: Optimization
+
+Result: 10x Output
+</code></pre>
+<hr>
+<h2>Next Steps</h2>
+<h3>Immediate Actions</h3>
+<ol>
+<li><p><strong>Install Prerequisites</strong></p>
+<pre><code class="language-bash">- Install Cursor IDE
+- Add Claude Code extension
+- Set up first project
+</code></pre>
+</li>
+<li><p><strong>Test Hack #1 (Global Brain)</strong></p>
+<pre><code class="language-bash"># all code must have error handling
+# prefer composition over inheritance
+# document all public APIs
+</code></pre>
+</li>
+<li><p><strong>Try Hack #5 (Slash Rewind)</strong></p>
+<pre><code class="language-bash">Build something → /re → Rebuild better
+</code></pre>
+</li>
+</ol>
+<h3>This Week</h3>
+<ol>
+<li><strong>Create mcp.json</strong> (Hack #3)</li>
+<li><strong>Install first plugin</strong> (Hack #2)</li>
+<li><strong>Set up phases.md</strong> (Hack #6)</li>
+<li><strong>Experiment with task-based agents</strong> (Hack #4)</li>
+</ol>
+<h3>This Month</h3>
+<ol>
+<li><strong>Master all 6 revealed hacks</strong></li>
+<li><strong>Watch video for Hacks 7-9</strong></li>
+<li><strong>Build AI factory workflow</strong></li>
+<li><strong>Measure productivity gains</strong></li>
+</ol>
+<hr>
+<h2>Conclusion</h2>
+<p>These six multiplier hacks represent a <strong>paradigm shift</strong> in AI-assisted development:</p>
+<p><strong>From:</strong> One-off prompts in isolated sessions
+<strong>To:</strong> Persistent, coordinated, parallel AI factory</p>
+<p><strong>Result:</strong></p>
+<ul>
+<li>10x productivity without 10x effort</li>
+<li>Unlimited project scope</li>
+<li>Risk-free experimentation</li>
+<li>Consistent quality</li>
+</ul>
+<p><strong>Combined with:</strong></p>
+<ul>
+<li>Self-contained visualizations (our toolkit)</li>
+<li>AG-UI protocol (intelligent agents)</li>
+<li>Capability packaging (our automation)</li>
+</ul>
+<p><strong>We have:</strong> An unprecedented development ecosystem</p>
+<hr>
+<p><strong>Status:</strong> 6 of 9 hacks documented (transcript cut-off)
+<strong>Recommendation:</strong> Watch full video for hacks 7-9
+<strong>Next Action:</strong> Implement Hack #1 (Global Brain) in current project</p>
+<hr>
+<p><strong>Created:</strong> December 22, 2025
+<strong>Source:</strong> Complete transcript + Gemini analysis
+<strong>Confidence:</strong> High (first 6 hacks fully detailed in transcript)</p>
+
+    </div>
+  </body>
+</html>

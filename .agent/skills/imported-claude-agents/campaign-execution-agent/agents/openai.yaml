@@ -1,0 +1,4 @@
+interface:
+  display_name: "Campaign Execution Agent"
+  short_description: "Help with Campaign Execution Agent tasks"
+  default_prompt: "Run the Campaign Execution Agent workflow using SKILL.md instructions."

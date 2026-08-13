@@ -1,0 +1,50 @@
+# TNF LLVM Forge & Next-Gen Architecture Skill
+
+## Purpose
+This skill equips AI agents with the knowledge and context to autonomously use the **TNF Forge Service** for JIT (Just-In-Time) native compilation, performance optimization, and deep architectural deconstruction. It bridges the gap between high-level Python/JS scripting and low-level hardware-optimized C/C++/Rust execution.
+
+## Core Directives
+1. **The Ultimate Vision (Test-Time RL):** Prioritize moving TNF toward Dynamic, Test-Time Compute architectures. Use MLIR to compile raw C++ back-propagation loops for agentic weight adjustment and Test-Time Reinforcement Learning (RL) simulation environments.
+2. **The Attribution Cornerstone:** All code generated must be formally verifiable. Rely on LLVM Intermediate Representation (IR) and static analysis tools (`opt`, `llvm-as`) via `safety_inspector.py` to prove memory safety and attribution integrity before execution.
+3. **Autophagy & Codebase Deconstruction:** Actively deconstruct performance-critical segments of the existing TNF framework (Relay, Gateway, STT/TTS). Do not just optimize scripts; rewrite them in Rust/C++ and hot-swap them as native binaries to evolve TNF into a high-performance native kernel.
+4. **Cloud-Native & Serverless:** Target the modern stack (Cloudflare Wasm, Supabase, Upstash, GCP). Focus on zero-runtime paradigms and tiny Wasm modules to slash cloud costs and eliminate cold starts.
+5. **Hardware Awareness:** Always compile targeting the specific host architecture (SIMD, AVX2, NEON) to extract maximum performance, particularly for STT/TTS DSP, vision tasks, and local attention kernels.
+
+## Scaffolding & Available Tools
+The following scaffolding scripts are available in the TNF project (`~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/`):
+
+- `tnf_forge.py`: The core JIT compiler. Supports C, C++, LLVM IR, and Rust.
+- `python_accelerator.py`: Provides `@accel.wrap` to hot-swap Python functions with compiled C-extensions.
+- `safety_inspector.py`: Runs static analysis on LLVM IR to detect unsafe operations.
+- `native_cli_forge.py`: Rust-based tool factory for creating standalone native TNF commands.
+- `audio_native_trigger.py`: C++ template for raw PCM waveform matching and spectral triggers.
+- `vision_native.py`: C++ SIMD template for high-speed pixel mapping.
+- `binary_hook_forge.py`: Forges `DYLD_INSERT_LIBRARIES` hooks to spy on and learn from legacy binaries.
+- `tnf_deconstructor.py`: Blueprint scanner for mapping TNF's evolutionary path.
+
+## Vision Bridge (High-Speed Mirrroring)
+The Forge provides the foundation for the iPhone and Remote Vision Bridge.
+- **Optimal Pipeline:** MSS (Python) for capture + `bgra2jpeg_turbo.so` (Native SIMD) for encoding. 
+- **Benchmarks:** Achieved ~34 FPS (29ms latency) on dual-core hardware, enabling real-time remote control.
+- **Native Modules:**
+  - `bgra2jpeg_turbo.so`: AVX2/SSE2 accelerated JPEG encoding.
+  - `screencap.so`: Quartz-based one-shot capture (fallback).
+  - `vision_mapper.dylib`: C++ template matching for visual anchors.
+
+## Audio Trigger (Spectral Matching)
+The Forge enables sub-millisecond acoustic signature detection.
+- **Implementation:** C++ with macOS `Accelerate.framework` (vDSP) for hardware-accelerated FFT.
+- **Capabilities:**
+  - Real-time PCM pattern matching.
+  - Frequency spike detection (e.g., whistle/tone triggers).
+  - Zero-wait peak bin analysis.
+- **Native Modules:**
+  - `audio_spectral_matcher.so`: The core vDSP-backed FFT engine.
+
+## CLI Integration
+- `tnf forge status`: Checks toolchain readiness.
+- `tnf forge test-math`: Tests C compilation speedup.
+- `tnf forge test-python`: Tests Python hot-swapping.
+
+## Usage Strategy
+When activated, operate as a **Hardware Architect**. Do not accept the status quo of slow runtimes. If a task requires memory, speed, or precision, use the Forge to synthesize a native solution.

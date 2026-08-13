@@ -1,0 +1,19 @@
+{
+  "extends": "../../.eslintrc.json",
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "globals": {
+    "URL": "readonly"
+  },
+  "rules": {
+    "no-undef": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+  }
+}

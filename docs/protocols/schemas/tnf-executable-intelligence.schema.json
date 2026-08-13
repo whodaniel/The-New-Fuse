@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-executable-intelligence.schema.json",
+  "title": "TNF Executable Intelligence Artifact",
+  "type": "object",
+  "required": [
+    "spec",
+    "artifact_id",
+    "generated_at",
+    "classification",
+    "namespace",
+    "ownership",
+    "source",
+    "taxonomy",
+    "utility_metrics",
+    "gate_results",
+    "synthesis"
+  ],
+  "properties": {
+    "spec": { "const": "tnf/executable-intelligence/0.2" },
+    "artifact_id": { "type": "string", "minLength": 6 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "classification": {
+      "type": "object",
+      "required": ["class", "status"],
+      "properties": {
+        "class": { "enum": ["PRIME", "INTEL", "RAW", "SRC"] },
+        "status": { "enum": ["PENDING", "VETTED", "LOCKED", "PURGE"] }
+      },
+      "additionalProperties": false
+    },
+    "namespace": { "type": "string" },
+    "ownership": {
+      "type": "object",
+      "required": [
+        "owner_principal_id",
+        "visibility",
+        "release_state",
+        "agent_allowlist",
+        "release_approved_by",
+        "released_at",
+        "release_note"
+      ],
+      "properties": {
+        "owner_principal_id": { "type": "string", "minLength": 1 },
+        "visibility": { "enum": ["private", "agent-scope", "collective", "public"] },
+        "release_state": { "enum": ["sealed", "released-collective", "released-public"] },
+        "agent_allowlist": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "release_approved_by": { "type": "string" },
+        "released_at": { "type": "string" },
+        "release_note": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "visibility": { "enum": ["private", "agent-scope"] } }
+          },
+          "then": {
+            "properties": { "release_state": { "const": "sealed" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "visibility": { "const": "collective" } }
+          },
+          "then": {
+            "properties": { "release_state": { "const": "released-collective" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "visibility": { "const": "public" } }
+          },
+          "then": {
+            "properties": { "release_state": { "const": "released-public" } }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "source_type",
+        "source_uri",
+        "resource_pointer",
+        "source_digest_sha256"
+      ],
+      "properties": {
+        "source_id": { "type": "string" },
+        "source_type": { "type": "string" },
+        "source_uri": { "type": "string" },
+        "source_title": { "type": "string" },
+        "source_author": { "type": "string" },
+        "source_publisher": { "type": "string" },
+        "source_published_at": { "type": "string" },
+        "retrieved_at": { "type": "string" },
+        "resource_pointer": { "type": "string" },
+        "source_digest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": true
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["procedural", "strategic", "governance"],
+      "properties": {
+        "procedural": { "type": "array", "items": { "type": "string" } },
+        "strategic": { "type": "array", "items": { "type": "string" } },
+        "governance": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "utility_metrics": {
+      "type": "object",
+      "required": ["freshness_decay", "implementation_density", "verification_difficulty"],
+      "properties": {
+        "freshness_decay": { "enum": ["High", "Medium", "Low"] },
+        "implementation_density": { "type": "number", "minimum": 0, "maximum": 1 },
+        "verification_difficulty": { "enum": ["Easy", "Hard"] }
+      },
+      "additionalProperties": false
+    },
+    "gate_results": { "type": "object" },
+    "synthesis": { "type": "string", "minLength": 1 },
+    "raw_stats": {
+      "type": "object",
+      "properties": {
+        "char_count": { "type": "integer", "minimum": 0 },
+        "unit_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

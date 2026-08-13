@@ -1,0 +1,94 @@
+bridge:
+  name: tnf-whatsapp-bridge-verifier
+  version: 1
+  status: proposed
+  source_skills:
+    - WhatsApp Agent Group Setup
+    - TNF Bridge
+    - hermes-agent
+  target_skills:
+    - tnf-skill-bridging
+  objective: >
+    Add a read-only verifier layer around the Hermes WhatsApp bridge so TNF can
+    inspect runtime health, transport reachability, session persistence, and
+    dependency drift without mutating production bridge state or replacing the
+    existing gateway workflow.
+  handoff_contract:
+    inputs:
+      - name: bridge_health_endpoint
+        format: http_json
+        producer: GET http://127.0.0.1:3000/health
+      - name: bridge_session_path
+        format: filesystem_path
+        producer: ~/.hermes/whatsapp/session
+      - name: bridge_log_path
+        format: filesystem_path
+        producer: ~/.hermes/whatsapp/bridge.log
+      - name: runtime_process_table
+        format: plain_text
+        producer: ps aux filtered for whatsapp bridge / gateway workers
+      - name: dependency_inventory
+        format: package_lock_or_manifest
+        producer: package.json + pnpm lock inspection for baileys/libsignal variants
+    outputs:
+      - name: verifier_snapshot
+        format: json_object
+        schema:
+          bridge:
+            host: string
+            port: number
+            status: connected|connecting|disconnected|unreachable|string
+            queueLength: number
+            uptime: number
+            httpStatusCode: number
+            httpError: string|null
+          filesystem:
+            sessionPath: string
+            sessionStat: json_object
+            sessionArtifacts: json_array
+            logPath: string
+            logStat: json_object
+            logTail: json_array
+          runtime:
+            processMatches: json_array
+          checks:
+            httpReachable: boolean
+            connected: boolean
+            sessionPresent: boolean
+            logPresent: boolean
+            processPresent: boolean
+          ok: boolean
+      - name: cli_contract_plan
+        format: prose
+        schema:
+          preferred_entrypoint: tnf whatsapp health
+          explicit_fallback: node scripts/protocols/whatsapp-bridge-health-check.cjs --json
+          integration_rule: additive only, no mutation of existing TNF commands
+      - name: dependency_candidate_matrix
+        format: markdown_table
+        schema:
+          candidate: string
+          scope: side_by_side|local_only|document_only
+          benefits: string
+          risks: string
+          verification: string
+  validation:
+    success_criteria:
+      - The verifier must succeed with read-only filesystem and HTTP access only.
+      - Default execution must not send WhatsApp messages, log in, re-pair, or rotate session artifacts.
+      - TNF must preserve existing Hermes and TNF WhatsApp bridge entrypoints unchanged.
+      - The verifier output must be machine-readable with --json and human-readable by default.
+      - Dependency candidate analysis must compare side-by-side remediation paths before any production package change.
+    failure_handling:
+      - If /health is unreachable, emit ok=false with diagnostic context instead of attempting restart.
+      - If the session directory is missing, classify as cold-start-or-misconfigured rather than mutating it.
+      - If dependency versions cannot be resolved, keep the matrix in proposed state and defer package actions.
+  migration_guidance:
+    nativeization_rule: >
+      TNF may expose verifier results through a native tnf CLI route, but the
+      initial rollout should remain a wrapper around the standalone read-only
+      script until parity and safety are proven.
+    replacement_rule: >
+      Any future native TNF WhatsApp health command must preserve the same
+      observable checks, JSON fields, and non-invasive behavior before replacing
+      the standalone verifier path.

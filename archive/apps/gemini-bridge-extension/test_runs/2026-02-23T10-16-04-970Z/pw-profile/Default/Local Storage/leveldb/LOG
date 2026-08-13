@@ -1,0 +1,5 @@
+2026/02/23-05:16:06.247 beb2b Creating DB /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb since it was missing.
+2026/02/23-05:16:06.295 beb2b Reusing MANIFEST /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/test_runs/2026-02-23T10-16-04-970Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/02/23-05:17:06.303 beb2e Level-0 table #5: started
+2026/02/23-05:17:06.320 beb2e Level-0 table #5: 138253 bytes OK
+2026/02/23-05:17:06.341 beb2e Delete type=0 #3

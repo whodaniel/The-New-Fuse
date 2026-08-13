@@ -1,0 +1,23 @@
+Verification timestamp: 2026-03-03T03:04:19Z
+
+OpenClaw launchctl summary:
+17706	-15	com.openclaw.tnf-continuous-test
+-	0	com.openclaw.jules-monitor
+-	0	com.openclaw.telegram-webhook
+-	0	com.openclaw.tnf-heartbeat
+17551	0	ai.openclaw.gateway
+-	0	com.openclaw.llm-probe
+-	0	com.openclaw.picoclaw-fleet
+-	0	com.openclaw.mesh-health
+
+HTTP endpoint checks:
+200 https://thenewfuse.com/ :: <!doctype html> <html lang="en">   <head>     <meta charset="UTF-8" />     <meta name="viewport" content="width=device-width, initial-scale=
+200 https://thenewfuse.com/api/health :: {"status":"healthy","timestamp":"2026-03-03T03:04:19.806Z","uptime":167.619138246}
+200 https://thenewfuse.com/api/community/stats :: {"totalMembers":1230,"activeToday":94,"totalPosts":3,"totalComments":24}
+200 https://thenewfuse.com/api/community/posts?category=all&sort=recent&search= :: [{"id":"post-help-1","title":"How are you handling staged deploy rollbacks?","content":"Looking for practical rollback patterns across Railw
+200 https://thenewfuse.com/api/auth/session :: {"authenticated":"fa*se","user":null}
+401 https://thenewfuse.com/api/agents/registry :: {"message":"Authentication required","error":"Unauthorized","statusCode":401}
+
+CloudRuntime api deployment summary:
+d6b4062a-c188-4b84-b937-bc9828047da8	BUILDING	2026-03-03T03:00:30.562Z
+84e37e61-ceaa-4182-a653-3f0e2204f235	SUCCESS	2026-03-03T02:52:51.886Z

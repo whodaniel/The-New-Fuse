@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Editor Agent"
+  short_description: "Help with Video Editor Agent tasks"
+  default_prompt: "Run the Video Editor Agent workflow using SKILL.md instructions."

@@ -1,0 +1,12 @@
+{
+  "skillName": "frontend-debugger-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/frontend-debugger-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/frontend-debugger-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/frontend-debugger-agent.json",
+  "status": "present"
+}

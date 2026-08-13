@@ -1,0 +1,37 @@
+[
+  {
+    "id": "d7df5318-d9e0-4b8c-bd7c-662629b6358d",
+    "agentId": "agent-search-engine",
+    "relatedAgentId": "agent-tagger",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "c6dd7163-05fc-41f8-bd64-e3e9a0af1ed3",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "digital-product-factory-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.37
+  },
+  {
+    "id": "182f4231-379b-429e-a99f-309f0c6ab9c8",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "podcast-equipment-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.26
+  },
+  {
+    "id": "b1695fef-f7e0-4a0f-9f7c-ffdb75652b7a",
+    "agentId": "monetization-strategy-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.34
+  },
+  {
+    "id": "6a6425a7-be76-4537-81fa-41e032e4176e",
+    "agentId": "orchestrator-agent-copy",
+    "relatedAgentId": "orchestrator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.96
+  }
+]

@@ -1,0 +1,88 @@
+import { Brain, Browser, ChartBar, File, FileMagnifyingGlass } from '@phosphor-icons/react';
+import DefaultSkillPanel from './DefaultSkillPanel';
+import GenericSkillPanel from './GenericSkillPanel';
+import AgentSQLConnectorSelection from './SQLConnectorSelection';
+import AgentWebSearchSelection from './WebSearchSelection';
+
+// Placeholder for agent skill images
+const RAGImage = '';
+const SummarizeImage = '';
+const ScrapeWebsitesImage = '';
+const GenerateChartsImage = '';
+const GenerateSaveImages = '';
+
+export const defaultSkills: Record<
+  string,
+  {
+    title: string;
+    description: string;
+    component: typeof DefaultSkillPanel;
+    icon: any;
+    image: string;
+  }
+> = {
+  'rag-memory': {
+    title: 'RAG & long-term memory',
+    description:
+      'Allow the agent to leverage your local documents to answer a query or ask the agent to "remember" pieces of content for long-term memory retrieval.',
+    component: DefaultSkillPanel,
+    icon: Brain,
+    image: RAGImage,
+  },
+  'view-summarize': {
+    title: 'View & summarize documents',
+    description:
+      'Allow the agent to list and summarize the content of workspace files currently embedded.',
+    component: DefaultSkillPanel,
+    icon: File,
+    image: SummarizeImage,
+  },
+  'scrape-websites': {
+    title: 'Scrape websites',
+    description: 'Allow the agent to visit and scrape the content of websites.',
+    component: DefaultSkillPanel,
+    icon: Browser,
+    image: ScrapeWebsitesImage,
+  },
+};
+
+export const configurableSkills: Record<
+  string,
+  {
+    title: string;
+    description?: string;
+    component: any;
+    skill: string;
+    icon?: any;
+    image?: string;
+  }
+> = {
+  'save-file-to-browser': {
+    title: 'Generate & save files to browser',
+    description:
+      'Enable the default agent to generate and write to files that can be saved to your computer.',
+    component: GenericSkillPanel,
+    skill: 'save-file-to-browser',
+    icon: FileMagnifyingGlass,
+    image: GenerateSaveImages,
+  },
+  'create-chart': {
+    title: 'Generate charts',
+    description:
+      'Enable the default agent to generate various types of charts from data provided or given in chat.',
+    component: GenericSkillPanel,
+    skill: 'create-chart',
+    icon: ChartBar,
+    image: GenerateChartsImage,
+  },
+  'web-browsing': {
+    title: 'Web Search',
+    component: AgentWebSearchSelection,
+    skill: 'web-browsing',
+  },
+  'sql-agent': {
+    title: 'SQL Connector',
+    component: AgentSQLConnectorSelection,
+    skill: 'sql-agent',
+  },
+};

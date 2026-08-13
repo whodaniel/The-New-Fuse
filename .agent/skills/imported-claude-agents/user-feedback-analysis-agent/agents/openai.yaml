@@ -1,0 +1,4 @@
+interface:
+  display_name: "User Feedback Analysis Agent"
+  short_description: "Help with User Feedback Analysis Agent tasks"
+  default_prompt: "Run the User Feedback Analysis Agent workflow using SKILL.md instructions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Platform Selection Agent"
+  short_description: "Help with Platform Selection Agent tasks"
+  default_prompt: "Run the Platform Selection Agent workflow using SKILL.md instructions."

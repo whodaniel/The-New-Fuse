@@ -1,0 +1,4 @@
+interface:
+  display_name: "Live Stream Manager Agent"
+  short_description: "Help with Live Stream Manager Agent tasks"
+  default_prompt: "Run the Live Stream Manager Agent workflow using SKILL.md instructions."

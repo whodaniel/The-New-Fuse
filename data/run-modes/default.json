@@ -1,0 +1,13 @@
+{
+  "name": "default",
+  "description": "TNF documented default run-mode. Mirrors a minimal subset of .pi settings.json so a ~/.pi/agent/modes/<name>.json file can be copied into either ~/.pi/agent/modes/ or ~/.tnf/modes/ and used by both runtimes.",
+  "settings": {
+    "defaultProvider": "nvidia",
+    "defaultModel": "minimaxai/minimax-m3",
+    "defaultThinkingLevel": "high",
+    "httpIdleTimeoutMs": 0,
+    "treeFilterMode": "all"
+  },
+  "toolOverrides": {},
+  "shellAliases": {}
+}

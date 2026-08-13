@@ -1,0 +1,278 @@
+# The New Fuse Platform - Helm Values
+
+global:
+  imageRegistry: us-central1-docker.pkg.dev
+  imageRepository: the-new-fuse/the-new-fuse-containers
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  
+  # Environment
+  environment: production
+  
+  # Secrets
+  secretsManager:
+    enabled: true
+    provider: gcp # gcp, aws, azure, vault
+    projectId: the-new-fuse
+
+# API Server Configuration
+apiServer:
+  enabled: true
+  name: api-server
+  replicaCount: 3
+  
+  image:
+    repository: api-server
+    tag: ""
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3001
+    targetPort: 3001
+  
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: api.thenewfuse.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: api-tls
+        hosts:
+          - api.thenewfuse.com
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  
+  env:
+    NODE_ENV: production
+    PORT: "3001"
+
+# A2A Service Configuration
+a2aService:
+  enabled: true
+  name: a2a-service
+  replicaCount: 2
+  
+  image:
+    repository: a2a-service
+    tag: ""
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# Sync Core Service Configuration
+syncCore:
+  enabled: true
+  name: sync-core
+  replicaCount: 2
+  
+  image:
+    repository: sync-core
+    tag: ""
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3003
+    targetPort: 3003
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+
+# MCP Core Service Configuration
+mcpCore:
+  enabled: true
+  name: mcp-core
+  replicaCount: 2
+  
+  image:
+    repository: mcp-core
+    tag: ""
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3004
+    targetPort: 3004
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+# Database Configuration
+postgresql:
+  enabled: false # Use managed Cloud SQL
+  external:
+    enabled: true
+    host: ""
+    port: 5432
+    database: the_new_fuse
+    username: postgres
+    existingSecret: postgresql-credentials
+    existingSecretPasswordKey: password
+
+redis:
+  enabled: false # Use managed MemoryStore
+  external:
+    enabled: true
+    host: ""
+    port: 6379
+    existingSecret: redis-credentials
+    existingSecretPasswordKey: password
+
+# Monitoring Configuration
+monitoring:
+  enabled: true
+  
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
+  
+  grafana:
+    enabled: true
+    adminPassword: ""
+    dashboards:
+      enabled: true
+      configMapName: the-new-fuse-dashboards
+  
+  alerts:
+    enabled: true
+    configMapName: the-new-fuse-alerts
+
+# Security Configuration
+security:
+  networkPolicies:
+    enabled: true
+  
+  podSecurityPolicy:
+    enabled: true
+  
+  rbac:
+    enabled: true
+    serviceAccountName: the-new-fuse
+
+# Secrets Configuration
+secrets:
+  # External secrets will be managed by External Secrets Operator
+  externalSecrets:
+    enabled: true
+    secretStore:
+      provider: gcpsm
+      projectId: the-new-fuse
+      auth:
+        workloadIdentity:
+          clusterLocation: us-central1
+          serviceAccountRef:
+            name: the-new-fuse-gsa
+  
+  # Secret names
+  secretNames:
+    database: postgresql-credentials
+    redis: redis-credentials
+    jwt: jwt-credentials
+    ai: ai-credentials
+    aws: aws-credentials
+    firebase: firebase-credentials
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+  
+  hosts:
+    - host: thenewfuse.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: api-server
+        - path: /
+          pathType: Prefix
+          service: frontend
+  
+  tls:
+    - secretName: thenewfuse-tls
+      hosts:
+        - thenewfuse.com
+
+# Service Mesh (Istio)
+serviceMesh:
+  enabled: false
+  istio:
+    enabled: false
+    gateway:
+      enabled: false
+    virtualService:
+      enabled: false
+
+# Backup Configuration
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: "30d"
+  storage:
+    type: gcs
+    bucket: the-new-fuse-backups

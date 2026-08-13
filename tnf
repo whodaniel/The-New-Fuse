@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve REAL location even when called via symlink
+THIS=$(readlink -f "$0" 2>/dev/null || greadlink -f "$0" 2>/dev/null || echo "$0")
+ROOT_DIR="$(cd "$(dirname "${THIS}")" && pwd)"
+
+# Ensure node/pnpm are available
+if [ -z "$(command -v pnpm 2>/dev/null)" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
+  # Try sourcing nvm
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+  # If still missing, add the installed nvm node to PATH directly
+  if [ -z "$(command -v node 2>/dev/null)" ]; then
+    for _nvm_node in "$NVM_DIR/versions/node"/v*; do
+      if [ -x "$_nvm_node/bin/node" ]; then
+        export PATH="$_nvm_node/bin:$PATH"
+        break
+      fi
+    done
+  fi
+fi
+
+# Try corepack if pnpm still missing
+if [ -z "$(command -v pnpm 2>/dev/null)" ] && [ -n "$(command -v corepack 2>/dev/null)" ]; then
+  corepack enable pnpm 2>/dev/null || true
+fi
+
+if [ -z "$(command -v pnpm 2>/dev/null)" ]; then
+  echo "Error: pnpm not found. Install via: corepack enable pnpm" >&2
+  exit 1
+fi
+
+# Resolve from repo root so pnpm does not inspect unrelated package.json files.
+cd "$ROOT_DIR"
+exec pnpm exec tsx "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"

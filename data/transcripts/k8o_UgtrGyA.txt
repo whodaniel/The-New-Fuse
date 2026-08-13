@@ -1,0 +1,790 @@
+People start to trust those agents with
+their credit cards fully. It feels like
+your ownership is definitely gone.
+Imagine you have AGI in the cloud. If
+you can do higher and higher workflows,
+what do you prompt such a system? We see
+this more and more that AI will prompt
+us.
+&gt;&gt; I miss it's a taste of the future.
+&gt;&gt; It's super super important. The agent
+has full control of its own source code.
+Then the agent can just resolve upstream
+changes. So the agent can decide what
+should be done or not. And the agent
+which can directly fix its own harness,
+then development cycle is like 10 times
+faster. So, it's almost like we'll just
+be working on the system more than on
+the business.
+&gt;&gt; Yesterday, we were climbing and I
+thought, "Oh, guys, do you want boritos
+later?" So, I just go to Telegram and
+say, "Okay, order me five burritos."
+Send me a screenshot. Okay, I liked it.
+I say buy and it buys me for me. The
+challenge is then who can describe their
+goals in the most high level abstract
+way. The second variable is the taste.
+Would you swipe left or would you swipe
+right?
+&gt;&gt; It's very magical. This is Magnus
+Mueller, the co-founder and CEO of
+Browser Use, a super popular open source
+framework which lets agents use the
+browser like humans do. In this podcast,
+we talk about why your agent should
+prompt you what the interface for AGI
+will look like and how Magnus runs his
+entire business from Telegram. If you
+want to be on the cutting edge of AI,
+make sure to watch until the end. This
+is the David Andre podcast. Enjoy.
+Right, Magnus, so you're one of the
+co-founders and the CEO of Browser Use.
+What do you think the future of using
+browsers will look like?
+&gt;&gt; I don't use my desktop that much. Like I
+would say most of the time when I'm on
+my laptop, I'm in my browser. But what's
+right now shifting is we launch this new
+thing browser harness like 3 weeks ago.
+It's like a skill which you plug in into
+cloud code or codeex. You basically
+prompt and it controls the browser in a
+way which is very very reliable. Maybe
+it's because you trust cloud code
+already. And this trust now transfers to
+this new harness which we which we
+launched. People started to trust it
+with credit cards. This one person just
+had a parking ticket and just sends a
+picture and then says, "Okay, handle
+this for me." Or sign me up for my
+driver's license. Or my my co-founder,
+he always spends hours and hours
+comparing products online, going to
+Reddit threads, finding like good
+information to find, okay, what are the
+best speakers to buy? And now cloud code
+with browser harness goes through
+Reddit, reads different threads, okay,
+what's the best speaker, compares on
+Amazon, sends some screenshots and he
+feels that this is actually a process
+how he would do it himself. So he starts
+to trust it and this feels very magical
+to me. And by the way, if you want to do
+this yourself and have your AI agent
+automate your shopping securely, I
+created a new custom skill which you can
+just copy paste your AI agent. It's
+available in the first link below video
+including everything else, all the other
+resources we mentioned throughout this
+podcast. Again, it's completely free. So
+go below the video and click the first
+link.
+&gt;&gt; One of the founders of hugging face, he
+told me he didn't find a single task
+which does not work. And so for me right
+now the question is okay what does this
+mean? Because when I started browsers I
+thought if you can control the browser
+reliable with AI then basically our
+startup is is solved and we are the
+biggest company on the planet. But it
+turns out okay it's magical right but it
+still feels okay nothing really changed
+for us. It's now the question okay
+what's what's next? Like what's the
+right interface for this technology?
+What's now the right new interface for
+interacting with the computer? So is
+that just a truth that like change takes
+longer than people expect that humans
+take longer to adapt you know societies
+even longer or is that some other thing
+that this is some different blocker
+maybe still authentication you know cuz
+like payments you you can probably count
+the number of things that are kind of
+missing from agents on the fingers of
+one hand like you mentioned the payments
+which is becoming solved maybe like
+authentication to different um you know
+like they can already click the I'm not
+a robot button right easily maybe like
+creating of accounts like signing to
+emails I don't know do You think there's
+some other major roadblocks?
+&gt;&gt; I I think those are all not the the main
+roadblocks. Like for example,
+authentication we can with browser
+honest it just controls like your real
+local browser. Stealth like the capture
+button like we have a stealth browser in
+the cloud. So if you if you use us from
+Telegram or from the cloud it's it's
+also kind of solved for for most
+workflows which you do online. I think
+the main number one problem is more the
+interface. The question okay what do you
+even want to prompt those agents? Like
+imagine you have AGI in the cloud. If if
+you can do higher and higher workflows,
+what what do you prompt such a system?
+You tell them your goals. Maybe before
+your goal was to change your website a
+bit. But now maybe you don't even care
+about your website anymore. Like what's
+&gt;&gt; need more customers?
+&gt;&gt; Yeah.
+&gt;&gt; Yeah. Yeah. Basically goal is okay is
+solve distribution for me. I was
+thinking about this this problem a lot
+in the last weeks and I came to the
+conclusion the core problem is that you
+have to come up with the prompts. That's
+the number one problem in a new repo
+which you're right now experimenting
+with. We flip this around and we let the
+AI prompt you. By the way, here's the
+part about AI engineering that nobody
+talks about. You want to give cloud code
+access to your database, have it make
+some changes, but it completely fails.
+It doesn't understand your schema. It
+doesn't know what RLS policies you have.
+It knows nothing about your DB. This is
+exactly why Superbase released agent
+skills. With the new Superbase skill,
+you can take any agent like codeex,
+cloud code or cursor and instantly make
+it an expert at working with your DB.
+And the best part is Superbase skills
+are fully open source. You install it
+with one command and the agent gets
+perfect knowledge of Superbase
+documentation so that any SQL change
+happens on the first try without any
+mistakes. It also enforces the patterns
+that matter in production. RLS on every
+expose schema security invokers on views
+and no orphaned migrations. To be
+honest, I wouldn't trust cloud code
+without it. Superbase is building for a
+world where all of your code is written
+by AI agents. They're investing in the
+ecosystem. The skill is fully free and
+open source and it works with every
+major AI agent. So, if you're letting AI
+make changes to your database, please
+install this before your agent does
+something dumb in production. The link
+is in the description. It's free to get
+started and you'll have a more competent
+agent in about 30 seconds. Oh, and thank
+you Superbase for sponsoring this video.
+&gt;&gt; So, we we have this thing where we can
+message with the agent from from
+Telegram and we don't really care about
+the harness here. like you can use cloud
+code, you can use codec just your
+subscription that's not a problem at all
+but basically the interface is telegram
+okay so I can message it from my phone
+and now I just tell it like my higher
+level goal for example make my startup
+successful how it looks like here
+basically the the flow is you first kind
+of connect some of your services okay
+with one click for some Gmail or Slack
+or notion linear GitHub wherever you
+have your contacts and your data and
+then you get like one of those boxes
+okay this is like just a machine which
+runs 24/7 for you. And in here you can
+log in with with codeex or with cloud
+code. Then you connect telegram and then
+you can message your own cloud code
+instance or whatever harness you use
+from here. And now that I have
+everything connected, I basically just
+tell this agent run in a in a loop for
+me. Check every half an hour and make me
+suggestions what you should do for me. I
+basically say I don't want to prompt you
+anymore. Just make me suggestions. For
+example, here it sees my WhatsApp okay
+and sees oh should I respond to this
+person on WhatsApp where I have here one
+channel with growth loops okay where
+basically say okay help me with growth
+and then basically it says here okay
+should I basically suggest me should I
+send a message to client to pitch
+browser harness okay and then I can see
+this this would be the message and I can
+say okay I like this I see browser use
+was there already tool before but I
+basically want to encourage them that
+they should switch browser harness to
+browser use to browser harness. Okay.
+Basically like an update for him. I say
+send now and now I can run my entire
+startup by just clicking buttons.
+&gt;&gt; Yeah. Because I just tell this agent,
+okay, I know last night that it
+suggested me here, I know just how many
+things I I want and basically I tell it
+I just from looking at the message in 3
+seconds I should be able to understand
+what this is about so that I can decide
+yes or no or give more context and I
+really really love this kind of new
+interface because I'm we just need to
+press buttons right and if I see want to
+see more I can see the the source of
+course we can make it like little bit
+nicer but It I think it really really
+changes how the interface looks like
+because the interface is just like
+Tinder basically just like swiping.
+Okay. Yes, do this for me. No, don't do
+this. It's it's it's very magical.
+&gt;&gt; Yeah. I'm wondering what the optimal
+interface looks like, right? Because
+from first principles, it needs to be
+like the best way to convey information
+to the human. And in some ways, these
+messaging apps are already very
+optimized for this. And also, everybody
+has them installed. That's why it's
+convenient. But I'm wondering maybe it's
+maybe it's different. Maybe it's like
+actually like a strategy game where you
+see your like resources, you see your,
+you know, minions, your soldiers and
+your suggestions, notifications, maybe
+like civilization style UI. What do you
+think? Or do you think Telegram is more
+optimal?
+&gt;&gt; Yeah, I I started with Telegram because
+it has already hundred of things in
+build. It's super super nice to go fast,
+you know, to give this in people's hand
+to see is this useful and if it's super
+useful, then I can later change the
+interface like to an app to have more
+control, maybe more like Tinder like
+&gt;&gt; it's amazing
+&gt;&gt; then. Yeah. So the craziest thing which
+it did for me, my co-founder complained
+in Slack that Codeex uses browser use as
+a name inside Codex. It's confusing.
+Okay. Now agency here it's BC monitors
+my Slack and everything. So it suggested
+me, hey, I just saw that your co-ounder
+complained. Should I DM the Codex team
+on on X and on on email if they can
+change your name? Yes, let's do it.
+Right. So it found out, oh this pyite
+person who worked on pyite before um is
+now in the codex team and and send him
+an email. Hey, this is like a little bit
+confusing. Can you rename? Two days
+later, he he sends back, oh yeah, let me
+let me talk to the team. Why exactly do
+you do you need this? Is it like
+confusing or not? I I I I just open my
+email and I see this email from the
+codex guy, right? I'm thinking, okay,
+what what happened here? Like I was
+missing context basically from what my
+agent did. and and it's it's like a
+crazy new feeling because it feels like
+like your ownership is definitely gone.
+You know, like when you send the prompt,
+you feel like the owner of the entire
+thing, but when the agent sends the
+initial prompt, you feel less like the
+owner. You feel more like a employee.
+And it's a very very weird feeling,
+right? You you start to care less. Yes.
+Codex guy replied, "Let me talk to the
+team." And 3 days later, my agent
+prompts me, "Oh, it's resolved. Codex
+renamed to browser. I asked my agent,
+okay, how can this be? Why? And I said,
+sorry, I just saw this one tweet from a
+person where they said that it doesn't
+find browsers anymore and it's called
+browser. I thought, okay, but it's not
+official open eye. Maybe this person
+something up. And so I I I I
+ignored it, right? And then one day
+later, the guy from Codex sent me an
+email and said, "Sorry for a late
+response. We actually renamed it. Thank
+you for your for your message." Right?
+And I just thought, how crazy is this
+that the HBC did this completely on
+itself? decided the goal did the entire
+process and told me before the codex guy
+even told me that it's resolved by
+seeing a random tweet online from
+somebody who couldn't find the browser
+use plugin anymore
+&gt;&gt; yeah I mean it's a taste of the future
+so then yeah as you said the challenge
+is then like who can describe their
+goals in the most high level abstract
+way and then I guess the second variable
+is the taste right like would you swipe
+left or would you swipe right
+&gt;&gt; yeah kind of yeah I would say so the
+high level goal yeah I mean what should
+be a high level goal make my startup
+successful and then just agent and give
+me ideas and make it easier for me to
+understand and and it's it's very
+interesting because now it's a
+psychological game like my agent started
+to suggest me things and I'm just
+thinking okay I don't care about this
+the ideas come from somebody else if
+those ideas come from yourself even if
+it's exactly the same idea you be
+completely behind the idea and say oh
+this is a good idea it's much much
+easier to be behind your own idea than
+behind the idea of the other person and
+so now I need to prompt my agent that it
+should try to convince me why its idea
+is important. So it needs to tell me how
+much impact will this have on my goal
+and it kind of needs to try to negotiate
+with me and it its goal is that I click
+accept, right? So it tries to sell and
+make it super easy for me to understand.
+&gt;&gt; Yeah, it's fascinating. Why did you
+create browser use in the first place?
+Like 10 years ago, I I was automating
+small businesses which I had online and
+I'm the kind of person I would spend 100
+hours automating something which saves
+me one hour. And one day I thought it's
+so painful to create automation scripts
+and then the website changes and your
+script breaks. I thought we just
+automate the automation generating
+process so that you can create scripts
+faster. At this time we were like in in
+Surirk in the university and we were
+living in this co-working space on the
+on the sofa. We were sleeping there
+using the microwave to cook. Rick and I
+at the at the lunch sitting together and
+thought wouldn't it be awesome if you
+can just tell your computer what it
+should do and it does it for you. And we
+thought wow open eye and computer use
+from entropic just launched and we
+thought 100% like they will build this
+like everybody wants this
+&gt;&gt; but we thought how hard would it be to
+just just build it. This is how our
+first like weekend project started
+together.
+&gt;&gt; I mean that's fascinating. A lot of
+people are actually scared of that you
+know open and phobic replacing them.
+What would you say to founders who think
+okay maybe the next generation of models
+would replace this? Like what would you
+say to them?
+Like in the beginning when we started we
+knew okay this is so cool like everybody
+wants to build this so we are sure they
+will build this but just thinking okay
+how hard would it be and then looking
+back if I think like more than a year
+ago when I thought this that they will
+100% do this they did this but I thought
+that they will do it like much much
+better and that it will already work
+much better. So I think it's just if you
+want to see something in reality, I
+think you shouldn't wait for somebody
+else to do it.
+&gt;&gt; Yeah, for sure. And also maybe it's the
+power of a small focused team rather
+than like a big company with, you know,
+many things on their plate
+&gt;&gt; like in our space especially being
+agnostic like we don't really care about
+the harness or the model. You can use
+your Deep Seek or your local model in
+our library. And I think that's that's
+always a big advantage. And
+&gt;&gt; why did you make it open source? For us,
+it was clear Craigger was supposed to do
+his master thesis in Berkeley and and it
+was clear that this is like a side
+project. Just as one weekend, we're like
+working two days into the project called
+it browser use. We thought let's let's
+launch this on Hacker News. Okay. I've
+never launched something successful on
+Hacker News before. And we just said,
+okay, open or private. Oh, for Hecker
+News, okay, it would make sense if it's
+like open. So, we just clicked on on
+GitHub on open was like a two-minute
+decision. But now retrospectively, I
+think all our traction and so on would
+be super super hard to get from like
+just pure closed source. It's just super
+super cool to have this community to
+have people like random people using
+your saying, "Oh, they they tried the
+library or then you get PRs back from
+people." Yeah, I love it a lot.
+&gt;&gt; Yeah. I mean lately, especially this
+year, we've seen a lot more open source
+projects, you know, popping up and going
+super viral. So, do you think like this
+will continue where like more and more
+of the software we use is open source or
+how do you see it? Yeah, like I think if
+you have very very clever AI, let's call
+it AGI, you can turn any software into
+open source, like you will just say,
+"Oh, here's this closed source software.
+Please make it open source for me."
+Because of this, you will see a lot of
+open source software because it will be
+very very easy to create software and
+copy software or make software which is
+closed open.
+&gt;&gt; I see. So basically the advantage is
+being that first open source project and
+kind of becoming in the training data of
+these models. So they like kind of
+default to you and other people can fork
+it and build up of it. No, it's not. I'm
+not sure how much we're in the training
+data. I feel not that much yet. I think
+there's definitely an advantage of being
+first like people want something super
+simple which just works right like for
+example in the beginning of browse now
+read me we had like a video and you
+could very quickly understand how the
+interface looks like how the library
+works and there was a huge advantage
+over like similar libraries which
+already existed at that time because it
+was just super super simple. Yeah, you
+showc people something which didn't
+really work before. And this what made
+people super exciting. And then for
+example, people like you started to make
+videos about it. This was like a a hype
+cycle I would say then around like one
+one year ago where for example I
+recorded like a demo where my AI can
+apply for a job for me. Super ugly demo.
+You could see my phone number and my
+email address. It's like like a gift
+like like not good quality. And I posted
+it and nothing happened to this. Okay.
+Like no one cared. But somehow like 3
+weeks later people started to use this
+demo put into their videos and say oh AI
+can now apply for jobs and because some
+YouTubers did this others also jumped on
+a train and then the whole thing
+exploded. But it's I would say it's
+mainly labeled controversial things.
+Many people started to discuss oh should
+you do this? Do we now need AI to review
+applications and at the same time just
+being at the right time. If you for
+example connect your project for example
+browse use we connected that oh you can
+now use deepseeek with browse use or you
+can now use operator came out or you can
+have free operator in our library.
+&gt;&gt; Yeah. Yeah.
+&gt;&gt; To control the browser. This kind of
+connection to current trends helped us a
+lot in the beginning.
+&gt;&gt; Yeah. So do you think founders need to
+focus more on this like marketing
+distribution rather than just pure
+product?
+&gt;&gt; So two weeks ago we did an experiment
+here in the company where we basically
+told every single team member you have
+like one week and your goal is to create
+a new startup from scratch from zero to
+how much you can get. Okay. And
+basically the goal is that you automate
+the entire process and that your AI can
+make money for you for everybody. It's
+like because all our engineers it's
+super simple to create like something to
+create a prompt to create a website. had
+his live super nice but definitely the
+distribution was for most the hardest
+part where like so the most c creativity
+&gt;&gt; I see okay so you had actually startup
+before right that wasn't as successful
+as browser use what are the main things
+that you learned from that and what did
+you do differently at browser use
+&gt;&gt; I think I'm definitely more excited
+about the idea like before we were
+trying to optimize traffic lights okay
+and I was trying to find meaning in this
+and say oh like we can save so much CO2
+on the world but whenever I was walking
+by a traffic light. I looked at it and I
+felt like I don't so boring. It was not
+really my my heart didn't really fire
+fire up. As I said earlier, I could
+spend 100 hours automating something
+which is completely useless in the end
+just because I I love the process of
+automating something work. This is much
+more fun I would say for for me and that
+helped me yeah I would say a lot in in
+pushing it out or telling other people
+about it and being really behind it. So
+almost like the product founder fit leds
+to the product market fit
+&gt;&gt; maybe. Yeah. Before we were like four
+co-founders. I also cannot recommend
+that like there were and we were not
+100% committed like we were working on
+the side and so we fight like we fight a
+lot between the co-founders. We started
+in a hackathon together like the
+previous startup in a hackathon and so
+it was not a clear decision oh I want to
+co-ound with this person together. It
+was more okay we were won this hackathon
+together. let's just continue working on
+this. This lead down the road to like
+many many conflicts between co-founders.
+I would say the new startup it was
+definitely more more conscious. Okay,
+with whom do I want to do this together?
+&gt;&gt; Yeah, I think a lot of successful people
+VCs you know entrepreneurs they
+recommend at least one or two years with
+the person until you like decide okay
+this is going to be a co-founder cuz you
+know you're going to spend it all day
+every day with that person.
+&gt;&gt; Yeah. In our case like with crack
+actually we did not work before together
+so we were maybe a little bit lucky. I
+think it definitely helps if if you're
+like flexible and I would say pro use
+when we started it of of course we
+hustled like in the beginning a lot and
+I said we we lived in a co-working space
+right we we I washed my clothes where
+homeless people wash their clothes and
+shout in the gym like we literally live
+there definitely what what helps a lot
+like feel like excited together is if if
+you're crowing right if you're crowing
+even if you don't know each other if you
+have rapid growth with a with a stranger
+person together it somehow ties you
+together a lot like in a previous
+startup for example Okay, we were
+working for this for 2 years and zero
+traction, not a single city which really
+give us money or no investors, nothing.
+I think it's super super hard.
+&gt;&gt; So you left Turik for SF, correct?
+&gt;&gt; Yes, we got into YC when one year ago
+that's why we said okay let's do this.
+&gt;&gt; Okay, so I guess let's unpack that
+first. Um Y Combinator, what was your
+main reasoning to join that? The main
+benefit that you saw
+&gt;&gt; felt very natural to me. I I was in SF
+before like my whole life before I was
+just sleeping in co-working spaces and
+building things and and thinking about
+personal development or building
+startups. So it felt very very natural
+to be in this environment of nurture. It
+feels like in Sunday when I go to church
+I'm there with many believers and going
+to SF it feels like going to church. I
+could pray from home alone but I go to
+church because there are like other
+Christians you know and going to SF it's
+just okay other agent builders are are
+here and it's it's kind of obvious.
+&gt;&gt; I see. What is then the difference
+between people who succeed and who
+don't? Like obviously the first thing is
+do you need to have this setup and you
+need to be using it but like you know
+let's assume you have 100 people with
+the same setup. Is it just the taste
+element or like what other variables
+will there be you think in the future
+like once agents can really do
+everything all the work and even like
+the ideation of how to grow the company
+&gt;&gt; basically the core question is okay what
+will be the prompts what do you prompt
+the system
+&gt;&gt; cuz like don't you think like humans are
+still the creators of the original idea
+you know I still think LLMs are like
+really bad at out of the box thinking
+&gt;&gt; I for example this codex thing I mean I
+didn't come up with that that this is
+possible humans we are good in deciding
+And I think taking responsibility for
+something like for example if I sent now
+a message to a cursor I mean I'm still
+somehow behind their message so I take
+responsibility for this and my agent
+would maybe send a completely stupid
+message and they would block me. So this
+is kind of the kind of the definitely
+the taste is in this equation but like I
+like for example the the mission of deep
+mind right they want to solve like
+scientific problems of of humanity. So I
+don't know cancer, biology problems,
+fusion. I mean there are definitely many
+problems which we which we want to solve
+as humanity, right? I guess this is the
+the anchor where you have like an AI
+system which can solve those really
+really hard problems which humans
+couldn't solve so far.
+&gt;&gt; So it's almost like we'll just be
+working on the system more than on the
+business like how can we improve our
+agentic kind of company you know
+structure or
+&gt;&gt; for the for the company itself. Honestly
+I think you define your high level goals
+in this agency system. You say okay
+start start agency in telegram and then
+it asks you okay what's your goal and
+you say okay my goal is to make my
+startup successful and then it starts to
+brainstorm with you and and as you say
+okay no I don't want this in my case it
+stores it all in a skill database so it
+remembers your preferences and remembers
+oh you don't
+&gt;&gt; you don't care about your GitHub PRs but
+you care more about distribution or let
+me suggest let me create your video and
+then ask you should I post this video on
+X for you and I just click yes and then
+it does it and I think It's like for our
+business it's a little bit a context
+issue right but I think when I connect
+Gmail Slack my WhatsApp it has most of
+my context sometimes there are some
+things okay I'm sitting in a car and
+maybe I would love to have a small
+microphone here so it has a bit more
+context
+&gt;&gt; I was thinking the same
+&gt;&gt; it's needed so okay so then between the
+founders themselves like it's probably
+then who understands the world the best
+like who has the best understanding of
+social dynamics of markets of business
+that will probably be the person who
+will win though
+&gt;&gt; I definitely feel in the AI agent space
+right now all the founders we are all
+converging to something similar like
+everybody wants to build the perfect AI
+assistant I would say it gets much much
+more competitive because AI gets so much
+general so you're just overlapping with
+so many more businesses suddenly I
+believe like what I truly believe in is
+me and my team we just live in the
+future and we play with those tools and
+we just experience what problems we face
+living in the future and then we solve
+whatever problems we face. Maybe it's
+right now the interface how suggest me
+things you know
+&gt;&gt; and
+&gt;&gt; by doing this I believe we can create
+something truly magical which people are
+very addicted and what people love by
+doing this process like maybe in 3
+months everybody does this you know now
+for example browse use the main library
+okay it's now mainly inbuilt into the
+main um models definitely but I think by
+living in the future and solving the
+problems that you face in the future if
+you choose to this constantly you can
+always build something useful and
+something magical and push a boundary of
+what's possible.
+&gt;&gt; That's actually a great idea to
+brainstorm startups, you know, like try
+to like really push yourself 3 months, 6
+months from now because if you're like
+10 years from now, then you end up like
+Google Glass, right? Like it's it's just
+too early. The timing isn't quite right.
+And you mentioned like the timing of
+browser use was correct. But you know, 3
+months, 6 months in the future,
+obviously the time is moving differently
+in the AI space. Then you can like
+anticipate issues of things that people
+don't see today. You know, for example,
+like now we have like crazy amount of
+repositories and software at our company
+and it's just like updating everything,
+keeping everything in track, right? It's
+not really it's not really normal for a
+company to have so much internal
+software, especially like coming from
+people who are not even developers,
+right? So there's going to be billion
+dollar startups just figured around that
+like how do you manage you know hundreds
+of GitHub repositories, hundreds of
+front ends, back ends, how do you keep
+everything up to date? How do you manage
+hundreds of agents? What is optimal user
+interface? How do you share skills and
+memory between them? Right? There's like
+a lot of new problems that arise and I
+think
+&gt;&gt; a lot of them are probably like multiple
+billion dollar startups right
+&gt;&gt; yeah for example one problem which I
+right now facing okay everybody has now
+their own 24/7 running bucks okay in our
+case is called bucks everyone gets like
+a machine in the cloud they chat from
+telegram and it's like running in the
+[TRUNCATED]

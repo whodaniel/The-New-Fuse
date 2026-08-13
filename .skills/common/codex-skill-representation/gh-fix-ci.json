@@ -1,0 +1,12 @@
+{
+  "skillName": "gh-fix-ci",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/gh-fix-ci/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/gh-fix-ci/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/gh-fix-ci.json",
+  "status": "present"
+}

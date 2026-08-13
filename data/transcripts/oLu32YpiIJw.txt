@@ -1,0 +1,923 @@
+There's a way to create beautiful
+designs, beautiful websites, beautiful
+apps, beautiful motion,
+&gt;&gt; [music]
+&gt;&gt; and I just learned about it. And it's
+through this thing called Google MD.
+It's using skills, and the entire
+process of this
+&gt;&gt; [music]
+&gt;&gt; is what we explained on this podcast. I
+had my friend Meng To, who's one of the
+best designers I know, come on and share
+his entire workflow to how to create
+jaw-dropping,
+beautiful designs that by the end of
+this episode, you will become a
+designer. You're going to be able to
+create better design than 99.99%
+of this planet. And what does that mean?
+That means that your startup, your idea,
+your app is going to have a higher
+chance of getting people to install it,
+to buy it, to share it. And [music] we
+all can use that, so enjoy the episode,
+and I'll see you in there.
+&gt;&gt; [music]
+&gt;&gt; Meng, welcome back. Second time on the
+pod. Uh by the end of this episode, uh
+what are people going to get out of
+this?
+Google just came out with design.md. And
+this is one way to create a blueprint to
+take one beautiful design,
+whether you made it or not, and then
+spread throughout the all the formats
+and the mediums for your startup idea.
+Right? So, you can turn a beautiful
+design system that is created by a
+master in their craft, like a designer,
+and then you can turn that into motion
+design, a landing page, different
+sections of the landing page, uh mobile
+design, and so on. So, a lot of people
+struggle right now with, you know, this
+idea, you know, they start really strong
+with one shot, and then suddenly they
+get into the the other pages, and they
+suddenly have something uh mo- more more
+generic. So, this is what we're going to
+be learning. I'm going to teach you all
+the tricks,
+remix,
+iterate, uh what is a design system,
+typography, colors, all the things that
+people struggle in design.
+Perfect. In in your world, I feel like a
+lot of people are talking about Design
+MD.
+Uh
+in my world, not that many people are
+talking about it, but they want to be
+able to create jaw-dropping, beautiful
+designs, even if they're not a designer.
+Because they're, you know, we're using
+agents now, and we're building startups.
+We're taking ideas out of our head, but
+you know, we don't want a purple vibe
+coded website or app. We want something
+that's beautiful, that's consistent. And
+so,
+I'm excited for you to explain what
+Design MD is. I'm excited for you to
+explain how you can actually get
+inspired by other designers and use some
+of their systems to create something of
+your own.
+Meng, thank you so much for being
+generous with your sauce and and tactics
+and tips and tricks.
+Uh
+there's no one I look up to more than
+you in this in this regard, so uh thank
+you.
+Yeah, I I just want to mention something
+before we start. People don't realize
+how hard it is to to get the right
+distribution, the marketing.
+And I want to thank you, Greg, because,
+you know, remember the first time I came
+to your podcast, I started with a $3,000
+MRR, and it shot up to $15,000
+MRR just by going to your podcast. And
+obviously, there's a ton of value over
+time. So, you know, to those who don't
+know, like going to, you know, Greg's
+podcast is like the bucket list, like
+the number one thing you want to, uh you
+know, reach towards to. And yeah, I
+prepared presentation,
+you know, slides and all that stuff.
+Because like, you know, Reply just
+introduced slides, and then, you know,
+we started doing uh you know,
+hyperframes, we started doing uh
+uh remotion. So, I prepared all of this.
+As a designer, I feel very strongly
+about this. So, let me just share my
+screen.
+First things first, I realized a lot of
+people are vibe coding their apps.
+They're vibe coding their startup
+marketing and so on.
+Everything I do today,
+including this tool that I'm showing
+you, which is
+my own notion with slides,
+is vibe coded and I made it by myself.
+So,
+I also want to say that all of these
+images
+are all generated using the context of
+the title
+and I'm using
+the new GPT
+image, too.
+So, with that said, you know,
+I prepared the slides and I want to go
+through one by one. What is design.md?
+So, but first of all, you know,
+I just want to also preface on what
+we're going to be discussing, you know,
+the things that I want to teach everyone
+about design and how we get there and
+then we're going to end with a demo.
+So, these are the kind of five main
+points that I want to I want to go
+through.
+And then, we we're going to get started.
+Design, as I mentioned before, design.md
+is just open source and I can find the
+tweet right here. They have a 10-minute
+video. You can watch it. Essentially,
+what it means is that just the same way
+a lot of people
+are using agents.md
+or skill.md
+or soul.md for those who are using cloud
+bot or in in this case is is open cloud
+now. So, basically, this is for
+designers. And if you want to take the
+soul of the design and you want to bring
+that to the agent
+and you want to bring a design system,
+the colors, the typography
+that makes a design beautiful. Well, you
+port it and you put it all into it an MD
+file
+and then you put it into your prompt as
+an attachment and then boom, you have a
+beautiful design. So, this is what
+design.md and you will see
+extremely
+efficient ways
+to use this across multiple medium. Not
+just web design, but also, you know,
+like
+you know, like motion design nowadays
+and slides. So, you know, for example
+Quick break in the pod to let you know
+about a free workshop I'm doing that
+answers some of your biggest questions.
+The first is in the AI age, what are
+some categories that are ripe for
+startup ideas? I'm going to outline a
+bunch of those different categories, the
+ones that I think the most opportunity
+is. Second is there's a million AI tools
+out there, which are the ones that
+matter when I'm trying to build a
+business. I'll walk you through that.
+And lastly, how do you actually build a
+business with some of these AI tools?
+So, I'm actually going to show you live
+how I do this with my ideabrowser.com
+team and I can't wait to see you there.
+It's this Thursday at 12:00 p.m. Eastern
+and if you go to the show notes, if you
+go to the description, you can click a
+link, RSVP, and learn a few things. I
+hope it'll get your creative juices
+flowing and I'll see you back at the
+pod. I'm going to use just some quick
+examples of what I created. So, for
+example
+when you have a design, right? You can
+sort of like take one design
+and using whatever medium, like whether
+it's React or HTML, you can create like
+a
+a nice promo video or you can create
+like a slide.
+And this is all using same DNA,
+which is the design.md.
+So, as you do this, for example, this is
+a slide and this is a promo video. You
+can see that this is two different
+approach to a design.
+And this is the result. And if you want,
+there's a ton of resources
+that allows you to save those design.md.
+So, one of them, obviously, I create
+them myself, but
+they're totally free. You can just
+download them.
+Uh right now, my internet is super slow,
+so
+here you can see
+we have a lot of these design systems.
+And it's essentially just one file. You
+click here, you download it, and it it
+contains all of this visual stuff,
+typography,
+colors, spacing.
+And if you look at the, you know,
+the the markdown itself, if you've used
+markdown, it's essentially a structured
+text with tables, uh titles, and code.
+And you can if you read through all of
+this, you have the weapons
+and the arsenal to essentially prompt
+efficiently.
+And you can sort of commit this to
+memory,
+and then it becomes your design.
+So,
+it's very simple. You add all of this to
+prompt, right? And then be it becomes
+the
+the HTML
+or the design.md. The HTML is more like
+the sort of finished dish.
+And the MD file is more like the recipe.
+The skills
+are like the ingredients. So, you put it
+all together, and it becomes your
+design, which is what I just showed
+earlier.
+And that's a big deal because um you
+know, why like honestly, why I want to
+have you on the pod is
+you know, it's such an advantage to
+to having scroll stopping design like
+the video you shared
+like the the the MP4 there that you
+shared like that was that was beautiful.
+Um
+and
+so I guess my question is
+like how do you if you're not a designer
+coming up with these
+um systems yourself like from scratch is
+really hard. So how do you what's the
+process for
+for for finding
+you know
+for finding
+brands and identities that resonate with
+you.
+Right. So
+you know, coming back to the slide,
+right? Oftentimes
+you know, people they want shots
+something. They saw like a beautiful
+prompt. Yeah.
+&gt;&gt; Oftentimes is bigger than the code. They
+copy and paste that. They have no idea
+how it's done. And they also have no
+leverage on how to change it. So the
+first screen is not the hard part. So
+you know, right nowadays you kind of
+feel like you're the one who's always
+like telling AI what to do and Mhm. you
+don't have control. And the question is
+like how do you solve this problem which
+is a design drift. Okay? You you you
+start something, you're kind of
+satisfied with it, but then you get into
+the stuff and it becomes completely
+different. So that's that's why we need
+design.md.
+And you know, you don't want to end up
+something like this.
+You want to to end up with a system, a
+process
+where you can bring whether it's a
+screenshot, an HTML
+a design.md, or all of those ingredients
+and recipes.
+And back to your question, Greg.
+There's a ton of resources that share
+all of these things. But design.md is
+new. Most places they share a template,
+right? We all know
+you know, like you go to a template
+and obviously I'm taking my mind as an
+example, but you can go to any of the
+templates that you find on Vizzlo,
+Lovable,
+you know, all of these other place
+Framer, Figma community for for people
+who are more familiar with designs. And
+the problem with those is that they are
+highly closed behind the techniques and
+the the rectangles and the pixels of
+Figma or Framer of Webflow.
+But, you know, then how do you tell that
+to an agent?
+And that's the big question. So,
+nowadays you can go to new communities
+that share the actual blueprint, which
+is a design.md. So, for example, I want
+a design that looks like this, that has
+this animation, that has the blue color,
+that has this systems of you know,
+beautiful typography and selections and
+buttons that you know, I don't want
+everything. I don't want the whole
+template. I just want something to start
+with that I can tell my AI
+to start with that and then be
+consistent across the board. Now, if you
+only provide
+a portion of it or something too
+specific, the AI tends to sort of like
+take that too literally.
+But if you provide something more like a
+foundational system, like a process,
+agents.md and what and whatnot, then you
+get something that gives more
+flexibility to your system when you're
+going to be working on new designs or
+new uh
+or you know, you want to be consistent
+across the board.
+Cool. Yeah, I mean, when I see this,
+like first of all, this is
+gorgeous.
+Um
+but what I would want to refrain from is
+like to your point,
+duplicating that and just creating the
+same
+cookie-cutter website, you know, cuz
+there's
+I'm sure you see this all the time. Like
+you you know, you come across a website,
+it's a Shopify, it's a WordPress, it's a
+Framer, it's whatever. And you're like,
+I've seen this website before, right?
+I've seen this website, um but it's
+another brand, right? And that like
+cookie-cutter doesn't work anymore.
+Um
+and it's the same reason like
+you know,
+you go into a a downtown core city and
+like all the buildings look the same,
+right? And and you feel like
+this like hum uh homogeneous cityscapes
+that that are existing now.
+Yeah, I and I fully agree with you.
+Everything is so high, like the baseline
+is so high nowadays, but also the
+baseline is also very generic. What used
+to be wow 5-10 years ago now is generic,
+which is funny because like if you look
+at the purple gradient,
+everyone was like, "Wow, purple
+gradient, I want to use that." But
+nowadays, if you see something with you
+know, purple gradients, you just run.
+Uh so,
+I guess what I'm trying to say here is
+that we have evolved so much and humans
+have a way to solve new problems and to
+adapt. And I think that's the real
+intelligence.
+And so, I think the question nowadays
+for me is how do you deal with taste,
+right? How do you design something? How
+do you make ultra-quick decisions,
+right? To uh take something,
+whether is the ingredients, the recipe,
+the secret sauce. For me, the sweet
+secret sauce is is the design, right?
+Because,
+you know, you don't want people to run
+away from your landing page.
+You don't want them to
+to to to look at your brand and like,
+"Oh this feel like,
+you know, just like the 1,000 startup
+that I've seen over the past week." So,
+if you if you focus on design enough,
+right? If you find these systems that
+you can uh bring to your own system
+that is flexible enough,
+then you can create something way more
+powerful. So, I like to think of design
+at design.md like a design memory.
+And this
+is great because it it it can transfer
+between platform.
+So,
+if you're working in Lovable
+and you like what you've done, or in
+Cloud Design,
+and then you want to
+move it to Figma, or you want to move it
+to
+uh you know, to Cursor,
+or to you know, nowadays I use Code X a
+lot. I know a lot of people use Cloud
+Code, but you can totally do all of that
+stuff because you can carry this this
+design.md, and then you can commit it to
+memory
+by telling your AI, your agent, to
+remember. I mean, I do that all the
+time. Remember this, remember that, and
+I think agents nowadays are are doing a
+pretty good job at um you know, trying
+to remember the workflow that you've
+just done, right? Because that workflow
+is unique to you.
+Like a lot of things that I make
+nowadays, I'm sure it applies to
+everyone out there who's making their
+own apps.
+Uh first of all,
+for me, when I make apps, I look at what
+is
+the moat. What what is something that I
+can do with my app that Notion cannot do
+or Figma cannot do?
+For me, that moat right now is the fact
+that everything is local. So, for
+example, this is all local. And because
+it's local, it it it generates these MD
+files across folders
+and nested folders that I can just open
+in Codex
+and open that folder and and tell my my
+agent, "Look, I have a great a Greg
+Eisenberg uh podcast. I want you to
+prepare
+all of these screens. I want you to
+prepare, you know, 10 sections or 10
+notes or do research." And it has all of
+that knowledge and it can create all of
+those files in one single go. Which I
+think is such a big moat nowadays,
+right? You can't like
+Sure, some tools can do that, but one,
+you have to deal with tokens, you have
+to pay for them, you cannot run locally,
+and you don't have your own workflow
+embedded into it. But nowadays, you have
+something like OpenClaw or or Codex or
+CloudCode that can do all of that, and
+it's so scary how good it is.
+100%.
+So,
+what you know, you mentioned
+uh
+you know, Cloud Design, you mentioned,
+you know, all these different platforms.
+You know, we're talking about Google.
+So, Google Stitch is another one. Like,
+can you show us how we can
+how we can go from, you know, MD file
+plus HTML to creating something?
+Sure. Uh first of all, I just want to
+start with
+sort of like,
+you know,
+getting the MD file, but also
+focusing on the design aspect. Well, for
+me, it's really important, but not
+everyone's going to do that, but I think
+it makes sense to start with that. So,
+for example, you know, I don't know if
+you know Variant. Variant is also very
+good. Yeah, uh variant.com.
+Uh,
+you know, I like tools like this because
+they allow me to get into the sort of uh
+uh creative stage, which I think is
+incredibly important. And essentially
+what you want to do is just to remix,
+you know, click one button, remix, click
+one button, remix. You find something
+that you like, you remix, and so on and
+so forth. So, that's why, you know, for
+me, as someone who built Aura, I also
+find it incredibly enticing. So, I go to
+community, right? And I find something
+that I like, and uh you know, I just I
+just remix it uh really quickly. In one
+click, I I have a bunch of skills. Like
+I mentioned before, skills are like
+ingredients. And, you know, if you go to
+to to some of these skills, you're going
+to see that some of them are so so
+powerful. And this is your moat in
+design because you don't want to look
+generic. You don't want to have purple
+gradients. So, the only way to do that
+is, for example, you you create a skill
+for lasers. Okay, so I know it sounds
+funny, but whenever I create a landing
+page with lasers, everyone clicks on it.
+I don't know why, but people love it so
+much because they love special effects,
+right? You go to a movie, what, you
+know, you want to see special effects,
+you want to see, you know, the Avengers
+kind of, you know, doing these grand
+things. So,
+that's the moat, right? Like, nowadays,
+just having the typography,
+just having the colors is not enough
+unless it's a secondary page or unless
+it's something that is very serious.
+But, if you're talking about a landing
+page or a promo video or, you know, a
+slide, you need a moat. So,
+uh yeah, you know, like, remix super
+fast, blah, you know, like
+uh you're going to remix this, click one
+button, you know, and then do that until
+you're happy. Once you're done with that
+with that flow, then you get into the
+prompt, right? So, each skill has a
+prompt, so you can copy this.
+And anything all of that stuff like
+design.md skills are free. And this is
+not why you should be paying money. You
+pay money because of tokens. You pay
+money for the finished result such as a
+template. Um and sort of like the whole
+sort of uh
+automation and whatnot.
+So,
+you know, you're going to go to a a
+template, you know, like uh I don't
+know. Let let's go to to this one.
+And and then
+you're going to download both the HTML
+and the design.md. The reason why I'm
+saying HTML is that's you know,
+design.md may not hold all the
+information that that you need to to
+create your first result. It does hold
+sort of like the typography, the
+foundation, the spacing. Some of them,
+including my own, holds also the WebGL,
+which I find For those who don't know,
+WebGL is the animation that powers the
+laser, right? Without WebGL or 3.js,
+which is for 3D, you don't have any of
+that stuff. You only have the typography
+and some of the reveal animations and
+some of the rules. So, that's why these
+two elements here for me is really
+important, and that's what gives you
+these beautiful animation that makes
+your site a lot more unique. It goes
+from, you know, 0 to 50 or 50 to 80 real
+fast. And so, yeah, I would download the
+two of them. And you know, back to here,
+so we're already at the demo, so I might
+as well show you guys.
+On Aura, you can go to design.md.
+This is what where you're going to find
+all of this stuff.
+The design.
+And then you you take something that you
+like
+and you add it to your prompt. So, the
+same way that I download design.md and
+HTML, I add it to my prompt and now I'm
+ready to to tell what I want for my
+landing page. So, for example, I can say
+something like Okay, create a landing
+page
+for my startup called, you know,
+uh
+I don't know, like Aura. And uh
+I don't know, really original. So, and
+then it's going to be a chat app that
+is, um,
+you know, that that is using AI and that
+ships stuff to people, uh,
+to their email, whatever.
+So, let's see what it does. Okay.
+So, now we have the design.md, we have
+the HTML, and then we we're just going
+to create it.
+Let's hope for the best, but, uh, you
+know,
+it's quite This This obviously you don't
+have to use Aura, you can just use
+whatever tool that you want. I just
+wanted to show you that that's
+essentially what you're supposed to do.
+You download the two files or just the
+design.md, however you want that to be.
+And then you start creating your, uh,
+your page, uh, through that uh system.
+And from there, you can generate more,
+you know, elements, more sections, more
+uh, because you have the design.md
+always with you. And also, you can bring
+that to another platform. It's not
+specific to one platform. And what's
+your take on Google's uh Google Stitch?
+I have I haven't gone deep in it.
+Right. So,
+for me, honestly,
+as someone who builds a startup using
+tokens,
+you know, it's it's really unfair, to be
+honest, because they they're they're
+able to give all of these stuff for
+free.
+And I just realized you know what? Like
+I spent almost half a million dollars in
+token for my startup right now.
+Right? It's it's insane. So, yeah, you
+can do basically the same thing.
+Uh I don't know if this is the correct
+one.
+But, you know, like uh create the
+landing page
+for Aura and uh
+you know,
+you're going to select web and you're
+going to select uh 3.1.
+Now,
+what makes it different is that it has
+an infinite canvas.
+Oh, I don't know what's going on here,
+but um
+it's it's also doing stuff differently.
+And this this concept of like attaching
+design IMD, which I feel very strongly
+about,
+is still like new to a lot of platforms.
+So, as someone who works in AI, your
+mode is basically you have to be new,
+you know, you have like I I don't I'm
+sure anyone can relate, but
+you always when there's a new model that
+comes, you have to talk about it.
+Otherwise, you're kind of losing a lot
+of that sort of edge that you have all
+over all of these companies. So, uh the
+same way with tools, you
+you know, and and the same way when you
+build a startup, you have to
+utilize all the best technologies and
+tools.
+And in this case, we're using a design
+that I'm doing. It's recreating exactly
+that foundation that we saw on Aura.
+And you know, it's going to create the
+same consistent design
+whether it's from here
+or on Aura. In this case, I used two
+different designs, so that's why we have
+two different designs, but if you know,
+in this case I'm using Aura list and the
+other one I used the one that I I I
+clicked earlier. But, you know, here I
+can just say, you know, create the
+footer and it's going to create like add
+the footer and it's just going to create
+the footer. But you can see the design
+using this technique gives me exactly
+what I want. It also uh you know, it
+also adapted to my to my design to my
+brand to my copywriting. And then from
+here you can use skills, right? Like for
+example, I I love to use skills like um
+if you go to skills, copywriting skill.
+So, this is going to uh improve your
+copy by 100%. You know, it's going to
+look at your uh text and it's going to
+to make it uh so much better. So, uh
+skills, design at MB, HTML,
+uh all of these things if if you uh
+merge all of them and blend all of them
+together, you create something really
+really powerful. And you know, to
+visualize all of this uh you know, this
+is a new tool that I built which is
+called new form. You know, you can sort
+of like in one click I turn this
+you know,
+which is a motion design, right? I go to
+prompt
+and I have all of these skills that I
+already saved.
+And then I can just click oh, I want
+laser. I'm going to click on laser. And
+then you know, I can just create another
+one and another one. So, I love that the
+idea of queuing which is why we have a
+different products is because like
+queuing is is such a powerful idea that
+I use all the time. I'm nowadays I
+create like three, four products at the
+same time. I have like multiple chats
+with sub agents on on across all of
+them. So, that's why you know, I I
+wanted to create something way more
+focused on the creative aspect. And on
+top of that we also have the mix type.
+Again, all of these are prompts by the
+way. Like I'm not I'm not like uh you
+know, keeping anything behind closed
+doors. You don't have to use my tools at
+all. But you know, I just wanted to show
+you visually how how it is like
+to turn something into mobile, right?
+Or, you know, if I go here to mobile,
+you're going to see that I have
+turned my designs into mobile design.
+Beautiful.
+&gt;&gt; I mean,
+if you look at this, it's hard to tell
+if this is made by a human or by AI, but
+I can guarantee you 100% that this was
+made by AI. And from here, I can just
+say, "Okay, I want a slide deck. Okay, I
+want, you know, uh a motion design. I
+want the hero section of you know, and
+then I'm doing six design at the same
+time, which is
+so good, so good for the creativity.
+It kind of reminds me of how Midjourney
+works.
+You know, on Midjourney, you kind of
+I haven't used Midjourney in like a year
+and a half, maybe, but like that
+[clears throat] that concept around you
+can like generate multiple things. And
+what's really cool about this is like
+you get into this flow state of like,
+"Okay, I want this. I want that. I'm
+going to queue this up." And it's really
+fun.
+I I agree. Like, the concept of queuing
+is not new, per se. I'm I'm just saying,
+you know,
+a lot of the things that we do,
+see here, it just transformed into
+mobile. And a lot of the things we do
+can just be transferred so easily
+because we have this this concept of
+like skills and design.md, right?
+&gt;&gt; Yeah. So, you know, one of your guests,
+for example, was talking and he's he
+calls himself like a a skills maxi,
+which I find it really funny, because I
+totally agree. Like, for me, I don't put
+anything in my agents.md,
+because I have my design.md, would I
+which I use per project, and then I have
+my skills, which I use per workflow. And
+if you only change the agent.md, often
+times, you know, first of all, it costs
+a lot more tokens, but also it's too
+general. Like it doesn't apply to every
+single workflow out there. So here I I
+added the laser.
+And here I turn it into a slide.
+You know, like again, it's so so fun to
+uh queue and to sort of like expand your
+creativity across all of this stuff. So
+you have something like oral lovable V0,
+which allows you to chat and sort of
+like evolve into something into a
+product. But I think what people sort of
+underestimate a lot is the design
+aspect, which is, you know, how do you
+come up with new sections that are
+unique? Right? How do you uh
+you know, work on the creativity and how
+do you learn about all of this stuff?
+Because if you don't
+learn this stuff, you know, you're just
+focusing so much on the chat and you're
+just chat chatting chatting and then
+giving commands and the AI AI do all the
+work for you, then you're not making any
+decision or at least you're not making
+the best decision for your product. Um
+can you quickly go back? I'm just
+curious more than anything like the
+skill section of new form, I think it's
+called.
+Yes.
+&gt;&gt; Like it's what happens when I click
+there?
+Yes. So you have access to Right now we
+have 63 skills, but I'm adding more
+every day. So for example, you have a
+skill for skeuomorphic design. For those
+who don't know, skeuomorphic design is
+kind of like the the realistic design
+that Apple used to use before the flat
+design.
+And it's a prompt. It's just a prompt.
+And you can copy this prompt and you can
+just tell your agent to use
+uh you know, to use the skill
+and then to apply that. So for example,
+you're going to have something a little
+bit more
+embossing, you know, something like like
+uh this design for example.
+You know, it has
+some of these, you know, shading and
+stuff like that. A lot of people still
+love that. I love that when it makes
+sense. For example, if you do like a DJ
+app, you might want something with a
+little bit more realistic. You want a a
+button that is lickable as Steve Jobs
+says. Well, yeah, you need a
+skeuomorphic design, right? And we also
+have a skill for
+you know, for the 3D.
+So, you know, this this little globe
+here that you put, well, that's 3D and
+then you can move that on top of the
+text which makes it look really nice.
+So, a lot of like every skill
+can be anything, you know, it can be
+like a badge design.
+Uh
+like this one.
+And you can have
+Yeah, all of these are also copyable.
+So, for example, if you only want just
+the colors, you can just copy the colors
+or you just want the typography. So, not
+only do you learn how to sort of like
+add to your arsenal all of these
+keywords that you did. What is font
+smoothing? What is sound font? What is
+system font? What is a a body font or
+what is the secondary color? What is a
+secondary button? So, all of these
+things are really useful when you, you
+know, chat with your AI agents. And you
+know, sometimes I condense it into just
+one word. Okay, fix the spacing, fix the
+gap, you know, fix this, fix that. And
+it it's just so powerful to know all of
+this stuff because it's all part of the
+design.md and it it holds so much
+richness
+to how you can manage your design.
+And it must be cool for you because
+you've been
+you know, you've been teaching designers
+for years now and these are you know,
+mostly
+I mean,
+trained designers. Now, anyone
+is a designer.
+That's such a good point, honestly. Um
+you know,
+when when I first started, nobody was
+using like most designers were not
+coding.
+And nowadays everyone is coding
+including non-designers.
+Uh you know, before like 10 20 years ago
+everyone was using Photoshop and then
+Sketch and then Figma.
+But nowadays everyone is a designer and
+everyone is kind of like downloading a
+template on HTML or design.md and then
+suddenly they have the most beautiful
+landing page.
+Sure they one-shot it. Sure they don't
+know how to change it or make it better,
+but they still have an amazing one-shot.
+You know, one-shot
+prompt. Uh but what I want to teach here
+is the whole workflow so that you don't
+end up with just a one-shot shot thing.
+And how do you You know, can you guess
+how many prompts that I used to build
+these products?
+Just give me a number. How many prompts
+do you think I used?
+It's definitely not one-shot.
+I don't know, a couple dozen.
+Couple dozen, 20, 25.
+At least a thousand.
+Yes.
+This is how obsessive one can be
+&gt;&gt; Wow. when it comes to creating. Yes.
+Like I'm building four products right
+now.
+Uh you know, Aura, Newform. Well, this I
+do
+[TRUNCATED]

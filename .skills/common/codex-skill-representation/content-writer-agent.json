@@ -1,0 +1,12 @@
+{
+  "skillName": "content-writer-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/content-writer-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/content-writer-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/content-writer-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "out",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node", "vscode"],
+    "paths": {
+      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
+      "@the-new-fuse/auth": ["../../packages/auth/dist"],
+      "@the-new-fuse/data": ["../../packages/data/dist"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "out", "dist", "**/*.test.ts"]
+}

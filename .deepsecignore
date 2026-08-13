@@ -1,0 +1,23 @@
+# Deep Sec scan exclusions for TNF monorepo
+# Keep scan fast by skipping non-source trees
+
+node_modules
+.git
+build
+dist
+.live
+.next
+coverage
+.tnf
+*.lock
+*.log
+
+# Archive/draft directories
+archive
+drafts
+*.bak
+
+# Large fixture/test data
+**/fixtures/**
+**/mocks/**
+**/__snapshots__/**

@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-analytics-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-analytics-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-analytics-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-analytics-agent.json",
+  "status": "present"
+}

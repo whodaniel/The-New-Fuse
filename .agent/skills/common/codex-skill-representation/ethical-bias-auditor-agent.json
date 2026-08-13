@@ -1,0 +1,12 @@
+{
+  "skillName": "ethical-bias-auditor-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/ethical-bias-auditor-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/ethical-bias-auditor-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/ethical-bias-auditor-agent.json",
+  "status": "present"
+}

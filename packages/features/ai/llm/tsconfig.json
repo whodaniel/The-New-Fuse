@@ -1,0 +1,23 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "composite": true,
+    "types": ["react", "node", "jest"],
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*", "components*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"],
+  "references": [
+    {
+      "path": "../../../core"
+    },
+    {
+      "path": "../../../types"
+    }
+  ]
+}

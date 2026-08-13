@@ -1,0 +1,5 @@
+version: 1
+interface:
+  display_name: TNF Master Clock Sync
+  short_description: Sync TNF loops with master clock cron protocols.
+  default_prompt: Map and operationalize TNF self-improvement loops into master clock cron execution with verification and escalation.

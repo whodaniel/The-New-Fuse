@@ -1,0 +1,222 @@
+import { LucideIcon } from 'lucide-react';
+import React, { ReactNode } from 'react';
+
+interface GlassCardProps {
+  children: ReactNode;
+  className?: string;
+  icon?: LucideIcon;
+  title?: string;
+  subtitle?: string;
+  gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
+  hover?: boolean;
+  onClick?: () => void;
+}
+
+const gradientClasses = {
+  blue: 'from-blue-500 to-blue-600',
+  purple: 'from-purple-500 to-purple-600',
+  green: 'from-green-500 to-teal-600',
+  orange: 'from-orange-500 to-red-600',
+  pink: 'from-pink-500 to-purple-600',
+  cyan: 'from-cyan-500 to-blue-600',
+};
+
+/**
+ * Premium Glassmorphism Card Component
+ * Provides consistent glass effect styling across the platform
+ */
+export const GlassCard: React.FC<GlassCardProps> = ({
+  children,
+  className = '',
+  icon: Icon,
+  title,
+  subtitle,
+  gradient = 'blue',
+  hover = true,
+  onClick,
+}) => {
+  const hoverClasses = hover
+    ? 'hover:bg-transparent/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300'
+    : '';
+
+  const cursorClass = onClick ? 'cursor-pointer' : '';
+
+  // Add default padding only when icon/title is used (backwards compat), otherwise caller must provide
+  const defaultPadding = Icon || title ? 'p-4' : '';
+
+  return (
+    <div
+      className={`backdrop-blur-2xl bg-transparent/2 border border-white/8 rounded-md shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] ${defaultPadding} ${hoverClasses} ${cursorClass} ${className}`}
+      onClick={onClick}
+      role="region"
+      aria-labelledby={title ? `${title}-heading` : undefined}
+    >
+      {(Icon || title) && (
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+          {Icon && (
+            <div
+              className={`w-10 h-10 rounded-md bg-gradient-to-br ${gradientClasses[gradient]} flex items-center justify-center`}
+            >
+              <Icon className="w-5 h-5 text-white" />
+            </div>
+          )}
+          {title && (
+            <div>
+              <h3 className="text-xl font-bold text-white">{title}</h3>
+              {subtitle && <p className="text-sm text-gray-400">{subtitle}</p>}
+            </div>
+          )}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+};
+
+/**
+ * Stats Card for displaying key metrics
+ */
+interface StatsCardProps {
+  label: string;
+  value: string | number;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  icon?: LucideIcon;
+  gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
+  trendPct?: number;
+  sparkline?: number[];
+}
+
+const Sparkline: React.FC<{ values: number[]; positive?: boolean }> = ({ values, positive }) => {
+  if (!values.length) return null;
+  const max = Math.max(...values, 1);
+  const points = values
+    .map((value, index) => {
+      const x = (index / Math.max(values.length - 1, 1)) * 100;
+      const y = 100 - (value / max) * 100;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <svg viewBox="0 0 100 24" className="w-20 h-6" aria-hidden>
+      <polyline
+        fill="none"
+        stroke={positive === false ? '#f87171' : '#34d399'}
+        strokeWidth="2"
+        points={points}
+      />
+    </svg>
+  );
+};
+
+export const StatsCard: React.FC<StatsCardProps> = ({
+  label,
+  value,
+  change,
+  changeType = 'neutral',
+  icon: Icon,
+  gradient = 'blue',
+  trendPct,
+  sparkline,
+}) => {
+  const changeColorClass = {
+    positive: 'text-green-400',
+    negative: 'text-red-400',
+    neutral: 'text-gray-400',
+  }[changeType];
+
+  return (
+    <GlassCard gradient={gradient} className="relative overflow-hidden p-4">
+      {/* Gradient overlay */}
+      <div
+        className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl pointer-events-none`}
+      />
+
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-4">
+          <p className="text-sm font-medium text-gray-400">{label}</p>
+          {Icon && (
+            <div
+              className={`w-10 h-10 rounded-md bg-gradient-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
+            >
+              <Icon className="w-5 h-5 text-white" />
+            </div>
+          )}
+        </div>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="text-2xl sm:text-4xl font-bold text-white">{value}</p>
+          {typeof trendPct === 'number' ? (
+            <span
+              className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                trendPct >= 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300'
+              }`}
+            >
+              {trendPct >= 0 ? '+' : ''}
+              {trendPct.toFixed(1)}%
+            </span>
+          ) : null}
+        </div>
+        {sparkline && sparkline.length > 1 ? (
+          <div className="mb-2">
+            <Sparkline values={sparkline} positive={(trendPct ?? 0) >= 0} />
+          </div>
+        ) : null}
+        {change && <p className={`text-sm ${changeColorClass}`}>{change}</p>}
+      </div>
+    </GlassCard>
+  );
+};
+
+/**
+ * Action Card for quick actions
+ */
+interface ActionCardProps {
+  title: string;
+  description: string;
+  icon: LucideIcon | React.ReactElement;
+  gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan' | string;
+  onClick?: () => void;
+  children?: ReactNode;
+}
+
+export const ActionCard: React.FC<ActionCardProps> = ({
+  title,
+  description,
+  icon,
+  gradient = 'blue',
+  onClick,
+  children,
+}) => {
+  // Check if icon is a React element or a component
+  const IconComponent = React.isValidElement(icon) ? null : (icon as LucideIcon);
+  const iconElement = React.isValidElement(icon) ? icon : null;
+
+  // Check if gradient is a custom class or predefined
+  const isCustomGradient =
+    gradient && !['blue', 'purple', 'green', 'orange', 'pink', 'cyan'].includes(gradient);
+
+  return (
+    <div
+      className={`backdrop-blur-2xl bg-transparent/2 border border-white/8 rounded-md shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-4 hover:bg-transparent/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        {(IconComponent || iconElement) && (
+          <div
+            className={`w-10 h-10 rounded-md bg-gradient-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
+          >
+            {IconComponent ? <IconComponent className="w-5 h-5 text-white" /> : iconElement}
+          </div>
+        )}
+        <div>
+          <h4 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
+            {title}
+          </h4>
+          <p className="text-sm text-gray-400">{description}</p>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+};

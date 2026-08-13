@@ -1,0 +1,16 @@
+{
+  "name": "cloudflare-openclaw-runtime",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240228.0",
+    "typescript": "^6.0.2",
+    "wrangler": "^4.0.0"
+  }
+}

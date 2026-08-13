@@ -1,0 +1,12 @@
+{
+  "skillName": "figma",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/figma/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/figma/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/figma.json",
+  "status": "present"
+}

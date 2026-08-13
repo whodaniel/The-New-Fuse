@@ -1,0 +1,97 @@
+{
+  "pass": "Tier C expanded (rest of curated docs, blast-radius 8KB head per file)",
+  "head": "befcc140e847",
+  "files_scanned_docs": 1236,
+  "files_scanned_apps": 802,
+  "files_scanned_packages": 404,
+  "patterns": {
+    "next_gen_slug": 7,
+    "legacy_fuse_git": 12,
+    "node22_claim": 2,
+    "ts54_claim": 3,
+    "electron_desktop_path": 25,
+    "airtable_adapters": 2,
+    "mit_leaning_badge": 0,
+    "control_plane_contracts_doc": 2,
+    "agent_coordination_proprietary": 0,
+    "orchestrate_top_level": 1,
+    "mcp_client_fictional": 1,
+    "harness_class_fictional": 0,
+    "agent_class_fictional": 0
+  },
+  "sample_files_per_pattern": {
+    "next_gen_slug": [
+      "docs/REPO_SEPARATION.md",
+      "docs/lineage/REPO_PARITY_the-new-fuse-next-gen.md",
+      "docs/lineage/REPO_LINEAGE.md",
+      "docs/consolidation/PUBLIC_DISTRIBUTION_AND_PERSONAL_RUNTIME.md",
+      "docs/protocols/reports/DOC_AUDIT_COHESION_REPORT_2026-07-14.md",
+      "docs/protocols/reports/DOC_AUDIT_POLICY_CLASSIFICATION_2026-07-14.md",
+      "docs/protocols/reports/DOC_AUDIT_ACT_VERIFICATION_2026-07-14.md"
+    ],
+    "legacy_fuse_git": [
+      "docs/README.md",
+      "docs/GETTING_STARTED.md",
+      "docs/archive/PUSH_INSTRUCTIONS.md",
+      "docs/security/SECURITY-CLEANUP-SUMMARY.md",
+      "docs/development/guide.md",
+      "docs/agents/_archive/development-guide.md",
+      "docs/architecture/MONOREPO_ARCHITECTURE.md",
+      "docs/getting-started/_archive/installation.md",
+      "docs/lineage/REPO_PARITY_fuse.md",
+      "docs/guides/COMPLETE-INTEGRATION-SETUP-GUIDE.md",
+      "docs/guides/installation.md",
+      "docs/_archive/redundant-near/2026-03-24/security/SECURITY-FIXES-SUMMARY.md"
+    ],
+    "node22_claim": [
+      "docs/_archives/2024-migration/CODEBASE_PERFECTION_SUMMARY.md",
+      "docs/protocols/reports/DOC_AUDIT_POLICY_CLASSIFICATION_2026-07-14.md"
+    ],
+    "ts54_claim": [
+      "docs/archive/EMERGENCY_FIXES_COMPLETE.md",
+      "docs/archive/HANDOFF_NEXT_SESSION.md",
+      "docs/protocols/reports/DOC_AUDIT_POLICY_CLASSIFICATION_2026-07-14.md"
+    ],
+    "electron_desktop_path": [
+      "docs/TNF_CONTEXT_INGESTION_REPORT.md",
+      "docs/BROWSER_HUB_IMPROVEMENT_SESSION.md",
+      "docs/README.md",
+      "docs/COMPONENT_AUDIT_REPORT.md",
+      "docs/_archives/2024-migration/BLOCKCHAIN_IMPLEMENTATION_COMPLETE.md",
+      "docs/_archives/2024-migration/BRANCH_MERGE_ANALYSIS_CORRECTED.md",
+      "docs/_archives/2024-migration/BRANCH_MERGE_ANALYSIS.md",
+      "docs/_archives/2024-migration/CODEBASE_ANALYSIS_COMPREHENSIVE.md",
+      "docs/_archives/2024-migration/DEPLOYMENT_COMPLETE_SUMMARY.md",
+      "docs/analysis/browsermcp-test-results.md",
+      "docs/analysis/framework-cohesion-analysis.md",
+      "docs/archive/FINAL_VICTORY_REPORT.md",
+      "docs/archive/electron-browser-hub/BROWSER_HUB_PROGRESS.md",
+      "docs/archive/electron-browser-hub/browser-hub-access.md",
+      "docs/archive/electron-browser-hub/BROWSER_HUB_AUDIT_REPORT.md",
+      "docs/archive/deployment/FULL_LOOP_STATUS.md",
+      "docs/development/TEST_FEATURES.md",
+      "docs/_archive/2024-deployment-reports/CLOUD_RUNTIME_SERVICES.md",
+      "docs/_archive/2024-migrations/CHAKRA_MIGRATION_PROGRESS_REPORT.md",
+      "docs/_archive/redundant/2026-03-24/docs/_archives/2024-migration/FRAMEWORK_COHESION_ANALYSIS.md",
+      "docs/_archive/2024-pre-restructure/migration-docs/CHAKRA_COMPLETE_AUDIT.md",
+      "docs/_archive/2024-pre-restructure/migration-docs/CHAKRA_MIGRATION_REMAINING.md",
+      "docs/_archive/2024-pre-restructure/migration-docs/CHAKRA_MIGRATION_STATUS.md",
+      "docs/_archive/2024-consolidation-phase/REFACTORING_COORDINATION.md",
+      "docs/_archive/2024-consolidation-phase/build-order-analysis.md"
+    ],
+    "airtable_adapters": [
+      "docs/REACT_AIRTABLE_CLONE_MIGRATION_SUMMARY.md",
+      "docs/migration/kanban-board.md"
+    ],
+    "mit_leaning_badge": [],
+    "control_plane_contracts_doc": [
+      "docs/REPO_SEPARATION.md",
+      "docs/protocols/reports/DOC_AUDIT_ACT_VERIFICATION_2026-07-14.md"
+    ],
+    "agent_coordination_proprietary": [],
+    "orchestrate_top_level": ["docs/lineage/REPO_PARITY_fuse-mirror.md"],
+    "mcp_client_fictional": ["docs/protocols/MCP-COMPLETE-GUIDE.md"],
+    "harness_class_fictional": [],
+    "agent_class_fictional": []
+  }
+}

@@ -1,0 +1,1146 @@
+[
+  {
+    "id": "cluster_verified-documentation **agent:** agent-doc-assimilator",
+    "label": "verified-documentation **Agent:** AGENT-DOC-ASSIMILATOR",
+    "items": [
+      {
+        "id": "doc-docs-agents-and-protocols-agent-development-guide",
+        "content": "Verified Doc: docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-project-readme",
+        "content": "Verified Doc: Project README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-guides-deployment-guide",
+        "content": "Verified Doc: docs/guides/deployment-guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-monorepo-architecture",
+        "content": "Verified Doc: Monorepo Architecture",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-protocols-mcp-complete-guide",
+        "content": "Verified Doc: docs/protocols/MCP-COMPLETE-GUIDE",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-deployment-guide",
+        "content": "Verified Doc: Deployment Guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-apps-cloud-sandbox-readme-md",
+        "content": "Verified Doc: apps/cloud-sandbox/README.md",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-tnf-command-map",
+        "content": "Verified Doc: TNF Command Map",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-mcp-complete-guide",
+        "content": "Verified Doc: MCP Complete Guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-cloud-migration-blueprint",
+        "content": "Verified Doc: CLOUD_MIGRATION_BLUEPRINT",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-build-status",
+        "content": "Verified Doc: Build Status",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-redis-migration-guide",
+        "content": "Verified Doc: Redis Migration Guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-tnf-openclaw-cloudflare-mirror-plan",
+        "content": "Verified Doc: TNF OpenClaw Cloudflare Mirror Plan",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-vision-bridge--mirror-",
+        "content": "Verified Doc: Vision Bridge (Mirror)",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-security-readme",
+        "content": "Verified Doc: Security README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-apps-backend-readme-md",
+        "content": "Verified Doc: apps/backend/README.md",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-build-guide",
+        "content": "Verified Doc: Build Guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-project-management-production-readiness",
+        "content": "Verified Doc: docs/project-management/PRODUCTION_READINESS",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-apps-chrome-extension-readme-md",
+        "content": "Verified Doc: apps/chrome-extension/README.md",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-standards",
+        "content": "Verified Doc: Standards",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-testing-readme",
+        "content": "Verified Doc: Testing README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-optimization-summary",
+        "content": "Verified Doc: Optimization Summary",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-architecture-architecture-standards",
+        "content": "Verified Doc: docs/architecture/ARCHITECTURE_STANDARDS",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-security-readme",
+        "content": "Verified Doc: docs/security/README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-tnf-llvm-prospectus",
+        "content": "Verified Doc: TNF LLVM Prospectus",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-quick-start-guide",
+        "content": "Verified Doc: QUICK_START_GUIDE",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-production-readiness",
+        "content": "Verified Doc: Production Readiness",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-architecture-monorepo-architecture",
+        "content": "Verified Doc: docs/architecture/MONOREPO_ARCHITECTURE",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-agent-development-guide",
+        "content": "Verified Doc: Agent Development Guide",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-antigravity-devtools-setup",
+        "content": "Verified Doc: Antigravity DevTools Setup",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-home",
+        "content": "Verified Doc: Docs Home",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-getting-started",
+        "content": "Verified Doc: docs/GETTING_STARTED",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-testing-best-practices",
+        "content": "Verified Doc: docs/testing/BEST_PRACTICES",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-tnf-network-skill-usage",
+        "content": "Verified Doc: TNF Network Skill Usage",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-tnf-agent-deployment-strategy",
+        "content": "Verified Doc: TNF Agent Deployment Strategy",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-readme",
+        "content": "Verified Doc: README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-audit-findings",
+        "content": "Verified Doc: Audit Findings",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-best-practices",
+        "content": "Verified Doc: Best Practices",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-performance-readme",
+        "content": "Verified Doc: Performance README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-performance-readme",
+        "content": "Verified Doc: docs/performance/README",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-apps-frontend-readme-md",
+        "content": "Verified Doc: apps/frontend/README.md",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-getting-started",
+        "content": "Verified Doc: Getting Started",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-apps-api-readme-md",
+        "content": "Verified Doc: apps/api/README.md",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "doc-docs-development-build-guide",
+        "content": "Verified Doc: docs/development/BUILD_GUIDE",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_legacy-video-analysis",
+    "label": "legacy-video-analysis",
+    "items": [
+      {
+        "id": "legacy-1rq6lr235hLh4-WX-eg7MgFRmk-h5fPbl",
+        "content": "Professor Stefano Albrecht introduces Multi-Agent ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1SSkkcU75sKwLNKLGvuEyauuER2QEOctd",
+        "content": "This interview features Jordan (Poopy), a co-found",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1fxIgwKD0yIIxK7M8jzu1z4exPvRtZ5S5",
+        "content": "Biochemist Nick Lane discusses his theory on the o",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1k8akgdZnJUOQIg6HqOS1245-wb2l_Uaf",
+        "content": "This video provides a comprehensive roundup of a m",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1chVuHi_0h2uT6LqLjzEwrcP_PgCGYGJ6",
+        "content": "This video introduces BabyAGI 2",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1YoQ3yBT995wGt7mJeOWwnY8wZqGdWSib",
+        "content": "George Carlin delivers a satirical critique of Ame",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1IgVG49I6dRKxSXReJNPU5qytHQOyea4o",
+        "content": "This live stream explores a high-performance AI de",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1jgWamjXq92SVDlmYNOP44tnqM6nGZ9r9",
+        "content": "This tutorial demonstrates how to build a generati",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1HH3O0ZYCpNQ5QTU7EJSBaYjvU6inXBPj",
+        "content": "Eddie Lazer, Head of Engineering at a16z Crypto, a",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1-9Qd1I79tOOFjV_ze-omXucKFDNt0DJh",
+        "content": "This tutorial demonstrates how to build a no-code ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-19UlkvS4PYIlHXMOXNVVRV7F5qEES0Kdn",
+        "content": "This video provides a comprehensive tutorial on bu",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-10JKKmY5s6H1MX1IOOC2758HAGslStUHD",
+        "content": "This video introduces the framework of Geometric D",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1I7wNDv9XpRqt4_1-UaXG-Hy6W0hSKwhB",
+        "content": "Jordan 'Poopy' Castro, co-founder of Doodles, disc",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1NarMrt3Hh6S_fzklANIkAK3xWTscgiSf",
+        "content": "This tutorial explains how to build an AI agent ca",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-11D_OGdLVbOtWgx5sl6_24Du1C-Okn60s",
+        "content": "This video provides a comprehensive guide on using",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1BGWcYk3vcC1otVP-s8jFEaMhNmkcu3fF",
+        "content": "This video provides a comprehensive guide on using",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1YkrdkSvbRln35WrEdkVve0nLZKM0Y6Q_",
+        "content": "This video analyzes a viral, 100% AI-generated mus",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-13SJcMyS4wejwdLX2zl64PfSwAIf-f0jT",
+        "content": "Eric Stein from Anthropic discusses the developmen",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1SC4kOecEpOhZkmtYp6zfKGeotww0AV9u",
+        "content": "This video showcases ten trending AI tools designe",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1F_PM_QBhQCN2j_Y-4uFBQCyZ8rmBx19f",
+        "content": "This video tutorial provides a step-by-step guide ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1hNgVV_gbWoByV7Bcwd7uvbqtOP56LgIg",
+        "content": "This video introduces an enhanced local fork of th",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1IMaw_S48puauhsihleKEyK7oAb2r2yJA",
+        "content": "This video provides a comprehensive crypto market ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-16tiBmz6ATdmQTyecT8pLckHorWN72EqP",
+        "content": "This video explores the rapid rise of open-source ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-10Yf7QoE4pSFWoE0mddzqiaae1yFeXnVC",
+        "content": "Autogen Studio is a newly released open-source GUI",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1sxXtUZFQ1hwoCAUcT72H1O2oTw0u2Vns",
+        "content": "This video explores two groundbreaking AI research",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1hbky5xf5OfuYoIkYk2HacvJYrnXoIiZG",
+        "content": "This video serves as a comprehensive guide for Run",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1UGeUylwvtH5ck4qy9tp4r6R43UPdV731",
+        "content": "This video introduces a local LLM selection system",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1vORZlHO0YTNGc9o0P8txXopmmS831Mnb",
+        "content": "This video explores the integration of the Mixtral",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1yIdNEmQvYbvGTJHIeenO5FmaH3yx5mHY",
+        "content": "This video provides an interactive guide to EQing ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1aGQhNNaeX7j01GGyluwheFPUPzYHPJFn",
+        "content": "This video provides an advanced tutorial on custom",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1QLuGiRj3r7eKGdGOz7fy6PPCcWolNKZa",
+        "content": "This video explores the projected $4",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1hVuaH9QCeqPsUrk6hJWfSGMLtuiXO9PB",
+        "content": "The video presents the 'one-person business' model",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1h0KouCZz7kFjEkyH0YANAydyjYw18-Ns",
+        "content": "This tutorial demonstrates how to integrate real-t",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1Qs2kH1GBBRzaxuTaLJFmVXIHIk2wEFpS",
+        "content": "This video introduces a web-based user interface f",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1k39RlfrYi7s1-tK55mvu5Ska1xWsl5DV",
+        "content": "This video analyzes the current state of the crypt",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1QI4Yom0YffFkH0zaVFwXZU41PWCIDauf",
+        "content": "This video covers a major week in AI releases, hig",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1xU4FcpoSLhQJCu1yaa5eQatqWBgMClKr",
+        "content": "This video provides a comprehensive update on the ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1NfdeOo5SuqihXrRLUvMml3cTLzQC-7OC",
+        "content": "This video features a deep dive into the geometric",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1Hc_dbe2iSZxWbGp0konQBqdc3wsAFKlw",
+        "content": "The video introduces Cache-Augmented Generation (C",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1AgrruAqi12a53PW9ckqYWMLH0cS_DOoz",
+        "content": "This video analyzes the hidden system prompts and ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1zW4QvEqVxWSUiUONPCPRIuz_2eJLpbLO",
+        "content": "This video showcases the top 10 trending open-sour",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1K7JhNzPBN9RPJIingw4VuMFttuovOdE7",
+        "content": "This video showcases a fully autonomous AI agent w",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1NA8FpjrAAxsllLSYXlnloIBeGbWV3HqW",
+        "content": "surf",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1iCOF_VOuOzV6D-l6Pw74PVA4uV7l5-IU",
+        "content": "The video highlights the integration of the Mixtra",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1TDGv6kJwgXjUmfl6mP0DJ83oPsf0zks5",
+        "content": "This tutorial provides an in-depth look at advance",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1FEmSzQ4pErSjHrOcOT7cVGtl6xYmRQkA",
+        "content": "This video features an interview with Noam Chomsky",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-13jMCo2gqMYOweu40j3ljHgPCw6DJNtdS",
+        "content": "This video explores the methodology of fact decomp",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1BWzhX61HCt4ismlUv84K-U9T1wyQbO-i",
+        "content": "This video showcases a curated selection of trendi",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1QlVw_HAj2EKe0zfmOy7_Aw5k5xswUhFg",
+        "content": "This video introduces a comprehensive series on bu",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1tVvldKiJV_FESjtNtf3lDZG3AuixiOLf",
+        "content": "Cognition AI introduces Devon, the world's first f",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1hSIDHjCWO5dpiJtxOCI498CFawQPY4iW",
+        "content": "This documentary explores the strategic planning b",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1cJ5Fnzaawqfi_K_TIFUSApyp_-ofr4Oe",
+        "content": "The video introduces A-Flow, a new methodology for",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1RDi8YpSa1khIFnepFPS9FD0WenK0GmfG",
+        "content": "This live stream presents a high-performance AI de",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1SJdnNkDalJo5EQyUnvEshUSjZz7YUNxT",
+        "content": "Josh Pook reviews GPT me, a terminal-based AI agen",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1tW-zSLDtZvwJf-Uc0T5uJQOE-j5N1yRN",
+        "content": "This video analyzes a University of Tokyo study wh",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-11IhfBgsrEO1gdrBzLK-OVuEWbY1OviTw",
+        "content": "Phidata is an open-source framework for building A",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1NKNC_YcnFRlhA2wvKciKlYbxXSUrg6O8",
+        "content": "This video features an interview with the founders",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1z22S9SHI0PSbPXL0wzVJwHQYsncOWGj5",
+        "content": "This video covers a series of major AI breakthroug",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1dEos7j1SAg9fWOzMlGLraBMOxf36UUsA",
+        "content": "Microsoft has released Magentic-One, a powerful mu",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-10Y3XDPheBmgIizlYGzeZIU4zRvJTLoAR",
+        "content": "The video introduces 'AdaSociety,' a research fram",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1GrLOKYKkfAw5bDV0R7NuMTuywpyzl9qM",
+        "content": "Mustafa Suleyman, co-founder of DeepMind and Infle",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1E8aY46N1iMio7I6eK4KQtLuIifB-2U-a",
+        "content": "DeepSeek Coder is an open-source AI coding tool an",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1RCy7gFoGRMxlI4AuBlf16gtvbrS8GGPJ",
+        "content": "This video features Coinbase developers demonstrat",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-14TgjpvgDtI2v7PsgHeX8e0FJtP64y4uK",
+        "content": "This video introduces a comprehensive 'all-in-one'",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-15hXsuNsh9G3nz4YYnHKPqymtVgpZk1OE",
+        "content": "Liam Otley provides a comprehensive blueprint for ",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1YVP1IKPzJfjO_69diYqe6lWyBDXy-8O1",
+        "content": "Shaw, the creator of the Eliza framework, discusse",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1G0AOs0kLNyQ6-0PPPfj5FwpqJyM8LAdI",
+        "content": "This video introduces Sentient Agent, an open-sour",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1Xy5HQOHklPJPywKD2BcGc7htbi80cOtM",
+        "content": "The video outlines essential strategies for Social",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1dFup0q-Hy9Qc02aSxEkd6GeT_eH4bE3T",
+        "content": "This video features a curated list of ten innovati",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1qebiPwfnlY7Rna8nWyWR39IRpar4H6Y8",
+        "content": "This video demonstrates a simple yet effective wor",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-10o4j0LXLIyKJrfm9D3xdI3E_NVFjD-Tt",
+        "content": "This video provides a tutorial on integrating Meta",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1tk7teL9HqVuymxlPrfJkXfhBJVLdGml5",
+        "content": "This episode of the Bankless AI Rollup explores th",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1wm9CDH-lsEL8f9LFEl4LEZu_ETy3MsVe",
+        "content": "This video showcases five high-utility Custom GPTs",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1o7tjAm70yN0IZkoU5Kik8FURebKxxkoq",
+        "content": "This video provides a guide to building multi-agen",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1tXiYSeynUBX0-TWnmulXbqkRfczk704c",
+        "content": "The video introduces PromptWizard, a Microsoft fra",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "legacy-1UTS4iVlfEAV2cLtYT2VMbgYSlVEkOEht",
+        "content": "This video demonstrates how to integrate a real-ti",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_assimilation **agent:** gemini-borg-01 **timestamp:** sat apr 25",
+    "label": "assimilation **Agent:** gemini-borg-01 **Timestamp:** Sat Apr 25",
+    "items": [
+      {
+        "id": "assimilation-pi-dev-001",
+        "content": "Pi.dev Protocol Ingestion",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_autonomous-agents",
+    "label": "autonomous-agents",
+    "items": [
+      {
+        "id": "video-analysis-D6jxT0E7tzU",
+        "content": "Manus AI: The Era of Autonomous AI Agents",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_ai-crypto",
+    "label": "ai-crypto",
+    "items": [
+      {
+        "id": "video-analysis-6H9S0I5X9N4",
+        "content": "The AI x Crypto Convergence: 2025 Trends & DeFAi",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_ai-coding-tutorials",
+    "label": "ai-coding-tutorials",
+    "items": [
+      {
+        "id": "video-analysis-sV3pI_xH_Q0",
+        "content": "Build AI Apps with Cursor, Firebase, and Vercel",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_language-modeling",
+    "label": "language-modeling",
+    "items": [
+      {
+        "id": "video-analysis-t3YJ5hKiMQ0",
+        "content": "Makemore Part 5: WaveNet",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "video-analysis-TCH_1BHY58I",
+        "content": "Makemore Part 2: MLP",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "video-analysis-PaCmpygFfXo",
+        "content": "Makemore: The Bigram Model",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_ai-apis",
+    "label": "ai-apis",
+    "items": [
+      {
+        "id": "video-analysis-xnEfL8rmy2M",
+        "content": "Meta Llama API: Free Integration via OpenRouter",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_prompt-engineering",
+    "label": "prompt-engineering",
+    "items": [
+      {
+        "id": "video-analysis-IVRr3zvXC0Q",
+        "content": "PromptWizard: Automated Prompt Optimization for Reasoning",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_gpt-architecture",
+    "label": "gpt-architecture",
+    "items": [
+      {
+        "id": "video-analysis-kCc8FmEb1nY",
+        "content": "Build GPT from Scratch",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "video-analysis-l8pRSuU81PU",
+        "content": "Reproducing GPT-2 (124M)",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      },
+      {
+        "id": "video-analysis-zduSFxRajkE",
+        "content": "The GPT Tokenizer",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_deep-learning-fundamentals",
+    "label": "deep-learning-fundamentals",
+    "items": [
+      {
+        "id": "video-analysis-VMj-3S1tku0",
+        "content": "Micrograd: Backprop from Scratch",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_assimilation **agent:** gemini-borg-01 **timestamp:** mon apr 27",
+    "label": "assimilation **Agent:** gemini-borg-01 **Timestamp:** Mon Apr 27",
+    "items": [
+      {
+        "id": "assimilation-pi-dev-002",
+        "content": "Native Mojo Semantic Clustering",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+# Durable local SearXNG for TNF knowledge/news scouts.
+# Usage:
+#   pnpm run searxng:up
+#   pnpm run searxng:health
+#   SEARXNG_BASE_URL=http://127.0.0.1:8080
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: tnf-searxng
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://127.0.0.1:8080/
+    restart: unless-stopped
+    volumes:
+      - tnf-searxng-data:/etc/searxng
+
+volumes:
+  tnf-searxng-data:

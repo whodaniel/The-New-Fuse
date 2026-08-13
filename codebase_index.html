@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TNF Codebase Map — Master Index</title>
+  <style>
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --surface-hover: #1a1a26; --text: #e0e0e5; --text-muted: #8888a0;
+      --accent: #3b82f6; --border: #2a2a35;
+      --lock: #ef4444; --open: #10b981; --super: #ef4444; --admin: #f59e0b; --dev: #3b82f6;
+      --method: #8b5cf6; --class: #ec4899; --file: #10b981; --domain: #f59e0b; --protocol: #06b6d4;
+      --status-unread: #374151; --status-reading: #f59e0b; --status-analyzed: #10b981; --status-stale: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.5rem 2rem; position: sticky; top: 0; z-index: 100; }
+    header h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    header .subtitle { color: var(--text-muted); font-size: 0.9rem; }
+    .container { display: flex; max-width: 1600px; margin: 0 auto; gap: 2rem; padding: 2rem; }
+    aside { width: 320px; flex-shrink: 0; position: sticky; top: 100px; height: fit-content; }
+    main { flex: 1; min-width: 0; }
+    .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; width: 100%; margin-bottom: 1rem; color: var(--text); font-size: 0.95rem; }
+    .search-box:focus { outline: none; border-color: var(--accent); }
+    .counts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .count-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; text-align: center; }
+    .count-card .num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .count-card .name { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    section { margin-bottom: 2.5rem; }
+    .section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section-title .badge { font-size: 0.7rem; background: var(--accent); padding: 0.15rem 0.5rem; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); }
+    th { background: var(--surface); color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 88px; }
+    tr:hover td { background: var(--surface-hover); cursor: pointer; }
+    .type-pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .type-method { background: color-mix(in oklab, var(--method) 15%, transparent); color: var(--method); }
+    .type-class { background: color-mix(in oklab, var(--class) 15%, transparent); color: var(--class); }
+    .type-file { background: color-mix(in oklab, var(--file) 15%, transparent); color: var(--file); }
+    .type-premium { background: color-mix(in oklab, var(--domain) 15%, transparent); color: var(--domain); }
+    .type-protocol { background: color-mix(in oklab, var(--protocol) 15%, transparent); color: var(--protocol); }
+    .role-pill { font-size: 0.75rem; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; }
+    .role-SUPER_ADMIN { background: color-mix(in oklab, var(--super) 15%, transparent); color: var(--super); }
+    .role-ADMIN { background: color-mix(in oklab, var(--admin) 15%, transparent); color: var(--admin); }
+    .role-DEVELOPER { background: color-mix(in oklab, var(--dev) 15%, transparent); color: var(--dev); }
+    .role-none { color: var(--text-muted); font-size: 0.8rem; }
+    .label-cell { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .status-pill { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: #fff; }
+    .status-UNREAD { background: var(--status-unread); }
+    .status-READING { background: var(--status-reading); }
+    .status-ANALYZED { background: var(--status-analyzed); }
+    .status-STALE { background: var(--status-stale); }
+    .detail-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); padding: 2rem; overflow-y: auto; transition: right 0.3s ease; z-index: 200; box-shadow: -5px 0 25px rgba(0,0,0,0.3); }
+    .detail-panel.open { right: 0; }
+    .detail-panel h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .detail-field { margin-bottom: 0.75rem; }
+    .detail-field label { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+    .detail-field .value { font-family: 'SF Mono', monospace; font-size: 0.85rem; word-break: break-all; }
+    .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.5rem; }
+    .close-btn:hover { color: var(--text); }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 150; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    /* Progress bar styles */
+    .progress-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .progress-section h3 { font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .progress-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem; }
+    .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+    .progress-fill.analyzed { background: var(--status-analyzed); }
+    .progress-fill.reading { background: var(--status-reading); }
+    .progress-fill.stale { background: var(--status-stale); }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); }
+    .lens-distribution { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .lens-distribution h3 { font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .lens-bar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .lens-label { font-size: 0.75rem; width: 100px; text-align: right; color: var(--text-muted); }
+    .lens-track { flex: 1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+    .lens-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.3s ease; }
+    .lens-count { font-size: 0.75rem; color: var(--text-muted); width: 30px; text-align: right; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f8f9fa; --surface: #ffffff; --surface-hover: #f1f3f5; --text: #1a1a2e; --text-muted: #6b7280; --border: #e5e7eb; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📄 TNF Codebase Map — Master Index</h1>
+    <p class="subtitle">Categorized, searchable, click-to-detail index with AI Reading Tracker</p>
+  </header>
+  <div class="container">
+    <aside>
+      <input type="text" class="search-box" id="search" placeholder="🔍 Search nodes...">
+      <div id="progress-sections"></div>
+      <div class="lens-distribution" id="lens-distribution"></div>
+      <div class="counts" id="counts"></div>
+      <nav id="toc"></nav>
+    </aside>
+    <main id="main"></main>
+  </div>
+  <div class="overlay" id="overlay"></div>
+  <div class="detail-panel" id="detail"></div>
+  <script type="module">
+    const jsonUrl = './apps/frontend/src/data/codebase_map.json';
+    const trackerUrl = './codebase_tracker.json';
+    let nodes = [], edges = [], tracker = null;
+
+    async function load() {
+      const [mapRes, trackerRes] = await Promise.all([fetch(jsonUrl), fetch(trackerUrl).catch(() => null)]);
+      const data = await mapRes.json();
+      nodes = data.nodes;
+      edges = data.edges;
+      if (trackerRes && trackerRes.ok) {
+        tracker = await trackerRes.json();
+      }
+      render();
+      renderTracker();
+    }
+
+    function getRoleClass(role) {
+      if (!role) return 'role-none';
+      return `role-${role}`;
+    }
+
+    function getTypeClass(type) {
+      const map = { method: 'method', class: 'class', file: 'file', premium: 'premium' };
+      return `type-${map[type] || 'method'}`;
+    }
+
+    function getStatusPill(nodeId) {
+      if (!tracker) return '';
+      const state = tracker.nodes[nodeId];
+      if (!state) return '<span class="status-pill status-UNREAD">●</span>';
+      const status = state.read_status;
+      return `<span class="status-pill status-${status}">${status.charAt(0)}</span>`;
+    }
+
+    function renderCounts() {
+      const counts = { total: nodes.length, domains: 0, protocols: 0, files: 0, classes: 0, methods: 0, locked: 0 };
+      nodes.forEach(n => {
+        const id = n.id || '';
+        if (id.startsWith('DOMAIN_')) counts.domains++;
+        if (id.startsWith('PROTO_')) counts.protocols++;
+        if (n.type === 'file') counts.files++;
+        if (n.type === 'class') counts.classes++;
+        if (n.type === 'method') counts.methods++;
+        if (n.data?.requiredRole) counts.locked++;
+      });
+      document.getElementById('counts').innerHTML = ['total','domains','protocols','files','classes','methods','locked'].map(k =>
+        `<div class="count-card"><div class="num">${counts[k].toLocaleString()}</div><div class="name">${k}</div></div>`
+      ).join('');
+    }
+
+    function renderProgressBar(label, value, total, colorClass) {
+      const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+      return `
+        <div class="progress-section" style="padding:0.5rem 0;">
+          <div class="progress-label">
+            <span>${label}</span><span>${value} / ${total} (${pct}%)</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill ${colorClass}" style="width:${pct}%"></div></div>
+        </div>`;
+    }
+
+    function renderTracker() {
+      if (!tracker) {
+        document.getElementById('progress-sections').innerHTML = '<div class="progress-section"><h3>Tracker</h3><p style="font-size:0.8rem;color:var(--text-muted)">Not initialized. Run: node scripts/trackers/init_tracker.mjs</p></div>';
+        return;
+      }
+      const p = tracker.progress;
+      const total = tracker.total_nodes;
+      document.getElementById('progress-sections').innerHTML = `
+        <div class="progress-section">
+          <h3>📊 Reading Progress</h3>
+          ${renderProgressBar('Analyzed', p.ANALYZED, total, 'analyzed')}
+          ${renderProgressBar('Reading', p.READING, total, 'reading')}
+          ${renderProgressBar('Stale', p.STALE, total, 'stale')}
+        </div>`;
+
+      // Lens distribution (intent only for now)
+      const intentDist = {};
+      Object.values(tracker.nodes).forEach(n => {
+        if (n.lenses?.intent) {
+          intentDist[n.lenses.intent] = (intentDist[n.lenses.intent] || 0) + 1;
+        }
+      });
+      const sorted = Object.entries(intentDist).sort((a, b) => b[1] - a[1]);
+      const max = sorted.length > 0 ? sorted[0][1] : 0;
+      document.getElementById('lens-distribution').innerHTML = `
+        <h3>🔍 Lens: Intent</h3>
+        ${sorted.map(([k, v]) => `
+          <div class="lens-bar">
+            <div class="lens-label">${k}</div>
+            <div class="lens-track"><div class="lens-fill" style="width:${(v/max)*100}%"></div></div>
+            <div class="lens-count">${v}</div>
+          </div>
+        `).join('') || '<p style="font-size:0.8rem;color:var(--text-muted)">No nodes classified yet.</p>'}`;
+    }
+
+    function renderSection(title, items, icon) {
+      if (!items.length) return '';
+      return `
+        <section>
+          <div class="section-title">${icon} ${title} <span class="badge">${items.length.toLocaleString()}</span></div>
+          <table>
+            <thead><tr><th>Type</th><th>ID</th><th>Label</th><th>Auth</th><th>Status</th></tr></thead>
+            <tbody>
+              ${items.map(n => {
+                const role = n.data?.requiredRole;
+                const authBadge = role
+                  ? `<span class="role-pill ${getRoleClass(role)}">🔒 ${role}</span>`
+                  : '<span class="role-none">✓ Open</span>';
+                return `<tr onclick="showDetail('${n.id}')">
+                  <td><span class="type-pill ${getTypeClass(n.type)}">${n.type}</span></td>
+                  <td><code>${n.id}</code></td>
+                  <td class="label-cell" title="${n.data?.label || ''}">${n.data?.label || '(no label)'}</td>
+                  <td>${authBadge}</td>
+                  <td>${getStatusPill(n.id)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </section>`;
+    }
+
+    function render(searchTerm = '') {
+      const term = searchTerm.toLowerCase();
+      const filter = n => !term || (n.data?.label || '').toLowerCase().includes(term) || n.id.toLowerCase().includes(term);
+
+      const domains = nodes.filter(n => n.id.startsWith('DOMAIN_')).filter(filter);
+      const protocols = nodes.filter(n => n.id.startsWith('PROTO_')).filter(filter);
+      const files = nodes.filter(n => n.type === 'file').filter(filter);
+      const classes = nodes.filter(n => n.type === 'class').filter(filter);
+      const methods = nodes.filter(n => n.type === 'method').filter(filter);
+      const locked = nodes.filter(n => n.data?.requiredRole).filter(filter);
+
+      const html = [
+        locked.length > 0 && searchTerm ? renderSection('🔐 Locked Auth Nodes', locked, '🔐') : '',
+        renderSection('🏛️ Domains', domains, '🏛️'),
+        renderSection('📜 Protocols', protocols, '📜'),
+        renderSection('📁 Files', files.slice(0, 200), '📁'),
+        renderSection('🏷️ Classes', classes.slice(0, 200), '🏷️'),
+        renderSection('🔧 Methods', methods.slice(0, 200), '🔧'),
+      ].filter(Boolean).join('');
+
+      document.getElementById('main').innerHTML = html || '<p style="color:var(--text-muted);text-align:center;padding:3rem;">No results found.</p>';
+      renderCounts();
+    }
+
+    window.showDetail = function(id) {
+      const node = nodes.find(n => n.id === id);
+      if (!node) return;
+      const outgoing = edges.filter(e => e.source === id).length;
+      const incoming = edges.filter(e => e.target === id).length;
+      const role = node.data?.requiredRole;
+      const state = tracker?.nodes[id];
+      const trackerInfo = state ? `
+        <div class="detail-field"><label>Read Status</label><div class="value"><span class="status-pill status-${state.read_status}">${state.read_status}</span></div></div>
+        <div class="detail-field"><label>Read By</label><div class="value">${state.read_by || '—'}</div></div>
+        <div class="detail-field"><label>Intent</label><div class="value">${state.lenses?.intent || '—'}</div></div>
+        <div class="detail-field"><label>Criticality</label><div class="value">${state.lenses?.criticality || '—'}</div></div>
+        <div class="detail-field"><label>Key Findings</label><div class="value">${state.key_findings?.join(', ') || '—'}</div></div>
+      ` : '';
+      document.getElementById('detail').innerHTML = `
+        <button class="close-btn" onclick="closeDetail()">&times;</button>
+        <h2>Node Details</h2>
+        <div class="detail-field"><label>ID</label><div class="value">${node.id}</div></div>
+        <div class="detail-field"><label>Type</label><div class="value">${node.type}</div></div>
+        <div class="detail-field"><label>Label</label><div class="value">${node.data?.label || '(no label)'}</div></div>
+        <div class="detail-field"><label>Kind</label><div class="value">${node.data?.kind || '—'}</div></div>
+        <div class="detail-field"><label>Children</label><div class="value">${node.data?.childCount || 0}</div></div>
+        <div class="detail-field"><label>Parent</label><div class="value">${node.data?.parentId || 'None (root)'}</div></div>
+        <div class="detail-field"><label>Outgoing Edges</label><div class="value">${outgoing}</div></div>
+        <div class="detail-field"><label>Incoming Edges</label><div class="value">${incoming}</div></div>
+        <div class="detail-field"><label>Required Role</label>
+          <div class="value">${role ? `<span class="role-pill ${getRoleClass(role)}">🔒 ${role}</span>` : '<span class="role-none">✓ Open access</span>'}</div>
+        </div>
+        ${trackerInfo}
+        ${node.data?.description ? `<div class="detail-field"><label>Description</label><div class="value">${node.data.description}</div></div>` : ''}
+      `;
+      document.getElementById('detail').classList.add('open');
+      document.getElementById('overlay').classList.add('open');
+    };
+
+    window.closeDetail = function() {
+      document.getElementById('detail').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    };
+
+    document.getElementById('search').addEventListener('input', e => render(e.target.value));
+    document.getElementById('overlay').addEventListener('click', closeDetail);
+
+    load();
+  </script>
+</body>
+</html>

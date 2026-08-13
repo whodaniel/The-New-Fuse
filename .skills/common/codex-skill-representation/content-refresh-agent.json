@@ -1,0 +1,12 @@
+{
+  "skillName": "content-refresh-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/content-refresh-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/content-refresh-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/content-refresh-agent.json",
+  "status": "present"
+}

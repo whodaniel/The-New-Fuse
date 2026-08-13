@@ -1,0 +1,218 @@
+[music]
+&gt;&gt; Hi. Welcome to another video. So,
+Hermes Agent 0.13 is out, and this is a
+pretty important update. In the last
+Hermes video, I already covered the
+earlier updates and the Kanban system in
+detail. So, I'm not going to repeat all
+of that here.
+This one is mainly about the Tenacity
+release, and the main theme is simple,
+reliability.
+This update is mostly about making sure
+agents can keep working without losing
+state, drifting from the goal, crashing
+silently, or getting stuck forever. Now,
+the first big thing is the durable
+multi-agent Kanban system. I already
+explained Kanban properly in the
+previous video, so I will keep this
+short. There are heartbeats, reclaim
+logic, zombie detection, retry budgets,
+and automatic blocking when a worker
+exits without completing the task.
+If a worker crashes, disappears, or gets
+stuck, Hermes can detect that instead of
+just leaving the task in a weird state.
+There is also a hallucination gate and
+recovery UX. This is for cases where an
+agent says it created or completed a
+task, but the actual board state does
+not match that claim.
+They also added per task max retries.
+Overall, Kanban is no longer just a
+visual board. It is becoming a more
+durable work queue for multiple agent
+profiles.
+The next important feature is /goal.
+This lets Hermes keep a persistent goal
+across turns.
+That matters because agents can lose
+focus pretty easily during longer tasks.
+/goal is meant to fix that. It gives
+Hermes a target to keep optimizing for
+as the session continues. I like this
+addition a lot because a lot of agents
+are good at one step, but worse at
+staying aligned over time. So, this is a
+good direction. Then there is
+Checkpoints V2.
+This rewrites the state persistence
+layer with pruning and discard rails.
+The gateway can also auto-resume
+interrupted sessions after restart. So,
+if the gateway restarts or a session
+gets interrupted, Hermes has a better
+chance of recovering and continuing
+instead of losing the whole thing.
+This is especially important if you use
+Hermes through messaging platforms or as
+a background agent. Security also got a
+big update. They closed eight P0
+security issues and secret redaction is
+now on by default. Discord role allow
+lists are now scoped to the originating
+guild. WhatsApp rejects strangers by
+default and avoids responding in self
+chat. They also improved credential
+right safety, MCPOAuth handling, browser
+protection against cloud metadata, SSRF,
+cron prompt injection scanning, and log
+redaction for debug sharing.
+This is not the most exciting part of
+the change log, but it is one of the
+most important parts.
+Now on the platform side, Hermes added
+Google Chat as another messaging
+platform. They also added more generic
+platform plugin hooks, so new adapters
+can be built without changing the core.
+As much IRC and Teams were also moved
+toward this plugin style surface. There
+are also new platform allow lists across
+Slack, Telegram, Mattermost, Matrix, and
+DingTalk, so you can restrict which
+channels, rooms, or chats are allowed to
+interact with Hermes. Another important
+change is provider plugins. Hermes now
+has a provider profile abstraction and a
+model providers plugin directory.
+This should make Hermes easier to extend
+as new providers and model routes keep
+showing up.
+They also added new model entries like
+DeepSeek V4 Pro, XAI Grok 4.3, Open
+Router Owl Alpha, and Tencent HY3
+Preview. Open Router Owl Alpha is listed
+as a free model route, which is nice for
+testing workflows without immediately
+spending money. No OAuth also persists
+across profiles now, so you can sign in
+once and have profiles inherit the
+session. There is also Open Router
+response caching support that can help
+with cost if the route and model support
+it. There is also a useful cost-related
+feature, no agent cron mode. Cron jobs
+can now run as script-only watchdogs
+without calling a model. If the script
+produces no output, Hermes stays silent.
+If it produces output, Hermes delivers
+it directly. This is a smart addition
+because not every automation needs an AI
+model. The tool system also got better.
+Hermes now does post-write delta linting
+after file writes and patches for
+Python, JSON, YAML, and TOML. So, if the
+agent writes a broken config file or
+creates a syntax error, Hermes can
+surface that immediately. MCP also got
+several improvements. There is SSE
+transport support, OAuth forwarding for
+SSE, stale pipe retries, keep-alive
+improvements, and better handling for
+image tool results.
+In a normal terms, MCP connections
+should be less fragile and multimodal
+tool outputs should work better.
+Hermes also added a video analyze tool
+for native video understanding on Gemini
+and compatible multimodal models. There
+is also XAI custom voices as a
+text-to-speech provider with voice
+cloning support. That is interesting for
+voice workflows, although voice cloning
+is obviously something people should use
+carefully. Internationalization also
+improved. Static gateway and CLI
+messages now support Chinese, Japanese,
+German, Spanish, French, Ukrainian, and
+Turkish.
+The doc site also gained a Chinese
+locale, so Hermes is becoming more
+accessible outside the English only
+developer bubble. The dashboard and TUI
+got some nice upgrades, too. The model
+picker now matches the Hermes model flow
+better and supports inline off. The
+startup banner has collapsible sections.
+The status bar can show context
+compression count. The dashboard has a
+plugins page, a profiles management
+page, sortable analytics tables, reverse
+proxy support, and a new default large
+theme.
+These are quality of life improvements,
+but they matter.
+There are also ACP adapter updates for
+Zed, VS Code, and JetBrains. /steer and
+/q are now available there. /steer lets
+you guide an in-flight agent. /q lets
+you queue follow-up work. That is useful
+because you do not always want to
+interrupt an agent completely. There are
+also new optional skills, including
+Shopify, Here Now, a personal shopping
+assistant, Anthropic financial services
+skills, a Kanban video orchestrator, and
+SearXNG search. SearXNG also connects to
+the web tooling changes, where Hermes
+can split search, extraction, and
+browsing across different backends.
+That is useful if you care about
+self-hosting, privacy, or different
+tools for different parts of web
+research. Curator also got a few smaller
+upgrades. It now has archive, prune, and
+list archive subcommands. Manual curator
+runs are synchronous now, so you can see
+the result directly. Since I already
+covered curator before, I will not go
+deeper than that. So, my overall take is
+pretty straightforward. This release is
+about making Hermes less fragile.
+Kanban workers can be tracked and
+recorded. Goals can persist across
+turns. Sessions can resume after
+restart. Security defaults are stricter.
+Providers are more pluggable. Cron can
+run without wasting model calls. MCP is
+more reliable. And the dashboard,
+gateway, and IDE integrations are
+getting more complete. That is a solid
+update. It is not really a
+beginner-simple release, though. Hermes
+is becoming more powerful, but also more
+complex. If you only want a basic AI
+coding assistant, a lot of this may be
+overkill. But, if you want a local agent
+system with profiles, messaging
+platforms, scheduled jobs, Kanban
+workflows, plugins, and long-running
+tasks, then this is a pretty important
+step.
+Overall, I think the Tenacity release is
+a good name.
+This is not just about more features. It
+is about making the agent keep going
+when real workflows get messy.
+And that is exactly what agent tools
+need right now. Overall, it's pretty
+cool. Anyway, let me know your thoughts
+in the comments. If you like this video,
+consider donating through the Super
+[music] Thanks option, or becoming a
+member by clicking the join button.
+Also, give this video a thumbs up and
+subscribe to my channel. I'll see you in
+the next one. Until then, bye.

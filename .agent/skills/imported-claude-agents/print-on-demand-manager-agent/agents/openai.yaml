@@ -1,0 +1,4 @@
+interface:
+  display_name: "Print On Demand Manager Agent"
+  short_description: "Help with Print On Demand Manager Agent tasks"
+  default_prompt: "Run the Print On Demand Manager Agent workflow using SKILL.md instructions."

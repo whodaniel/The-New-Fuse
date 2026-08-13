@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TNF Compounding Memory | Live Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { margin: 0; background: #020617; color: #fff; font-family: sans-serif; overflow: hidden; }
+        #header { position: absolute; top: 20px; left: 20px; z-index: 10; }
+        h1 { margin: 0; font-size: 24px; color: #60a5fa; }
+        .node { stroke: #fff; stroke-width: 1.5px; }
+        .link { stroke: rgba(148, 163, 184, 0.2); }
+        #controls { position: absolute; bottom: 20px; left: 20px; font-size: 12px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>TNF Compounding Memory</h1>
+        <div id="status">Syncing with Sovereign State...</div>
+    </div>
+    <div id="controls">ENGINE: TNF-D3-RELAY-V2 | SOFTWARE 3.0 READY</div>
+    <svg id="viz"></svg>
+
+    <script>
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const svg = d3.select("#viz")
+            .attr("width", width)
+            .attr("height", height);
+
+        const container = svg.append("g");
+
+        svg.call(d3.zoom().on("zoom", (event) => {
+            container.attr("transform", event.transform);
+        }));
+
+        async function update() {
+            try {
+                // In a real environment, we'd fetch from /api/knowledge/clusters
+                // For this demo, we'll try to read the local file if served via a dev server,
+                // or use a mock if not.
+                const response = await fetch('/api/knowledge/clusters');
+                const clusters = await response.json();
+                
+                if (!clusters || clusters.length === 0) return;
+
+                const nodes = [];
+                const links = [];
+
+                clusters.forEach(c => {
+                    nodes.push({ id: c.id, label: c.label, type: 'cluster', value: 10 });
+                    c.items.forEach(item => {
+                        nodes.push({ id: item.id, label: item.content, type: 'item', value: 5 });
+                        links.push({ source: c.id, target: item.id });
+                    });
+                });
+
+                render(nodes, links);
+                document.getElementById('status').innerText = `Graph Active: ${nodes.length} nodes`;
+            } catch (e) {
+                document.getElementById('status').innerText = "Waiting for data...";
+            }
+        }
+
+        function render(nodes, links) {
+            container.selectAll("*").remove();
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            const link = container.append("g")
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("class", "link");
+
+            const node = container.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .join("g")
+                .call(d3.drag()
+                    .on("start", (event, d) => {
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x; d.fy = d.y;
+                    })
+                    .on("drag", (event, d) => { d.fx = event.x; d.fy = event.y; })
+                    .on("end", (event, d) => {
+                        if (!event.active) simulation.alphaTarget(0);
+                        d.fx = null; d.fy = null;
+                    }));
+
+            node.append("circle")
+                .attr("r", d => d.type === 'cluster' ? 12 : 6)
+                .attr("fill", d => d.type === 'cluster' ? "#3b82f6" : "#a855f7");
+
+            node.append("text")
+                .text(d => d.label)
+                .attr("x", 15)
+                .attr("y", 5)
+                .style("font-size", "10px")
+                .style("fill", "#fff");
+
+            simulation.on("tick", () => {
+                link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+        }
+
+        update();
+        setInterval(update, 5000);
+    </script>
+</body>
+</html>

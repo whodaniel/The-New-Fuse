@@ -1,0 +1,2 @@
+{"severity":"HIGH","category":"Functional","title":"Route 404","route":"/api/v1/health","code":404,"details":"Page at https://app.thenewfuse.com/api/v1/health responded 404"}
+{"severity":"MEDIUM","category":"Security","title":"JSON Information Disclosure","details":"Version/status exposed in body JSON"}

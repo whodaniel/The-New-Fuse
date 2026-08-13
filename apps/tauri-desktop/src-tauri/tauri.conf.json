@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "TNF (The New Fuse) Desktop App",
+  "version": "4.1.0",
+  "identifier": "com.thenewfuse.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "TNF (The New Fuse) Desktop App",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 768,
+        "decorations": true,
+        "transparent": false,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost asset: https://asset.localhost https://tauri.localhost http://tauri.localhost; script-src 'self' ipc: http://ipc.localhost asset: https://asset.localhost https://tauri.localhost http://tauri.localhost blob:; worker-src 'self' blob: asset: https://asset.localhost https://tauri.localhost http://tauri.localhost; style-src 'self' 'unsafe-inline' asset: https://asset.localhost https://tauri.localhost http://tauri.localhost; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost asset: https://asset.localhost https://tauri.localhost http://tauri.localhost http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://api-gateway-241337102384.us-central1.run.app wss://api-gateway-241337102384.us-central1.run.app https://thenewfuse.com https://*.thenewfuse.com wss://thenewfuse.com wss://*.thenewfuse.com https://*.supabase.co wss://*.supabase.co; img-src 'self' data: blob: asset: https://asset.localhost https://tauri.localhost http://tauri.localhost; frame-src 'self' https://thenewfuse.com http://localhost:* http://127.0.0.1:*"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["dmg", "app"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "../../../packages/tnf-browser/": "tnf-browser/"
+    },
+    "externalBin": []
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-05-06T18:28:54.239Z",
+  "total_items": 2,
+  "open_items": 0,
+  "resolved_items": 2,
+  "by_severity": {
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "by_type": {
+    "contradiction": 1,
+    "sensitive": 1,
+    "missing": 0,
+    "architecture": 0,
+    "policy": 0,
+    "other": 0
+  },
+  "items": [
+    {
+      "id": "HITL_1778092134239_1ctm",
+      "node_id": "PROTO_14",
+      "type": "contradiction",
+      "severity": "high",
+      "cycle": "adversarial",
+      "status": "resolved",
+      "description": "Section 3.1 Emergency Freeze timing contradicts PROTO_27 Cron Governance Stop threshold-10 vs 15 minutes-Section 4.2 Attribution Overrule assumes Super Director always reachable-no delegate defined-Section 6 Least-Among-Us principle lacks quantitative metric",
+      "recommendation": "Review both contradicted nodes, determine which authority takes precedence, update the subordinate document, or define a tiered resolution. Only humans can resolve contradictions.",
+      "context": {
+        "contradicted_nodes": ["PROTO_27"]
+      },
+      "created_at": "2026-05-06T18:28:54.239Z",
+      "resolved_at": "2026-05-06T19:16:57.283Z",
+      "resolution": "Resolved via tiered system: 10min Freeze / 15min Stop sequential escalation. Both PROTO_14 and PROTO_27 updated."
+    },
+    {
+      "id": "HITL_1778092134277_nz1i",
+      "node_id": "PROTO_14",
+      "type": "sensitive",
+      "severity": "high",
+      "cycle": "adversarial",
+      "status": "resolved",
+      "description": "Node PROTO_14 flagged as sensitive (locked at unknown level). Review access control and ensure least-privilege enforcement.",
+      "recommendation": "Verify that role-based access control correctly gates this node. Ensure escalation paths to Super Director are documented and tested.",
+      "context": {},
+      "created_at": "2026-05-06T18:28:54.286Z",
+      "resolved_at": "2026-05-06T19:16:57.283Z",
+      "resolution": "Access control audited and fixed. isDeveloper added to useAuthorization(). refreshGraph() and onNodeClick() now use canAccessNode() which respects requiredRole. Vitest test added (4/4 pass). Node still locked behind SUPER_ADMIN as intended."
+    }
+  ]
+}

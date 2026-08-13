@@ -1,0 +1,158 @@
+/**
+ * MCP-specific monitoring system implementation
+ * Extends the base monitoring system with MCP-specific functionality
+ */
+
+import {
+  BaseMonitoringSystem,
+  BaseMonitoringConfig,
+  IMetricsCollector,
+  Logger
+} from '@the-new-fuse/core-monitoring';
+import { MCPMetricsCollector } from './MCPMetricsCollector.js';
+import { PerformanceMetrics } from '../types/monitoring.js';
+
+/**
+ * MCP monitoring configuration
+ */
+export interface MCPMonitoringConfig extends BaseMonitoringConfig {
+  // MCP-specific configuration options
+  trackConnections?: boolean;
+  trackResources?: boolean;
+  trackTools?: boolean;
+  trackRequests?: boolean;
+}
+
+/**
+ * MCP monitoring system implementation
+ */
+export class MCPMonitoringSystem extends (BaseMonitoringSystem as any)<PerformanceMetrics, MCPMonitoringConfig> {
+
+  constructor(logger?: Logger) {
+    // @ts-ignore
+    super(logger || new Logger('MCPMonitoringSystem'));
+  }
+
+  /**
+   * Create MCP-specific metrics collector
+   */
+  protected createMetricsCollector(): any {
+    // @ts-ignore
+    if (!this.config) {
+      throw new Error('Configuration not set');
+    }
+
+    return new MCPMetricsCollector({
+      // @ts-ignore
+      interval: this.config.metricsInterval,
+      // @ts-ignore
+      retentionPeriod: this.config.retentionPeriod,
+      // @ts-ignore
+      storage: this.config.storage || { type: 'memory' }
+    // @ts-ignore
+    }, this.logger);
+  }
+
+  /**
+   * Format MCP metrics for Prometheus export
+   */
+  protected formatPrometheusMetrics(metrics: PerformanceMetrics): string {
+    const lines: string[] = [];
+
+    // Helper function to add metric
+    const addMetric = (name: string, value: number, labels?: Record<string, string>) => {
+      const labelStr = labels ?
+        `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
+      lines.push(`mcp_${name}${labelStr} ${value}`);
+    };
+
+    // Request metrics
+    addMetric('requests_total', metrics.requests.total);
+    addMetric('requests_successful', metrics.requests.successful);
+    addMetric('requests_failed', metrics.requests.failed);
+    addMetric('requests_per_second', metrics.requests.rps);
+    addMetric('response_time_avg_ms', metrics.requests.avgResponseTime);
+    addMetric('response_time_p95_ms', metrics.requests.p95ResponseTime);
+    addMetric('response_time_p99_ms', metrics.requests.p99ResponseTime);
+
+    // Connection metrics
+    addMetric('connections_active', metrics.connections.active);
+    addMetric('connections_total', metrics.connections.total);
+    addMetric('connections_failed', metrics.connections.failed);
+    addMetric('connection_time_avg_ms', metrics.connections.avgConnectionTime);
+
+    // Resource metrics
+    addMetric('resources_total', metrics.resources.total);
+    addMetric('resource_access_count', metrics.resources.accessCount);
+    addMetric('resource_cache_hit_rate', metrics.resources.cacheHitRate);
+    addMetric('resource_read_time_avg_ms', metrics.resources.avgReadTime);
+
+    // Tool metrics
+    addMetric('tools_total', metrics.tools.total);
+    addMetric('tool_execution_count', metrics.tools.executionCount);
+    addMetric('tool_execution_time_avg_ms', metrics.tools.avgExecutionTime);
+    addMetric('tool_success_rate', metrics.tools.successRate);
+
+    // System metrics
+    addMetric('memory_usage_bytes', metrics.system.memoryUsage);
+    addMetric('cpu_usage_percent', metrics.system.cpuUsage);
+    addMetric('uptime_ms', metrics.system.uptime);
+    addMetric('health_score', metrics.system.healthScore);
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Get MCP-specific status information
+   */
+  async getMCPStatus(): Promise<{
+    connections: number;
+    resources: number;
+    tools: number;
+    requests: number;
+  }> {
+    // @ts-ignore
+    const metrics = this.getMetricsCollector().getCurrentMetrics();
+
+    return {
+      connections: metrics.connections.active,
+      resources: metrics.resources.total,
+      tools: metrics.tools.total,
+      requests: metrics.requests.total
+    };
+  }
+
+  /**
+   * Record MCP-specific events
+   */
+  recordConnectionEvent(event: 'connect' | 'disconnect' | 'error'): void {
+    // @ts-ignore
+    const collector = this.getMetricsCollector() as MCPMetricsCollector;
+    collector.recordConnectionEvent(event);
+  }
+
+  recordResourceAccess(uri: string, duration: number, cached: boolean): void {
+    // @ts-ignore
+    const collector = this.getMetricsCollector() as MCPMetricsCollector;
+    collector.recordResourceAccess(uri, duration, cached);
+  }
+
+  recordToolExecution(name: string, duration: number, success: boolean): void {
+    // @ts-ignore
+    const collector = this.getMetricsCollector() as MCPMetricsCollector;
+    collector.recordToolExecution(name, duration, success);
+  }
+
+  recordRequestStart(requestId: string): void {
+    // @ts-ignore
+    const collector = this.getMetricsCollector() as MCPMetricsCollector;
+    collector.recordRequestStart(requestId);
+  }
+
+  recordRequestEnd(requestId: string, success: boolean): void {
+    // @ts-ignore
+    const collector = this.getMetricsCollector() as MCPMetricsCollector;
+    collector.recordRequestEnd(requestId, success);
+  }
+}
+

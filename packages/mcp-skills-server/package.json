@@ -1,0 +1,52 @@
+{
+  "name": "@the-new-fuse/mcp-skills-server",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server exposing The New Fuse skills library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tnf-skills-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "skills",
+    "agent",
+    "ai"
+  ],
+  "author": "The New Fuse",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/glob": "*",
+    "@types/node": "^24.8.1",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

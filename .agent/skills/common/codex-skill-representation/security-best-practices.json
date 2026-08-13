@@ -1,0 +1,12 @@
+{
+  "skillName": "security-best-practices",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/security-best-practices/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/security-best-practices/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/security-best-practices.json",
+  "status": "present"
+}

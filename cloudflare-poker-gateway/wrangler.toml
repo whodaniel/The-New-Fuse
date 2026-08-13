@@ -1,0 +1,13 @@
+name = "ai-arcade-poker-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-03-14"
+
+account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
+workers_dev = true
+routes = ["poker.ai-arcade.xyz/*"]
+
+[vars]
+FRONTEND_URL = "https://ai-arcade-poker.pages.dev"
+# ⚠️ DEPRECATED: BACKEND_URL points to CloudRuntime which is no longer used.
+# Update to the current GCP Cloud Run backend URL. See CLOUD_MIGRATION_BLUEPRINT.md.
+BACKEND_URL = "https://casin8-games-backend-production.thenewfuse.com"

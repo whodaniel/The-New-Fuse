@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ZSHRC="${HOME}/.zshrc"
+MARK_BEGIN="# BEGIN TNF FRONTLOAD"
+MARK_END="# END TNF FRONTLOAD"
+
+usage() {
+  cat <<'EOF'
+Usage: tnf-frontload <on|off|status>
+
+Controls whether the TNF frontload status banner runs in new zsh sessions.
+This edits ~/.zshrc between:
+  # BEGIN TNF FRONTLOAD
+  # END TNF FRONTLOAD
+EOF
+}
+
+ensure_block_present() {
+  if ! grep -qF "$MARK_BEGIN" "$ZSHRC" 2>/dev/null; then
+    cat >>"$ZSHRC" <<'EOF'
+
+# BEGIN TNF FRONTLOAD
+# TNF Frontload Integration: Auto-display status on shell startup (once per session)
+if [ -f "$HOME/.tnf/handoff-current.json" ] && [ -z "$TNF_STATUS_SHOWN" ]; then
+  export TNF_STATUS_SHOWN=1
+  ~/.tnf/tnf-status
+fi
+# END TNF FRONTLOAD
+EOF
+  fi
+}
+
+set_enabled() {
+  local enabled="$1"
+  python3 - "$ZSHRC" "$enabled" "$MARK_BEGIN" "$MARK_END" <<'PY'
+import sys
+
+path, enabled, begin, end = sys.argv[1:]
+enabled = enabled == "1"
+
+with open(path, "r", encoding="utf-8") as f:
+    lines = f.read().splitlines(True)
+
+out = []
+i = 0
+in_block = False
+while i < len(lines):
+    line = lines[i]
+    if line.rstrip("\n") == begin:
+        in_block = True
+        out.append(line)
+        i += 1
+        continue
+    if in_block:
+        if line.rstrip("\n") == end:
+            in_block = False
+            out.append(line)
+            i += 1
+            continue
+        # Comment/uncomment lines inside block (keep markers untouched).
+        if enabled:
+            if line.startswith("# "):
+                out.append(line[2:])
+            elif line.startswith("#"):
+                out.append(line[1:])
+            else:
+                out.append(line)
+        else:
+            if line.startswith("#") or line.strip() == "":
+                out.append(line)
+            else:
+                out.append("# " + line)
+        i += 1
+        continue
+    out.append(line)
+    i += 1
+
+with open(path, "w", encoding="utf-8") as f:
+    f.write("".join(out))
+PY
+}
+
+status() {
+  if ! grep -qF "$MARK_BEGIN" "$ZSHRC" 2>/dev/null; then
+    echo "frontload: not installed"
+    exit 0
+  fi
+  # If the tnf-status line is commented, we treat as off.
+  if grep -nF "$MARK_BEGIN" "$ZSHRC" >/dev/null 2>&1; then :; fi
+  if grep -nE '^[[:space:]]*~\/\.tnf\/tnf-status' "$ZSHRC" >/dev/null 2>&1; then
+    echo "frontload: on"
+  else
+    echo "frontload: off"
+  fi
+}
+
+cmd="${1:-}"
+case "$cmd" in
+  on)
+    ensure_block_present
+    set_enabled 1
+    echo "frontload: on (new terminals)"
+    ;;
+  off)
+    ensure_block_present
+    set_enabled 0
+    echo "frontload: off (new terminals)"
+    ;;
+  status)
+    status
+    ;;
+  -h|--help|"")
+    usage
+    exit 0
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac
+

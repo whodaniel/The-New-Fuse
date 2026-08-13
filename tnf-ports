@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THIS=$(readlink -f "$0" 2>/dev/null || greadlink -f "$0" 2>/dev/null || echo "$0")
+ROOT_DIR="$(cd "$(dirname "${THIS}")" && pwd)"
+
+exec node "$ROOT_DIR/scripts/tnf-ports.cjs" "$@"

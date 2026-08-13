@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cursor Watch Learn Operator"
+  short_description: "Run capture cycles and actionable summaries."
+  default_prompt: "Use $cursor-watch-learn-operator to run a live capture cycle, enforce max-20 retention, and report actionable findings."

@@ -1,0 +1,832 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-12T05:49:12.949Z",
+  "generator": "scripts/harness/skill-publisher-attest.cjs --write-lock",
+  "entries": {
+    ".agent/skills/anthropic/algorithmic-art/SKILL.md": {
+      "sha256": "fb25accbe1ea82da00b18440f9f8521b3c778575e577ddea2b188a77cc2044eb",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/brand-guidelines/SKILL.md": {
+      "sha256": "6de1cb5aad287fa77a1a017caca66f941ba4c921e67348cab3bcaf5a2d65c4ee",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/canvas-design/SKILL.md": {
+      "sha256": "0c1281e95357845a79f8bfd799e27079f319bad5ca0c97d0bad961fcf9e1f560",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/doc-coauthoring/SKILL.md": {
+      "sha256": "0a1863456c46d5408ca198ec8b2295302259857ce54edfad0f880d2ba77cb304",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/docx/SKILL.md": {
+      "sha256": "ab845132b850cc741cd6642bbc5ee7113715d929b58161271e228461b766c763",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/frontend-design/SKILL.md": {
+      "sha256": "00f6a198c03c1d1ba649196e31da4f89cb91feaf69afe9b89ea21dff8d2939ad",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/internal-comms/SKILL.md": {
+      "sha256": "c00ae6a7015107df76304ad145d869bd7fa268fd36f7c658e176962ac0103b33",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/mcp-builder/SKILL.md": {
+      "sha256": "57b671c19009ab51fba6d557bb10d7609095adb7b0f4d82aa7d5fb5a12df3750",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/pdf/SKILL.md": {
+      "sha256": "34b41cb865aea9c8cd59e07c855011e4d655742ad95585f7075565f7d95a11c6",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/pptx/SKILL.md": {
+      "sha256": "093cc68c0715c0672b5249f096658e0c97724a9b2561ace34b090893357173a2",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/skill-creator/SKILL.md": {
+      "sha256": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/slack-gif-creator/SKILL.md": {
+      "sha256": "502ccf809185d4c91e1269f2f327dde97625c0abed03e910948059e5ee171657",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/theme-factory/SKILL.md": {
+      "sha256": "b3bc756fe84af6cdf958d27bf3f94ddb8d83eee96e3b577714e182295aae48ca",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/web-artifacts-builder/SKILL.md": {
+      "sha256": "d39fbe76d3d305b65c8d05dda7d5de15da41a95dc82cb664e690e2dfce838b8f",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/webapp-testing/SKILL.md": {
+      "sha256": "58d4b02e77ee2f371234302a612793871a57234320b22a45cc1b8a698a05e681",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/anthropic/xlsx/SKILL.md": {
+      "sha256": "6b335e58b4fed670e5d69075ddc2c3ccdc96aec9fc38b375b2a48f492df8b973",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".agent/skills/antigravity/3d-web-experience/SKILL.md": {
+      "sha256": "1329eaa8a9d12f7a56a275960f95185d5cabc83f3261f1d6cacb87b250f15741",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/agent-evaluation/SKILL.md": {
+      "sha256": "ed17c32416886ddd5fcff8ff8117a0c09a36066e4a9b72759a73aec3020d779b",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/agent-memory-mcp/SKILL.md": {
+      "sha256": "87f7692450db90f0ca101040873f431862dad1f8a71b41824a810eaa176c0897",
+      "publisher": "amit rathiesh",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/agent-memory-systems/SKILL.md": {
+      "sha256": "c45f6da6e83d7740b91c32e9ba5a7320bbdc4e5c973416af6371b53e599f1dc6",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/agent-tool-builder/SKILL.md": {
+      "sha256": "51b313c6bf7281e03e95aece8cd2298d85fda2957a262bda8935da22255ed91c",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/ai-agents-architect/SKILL.md": {
+      "sha256": "b4ec9d32aedf17993fdb63799938addee0765ab1ec65cd1a9fafd48088dbb039",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/ai-product/SKILL.md": {
+      "sha256": "1f0fbff109d1caaa3148f4fff7a2e65d6fd4ce3b53f756e4dced9bc5f27b80b7",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/ai-wrapper-product/SKILL.md": {
+      "sha256": "71254dbd3eb1647d44be4a9b93b991d26eea9e08b09f33b219f99fa0fc708c02",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/algolia-search/SKILL.md": {
+      "sha256": "a8b8ca2c05e5bc6b988f5e447f0e4aa6b65c6bc132369d5e0927a3db63c0d8d0",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/autonomous-agents/SKILL.md": {
+      "sha256": "f279e8a3ba4b87cff09575c4a44ac3e5616825c7a1eda364ee20a6fe2a2a977c",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/aws-serverless/SKILL.md": {
+      "sha256": "3deca503480d1be9e26c7104626d30f0c40deb342ca60d3b189b404b6bfe7235",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/azure-functions/SKILL.md": {
+      "sha256": "b88320d8dda0f108d7a96c754d9f5be899483fc01e92546e330130365653d0a6",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/browser-automation/SKILL.md": {
+      "sha256": "86847cc7d882e48bba81ab55e8deab53c483feb135724b3ca15be8d36a28a9b9",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/browser-extension-builder/SKILL.md": {
+      "sha256": "7bc401a7f30741844b7c08b60b5f37aabb8b9e881880c254de951ca85ed7b733",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/bullmq-specialist/SKILL.md": {
+      "sha256": "7b50885d38d6a46965c9397f22cb5b09c1f5cfe47d92671603bd08288db01a02",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-backend-patterns/SKILL.md": {
+      "sha256": "23b9ef6b7cfc98d96c449ad9ade23b2e6939a3938c557c0f3daff1723d2a0770",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-clickhouse-io/SKILL.md": {
+      "sha256": "069d0887e4636adddd5f6c8ceff438da70aef469b07e577fea07562b20da617a",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-coding-standards/SKILL.md": {
+      "sha256": "4034db738c85d87eb3f94a12a5a662ac9b20005be028b0a9c69b914300508a31",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-continuous-learning/SKILL.md": {
+      "sha256": "a01df48bcdd437afd697d2785d961776edee234a69a39ee0e377e57c9f9946da",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-frontend-patterns/SKILL.md": {
+      "sha256": "5f6512d2c3303c12512ef07b1b97cf7bed1d6bf84072d461a42493c340238288",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-project-guidelines-example/SKILL.md": {
+      "sha256": "677b5ea6d81592a52fd3c59664ee3ff141112baa6e16de37534868b13d09632f",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-security-review/SKILL.md": {
+      "sha256": "ebfd124f250ae9d31a6eedd2f4141725eae2db0bbed2de8e1e7ef796c226bbda",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/cc-skill-strategic-compact/SKILL.md": {
+      "sha256": "ecd448d26e830161800d4e6dbae284130353344c2fc9cc12ed61f567386fd487",
+      "publisher": "affaan-m",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/clerk-auth/SKILL.md": {
+      "sha256": "1c0faf47537759cd08a4de9ee93a6321f0cd626859dd60b073d410cfd3e7c758",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/computer-use-agents/SKILL.md": {
+      "sha256": "d565aa781527b3571a5f555fda950d279a6fea781f74bdabc4d4575c78fdca47",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/context-window-management/SKILL.md": {
+      "sha256": "85ba962196db25cf213e7bb04ea99bf648979eb9d7f1499d3bccda95c5ee14bf",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/conversation-memory/SKILL.md": {
+      "sha256": "48de65ebd93c4867681c8ad9891106914eb4bd0601fc2a17db54b230b55cb03b",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/crewai/SKILL.md": {
+      "sha256": "8e3a079c85ef8ca8579e134ef8fbf79c5116caba27ff6ad03f363a452a99439e",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/discord-bot-architect/SKILL.md": {
+      "sha256": "989a07c9fce84bca2a183388d55f1fef30f9ebda9000172807fda0cfed873b76",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/email-systems/SKILL.md": {
+      "sha256": "e112c9d65e6816a05598df03de3bd077687ae50775026bbbb5157b44795f6f40",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/file-uploads/SKILL.md": {
+      "sha256": "758ab4f35467b011a8e8472245098b46ce3b5929cfaccab3ad8aac660a53af80",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/firebase/SKILL.md": {
+      "sha256": "c48918ca4c3e639260a5e64d2da2c121393973257f324c6343996dbcdadd4d35",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/gcp-cloud-run/SKILL.md": {
+      "sha256": "587cebee6bac6e310a89dcfab5f2f405f35745925a07ccf559093bedd058e642",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/graphql/SKILL.md": {
+      "sha256": "900fce3a40964535fb64a85fba12a98b2b57a5d8630ace4f753409875be3c338",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/hubspot-integration/SKILL.md": {
+      "sha256": "94df063ff00538d27edae780215258b207275c0d73942707e2d162ea121a9f06",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/inngest/SKILL.md": {
+      "sha256": "1676c94122b69c2ff5363c071de5675b96e3baa643c2daca8ab0bee326e80d4b",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/interactive-portfolio/SKILL.md": {
+      "sha256": "67fec9ca048af1c0780d7c816449b241faa4da68472f25837eb8c4eff51606f7",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/langfuse/SKILL.md": {
+      "sha256": "cd7c9c648933581f340123865135e908e3eb7ad895793520b4532b1064d552e5",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/langgraph/SKILL.md": {
+      "sha256": "d193219abd353676507dc3c7030530b8e7715fc16132921c1ea01fc4d6303723",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/micro-saas-launcher/SKILL.md": {
+      "sha256": "b941be706fcb678788b78b0155428e4e1861e512a26ea0765ee8ba6deb0ff427",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/neon-postgres/SKILL.md": {
+      "sha256": "d2ea61c111a3905a7e468a467da6184d9ba83c8f3b78a530c40b43dddeeecc89",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/nextjs-supabase-auth/SKILL.md": {
+      "sha256": "654f352ad3e7e147452a7486ede76bde65dbc01b7e03a1f9cdc2b27939bbad12",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/notion-template-business/SKILL.md": {
+      "sha256": "1e8fb0c71822f4f80df9739ebaf791ea8a980c52aed58eaba5222cb920f3b85f",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/personal-tool-builder/SKILL.md": {
+      "sha256": "006a858dac390b9e2e1feb1713dc27d727fd7a8436349f6900e86020d8ca1376",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/plaid-fintech/SKILL.md": {
+      "sha256": "8204d36c3939ad69a6aa1d0616f143494a886f38b02efe9f8cecf62a47a50092",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/prompt-caching/SKILL.md": {
+      "sha256": "807b70b2ddd707ecfea10e83f4ccc18558659b31eadf53dff8a35cd0a5c5b38d",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/prompt-engineer/SKILL.md": {
+      "sha256": "ea243270b70eb986dedd3c974f7ea6de5d91d6348c7827b005d3e7cde9f1681d",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/rag-engineer/SKILL.md": {
+      "sha256": "a6d17aaee87829bac0abe05680c9e28bcb385ac753a9df571212a0e0a372c112",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/rag-implementation/SKILL.md": {
+      "sha256": "ef888c8b742d79458a0f90814fa6392df3f6cbafbe103b1262503d1b0c568efe",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/remotion-best-practices/SKILL.md": {
+      "sha256": "aca0edbad9e4e21d716818d201a14577d996d5142847710b0fdc0002b2b98c50",
+      "publisher": "remotion-dev",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/salesforce-development/SKILL.md": {
+      "sha256": "5adf1e9cfd24e8210070c0a462a70dafca0e1bb817b4034ac80320971f6f08e9",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/scroll-experience/SKILL.md": {
+      "sha256": "9d820b99dd89f9f36cb84cf6a7225deebff36d6bc770df8c809fe9ce3f639815",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/segment-cdp/SKILL.md": {
+      "sha256": "39eb6ef8d81adaa58587929d4875d94bd6ecd9c2ab0168d7f724d3820023521f",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/shopify-apps/SKILL.md": {
+      "sha256": "679500db2c08248327bc4f41ab3f317c21ccbdc8e21ae128283b0218cfb66f5d",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/slack-bot-builder/SKILL.md": {
+      "sha256": "a3e38c57a4d816c2d1905cb290782e7dec6f18304529e8efad5f7b018b587bc0",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/stripe-integration/SKILL.md": {
+      "sha256": "d66de010a1b16366a1bc2f93005289cd7d0b5bd0ad213e68782a51f1cdffce50",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/telegram-bot-builder/SKILL.md": {
+      "sha256": "858672c20bedfaf071e8cc900c4a23ece8939872152bb310ebb1b2492b80c71a",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/telegram-mini-app/SKILL.md": {
+      "sha256": "ff4e3b54b589f88b31888d89d240b92df159c87ac557f22eb1f481af6df8f1ac",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/trigger-dev/SKILL.md": {
+      "sha256": "c62463443d6b84a0eea98368886adad4899f663342f83fd284c8bedc3f39e047",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/twilio-communications/SKILL.md": {
+      "sha256": "57aa14bdb61b6e1bec9e5f338857897f0b61400da7d1b5d0d2d34e21361c76f3",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/upstash-qstash/SKILL.md": {
+      "sha256": "7c9132a3e5e4c7eb0b9329ddbadc8f4ff02740149ca0c44054a126d675dc6bfe",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/vercel-deployment/SKILL.md": {
+      "sha256": "334c40249c1783e3d0ea421cb8d4f46ed2c558e8dff9eecd6cc5863a1c680b40",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/viral-generator-builder/SKILL.md": {
+      "sha256": "78a806303f70f830451342e9591de6cd1cbe0e0d512e86c03a4786fbb0a8cf1b",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/voice-agents/SKILL.md": {
+      "sha256": "c31bb21df6e104f42aa7f6ce99025cc01fb9c020d43d22372bb056ae56a0bd9e",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/voice-ai-development/SKILL.md": {
+      "sha256": "011c4a50a643789dec319d783f5d8295951aabf3a2d9c5cc5bc62fb26f8ba156",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/workflow-automation/SKILL.md": {
+      "sha256": "5448de475e395890d5a7dbdfba791bbe574be1903bd5e477c701f40e877e0867",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/antigravity/zapier-make-patterns/SKILL.md": {
+      "sha256": "19f55fb53942e8053fa30450309b3c89a5ad698830069d9b48841c9ae9baee09",
+      "publisher": "vibeship-spawner-skills (apache 2.0)",
+      "trust": "third-party"
+    },
+    ".agent/skills/cursor-watch-learn-operator/SKILL.md": {
+      "sha256": "1b6d39f32cb373b72bd3e3b124b0a8c47979704ecad4a480bbbe55abfbebd8e1",
+      "publisher": "cursor",
+      "trust": "vendor"
+    },
+    ".agent/skills/dogfood/tnf-directive-rotation/SKILL.md": {
+      "sha256": "645cebd277312cdef977a80f305cd1dc16b040e7285f53fab0764a756fbffd3b",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-extension-bridge-standard/SKILL.md": {
+      "sha256": "b4e54cb88a0c96e084d0876bb9de5d72131923dc9e40d5f98015d98c77e69ca9",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-fleet-activation/SKILL.md": {
+      "sha256": "335d70440a6a5aedce9a26a251e63d19ddddd514577bb317566f8d9c927995b6",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-launchd-popup-fix/SKILL.md": {
+      "sha256": "e66cb8f734456cb618c0726bb6905670669ff408e4d89d31b4bf0e66468b32e8",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-native-host-debug/SKILL.md": {
+      "sha256": "1590ddf68526881d297804215e52770b04597a7c42a9a6ddb7c34bbd2a3ed25c",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-relay-silent-failure-fix/SKILL.md": {
+      "sha256": "bc516830b35b796287aefa73bc396972bf14072c2a6f381bdc05556e4de81cc8",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/tnf-whatsapp-gateway-recovery/SKILL.md": {
+      "sha256": "e4032d92feb0cc3ef9be845b5be7f1ab05cdf781529ab52fe896547d411b6844",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/dogfood/whatsapp-voice-transcription-fix/SKILL.md": {
+      "sha256": "fcffc4707e2a27f99c97e3f3bc8a601762750adf24c780f535bc2818b599a64d",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/elite-longterm-memory/SKILL.md": {
+      "sha256": "56bb341604f951985e451df450744d1d78cd9ba905b6df8952084343b35a95b3",
+      "publisher": "nextfrontierbuilds",
+      "trust": "third-party"
+    },
+    ".agent/skills/feedback-integration/SKILL.md": {
+      "sha256": "5931d2bd0a90aef965063d4314ad7e97f333e46f58c785eaba5fd872935738c2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/openclaw-assistant-setup/SKILL.md": {
+      "sha256": "a677956d1909ae666f1ef8489375f1f4f66b9de0cc4a0c34694f5f639090cf43",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-oauth-rotation/SKILL.md": {
+      "sha256": "108b5627ec7b98c3a4faea9706967ad3c7aa02a4eecb354d5664d005a2dd3a73",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-onboarding-wizard/SKILL.md": {
+      "sha256": "d15440b04bb34d9cfd997cd131aa490e89ac50edbbf965c5cdc5ce9e591803ab",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-protocol/SKILL.md": {
+      "sha256": "426ce6790d0fd973509f7b9a3798584aad5bbeb62603b10c679ab6b74dc02a58",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-provider-rollout/SKILL.md": {
+      "sha256": "630c7229453485bd80565aafe5ede6e039c5b84349451dc66dc713404151be3f",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-sherpa-service/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-sherpa/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-universal-knowledge/SKILL.md": {
+      "sha256": "551f45a4893c39146cdd96574f038cb8cf0235a0de85d13013150e0ec4b5ced3",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-wizard-cli-automation/SKILL.md": {
+      "sha256": "cec32fdc4533be9667c9c412dec91c59c38c6adc57b97465cc4bae2f4ffdafa8",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/openclaw-wizard-cli-reference/SKILL.md": {
+      "sha256": "515822f507a48106d42f870e695b59e97fe6c5cedfdd60ea58d4f7f44a8c7dc3",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".agent/skills/proactive-agent/SKILL.md": {
+      "sha256": "571521d9f6f38b3ec9f073d7bdec47170a35e9c78556954ac7f0f860ab12873b",
+      "publisher": "halthelobster",
+      "trust": "third-party"
+    },
+    ".agent/skills/tnf-artifacts-lifecycle/SKILL.md": {
+      "sha256": "fc18c7b5f7816658fe4f63a3b553ded8140182c6695e41e5c8c751915a10e12f",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-autonomy-safety-audit/SKILL.md": {
+      "sha256": "53b8ab418e1698d0d62cd68cfe68430b78821c4e9d194bd13054f39e35b57431",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-cli-agent-interoperability/SKILL.md": {
+      "sha256": "e756140c9ceb989ff044723c4565fdc4d7e99e742b26d6e55984222c40d06e57",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-cli-parity-upgrade/SKILL.md": {
+      "sha256": "16eae823ad0939f7197204fff6925997254e1a83ed723db567d618f59ebcdc9e",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-cli-sdk-interoperability/SKILL.md": {
+      "sha256": "c7e22b0d6a54ae5f27c7551c6b578c09de74b31a0d32fe08e09a00e0154cfb98",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-cursor-harness-protocol/SKILL.md": {
+      "sha256": "3bde6c8c22a3555e347a5056e8cccfeca1f22e9456bf81db8c6f6ca465129bc2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-directives/SKILL.md": {
+      "sha256": "0100c0ab9471e11756e6a144a594a54d6b0e0791f657fd37bd2590065c0b75b3",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-federated-ws-channel-control/SKILL.md": {
+      "sha256": "4a1fa24818ec1de68af0213a159737e3a5bc86272aea51a47c6d726a8b6b3fe8",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-fleet-delegation-governor/SKILL.md": {
+      "sha256": "c43c2401bc2ddd1ee58d236216fe2c63d17b121ed9876c2230ab4a16c8e6e407",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-framework-overview/SKILL.md": {
+      "sha256": "c505fd024f46ce104c75bca13a3f4f56ec3f87c1fbda2190baf4f0dde25b8dcc",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-frontend-deploy/SKILL.md": {
+      "sha256": "e0a9bb62244f945f234984629a29ede1c243a0c956e4f6a356d529dafd925aac",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-full-auto-network-autopilot/SKILL.md": {
+      "sha256": "b359579ed38311e05adf68a5b4bdc8158f118c46bacc05f4f6dd32f4ab2c7752",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-growth-audit/SKILL.md": {
+      "sha256": "a41aa47b114babb8d1babdfd169652ad004e6efc0438c8d9ca8f4c4068499223",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-harness-completeness/SKILL.md": {
+      "sha256": "c22f74532a8b1dac6174d42f5fb2e961ce3f8be2abda647a9b30c4da2192c1c0",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-harness-integrity-auditor/SKILL.md": {
+      "sha256": "42131fe7c3e130dc99d845d3043fe31b74cd05b7ad13700ae391a4e2680fb5e3",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-harness-master-loop/SKILL.md": {
+      "sha256": "ec7396efc54bf7daac5186050a9c70975e96cf46cc5925052b90551ed8b5946b",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-harness-protocol/SKILL.md": {
+      "sha256": "3bde6c8c22a3555e347a5056e8cccfeca1f22e9456bf81db8c6f6ca465129bc2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-health-check/SKILL.md": {
+      "sha256": "fae221218ebbe25d1fa97a908ac43ab563f23dc4687621590769c92c6c47b0d2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-iphone-vision-bridge/SKILL.md": {
+      "sha256": "6e1c912f0adb4b9c894ab47c90e361873db01f34dd24ab1f3578b51d073e88c4",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-live-fleet-cohesion/SKILL.md": {
+      "sha256": "686cf3f9df8dfec346b6ec086c781300a31e28e1523672dd321e97036be534c9",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-local-runtime-stability/SKILL.md": {
+      "sha256": "82612bdf48bd2015f09e705c98fa9bf72dca9b74d42e6d01d8a6db5f4dc436ff",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-multi-agent-state-governor/SKILL.md": {
+      "sha256": "f61f98e1018d9f2a907f5cdc9f53666e3994199d9322142d8cdf65616e961de0",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-operator-terminal-inviolability/SKILL.md": {
+      "sha256": "b7bb3969be87c621a8c988aabe3da36ae0d2b6d58712e7114a3477214cb65ba8",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-proactive-goal-wizard/SKILL.md": {
+      "sha256": "2a7f1027148c8f5efd4d72101d26f6174949f18c341283094484b07909590aa2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-self-evolution-protocol/SKILL.md": {
+      "sha256": "d8faf8f507331ac9987907e1464fa2ab43d121938b5eec28103a0e38dcf0ae26",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-timeline-debug/SKILL.md": {
+      "sha256": "6f644b6fc2be395724105816a323166f7358f752a6b20b8cb3812277964a4092",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/tnf-ufte-federated-tag-governor/SKILL.md": {
+      "sha256": "1852843bc8a0cbb4d34c834fb54ca9e7544c058f2c6a8672c4b2956bfad09042",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".agent/skills/youtube-watcher/SKILL.md": {
+      "sha256": "89b97c95ce71f719f2d97e4cb7657217f4a85afbb66ee5e9dbafa39b71bcdb39",
+      "publisher": "michael gathara",
+      "trust": "third-party"
+    },
+    ".claude/skills/openclaw-protocol/SKILL.md": {
+      "sha256": "426ce6790d0fd973509f7b9a3798584aad5bbeb62603b10c679ab6b74dc02a58",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".claude/skills/openclaw-sherpa-service/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".claude/skills/openclaw-sherpa/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".claude/skills/tnf-autonomy-safety-audit/SKILL.md": {
+      "sha256": "ea108da5e1df31ae4922a505399ed01b64a59a8d46506bf267fbd70b9fdc8b2a",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".claude/skills/voice-link-trigger/SKILL.md": {
+      "sha256": "57c5621be18edbfd0ece10319d970c52f7a1ae3ab819d819bd5d43f22efa35f5",
+      "publisher": "anthropic",
+      "trust": "vendor"
+    },
+    ".skills/openclaw-assistant-setup/SKILL.md": {
+      "sha256": "a677956d1909ae666f1ef8489375f1f4f66b9de0cc4a0c34694f5f639090cf43",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-onboarding-wizard/SKILL.md": {
+      "sha256": "d15440b04bb34d9cfd997cd131aa490e89ac50edbbf965c5cdc5ce9e591803ab",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-protocol/SKILL.md": {
+      "sha256": "426ce6790d0fd973509f7b9a3798584aad5bbeb62603b10c679ab6b74dc02a58",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-sherpa-service/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-sherpa/SKILL.md": {
+      "sha256": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-slash-commands/SKILL.md": {
+      "sha256": "78e62b56fe61a6c0f073c871a19c4585b0d0a10629d9beb743397de73dc0a62f",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-wizard-cli-automation/SKILL.md": {
+      "sha256": "cec32fdc4533be9667c9c412dec91c59c38c6adc57b97465cc4bae2f4ffdafa8",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/openclaw-wizard-cli-reference/SKILL.md": {
+      "sha256": "515822f507a48106d42f870e695b59e97fe6c5cedfdd60ea58d4f7f44a8c7dc3",
+      "publisher": "openclaw",
+      "trust": "interop"
+    },
+    ".skills/tnf-cli-agent-interoperability/SKILL.md": {
+      "sha256": "e756140c9ceb989ff044723c4565fdc4d7e99e742b26d6e55984222c40d06e57",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-cli-parity-upgrade/SKILL.md": {
+      "sha256": "16eae823ad0939f7197204fff6925997254e1a83ed723db567d618f59ebcdc9e",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-cli-sdk-interoperability/SKILL.md": {
+      "sha256": "c7e22b0d6a54ae5f27c7551c6b578c09de74b31a0d32fe08e09a00e0154cfb98",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-execution-audit-trail/SKILL.md": {
+      "sha256": "663495e6dc6c77e723f8d27c50dbf705f302b42d78199848253a2db4d974bbb2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-frontload-protocols/SKILL.md": {
+      "sha256": "710d836754102bb72811e3f18ad37c2fe02fc21cf3176b1884e68dd6e1691f10",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-full-auto-network-autopilot/SKILL.md": {
+      "sha256": "b359579ed38311e05adf68a5b4bdc8158f118c46bacc05f4f6dd32f4ab2c7752",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-growth-blocker-auditor/SKILL.md": {
+      "sha256": "cbdd5c7837859dd82e2f2e6c154dbadac04ef91ec2443fb3478a801bd45485e1",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-honest-guard-review/SKILL.md": {
+      "sha256": "1d9a59735db3b51a7477dd1c37228a90cf6ca79173ceba6936a5b91fe9afdc06",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-live-session-coordination/SKILL.md": {
+      "sha256": "8e91ba778ccf7e79bae80ae49a8a9be0f782cfd33b98925d56804c7a0dbfa308",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-master-clock-sync/SKILL.md": {
+      "sha256": "d81f511a1d8074b5c7b3f553347530cd8f4a67238c7c815d41f38f7fc6144b6a",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-multi-agent-state-governor/SKILL.md": {
+      "sha256": "ffddeef1f892da3128c12ed68ff14b7e1c2621ff692213952fc7909b0c04bdab",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-skill-bridging/SKILL.md": {
+      "sha256": "413b3297a1a1eaecbf5b01a5bbf617b8f773158bf7ff4bf46b6e18c87cd2b758",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-skill-types/SKILL.md": {
+      "sha256": "ffd840d1b07aed22caa185b03bc6080c42a5ae83078f561d60dcfa39660a16f7",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-stack-self-improvement-loop/SKILL.md": {
+      "sha256": "d995e3a920efde6b20ae332bfdeefd8cd5dc51f36b354c3d25010754d55cab28",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-staff-review-agent/SKILL.md": {
+      "sha256": "ce096d2b20909aaa48e4e3dc7f19afcd91c562af5829ebd883fe5fbf65965802",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-staffing-director-agent/SKILL.md": {
+      "sha256": "6bed5acfc5b5a4781d929ba2c7d346168946dfe53c869b8976c606ce700ec9a2",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-sub-director-autopilot/SKILL.md": {
+      "sha256": "5ccc3f86702935b558e13d3d929cec5acb470aa430a6f1c1171ae80d45c7a0cd",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-task-production-pipeline/SKILL.md": {
+      "sha256": "d748bf2d49292dc1cd251c378af14b35fc583566dce93f4a4bf51d3f2c1123e4",
+      "publisher": "tnf",
+      "trust": "first-party"
+    },
+    ".skills/tnf-universal-slash-commands/SKILL.md": {
+      "sha256": "650269ec4b8e15ed13e99e69b61f026b3a4397608e79a36a02f99bb9226e8d65",
+      "publisher": "tnf",
+      "trust": "first-party"
+    }
+  }
+}

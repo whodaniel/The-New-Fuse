@@ -1,0 +1,796 @@
+This might genuinely be one of the
+biggest breakthroughs in medicine and
+drug discovery we've seen in decades. A
+new paper just dropped and it's about
+this new AI model called MAML. And this
+can completely transform biosciences and
+medicine. It could potentially come up
+with a ton of new cures for diseases
+like cancer. And this can make drug
+discovery way faster and cheaper and
+more accurate. This could also lead to
+personalized medicine and beyond. Now,
+this paper is super technical and
+jam-packed with details. So, in this
+video, I'm going to break it down into
+simple terms so it's easy for anyone to
+understand. Let's jump right in. Now, to
+understand why this paper is such a big
+deal, it's helpful to first start with
+the problems of medicine and drug design
+today. Imagine spending 10 years and a
+billion dollars building something and
+there's a 90% chance it just doesn't
+work. 90%. That's the failure rate of
+new drugs. From the moment scientists
+come up with a promising new medicine to
+the moment it goes through clinical
+trials, roughly 90% don't make it
+through approval. That's kind of insane
+when you think about it. We've already
+sequenced the human genome. We have
+smartphones. We have AI that can predict
+protein structures or even understand
+DNA. We have so much amazing technology.
+Yet, when it comes to actually making
+new medicine, we're still wrong most of
+the time. Think about this. If I built
+bridges and nine out of 10 of them
+collapsed, that would be horrible. I
+would be out of business. So why is
+modern medicine, even with all our
+insane modern technology, still hitting
+this wall? To understand this, we first
+need to understand some basic biology
+and how drug design works. You see,
+every living thing has DNA. This is the
+code for living things to function and
+stay alive. And within DNA, there are
+sections called genes. These are
+basically instruction manuals. They
+contain the code for making proteins.
+And proteins are the tiny machines that
+actually do most of the work inside your
+body. They send signals, build
+structures, speed up chemical reactions,
+control immune responses, keep cells
+alive, and a ton of other stuff. But
+genes aren't always active. Some genes
+can be turned up, some turned down, or
+mutated. Scientists call this gene
+expression. Basically, a measurement of
+which genes are active and how active
+they are. And this controls how many
+proteins are made. So we have DNA which
+contains genes which code up proteins
+which are essential for the function of
+all living things. I'm oversimplifying
+here but that's essentially the mini
+lesson on how life works. Now there are
+a few possible ways for this pathway to
+go wrong which could cause disease. The
+DNA might get mutations which would mess
+things up. This could cause proteins to
+be made incorrectly or not at all. or
+the gene expression might be too high or
+too low which also affects how proteins
+are made. Even subtle errors in this
+pathway could cause some catastrophic
+diseases that you and I are familiar
+with like cancer. In fact, in really
+simple terms, how cancer works is there
+might be a mutation that damages a gene
+in the DNA which controls for cell
+division. This changes gene expression
+or protein function. And subsequently,
+these proteins then tell the cell to
+grow to ignore stop signals and spread
+into a tumor. That's essentially cancer.
+Now, here's how drugs are currently
+designed around this process. Scientists
+usually start by trying to find the
+specific part of the disease pathway
+that has gone wrong. In other words,
+they look for the bad guy. Maybe there's
+a protein telling cancer cells to keep
+dividing. Maybe there's an enzyme
+helping a virus copy itself. Anyways,
+once the researchers find that target,
+the goal is to design a drug that can
+interact with it. Think of the target
+like a lock and the drug like a key. If
+the key fits within the lock, it can
+either block the protein or change what
+it does. Now, there are two main types
+of drugs that are relevant to this
+paper. Some drugs are small molecules
+like Tylenol. They're tiny, stable, and
+often easy to manufacture as pills. And
+because they're so small, they can
+sometimes just slip inside cells and
+bind to proteins there. Another type of
+drug is called an antibbody, which is
+much larger. You can think of them as
+highly precise biological clamps.
+They're designed to stick to the bad guy
+with extreme accuracy. Because of their
+size, they usually work outside cells or
+on the surface of cells. The hope is
+that if you shut down the bad guy, the
+disease such as cancer would also stop
+growing and die. But this is where it
+gets incredibly difficult. Because the
+body is not just one simple machine,
+it's made of a billion moving parts.
+Even though the designed drug could
+successfully bind to the bad guy, it
+might affect other parts of the body as
+well and have some side effects. So,
+it's not as simple as the analogy of a
+key and a lock. Maybe that key can also
+open other locks in the body which could
+cause harmful effects. So drug design is
+basically an attempt to find the perfect
+molecular tool strong enough to stop the
+disease but precise enough so that it
+doesn't also harm the rest of the body
+and safe enough to give to a real human.
+You also have to prove the drug actually
+works at safe doses and it doesn't
+accidentally kill the patient. That's
+the real challenge of drug design. And
+this is where modern technology runs
+into a weird problem. You see, we have
+incredibly powerful tools today, but
+most of them only understand one slice
+of the puzzle. One AI model might
+predict protein structures. In fact,
+that's exactly what Google's Alphafold
+does. Another AI might be great at
+reading and generating DNA. One of them
+is called EVO 2. And in fact, I covered
+this in a previous video. So see this if
+you want to learn more and we have other
+tools that can screen chemical
+compounds, others that can analyze
+clinical trial data and so on and so
+forth. But here's the thing, disease
+does not happen in separate folders. It
+flows through the entire system from DNA
+to gene activity to proteins to cells
+and then to entire bodies. The problem
+is that all these tools are often
+siloed. They're trained on different
+data sets built by different teams
+optimized for different tasks. So
+instead of one system that understands
+the full chain of biology, we have a
+bunch of specialized tools looking at
+disconnected snapshots. It's like trying
+to solve a crime scene where one
+detective only has the fingerprints.
+Another detective only has the security
+footage. Another one only has the final
+autopsy report. Each clue matters, but
+they don't really talk to each other, so
+they can't connect everything into one
+story. Well, that's exactly what Mammal
+is trying to solve. They've built an AI
+model that understands everything at
+once. Chemistry, genetics, and protein
+structure simultaneously. And the scale
+of what they did is honestly insane.
+Mammal was pre-trained on 2 billion
+samples. They scraped basically every
+major biological database out there. The
+observed antibbody space, which contains
+billions of antibbody sequences. Uniro,
+which contains almost every protein we
+know. And then we also have zinc and
+pubm which contains millions of small
+molecule structures. Cell Xgene which
+contains a ton of gene expression data.
+So the model was trained on everything
+to do with chemistry, genetics and
+proteins. But how does the AI actually
+read all of this? These are in different
+formats, right? A small molecule like
+aspirin looks nothing like a gene which
+also looks nothing like an antibbody. So
+the researchers did something clever.
+They forced everything into a single
+unified format, sequences of characters,
+but each domain has its own grammar. For
+molecules, they used something called a
+smile string. This is basically a way to
+flatten a 3D chemical structure into
+just one line of text. For example, the
+smile for Tylenol becomes this, where
+every letter is an atom and every
+symbol, like the equal sign, is a
+chemical bond. The AI learns chemistry
+just by tracking patterns across
+millions of these text strings. Now, for
+genes, it's totally different. The model
+takes every gene in a cell and ranks
+them by how active they are. In other
+words, how much they are expressed. The
+genes screaming the loudest go first.
+The silent ones go last. So, the model
+reads a cell as a priority list of which
+genes are doing the most work right now.
+And then for proteins and antibodies
+which are also proteins, it just reads
+the chain of amino acids. These are the
+building blocks of proteins. But right
+now everything is in different formats.
+It's like you're reading a book but the
+first paragraph is in English, the
+second paragraph is in sheet music and
+the third paragraph is in JavaScript. It
+gets really confusing, right? This
+doesn't make sense at all. And if you
+throw all this raw data to train a
+neural network, it also gets super
+confused. Well, this is where the
+engineering gets super clever. Mammal
+uses what's called a modular tokenizer.
+Think of a tokenizer as a dictionary the
+AI uses to translate this raw data into
+consistent language that the AI
+understands. But Mamml doesn't just use
+one dictionary. It uses an umbrella
+tokenizer with specialized
+subdictionaries underneath. So there's
+one dictionary for chemistry, one
+dictionary for genetics, and another
+dictionary for proteins. If it sees a
+small molecule, it uses the small
+molecule dictionary to convert that into
+tokens and embeddings. If it gets a
+protein, it uses the protein dictionary
+to convert that into embeddings. And the
+same logic applies to genes. And here's
+the magic part. Once everything is
+translated and converted into these
+embeddings, they all get mixed together
+into a shared multi-dimensional space.
+So the model learns chemistry, proteins,
+and genetic expression all in one
+unified space. Because it merges all
+these domains together, it can learn the
+relationships between all these
+different things. Now, this design
+sounds great, but how well does it
+actually perform in the real world? For
+example, can it actually predict drug
+behavior? Well, the researchers put
+mammal through some pretty intense
+tests. Specifically, they evaluated it
+across 11 distinct, highly rigorous
+benchmarks that span the entire drug
+discovery pipeline. They threw
+everything at it, and it turns out the
+results across the board were
+phenomenal. So, here's the table of
+results. And across these 11 benchmarks,
+Mammal achieved state-of-the-art
+performance. It outright beat the
+previous best models in the world on all
+of these tasks. Let's dig into some
+specific benchmarks. Earlier we
+discussed the nightmare of designing a
+drug that actually works. It's able to
+reduce the disease but it also ends up
+being toxic to the human. So is mammal
+able to predict these scenarios? They
+evaluated mammal on two critical safety
+benchmarks. One is called BBBP which
+stands for blood brain barrier
+penetration. Another one is clintox
+which is a data set used to predict
+clinical toxicity and FDA approval.
+Let's pause on this bloodb brain barrier
+for a second. This is actually a massive
+hurdle in pharmarmacology. You see, the
+brain has this incredibly tight security
+system. Of course, it doesn't want any
+external stuff flowing into the brain.
+But if you're designing a therapeutic
+for something like Alzheimer's or
+Parkinson's, your drug must be able to
+penetrate this barrier to reach the
+brain. Or conversely, if you're
+designing a really heavy chemotherapy
+drug for the liver, you absolutely do
+not want it crossing this barrier and
+getting into the brain. So predicting
+that penetration is super important. Now
+for this benchmark, the reigning
+champion for predicting this was a model
+called mole former. This is a highly
+specialized model. It was trained
+exclusively on over a billion small
+molecule sequences. So think of it as
+like a hyperfocused master of small
+molecule chemistry. On the other hand,
+this new mammal is a generalist. But the
+insane thing is on this blood brain
+barrier penetration test. While the
+hypers specialized mole former achieved
+a very good score, mammal was able to
+beat it. And then same for this clintox
+safety benchmark which predicts FDA
+approval. Maml also beat mole former by
+a huge percentage points. Let's take a
+second to highlight why this is so
+impressive. In almost every field, a
+specialist will beat a generalist in
+their specific domain, right? For
+example, if a decathlete races a
+professional swimmer, the decathlete
+will likely lose since he's not really
+specialized in swimming. Well, in this
+case, mammal is the decathlete. It
+spreads its knowledge across chemistry,
+genetics, and proteins. It's not just
+specialized in small molecule sequences,
+but yet it was able to beat the
+specialist pro swimmer. It beats mole
+former that was highly specialized in
+chemistry. That's actually very
+insightful. Why does knowing about genes
+and proteins also make it better at
+chemistry? Well, that's because
+everything is interconnected in biology.
+There's a billion moving parts. And this
+proves that being multimodal, being able
+to understand all these different
+domains, is not a distraction, but
+instead an advantage. Small molecules
+exist to interact with proteins and
+alter gene expression. Because mammal
+was forced to learn the relationships
+between all these different modalities
+during training, it developed a much
+deeper understanding of the overall
+biology of the molecules. And this makes
+it much better at predicting outcomes
+compared to a specialized model. But the
+researchers didn't stop there. If you
+make videos or content online, you
+should definitely check out Runway, the
+sponsor of this video. They just
+released Runway Agent. Think of it as
+like your creative partner that can
+autonomously turn your idea into a
+publish ready video. I mean, full
+multi-shot videos with voice over,
+music, scene transitions, and actual
+narrative structure already assembled
+for you. You start by simply describing
+what you want. Maybe it's a product
+launch, an ad campaign, a YouTube intro,
+or even just a vague idea in your head.
+So, instead of staring at a blank
+timeline and editing software for hours,
+you're basically working with an AI
+creative partner that helps shape the
+idea with you. And here's the crazy
+part. Before the video is generated, you
+can see the entire plan first. every
+scene, the visual direction, the flow of
+the story, and you can tweak it,
+redirect it, or completely reshape it
+before it gets rendered. It doesn't feel
+like gambling on prompts anymore. And
+once everything looks right, Runway
+Agent builds the actual finished video
+for you. Multiple scenes, voice over,
+music, editing, all assembled and ready
+to publish. Most AI video tools still
+give you fragments, but this feels much
+closer to an actual end-to-end workflow.
+That means more videos, faster
+campaigns, smaller teams producing
+bigger content, and way less time stuck
+in post-prouction. Try Runway Agent
+today using the link in the description
+below or the QR code on the screen and
+get 50% off your first 3 months with the
+code agent50. Next, they tested it on
+labeling cell types using the Zen 68K
+data set. This consists of thousands of
+gene activity data from a ton of
+different immune cell types in the
+blood. The AI's job is to look at the
+genetic activity of the cell and
+correctly label it. For example, this is
+the ZD4 plus T- cell or this is the NK
+cell, etc., etc. Basically, label the
+cell given its genetic activity. And
+this is incredibly important for
+figuring out how a patient's immune
+system is responding to a disease or
+treatment. It's a fundamental
+classification task. And on this highly
+complex task, Mammal achieved a 7.5%
+improvement over the state-of-the-art
+model. Again, this is a huge leap. And
+it gets even more impressive. I think
+the highlight of this paper is this
+cancer drug response section. This is
+proof of a genuine biomedical
+breakthrough. So, here's the setup for
+this test. The researchers wanted to
+prove that mammal wasn't just
+regurgitating information it had
+memorized from training. They wanted to
+see if it could predict how completely
+new and unseen drugs would perform
+against human cancer cells. So they
+selected four drugs that were definitely
+not included in its training data. So
+this includes carzomibadanib,
+infigratinib and vura phenib. What a
+mouthful. Anyway, they took the chemical
+strings for these four drugs and they
+gave them to mammal. In addition to the
+genetic profiles of over 800 different
+types of cancer tumor cells, this
+includes like lung cancer, breast
+cancer, colon cancer, and so on. A huge
+diversity of human cancer cells. And
+they asked Mamml one question. How
+effective are these four new drugs
+across these 800 tumor cell types? Rank
+them from the most deadly down to the
+least deadly to the cancer. Now, you
+might be wondering, if these drugs
+weren't in the training data, what if
+they still looked very similar to
+something in the training data that the
+AI memorized? That's a very valid
+concern. So, to prove these drugs were
+truly new to the model, to prove that it
+has never seen these types of drugs
+before, the researchers calculated
+something called the Tanyimoto
+similarity. This is basically used to
+measure how structurally similar two
+molecules are based on their chemical
+structure. And the researchers confirmed
+that three out of the four drugs had a
+maximum tenoto value of less than.7 when
+compared to anything mammal had ever
+seen. And in the rigorous world of
+chemistry, a score below 7 means that
+these drugs are basically structurally
+different. So these drugs are like
+strangers to the AI. They look
+completely new to the AI and like
+nothing it has seen before. Now back to
+the task. It needs to rank how potent
+each drug will be against 805 different
+variations of cancer tumors. And here's
+its prediction. Mammal returned a very
+confident and specific ranking. It
+predicted that carzib is the most potent
+across the majority of tumors. It then
+ranked nadanib second and then this one
+third and this one fourth, the least
+potent of the four. Now, here's the plot
+twist. If you actually look up
+carfilzomib, it's a real FDA approved
+drug, but it's currently approved and
+only used for blood cancers. All this
+time, doctors believed that carfilzoib
+was useless against solid tumors. They
+just thought it didn't work. That's the
+currently accepted view from expert
+oncologists. But here, the AI put this
+as the number one strongest drug against
+solid cancer types. Remember, we don't
+have this knowledge before. Experts
+never thought this would be the case. If
+we put this to the test in real life, we
+would expect it to fail miserably,
+right? But here, Mammal seems so
+confident. It looked at the structure of
+this drug and it confidently said that
+this would be very strong against solid
+tumor cells, completely contrary to what
+doctors think. So, the researchers put
+this to the test. They conducted a real
+life physical experiment where they
+tested these drugs against solid cancer
+cells. And what they found was shocking.
+The results perfectly matched mammals
+predictions. It got the precise potency
+ranking exactly right. Carfield zomib
+was the most potent, cascading down to
+vurophenib as the least potent. Mammals
+successfully preserved this relative
+order across approximately 95% of all
+805 cancer cell types. Let's take a
+second to process how insane this is. An
+AI that merely reads text strings looked
+at a blood cancer drug it had never seen
+before. It looked at the genetics of
+hundreds of solid tumors, which is a
+different thing. And it correctly
+deduced that this drug would be
+effective against these solid tumors.
+Even though for decades, human experts
+assumed these drugs would not work. The
+implications of this are massive. What
+we're witnessing is an AI that can
+generalize to entirely new chemical
+compounds and accurately predict their
+uses for treating diseases, which is the
+entire field of drug discovery and
+especially for drug repurposing. If
+you're not familiar with drug
+repurposing, it means taking a drug that
+already exists and testing whether it
+can treat a different disease. Instead
+of starting from zero and designing a
+brand new molecule, scientists look at
+approved drugs or failed drug candidates
+and ask, "Could this work somewhere
+else?" And this is really important
+because discovering or inventing a new
+drug from scratch takes like 10 to 15
+years and billions of dollars. But if
+you have an AI that can scan the entire
+library of existing drug candidates and
+see if it can treat another disease,
+that opens up massive opportunities. But
+as incredible as this cancer drug story
+is, remember that small molecules are
+just one type of drug. Another type is
+the antibbody. These are larger proteins
+that clamp on to the problematic protein
+very precisely. And predicting the
+structure and application of this is
+super complicated. You see, a protein is
+just a long chain of amino acids that
+fold into complex 3D shapes. That shape
+determines what they stick to and what
+effect they will have in the body. But
+in theory, a protein has a ginormous
+number of possible ways it could fold.
+If it tried every possible shape
+randomly, it could take longer than the
+age of the universe to find the correct
+one. But in real life, of course,
+proteins fold almost instantly because
+physics guide them towards the most
+stable shape. So to create a
+protein-based drug like an antibbody,
+scientists need to understand not just
+the protein sequence, but how it folds,
+how does it move, and what does it bind
+to. Now, at least in terms of predicting
+how proteins fold, that's exactly what
+Google's legendary AlphaFold does. But
+since Mammal was also trained on
+proteins, what happens if we compare
+Mammal with the latest Alphafold 3
+head-to-head? Keep in mind, Alphafold is
+super accurate. It's like the industry
+standard for predicting proteins. It's
+considered like one of the greatest
+modern scientific achievements, and the
+team even won a Nobel Prize in chemistry
+for this. Now we just established that
+mammal is just a sequence model, right?
+It reads text in one dimension. How can
+it possibly beat AlphaFold which is
+specialized at predicting the 3D
+structure of proteins? Well, the
+researchers put this to the test. They
+showed both mammal and alphaold an
+antibbody and a disease target. And they
+asked, will these two stick together?
+Yes or no? They tested both models
+across seven different welldocumented
+targets. And again, the results were
+shocking. Mammal actually beat AlphaFold
+3 on five of those seven targets. Again,
+this is pretty crazy. AlphaFold 3 can
+literally see 3D shapes of these
+proteins. So, shouldn't it easily see if
+it fits with the target disease? How on
+earth could a one-dimensional text
+reader like mammal actually win? To
+understand why, we have to understand a
+very flawed assumption about how
+proteins work at the microscopic level.
+You see, in textbooks or in other
+content, they often describe proteins as
+just rigid static structures. Every
+textbook illustration shows proteins as
+these solid interlocking shapes because,
+well, that's the only way we could
+historically draw them or photograph
+them. But in reality, at least for human
+proteins, around 30 to 40% of the
+sequence consists of intrinsically
+disordered regions or RS for short. Now,
+what on earth are these? These sections
+of the protein actually don't have a
+stable 3D shape. Instead, they're floppy
+and highly flexible. And R kind of looks
+and behaves like a piece of wet
+spaghetti, constantly wiggling, folding,
+and shifting around. So, actually,
+protein structures are quite dynamic,
+not static. They're not just solid
+blocks, but they're actually fluid and
+they can change shapes or move around.
+And this is crucial because some of the
+most important protein targets like EGFR
+and her 2, which are notoriously
+aggressive drivers of breast cancer and
+stomach cancer, have a ton of these
+floppy, intrinsically disordered
+regions. If you give these floppy
+regions to Alphafold 3, well, it
+struggles to actually predict the
+structure of this because it's trained
+on predicting static and solid 3D
+structures. AlphaFold only learned from
+those frozen snapshots of proteins
+during training. So if you give
+Alphafold 3 the sequence of these highly
+flexible and chaotic targets and ask if
+a specific antibbody will bind to it, it
+actually does not answer this well. But
+if you give the same question to Mammal,
+it had much better predictions. Mammal
+actually wins on the floppy proteins
+because it isn't trying to draw a static
+picture of them. Because mammal is a
+large language model operating on
+sequences, it doesn't try to force the
+protein into sue any specific shape.
+Instead, it seems to understand the
+underlying grammar or the rules of
+proteins including floppy parts. It
+relies on the math of the sequence and
+not just the snapshot of the structure.
+And this is a brilliant distinction.
+It's far more robust at predicting
+whether an antibbody will bind to a
+disease target. And again, this
+unleashes some insane possibilities. We
+can now plug all antibbody candidates
+through this AI and ask if it can bind
+to certain diseases. And this could lead
+to a ton of huge discoveries and new
+drugs. Now, so far, we've only asked
+mammal questions about existing
+candidates and whether they respond to
+certain diseases. What if we want to
+generate a completely new drug from
+scratch? The crazy thing is they
+actually designed mammal to be able to
+do this. It's not just an analyst, but
+it can also act as the inventor. So
+next, the researchers tested its ability
+to design new antibodies from scratch.
+To understand the significance of this,
+we first need to understand how
+antibodies work. An antibbody is
+basically a massive Y-shaped protein
+used by our immune system to identify
+and deactivate things like viruses or
+cancerous cells. Picture it as a giant
+microscopic claw floating through the
+bloodstream. Now, the main body of that
+Y-shaped claw is quite stable and
+consistent. But the very tips of the
+claw, the parts that actually reach out
+and physically grab the disease antigen,
+these are highly variable. These tips
+are called CDRs or complimentarity
+determining regions. And the CDRs are
+kind of like the fingers at the end of
+the claw. These fingers are the most
+important part of the antibbody because
+they are highly specific. The sequence
+of amino acids that code up these
+fingers determine exactly what disease
+the antibbody can grab onto. In fact,
+the entire field of modern antibbody
+design involves trying to engineer new
+and better fingers to grab a specific
+target. So, how did they set up this
+test for mammal? They used a huge data
+set called SABDAB, which has a ton of
+different antibodies. They took
+thousands of known and successful
+antibodies, but they artificially erased
+the CDRs or the fingers so that the AI
+couldn't see it. They then fed mammal
+the disease it needed to target, and
+essentially they gave it a
+fill-in-the-blank test. based on this
+target disease predict the exact
+sequence of amino acids the fingers
+should have to bind onto this disease.
+Remember mammal only reads
+one-dimensional text sequences. It's
+just a language model. It wasn't allowed
+to look at any 3D structural maps of the
+antibbody or the disease. It had to
+infer the physical shape of both of
+these just by understanding the grammar
+or the rules of proteins. And guess
+what? The results were shocking. Mammal
+was able to generate the correct
+sequences of all these fingers, even
+better than other state-of-the-art
+methods that were specialized at this.
+But here's where it gets even crazier.
+There's one specific region where it
+completely blew away the competition,
+and that's the CDRH3 region. Now, what
+makes this specific finger so special?
+You see, this CDRH3 region is
+notoriously the longest and most complex
+and chaotic and variable region of the
+entire antibbody. Because of its length
+and flexibility, it's almost entirely
+responsible for determining what the
+antibbody can bind to. And consequently,
+it's also the hardest piece for any AI
+to predict. And for this region, mammal
+absolutely crushed the competition. It
+achieved a massive 19% improvement
+compared to the previous leading models.
+A 19% leap in predicting the hardest
+most variable part of the antibbody
+using nothing but its underlying
+understanding of the grammar of
+proteins. That's pretty astonishing. It
+means the model isn't just memorizing
+common patterns. It truly understands
+the rules of biology. So, as we zoom
+out, what does this all mean? We
+potentially have the first true
+foundation model for biology. one that
+doesn't just read papers or just look at
+molecules or analyze genes, but it does
+all of it at once. It's one unified
+model that understands everything. If
+mammal actually works the way the paper
+claims, we could be looking at a future
+where drug discovery isn't a 10-year
+billiondoll gamble that fails 90% of the
+time. Instead, we can now design drugs
+way faster and cheaper and more
+accurately. We can also explore existing
+known drug candidates and see if they
+can target any other disease. I mean we
+can expect a massive acceleration in new
+drugs in the coming months if this is
+true. And because this model also
+understands DNA and gene expression,
+personalized medicine could become
+mainstream. We can just take a DNA and
+blood sample from the patient and plug
+it through this AI to figure out what's
+causing their specific disease. what's
+wrong with their DNA or which proteins
+in their body are messed up. And then
+this AI can also figure out what are the
+best drugs to prescribe to this specific
+person. Or it can even custom design a
+new antibbody just for this patient. And
+this is a bold prediction, but in the
+paper they've already shown that it's
+really good at predicting how drug
+candidates bind to
+[TRUNCATED]

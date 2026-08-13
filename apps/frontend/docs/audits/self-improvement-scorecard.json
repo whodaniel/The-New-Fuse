@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-08-10T19:01:55.024Z",
+  "overall": {
+    "passed": true,
+    "requiredAuditsPresent": true
+  },
+  "live": {
+    "available": true,
+    "passed": true,
+    "totalChecked": 176,
+    "totalBroken": 0,
+    "semanticBroken": 0,
+    "generatedAt": "2026-08-10T18:54:15.524Z"
+  },
+  "semantic": {
+    "available": true,
+    "passed": true,
+    "totalRoutes": 224,
+    "hardBroken": 0,
+    "networkBroken": 0,
+    "sameAsRoot": 0,
+    "duplicateFingerprintGroups": 13,
+    "generatedAt": "2026-08-10T19:01:42.030Z"
+  },
+  "auth": {
+    "available": true,
+    "passed": true,
+    "totalChecks": 4,
+    "passedChecks": 4,
+    "failedChecks": 0,
+    "generatedAt": "2026-08-10T19:01:50.315Z"
+  }
+}

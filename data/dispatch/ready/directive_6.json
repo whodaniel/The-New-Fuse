@@ -1,0 +1,15 @@
+{
+  "title": "Revalidate Security Fixes with Deep Sec",
+  "steps": [
+    "Execute the command `PNPM Deep Sec revalidate`.",
+    "Review the command's output to confirm that the previously identified security issues are marked as resolved."
+  ],
+  "target": "Git History and Security Findings",
+  "metrics": {
+    "specificity": 1.0,
+    "implementability": 1.0,
+    "testability": 1.0
+  },
+  "rationale": "Provides a specific, executable command to verify the resolution status of security issues against the Git history, with the tool explicitly marking issues as fixed.",
+  "dispatch_ready": true
+}

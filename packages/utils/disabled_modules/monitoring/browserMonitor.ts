@@ -1,0 +1,73 @@
+
+export {}
+exports.browserMonitor = void 0;
+import eventBus_1 from './eventBus.js';
+class BrowserMonitor {
+    constructor() {
+        this.metricsInterval = null;
+        this.METRICS_INTERVAL = 5000; // 5 seconds
+        this.initializeMonitoring();
+    }
+    static getInstance() {
+        if (!BrowserMonitor.instance) {
+            BrowserMonitor.instance = new BrowserMonitor();
+        }
+        return BrowserMonitor.instance;
+    }
+    initializeMonitoring() {
+        // Start collecting metrics periodically
+        this.metricsInterval = setInterval(() => {
+            const metrics = this.collectMetrics();
+            eventBus_1.eventBus.emit('browser:metrics', metrics);
+        }, this.METRICS_INTERVAL);
+        // Listen for window resize events
+        window.addEventListener('resize', () => {
+            const metrics = this.collectMetrics();
+            eventBus_1.eventBus.emit('browser:metrics', metrics);
+        });
+        // Clean up on page unload
+        window.addEventListener('unload', () => {
+            this.stopMonitoring();
+        });
+    }
+    collectMetrics() {
+        const performance = window.performance;
+        const memory = performance.memory || null;
+        const timing = performance.timing;
+        return {
+            memory: memory ? {
+                usedJSHeapSize: memory.usedJSHeapSize,
+                totalJSHeapSize: memory.totalJSHeapSize,
+                jsHeapSizeLimit: memory.jsHeapSizeLimit
+            } : null,
+            performance: {
+                navigationStart: timing.navigationStart,
+                loadEventEnd: timing.loadEventEnd,
+                domComplete: timing.domComplete,
+                firstContentfulPaint: this.getFirstContentfulPaint()
+            },
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight
+            }
+        };
+    }
+    getFirstContentfulPaint() {
+        const paintMetrics = performance.getEntriesByType('paint')
+            .find(entry => entry.name === 'first-contentful-paint');
+        return paintMetrics ? paintMetrics.startTime : 0;
+    }
+    stopMonitoring() {
+        if (this.metricsInterval) {
+            clearInterval(this.metricsInterval);
+            this.metricsInterval = null;
+        }
+    }
+    resumeMonitoring() {
+        if (!this.metricsInterval) {
+            this.initializeMonitoring();
+        }
+    }
+}
+exports.browserMonitor = BrowserMonitor.getInstance();
+//# sourceMappingURL=browserMonitor.js.mapexport {};

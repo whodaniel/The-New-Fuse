@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "tnf-staffops-llm-quota-state/v1",
+  "visibility": "staffops-only",
+  "generatedAt": "2026-03-26T00:00:00Z",
+  "agents": {
+    "tnf-staffops-local-subdirector-01": {
+      "quotaRemainingPercent": null,
+      "lastCheckedAt": null,
+      "currentProviderId": null,
+      "handoffState": "idle"
+    }
+  }
+}

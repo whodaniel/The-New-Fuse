@@ -1,0 +1,383 @@
+{
+  "generatedAt": "2026-05-14T11:01:37.248Z",
+  "counts": {
+    "sidebarPaths": 54,
+    "missingRoutes": 3,
+    "adminUnguarded": 0,
+    "unguardedReview": 20
+  },
+  "sidebarGuardReport": [
+    {
+      "path": "/admin",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/agent-management",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/agents/skills",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/agents/web-search",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/api-analytics",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/audit-logs",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/backup-restore",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/configuration",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/control-panel",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/database",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/feature-flags",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/layout",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/marketplace",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/openclaw-security",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/port-management",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/settings",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/system-health",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/system-metrics",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/user-management",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/users",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/workspaces",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/agents",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/ai-command-center",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/ai-portal",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/all-pages",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/analytics",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/billing",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/build-info",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/chat",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/command-center",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/dashboard",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/debug",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/docs",
+      "access": "public",
+      "status": "ok",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/general-settings",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/live-view",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/marketplace",
+      "access": "public",
+      "status": "ok",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/mcp-hub",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/platform-parity",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/settings",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/settings/api",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/settings/appearance",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/settings/notifications",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/settings/security",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/suggestions",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/tasks",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/timeline",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/user/profile",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/workflows",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/workflows/nexus",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/workflows/nexus?layer=lexicon",
+      "status": "missing-route",
+      "guard": "none"
+    },
+    {
+      "path": "/workflows/nexus?layer=memory",
+      "status": "missing-route",
+      "guard": "none"
+    },
+    {
+      "path": "/workflows/nexus?layer=topology&from=observatory",
+      "status": "missing-route",
+      "guard": "none"
+    },
+    {
+      "path": "/workspace-settings/llm-selection",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/workspace/overview",
+      "access": "authenticated",
+      "status": "review-unguarded",
+      "guard": "none",
+      "redirect": false
+    }
+  ]
+}

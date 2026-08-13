@@ -1,0 +1,20 @@
+[
+  {
+    "id": "TNF-EDA-v1.0",
+    "date": "2026-06-19",
+    "protocol": "TNF-EDA-001",
+    "addedSurfaces": [
+      "surface:agents:cli",
+      "surface:infrastructure:bin",
+      "surface:infrastructure:listening",
+      "surface:provider:env",
+      "surface:provider:keychain",
+      "surface:app:macos",
+      "surface:info:home",
+      "surface:running:ollama",
+      "surface:running:lms",
+      "surface:running:openai-compatible"
+    ],
+    "notes": "Initial stable surface map. Adapter is idempotent and read-only."
+  }
+]

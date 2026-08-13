@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personalized Content Recommendation Agent"
+  short_description: "Help with Personalized Content Recommendation Agent tasks"
+  default_prompt: "Run the Personalized Content Recommendation Agent workflow using SKILL.md instructions."

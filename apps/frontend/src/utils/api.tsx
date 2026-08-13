@@ -1,0 +1,114 @@
+import { authFetch } from './authToken';
+import { noteRateLimitResponse, RateLimitedError } from './rateLimitCoordinator';
+
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export async function handleApiResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    if (response.status === 429) {
+      noteRateLimitResponse(response);
+    }
+    const error = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+    const message =
+      (error as { message?: string })?.message ||
+      (response.status === 429
+        ? 'Rate limit exceeded. Please try again later.'
+        : 'An unknown error occurred');
+    throw new ApiError(response.status, message);
+  }
+
+  // Return null for 204 No Content
+  if (response.status === 204) {
+    return null as T;
+  }
+
+  return response.json();
+}
+
+export function createQueryString(params: Record<string, any>): string {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.append(key, String(value));
+    }
+  });
+  return searchParams.toString();
+}
+
+export interface ApiRequestOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  data?: any;
+  headers?: Record<string, string>;
+  params?: Record<string, any>;
+}
+
+export async function apiRequest<T = any>(
+  url: string,
+  options: ApiRequestOptions = {}
+): Promise<{ data: T }> {
+  const { method = 'GET', data, headers = {}, params } = options;
+
+  // Build URL with query parameters
+  let finalUrl = url;
+  if (params && Object.keys(params).length > 0) {
+    const queryString = createQueryString(params);
+    finalUrl += `?${queryString}`;
+  }
+
+  const requestInit: RequestInit = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  };
+
+  if (data && method !== 'GET') {
+    requestInit.body = JSON.stringify(data);
+  }
+
+  let response: Response;
+  try {
+    response = await authFetch(finalUrl, requestInit);
+  } catch (error) {
+    if (error instanceof RateLimitedError) {
+      throw new ApiError(429, error.message);
+    }
+    throw error;
+  }
+
+  const responseData = await handleApiResponse<T>(response);
+
+  return { data: responseData };
+}
+
+export const api = {
+  get<T = any>(url: string, options?: Omit<ApiRequestOptions, 'method'>): Promise<{ data: T }> {
+    return apiRequest<T>(url, { ...options, method: 'GET' });
+  },
+  post<T = any>(
+    url: string,
+    data?: any,
+    options?: Omit<ApiRequestOptions, 'method' | 'data'>
+  ): Promise<{ data: T }> {
+    return apiRequest<T>(url, { ...options, data, method: 'POST' });
+  },
+  put<T = any>(
+    url: string,
+    data?: any,
+    options?: Omit<ApiRequestOptions, 'method' | 'data'>
+  ): Promise<{ data: T }> {
+    return apiRequest<T>(url, { ...options, data, method: 'PUT' });
+  },
+  delete<T = any>(url: string, options?: Omit<ApiRequestOptions, 'method'>): Promise<{ data: T }> {
+    return apiRequest<T>(url, { ...options, method: 'DELETE' });
+  },
+};

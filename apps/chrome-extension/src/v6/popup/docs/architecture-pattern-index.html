@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture Pattern Index</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #0f1116;
+        color: #e6edf3;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 { margin: 0 0 10px 0; }
+      h2 { margin-top: 22px; font-size: 18px; }
+      ul { margin: 8px 0 0 16px; }
+      li { margin: 4px 0; }
+      code { color: #7ee787; }
+      .note {
+        margin-top: 16px;
+        padding: 12px;
+        border: 1px solid #30363d;
+        background: #161b22;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Architecture Pattern Index</h1>
+      <p>Runtime-oriented map of orchestrator, A2A, handoff, and self-improvement mechanics.</p>
+
+      <h2>Active Runtime Paths</h2>
+      <ul>
+        <li><code>apps/chrome-extension/src/v6/background/index.ts</code></li>
+        <li><code>apps/chrome-extension/src/v6/native-host/tnf-native-host.js</code></li>
+        <li><code>scripts/relay-channel-monitor.cjs</code></li>
+        <li><code>packages/relay-core/src/standalone-relay.ts</code></li>
+        <li><code>packages/relay-core/dist/master-clock.js</code></li>
+      </ul>
+
+      <h2>A2A / Broker / Orchestrator</h2>
+      <ul>
+        <li><code>src/services/MessageRouter.ts</code></li>
+        <li><code>src/services/A2AMessageQueue.ts</code></li>
+        <li><code>src/services/A2ALoadBalancer.ts</code></li>
+        <li><code>src/ai-communication.js</code></li>
+      </ul>
+
+      <h2>Handoff / Context</h2>
+      <ul>
+        <li><code>src/services/AgentHandoffTemplateService.ts</code></li>
+        <li><code>apps/chrome-extension/src/v6/background/index.ts</code> (onboarding context)</li>
+      </ul>
+
+      <h2>Self-Improvement / Self-Prompting / Meta-Skills</h2>
+      <ul>
+        <li><code>tnf-master-orchestrator.ts</code></li>
+        <li><code>docs/CLOUD_RUNTIME_CRON_SETUP.md</code></li>
+        <li><code>.claude/commands/self-improve.md</code></li>
+        <li><code>.claude/skills/framework-consciousness.md</code></li>
+      </ul>
+
+      <div class="note">
+        Canonical source doc: <code>docs/ARCHITECTURE_PATTERN_INDEX.md</code>
+      </div>
+    </div>
+  </body>
+</html>

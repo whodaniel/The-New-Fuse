@@ -1,0 +1,485 @@
+In this video, we're building an AI
+image studio from scratch. You'll be
+able to upload reference assets like a
+face photo, a logo, product image, or a
+style reference, write a prompt, and
+generate usable images for things like
+YouTube thumbnails, posters, banners,
+product shots, or branded content. And
+because this is a build challenge, I'm
+not using the coding tool, the wheel is.
+Whatever this lands on, this is what I
+have to use to build the app. All right,
+we're using the Codex CLI. Lekker, let's
+build this. All right, first things
+first, I just created this blank folder,
+and we've got Codex open. For the model,
+let's go with GPT 5.5, and for the
+reasoning level, let's go with high. I
+do have a ChatGPT subscription, but only
+the basic plus plan. So, I do hope we
+can get through all of this on this very
+simple plan. In order to save on tokens,
+I am going to run certain commands
+manually. So, I'm just going to open up
+another command prompt window. Let's CD
+into the project folder. And the first
+thing I'm going to do is run the command
+create a gen tick app at latest space
+period. This will scaffold the Next.js
+project for us with user authentication,
+a Postgres database, Drizzle ORM, and a
+lot of things we need to build a
+practical web application. Right, once
+that's done, we just have to run the
+command docker compose up {dash} d. This
+will simply start a Postgres database on
+our machines. And we can use that to
+store user information, maybe references
+to images, track, you know, credits,
+whatever else. Then we have to run the
+command npm run db migrate. This will
+simply copy across all the user tables
+to our newly created database. If we
+ever wanted to view the contents of the
+database, we can run the command npm run
+db studio, which will give us this URL.
+And in the database, we can see a few
+tables, like account, session, user, and
+verification. These will all be used to
+store our user information. Now, I do
+want to show you guys a few things in
+this project folder, but I think doing
+it this way is not going to be very
+user-friendly. So, just to simplify
+things, I am going to open this in VS
+Code, and this will just make it
+slightly easier for us to actually see
+what's going on in our project. So, we
+can actually close all of these
+sessions, and instead, I'll just run
+Codex in VS Code. All right, perfect.
+Right, so what we have now is we've got
+this dot agents folder, and we have a
+lot of skills pre-installed into this
+folder already, like the front-end
+design skill that will give us access to
+better-looking user interfaces. We also
+have the Next.js skill, which will help
+our agent understand and navigate
+Next.js and follow Next.js best
+practices. Now, I've also set up the
+agents.md file in a very specific way.
+This is kind of like a system prompt
+that the agent needs to follow. In
+planning mode, we're encouraging the
+agent to ask clarifying questions and
+use sub-agents to review the plan before
+presenting it to the user. In change and
+edit mode, we're instructing the agent
+to never implement the features itself,
+but to delegate the tasks to sub-agents
+instead. And then we've got some other
+rules around making changes to the
+database schema, running tests, and
+following a UI design. And by the way,
+if you open up the design.md file, we
+can see the entire design system for
+this application in this file. Now, this
+is actually just based on the standard
+Next.js style system. There's nothing
+special about it, and we will change the
+style system in a second.
+As a matter of fact, I'm going to clear
+out this file, and we are going to
+create a completely new design system
+for this app. Let's do that now,
+actually. So, back in Codex, let's say,
+"Hey there. So, currently we've got a
+border plate Next.js application set up,
+but all of this needs to be replaced
+with our actual application. This is an
+AI image generation platform for
+generating thumbnails. Now, don't worry
+about the back-end functionality for
+now. What we're trying to do is create a
+design system for this application. Use
+the front-end design skill to redesign
+the home page of this application to
+represent an AI image studio or AI image
+like a YouTube thumbnail application
+instead. This should not look like AI
+slop and should be easy to use. Make
+dark mode the default for this
+application." All right, cool. Let's
+send this. Now, I'm not going to use
+planning mode at this stage. I simply
+want to get to the result as quickly as
+possible because we might actually just
+redesign this or throw it away entirely.
+And I'm also not going to create
+different work teams in this instance
+because I do have a limited plan and I
+need to be very careful about how I burn
+tokens. I'm just looking at the agent's
+output. I can see the front-end design
+skill was indeed pulled in and that
+skill will give the agent very clear
+instructions on how to create beautiful
+user interfaces. And this is the cool
+thing about my workflow. The agent will
+test the changes before simply adding it
+back to you. In this instance, it's
+using the Playwright CLI to open the app
+in the browser. It's taking screenshots
+and visually ensuring that the app is
+actually working. We can actually see a
+screenshot right here. And this is what
+the screenshot currently looks like.
+Then, let's run the dev server by
+running npm run dev. Let's open this in
+the browser. Right, this is what GPT
+came up with. So, on the right-hand
+side, this is just a placeholder for
+what a thumbnail could actually look
+like. So, this is not bad and I think
+it's going to look way better once we
+replace it with actual images. Let's
+also see if we're able to actually sign
+up and sign in. So, I'll just enter my
+name. And of course, we haven't
+implemented the dashboard yet. We're
+simply creating a design system. And
+now, what I'm going to do is grab our
+design file, add it to the chat, and
+let's say,
+"I really like this design system.
+Please, can you update the design.md
+file with this design system so that we
+can reliably recreate these components
+and pages going forward." And great.
+Now, we have this design system in the
+design.md file that the agent will
+follow whenever creating new components
+or pages.
+Right. So, now for the next step, I'm
+actually going to start a new
+conversation, and I'm actually going to
+commit all of these untracked files as
+well. I'll just call this design system,
+and let's commit these changes. I'll
+also publish this to GitHub. So, if you
+guys want to copy this repository,
+you're more than welcome to do so.
+All right. For the next part, I'm
+actually going to switch to planning
+mode.
+So, now we're in plan mode, which you
+can see down here. And now, we're going
+to just kind of plan out the rest of the
+application without actually
+implementing the back-end functionality
+at this stage. So, I'm going to tell the
+agent, "Let's continue working on this
+app. At this stage, we've got our
+landing page, but now we have to move on
+to the dashboard page for this YouTube
+thumbnail generation application." And
+there we go. The agent is now asking us
+those clarifying questions. And cool.
+Code Assist gave us its implementation
+plan. Now, I'm happy with this plan, but
+I also don't want to lose this plan if
+we clear the session.
+So, what I like to do in this case is
+under agents, I'm going to create a new
+subfolder called plans. Then, I'm going
+to just press escape in Code Assist and
+say,
+"Please, store this plan in the plans
+folder." Let's run this. Let's just go
+into edit mode, try again, and done. All
+right, so we've now persisted the plan
+in this plans folder, so if we ever
+wanted to refer back to it in the
+future, we can. So, now that we've saved
+the plan, we can start a new
+conversation. This will just kind of
+clear our context window.
+We can pull in the plan, and we just
+have to ensure we are not in planning
+mode.
+And now let's say, "Please go ahead and
+implement this plan." All right, so I
+just want to show you guys this as well.
+You might recall from the agents.md file
+that we instructed the agent to never
+implement the changes itself, but to use
+sub agents. And here you can see that
+Codex is indeed running three agents in
+parallel to implement the solution for
+us. So, this can greatly speed up
+delivery because what the main agent
+does is it takes the plan as a whole, it
+splits it up into different silos or
+different waves of work that can be done
+in parallel. And it will then assign
+these different waves to different sub
+agents. All right, so I noticed that
+these agents weren't making any
+progress. I actually waited something
+like 10 or 15 minutes, and I haven't
+seen any file changes yet. So, what I
+think is happening is that the sub
+agents are asking for permissions, but
+we can't actually see that. So, in
+Codex, we can change the permissions by
+running the permissions command,
+and I'm going to allow full access. And
+let's continue anyway. Cool.
+Now I'm going to tell the agent,
+"Now I need you to follow the rules as
+per the agents.md file. You need to use
+sub agents. I suspect this was a
+permissions issue, so simply try again."
+All right, then. So, the agent is almost
+done implementing these changes, but I
+do want to point a few things out. You
+can see it's still using Playwright to
+test the application, which is a really
+important thing. I do like the fact that
+the agents test their changes before
+handing it over to the user. And in this
+case, you can actually see that it
+picked up a bug proactively in the UI.
+So, it's kind of making changes, opening
+up the app, testing it, and making
+changes again or fixes. And it just
+creates a way more reliable output at
+the end of the day.
+But this does use a lot more tokens. And
+as you can see, I'm already receiving a
+message saying that I'm about to hit my
+5-hour limit on the ChatGPT Plus plan.
+So, if you do want to save tokens, you
+can definitely just remove the section
+from this agents.md file related to
+testing. So, in the agents.md file, you
+can scroll down to testing and simply
+delete the section if you do not want
+the agent to run tests. But personally,
+I think it's worth it. Now, I am worried
+that I'm not going to be able to
+complete this within the Plus package,
+and I don't want to wait until usage
+resets. So, for this tutorial, I might
+have to upgrade my plan, but I did want
+to give you guys an honest and open take
+on how many tokens this is actually
+using. I guess I could bring the
+reasoning down to something like medium
+to see if that would help. Then we can
+see I've just hit my limit, which only
+resets at 12, which is about an hour and
+a half away. So, definitely not ideal.
+All right, I've just upgraded my plan,
+so I'm going to ask the agent to
+continue. But I should also mention that
+I used ChatGPT for other things this
+morning as well, like, you know,
+assisting me with scripts and thumbnail
+designs and and things like that. So,
+just to be fair towards OpenAI and
+CodeX, I typically get a lot of usage
+out of their plans. All right, cool. The
+agent is done. I'm actually just going
+to restart the dev server.
+I'll just use the same credentials as
+before. And now we're was into the
+dashboard. This is all new.
+So, we've got our overview cockpit,
+which looks really cool. So, we can
+quickly generate new concepts. On the
+right-hand side, we can see the preview
+of the final image. And here are a few
+mock-ups of our most recent work. All
+right, that looks really cool. We've got
+our concept library. Nice. We've got our
+avatar references. Really cool. And
+assets directory. Very nice. We've got
+this generate workspace where we can
+create new thumbnails. This looks pretty
+cool, but I did notice that these
+buttons at the top actually don't do
+anything. So, I'm just going to tell the
+agent, "This looks very cool." I did
+notice though that after signing into
+the dashboard, the top nav menu items
+actually don't do anything. We can also
+check if the app is responsive by
+pressing F12. I'm just going to switch
+over to mobile mode, and this looks
+really neat. So, let's actually go to
+overview. This definitely looks
+responsive. So, in the library,
+everything is indeed stacking really
+nicely. And what you would also notice
+is that all of these pages and
+components are following that design
+system that we added to the design.md
+file.
+All right then, so Codex made a fix. And
+if we click on these top navs, this does
+seem to work. And if we go back to the
+studio dashboard, these simply take you
+back to the home page. So, that's
+perfectly fine with me. Now, all we have
+to do is create a commit for all of
+these changes. Let's just call this
+dashboard. Let's commit this.
+And done. Now, what I think we need to
+do is create a new session.
+And now we're going to implement the
+actual functionality. So, I'll go back
+to planning mode for this. Now, there
+are many different AI image generation
+models out there. We could go with
+Google's Nano Banana Pro, but what I'll
+do is actually go with the new GBT image
+two model. Then what I'm looking for is
+this article over here. The OpenAI API
+needs to generate and edit images from
+text prompts using GBT image models
+including our latest GBT image two
+model. So this editing part is really
+important to us because we want the
+ability to pass in reference images or
+you know avatars or assets, and this
+model should be able to combine all of
+those into something like a thumbnail or
+product image. So what we can do is
+simply copy this URL.
+All right, so far we've kind of mocked
+out the UI for our YouTube generation
+application, but now it's time to build
+the actual functionality. So please have
+a look at all the dashboard pages, and
+everything that needs to be changed to
+perform the actual image generation
+along with attaching and passing
+reference images like avatars and
+assets. This article gives you all the
+instructions needed for integrating
+image two into our own application. All
+right, so while Codex is working through
+this, we do have to provide an OpenAI
+API key. So just go to
+platform.openai.com
+{slash} API keys. Let's create a new
+key. Back in our project, open up this
+.env file. Now under this AI integration
+section, I'm just going to create a new
+variable called OpenAI
+{underscore} API {underscore} key, which
+is equal to our API key. By default, the
+boilerplate does support open router. So
+if you ever wanted to use an AI model on
+open router, you can definitely do that
+as well. For our project though, I'm
+going to remove those and we'll directly
+call OpenAI. Now if you are using open
+AI, you do have to load some credit onto
+your account. Generating images with
+open AI is not free. And that's pretty
+much the case for all of these image
+generation platforms.
+Uh cool, we have our plans. I'm going to
+press escape. I'm going to go out of
+planning mode. I'm going to pull in the
+plans folder and say, "Please store this
+plan in the plans folder."
+Great, it's now stored the plan for us.
+So, I'm going to create a new
+conversation. This will free up the
+context window, so we can then pull in
+our plan.
+And let's say, "Please go ahead and
+implement this plan."
+Right, the agent is done. So, let's just
+have a look at the dashboard. So, it's
+no longer using those mock images
+anymore. So, let's just go through this.
+We've got the concept library. And under
+avatar images, I just uploaded these two
+images of myself, which seems to be
+working fine. Under assets, let's upload
+an asset like the cursor logo as an
+example. And let's see if we're actually
+able to generate a thumbnail. Let's
+create a thumbnail with my avatar on the
+right. On the left, it should be the
+cursor logo with the text full tutorial.
+All right, then let's select my avatar.
+Let's select the cursor logo and
+generate concept. So, it's showing
+generating here, but it's actually not
+like visually showing that it's
+generating the thumbnail over here.
+While the thumbnail is being generated,
+it would be ideal if the live preview
+showed some kind of loading or
+generating state just to show the user
+that something is actually happening.
+While that's running, we do get our
+thumbnail. And I think this looks really
+cool. It's definitely used my likeness.
+It incorporated the asset that we passed
+as well. All right, so let's see if that
+actually works. I'll just use these two
+assets again. Let's click on generate.
+And that looks much better. It's clearly
+telling us that the thumbnail is being
+generated. And that's done. Cool. So,
+we've got our thumbnail. That is
+awesome.
+So, there is one thing I do want to
+change. The homepage is kind of showing
+the last generated thumbnail, which is
+not correct. So, the homepage shouldn't
+allow the user to generate images. They
+first have to log in and go to their
+dashboard to do so. So, what I'm going
+to do is just clear the chat again. I'm
+going to commit all of these changes.
+I'll just call this working dashboard.
+And then check this out. This is a
+really cool feature in Codex.
+All right, everything seems to be
+working in the dashboard. We just have
+to redesign the homepage. The user
+shouldn't be able to generate images
+directly from the homepage. The homepage
+is just kind of a landing page with some
+marketing copy. So, you can write the
+marketing copy yourself. And then for
+the image or to demonstrate how this app
+works, you can generate the image
+yourself as you do have access to an
+image generation model. So, if you
+didn't know, image generation is
+actually baked into Codex already. So,
+the Codex CLI tool does have access to
+the image gen models. So, it can
+generate its very own stock images for
+websites. And look at that. So, that's
+our new homepage. It looks really sleek.
+Looks really cool. And by the way, this
+image over here was generated by Codex.
+How cool is that? So, everything else
+looks really cool. Looks really
+professional. And of course, everything
+in the dashboard works. If you enjoyed
+this video, hit the like button and
+subscribe to my channel for more Agenty
+Coding content. Thank you for watching.
+Now, go build something like a

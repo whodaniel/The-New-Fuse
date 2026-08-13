@@ -1,0 +1,12 @@
+{
+  "skillName": "funnel-economics-analyst-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/funnel-economics-analyst-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/funnel-economics-analyst-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/funnel-economics-analyst-agent.json",
+  "status": "present"
+}

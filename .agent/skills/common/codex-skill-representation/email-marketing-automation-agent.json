@@ -1,0 +1,12 @@
+{
+  "skillName": "email-marketing-automation-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/email-marketing-automation-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/email-marketing-automation-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/email-marketing-automation-agent.json",
+  "status": "present"
+}

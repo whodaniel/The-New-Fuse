@@ -1,0 +1,28 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentSearch = void 0;
+const react_1 = require("react");
+const lucide_react_1 = require("lucide-react");
+const Input_1 = require("../ui/Input/Input");
+const useDebounce_1 = require("@/hooks/useDebounce");
+const AgentSearch = ({ onSearch, placeholder = 'Search agents...', }) => {
+    const [searchQuery, setSearchQuery] = react_1.default.useState('');
+    const debouncedSearch = (0, useDebounce_1.useDebounce)(onSearch, 300);
+    const handleSearch = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        debouncedSearch(query);
+    };
+    return (<div className="w-full max-w-md">
+      <Input_1.Input type="text" placeholder={placeholder} value={searchQuery} onChange={handleSearch} icon={<lucide_react_1.Search className="h-4 w-4"/>} className="w-full"/>
+    </div>);
+};
+exports.AgentSearch = AgentSearch;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQWdlbnRTZWFyY2guanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJBZ2VudFNlYXJjaC50c3giXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsaUNBQTBCO0FBQzFCLCtDQUFzQztBQUN0Qyw2Q0FBMEM7QUFDMUMscURBQWtEO0FBTzNDLE1BQU0sV0FBVyxHQUErQixDQUFDLEVBQ3RELFFBQVEsRUFDUixXQUFXLEdBQUcsa0JBQWtCLEdBQ2pDLEVBQUUsRUFBRTtJQUNILE1BQU0sQ0FBQyxXQUFXLEVBQUUsY0FBYyxDQUFDLEdBQUcsZUFBSyxDQUFDLFFBQVEsQ0FBQyxFQUFFLENBQUMsQ0FBQztJQUN6RCxNQUFNLGVBQWUsR0FBRyxJQUFBLHlCQUFXLEVBQUMsUUFBUSxFQUFFLEdBQUcsQ0FBQyxDQUFDO0lBRW5ELE1BQU0sWUFBWSxHQUFHLENBQUMsQ0FBc0MsRUFBRSxFQUFFO1FBQzlELE1BQU0sS0FBSyxHQUFHLENBQUMsQ0FBQyxNQUFNLENBQUMsS0FBSyxDQUFDO1FBQzdCLGNBQWMsQ0FBQyxLQUFLLENBQUMsQ0FBQztRQUN0QixlQUFlLENBQUMsS0FBSyxDQUFDLENBQUM7SUFDekIsQ0FBQyxDQUFDO0lBRUYsT0FBTyxDQUNMLENBQUMsR0FBRyxDQUFDLFNBQVMsQ0FBQyxpQkFBaUIsQ0FDOUI7TUFBQSxDQUFDLGFBQUssQ0FDSixJQUFJLENBQUMsTUFBTSxDQUNYLFdBQVcsQ0FBQyxDQUFDLFdBQVcsQ0FBQyxDQUN6QixLQUFLLENBQUMsQ0FBQyxXQUFXLENBQUMsQ0FDbkIsUUFBUSxDQUFDLENBQUMsWUFBWSxDQUFDLENBQ3ZCLElBQUksQ0FBQyxDQUFDLENBQUMscUJBQU0sQ0FBQyxTQUFTLENBQUMsU0FBUyxFQUFHLENBQUMsQ0FDckMsU0FBUyxDQUFDLFFBQVEsRUFFdEI7SUFBQSxFQUFFLEdBQUcsQ0FBQyxDQUNQLENBQUM7QUFDSixDQUFDLENBQUM7QUF6QlcsUUFBQSxXQUFXLGVBeUJ0QiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBTZWFyY2ggfSBmcm9tICdsdWNpZGUtcmVhY3QnO1xuaW1wb3J0IHsgSW5wdXQgfSBmcm9tICcuLi91aS9JbnB1dC9JbnB1dCc7XG5pbXBvcnQgeyB1c2VEZWJvdW5jZSB9IGZyb20gJ0AvaG9va3MvdXNlRGVib3VuY2UnO1xuXG5pbnRlcmZhY2UgQWdlbnRTZWFyY2hQcm9wcyB7XG4gIG9uU2VhcmNoOiAocXVlcnk6IHN0cmluZykgPT4gdm9pZDtcbiAgcGxhY2Vob2xkZXI/OiBzdHJpbmc7XG59XG5cbmV4cG9ydCBjb25zdCBBZ2VudFNlYXJjaDogUmVhY3QuRkM8QWdlbnRTZWFyY2hQcm9wcz4gPSAoe1xuICBvblNlYXJjaCxcbiAgcGxhY2Vob2xkZXIgPSAnU2VhcmNoIGFnZW50cy4uLicsXG59KSA9PiB7XG4gIGNvbnN0IFtzZWFyY2hRdWVyeSwgc2V0U2VhcmNoUXVlcnldID0gUmVhY3QudXNlU3RhdGUoJycpO1xuICBjb25zdCBkZWJvdW5jZWRTZWFyY2ggPSB1c2VEZWJvdW5jZShvblNlYXJjaCwgMzAwKTtcblxuICBjb25zdCBoYW5kbGVTZWFyY2ggPSAoZTogUmVhY3QuQ2hhbmdlRXZlbnQ8SFRNTElucHV0RWxlbWVudD4pID0+IHtcbiAgICBjb25zdCBxdWVyeSA9IGUudGFyZ2V0LnZhbHVlO1xuICAgIHNldFNlYXJjaFF1ZXJ5KHF1ZXJ5KTtcbiAgICBkZWJvdW5jZWRTZWFyY2gocXVlcnkpO1xuICB9O1xuXG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJ3LWZ1bGwgbWF4LXctbWRcIj5cbiAgICAgIDxJbnB1dFxuICAgICAgICB0eXBlPVwidGV4dFwiXG4gICAgICAgIHBsYWNlaG9sZGVyPXtwbGFjZWhvbGRlcn1cbiAgICAgICAgdmFsdWU9e3NlYXJjaFF1ZXJ5fVxuICAgICAgICBvbkNoYW5nZT17aGFuZGxlU2VhcmNofVxuICAgICAgICBpY29uPXs8U2VhcmNoIGNsYXNzTmFtZT1cImgtNCB3LTRcIiAvPn1cbiAgICAgICAgY2xhc3NOYW1lPVwidy1mdWxsXCJcbiAgICAgIC8+XG4gICAgPC9kaXY+XG4gICk7XG59O1xuIl19
+export {};

@@ -1,0 +1,9 @@
+{
+  "customModes": [
+    {
+      "name": "Test Mode",
+      "slug": "test-mode",
+      "roleDefinition": "Test role definition for CLI testing"
+    }
+  ]
+}

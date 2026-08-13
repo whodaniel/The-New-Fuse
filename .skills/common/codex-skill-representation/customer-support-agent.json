@@ -1,0 +1,12 @@
+{
+  "skillName": "customer-support-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/customer-support-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/customer-support-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/customer-support-agent.json",
+  "status": "present"
+}

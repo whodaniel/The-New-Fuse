@@ -1,0 +1,354 @@
+{
+  "summary": {
+    "generatedAt": "2026-03-09T05:51:59.849Z",
+    "totalLinks": 66,
+    "missingLinks": 0,
+    "missingBySource": [
+      {
+        "source": "public/index.html",
+        "missing": 0
+      },
+      {
+        "source": "public/sitemap.html",
+        "missing": 0
+      },
+      {
+        "source": "src/pages/Home.tsx",
+        "missing": 0
+      }
+    ]
+  },
+  "rows": [
+    {
+      "source": "public/index.html",
+      "link": "/about",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/agents",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/api/docs",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/apple-touch-icon.png",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/blog",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/dashboard",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/docs",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/favicon-16x16.png",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/favicon-32x32.png",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/legal/privacy",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/legal/terms",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/visualizations/dashboard.html",
+      "status": "ok"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/workflows/builder",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/settings",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/system-health",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/users",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/workspaces",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/ai-portal",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/analytics",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/forgot-password",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/login",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/register",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/reset-password",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/sso",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/blog",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/capabilities",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/community",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/components",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/connect",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/dashboard",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/debug",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/docs",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/graph-demo",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/home",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/layout-example",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/legal/privacy",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/legal/terms",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/marketplace",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/membership",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/onboarding",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/pricing",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/product-map",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/support",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/test",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/timeline-demo",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/analytics",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/members",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/overview",
+      "status": "ok"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/settings",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/agents",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/agents/nft-marketplace",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/analytics",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/api/docs",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/auth/register",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/community",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/dashboard",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/docs/ai-orientation",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/hub",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/legal/privacy",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/legal/terms",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/onboarding/ai-agent",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/settings/api",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows/builder",
+      "status": "ok"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows/templates",
+      "status": "ok"
+    }
+  ],
+  "missing": []
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "social-selling-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/social-selling-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/social-selling-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/social-selling-agent.json",
+  "status": "present"
+}

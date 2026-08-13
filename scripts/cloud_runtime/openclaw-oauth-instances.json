@@ -1,0 +1,64 @@
+{
+  "instances": [
+    {
+      "name": "openclaw-cloud-codex",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
+      "service": "openclaw-cloud",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    },
+    {
+      "name": "openclaw-primary-codex",
+      "instanceId": "TNF-OC-002",
+      "instanceName": "OpenClaw Primary",
+      "service": "openclaw-primary",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    },
+    {
+      "name": "openclaw-sandbox-codex",
+      "instanceId": "TNF-OC-003",
+      "instanceName": "OpenClaw Sandbox Cloud",
+      "service": "openclaw-sandbox-cloud",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/windsurfree19/auth.json",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    },
+    {
+      "name": "openclaw-oc004-codex",
+      "instanceId": "TNF-OC-004",
+      "instanceName": "OpenClaw Expansion 004",
+      "service": "openclaw-oc004",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/windsurfree2/auth.json",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    }
+  ]
+}

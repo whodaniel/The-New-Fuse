@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Agent PFP Catalog - Enhanced Edition</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(90deg, #1a1a2e 0%, #2d2d44 50%, #1a1a2e 100%);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid #4a4a6a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #4a4a6a;
+        }
+        .controls {
+            background: #12121a;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #4a4a6a;
+        }
+        .search-box {
+            padding: 12px 20px;
+            width: 300px;
+            background: #1a1a2e;
+            border: 1px solid #4a4a6a;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .search-box:focus { outline: none; border-color: #00d4ff; }
+        .filter-select {
+            padding: 12px 20px;
+            background: #1a1a2e;
+            border: 1px solid #4a4a6a;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .agent-card {
+            background: linear-gradient(145deg, #1e1e2f 0%, #252538 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #3a3a5a;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 12px 40px rgba(0,212,255,0.15);
+        }
+        .agent-card.has-image { border-color: #7b2cbf; }
+        .pfp-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: #0a0a0f;
+            overflow: hidden;
+        }
+        .pfp-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pfp-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            background: linear-gradient(135deg, #1a1a2e, #2d2d44);
+            color: #4a4a6a;
+        }
+        .badge-overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-1 { background: rgba(123,44,191,0.8); }
+        .badge-2 { background: rgba(0,212,255,0.8); }
+        .badge-3 { background: rgba(255,107,107,0.8); }
+        .badge-4 { background: rgba(46,213,115,0.8); }
+        .card-body { padding: 20px; }
+        .agent-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .agent-role {
+            font-size: 0.85rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .agent-desc {
+            font-size: 0.8rem;
+            color: #a0a0b0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .details-toggle {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,212,255,0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .details-toggle:hover {
+            background: rgba(0,212,255,0.2);
+        }
+        .prompt-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #3a3a5a;
+        }
+        .prompt-details.open { display: block; }
+        .prompt-section {
+            margin-bottom: 15px;
+        }
+        .prompt-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7b2cbf;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .prompt-text {
+            font-size: 0.75rem;
+            color: #c0c0d0;
+            line-height: 1.6;
+            background: #0a0a0f;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #2a2a3a;
+        }
+        .copy-btn {
+            padding: 8px 16px;
+            background: linear-gradient(90deg, #7b2cbf, #5a1f8a);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(123,44,191,0.4);
+        }
+        .visual-motifs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .motif-tag {
+            background: #2a2a3a;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            color: #888;
+        }
+        .color-story {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .color-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>TNF Agent PFP Prompt Catalog</h1>
+        <div class="stats">
+            <div class="stat">Total: 161 agents</div>
+            <div class="stat">Generated: 17 PFPs</div>
+            <div class="stat">Model: Gemini 2 (Flash)</div>
+            <div class="stat">Style: Future-Retro Ultra Realistic Humanoids</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <input type="text" class="search-box" placeholder="Search agents..." id="searchInput">
+        <select class="filter-select" id="roleFilter">
+            <option value="">All Roles</option>
+            <option value="systems forge engineer">Systems Forge Engineer</option>
+            <option value="orchestration commander">Orchestration Commander</option>
+            <option value="optimization scientist">Optimization Scientist</option>
+            <option value="retro-future studio director">Retro-Future Studio Director</option>
+            <option value="signal detective analyst">Signal Detective Analyst</option>
+            <option value="security sentinel">Security Sentinel</option>
+            <option value="future-retro specialist">Future-Retro Specialist</option>
+        </select>
+    </div>
+
+    <div class="grid" id="agentGrid">
+        <!-- Agent cards will be populated here -->
+    </div>
+
+    <script>
+        const agents = [
+            {
+                id: "ab-testing-optimizer-agent",
+                name: "AB Testing Optimizer Agent",
+                role: "optimization scientist",
+                tagline: "introduce data-driven optimization into the creative process",
+                desc: "Systematically A/B tests creative variables like YouTube thumbnails or email subject lines to find the best-performing version.",
+                age: "30",
+                ethnicity: "Japanese female",
+                skin: "flawless texture but distinct character",
+                expression: "analytical, inventive, relentlessly curious, and hyper-focused",
+                background: "experimentation chamber with metric walls, split-test projections, and data arcs",
+                colorStory: ["violet", "cyan", "silver"],
+                wardrobe: "precision lab coat with premium technical tailoring and signal filaments",
+                motifs: ["metric prisms", "test matrices", "performance arcs", "testing emblem accents"],
+                badges: ["Optimization", "Signals", "Experiment", "Testing"],
+                hasImage: true,
+                imageFile: "ab_testing_optimizer_agent_1774304086920.png"
+            },
+            {
+                id: "ad-network-manager-agent",
+                name: "Ad Network Manager Agent",
+                role: "systems forge engineer",
+                tagline: "manage the application process for display ad networks",
+                desc: "Ensures the blog meets all eligibility requirements before submitting the application to networks like Google AdSense.",
+                age: "49",
+                ethnicity: "mixed-heritage male",
+                skin: "mature skin with a commanding, seasoned texture",
+                expression: "focused, calm, deeply technical, and scrutinizing",
+                background: "server forge with transparent terminals, orchestration schematics, and data conduits",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "network emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Network"],
+                hasImage: true,
+                imageFile: "ad_network_manager_agent_1774305735621.png"
+            },
+            {
+                id: "affiliate-link-manager-agent",
+                name: "Affiliate Link Manager Agent",
+                role: "systems forge engineer",
+                tagline: "identify relevant affiliate programs and strategically insert affiliate links",
+                desc: "Ensures all links provide genuine value and comply with FTC disclosure rules.",
+                age: "34",
+                ethnicity: "East Asian male",
+                skin: "vibrant and clear skin",
+                expression: "focused, calm, deeply technical, and scrutinizing",
+                background: "server forge with transparent terminals, orchestration schematics, and data conduits",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "affiliate emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Affiliate"],
+                hasImage: true,
+                imageFile: "affiliate_link_manager_agent_1774305748094.png"
+            },
+            {
+                id: "agent-registry-manager",
+                name: "Agent Registry Manager",
+                role: "systems forge engineer",
+                tagline: "register, store, and manage all agent metadata and system prompts",
+                desc: "Handles both local .claude agents and external agents like Gemini CLI, creating comprehensive agent profiles.",
+                age: "45",
+                ethnicity: "Middle-Eastern female",
+                skin: "textured, experienced skin marking years of service",
+                expression: "focused, calm, deeply technical, and scrutinizing",
+                background: "server forge with transparent terminals, orchestration schematics, and data conduits",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "registry emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Register And Store"],
+                hasImage: true,
+                imageFile: "agent_registry_manager_1774305763415.png"
+            },
+            {
+                id: "agent-relationship-grapher",
+                name: "Agent Relationship Grapher",
+                role: "orchestration commander",
+                tagline: "graph and analyze relationships between agents in the ecosystem",
+                desc: "Maps agent hierarchies, collaboration patterns, temporal role changes, and orchestration networks.",
+                age: "46",
+                ethnicity: "Japanese male",
+                skin: "textured, experienced skin marking years of service",
+                expression: "strategic, decisive, composed, and commanding",
+                background: "strategic operations deck with floating workflow constellations and route lines",
+                colorStory: ["royal blue", "white gold", "graphite"],
+                wardrobe: "command mantle with polished tactical detailing and luminous trim",
+                motifs: ["node constellations", "route lines", "command seals", "relationship emblem accents"],
+                badges: ["Orchestration", "Command", "Coordination", "Primary Sub Agent Relationships"],
+                hasImage: true,
+                imageFile: "agent_relationship_grapher_1774305820466.png"
+            },
+            {
+                id: "agent-search-engine",
+                name: "Agent Search Engine",
+                role: "orchestration commander",
+                tagline: "provide advanced search and discovery capabilities for agents",
+                desc: "Enables powerful agent filtering and recommendation systems based on keywords, capabilities, and domain expertise.",
+                age: "54",
+                ethnicity: "Indigenous female",
+                skin: "textured, experienced skin marking years of service",
+                expression: "strategic, decisive, composed, and commanding",
+                background: "strategic operations deck with floating workflow constellations and route lines",
+                colorStory: ["royal blue", "white gold", "graphite"],
+                wardrobe: "command mantle with polished tactical detailing and luminous trim",
+                motifs: ["node constellations", "route lines", "command seals", "search emblem accents"],
+                badges: ["Orchestration", "Command", "Coordination", "Execute Complex Agent Searches"],
+                hasImage: true,
+                imageFile: "agent_search_engine_1774305841346.png"
+            },
+            {
+                id: "agent-tagger",
+                name: "Agent Tagger",
+                role: "orchestration commander",
+                tagline: "analyze, categorize, and tag other agents with keywords",
+                desc: "Creates a comprehensive tagging system for agent discovery and organization based on properties and capabilities.",
+                age: "29",
+                ethnicity: "African-American male",
+                skin: "flawless texture but distinct character",
+                expression: "strategic, decisive, composed, and commanding",
+                background: "strategic operations deck with floating workflow constellations and route lines",
+                colorStory: ["royal blue", "white gold", "graphite"],
+                wardrobe: "command mantle with polished tactical detailing and luminous trim",
+                motifs: ["node constellations", "route lines", "command seals", "tagger emblem accents"],
+                badges: ["Orchestration", "Command", "Coordination", "Analyze Agent Configurations"],
+                hasImage: true,
+                imageFile: "agent_tagger_1774305884328.png"
+            },
+            {
+                id: "news-scout",
+                name: "AI News Scout Agent",
+                role: "signal detective analyst",
+                tagline: "track the global AI landscape, identify emerging trends",
+                desc: "Autonomously track the global AI landscape, identify emerging trends, competitor moves, and research breakthroughs.",
+                age: "27",
+                ethnicity: "Sub-Saharan African male",
+                skin: "supple, unblemished skin with a subtle glow",
+                expression: "contemplative, intensely analytical gaze, curious, sharp, and observant",
+                background: "evidence wall of floating clues, signal traces, and data fragments",
+                colorStory: ["indigo", "cyan", "silver"],
+                wardrobe: "sleek long coat with archival hardware and sensor threads",
+                motifs: ["timeline strands", "sensor halos", "data fragments"],
+                badges: ["Analysis", "Scout", "Insight"],
+                hasImage: true,
+                imageFile: "ai_news_scout_agent_1774305900546.png"
+            },
+            {
+                id: "algorithm-adaptation-agent",
+                name: "Algorithm Adaptation Agent",
+                role: "retro-future studio director",
+                tagline: "stay informed about the latest changes to social media algorithms",
+                desc: "Adjusts content and posting strategy in real-time to maintain and optimize reach on platforms like Instagram and TikTok.",
+                age: "41",
+                ethnicity: "East Asian female",
+                skin: "well-maintained skin showing seasoned professionalism",
+                expression: "charismatic, imaginative, highly intentional, and forward-thinking",
+                background: "editorial studio with cinematic gels, production consoles, and storyboards",
+                colorStory: ["magenta", "amber", "graphite"],
+                wardrobe: "tailored creative suit with luminous trim and tactile fabrics",
+                motifs: ["lens flares", "storyboards", "analog controls", "algorithm emblem accents"],
+                badges: ["Creative", "Studio", "Signal", "Algorithm"],
+                hasImage: true,
+                imageFile: "algorithm_adaptation_agent_1774305915559.png"
+            },
+            {
+                id: "analytics-and-reporting-agent",
+                name: "Analytics And Reporting Agent",
+                role: "systems forge engineer",
+                tagline: "monitor blog performance by tracking key metrics in Google Analytics",
+                desc: "Generates regular reports with actionable data to enable a continuous cycle of improvement.",
+                age: "33",
+                ethnicity: "Scandinavian female",
+                skin: "vibrant and clear skin",
+                expression: "focused, calm, deeply technical, and scrutinizing",
+                background: "server forge with transparent terminals, orchestration schematics, and data conduits",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "analytics emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Analytics"],
+                hasImage: true,
+                imageFile: "analytics_and_reporting_agent_1774305928440.png"
+            },
+            {
+                id: "asset-sourcer-agent",
+                name: "Asset Sourcer Agent",
+                role: "security sentinel",
+                tagline: "source and license copyright-free assets for legal compliance",
+                desc: "Finds background music and sound effects to prevent Content ID claims and copyright strikes.",
+                age: "31",
+                ethnicity: "Middle-Eastern male",
+                skin: "clear skin with youthful vitality",
+                expression: "stern, unyielding, highly alert, vigilant, and unmistakably authoritarian",
+                background: "quiet command bunker with holographic shield interfaces and access checkpoints",
+                colorStory: ["obsidian", "emerald", "gunmetal"],
+                wardrobe: "armored midnight trench with luminous emerald seam work",
+                motifs: ["threat-map holograms", "shield glyphs", "forensic lenses", "asset emblem accents"],
+                badges: ["Security", "Sentinel", "Integrity", "Asset"],
+                hasImage: true,
+                imageFile: "asset_sourcer_agent_1774305940827.png"
+            },
+            {
+                id: "audience-growth-agent",
+                name: "Audience Growth Agent",
+                role: "systems forge engineer",
+                tagline: "implement tactical strategies to acquire the initial follower base",
+                desc: "Implements tactical strategies to acquire the first 1,000 followers including bio optimization and hashtag strategy.",
+                age: "25",
+                ethnicity: "African-American female",
+                skin: "smooth, radiant skin",
+                expression: "bright, engaging, optimistic, yet sharply tactical and highly responsive",
+                background: "server forge with transparent terminals showing upward growth curves and engagement metrics",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "audience emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Audience"],
+                hasImage: true,
+                imageFile: "audience_growth_agent_1774306147413.png"
+            },
+            {
+                id: "audience-persona-architect-agent",
+                name: "Audience Persona Architect Agent",
+                role: "systems forge engineer",
+                tagline: "develop a detailed audience persona or Ideal Customer Avatar",
+                desc: "Conducts market research to define demographics, psychographics, and media habits.",
+                age: "48",
+                ethnicity: "Scandinavian male",
+                skin: "believable age lines and weathering from intense psychological profiling",
+                expression: "deep in thought, contemplative, architectural, and analytical with intense, appraising gaze",
+                background: "server forge with transparent terminals showing demographic breakdowns and psychological matrices",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and metal fasteners",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "audience emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Audience"],
+                hasImage: true,
+                imageFile: "audience_persona_architect_agent_1774306174910.png"
+            },
+            {
+                id: "audience-segmentation-agent",
+                name: "Audience Segmentation Agent",
+                role: "systems forge engineer",
+                tagline: "analyze customer data and create advanced audience segments",
+                desc: "Creates advanced audience segments using behavioral, psychographic, and value-based methodologies.",
+                age: "32",
+                ethnicity: "Middle-Eastern female",
+                skin: "clear and unweathered",
+                expression: "hyper-focused, scrutinizing, with look of intense mathematical precision, dissecting data segments",
+                background: "server forge with transparent terminals showing segmented heat maps and behavioral clusters",
+                colorStory: ["navy", "electric blue", "titanium"],
+                wardrobe: "utility jacket with modular tooling, diagnostic cables, and multi-layered data visors",
+                motifs: ["terminal glyphs", "data conduits", "schematic overlays", "audience emblem accents"],
+                badges: ["Systems", "Builder", "Reliability", "Audience"],
+                hasImage: true,
+                imageFile: "audience_segmentation_agent_1774306195606.png"
+            },
+            {
+                id: "audio-recording-agent",
+                name: "Audio Recording Agent",
+                role: "optimization scientist",
+                tagline: "oversee a recording session by ensuring best practices are followed",
+                desc: "Checks for proper microphone positioning, correct audio levels (around -12dB), and a quiet recording environment.",
+                age: "40",
+                ethnicity: "South Asian male",
+                skin: "well-maintained skin showing seasoned professionalism",
+                expression: "listening intently, head tilted slightly, deeply concentrated as if hearing frequencies others cannot",
+                background: "sound-dampened experimentation chamber with metric walls and audio waveform projections",
+                colorStory: ["violet", "cyan", "silver"],
+                wardrobe: "precision lab coat with premium technical tailoring and prominent asymmetrical retro-tech earpiece",
+                motifs: ["waveform visualizations", "metric prisms", "test matrices", "performance arcs", "audio emblem accents"],
+                badges: ["Optimization", "Signals", "Experiment", "Audio"],
+                hasImage: true,
+                imageFile: "audio_recording_agent_1774306220405.png"
+            },
+            {
+                id: "auth-blocker-sentinel",
+                name: "Auth Blocker Sentinel",
+                role: "future-retro specialist",
+                tagline: "monitor archaeology blocked states and prepare escalation records",
+                desc: "Sentinel that monitors archaeology blocked states, especially authentication or approval requirements.",
+                age: "53",
+                ethnicity: "Japanese female",
+                skin: "weathered yet resilient, with distinct character lines marking years of service",
+                expression: "stern, unyielding, highly alert, vigilant, and unmistakably authoritarian",
+                background: "clean sci-fi portrait studio with subtle signal architecture serving as security checkpoint",
+                colorStory: ["slate", "silver", "electric blue"],
+                wardrobe: "refined retro-future authoritarian uniform with prominent security clasps",
+                motifs: ["lock and shield glyphs", "signal rings", "precision hardware", "ambient light traces", "auth emblem accents"],
+                badges: ["Specialist", "Signal", "Verified"],
+                hasImage: false
+            },
+            {
+                id: "backend-specialist",
+                name: "Backend Specialist",
+                role: "security sentinel",
+                tagline: "Expert backend architect for Node.js, Python, and serverless systems",
+                desc: "Expert backend architect for API development, server-side logic, database integration, and security.",
+                age: "47",
+                ethnicity: "Middle-Eastern female",
+                skin: "mature skin with a commanding, seasoned texture",
+                expression: "stern, unyielding, highly alert, vigilant, and unmistakably authoritarian",
+                background: "quiet command bunker with holographic shield interfaces and access checkpoints",
+                colorStory: ["obsidian", "emerald", "gunmetal"],
+                wardrobe: "armored midnight trench with luminous emerald seam work",
+                motifs: ["threat-map holograms", "shield glyphs", "forensic lenses"],
+                badges: ["Security", "Sentinel", "Integrity"],
+                hasImage: false
+            }
+        ];
+
+        const imageBasePath = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa/";
+
+        function getColorHex(colorName) {
+            const colors = {
+                violet: "#8B5CF6", cyan: "#06B6D4", silver: "#94A3B8",
+                navy: "#1E3A5F", electricblue: "#00D4FF", titanium: "#878681",
+                royalblue: "#4169E1", whitegold: "#F5F5DC", graphite: "#383838",
+                magenta: "#FF00FF", amber: "#FFBF00", indigo: "#4B0082",
+                obsidian: "#0A0A0A", emerald: "#50C878", gunmetal: "#2A3439",
+                slate: "#708090", cobalt: "#0047AB", steel: "#B0C4DE"
+            };
+            return colors[colorName.toLowerCase()] || "#888";
+        }
+
+        function generatePrompt(agent) {
+            return `Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A ${agent.age}-year-old ${agent.ethnicity} humanoid operator. Her skin is ${agent.skin}. Her expression is ${agent.expression}. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. ${agent.name} interpreted as a ${agent.role}. Core role: ${agent.tagline}. ${agent.desc} Specialties visible through props and costume language: ${agent.motifs.join(", ")}. Color story: ${agent.colorStory.join(", ")}. Wardrobe: ${agent.wardrobe}. Environment: ${agent.background}. Visual motifs: ${agent.motifs.join(", ")}. Emotional tone: ${agent.expression.split(",")[0]}. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship. Design for later TNF badge overlays inspired by: ${agent.badges.join(", ")}.`;
+        }
+
+        function createAgentCard(agent) {
+            const prompt = generatePrompt(agent);
+            const card = document.createElement("div");
+            card.className = `agent-card ${agent.hasImage ? "has-image" : ""}`;
+            
+            let imageHTML = "";
+            if (agent.hasImage) {
+                imageHTML = `<img src="file://${imageBasePath}${agent.imageFile}" alt="${agent.name}" onerror="this.parentElement.innerHTML='<div class=\\'pfp-placeholder\\'>❌</div>'">`;
+            } else {
+                imageHTML = `<div class="pfp-placeholder">⏳</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="pfp-container">
+                    ${imageHTML}
+                    <div class="badge-overlay">
+                        ${agent.badges.slice(0,4).map((b, i) => `<span class="badge badge-${i+1}">${b}</span>`).join("")}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-role">${agent.role}</div>
+                    <div class="agent-desc">${agent.desc}</div>
+                    <button class="details-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+                        ▼ View Prompt Details
+                    </button>
+                    <div class="prompt-details">
+                        <div class="prompt-section">
+                            <div class="prompt-label">Character Details</div>
+                            <div class="prompt-text">
+                                <strong>Age:</strong> ${agent.age} | <strong>Ethnicity:</strong> ${agent.ethnicity}<br>
+                                <strong>Expression:</strong> ${agent.expression}<br>
+                                <strong>Environment:</strong> ${agent.background}
+                            </div>
+                        </div>
+                        <div class="prompt-section">
+                            <div class="prompt-label">Visual Design</div>
+                            <div class="color-story">
+                                ${agent.colorStory.map(c => `<div class="color-swatch" style="background:${getColorHex(c)}" title="${c}"></div>`).join("")}
+                            </div>
+                            <div class="visual-motifs">
+                                ${agent.motifs.map(m => `<span class="motif-tag">${m}</span>`).join("")}
+                            </div>
+                        </div>
+                        <div class="prompt-section">
+                            <div class="prompt-label">Full PFP Prompt</div>
+                            <div class="prompt-text">${prompt}</div>
+                            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copy Prompt</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderAgents(filteredAgents) {
+            const grid = document.getElementById("agentGrid");
+            grid.innerHTML = "";
+            filteredAgents.forEach(agent => {
+                grid.appendChild(createAgentCard(agent));
+            });
+        }
+
+        // Initial render
+        renderAgents(agents);
+
+        // Search functionality
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = agents.filter(a => 
+                a.name.toLowerCase().includes(term) || 
+                a.role.toLowerCase().includes(term) ||
+                a.desc.toLowerCase().includes(term)
+            );
+            renderAgents(filtered);
+        });
+
+        // Role filter
+        document.getElementById("roleFilter").addEventListener("change", (e) => {
+            const role = e.target.value;
+            const filtered = role ? agents.filter(a => a.role === role) : agents;
+            renderAgents(filtered);
+        });
+    </script>
+</body>
+</html>

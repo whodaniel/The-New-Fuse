@@ -1,0 +1,44 @@
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+const AgentLogs = ({ agentId }) => {
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const fetchLogs = async (): Promise<void> {) => {
+            try {
+                const response = await fetch(`/api/agents/${agentId}/logs`);
+                const data = await response.json();
+                setLogs(data);
+            }
+            catch (error) {
+                console.error('Failed to fetch logs:', error);
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+        fetchLogs();
+    }, [agentId]);
+    if (loading) {
+        return <div>Loading logs...</div>;
+    }
+    return (<Card>
+      <CardContent className="p-4">
+        <div className="space-y-2">
+          {logs.map((log) => (<div key={log.id} className={`p-2 rounded ${log.level === 'error'
+                ? 'bg-red-100'
+                : log.level === 'warn'
+                    ? 'bg-yellow-100'
+                    : bg-gray-100'}`}>
+              <div className="flex justify-between text-sm">
+                <span className="font-mono">{new Date(log.timestamp).toLocaleString()}</span>
+                <span className="uppercase text-xs font-bold">{log.level}</span>
+              </div>
+              <div className="mt-1">{log.message}</div>
+            </div>))}
+        </div>
+      </CardContent>
+    </Card>);
+};
+export default AgentLogs;
+//# sourceMappingURL=AgentLogs.js.map

@@ -1,0 +1,103 @@
+# TNF Cron Job Definitions - Voice System & Multi-Agent Orchestration
+# Generated: 2026-04-15
+# Role: Local Director - Voice System Lead
+
+# ============================================================
+# VOICE SYSTEM MAINTENANCE
+# ============================================================
+
+# Voice server health check - every 5 minutes
+*/5 * * * * curl -sS http://localhost:50005/healthz >> /Users/<owner>/.tnf/poll-jobs/voice-server-health/cron.log 2>&1 # tnf-voice:server-health-check
+
+# Voice target verification - every 15 minutes
+*/15 * * * * /Users/<owner>/.tnf/bin/voice-target-verify.sh >> /Users/<owner>/.tnf/poll-jobs/voice-target-verify/cron.log 2>&1 # tnf-voice:target-verify
+
+# Voice stream cleanup - hourly
+0 * * * * /Users/<owner>/.tnf/bin/voice-stream-cleanup.sh >> /Users/<owner>/.tnf/poll-jobs/voice-stream-cleanup/cron.log 2>&1 # tnf-voice:stream-cleanup
+
+# ============================================================
+# AGENT ROUTING (KWS-MVP)
+# ============================================================
+
+# Agent routing health check - every 10 minutes
+*/10 * * * * curl -sS http://localhost:43110/healthz >> /Users/<owner>/.tnf/poll-jobs/agent-routing-health/cron.log 2>&1 # tnf-agent-routing:health-check
+
+# Agent registry sync - every 30 minutes
+*/30 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp && node dist/agent-sync.js >> /Users/<owner>/.tnf/poll-jobs/agent-sync/cron.log 2>&1 # tnf-agent-routing:registry-sync
+
+# KWS lexicon validation - every 6 hours
+0 */6 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/audio-trigger-kws-mvp && node dist/lexicon-validate.js >> /Users/<owner>/.tnf/poll-jobs/lexicon-validate/cron.log 2>&1 # tnf-agent-routing:lexicon-validate
+
+# ============================================================
+# MULTI-AGENT COORDINATION
+# ============================================================
+
+# Agent heartbeat collection - every minute
+* * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-agent-heartbeat-collector" >> /Users/<owner>/.tnf/poll-jobs/agent-heartbeat/cron.log 2>&1 # tnf-agent:heartbeat-collector
+
+# WebSocket relay health - every 5 minutes
+*/5 * * * * curl -sS http://localhost:3000/health >> /Users/<owner>/.tnf/poll-jobs/ws-relay-health/cron.log 2>&1 # tnf-agent:ws-relay-health
+
+# Agent routing table update - every 15 minutes
+*/15 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-agent-routing-table-sync" >> /Users/<owner>/.tnf/poll-jobs/agent-routing-table/cron.log 2>&1 # tnf-agent:routing-table-sync
+
+# ============================================================
+# QUALITY CONTROL LOOPS
+# ============================================================
+
+# TypeScript type-check - every 6 hours
+0 */6 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm typecheck >> /Users/<owner>/.tnf/poll-jobs/typecheck/cron.log 2>&1 # tnf-quality:typecheck
+
+# Lint check - every 6 hours
+0 */6 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm lint >> /Users/<owner>/.tnf/poll-jobs/lint/cron.log 2>&1 # tnf-quality:lint
+
+# Build verification - every 12 hours
+0 */12 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm build >> /Users/<owner>/.tnf/poll-jobs/build/cron.log 2>&1 # tnf-quality:build
+
+# Test suite runner - every 12 hours
+0 */12 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm test >> /Users/<owner>/.tnf/poll-jobs/tests/cron.log 2>&1 # tnf-quality:tests
+
+# ============================================================
+# SELF-IMPROVEMENT LOOPS
+# ============================================================
+
+# TODO/FIXME scanner - every 6 hours
+0 */6 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-todo-scanner" >> /Users/<owner>/.tnf/poll-jobs/todo-scanner/cron.log 2>&1 # tnf-self-improve:todo-scanner
+
+# Dependency update check - daily
+0 6 * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm outdated >> /Users/<owner>/.tnf/poll-jobs/deps-check/cron.log 2>&1 # tnf-self-improve:deps-check
+
+# Handoff notes backup - every 4 hours
+0 */4 * * * cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/handoff_notes.txt /Users/<owner>/.tnf/backups/handoff_notes_$(date +\%Y\%m\%d_\%H\%M\%S).txt >> /Users/<owner>/.tnf/poll-jobs/handoff-backup/cron.log 2>&1 # tnf-self-improve:handoff-backup
+
+# Agent state persistence - every 30 minutes
+*/30 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-agent-state-persist" >> /Users/<owner>/.tnf/poll-jobs/agent-state-persist/cron.log 2>&1 # tnf-self-improve:agent-state-persist
+
+# ============================================================
+# ORCHESTRATION COORDINATION
+# ============================================================
+
+# Director heartbeat - every 3 minutes
+*/3 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-director-heartbeat" >> /Users/<owner>/.tnf/poll-jobs/director-heartbeat/cron.log 2>&1 # tnf-orchestration:director-heartbeat
+
+# Agent delegation queue - every 5 minutes
+*/5 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-agent-delegation-queue" >> /Users/<owner>/.tnf/poll-jobs/delegation-queue/cron.log 2>&1 # tnf-orchestration:delegation-queue
+
+# Task completion tracker - every 10 minutes
+*/10 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-task-completion-tracker" >> /Users/<owner>/.tnf/poll-jobs/task-completion/cron.log 2>&1 # tnf-orchestration:task-completion-tracker
+
+# Quality gate enforcer - every 15 minutes
+*/15 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node scripts/protocols/run-chronological-process.cjs --process-id "tnf-quality-gate-enforcer" >> /Users/<owner>/.tnf/poll-jobs/quality-gate/cron.log 2>&1 # tnf-orchestration:quality-gate-enforcer
+
+# ============================================================
+# VOICE ECHO SUPPRESSION MONITORING
+# ============================================================
+
+# Echo suppression stats - every 10 minutes
+*/10 * * * * cat /tmp/voice_response_audio.log 2>/dev/null | grep ECHO_SUPPRESS | wc -l >> /Users/<owner>/.tnf/poll-jobs/echo-suppress-stats/cron.log 2>&1 # tnf-voice:echo-suppress-stats
+
+# Interrupt detection logs - every 15 minutes
+*/15 * * * * cat /tmp/voice_server.log 2>/dev/null | grep INTERRUPT | tail -10 >> /Users/<owner>/.tnf/poll-jobs/interrupt-logs/cron.log 2>&1 # tnf-voice:interrupt-logs
+
+# AI speaking flag cleanup - every 5 minutes
+*/5 * * * * find /tmp -name "ai_is_speaking*" -mmin +5 -delete 2>/dev/null >> /Users/<owner>/.tnf/poll-jobs/ai-flag-cleanup/cron.log 2>&1 # tnf-voice:ai-flag-cleanup

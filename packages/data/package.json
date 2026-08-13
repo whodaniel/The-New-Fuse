@@ -1,0 +1,36 @@
+{
+  "name": "@the-new-fuse/data",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "description": "Unified data stack for The New Fuse framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "dependencies": {
+    "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/core-vector-db": "workspace:*",
+    "@the-new-fuse/infrastructure": "workspace:*"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

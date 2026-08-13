@@ -1,0 +1,1090 @@
+import { invoke } from '@tauri-apps/api/core';
+import React, { useEffect, useState } from 'react';
+import PageShell from '../components/layout/PageShell';
+import { useRoute } from '../components/route-context';
+import {
+  VERIFIED_PROVIDER_CATALOG,
+  defaultProviderId,
+  modelsForProvider,
+} from '../config/verifiedModels';
+import { useModalA11y } from '../hooks/useModalA11y';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { isTauriRuntime } from '../lib/isTauri';
+import { apiService } from '../services/api';
+import { useAgentStore } from '../stores/agentStore';
+import type { Agent } from '../types';
+
+/**
+ * Agent Hub Page - Full Featured
+ * Manage and monitor your AI agent swarm
+ */
+const AgentHub: React.FC = () => {
+  const {
+    agents,
+    loading,
+    error,
+    apiOffline,
+    fetchAgents,
+    startAgent,
+    stopAgent,
+    deleteAgent,
+    createAgent,
+  } = useAgentStore();
+  const { unifiedAgents, state: synergy, rediscover, refresh } = useOperatorSynergy();
+  const { navigate } = useRoute();
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'error'>('all');
+  const [stackBusy, setStackBusy] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchAgents();
+  }, [fetchAgents]);
+
+  const federatedAgents = unifiedAgents.filter((agent) => agent.source === 'federation');
+
+  const filteredAgents = agents.filter((agent) => {
+    if (filter === 'all') return true;
+    return agent.status === filter;
+  });
+
+  const getTypeIcon = (type: Agent['type']) => {
+    const icons: Record<string, string> = {
+      nvidia: '⚡',
+      groq: '🚀',
+      sambanova: '💠',
+      cerebras: '🧠',
+      deepseek: '🌊',
+      gemini: '💎',
+      openai: '🤖',
+      openrouter: '🔗',
+      custom: '⚙️',
+      local: '🏠',
+    };
+    return icons[type] || '🤖';
+  };
+
+  const getStatusColor = (status: Agent['status']) => {
+    const colors: Record<string, string> = {
+      active: '#10b981',
+      idle: '#f59e0b',
+      error: '#ef4444',
+      offline: '#64748b',
+    };
+    return colors[status] || '#64748b';
+  };
+
+  const handleStartStop = async (agent: Agent) => {
+    if (agent.status === 'active') {
+      await stopAgent(agent.id);
+    } else {
+      await startAgent(agent.id);
+    }
+  };
+
+  const startLocalApi = async () => {
+    if (!isTauriRuntime()) {
+      setStackBusy('Start the TNF API from a terminal: pnpm run dev:api');
+      return;
+    }
+    setStackBusy('Starting API…');
+    try {
+      const result = await invoke<{ ok?: boolean; message?: string }>('start_tnf_api');
+      setStackBusy(result?.message || 'API start requested');
+      await new Promise((r) => setTimeout(r, 2500));
+      await rediscover();
+      await fetchAgents();
+      await refresh();
+    } catch (err) {
+      setStackBusy(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  return (
+    <PageShell
+      title="Agent Hub"
+      subtitle="Create and manage your agent fleet — REST agents plus federation peers"
+      actions={
+        <>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => navigate('/computer-use')}
+          >
+            Computer Use
+          </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => fetchAgents({ force: true })}
+          >
+            Refresh
+          </button>
+          <button type="button" className="primary-button" onClick={() => setShowCreateModal(true)}>
+            + Create Agent
+          </button>
+        </>
+      }
+      banner={
+        apiOffline ? (
+          <div className="offline-banner">
+            <div>
+              REST API offline — local agent CRUD unavailable. Federation agents (
+              {federatedAgents.length}) still visible via relay
+              {synergy.relayUrl ? ` (${synergy.relayUrl})` : ''}.
+            </div>
+            <div className="offline-banner-actions">
+              <button type="button" className="primary-button" onClick={() => void startLocalApi()}>
+                Start local API
+              </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => void rediscover().then(() => fetchAgents())}
+              >
+                Rediscover endpoints
+              </button>
+            </div>
+            {stackBusy ? <div className="offline-banner-note">{stackBusy}</div> : null}
+          </div>
+        ) : null
+      }
+    >
+      {/* Filter Tabs */}
+      <div className="filter-tabs">
+        {(['all', 'active', 'idle', 'error'] as const).map((f) => (
+          <button
+            key={f}
+            className={`filter-tab ${filter === f ? 'active' : ''}`}
+            onClick={() => setFilter(f)}
+          >
+            {f === 'all' && '📊 All'}
+            {f === 'active' && '🟢 Active'}
+            {f === 'idle' && '🟡 Idle'}
+            {f === 'error' && '🔴 Error'}
+            <span className="tab-count">
+              {f === 'all' ? agents.length : agents.filter((a) => a.status === f).length}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Agent Stats */}
+      <div className="agent-stats">
+        <div className="stat-card mini">
+          <span className="stat-value">{agents.filter((a) => a.status === 'active').length}</span>
+          <span className="stat-label">Active</span>
+        </div>
+        <div className="stat-card mini">
+          <span className="stat-value">{agents.reduce((sum, a) => sum + a.tasks, 0)}</span>
+          <span className="stat-label">Total Tasks</span>
+        </div>
+        <div className="stat-card mini">
+          <span className="stat-value">{agents.length}</span>
+          <span className="stat-label">Agents</span>
+        </div>
+      </div>
+
+      {/* Federated Swarm Section */}
+      <section className="federated-swarm">
+        <h2 className="section-title">
+          📡 Federated Swarm {synergy.relayRegistered ? '(registered)' : '(connecting)'}
+        </h2>
+        {federatedAgents.length > 0 ? (
+          <div className="agent-grid">
+            {federatedAgents.map((agent) => (
+              <div key={agent.id} className="agent-card federated">
+                <div className="agent-header">
+                  <span className="agent-type-icon">🌐</span>
+                  <div
+                    className="agent-status-indicator online"
+                    style={{ backgroundColor: '#10b981' }}
+                  />
+                </div>
+                <h3 className="agent-name">{agent.name}</h3>
+                <div className="agent-meta">
+                  <span className="agent-type">{agent.platform}</span>
+                  <span className="agent-role">{agent.status}</span>
+                </div>
+                <div className="agent-capabilities">
+                  {agent.capabilities.map((cap) => (
+                    <span key={cap} className="capability-tag">
+                      {cap}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="offline-notice">
+            {synergy.relayConnected
+              ? 'Relay connected — no federated peers published yet. Local REST agents below remain the primary roster when the API is online.'
+              : 'Synergy plane connecting to relay… If this persists, start the local relay (Quick Actions → Start Local Relay).'}
+          </p>
+        )}
+      </section>
+
+      {/* Local Agent Grid */}
+      <h2 className="section-title">🏠 Local Agents (REST API)</h2>
+      {apiOffline && error && (
+        <div className="offline-banner">
+          <strong>API offline:</strong> {error}
+        </div>
+      )}
+      {loading ? (
+        <div className="loading-state">Loading agents...</div>
+      ) : filteredAgents.length === 0 ? (
+        <div className="empty-state">
+          {apiOffline ? 'No local agents — start the TNF REST API on port 3001.' : 'No agents yet.'}
+        </div>
+      ) : (
+        <div className="agent-grid">
+          {filteredAgents.map((agent) => (
+            <button
+              key={agent.id}
+              type="button"
+              className="agent-card"
+              onClick={() => setSelectedAgent(agent)}
+              aria-label={`Open ${agent.name} details`}
+            >
+              <div className="agent-header">
+                <span className="agent-type-icon">{getTypeIcon(agent.type)}</span>
+                <div
+                  className="agent-status-indicator"
+                  style={{ backgroundColor: getStatusColor(agent.status) }}
+                  title={agent.status}
+                />
+              </div>
+              <h3 className="agent-name">{agent.name}</h3>
+              <p className="agent-description">{agent.description}</p>
+              <div className="agent-meta">
+                <span className="agent-type">{agent.type}</span>
+                <span className="agent-tasks">{agent.tasks} tasks</span>
+              </div>
+              <div className="agent-capabilities">
+                {agent.capabilities.slice(0, 3).map((cap) => (
+                  <span key={cap} className="capability-tag">
+                    {cap}
+                  </span>
+                ))}
+                {agent.capabilities.length > 3 && (
+                  <span className="capability-tag more">+{agent.capabilities.length - 3}</span>
+                )}
+              </div>
+              <div className="agent-footer">
+                <span className="last-active">Last: {agent.lastActive}</span>
+                <div className="agent-actions">
+                  <button
+                    className={`action-btn ${agent.status === 'active' ? 'stop' : 'start'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStartStop(agent);
+                    }}
+                    title={agent.status === 'active' ? 'Stop' : 'Start'}
+                  >
+                    {agent.status === 'active' ? '⏹️' : '▶️'}
+                  </button>
+                  <button
+                    className="action-btn config"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedAgent(agent);
+                    }}
+                    title="Configure"
+                  >
+                    ⚙️
+                  </button>
+                </div>
+              </div>
+            </button>
+          ))}
+
+          {/* Add New Agent Card */}
+          <button className="agent-card add-card" onClick={() => setShowCreateModal(true)}>
+            <span className="add-icon">+</span>
+            <span className="add-label">Add New Agent</span>
+          </button>
+        </div>
+      )}
+
+      {/* Agent Detail Modal */}
+      {selectedAgent && (
+        <AgentDetailModal
+          agent={selectedAgent}
+          onClose={() => setSelectedAgent(null)}
+          onDelete={() => {
+            deleteAgent(selectedAgent.id);
+            setSelectedAgent(null);
+          }}
+        />
+      )}
+
+      {/* Create Agent Modal */}
+      {showCreateModal && (
+        <CreateAgentModal
+          onClose={() => setShowCreateModal(false)}
+          onCreate={async (agent) => {
+            await createAgent(agent);
+            setShowCreateModal(false);
+          }}
+        />
+      )}
+
+      <style>{`
+        .page-container {
+          padding: 32px;
+          max-width: 1600px;
+          margin: 0 auto;
+        }
+
+        .page-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .page-title {
+          font-family: var(--tnf-font-heading, 'Outfit', sans-serif);
+          font-size: 32px;
+          font-weight: 700;
+          margin: 0;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+          color: var(--tnf-text-muted, #64748b);
+          margin: 4px 0 0;
+        }
+
+        .offline-banner,
+        .offline-notice,
+        .empty-state {
+          margin-bottom: 16px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: rgba(239, 68, 68, 0.12);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          color: #fecaca;
+        }
+
+        .offline-banner-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .offline-banner-note {
+          margin-top: 8px;
+          font-size: 12px;
+          color: #fed7aa;
+        }
+
+        .empty-state {
+          background: rgba(100, 116, 139, 0.12);
+          border-color: rgba(100, 116, 139, 0.25);
+          color: #cbd5e1;
+        }
+
+        .header-actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .primary-button {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          border: none;
+          color: white;
+          padding: 12px 24px;
+          border-radius: 10px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .primary-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .secondary-button {
+          background: var(--tnf-surface);
+          border: 1px solid var(--tnf-border);
+          color: var(--tnf-text-primary);
+          padding: 12px 24px;
+          border-radius: 10px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .secondary-button:hover {
+          background: var(--tnf-surface-hover);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+        }
+
+        .filter-tab {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background: var(--tnf-surface);
+          border: 1px solid var(--tnf-border);
+          border-radius: 20px;
+          color: var(--tnf-text-muted);
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 14px;
+        }
+
+        .filter-tab:hover {
+          background: var(--tnf-surface-hover);
+        }
+
+        .filter-tab.active {
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(118, 75, 162, 0.2));
+          border-color: var(--tnf-primary);
+          color: var(--tnf-text-primary);
+        }
+
+        .tab-count {
+          background: rgba(255, 255, 255, 0.1);
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 12px;
+        }
+
+        /* Agent Stats */
+        .agent-stats {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .stat-card.mini {
+          background: var(--tnf-surface);
+          border: 1px solid var(--tnf-border);
+          border-radius: 12px;
+          padding: 16px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .stat-card.mini .stat-value {
+          font-size: 24px;
+          font-weight: 700;
+          color: var(--tnf-primary-light);
+        }
+
+        .stat-card.mini .stat-label {
+          font-size: 12px;
+          color: var(--tnf-text-muted);
+        }
+
+        /* Agent Grid */
+        .agent-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+        }
+
+        .agent-card {
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 20px;
+          padding: 24px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          text-align: left;
+          font: inherit;
+          color: inherit;
+        }
+
+        .agent-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .agent-card:hover {
+          background: rgba(15, 23, 42, 0.8);
+          border-color: rgba(99, 102, 241, 0.3);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .agent-card:hover::before {
+          opacity: 1;
+        }
+
+        .agent-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .agent-type-icon {
+          font-size: 36px;
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
+
+        .agent-status-indicator {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          box-shadow: 0 0 12px currentColor;
+        }
+
+        .agent-name {
+          font-family: 'Outfit', sans-serif;
+          font-size: 20px;
+          font-weight: 700;
+          margin: 0 0 8px;
+          color: #f8fafc;
+          position: relative;
+          z-index: 1;
+        }
+
+        .agent-description {
+          font-size: 14px;
+          color: #94a3b8;
+          margin: 0 0 16px;
+          line-height: 1.6;
+          position: relative;
+          z-index: 1;
+        }
+
+        .agent-meta {
+          display: flex;
+          justify-content: space-between;
+          font-size: 13px;
+          color: var(--tnf-text-muted);
+          margin-bottom: 12px;
+        }
+
+        .agent-capabilities {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 16px;
+        }
+
+        .capability-tag {
+          background: rgba(99, 102, 241, 0.15);
+          color: var(--tnf-primary-light);
+          padding: 4px 10px;
+          border-radius: 12px;
+          font-size: 11px;
+        }
+
+        .capability-tag.more {
+          background: rgba(255, 255, 255, 0.05);
+          color: var(--tnf-text-muted);
+        }
+
+        .agent-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 16px;
+          border-top: 1px solid var(--tnf-border);
+        }
+
+        .last-active {
+          font-size: 12px;
+          color: var(--tnf-text-muted);
+        }
+
+        .agent-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .action-btn {
+          background: var(--tnf-surface-hover);
+          border: none;
+          padding: 8px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+          background: var(--tnf-surface-active);
+        }
+
+        .action-btn.start:hover { background: rgba(16, 185, 129, 0.2); }
+        .action-btn.stop:hover { background: rgba(239, 68, 68, 0.2); }
+
+        /* Add Card */
+        .add-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          border-style: dashed;
+          min-height: 280px;
+        }
+
+        .add-card:hover {
+          border-color: var(--tnf-primary);
+          background: rgba(99, 102, 241, 0.05);
+        }
+
+        .add-icon {
+          font-size: 40px;
+          color: var(--tnf-text-muted);
+        }
+
+        .add-label {
+          font-size: 14px;
+          color: var(--tnf-text-muted);
+        }
+
+        .loading-state {
+          text-align: center;
+          padding: 60px;
+          color: var(--tnf-text-muted);
+        }
+
+        .section-title {
+          font-family: 'Outfit', sans-serif;
+          font-size: 18px;
+          font-weight: 600;
+          margin: 32px 0 16px;
+          color: #f8fafc;
+          opacity: 0.9;
+          letter-spacing: 0.5px;
+        }
+
+        .agent-card.federated {
+          border-left: 3px solid var(--tnf-primary);
+          background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.7));
+        }
+
+        .agent-role {
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          text-transform: uppercase;
+        }
+      `}</style>
+    </PageShell>
+  );
+};
+
+// Agent Detail Modal Component
+const AgentDetailModal: React.FC<{
+  agent: Agent;
+  onClose: () => void;
+  onDelete: () => void;
+}> = ({ agent, onClose, onDelete }) => {
+  const dialogRef = useModalA11y(true, onClose);
+
+  return (
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="agent-detail-title"
+      >
+        <div className="modal-header">
+          <h2 id="agent-detail-title">{agent.name}</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="detail-section">
+            <label>Status</label>
+            <span className={`status-badge ${agent.status}`}>{agent.status}</span>
+          </div>
+          <div className="detail-section">
+            <label>Type</label>
+            <span>{agent.type}</span>
+          </div>
+          <div className="detail-section">
+            <label>Model</label>
+            <span>{agent.config.model}</span>
+          </div>
+          <div className="detail-section">
+            <label>Description</label>
+            <p>{agent.description}</p>
+          </div>
+          <div className="detail-section">
+            <label>Capabilities</label>
+            <div className="tags">
+              {agent.capabilities.map((cap) => (
+                <span key={cap} className="tag">
+                  {cap}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="detail-section">
+            <label>Tools</label>
+            <div className="tags">
+              {agent.config.tools.map((tool) => (
+                <span key={tool} className="tag tool">
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="detail-section">
+            <label>System Prompt</label>
+            <pre className="system-prompt">{agent.config.systemPrompt}</pre>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="delete-btn" onClick={onDelete}>
+            Delete Agent
+          </button>
+          <button className="primary-button" onClick={onClose}>
+            Close
+          </button>
+        </div>
+        <style>{`
+          .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+          }
+          .modal-content {
+            background: var(--tnf-obsidian, #0f172a);
+            border: 1px solid var(--tnf-border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+          }
+          .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--tnf-border);
+          }
+          .modal-header h2 {
+            margin: 0;
+            font-family: var(--tnf-font-heading);
+          }
+          .close-btn {
+            background: none;
+            border: none;
+            color: var(--tnf-text-muted);
+            font-size: 24px;
+            cursor: pointer;
+          }
+          .modal-body {
+            padding: 24px;
+          }
+          .detail-section {
+            margin-bottom: 20px;
+          }
+          .detail-section label {
+            display: block;
+            font-size: 12px;
+            color: var(--tnf-text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+          }
+          .status-badge.active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+          .status-badge.idle { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+          .status-badge.error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+          .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+          .tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--tnf-primary-light);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+          }
+          .tag.tool {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+          }
+          .system-prompt {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: pre-wrap;
+            margin: 0;
+          }
+          .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-top: 1px solid var(--tnf-border);
+          }
+          .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+          }
+          .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+          }
+          .primary-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+          }
+        `}</style>
+      </div>
+    </div>
+  );
+};
+
+// Create Agent Modal Component
+const CreateAgentModal: React.FC<{
+  onClose: () => void;
+  onCreate: (agent: Partial<Agent>) => void;
+}> = ({ onClose, onCreate }) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [providers, setProviders] = useState(VERIFIED_PROVIDER_CATALOG);
+  const [providerId, setProviderId] = useState(defaultProviderId());
+  const [model, setModel] = useState(modelsForProvider(defaultProviderId())[0] || '');
+  const [catalogSource, setCatalogSource] = useState<'api' | 'offline-fallback'>(
+    'offline-fallback'
+  );
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const dialogRef = useModalA11y(true, onClose);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setCatalogLoading(true);
+      const response = await apiService.getAvailableModels({ refresh: true });
+      if (cancelled) return;
+      if (response.success && response.data?.providers?.length) {
+        const mapped = response.data.providers.map((p) => ({
+          id: p.id,
+          name: p.name,
+          priority: p.priority,
+          models: p.models.map((m) => m.id),
+        }));
+        setProviders(mapped);
+        const nextProvider = response.data.defaultProvider || mapped[0]?.id || defaultProviderId();
+        setProviderId(nextProvider);
+        const nextModels = mapped.find((p) => p.id === nextProvider)?.models || [];
+        setModel(nextModels[0] || '');
+        setCatalogSource('api');
+      } else {
+        setProviders(VERIFIED_PROVIDER_CATALOG);
+        setProviderId(defaultProviderId());
+        setModel(modelsForProvider(defaultProviderId())[0] || '');
+        setCatalogSource('offline-fallback');
+      }
+      setCatalogLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const modelOptions =
+    providers.find((p) => p.id === providerId)?.models || modelsForProvider(providerId);
+
+  const handleProviderChange = (next: string) => {
+    setProviderId(next);
+    const nextModels = providers.find((p) => p.id === next)?.models || modelsForProvider(next);
+    setModel(nextModels[0] || '');
+  };
+
+  const handleCreate = () => {
+    onCreate({
+      name,
+      type: 'custom',
+      description,
+      capabilities: [],
+      config: {
+        model,
+        temperature: 0.7,
+        maxTokens: 4096,
+        systemPrompt: '',
+        tools: [],
+        provider: providerId,
+      },
+    });
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose} role="presentation">
+      <div
+        ref={dialogRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-agent-title"
+      >
+        <div className="modal-header">
+          <h2 id="create-agent-title">Create New Agent</h2>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label>Agent Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Research Assistant"
+            />
+          </div>
+          <div className="form-group">
+            <label>LLM Provider</label>
+            <select
+              value={providerId}
+              onChange={(e) => handleProviderChange(e.target.value)}
+              disabled={catalogLoading}
+            >
+              {providers.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <p className="form-hint">
+              {catalogSource === 'api'
+                ? 'Models loaded from TNF API catalog (integrated providers).'
+                : 'API offline — showing verified offline catalog (NVIDIA-first).'}
+            </p>
+          </div>
+          <div className="form-group">
+            <label>Model</label>
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              disabled={catalogLoading || modelOptions.length === 0}
+            >
+              {modelOptions.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="What does this agent do?"
+              rows={3}
+            />
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="secondary-button" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="primary-button" onClick={handleCreate} disabled={!name || !model}>
+            Create Agent
+          </button>
+        </div>
+        <style>{`
+          .form-group {
+            margin-bottom: 20px;
+          }
+          .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+          }
+          .form-hint {
+            margin: 6px 0 0;
+            font-size: 12px;
+            color: var(--tnf-text-muted);
+          }
+          .form-group input,
+          .form-group select,
+          .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--tnf-surface);
+            border: 1px solid var(--tnf-border);
+            border-radius: 8px;
+            color: var(--tnf-text-primary);
+            font-size: 14px;
+          }
+          .form-group input:focus,
+          .form-group select:focus,
+          .form-group textarea:focus {
+            outline: none;
+            border-color: var(--tnf-primary);
+          }
+          .secondary-button {
+            background: var(--tnf-surface);
+            border: 1px solid var(--tnf-border);
+            color: var(--tnf-text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+          }
+        `}</style>
+      </div>
+    </div>
+  );
+};
+
+export default AgentHub;

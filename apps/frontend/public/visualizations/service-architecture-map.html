@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>The New Fuse - Service Architecture Map</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            color: #2d3748;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        #controls {
+            position: absolute;
+            top: 130px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            min-width: 200px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.active {
+            background: #48bb78;
+        }
+
+        #breadcrumbs {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .breadcrumb-item {
+            display: inline-block;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .breadcrumb-item:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            display: inline-block;
+            margin: 0 8px;
+            color: #cbd5e0;
+        }
+
+        #chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .node:hover {
+            opacity: 0.8;
+        }
+
+        .node-label {
+            font-size: 12px;
+            font-weight: 600;
+            fill: white;
+            pointer-events: none;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .node-value {
+            font-size: 10px;
+            fill: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(45, 55, 72, 0.95);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 20;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .tooltip-section {
+            margin-bottom: 6px;
+        }
+
+        .tooltip-label {
+            opacity: 0.7;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tooltip-value {
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>🏗️ Service Architecture Map</h1>
+            <p class="subtitle">The New Fuse - Interactive service dependency treemap</p>
+        </div>
+
+        <div id="controls">
+            <div class="control-group">
+                <span class="control-label">View Mode</span>
+                <button onclick="setMode('size')" id="btnSize">By Resource Usage</button>
+                <button onclick="setMode('dependencies')" id="btnDeps">By Dependencies</button>
+                <button onclick="setMode('health')" id="btnHealth">By Health Score</button>
+            </div>
+
+            <div class="control-group">
+                <button onclick="resetZoom()">Reset Zoom</button>
+            </div>
+        </div>
+
+        <div id="breadcrumbs">
+            <span class="breadcrumb-item" onclick="zoomTo(root)">The New Fuse</span>
+        </div>
+
+        <svg id="chart"></svg>
+    </div>
+
+    <!-- Embedded D3.js v7 (same as previous file) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <script>
+        // Service architecture data for The New Fuse
+        const architectureData = {
+            name: 'The New Fuse',
+            children: [
+                {
+                    name: 'Frontend Layer',
+                    children: [
+                        { name: 'React App', value: 450, dependencies: 8, health: 98, port: 3000, desc: 'Main user interface' },
+                        { name: 'Vite Dev Server', value: 120, dependencies: 3, health: 100, port: 3000, desc: 'Development bundler' },
+                        { name: 'Tauri Desktop', value: 280, dependencies: 5, health: 95, port: null, desc: 'Desktop application' },
+                    ]
+                },
+                {
+                    name: 'Backend Services',
+                    children: [
+                        { name: 'Backend API', value: 680, dependencies: 15, health: 97, port: 3001, desc: 'Main NestJS API server' },
+                        { name: 'API Gateway', value: 420, dependencies: 12, health: 99, port: 3005, desc: 'API routing & load balancing' },
+                        { name: 'Workflow Engine', value: 350, dependencies: 8, health: 94, port: null, desc: 'Agent workflow orchestration' },
+                    ]
+                },
+                {
+                    name: 'Data Layer',
+                    children: [
+                        { name: 'PostgreSQL', value: 820, dependencies: 0, health: 99, port: 5433, desc: 'Primary database' },
+                        { name: 'Redis Cache', value: 340, dependencies: 0, health: 100, port: 6380, desc: 'In-memory caching' },
+                        { name: 'Drizzle ORM', value: 210, dependencies: 2, health: 98, port: null, desc: 'Database abstraction' },
+                    ]
+                },
+                {
+                    name: 'Agent System',
+                    children: [
+                        { name: 'Agent Registry', value: 290, dependencies: 6, health: 96, port: null, desc: 'Agent discovery & registration' },
+                        { name: 'MCP Integration', value: 380, dependencies: 10, health: 93, port: null, desc: 'Model Context Protocol' },
+                        { name: 'Task Agents', value: 540, dependencies: 7, health: 95, port: null, desc: 'Specialized task agents' },
+                        { name: 'Orchestrator', value: 420, dependencies: 18, health: 92, port: null, desc: 'Master coordination agent' },
+                    ]
+                },
+                {
+                    name: 'Integration Services',
+                    children: [
+                        { name: 'Browser Hub', value: 460, dependencies: 4, health: 97, port: 8080, desc: 'Browser automation service' },
+                        { name: 'File System MCP', value: 180, dependencies: 3, health: 99, port: null, desc: 'File operations' },
+                        { name: 'External APIs', value: 240, dependencies: 0, health: 91, port: null, desc: 'Third-party integrations' },
+                    ]
+                },
+                {
+                    name: 'Infrastructure',
+                    children: [
+                        { name: 'Docker Compose', value: 150, dependencies: 0, health: 100, port: null, desc: 'Container orchestration' },
+                        { name: 'Turbo Build', value: 95, dependencies: 0, health: 98, port: null, desc: 'Monorepo build system' },
+                        { name: 'CloudRuntime Deploy', value: 120, dependencies: 5, health: 94, port: null, desc: 'Production deployment' },
+                    ]
+                }
+            ]
+        };
+
+        // Setup
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3.select('#chart')
+            .attr('width', width)
+            .attr('height', height);
+
+        const g = svg.append('g');
+
+        let mode = 'size'; // 'size', 'dependencies', or 'health'
+        let currentRoot = architectureData;
+        let tooltip;
+
+        // Color scale
+        const color = d3.scaleOrdinal(d3.schemeTableau10);
+
+        // Create treemap layout
+        const treemap = d3.treemap()
+            .size([width, height])
+            .padding(2)
+            .round(true);
+
+        function render() {
+            // Prepare data based on mode
+            const hierarchy = d3.hierarchy(currentRoot)
+                .sum(d => {
+                    if (mode === 'size') return d.value || 0;
+                    if (mode === 'dependencies') return (d.dependencies || 0) * 10;
+                    if (mode === 'health') return (100 - (d.health || 100));
+                })
+                .sort((a, b) => b.value - a.value);
+
+            const root = treemap(hierarchy);
+
+            // Render rectangles
+            const nodes = g.selectAll('g')
+                .data(root.leaves(), d => d.data.name);
+
+            const nodeEnter = nodes.enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `translate(${d.x0},${d.y0})`)
+                .on('click', (event, d) => {
+                    if (d.parent && d.parent.data.children) {
+                        zoomTo(d.parent.data);
+                    }
+                })
+                .on('mouseover', showTooltip)
+                .on('mouseout', hideTooltip);
+
+            nodeEnter.append('rect')
+                .attr('width', d => d.x1 - d.x0)
+                .attr('height', d => d.y1 - d.y0)
+                .attr('fill', d => {
+                    if (mode === 'health') {
+                        const health = d.data.health || 100;
+                        return health >= 95 ? '#48bb78' : health >= 85 ? '#ed8936' : '#f56565';
+                    }
+                    return color(d.parent.data.name);
+                })
+                .attr('stroke', 'white')
+                .attr('stroke-width', 2);
+
+            nodeEnter.append('text')
+                .attr('class', 'node-label')
+                .attr('x', d => (d.x1 - d.x0) / 2)
+                .attr('y', d => (d.y1 - d.y0) / 2 - 6)
+                .text(d => {
+                    const width = d.x1 - d.x0;
+                    const height = d.y1 - d.y0;
+                    return width > 80 && height > 40 ? d.data.name : '';
+                });
+
+            nodeEnter.append('text')
+                .attr('class', 'node-value')
+                .attr('x', d => (d.x1 - d.x0) / 2)
+                .attr('y', d => (d.y1 - d.y0) / 2 + 10)
+                .text(d => {
+                    const width = d.x1 - d.x0;
+                    const height = d.y1 - d.y0;
+                    if (width > 100 && height > 50) {
+                        if (mode === 'size') return `${d.data.value || 0} MB`;
+                        if (mode === 'dependencies') return `${d.data.dependencies || 0} deps`;
+                        if (mode === 'health') return `${d.data.health || 100}% healthy`;
+                    }
+                    return '';
+                });
+
+            // Update existing nodes
+            nodes.transition()
+                .duration(750)
+                .attr('transform', d => `translate(${d.x0},${d.y0})`);
+
+            nodes.select('rect')
+                .transition()
+                .duration(750)
+                .attr('width', d => d.x1 - d.x0)
+                .attr('height', d => d.y1 - d.y0)
+                .attr('fill', d => {
+                    if (mode === 'health') {
+                        const health = d.data.health || 100;
+                        return health >= 95 ? '#48bb78' : health >= 85 ? '#ed8936' : '#f56565';
+                    }
+                    return color(d.parent.data.name);
+                });
+
+            nodes.select('.node-label')
+                .text(d => {
+                    const width = d.x1 - d.x0;
+                    const height = d.y1 - d.y0;
+                    return width > 80 && height > 40 ? d.data.name : '';
+                });
+
+            nodes.select('.node-value')
+                .text(d => {
+                    const width = d.x1 - d.x0;
+                    const height = d.y1 - d.y0;
+                    if (width > 100 && height > 50) {
+                        if (mode === 'size') return `${d.data.value || 0} MB`;
+                        if (mode === 'dependencies') return `${d.data.dependencies || 0} deps`;
+                        if (mode === 'health') return `${d.data.health || 100}% healthy`;
+                    }
+                    return '';
+                });
+
+            // Remove old nodes
+            nodes.exit()
+                .transition()
+                .duration(750)
+                .style('opacity', 0)
+                .remove();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('#controls button').forEach(btn => btn.classList.remove('active'));
+            if (newMode === 'size') document.getElementById('btnSize').classList.add('active');
+            if (newMode === 'dependencies') document.getElementById('btnDeps').classList.add('active');
+            if (newMode === 'health') document.getElementById('btnHealth').classList.add('active');
+            render();
+        }
+
+        function zoomTo(data) {
+            currentRoot = data;
+            updateBreadcrumbs();
+            render();
+        }
+
+        function resetZoom() {
+            zoomTo(architectureData);
+        }
+
+        function updateBreadcrumbs() {
+            let html = '<span class="breadcrumb-item" onclick="zoomTo(architectureData)">The New Fuse</span>';
+            if (currentRoot !== architectureData) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += `<span class="breadcrumb-item">${currentRoot.name}</span>`;
+            }
+            document.getElementById('breadcrumbs').innerHTML = html;
+        }
+
+        function showTooltip(event, d) {
+            if (!tooltip) {
+                tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+            }
+
+            tooltip.html(`
+                <div class="tooltip-title">${d.data.name}</div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Category</div>
+                    <div class="tooltip-value">${d.parent.data.name}</div>
+                </div>
+                ${d.data.desc ? `
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Description</div>
+                    <div class="tooltip-value">${d.data.desc}</div>
+                </div>
+                ` : ''}
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Resource Usage</div>
+                    <div class="tooltip-value">${d.data.value || 0} MB</div>
+                </div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Dependencies</div>
+                    <div class="tooltip-value">${d.data.dependencies || 0}</div>
+                </div>
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Health Score</div>
+                    <div class="tooltip-value">${d.data.health || 100}%</div>
+                </div>
+                ${d.data.port ? `
+                <div class="tooltip-section">
+                    <div class="tooltip-label">Port</div>
+                    <div class="tooltip-value">${d.data.port}</div>
+                </div>
+                ` : ''}
+            `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 10) + 'px')
+            .style('display', 'block');
+        }
+
+        function hideTooltip() {
+            if (tooltip) {
+                tooltip.style('display', 'none');
+            }
+        }
+
+        // Initial render
+        setMode('size');
+    </script>
+</body>
+</html>

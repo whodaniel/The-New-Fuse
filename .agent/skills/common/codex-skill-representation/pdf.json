@@ -1,0 +1,12 @@
+{
+  "skillName": "pdf",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/pdf/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/pdf/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/pdf.json",
+  "status": "present"
+}

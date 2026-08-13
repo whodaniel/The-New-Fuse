@@ -1,0 +1,12 @@
+{
+  "skillName": "jules-followup-ops",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/jules-followup-ops/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/jules-followup-ops/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/jules-followup-ops.json",
+  "status": "present"
+}

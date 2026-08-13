@@ -1,0 +1,481 @@
+{
+  "generatedAt": "2026-03-24T06:35:29.627Z",
+  "source": ".agent/skill-bank/snapshots",
+  "purpose": "Promoted snapshot-only skills to permanent categorized skills with risk metadata.",
+  "totals": {
+    "skills": 24,
+    "harmfulPatternSkills": 13
+  },
+  "skills": [
+    {
+      "id": "api-fuzzing-for-bug-bounty",
+      "category": "security/pentest",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "api-fuzzing",
+        "idor",
+        "auth-bypass",
+        "api-abuse"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/api-fuzzing-for-bug-bounty-6e252cef/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/api-fuzzing-for-bug-bounty/SKILL.md",
+        ".agent/skills/security/pentest/api-fuzzing-for-bug-bounty/SKILL.md"
+      ]
+    },
+    {
+      "id": "broken-authentication-testing",
+      "category": "security/pentest",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "broken-auth",
+        "session-takeover",
+        "credential-abuse"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/broken-authentication-testing-70ff7a29/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/broken-authentication-testing/SKILL.md",
+        ".agent/skills/security/pentest/broken-authentication-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "burp-suite-web-application-testing",
+      "category": "security/pentest",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "proxy-interception",
+        "web-pentest",
+        "request-tampering"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/burp-suite-web-application-testing-8b0f7b7d/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/burp-suite-web-application-testing/SKILL.md",
+        ".agent/skills/security/pentest/burp-suite-web-application-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "cross-site-scripting-and-html-injection-testing",
+      "category": "security/pentest",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "xss",
+        "html-injection",
+        "content-security"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/cross-site-scripting-and-html-injection-testing-727f5af3/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/cross-site-scripting-and-html-injection-testing/SKILL.md",
+        ".agent/skills/security/pentest/cross-site-scripting-and-html-injection-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "file-path-traversal-testing",
+      "category": "security/pentest",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "path-traversal",
+        "file-disclosure"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/file-path-traversal-testing-3677f26c/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/file-path-traversal-testing/SKILL.md",
+        ".agent/skills/security/pentest/file-path-traversal-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "idor-vulnerability-testing",
+      "category": "security/pentest",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "idor",
+        "authorization-bypass",
+        "object-level-access-control"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/idor-vulnerability-testing-b97f2414/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/idor-vulnerability-testing/SKILL.md",
+        ".agent/skills/security/pentest/idor-vulnerability-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "red-team-tools-and-methodology",
+      "category": "security/red-team",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "critical",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "red-team",
+        "offensive-ops",
+        "adversary-simulation"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/red-team-tools-and-methodology-60f25476/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/red-team/red-team-tools-and-methodology/SKILL.md",
+        ".agent/skills/security/red-team/red-team-tools-and-methodology/SKILL.md"
+      ]
+    },
+    {
+      "id": "security-review",
+      "category": "security/review",
+      "primaryType": "governance",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "medium",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "secure-design-review",
+        "risk-assessment",
+        "control-gaps"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/security-review-ebfd124f/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/review/security-review/SKILL.md",
+        ".agent/skills/security/review/security-review/SKILL.md"
+      ]
+    },
+    {
+      "id": "security-scanning-tools",
+      "category": "security/scanning",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "scanner-usage",
+        "vuln-discovery",
+        "automated-testing"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/security-scanning-tools-fb487cf3/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/scanning/security-scanning-tools/SKILL.md",
+        ".agent/skills/security/scanning/security-scanning-tools/SKILL.md"
+      ]
+    },
+    {
+      "id": "shodan-reconnaissance-and-pentesting",
+      "category": "security/recon",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "internet-recon",
+        "shodan",
+        "attack-surface-discovery"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/shodan-reconnaissance-and-pentesting-035ae5d1/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/recon/shodan-reconnaissance-and-pentesting/SKILL.md",
+        ".agent/skills/security/recon/shodan-reconnaissance-and-pentesting/SKILL.md"
+      ]
+    },
+    {
+      "id": "sqlmap-database-penetration-testing",
+      "category": "security/pentest",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "critical",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "sql-injection",
+        "sqlmap",
+        "database-exfiltration"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/sqlmap-database-penetration-testing-43732dff/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/pentest/sqlmap-database-penetration-testing/SKILL.md",
+        ".agent/skills/security/pentest/sqlmap-database-penetration-testing/SKILL.md"
+      ]
+    },
+    {
+      "id": "top-100-web-vulnerabilities-reference",
+      "category": "security/reference",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "interactive"
+      ],
+      "riskTier": "medium",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "vulnerability-taxonomy",
+        "web-risk-reference"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/top-100-web-vulnerabilities-reference-6f86478d/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/reference/top-100-web-vulnerabilities-reference/SKILL.md",
+        ".agent/skills/security/reference/top-100-web-vulnerabilities-reference/SKILL.md"
+      ]
+    },
+    {
+      "id": "wireshark-network-traffic-analysis",
+      "category": "security/network-analysis",
+      "primaryType": "diagnostic",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "high",
+      "harmfulPatternDetection": true,
+      "harmfulPatternSignals": [
+        "packet-analysis",
+        "network-forensics",
+        "traffic-inspection"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/wireshark-network-traffic-analysis-d2f094fb/SKILL.md",
+      "permanentPaths": [
+        ".skills/security/network-analysis/wireshark-network-traffic-analysis/SKILL.md",
+        ".agent/skills/security/network-analysis/wireshark-network-traffic-analysis/SKILL.md"
+      ]
+    },
+    {
+      "id": "backend-patterns",
+      "category": "engineering/patterns",
+      "primaryType": "construction",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "backend-architecture",
+        "service-patterns"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/backend-patterns-23b9ef6b/SKILL.md",
+      "permanentPaths": [
+        ".skills/engineering/patterns/backend-patterns/SKILL.md",
+        ".agent/skills/engineering/patterns/backend-patterns/SKILL.md"
+      ]
+    },
+    {
+      "id": "frontend-patterns",
+      "category": "engineering/patterns",
+      "primaryType": "construction",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "frontend-architecture",
+        "ui-patterns"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/frontend-patterns-5f6512d2/SKILL.md",
+      "permanentPaths": [
+        ".skills/engineering/patterns/frontend-patterns/SKILL.md",
+        ".agent/skills/engineering/patterns/frontend-patterns/SKILL.md"
+      ]
+    },
+    {
+      "id": "coding-standards",
+      "category": "engineering/governance",
+      "primaryType": "governance",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "code-style",
+        "quality-standards"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/coding-standards-4034db73/SKILL.md",
+      "permanentPaths": [
+        ".skills/engineering/governance/coding-standards/SKILL.md",
+        ".agent/skills/engineering/governance/coding-standards/SKILL.md"
+      ]
+    },
+    {
+      "id": "vercel-react-best-practices",
+      "category": "engineering/deployment",
+      "primaryType": "construction",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "vercel",
+        "react",
+        "production-best-practices"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/vercel-react-best-practices-63786205/SKILL.md",
+      "permanentPaths": [
+        ".skills/engineering/deployment/vercel-react-best-practices/SKILL.md",
+        ".agent/skills/engineering/deployment/vercel-react-best-practices/SKILL.md"
+      ]
+    },
+    {
+      "id": "clickhouse-io",
+      "category": "data/analytics",
+      "primaryType": "integration",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "clickhouse",
+        "analytics-querying"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/clickhouse-io-069d0887/SKILL.md",
+      "permanentPaths": [
+        ".skills/data/analytics/clickhouse-io/SKILL.md",
+        ".agent/skills/data/analytics/clickhouse-io/SKILL.md"
+      ]
+    },
+    {
+      "id": "d3-viz",
+      "category": "data/visualization",
+      "primaryType": "construction",
+      "secondaryTags": [
+        "exploratory"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "d3",
+        "data-visualization"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/d3-viz-4b1f820c/SKILL.md",
+      "permanentPaths": [
+        ".skills/data/visualization/d3-viz/SKILL.md",
+        ".agent/skills/data/visualization/d3-viz/SKILL.md"
+      ]
+    },
+    {
+      "id": "linux-production-shell-scripts",
+      "category": "ops/systems",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "medium",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "shell-automation",
+        "linux-ops"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/project-agent/linux-production-shell-scripts-c52e2c53/SKILL.md",
+      "permanentPaths": [
+        ".skills/ops/systems/linux-production-shell-scripts/SKILL.md",
+        ".agent/skills/ops/systems/linux-production-shell-scripts/SKILL.md"
+      ]
+    },
+    {
+      "id": "tmux",
+      "category": "ops/tooling",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "interactive"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "terminal-multiplexing",
+        "session-management"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/picoclaw/tmux-417e5e42/SKILL.md",
+      "permanentPaths": [
+        ".skills/ops/tooling/tmux/SKILL.md",
+        ".agent/skills/ops/tooling/tmux/SKILL.md"
+      ]
+    },
+    {
+      "id": "hardware",
+      "category": "ops/hardware",
+      "primaryType": "integration",
+      "secondaryTags": [
+        "deterministic"
+      ],
+      "riskTier": "medium",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "i2c",
+        "spi",
+        "hardware-interfaces"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/picoclaw/hardware-74f16121/SKILL.md",
+      "permanentPaths": [
+        ".skills/ops/hardware/hardware/SKILL.md",
+        ".agent/skills/ops/hardware/hardware/SKILL.md"
+      ]
+    },
+    {
+      "id": "overwatch",
+      "category": "ops/monitoring",
+      "primaryType": "operational",
+      "secondaryTags": [
+        "continuous"
+      ],
+      "riskTier": "medium",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "mesh-monitoring",
+        "state-synchronization"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/picoclaw/overwatch-3581432c/SKILL.md",
+      "permanentPaths": [
+        ".skills/ops/monitoring/overwatch/SKILL.md",
+        ".agent/skills/ops/monitoring/overwatch/SKILL.md"
+      ]
+    },
+    {
+      "id": "template-skill",
+      "category": "meta/templates",
+      "primaryType": "meta",
+      "secondaryTags": [
+        "interactive"
+      ],
+      "riskTier": "low",
+      "harmfulPatternDetection": false,
+      "harmfulPatternSignals": [
+        "skill-template",
+        "scaffolding"
+      ],
+      "sourceSnapshot": ".agent/skill-bank/snapshots/claude/template-skill-eb685d91/SKILL.md",
+      "permanentPaths": [
+        ".skills/meta/templates/template-skill/SKILL.md",
+        ".agent/skills/meta/templates/template-skill/SKILL.md"
+      ]
+    }
+  ]
+}

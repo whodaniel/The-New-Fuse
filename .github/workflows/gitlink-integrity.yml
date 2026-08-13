@@ -1,0 +1,37 @@
+name: Gitlink Integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gitlink-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build changed file list
+        run: |
+          set -euo pipefail
+          zero_sha='0000000000000000000000000000000000000000'
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --prune --depth=1 origin "${{ github.base_ref }}"
+            git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" > .tnf_changed_files
+          else
+            if [ "${{ github.event.before }}" = "$zero_sha" ]; then
+              git diff --name-only --diff-filter=ACMR HEAD~1...HEAD > .tnf_changed_files
+            else
+              git diff --name-only --diff-filter=ACMR "${{ github.event.before }}...${{ github.sha }}" > .tnf_changed_files
+            fi
+          fi
+          sort -u .tnf_changed_files -o .tnf_changed_files
+
+      - name: Validate gitlink allowlist and state
+        run: ./scripts/check-gitlinks.sh
+
+      - name: Verify changed gitlink commits are reachable from nested remotes
+        run: node scripts/protocols/verify-gitlink-reachability.cjs --mode=ci --file-list=.tnf_changed_files

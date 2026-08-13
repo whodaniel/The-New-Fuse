@@ -1,0 +1,41 @@
+{
+  "name": "@the-new-fuse/tnf-core",
+  "files": [
+    "dist"
+  ],
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./chat/ChatManager": {
+      "types": "./dist/chat/ChatManager.d.ts",
+      "import": "./dist/chat/ChatManager.js",
+      "require": "./dist/chat/ChatManager.js",
+      "default": "./dist/chat/ChatManager.js"
+    },
+    "./package-reconnect/PackageReconnectHub": {
+      "types": "./dist/package-reconnect/PackageReconnectHub.d.ts",
+      "import": "./dist/package-reconnect/PackageReconnectHub.js",
+      "require": "./dist/package-reconnect/PackageReconnectHub.js",
+      "default": "./dist/package-reconnect/PackageReconnectHub.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests for this package\" && exit 0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^6.0.2",
+    "@types/node": "^24.8.1"
+  }
+}

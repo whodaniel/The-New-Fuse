@@ -1,0 +1,30 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev libjpeg-turbo-dev giflib-dev
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy monorepo files
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages ./packages
+COPY apps/relay-server ./apps/relay-server
+COPY scripts ./scripts
+
+# Build the UI FIRST to break cache and ensure assets exist
+RUN cd apps/relay-server/ui && pnpm install --no-frozen-lockfile && pnpm run build
+
+# Install server dependencies
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Expose Main Port
+ENV PORT=3000
+EXPOSE 3000
+
+# Start the consolidated server from its directory
+WORKDIR /app/apps/relay-server
+CMD ["node", "src/comprehensive-tnf-relay.js"]
+# Cache bust 2: Wed Mar 18 02:14:03 EDT 2026

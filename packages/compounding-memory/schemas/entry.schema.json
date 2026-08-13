@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TNF Compounding Log Entry",
+  "description": "Schema for Andrej Karpathy-style compounding knowledge entries in the TNF wiki.",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "description": "Unique entry identifier" },
+    "title": { "type": "string" },
+    "category": {
+      "enum": [
+        "architecture",
+        "decision",
+        "pattern",
+        "deconstruction",
+        "assimilation"
+      ]
+    },
+    "summary": { "type": "string" },
+    "content": {
+      "type": "string",
+      "description": "Markdown content for the wiki page"
+    },
+    "backlinks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agentId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "mojoOptimized": { "type": "boolean", "default": false }
+      }
+    }
+  },
+  "required": ["id", "title", "category", "content"]
+}

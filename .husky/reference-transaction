@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# Pre-mutation guard — TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL R1/R2.
+#
+# reference-transaction is the ONLY hook that sees `git stash`, `reset`, `merge`
+# and `rebase`; git has no pre-stash/pre-checkout/pre-reset hook. Only the
+# "prepared" phase can abort. Ordinary commits pass through untouched.
+#
+# Deliberately NOT `set -e`: this hook must never be the reason git fails.
+# The guard fails open on any internal error.
+#
+# Operator override:  TNF_MUTATION_OK=1 <git command>
+node "$(dirname "$0")/../scripts/security/workspace-mutation-guard.cjs" --hook "$1" || exit $?

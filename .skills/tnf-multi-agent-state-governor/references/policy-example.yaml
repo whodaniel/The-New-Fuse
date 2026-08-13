@@ -1,0 +1,28 @@
+report_dir: ~/.tnf/reports/protocols/agent-state-governance
+keep_latest_rules:
+  - name: claude_shell_snapshots
+    path: ~/.claude/shell-snapshots
+    glob: "*"
+    keep: 120
+  - name: gemini_settings_backups
+    path: ~/.gemini
+    glob: settings.json.backup.*
+    keep: 2
+older_than_days_rules:
+  - name: tnf_terminal_heartbeat_history
+    path: ~/.tnf/terminal-heartbeat/state/history
+    glob: "*"
+    days: 30
+gzip_rules:
+  - name: tnf_master_heartbeat_history
+    file: ~/.tnf/master-heartbeat/state/master-heartbeat-history.jsonl
+    days: 21
+  - name: tnf_watchdog_history
+    file: ~/.tnf/perpetual-scaffold/state/watchdog-history.jsonl
+    days: 21
+  - name: tnf_subdirector_history
+    file: ~/.tnf/subdirector-autopilot/state/subdirector-autopilot-history.jsonl
+    days: 21
+  - name: tnf_cloud_health_history
+    file: ~/.tnf/cloud-health/state/history.jsonl
+    days: 21

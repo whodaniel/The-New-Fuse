@@ -1,0 +1,12 @@
+{
+  "skillName": "equipment-recommendation-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/equipment-recommendation-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/equipment-recommendation-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/equipment-recommendation-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,157 @@
+.graphContainer {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  position: relative;
+  background-color: #06080f;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.darkMode {
+  background-color: #020408;
+}
+
+/* --- Nodes --- */
+.defaultNode, .taskNode, .agentNode {
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  color: #f8fafc;
+  min-width: 180px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.defaultNode:hover, .taskNode:hover, .agentNode:hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+}
+
+.taskNode {
+  border-left: 4px solid #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.agentNode {
+  border-left: 4px solid #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.nodeTitle {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metadataList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metadataItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: #94a3b8;
+}
+
+.metadataValue {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+/* --- Status Indicators --- */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.statusIndicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.statusRunning {
+  background-color: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: status-pulse 2s infinite;
+}
+
+.statusIdle {
+  background-color: #64748b;
+}
+
+.statusError {
+  background-color: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+/* --- Controls & UI --- */
+.layoutSelect {
+  appearance: none;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.layoutSelect:hover {
+  background: rgba(30, 41, 59, 1);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #06080f;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(59, 130, 246, 0.1);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes status-pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}

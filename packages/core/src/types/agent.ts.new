@@ -1,0 +1,14 @@
+import { LLMProviderConfig } from './llm.types';
+
+// Define these interfaces locally instead of importing from @the-new-fuse/types
+interface BaseAgentConfig {
+  tools?: AgentTool[];
+  memory?: boolean;
+  visualization?: boolean;
+}
+
+interface AgentTool {
+  name: string;
+  description: string;
+  execute: (input: Record<string, unknown>) => Promise<unknown>;
+}

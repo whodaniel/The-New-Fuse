@@ -1,0 +1,157 @@
+#!/bin/bash
+# cursor-speak: Speak Cursor agent replies aloud (macOS say + mic ducking flags)
+set -euo pipefail
+
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh"
+
+export VOICEBRIDGE_STATE_DIR VOICEBRIDGE_PROJECT_ROOT VOICEBRIDGE_PROFILE
+
+profile="${VOICEBRIDGE_PROFILE:-main}"
+json_out=0
+use_stdin=0
+text=""
+pause_beam="${CURSOR_SPEAK_PAUSE_BEAM:-1}"
+voice_port="${VOICEBRIDGE_PORT:-50005}"
+
+usage() {
+  cat <<'USAGE'
+Usage: cursor-speak [--profile main] [--stdin] [--json] [--allow-barge-in] [message...]
+
+Speaks agent text with the voice bridge AI-speaking flags so the mic pipeline
+can duck / avoid echo while TTS is active. By default the beam pauses during
+speech so accidental overlap does not cut off the reply. Use --allow-barge-in
+if you want the mic to stay hot so your voice can interrupt the reply.
+USAGE
+}
+
+beam_pause_via_api() {
+  curl -fsS -X POST "http://127.0.0.1:${voice_port}/mic_pause" >/dev/null 2>&1 || \
+    voice-mic-toggle --profile "$profile" --pause >/dev/null 2>&1 || true
+  sleep 0.35
+}
+
+beam_resume_via_api() {
+  sleep "${CURSOR_SPEAK_POST_DELAY_SECONDS:-0.45}"
+  curl -fsS -X POST "http://127.0.0.1:${voice_port}/mic_resume" >/dev/null 2>&1 || \
+    voice-mic-toggle --profile "$profile" --resume >/dev/null 2>&1 || true
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      profile="${2:-}"
+      shift 2
+      ;;
+    --profile=*)
+      profile="${1#--profile=}"
+      shift
+      ;;
+    --stdin)
+      use_stdin=1
+      shift
+      ;;
+    --json)
+      json_out=1
+      shift
+      ;;
+    --keep-beam|--allow-barge-in)
+      pause_beam=0
+      shift
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile"
+fi
+export VOICEBRIDGE_PROFILE
+
+if [[ "$use_stdin" -eq 1 ]]; then
+  stdin_text="$(cat)"
+  if [[ -n "$stdin_text" ]]; then
+    text="$stdin_text"
+  fi
+fi
+
+if [[ $# -gt 0 ]]; then
+  text="$*"
+fi
+
+text="$(printf '%s' "$text" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+if [[ -z "$text" ]]; then
+  echo "Message text is empty." >&2
+  exit 1
+fi
+
+max_chars="${CURSOR_SPEAK_MAX_CHARS:-420}"
+if [[ "${#text}" -gt "$max_chars" ]]; then
+  text="${text:0:max_chars}"
+  text="${text%"${text##*[![:space:]]}"}..."
+fi
+
+suffix=""
+if command -v voicebridge_profile_suffix >/dev/null 2>&1; then
+  suffix="$(voicebridge_profile_suffix)"
+fi
+
+voice="${CURSOR_SPEAK_VOICE:-Daniel}"
+case "$profile" in
+  b|samantha)
+    voice="${CURSOR_SPEAK_VOICE:-Samantha}"
+    ;;
+esac
+
+ai_flag="/tmp/ai_is_speaking${suffix}"
+ai_ts="/tmp/voice_last_ai_speech_ts${suffix}"
+ai_text="/tmp/voice_last_ai_speech_text${suffix}"
+beam_was_paused=0
+
+if [[ "$pause_beam" == "1" ]]; then
+  if voice-mic-toggle --profile "$profile" --status 2>/dev/null | grep -qx "paused"; then
+    beam_was_paused=1
+  else
+    beam_pause_via_api
+  fi
+fi
+
+: > "$ai_flag" || true
+printf '%s\n' "$text" > "$ai_text" 2>/dev/null || true
+say -v "$voice" "$text"
+rm -f "$ai_flag" || true
+printf '%.6f\n' "$(python3 - <<'PY'
+import time
+print(time.time())
+PY
+)" > "$ai_ts" 2>/dev/null || true
+
+if [[ "$pause_beam" == "1" && "$beam_was_paused" -eq 0 ]]; then
+  beam_resume_via_api
+fi
+
+chronicle_py="${TNF_VOICE_SYSTEM_DIR}/voice_chronicle.py"
+if [[ -f "$chronicle_py" ]] && [[ "${VOICEBRIDGE_CHRONICLE:-1}" != "0" ]]; then
+  if [[ -n "${CURSOR_SPEAK_CHRONICLE_BODY:-}" ]]; then
+    printf '%s' "$CURSOR_SPEAK_CHRONICLE_BODY" | python3 "$chronicle_py" append \
+      --role assistant --channel text --stdin --profile "$profile" >/dev/null 2>&1 || true
+  fi
+  python3 "$chronicle_py" append --role assistant --channel tts --text "$text" \
+    --profile "$profile" >/dev/null 2>&1 || true
+fi
+
+if [[ "$json_out" -eq 1 ]]; then
+  python3 - <<PY
+import json
+print(json.dumps({"ok": True, "profile": "${profile}", "voice": "${voice}", "spoken_chars": len("""${text}"""), "paused_beam": ${pause_beam} == "1"}))
+PY
+else
+  echo "spoken (${voice}): ${text}"
+fi

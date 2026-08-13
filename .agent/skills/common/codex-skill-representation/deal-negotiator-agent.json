@@ -1,0 +1,12 @@
+{
+  "skillName": "deal-negotiator-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/deal-negotiator-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/deal-negotiator-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/deal-negotiator-agent.json",
+  "status": "present"
+}

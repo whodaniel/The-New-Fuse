@@ -1,0 +1,5 @@
+{
+  "publishable_key": "pk_test_...",
+  "secret_key": "sk_test_...",
+  "webhook_secret": "whsec_..."
+}

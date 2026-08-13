@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/twip-terminal-context.schema.json",
+  "title": "TWIP Terminal Context",
+  "description": "Portable terminal context block for handoff packets and orchestrator routing hints.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["twip_ref", "scope", "terminal", "risk"],
+  "properties": {
+    "twip_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["twid", "correlation_id"],
+      "properties": {
+        "twid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "correlation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "integrity_hash": {
+          "type": ["string", "null"],
+          "description": "Optional canonical payload hash for integrity checks."
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id"],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_key": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tty", "work_executables"],
+      "properties": {
+        "tty": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pane_id": {
+          "type": ["string", "null"]
+        },
+        "shell_pid": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "work_executables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_bypass", "remote_mcp"],
+      "properties": {
+        "approval_bypass": {
+          "type": "boolean"
+        },
+        "remote_mcp": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

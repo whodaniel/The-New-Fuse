@@ -1,0 +1,146 @@
+{
+  "spec": "tnf/agent-classification-audit/0.1",
+  "audit_id": "audit-2026-06-14-agent-role-fulfillment",
+  "created_at": "2026-06-14T00:00:00Z",
+  "operator_session": "agent:local-subdirector:session:2026-06-12T03:17:10.901505Z",
+  "scope": "inventory-of-existing-agent-classification-in-tnf",
+  "audit_summary": "TNF currently has TWO parallel registry surfaces (in-memory relay + DB-backed master), and an implicit role-vs-fulfillment conflation in AgentType enum. No canonical place to record 'role + fulfillment stack (model+tools+prompting)' as separate qualities. Per operator directive, TNF is the source-of-truth for classifying ANY agent, including ones with subagents or that themselves orchestrate agents (kilo, opencode, jules, hermes).",
+  "files_inspected": [
+    "docs/protocols/TURN_ZERO_MANDATE.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    ".agent/SYSTEM_PROMPT.md",
+    ".agent/context/resource-map.md",
+    ".agent/context/agent-onboarding.md",
+    ".agent/workflows/frontload.md",
+    "packages/relay-core/src/types.ts (Agent interface)",
+    "packages/relay-core/src/services/agent-registry.service.ts (in-memory Agent + assignAgentId)",
+    "packages/relay-core/src/services/MasterAgentRegistry.ts (DB-backed profile)",
+    "packages/relay-core/src/broker-agent.ts (router/policy)",
+    "packages/relay-core/src/agent-registry-bridge.ts (relay WebSocket registration)",
+    "packages/database/src/drizzle/schema/agents.ts (8 tables)",
+    "packages/database/src/drizzle/schema/agent-tracking.ts (tracking+sessions+reqlog)",
+    "packages/database/src/drizzle/schema/users.ts (qualities on accounts)",
+    "packages/database/src/drizzle/schema/enums.ts (~110 AgentType values)"
+  ],
+  "current_registry_surfaces": {
+    "relay_in_memory_registry": {
+      "files": ["packages/relay-core/src/services/agent-registry.service.ts"],
+      "fields": [
+        "agentId",
+        "sourceId",
+        "canonicalEntityId",
+        "operationalHandle",
+        "runtimeSessionId",
+        "aliases",
+        "platform",
+        "name",
+        "capabilities (string[])",
+        "registeredAt",
+        "lastHeartbeat",
+        "lastActivity",
+        "status",
+        "messageCount",
+        "violations",
+        "channel"
+      ],
+      "lossy_normalization": "assignAgentId(info) extracts platform/name/capabilities/channel and DESTROYS all other fields from incoming info payload (line 122-139). Discovered role/fulfillment metadata is dropped here.",
+      "scope": "single runtime; ephemeral"
+    },
+    "master_agent_registry_db": {
+      "files": [
+        "packages/relay-core/src/services/MasterAgentRegistry.ts",
+        "packages/database/src/drizzle/schema/agents.ts"
+      ],
+      "tables": [
+        "agents",
+        "agent_metadata",
+        "agent_nfts",
+        "agent_registrations",
+        "agent_capability_registry",
+        "agent_onboarding_events",
+        "agent_directory_entries",
+        "agent_prompt_versions",
+        "agent_metrics",
+        "agent_tracking",
+        "agent_sessions",
+        "agent_request_log"
+      ],
+      "fields": [
+        "id, name, type (agentTypeEnum), status (agentStatusEnum), description, systemPrompt, config (jsonb), capabilities (jsonb:string[]), provider, userId, profile (jsonb)"
+      ],
+      "gap": "type is a flat 100+ value enum mixing roles (CODE_GENERATOR, BROKER), platforms (BROWSER_CHATGPT, IDE_VSCODE), and specific products (GITHUB_JULES). Changing it requires DB migration. Missing: kilo, opencode, claude-code, pi-coding-agent, jules-as-a-product (only GITHUB_JULES, which is the IDE/CI version).",
+      "scope": "persistent (Postgres via Drizzle); canonical for SAAS"
+    }
+  },
+  "broker_dispatch_keys": {
+    "files": ["packages/relay-core/src/broker-agent.ts"],
+    "reads": ["role", "capabilities[]", "status", "itinerary.lane"],
+    "writes_to": ["tnf:master:tasks:realtime"],
+    "gap": "broker gates on role + capabilities only. No fulfillment consideration. Cannot route based on 'which LLM model is currently available' or 'which tools does this agent have access to'."
+  },
+  "qualities_on_user_accounts": {
+    "files": ["packages/database/src/drizzle/schema/users.ts"],
+    "fields": [
+      "role (enum: USER/ADMIN/...)",
+      "roles (string[])",
+      "preferences (jsonb)"
+    ],
+    "gap": "No 'agent-qualities' array per user. Users don't carry role-fulfillment profile of agents they own/operate. openclaw-agents known about per-user requires checking user-storage, schema lacks this."
+  },
+  "persona_definitions_consumed_by": {
+    "kilo": "external CLI persona store (not in TNF)",
+    "opencode": "external config (not in TNF)",
+    "claude-code": "external `.claude/agents` (121 files; mirror in `.agent/agents` at 171 files)",
+    "jules": "no persona customization per operator",
+    "tnf_hermes": "must be tracked IN TNF per operator — agent identity entry, no leak inward"
+  },
+  "gap_matrix_summary": [
+    {
+      "gap": "No canonical role taxonomy separate from platform-type enum",
+      "evidence": "agentTypeEnum in enums.ts blends role+platform+specific-product into one 100+ value list",
+      "impact": "Cannot ask 'all orchestrator agents' or 'kilo' without enumerating the unrolled list — and adding a new platform requires a DB migration"
+    },
+    {
+      "gap": "In-memory registry DROPS unrecognized info fields",
+      "evidence": "agent-registry.service.ts:122-139 keeps only platform/name/capabilities/channel from registration payload",
+      "impact": "If kilo sends { role: 'CLI_CODER', fulfillment: { model: 'kilo-gateway/qwen3-coder', tools: ['fs','shell'], prompt: 'kilo-persona-coder.md' } }, the fulfillment object is destroyed before the agent is registered"
+    },
+    {
+      "gap": "Broker ignores fulfillment entirely",
+      "evidence": "broker-agent.ts:879-912 reads role + capabilities[] only",
+      "impact": "Cannot dispatch by model availability, cannot fail-over persona prompt if provider changes"
+    },
+    {
+      "gap": "kilo/opencode/claude-code/pi-coding-agent have NO entries in agentTypeEnum",
+      "evidence": "enums.ts lines 25-141 — only GITHUB_JULES exists; no CLI_KILO, CLI_OPENCODE, IDE_PI",
+      "impact": "These agents register with stale enum values (probably unrolled 'CLI_CODER'), losing their identity"
+    },
+    {
+      "gap": "User account has no `ownedAgentsQualities[]` or `activeAgents[]` link",
+      "evidence": "users.ts:24-43 has roles+preferences; no FK to agents table or qualities array",
+      "impact": "Cannot answer 'which agents does Daniel have running right now' from the user record; must join agents.userId with lastHeartbeat"
+    },
+    {
+      "gap": "Parallel `.agent/agents` (171) vs `.claude/agents` (121) directories not indexed as a registry",
+      "evidence": "tnf-onboard.cjs reports totals but no canonical mapping enforces uniqueness",
+      "impact": "When TNF says 'all agents', it does not include these persona files unless invoked explitictly"
+    }
+  ],
+  "proposed_first_actions": [
+    "Add `role` and `fulfillment` columns to `agents` table (Drizzle migration) — split role (action: code_generation) from fulfillment (vendor+model+tools+prompt-doc+endpoint)",
+    "Soft-deprecate `type` enum; introduce `agent_role` enum + `agent_fulfillment` JSONB column (vendor, model, transport, protocol_version, prompt_doc_uri, tools[])",
+    "Update `assignAgentId` to preserve all incoming info fields, not just 4",
+    "Extend `RegistryAgent` type in broker-agent.ts to surface fulfillment; document dispatch rules that consult it",
+    "Add a SUPABASE migration to seed kilo, opencode, claude-code, pi-coding-agent as full role+fulfillment entries — admin-overridable",
+    "Extend `users` with `agentQualities` jsonb (per-language/per-vendor fallbacks) and a `user_agents_lnk` or thin join query for 'active agents of this user'",
+    "Build a `tnf agents classify <path>` CLI that reads `.agent/agents/*.md` and `.claude/agents/*.md`, derives role+fulfillment, and uploads to the registry (idempotent) — codifies persona metadata into TNF without 'leaking inward' to hermes"
+  ],
+  "do_not_break": [
+    "Existing AGENT_REGISTER protocol payload schema (backward-compatible additive change)",
+    "Merkle root verification (variant already accounts for additional optional metadata)",
+    "Phase 7 directive conversion ledger (unrelated subsystem, leave alone)"
+  ],
+  "awaiting_operator_decision": true,
+  "next_action": "Operator chooses gap to attack first or greenlights a rollout order. No code changes made yet per Turn Zero confirmation rule."
+}

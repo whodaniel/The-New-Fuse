@@ -1,0 +1,755 @@
+So in this video, we're going to build
+an agentic rack system from scratch in
+pure Python. And not to build another
+coding agent, but rather to replace or
+extend semantic rack in scenarios where
+we want company data, private data, any
+kind of information that we want to make
+available to a large language model when
+we're automating with AI. I'm going to
+walk you through a couple of code
+examples and we're going to start with
+some simple tool definitions all the way
+to some production best practices that
+you can immediately apply in your
+projects today. Now, if you're new to
+the channel, welcome. My name is Dave
+Abalar. I'm an AI engineer with over 10
+years of experience in the field. I'm
+also the founder of Dat Luminina, which
+is an AI development company. And on
+this channel, I share all of the
+engineering best practices on what's
+working right now in the field for the
+client solutions that we're working on.
+Now, classic semantic rag is definitely
+not that as some people on the internet
+may claim. If you're looking at very low
+latency scenarios where you need raw
+speed or you really need to optimize for
+costs, semantic rag is probably still a
+better starting point for you to look
+into. But if you have the time and if
+you have the budgets, agentic rag will
+generally outperform semantic rag just
+because of the feedback loop that the
+agent can use. This is very simply
+explained in the example over here where
+generally semantic rack is a more linear
+process where we leverage the
+intelligence of the large language model
+only once after we have all of the
+information and we make a single LLM API
+call. Whereas with agentic rack, we have
+this loop where we have search tools and
+read tools that can get results, get
+back to the language model and we can
+utilize its intelligence in a loop
+multiple times and therefore it can
+self-correct in order to get to the
+right information where it may at first
+did not find what it was looking for.
+And now the simplest way to get started
+with aentic rag is by using simple
+markdown files that live on the file
+system in combination with three tools.
+a tool that can list files, a tool that
+can search files, and a tool that can
+read files. And these are the exact same
+tools that all of the popular agent
+harnesses are built around nowadays. So,
+let's explore what that looks like in
+practice. And if you want to follow
+along, the link to the GitHub repository
+is in the description. This is part of
+my AI cookbook. If you go in there to
+the knowledge folder, you'll find the
+Agentic Rack folder. And now I am in the
+build tool files. That's where I'm going
+to start. And the only thing that you
+need in order to follow along is an
+OpenAI API key. or you can also simply
+replace it with another provider that
+you like to use. Okay, so let's walk
+through this together. The goal of this
+first file, build tools, is to show you
+and to really help you understand how
+these tools work under the hood. Because
+once we understand that, once we
+understand how to list, how to grab, and
+how to read files, we can bring that
+together and we can start to engineer
+the agentic loop around this. Here we're
+going really to pure Python, nothing
+else. and we're going to explore the
+core primitives in order to show you
+what this looks like. We're going to
+import regular expressions and path from
+the podlift library and we're going to
+first set our notes directory. So, as I
+said in the introduction, we're going to
+work with simple markdown files. So, as
+you can see over here, I created a bunch
+of hypothetical markdown files about an
+engineering team. This is the use case
+that we will be going through for your
+own situation and project. You of course
+want to replace this with whatever
+knowledge you want to make available to
+your system. So you have to note that
+this is a knowledge agentic rag and then
+notes. So let me close this out and come
+back to the first line over here where
+we specify the directory. So what I'm
+going to do is I'm going to use the path
+library to say we're going to take the
+path of the current file and then we're
+going to take the parent and then we add
+nodes to that. So let's see what that
+looks like. If I take the current file,
+you can see over here that we're in the
+build tools.py. Now, if I expand that to
+parent, the path library will know that
+we are now in the agentic rag folder.
+So, it will go one level up to the
+parent. If we now append notes to that,
+you'll find that it now correctly
+identify the notes folder. And then the
+resolve method at the end is just a
+safety precaution to make sure we
+actually have a clean path in there
+without any sim links or other weird
+characters. All right. So that gives us
+the clean notes directory folder as you
+can see over here. Now now we're going
+to start with step one listing the
+files. So we're going to walk through
+this step by step and then we'll bring
+it together in a function that we're
+later going to provide to our agent. So
+we'll start with the nodes directory and
+now we're going to use a method that is
+called glop. and globe. What that is, I
+created a list over here with some of
+the uh methods and functions that we're
+using in the Python programming language
+for you to reference. So here you can
+see if we're using glo it find files
+matching a pattern in a directory. So
+for example, we can search for markdown
+files or we can also let it search for a
+particular phrase within a file name. If
+I now come back over here and you see
+the path is sorted nodes and we do a
+glob and we simply filter for MD files
+and I take this path over here you can
+see that we found all of the nodes that
+are in that folder because all of the
+files are simply MD files. So that's how
+we can find the files. And now if we
+take that same path and we apply the
+relative to which is another method that
+we can use what we'll find is that if we
+run this and we print that we can see
+that now we only get the actual file
+name. So let me show you the entire list
+over here. So you can see that by using
+glo we found all of the full paths in
+here. But for the AI agent we don't want
+to provide all of the context because it
+doesn't really need to know the full
+path. So that's why we can use relative
+to. So it has a shorter hand of going
+through all of the files which will save
+us tokens in the long run. If we now
+bring that together, you can now see
+that through this simple function at
+once, we can get all of these files in
+the relative notation that is short
+enough to provide to our agent. All
+right, so without going into an actual
+database, this is how an AI agent can
+find files on your system. All right,
+now let's get into function number two
+and that is grab. So with grap we can
+search for patterns that we can define
+through regular expressions. So it can
+be a clever search algorithm that we can
+create. So let's say again through this
+example we want to search for the
+pattern connection pool. So within our
+development engineering team documents
+we want to search for all dimensions of
+connection pool. So we start with that
+string. What we then do is we use the
+regular expression library and we
+compile a pattern and we also say ignore
+the case. So we want to match connection
+pool whether it is with a capital C or
+any type of other capital letter. We
+ignore that. We ignore the case. What we
+then do is we turn that into a regular
+expression pattern that we can now
+reuse. So how this works if I run these
+two examples over here you can see that
+for the first string with connection
+pool in there it will say it found a
+match and then in the second result over
+here it will not find a match because
+there's no connection pool in here. So
+you can see I negated with not. So
+there's no match in here. Okay. So that
+is how we can perform these searches.
+Now if we continue with the next step if
+we take a file. So let's say we take a
+particular file that we want to look
+into. Let's say we want to start with a
+billing runbook. MD we can grab the text
+from that. So let's see what's in here.
+Now we get the entire string of
+everything that is within the markdown.
+Now we can use another Python method, a
+string method which is split lines. And
+what this will do, it will take all of
+the lines that are within that file and
+it will create a list out of it. So it
+will break on a new line as you can see
+in here. So here we have the entire
+document but now in a way where we can
+loop over things. Now the next step that
+we're going to do is we're going to
+create a an empty list where we can
+store the results if we're going to loop
+over everything and try to search for
+the results. So let's create that empty
+list. And now here's one more piece of
+code that may be a little bit hard to
+understand in the beginning, but we'll
+take the lines over here and we're going
+to use the enumerate method over here
+where we can also not only loop over a
+list in this case, but also start a
+counter. So we start at one otherwise
+Python will be zero index and it will
+for example reference to this first
+line. It will say line zero. But this is
+more human readable. So you can see that
+right now we're applying that same
+regular expression search pattern that
+we were applying over here, but now
+we're simply doing it in a loop over all
+of the results that we got from the
+split lines. It will then proceed and if
+it finds a match, it will first store
+the file name with the method we covered
+earlier in this tutorial, which is the
+relative to to get the file name. And
+then you see we append the list with the
+file name, the line number, and then
+also what's on the actual line. So let
+me actually run this for you to get a
+better visual understanding of what this
+now looks like. So we can see the final
+result where we find connection pool on
+line 46 in the billing runbook.md.
+So this is how we're step by step
+defining the search pattern, then split
+up the file that we're going to search
+over, bring that together in a loop,
+store the results, and if we bring all
+of that together and take all of the
+files that were in the folder, right,
+that we looked at, we now get our grab
+function, our grab tool. And I wanted to
+really split this up because if you look
+at this over here, like it's a lot. Like
+even for me trying to read through this,
+you really need to break it down step by
+step. So I also highly recommend you to
+kind of like go for these examples.
+That's why I made it interactive with
+all of the print statements and to
+really be modular. And now once we have
+that stored in the function over here
+and I run that, you can see that if we
+loop over all of the files in our notes,
+it finds two occasions where connection
+pool is mentioned. First in the billing
+runbook and then also in the
+architectural decisions. You can also
+see the line numbers in here as well as
+the particular line. And that is exactly
+the same way that your coding agents
+like cloud code or cursor can navigate
+your codebase and find what code it
+actually needs to update and edit when
+you ask a question. All right, then we
+can continue to step number three that
+is reading the files. This is now an
+easy one. Grab was definitely the most
+complicated in here. So if we now say
+let's say we want to read this
+particular file, the architecture
+decision. So we start with a string then
+we make it a target. So we turn it into
+a path. You should now be familiar with
+what that looks like. We have our target
+and here is another check that we are
+that I'm going to apply. We have another
+method which is called is relative to
+and this checks if the target is
+actually within the nodes directory. So
+this is a safety precaution that we can
+add to contain the agent within a
+particular folder. So if I run this
+check you can see this is now true. So
+target is a path and notes there is also
+if I put that correctly is also a path
+and then if we plug them together so
+target path is relative to insert
+another path we get a boolean that we
+can check for then we can read the text
+we just take the first 200 characters in
+there and we can bring all of the
+together in our read file. So we again
+we check the target and we then have a
+value in error in there that we raise if
+we get a false. So we simply flag look
+this file is not inside our notes so we
+cannot use it. Bringing that together
+let me clean this up for you. We can
+then just simply print that and now we
+have another simple function a simple
+tool that we can later use with our
+agent to also read the file. All right
+so now zooming out a little bit again if
+we come to our project you can see that
+in the utils folder there is a tools.py
+by and here are the exact tools that we
+could just created. So we have the list
+files, we have the grab and we have the
+read files. If we then continue over
+here with file number two here you can
+see how we can use that simple import
+statement to get the tools from the
+utils folder. So we import grab list
+files and read files. And now you can
+see with all of the logic that we
+already built and also more importantly
+now understand we now have a very lean
+file over here where we can use all of
+these functions. So if I now run all of
+this, you can immediately see all of the
+outputs with just a few lines of Python.
+Okay. So if we then continue and go to
+file number three over here called basic
+agent, we can now actually start to
+bring this together and start working
+with this. So in this example, I'm using
+paidic AI and that is simply because it
+simplifies the way that we can make the
+tools available for a language model and
+perform that execution loop. But you can
+do this with any agent framework and
+also build your own using the model APIs
+directly working with OpenAI cloud
+whatever you want to use. So I set up an
+AI agent which pretty much means we're
+using OpenAI GPT 5.5 in this case and
+here are the tools that I make
+available. So this is now how we're
+actually going to set up a simple
+agentic rag system. So with the agent in
+memory, I can now start to execute this.
+And we're going to ask a question over
+all our engineering wiki knowledge. And
+we ask why does our nightly deploy job
+run specifically at this time? And then
+if we run this, this will go on and on
+in a loop. And it will come back to us
+with the question and answer. So why
+does the deploy job run at the specific
+time? Well, here is the answer to that.
+Apparently there is an oper over overlap
+with the European batch ETL and it also
+describes where that is coming from and
+it gives us a result with the usage and
+the tokens and also the tool calls which
+are five in total in this case which
+means that in this example this agentic
+rag loop over here with list files grab
+and read files was executed five times.
+But there's one problem right now and
+that is we cannot really see what's
+going on behind the scenes. So let's see
+how we can fix that. And for that we're
+jumping over to file number four which
+is the streaming steps.py. And what we
+have over here is we have the same
+simple agent setup with pidenticai same
+model but now what we're doing instead
+of running the agent directly and making
+the lm API calls. We have a little bit
+of a function around it where we use the
+agent. Method from pyantic AI. Now, this
+is framework specific, and I'm not going
+to bother with you with how this
+specifically works, but it's a way to
+intercept all of the tool calls to get a
+look behind the scenes as to what is
+going on. And this is going to be very
+helpful for debugging so we actually
+know what our agent is doing. So, I'm
+going to put this into memory over here
+because again, this is not a tutorial on
+how Pentic AI specifically works. This
+is a tutorial to show you what our agent
+will do, what our agentic rack system
+will do. So now you can see what is
+going on behind the scenes. Before we
+saw it made five tool calls, right? Now
+we can see look it starts with a
+question and then here are the agent
+steps. So it first decides to use the
+grab tool that we created and here this
+is where it gets interesting. Now you
+can see these parameters over here and
+you can see these parameters are what
+the language model actually decides to
+put into the tool call. This is what
+makes a gentic rag and aentic search so
+powerful because it uses all of these
+terms in here and it will then go off.
+It will list the files. It will read the
+files depending on the results that it
+got back. So it will simply go on in
+this loop until it has all of the right
+answers. Now one extra uh parameter that
+I added for you here is the debug
+parameter. So if you put this in file
+number four to true and we run this one
+more time. Now you will also literally
+see all of the results that it got back.
+So here you can see also when we do the
+grab command. So let me show you before
+it just showed you this is a little bit
+messy just showed you. Okay, I'm doing a
+grab command. So it only showed you what
+it did not what it got back. So now with
+this we can actually also see look if we
+do a grab. So here it runs grap you can
+see that it got 14 results 14 times the
+document the line number and then that
+particular line for this particular
+search over here. So these again were
+all the input parameters that the model
+decided to put in there. So this is
+super important to understand and that's
+why I want to spend some time here
+because when you are building and
+optimizing these information systems and
+you're trying to decide okay is it
+working is it not working and you're
+debugging you need to understand from
+first principles really how these tools
+and these patterns work behind the
+scenes. You need to be able to look in
+here and then see look what is the agent
+searching for and then check are the
+right documents coming up and how you
+can also improve this. If we come back
+to our tools what you should also
+understand that everything that you put
+in here your tool definition and even
+the dock string in here this is all
+information that the large language
+model will use. So based on this dock
+string it will understand okay this is
+what I can use the tool for these are
+the parameters that I can put in here
+and then here you can give in additional
+instructions or even domain knowledge to
+steer it in a particular direction so
+that when we are using it it knows what
+to put into the function it knows what
+to search for. So, this is really how
+you demystify what's going on behind the
+scenes. And luckily, most of these
+state-of-the-art models right now are
+super good at this particular task. And
+that is because all of the big labs are
+optimizing their state-of-the-art models
+really to also be really good coding
+agents. And what makes a good coding
+agent is not only understanding program
+itself, but also really mastering this
+agentic loop with these tools to search
+over information which then is your
+codebase. But we apply that same
+principle to general knowledge, markdown
+files, anything we need for our
+application. And then real quick, a lot
+of the lessons that I share on this
+channel, also this one, are coming from
+the real world where I built and
+implement solutions for my clients. So,
+I've been working as a freelancer for
+over 6 years already, and right now I
+focus primarily on selling AI solutions
+to small to medium-size companies. Now,
+if you've been thinking about starting
+as a freelancer as well, but don't
+really know where to start or how to
+find that first client, then you might
+want to check out the first link in the
+description. There you'll find a website
+where I talk more about data freelancer,
+which is the program I've been running
+for three years already, where I bring
+together developers from all over the
+world that want to do exactly that, make
+more money, work on fun projects, and
+create freedom. We have all the steps
+and the blueprints to help you get
+started, as well as a community with
+support to actually get you started with
+freelancing and land that first client
+instead of just thinking about it and
+watching year after year go by without
+taking any action. So, if that sounds
+like you and you've been thinking about
+it, but just putting it off, make sure
+to click on that link and watch the
+video on the page for more information.
+Okay, let's continue to step number
+five, that is structured output. So here
+we're just going to make our search
+agent a little bit more robust by
+providing it with a default output model
+that it needs to adhere to. So here we
+have a search answer which is the actual
+answer in plain English to the question.
+But we also add these citations and a
+citation is built up of it's a list and
+buildup of citations which is another
+data model that we specify over here
+which has the file the quote and the
+line number. Everything else in here is
+the same. We have that same agentic uh
+setup over here. We provide the tools
+but now we specify the output type. So
+if we bring all of this together and we
+run this over here, we now already have
+a minimal setup for an agentic search
+system. When you are running this, you
+can also see right now that it's taken a
+couple of seconds. It will probably take
+10 to 15 seconds for it to complete. It
+needs to do the five tool calls. We're
+using a relatively fast but heavy model
+on this. And then you can see it comes
+back with the answer and now also these
+citations. And this is perfect for
+putting it into a another system in a
+software environment where downstream
+processes or functions can rely on this
+particular data format. So we can show
+the answer to the user and then we can
+have some type of front-end component
+maybe that we show these citations in
+that the user can also click on. So that
+is the foundation of how you set up an
+agentic rack loop in pure Python which
+can replace or extend a semantic rack
+system. But of course keep in mind the
+differences especially when it comes to
+latency and cost. Okay. But now you
+might be wondering but how does this
+work in a production environment? How
+does this work on a VPS container app or
+when you're using a serverless function?
+So what I did is I have a last file for
+you the file file number six which is
+called production. And in here I took
+the simple starting files that we use to
+understand the basics and added some
+production best practices to them that
+you can literally actually use in a real
+system which is all modeled after for
+example what codecs open code cursor
+cloud code all the agent harnesses are
+really using. So let's go over a couple
+of the things that I want you to be
+aware of. So let's come over here to
+file number six production. close this
+out and let's begin with the end in
+mind. Let's go all the way to the bottom
+and run this because what I want you
+what I want to show you is that it's
+exactly the same as what we previously
+did but now just with added safety
+precautions and depth really to it. So
+you can see we have some logging over
+here to figure out what's going on
+behind the scenes. But we can still ask
+that exact same question that we have
+been using. It will go through all of
+our markdown files. it will answer
+correctly and it will also site where it
+came from. And here you can see also
+again the total time it took and also
+the tool calls. So that's the end.
+That's how it works. Now let's reverse
+engineer to see how we got here because
+this is a little bit more of an
+extensive file. And if I scroll all the
+way to the top, first of all, you'll
+find we have some extra parameters in
+here. We'll add some safety precautions.
+for example, an agent request limit,
+readmax lines. This is all to avoid
+either the agent getting stuck in loops
+or opening files that are really large
+and still blowing up the context window
+by reading everything. Then we get a
+logger in here. And one of the biggest
+changes that we are doing over here in
+this system is we're using a library or
+tool called rip grab. Rip grab is built
+in rust. So, this is a grab tool that
+all of the pretty much all of the modern
+agent harnesses are using because it's
+really fast and it has some out
+ofthe-box built-in things where it
+doesn't go through hidden files. It will
+ignore files that are within git ignore.
+So, there are just a lot of benefits to
+this. So, we're using rip wrap and this
+is a simple he helper function to check
+if it's installed on your system. On Mac
+OS, you can install it via brew. On
+Windows, you can run the following
+command if you don't have that because
+you need to run that to uh you need that
+to run this code locally, but you would
+also need that in your production
+environment in order to run this. So, it
+would be a dependency. Okay. So, then we
+have the function to safely check the
+path. This is already something we
+covered. But then the biggest change is
+here the grab function. So, I'm not
+going to go into every line over here
+and how this works because this is just
+how the rip grab library works. But
+we're you what's interesting is we're
+using Python's subprocess. So what we
+can do over here, we can say we are
+within a Python file. We're running
+things and then Python can spawn a
+subprocess where it uses that rip grab
+tool. So that's what's going on over
+here. And then here you can see the
+parameters that we're plugging in there.
+So this is the command to actually start
+things. And we're giving all of these
+flags. We say we want the line numbers.
+We want to ignore the case. No
+modification. And all of this is
+documented over here if you really want
+to go deep into this to figure out why
+we're doing certain things. And this is
+all modeled again by literally doing
+research into the best coding tools
+right now and taking the best practices.
+So here you can see it actually fires
+the Python subprocess and runs
+everything. If I then scroll down the
+list files is pretty much the same. The
+only thing that we added to it is a
+little bit of extra like try accept. And
+one thing that you'll also notice is
+that we have implemented a lot of human
+readable errors. And we do not raise
+them, we return them. Because if we were
+to raise them, it would stop our
+process. So if our AI agent, for
+example, would make an error, it would
+put something into a function that
+results into some type of error because
+a file does not exist or any other edge
+case that is going on. It would simply
+stop. with the return error. It will
+simply return a human readable error
+message that the model can then
+intercept and course correct on. So that
+is also documented in the production
+best practices over here along with some
+other tips. Again, if you really want to
+understand this, I recommend you just go
+read through this and find where it's at
+in the codebase. But really, this is all
+you need for now in order to start
+playing and start experimenting with
+this. You now understand the three
+simple tools that make up such a a
+gentic rack system from simple all the
+way to these production best practices.
+How to make it a little bit more
+extensive. And now all you need to do to
+apply this into your own project is
+simply use this production.py file over
+here. I would recommend probably to do a
+little bit of refactoring, split it up,
+put it in your project, and then you
+need a folder or file system, ideally
+with markdown files because that's just
+the easiest to to work with for this
+whole agent loop to run over. You simply
+combine it with your favorite agent
+framework or you build your own loop and
+you use your favorite model and this
+will simply work. Now, finally, here is
+another list of some questions that you
+may have right now, right? So, does this
+only work with local markdown files? How
+does this work on a VPS? How does this
+work on container apps? And the answer
+pretty much to all of this is this can
+all work and tailor to whatever
+situation you are using. You may just
+need to adjust a few things. So, for
+example, you could just also put all of
+your markdown files in a postcore SQL
+database. The concepts will still be the
+same. You just slightly need to adjust
+the functions in order to create that
+loop to actually get the information.
+Same is true for the VPS or the
+container app. So I left some tips over
+here depending on how you want to
+deploy. This is also very common for us
+at data luminina working as an AI
+development agency where we need to
+tailor to different clients where some
+clients want to use container apps, some
+want to deploy on a VPS, some use
+serverless functions and then we also
+take the same principles that already
+work but then just make simple
+adjustments to make them work in the new
+environment. All right and then that's
+it for this video. Now, as always, if
+you found this valuable, please leave a
+like and also consider subscribing. And
+then next, if you are also interested in
+working on these AI projects, finding
+freelance work, then I highly recommend
+to check out this video where I
+essentially give my entire road map of
+the past six years, what I've learned
+freelancing in AI, and what I would do
+if I had to start over from scratch
+today and quickly get up and running
+again. So, if that sounds interesting,
+make sure to check out this video

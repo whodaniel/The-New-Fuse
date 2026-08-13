@@ -1,0 +1,30 @@
+steps:
+  # Build API Server Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest', '-f', 'Dockerfile.api-server', '.']
+
+  # Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest']
+
+  # Deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'api-server'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'DATABASE_URL=${_DATABASE_URL},REDIS_URL=${_REDIS_URL},GCP_PROJECT_ID=the-new-fuse-2025,GCS_BUCKET=the-new-fuse-2025-storage,JWT_SECRET=${_JWT_SECRET},JWT_REFRESH_SECRET=${_JWT_REFRESH_SECRET},NODE_ENV=production'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+timeout: 1800s

@@ -1,0 +1,83 @@
+{
+  "canonicalization": {
+    "canonical_codebase": "~/Projects/virtual-library-blueprints",
+    "drift": {
+      "branch_mismatch": true,
+      "head_mismatch": true,
+      "remote_mismatch": false
+    },
+    "monorepo_mirror_codebase": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints"
+  },
+  "generated_at_utc": "2026-06-26T18:03:55.620490+00:00",
+  "process_contract": {
+    "authoritative_edit_path": "~/Projects/virtual-library-blueprints",
+    "mirror_sync_required": true,
+    "owner_scope_keys": [
+      "owner_principal_id",
+      "visibility_scope",
+      "release_state",
+      "agent_allowlist"
+    ],
+    "privacy_wall_required": true
+  },
+  "surfaces": {
+    "agent_runtime_homes": {
+      "gemini": {
+        "exists": true,
+        "memory_file": "~/.gemini/GEMINI.md",
+        "path": "~/.gemini",
+        "role": "agent memory/skills/runtime state (not story source of truth)",
+        "skills": [
+          "~/.gemini/skills/tnf-full-auto-network-autopilot/SKILL.md",
+          "~/.gemini/skills/tnf-full-auto-network-autopilot.skill"
+        ]
+      },
+      "kilo": {
+        "dependencies": {
+          "@kilocode/plugin": "7.1.9"
+        },
+        "exists": true,
+        "path": "~/.kilo",
+        "role": "runtime/tooling state (not story source of truth)"
+      },
+      "opencode": {
+        "dependencies": {
+          "@kilocode/plugin": "7.1.9",
+          "@opencode-ai/plugin": "1.2.5"
+        },
+        "exists": true,
+        "path": "~/.opencode",
+        "role": "runtime/tooling state (not story source of truth)"
+      }
+    },
+    "codebases": {
+      "canonical": {
+        "branch": "codex/story-privacy-wall",
+        "dirty": false,
+        "exists": true,
+        "head": "8d84bd805911a256461d84ed8aac6488b20d4685",
+        "is_repo": true,
+        "path": "~/Projects/virtual-library-blueprints",
+        "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"
+      },
+      "monorepo_mirror": {
+        "branch": "main",
+        "dirty": true,
+        "exists": true,
+        "head": "994f3d3e013bdf09201b36c3a13b8f339b7a3f79",
+        "is_repo": true,
+        "path": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints",
+        "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"
+      }
+    },
+    "story_data_authoritative_tables": [
+      "story_sessions",
+      "story_answers",
+      "note_cards",
+      "timeline_events",
+      "library_navigation",
+      "story_session_agent_access"
+    ]
+  },
+  "system": "TNF Virtual Library"
+}

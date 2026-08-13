@@ -1,0 +1,12 @@
+{
+  "skillName": "figma-implement-design",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/figma-implement-design/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/figma-implement-design/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/figma-implement-design.json",
+  "status": "present"
+}

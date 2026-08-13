@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Staffing Director"
+  short_description: "Detect role gaps and propose agent+skill staffing"
+  default_prompt: "Run the TNF staffing director cycle and propose new role+skill packages for uncovered operational niches."

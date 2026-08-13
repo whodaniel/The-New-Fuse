@@ -1,0 +1,30 @@
+#!/bin/bash
+# omni: Start Mini-Omni Voice Terminal
+
+SERVER_URL="http://127.0.0.1:60808/chat"
+REPO_DIR="$HOME/mini-omni"
+
+# 1. Start server if not running
+if ! curl -s --head "$SERVER_URL" > /dev/null; then
+    echo "🚀 Starting Mini-Omni Server..."
+    cd "$REPO_DIR" || exit 1
+    source venv/bin/activate
+    export PYTHONPATH=$PYTHONPATH:.
+    python3 server.py --ip '127.0.0.1' --port 60808 --device 'cpu' > /tmp/mini_omni_server.log 2>&1 &
+    
+    # Wait for server to warm up
+    echo "⏳ Warming up AI engine (takes ~45s on CPU)..."
+    while ! grep -q "Running on http://127.0.0.1:60808" /tmp/mini_omni_server.log; do
+        sleep 2
+        if ! pgrep -f "server.py" > /dev/null; then
+            echo "❌ Server failed to start. Check /tmp/mini_omni_server.log"
+            exit 1
+        fi
+    done
+    echo "✅ Server Ready!"
+fi
+
+# 2. Start CLI client
+cd "$REPO_DIR" || exit 1
+source venv/bin/activate
+python3 omni_cli.py

@@ -1,0 +1,108 @@
+name: Tauri Desktop QA
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - tnf-cli-harness-implementation
+    paths:
+      - "apps/tauri-desktop/**"
+      - "scripts/qa/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/tauri-desktop-qa.yml"
+  push:
+    branches:
+      - main
+      - develop
+      - tnf-cli-harness-implementation
+      - "cursor/**"
+    paths:
+      - "apps/tauri-desktop/**"
+      - "scripts/qa/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/tauri-desktop-qa.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  PNPM_VERSION: 10.22.0
+
+jobs:
+  qa:
+    name: Type-check, unit, build, e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        working-directory: apps/tauri-desktop
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Type-check
+        working-directory: apps/tauri-desktop
+        run: pnpm run type-check
+
+      - name: Unit tests
+        working-directory: apps/tauri-desktop
+        run: pnpm run test
+
+      - name: Production build
+        working-directory: apps/tauri-desktop
+        run: pnpm run build
+
+      - name: Install Playwright browsers
+        working-directory: apps/tauri-desktop
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Route e2e (full interaction)
+        working-directory: apps/tauri-desktop
+        run: pnpm exec playwright test e2e/routes.spec.ts e2e/full-interaction.spec.ts --reporter=line
+
+      - name: Contrast readability e2e
+        working-directory: apps/tauri-desktop
+        run: pnpm exec playwright test e2e/contrast-readability.spec.ts --reporter=line
+
+      - name: Dual-mode harness e2e
+        working-directory: apps/tauri-desktop
+        run: pnpm exec playwright test e2e/dual-mode-harness.spec.ts --reporter=line
+
+      - name: Web surface parity (SaaS)
+        working-directory: apps/tauri-desktop
+        env:
+          TNF_WEB_BASE_URL: https://thenewfuse.com
+        run: pnpm exec playwright test e2e/web-surface-parity.spec.ts --reporter=line
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-failure-artifacts
+          path: apps/tauri-desktop/test-results/
+          retention-days: 7

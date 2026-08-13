@@ -1,0 +1,12 @@
+{
+  "skillName": "graph-writer",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/graph-writer/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/graph-writer/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/graph-writer.json",
+  "status": "present"
+}

@@ -1,0 +1,18 @@
+{
+  "adaptation_manager": {
+    "adaptation_context": {
+      "type": "AdaptationContext",
+      "config": {
+        "context_type": "neural",
+        "metrics_type": "NeuralMetrics",
+        "event_system_integration": true
+      }
+    },
+    "adaptation_strategies": {
+      "weight_updates": true,
+      "topology_changes": true,
+      "function_updates": true
+    },
+    "event_system_integration": true
+  }
+}

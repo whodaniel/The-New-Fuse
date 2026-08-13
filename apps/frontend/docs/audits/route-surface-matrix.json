@@ -1,0 +1,3798 @@
+{
+  "generatedAt": "2026-03-25T00:29:45.447Z",
+  "parityGeneratedAt": "2026-03-25T00:29:44.401Z",
+  "parityChecks": {
+    "noSidebarOrphans": true,
+    "noCatalogOrphans": true,
+    "hiddenRoutesCount": 77,
+    "catalogOnlyRoutesCount": 0,
+    "highRiskRoutesCount": 0
+  },
+  "summary": {
+    "totalPaths": 231,
+    "dynamicPaths": 14,
+    "primaryNavPaths": 80,
+    "hiddenPaths": 90,
+    "catalogOnlyPaths": 0,
+    "legacyAliasPaths": 45,
+    "highRiskPaths": 0,
+    "unknownPaths": 0
+  },
+  "counts": {
+    "exposure": [
+      {
+        "label": "hidden-route",
+        "count": 90
+      },
+      {
+        "label": "primary-nav",
+        "count": 80
+      },
+      {
+        "label": "legacy-alias",
+        "count": 44
+      },
+      {
+        "label": "redirect-target-only",
+        "count": 17
+      }
+    ],
+    "risk": [
+      {
+        "label": "low",
+        "count": 124
+      },
+      {
+        "label": "medium",
+        "count": 107
+      }
+    ]
+  },
+  "highRiskPaths": [],
+  "unknownPaths": [],
+  "rows": [
+    {
+      "path": "*",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Home"
+      ]
+    },
+    {
+      "path": "/404",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "404 Page"
+      ]
+    },
+    {
+      "path": "/a2a-control",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "A2A Control"
+      ],
+      "catalogLabels": [
+        "A2A Control"
+      ]
+    },
+    {
+      "path": "/about",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/admin",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Admin Dashboard"
+      ],
+      "catalogLabels": [
+        "Admin Panel"
+      ]
+    },
+    {
+      "path": "/admin/agent-management",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Agent Management"
+      ],
+      "catalogLabels": [
+        "Admin Agent Management"
+      ]
+    },
+    {
+      "path": "/admin/agents/skills",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Agent Skills"
+      ],
+      "catalogLabels": [
+        "Agent Skills Admin"
+      ]
+    },
+    {
+      "path": "/admin/agents/web-search",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Web Search Providers"
+      ],
+      "catalogLabels": [
+        "Web Search Selection"
+      ]
+    },
+    {
+      "path": "/admin/api-analytics",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "API Analytics"
+      ],
+      "catalogLabels": [
+        "Admin API Analytics"
+      ]
+    },
+    {
+      "path": "/admin/audit-logs",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Audit Logs"
+      ],
+      "catalogLabels": [
+        "Admin Audit Logs"
+      ]
+    },
+    {
+      "path": "/admin/backup-restore",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Backup & Restore"
+      ],
+      "catalogLabels": [
+        "Admin Backup Restore"
+      ]
+    },
+    {
+      "path": "/admin/configuration",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Configuration"
+      ],
+      "catalogLabels": [
+        "Admin Configuration"
+      ]
+    },
+    {
+      "path": "/admin/control-panel",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Super Admin Panel"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/admin/dashboard",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Admin Dashboard"
+      ]
+    },
+    {
+      "path": "/admin/database",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Database"
+      ],
+      "catalogLabels": [
+        "Admin Database"
+      ]
+    },
+    {
+      "path": "/admin/experimental-features",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin/feature-flags",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Experimental Features"
+      ]
+    },
+    {
+      "path": "/admin/feature-flags",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Feature Flags"
+      ],
+      "catalogLabels": [
+        "Feature Flags"
+      ]
+    },
+    {
+      "path": "/admin/layout",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Admin Layout"
+      ],
+      "catalogLabels": [
+        "Admin Layout"
+      ]
+    },
+    {
+      "path": "/admin/marketplace",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Admin Marketplace"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/admin/onboarding",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Admin Onboarding"
+      ]
+    },
+    {
+      "path": "/admin/openclaw-security",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "OpenClaw Security"
+      ],
+      "catalogLabels": [
+        "Admin OpenClaw Security"
+      ]
+    },
+    {
+      "path": "/admin/panel",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/admin/port-management",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Port Management"
+      ],
+      "catalogLabels": [
+        "Port Management"
+      ]
+    },
+    {
+      "path": "/admin/settings",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Admin Settings"
+      ],
+      "catalogLabels": [
+        "Admin Settings"
+      ]
+    },
+    {
+      "path": "/admin/system-health",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "System Health"
+      ],
+      "catalogLabels": [
+        "System Health"
+      ]
+    },
+    {
+      "path": "/admin/system-metrics",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "System Metrics"
+      ],
+      "catalogLabels": [
+        "Admin System Metrics"
+      ]
+    },
+    {
+      "path": "/admin/user-management",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "User Management (Full)"
+      ],
+      "catalogLabels": [
+        "Admin User Management"
+      ]
+    },
+    {
+      "path": "/admin/users",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Users"
+      ],
+      "catalogLabels": [
+        "User Management"
+      ]
+    },
+    {
+      "path": "/admin/workspaces",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workspaces"
+      ],
+      "catalogLabels": [
+        "Workspace Management"
+      ]
+    },
+    {
+      "path": "/agency/dashboard",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agency Dashboard"
+      ]
+    },
+    {
+      "path": "/agency/onboard",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agency Onboard"
+      ]
+    },
+    {
+      "path": "/agent-builder",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Builder"
+      ]
+    },
+    {
+      "path": "/agent-management",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Management"
+      ]
+    },
+    {
+      "path": "/agents",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Agent Fleet",
+        "Build"
+      ],
+      "catalogLabels": [
+        "All Agents"
+      ]
+    },
+    {
+      "path": "/agents/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Detail"
+      ]
+    },
+    {
+      "path": "/agents/:id/identity",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Identity"
+      ]
+    },
+    {
+      "path": "/agents/new",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "New Agent"
+      ]
+    },
+    {
+      "path": "/agents/nft-marketplace",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "NFT Marketplace"
+      ],
+      "catalogLabels": [
+        "NFT Marketplace"
+      ]
+    },
+    {
+      "path": "/agents/onboard",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Agent Onboarding"
+      ],
+      "catalogLabels": [
+        "Agent Onboard"
+      ]
+    },
+    {
+      "path": "/agents/pfp-prompts",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Legacy Prompt Catalog"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/agents/pfp-studio",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Legacy PFP Studio"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/agents/profiles",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Agent Profiles"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/agents/profiles/:slug",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/agents/revenue-dashboard",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Revenue Dashboard"
+      ],
+      "catalogLabels": [
+        "Revenue Dashboard"
+      ]
+    },
+    {
+      "path": "/agents/unified-creator",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/agents/new",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Unified Agent Creator"
+      ]
+    },
+    {
+      "path": "/ai-agent-portal",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "AI Agent Portal Index"
+      ]
+    },
+    {
+      "path": "/ai-agents",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "AI Agents Portal Alias"
+      ]
+    },
+    {
+      "path": "/ai-command-center",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "AI Command Center"
+      ],
+      "catalogLabels": [
+        "AI Command Center"
+      ]
+    },
+    {
+      "path": "/ai-portal",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "AI Portal"
+      ],
+      "catalogLabels": [
+        "AI Agent Portal"
+      ]
+    },
+    {
+      "path": "/ai-portal/pfp-prompts",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Prompt Catalog"
+      ],
+      "catalogLabels": [
+        "AI Portal Prompt Catalog"
+      ]
+    },
+    {
+      "path": "/ai-portal/pfp-studio",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "PFP Studio"
+      ],
+      "catalogLabels": [
+        "AI Portal PFP Studio"
+      ]
+    },
+    {
+      "path": "/all-pages",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Surface Map"
+      ],
+      "catalogLabels": [
+        "All Pages List"
+      ]
+    },
+    {
+      "path": "/analytics",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Analytics"
+      ],
+      "catalogLabels": [
+        "Analytics"
+      ]
+    },
+    {
+      "path": "/api/admin/database",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Admin Database API"
+      ]
+    },
+    {
+      "path": "/api/admin/features",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Admin Features API"
+      ]
+    },
+    {
+      "path": "/api/admin/features/:id/evaluate",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/api/admin/features",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Feature Evaluation API"
+      ]
+    },
+    {
+      "path": "/api/docs",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/docs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/app.html",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/audit-logs",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin/audit-logs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/auth",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Auth Index"
+      ]
+    },
+    {
+      "path": "/auth/callback",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/auth/oauth-callback",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/auth/forgot-password",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Forgot Password"
+      ]
+    },
+    {
+      "path": "/auth/google-callback",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Google OAuth Callback"
+      ]
+    },
+    {
+      "path": "/auth/google/callback",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/auth/google-callback",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/auth/login",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Auth Login"
+      ]
+    },
+    {
+      "path": "/auth/oauth-callback",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "OAuth Callback"
+      ]
+    },
+    {
+      "path": "/auth/register",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Auth Register"
+      ]
+    },
+    {
+      "path": "/auth/reset-password",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Reset Password"
+      ]
+    },
+    {
+      "path": "/auth/sso",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "SSO Authentication"
+      ]
+    },
+    {
+      "path": "/automations",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Automations"
+      ],
+      "catalogLabels": [
+        "Automations Alias"
+      ]
+    },
+    {
+      "path": "/billing",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Billing"
+      ],
+      "catalogLabels": [
+        "Billing Alias"
+      ]
+    },
+    {
+      "path": "/blog",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Blog"
+      ]
+    },
+    {
+      "path": "/bookmarks",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Bookmarks"
+      ],
+      "catalogLabels": [
+        "Bookmarks"
+      ]
+    },
+    {
+      "path": "/brand",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Brand"
+      ]
+    },
+    {
+      "path": "/build-info",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Build Info"
+      ],
+      "catalogLabels": [
+        "Build Info"
+      ]
+    },
+    {
+      "path": "/capabilities",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/channels",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/command-center",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/chat",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Chat"
+      ],
+      "catalogLabels": [
+        "Chat"
+      ]
+    },
+    {
+      "path": "/chat-page",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/chat",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Chat Page"
+      ]
+    },
+    {
+      "path": "/chats",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Chats Alias"
+      ]
+    },
+    {
+      "path": "/command-center",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Command Center",
+        "Control Center"
+      ],
+      "catalogLabels": [
+        "Command Center"
+      ]
+    },
+    {
+      "path": "/community",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Community"
+      ]
+    },
+    {
+      "path": "/components",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "UI Components"
+      ]
+    },
+    {
+      "path": "/components-nav",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/components",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Components Navigation"
+      ]
+    },
+    {
+      "path": "/components-showcase",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Components Showcase"
+      ]
+    },
+    {
+      "path": "/config",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/settings",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/connect",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/contact",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Contact"
+      ]
+    },
+    {
+      "path": "/cron-jobs",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/tasks",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/dashboard",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Overview",
+        "Workspace"
+      ],
+      "catalogLabels": [
+        "Dashboard"
+      ]
+    },
+    {
+      "path": "/dashboard/agents",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Agents"
+      ],
+      "catalogLabels": [
+        "Agent Dashboard"
+      ]
+    },
+    {
+      "path": "/dashboard/agents/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Detail Dashboard"
+      ]
+    },
+    {
+      "path": "/dashboard/agents/new",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Create Dashboard Agent"
+      ],
+      "catalogLabels": [
+        "Create Agent"
+      ]
+    },
+    {
+      "path": "/dashboard/analytics",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Analytics"
+      ],
+      "catalogLabels": [
+        "Dashboard Analytics"
+      ]
+    },
+    {
+      "path": "/dashboard/architecture",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Architecture"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/dashboard/logs",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Logs"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/dashboard/observability",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Observability"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/dashboard/settings",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Dashboard Settings"
+      ],
+      "catalogLabels": [
+        "Dashboard Settings"
+      ]
+    },
+    {
+      "path": "/datasets",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Datasets"
+      ],
+      "catalogLabels": [
+        "Datasets Workbench"
+      ]
+    },
+    {
+      "path": "/debug",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Debug"
+      ],
+      "catalogLabels": [
+        "Debug Info"
+      ]
+    },
+    {
+      "path": "/debug-routing",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Debug Routing"
+      ]
+    },
+    {
+      "path": "/design-system",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Design System"
+      ]
+    },
+    {
+      "path": "/docs",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Docs"
+      ],
+      "catalogLabels": [
+        "Docs"
+      ]
+    },
+    {
+      "path": "/docs/*",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Docs Wildcard"
+      ]
+    },
+    {
+      "path": "/features",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/files",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Files"
+      ],
+      "catalogLabels": [
+        "Files Workspace"
+      ]
+    },
+    {
+      "path": "/forgot-password",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/auth/forgot-password",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/frontend-showcase",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Frontend Showcase"
+      ]
+    },
+    {
+      "path": "/general-settings",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "General Settings Alt"
+      ]
+    },
+    {
+      "path": "/general-settings/community-hub",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/general-settings",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Community Hub"
+      ]
+    },
+    {
+      "path": "/general-settings/embedding",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Embedding Preferences"
+      ]
+    },
+    {
+      "path": "/goals",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/goals/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/graph-demo",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Graph Demo"
+      ]
+    },
+    {
+      "path": "/help/community",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/community",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/help/documentation",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/docs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/help/faq",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/docs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/help/support",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/support",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/help/tutorials",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/docs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/home",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Home Alt aka Dev Index"
+      ]
+    },
+    {
+      "path": "/hosting",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Hosting"
+      ],
+      "catalogLabels": [
+        "Hosting Control Center"
+      ]
+    },
+    {
+      "path": "/html/admin",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Admin"
+      ]
+    },
+    {
+      "path": "/html/agents",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Agents"
+      ]
+    },
+    {
+      "path": "/html/chat",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Chat"
+      ]
+    },
+    {
+      "path": "/html/dashboard",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Dashboard"
+      ]
+    },
+    {
+      "path": "/html/tasks",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Tasks"
+      ]
+    },
+    {
+      "path": "/html/workflows",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "HTML Workflows"
+      ]
+    },
+    {
+      "path": "/hub",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Knowledge",
+        "TNF Hub"
+      ],
+      "catalogLabels": [
+        "Modern Hub"
+      ]
+    },
+    {
+      "path": "/ide",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/command-center",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/instances",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/observatory",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/integrations",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/connect",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/knowledge-hub",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Knowledge Hub"
+      ],
+      "catalogLabels": [
+        "Knowledge Hub"
+      ]
+    },
+    {
+      "path": "/landing",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Landing Page"
+      ]
+    },
+    {
+      "path": "/landing-page",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/landing",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Landing Page Alt"
+      ]
+    },
+    {
+      "path": "/launchpad",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/layout-example",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Layout Example"
+      ]
+    },
+    {
+      "path": "/legal/privacy",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Privacy Policy"
+      ]
+    },
+    {
+      "path": "/legal/terms",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Terms of Service"
+      ]
+    },
+    {
+      "path": "/live-view",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Live View"
+      ],
+      "catalogLabels": [
+        "Live View"
+      ]
+    },
+    {
+      "path": "/login",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/auth/login",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Login"
+      ]
+    },
+    {
+      "path": "/logs",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/admin/audit-logs",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/macro-timeline",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/main",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Main Workspace"
+      ]
+    },
+    {
+      "path": "/marketplace",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Marketplace"
+      ],
+      "catalogLabels": [
+        "Platform Overview"
+      ]
+    },
+    {
+      "path": "/mcp-hub",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "MCP Hub"
+      ],
+      "catalogLabels": [
+        "MCP Hub"
+      ]
+    },
+    {
+      "path": "/membership",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/multi-agent-chat",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Multi-Agent Chat"
+      ]
+    },
+    {
+      "path": "/multi-agent-chat-demo",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Multi Agent Chat Demo"
+      ]
+    },
+    {
+      "path": "/nexus",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Nexus 3D"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/nodes",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/observatory",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/not-found",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Not Found"
+      ]
+    },
+    {
+      "path": "/observatory",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Observatory"
+      ],
+      "catalogLabels": [
+        "Observatory"
+      ]
+    },
+    {
+      "path": "/onboarding",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Onboarding Flow"
+      ]
+    },
+    {
+      "path": "/onboarding/ai-agent",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "AI Agent Onboarding"
+      ]
+    },
+    {
+      "path": "/overview",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/dashboard",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/package/agents",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Package Agents"
+      ]
+    },
+    {
+      "path": "/package/dashboard",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Package Dashboard"
+      ]
+    },
+    {
+      "path": "/package/login",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Package Login"
+      ]
+    },
+    {
+      "path": "/package/workflows",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Package Workflows"
+      ]
+    },
+    {
+      "path": "/perpetual-status",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/plans",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/plans/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/platform",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/preview/onboarding",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Onboarding Preview"
+      ]
+    },
+    {
+      "path": "/pricing",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Pricing"
+      ]
+    },
+    {
+      "path": "/privacy",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/legal/privacy",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/product-map",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/profile",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Profile Alias"
+      ]
+    },
+    {
+      "path": "/register",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/auth/register",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Register"
+      ]
+    },
+    {
+      "path": "/resources",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Resources"
+      ],
+      "catalogLabels": [
+        "Resources"
+      ]
+    },
+    {
+      "path": "/sessions",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/multi-agent-chat",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/settings",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "General",
+        "Settings"
+      ],
+      "catalogLabels": [
+        "Settings"
+      ]
+    },
+    {
+      "path": "/settings/api",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "API Settings"
+      ]
+    },
+    {
+      "path": "/settings/appearance",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Appearance Settings"
+      ]
+    },
+    {
+      "path": "/settings/general",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "General Settings"
+      ]
+    },
+    {
+      "path": "/settings/notifications",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Notification Settings"
+      ]
+    },
+    {
+      "path": "/settings/security",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Security Settings"
+      ]
+    },
+    {
+      "path": "/simple-landing",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/landing",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Simple Landing"
+      ]
+    },
+    {
+      "path": "/simple-test",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Simple Test"
+      ]
+    },
+    {
+      "path": "/skills",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/resources",
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Skills"
+      ],
+      "catalogLabels": [
+        "Skills Alias"
+      ]
+    },
+    {
+      "path": "/sophisticated-hub",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Sophisticated Hub"
+      ]
+    },
+    {
+      "path": "/space",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Space Alias"
+      ]
+    },
+    {
+      "path": "/spaces",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Spaces"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/suggestions",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Suggestions"
+      ],
+      "catalogLabels": [
+        "Suggestions"
+      ]
+    },
+    {
+      "path": "/suggestions/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Suggestion Detail"
+      ]
+    },
+    {
+      "path": "/suggestions/new",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "New Suggestion"
+      ]
+    },
+    {
+      "path": "/support",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Support"
+      ]
+    },
+    {
+      "path": "/system",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "System Alias"
+      ]
+    },
+    {
+      "path": "/tasks",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Tasks"
+      ],
+      "catalogLabels": [
+        "All Tasks"
+      ]
+    },
+    {
+      "path": "/tasks-page",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/tasks",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Tasks Page"
+      ]
+    },
+    {
+      "path": "/tasks/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Task Detail"
+      ]
+    },
+    {
+      "path": "/tasks/:id/edit",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Edit Task"
+      ]
+    },
+    {
+      "path": "/tasks/new",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "New Task"
+      ]
+    },
+    {
+      "path": "/team",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workspace/members",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/terminal",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Terminal Alias"
+      ]
+    },
+    {
+      "path": "/terminals",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Terminal Graph"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/terms",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/legal/terms",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/test",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Test Page"
+      ]
+    },
+    {
+      "path": "/timeline",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Timeline"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/timeline-demo",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Timeline Demo"
+      ]
+    },
+    {
+      "path": "/timeline/module",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/tnf-hub",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/hub",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/unauthorized",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Unauthorized"
+      ]
+    },
+    {
+      "path": "/usage",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/analytics",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/user/profile",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "User Profile"
+      ]
+    },
+    {
+      "path": "/visualizations",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Viz Hub"
+      ],
+      "catalogLabels": []
+    },
+    {
+      "path": "/visualizations/terminals",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/workflows",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workflows"
+      ],
+      "catalogLabels": [
+        "Workflows"
+      ]
+    },
+    {
+      "path": "/workflows-enhanced",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Enhanced Workflows"
+      ]
+    },
+    {
+      "path": "/workflows/:id",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workflow Detail"
+      ]
+    },
+    {
+      "path": "/workflows/:id/execution",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": true,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workflow Execution"
+      ]
+    },
+    {
+      "path": "/workflows/advanced-builder",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Advanced Builder"
+      ],
+      "catalogLabels": [
+        "Advanced Builder"
+      ]
+    },
+    {
+      "path": "/workflows/builder",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workflow Builder"
+      ],
+      "catalogLabels": [
+        "Workflow Builder"
+      ]
+    },
+    {
+      "path": "/workflows/console",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Execution Console"
+      ],
+      "catalogLabels": [
+        "Workflow Console"
+      ]
+    },
+    {
+      "path": "/workflows/detail",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workflows",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workflow Detail Alias"
+      ]
+    },
+    {
+      "path": "/workflows/execution",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workflows/executions",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workflow Execution Alias"
+      ]
+    },
+    {
+      "path": "/workflows/executions",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workflow Runs"
+      ],
+      "catalogLabels": [
+        "Execution Monitor"
+      ]
+    },
+    {
+      "path": "/workflows/templates",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workflow Templates"
+      ],
+      "catalogLabels": [
+        "Workflow Templates"
+      ]
+    },
+    {
+      "path": "/workspace",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": false,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workspace/overview",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": []
+    },
+    {
+      "path": "/workspace-chat",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "redirect-target-only",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workspace Chat"
+      ]
+    },
+    {
+      "path": "/workspace-settings/agent-model",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Agent Model Selection"
+      ]
+    },
+    {
+      "path": "/workspace-settings/chat-model",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Chat Model Selection"
+      ]
+    },
+    {
+      "path": "/workspace-settings/llm-selection",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workspace LLM Selection"
+      ]
+    },
+    {
+      "path": "/workspace/analytics",
+      "inRouter": true,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "hidden-route",
+      "risk": "medium",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workspace Analytics"
+      ]
+    },
+    {
+      "path": "/workspace/chat",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workspace-chat",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workspace Chat Index"
+      ]
+    },
+    {
+      "path": "/workspace/layout",
+      "inRouter": false,
+      "inSidebar": false,
+      "inRouteCatalog": true,
+      "isLegacyAlias": true,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": "/workspace/overview",
+      "exposure": "legacy-alias",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [],
+      "catalogLabels": [
+        "Workspace Layout"
+      ]
+    },
+    {
+      "path": "/workspace/members",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Members"
+      ],
+      "catalogLabels": [
+        "Workspace Members"
+      ]
+    },
+    {
+      "path": "/workspace/overview",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": true,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workspace Home"
+      ],
+      "catalogLabels": [
+        "Workspace Overview"
+      ]
+    },
+    {
+      "path": "/workspace/settings",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Workspace Settings"
+      ],
+      "catalogLabels": [
+        "Workspace Settings"
+      ]
+    },
+    {
+      "path": "/zo-parity",
+      "inRouter": true,
+      "inSidebar": true,
+      "inRouteCatalog": true,
+      "isLegacyAlias": false,
+      "isLegacyTarget": false,
+      "legacyRedirectTarget": null,
+      "exposure": "primary-nav",
+      "risk": "low",
+      "isDynamic": false,
+      "sidebarLabels": [
+        "Zo Parity"
+      ],
+      "catalogLabels": [
+        "Zo Parity Dashboard"
+      ]
+    }
+  ]
+}

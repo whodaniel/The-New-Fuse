@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "contradictions": [
+    {
+      "from": "PROTO_14",
+      "to": "PROTO_27",
+      "discovered_at": "2026-05-06T17:30:20.984Z",
+      "severity": "high",
+      "status": "open"
+    },
+    {
+      "from": "PROTO_14",
+      "to": "PROTO_27",
+      "discovered_at": "2026-05-06T18:10:18.866Z",
+      "severity": "medium",
+      "status": "open"
+    },
+    {
+      "from": "PROTO_27",
+      "to": "PROTO_27",
+      "discovered_at": "2026-05-06T18:10:19.035Z",
+      "severity": "high",
+      "status": "open"
+    },
+    {
+      "from": "PROTO_14",
+      "to": "PROTO_27",
+      "discovered_at": "2026-05-06T18:11:11.435Z",
+      "severity": "high",
+      "status": "open"
+    },
+    {
+      "from": "PROTO_14",
+      "to": "PROTO_27",
+      "discovered_at": "2026-05-06T18:28:53.985Z",
+      "severity": "high",
+      "status": "open"
+    }
+  ]
+}

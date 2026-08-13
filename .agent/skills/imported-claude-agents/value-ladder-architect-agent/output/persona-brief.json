@@ -1,0 +1,116 @@
+{
+  "project": "value-ladder-production",
+  "base_persona": {
+    "persona_name": "Operator Olivia",
+    "archetype": "Growth-focused creator-operator",
+    "quote": "I need a system that grows revenue without adding chaos.",
+    "demographics": {
+      "age_range": "28-42",
+      "location_focus": "US/English-speaking markets",
+      "job_profile": "creator, coach, consultant, or small digital business owner",
+      "business_stage": "$2k-$30k monthly revenue",
+      "team_size": "solo to 3-person team"
+    },
+    "psychographics": {
+      "pain_points_and_challenges": [
+        "Inconsistent lead flow and weak conversion from audience to buyers",
+        "Offer stack is fragmented and not sequenced",
+        "Overwhelm from content volume and platform dependency",
+        "Low confidence in pricing and ascension strategy"
+      ],
+      "goals_and_aspirations": [
+        "Build predictable monthly revenue",
+        "Increase LTV through structured upsells and continuity",
+        "Run growth from clear metrics instead of guesswork",
+        "Reduce founder workload with repeatable automations"
+      ],
+      "values_and_beliefs": [
+        "Prefers practical playbooks over theory",
+        "Wants ethical selling and clear customer outcomes",
+        "Values speed, clarity, and measurable ROI"
+      ],
+      "buying_triggers": [
+        "Clear implementation path",
+        "Proof from similar operators",
+        "Low-risk first purchase",
+        "Visible path to premium support"
+      ],
+      "objections": [
+        "Will this work in my niche?",
+        "Do I have time to implement this?",
+        "What if I buy and still cannot execute?"
+      ]
+    },
+    "media_habits": {
+      "active_social_platforms": [
+        "YouTube",
+        "Instagram",
+        "TikTok",
+        "LinkedIn",
+        "Reddit"
+      ],
+      "preferred_content_formats": [
+        "short tutorials",
+        "framework carousels",
+        "case-study breakdowns",
+        "live Q&A/webinars",
+        "checklists/templates"
+      ],
+      "trusted_influencers_or_sources": [
+        "Creator economy operators with transparent metrics",
+        "Practical marketing newsletters",
+        "Communities focused on online business execution"
+      ]
+    }
+  },
+  "offer_personas": [
+    {
+      "offer": "Free Growth Playbook",
+      "readiness_stage": "problem-aware",
+      "core_desire": "Get a fast win and confirm a path exists.",
+      "primary_objection": "Free resources are usually too generic.",
+      "message_angle": "7-day quick win with a simple first action.",
+      "cta": "Download the playbook"
+    },
+    {
+      "offer": "Starter Toolkit",
+      "readiness_stage": "solution-aware",
+      "core_desire": "Move from idea to execution quickly.",
+      "primary_objection": "Templates may not match my business.",
+      "message_angle": "Plug-and-play templates with examples for adaptation.",
+      "cta": "Get instant access"
+    },
+    {
+      "offer": "Core Accelerator Program",
+      "readiness_stage": "product-aware",
+      "core_desire": "Install a repeatable acquisition-to-sale system.",
+      "primary_objection": "I am worried I won't finish the program.",
+      "message_angle": "Milestone-based implementation and accountability.",
+      "cta": "Join the accelerator"
+    },
+    {
+      "offer": "Insider Membership",
+      "readiness_stage": "retention",
+      "core_desire": "Stay consistent after initial wins.",
+      "primary_objection": "Memberships lose value after month one.",
+      "message_angle": "Monthly execution assets and live support tied to current funnel goals.",
+      "cta": "Start membership"
+    },
+    {
+      "offer": "Elite Advisory",
+      "readiness_stage": "ascension",
+      "core_desire": "Compress time to scale with expert oversight.",
+      "primary_objection": "High ticket must produce tangible ROI.",
+      "message_angle": "Direct strategy, custom growth roadmap, and decision support.",
+      "cta": "Apply now"
+    }
+  ],
+  "research_notes": {
+    "signals_used": [
+      "Creator audience skews toward working-age operators building diversified income streams.",
+      "Owned audience channels (email/community) are prioritized to reduce platform risk.",
+      "Short-form discovery plus long-form trust-building remains a dominant behavior pattern."
+    ],
+    "timestamp_utc": "2026-03-03T00:00:00Z"
+  }
+}

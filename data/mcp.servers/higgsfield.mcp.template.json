@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/mcp-config.json",
+  "mcpServers": {
+    "higgsfield-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "higgsfield-mcp@0.2.0"
+      ],
+      "env": {
+        "HIGGSFIELD_API_KEY": "${HIGGSFIELD_API_KEY}"
+      }
+    }
+  },
+  "activation": {
+    "status": "template",
+    "requiredEnv": [
+      "HIGGSFIELD_API_KEY"
+    ],
+    "targetClients": [
+      "claude",
+      "openclaw",
+      "hermes"
+    ],
+    "notes": "Do not merge into active MCP client configs until the API key is present in the operator-controlled secret source."
+  }
+}

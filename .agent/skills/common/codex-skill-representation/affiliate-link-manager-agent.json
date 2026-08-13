@@ -1,0 +1,12 @@
+{
+  "skillName": "affiliate-link-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/affiliate-link-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/affiliate-link-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/affiliate-link-manager-agent.json",
+  "status": "present"
+}

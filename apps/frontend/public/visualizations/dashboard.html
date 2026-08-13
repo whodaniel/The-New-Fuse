@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The New Fuse — Visualization Dashboard</title>
+    <meta
+      name="description"
+      content="Interactive visualizations, agent relationship graphs, and analytics for The New Fuse AI agent ecosystem."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --surface-hover: #171d27;
+        --border: #1c2333;
+        --border-hover: #3b82f6;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+  --accent-dim: rgba(59, 130, 246, 0.12);
+  --accent-badge-bg: rgba(59, 130, 246, 0.25);
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.12);
+  --green-badge-bg: rgba(34, 197, 94, 0.25);
+  --purple: #a855f7;
+  --purple-dim: rgba(168, 85, 247, 0.12);
+  --purple-badge-bg: rgba(168, 85, 247, 0.25);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245, 158, 11, 0.12);
+  --amber-badge-bg: rgba(245, 158, 11, 0.25);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.12);
+  --red-badge-bg: rgba(239, 68, 68, 0.25);
+  --cyan: #06b6d4;
+  --cyan-dim: rgba(6, 182, 212, 0.12);
+  --cyan-badge-bg: rgba(6, 182, 212, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---- Navigation ---- */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-brand .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        object-fit: cover;
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+      }
+      .nav-links {
+        display: flex;
+        gap: 4px;
+      }
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 6px;
+        transition: all 0.15s;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* ---- Hero ---- */
+      .hero {
+        padding: 64px 40px 48px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 400px;
+        background: radial-gradient(ellipse, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .hero-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .hero h1 {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 16px;
+        margin-top: 12px;
+        max-width: 600px;
+        line-height: 1.6;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 32px;
+        margin-top: 24px;
+      }
+      .hero-stat {
+        text-align: center;
+      }
+      .hero-stat .number {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .hero-stat .label {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      /* ---- Container ---- */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px 60px;
+      }
+
+      /* ---- Section ---- */
+      .section {
+        margin-bottom: 48px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .section-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+      }
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .section-count {
+        font-size: 12px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-left: auto;
+      }
+
+      /* ---- Grid ---- */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 14px;
+      }
+
+      /* ---- Card ---- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 22px;
+        text-decoration: none;
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--card-accent, var(--accent)),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .card:hover {
+        background: var(--surface-hover);
+        border-color: var(--card-accent, var(--border-hover));
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+      .card:hover::after {
+        opacity: 1;
+      }
+      .card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        margin-bottom: 14px;
+      }
+      .card-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        line-height: 1.3;
+      }
+      .card-desc {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.55;
+        flex: 1;
+      }
+      .card-meta {
+        margin-top: 14px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 3px 9px;
+        border-radius: 5px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+      }
+
+      /* ---- Command Block ---- */
+      .cmd-block {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px 24px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+        font-size: 13px;
+        line-height: 1.8;
+        color: #7dd3fc;
+        margin-bottom: 48px;
+        overflow-x: auto;
+      }
+      .cmd-block .prompt {
+        color: var(--green);
+      }
+  .cmd-block .comment {
+    color: #7c8ca4;
+  }
+
+      /* ---- Footer ---- */
+      .footer {
+        border-top: 1px solid var(--border);
+        padding: 24px 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* ---- Responsive ---- */
+      @media (max-width: 768px) {
+        .hero {
+          padding: 40px 20px 32px;
+        }
+        .container {
+          padding: 0 20px 40px;
+        }
+        .nav {
+          padding: 0 20px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 28px;
+        }
+        .hero-stats {
+          gap: 20px;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ---- Markdown Viewer ---- */
+      .md-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+      }
+      .md-overlay.active {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        padding: 40px;
+        overflow-y: auto;
+      }
+      .md-viewer {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        max-width: 900px;
+        width: 100%;
+        padding: 40px;
+        position: relative;
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 {
+        font-size: 24px;
+        margin-bottom: 16px;
+      }
+      .md-viewer h2 {
+        font-size: 20px;
+        margin: 24px 0 12px;
+        color: var(--accent);
+      }
+      .md-viewer h3 {
+        font-size: 16px;
+        margin: 20px 0 8px;
+      }
+      .md-viewer p {
+        margin-bottom: 12px;
+      }
+      .md-viewer ul,
+      .md-viewer ol {
+        margin: 8px 0 12px 24px;
+      }
+      .md-viewer li {
+        margin: 4px 0;
+      }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 12px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+      }
+      .md-viewer th,
+      .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 13px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+      }
+      .md-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        display: grid;
+        place-items: center;
+      }
+      .md-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Nav -->
+    <nav class="nav">
+      <div class="nav-inner">
+        <a href="/" class="nav-brand">
+          <img src="../assets/brand/tnf-logo.png" alt="The New Fuse" class="logo" />
+          The New Fuse
+        </a>
+        <div class="nav-links">
+          <a href="#graphs" class="active">Graphs</a>
+          <a href="#system">System</a>
+          <a href="#docs">Docs</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-inner">
+        <h1>Visualization Dashboard</h1>
+        <p>
+          Interactive agent relationship graphs, system architecture maps, and analytics for the TNF
+          ecosystem.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="number">113</div>
+            <div class="label">Agents</div>
+          </div>
+          <div class="hero-stat">
+            <div class="number">7</div>
+            <div class="label">Domains</div>
+          </div>
+          <div class="hero-stat">
+            <div class="number">13</div>
+            <div class="label">Visualizations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Commands -->
+      <div class="cmd-block">
+        <span class="comment"># Rebuild all graph artifacts from project root:</span><br />
+        <span class="prompt">$</span> pnpm run graph:all<br />
+        <span class="prompt">$</span> pnpm run graph:help &nbsp;&nbsp;&nbsp;&nbsp;<span
+          class="comment"
+          ># Show all available commands</span
+        >
+      </div>
+
+      <!-- Agent Graph Section -->
+      <div class="section" id="graphs">
+        <div class="section-header">
+          <div class="section-icon" style="background: var(--accent-dim)">🕸️</div>
+          <h2 class="section-title">Agent Relationship Graphs</h2>
+          <span class="section-count">7 subgraphs</span>
+        </div>
+        <div class="grid" id="graph-grid"></div>
+      </div>
+
+      <!-- System Visualizations -->
+      <div class="section" id="system">
+        <div class="section-header">
+          <div class="section-icon" style="background: var(--purple-dim)">📊</div>
+          <h2 class="section-title">System Visualizations</h2>
+          <span class="section-count">6 tools</span>
+        </div>
+        <div class="grid" id="system-grid"></div>
+      </div>
+
+      <!-- Documentation -->
+      <div class="section" id="docs">
+        <div class="section-header">
+          <div class="section-icon" style="background: var(--green-dim)">📖</div>
+          <h2 class="section-title">Documentation & Guides</h2>
+          <span class="section-count">8 docs</span>
+        </div>
+        <div class="grid" id="docs-grid"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer"><a href="/">The New Fuse</a> · Visualization Dashboard</div>
+
+    <!-- Markdown Viewer Overlay -->
+    <div class="md-overlay" id="md-overlay">
+      <div class="md-viewer">
+        <button class="md-close" id="md-close" aria-label="Close">✕</button>
+        <div id="md-content"></div>
+      </div>
+    </div>
+
+    <script>
+      // ---- Data ----
+      // All paths are RELATIVE to this HTML file's location (visualizations/)
+      const graphBase = './graphs/agent-relationship-graph/subgraphs/';
+      const subgraphs = [
+        {
+          title: 'Content Domain',
+          desc: 'Content creation, calendar orchestration, SEO optimization, and refresh workflows',
+          file: graphBase + 'agent-relationship-content-subgraph.html',
+          icon: '✏️',
+          badges: ['9 nodes', '10 edges'],
+          color: 'accent',
+        },
+        {
+          title: 'SEO Domain',
+          desc: 'Search engine optimization, keyword research, and content calendar integration',
+          file: graphBase + 'agent-relationship-seo-subgraph.html',
+          icon: '🔍',
+          badges: ['SEO', 'Search'],
+          color: 'accent',
+        },
+        {
+          title: 'Social Domain',
+          desc: 'Social media management, content distribution, and engagement tracking',
+          file: graphBase + 'agent-relationship-social-subgraph.html',
+          icon: '📱',
+          badges: ['Social', 'Media'],
+          color: 'accent',
+        },
+        {
+          title: 'Brand Domain',
+          desc: 'Brand identity management, legal compliance, and voice consistency',
+          file: graphBase + 'agent-relationship-brand-subgraph.html',
+          icon: '🏷️',
+          badges: ['Brand', 'Compliance'],
+          color: 'accent',
+        },
+        {
+          title: 'Podcast Domain',
+          desc: 'Podcast production, guest coordination, analytics, and distribution',
+          file: graphBase + 'agent-relationship-podcast-subgraph.html',
+          icon: '🎙️',
+          badges: ['Podcast', 'Audio'],
+          color: 'accent',
+        },
+        {
+          title: 'Funnel Domain',
+          desc: 'Marketing funnel management, conversion tracking, and analytics',
+          file: graphBase + 'agent-relationship-funnel-subgraph.html',
+          icon: '📈',
+          badges: ['Funnel', 'Analytics'],
+          color: 'accent',
+        },
+        {
+          title: 'Operations Domain',
+          desc: 'Task routing, orchestration, and system management agents',
+          file: graphBase + 'agent-relationship-ops-subgraph.html',
+          icon: '⚙️',
+          badges: ['Operations', 'Core'],
+          color: 'accent',
+        },
+      ];
+
+      const systemViz = [
+        {
+          title: 'Agent Communication Flow',
+          desc: 'Real-time message routing and protocol exchange visualization',
+          file: 'agent-communication-flow.html',
+          icon: '🔀',
+          badges: ['D3.js', 'Interactive'],
+          color: 'purple',
+        },
+        {
+          title: 'Service Architecture Map',
+          desc: 'Microservice topology, dependencies, and health status',
+          file: 'service-architecture-map.html',
+          icon: '🏗️',
+          badges: ['Architecture', 'Services'],
+          color: 'purple',
+        },
+        {
+          title: 'Monitoring Dashboard',
+          desc: 'System health metrics, resource usage, and performance',
+          file: 'monitoring-dashboard.html',
+          icon: '📡',
+          badges: ['Monitoring', 'Live'],
+          color: 'green',
+        },
+        {
+          title: 'Bundle Size Analyzer',
+          desc: 'Treemap of JavaScript bundle composition and dependencies',
+          file: 'bundle-size-analyzer.html',
+          icon: '📦',
+          badges: ['Bundle', 'Treemap'],
+          color: 'amber',
+        },
+        {
+          title: 'Workflow Dependencies',
+          desc: 'DAG visualization of build and deployment workflow steps',
+          file: 'workflow-dependencies.html',
+          icon: '🔗',
+          badges: ['Workflow', 'DAG'],
+          color: 'purple',
+        },
+        {
+          title: 'Workflow Preview',
+          desc: 'Preview and validate workflow configurations',
+          file: 'workflow-preview.html',
+          icon: '👁️',
+          badges: ['Preview', 'Validate'],
+          color: 'cyan',
+        },
+      ];
+
+      const docs = [
+        {
+          title: 'AG-UI Integration Analysis',
+          desc: 'Comprehensive analysis of AG-UI protocol integration strategies',
+          file: 'AG-UI-INTEGRATION-ANALYSIS.html',
+          icon: '🧩',
+          badges: ['AG-UI', 'Protocol'],
+          color: 'green',
+          isDoc: true,
+        },
+        {
+          title: 'AG-UI Integration Guide',
+          desc: 'Step-by-step implementation guide for the AG-UI protocol',
+          file: 'AG-UI-INTEGRATION-GUIDE.html',
+          icon: '📋',
+          badges: ['Guide', 'AG-UI'],
+          color: 'green',
+          isDoc: true,
+        },
+        {
+          title: 'Capability Packaging',
+          desc: 'Package agent capabilities for distribution and deployment',
+          file: 'CAPABILITY-PACKAGING-COMPLETE.html',
+          icon: '📦',
+          badges: ['Packaging', 'Deploy'],
+          color: 'green',
+          isDoc: true,
+        },
+        {
+          title: 'Claude Code at Scale',
+          desc: 'Patterns for scaling Claude Code across organizations',
+          file: 'CLAUDE-CODE-AT-SCALE.html',
+          icon: '🚀',
+          badges: ['Scale', 'Claude'],
+          color: 'purple',
+          isDoc: true,
+        },
+        {
+          title: 'Gemini Code Assist',
+          desc: 'Integration patterns for Gemini Code Assist in TNF',
+          file: 'GEMINI-CODE-ASSIST-INTEGRATION.html',
+          icon: '♊',
+          badges: ['Gemini', 'Integration'],
+          color: 'accent',
+          isDoc: true,
+        },
+        {
+          title: 'Visual Demo',
+          desc: 'Interactive demonstration of visualization capabilities',
+          file: 'VISUAL-DEMO.html',
+          icon: '🎨',
+          badges: ['Demo', 'Interactive'],
+          color: 'purple',
+          isDoc: true,
+        },
+        {
+          title: 'Project Summary',
+          desc: 'High-level overview of the visualization architecture',
+          file: 'PROJECT-SUMMARY.html',
+          icon: '📄',
+          badges: ['Overview', 'Architecture'],
+          color: 'amber',
+          isDoc: true,
+        },
+        {
+          title: 'Nine Multiplier Hacks',
+          desc: 'Productivity multipliers for agent-assisted development',
+          file: 'NINE-MULTIPLIER-HACKS.html',
+          icon: '⚡',
+          badges: ['Productivity', 'Tips'],
+          color: 'amber',
+          isDoc: true,
+        },
+      ];
+
+      // ---- Color map ----
+  const colorMap = {
+    accent: { bg: 'var(--accent-dim)', badgeBg: 'var(--accent-badge-bg)', text: '#60a5fa', badgeText: '#dbeafe', accent: 'var(--accent)' },
+    purple: { bg: 'var(--purple-dim)', badgeBg: 'var(--purple-badge-bg)', text: '#c084fc', badgeText: '#ede9fe', accent: 'var(--purple)' },
+    green: { bg: 'var(--green-dim)', badgeBg: 'var(--green-badge-bg)', text: '#4ade80', badgeText: '#dcfce7', accent: 'var(--green)' },
+    amber: { bg: 'var(--amber-dim)', badgeBg: 'var(--amber-badge-bg)', text: '#fbbf24', badgeText: '#fef3c7', accent: 'var(--amber)' },
+    red: { bg: 'var(--red-dim)', badgeBg: 'var(--red-badge-bg)', text: '#f87171', badgeText: '#fee2e2', accent: 'var(--red)' },
+    cyan: { bg: 'var(--cyan-dim)', badgeBg: 'var(--cyan-badge-bg)', text: '#22d3ee', badgeText: '#cffafe', accent: 'var(--cyan)' },
+  };
+
+      // ---- Render ----
+      function renderCards(containerId, items) {
+        const el = document.getElementById(containerId);
+        items.forEach((item) => {
+          const c = colorMap[item.color] || colorMap.accent;
+          const card = document.createElement('a');
+          card.className = 'card';
+          card.style.setProperty('--card-accent', c.accent);
+          card.href = item.file;
+
+          card.innerHTML = `
+          <div class="card-icon" style="background:${c.bg}">${item.icon}</div>
+          <div class="card-title">${item.title}</div>
+          <div class="card-desc">${item.desc}</div>
+        <div class="card-meta">
+          ${item.badges.map((b) => `<span class="badge" style="background:${c.badgeBg};color:${c.badgeText}">${b}</span>`).join('')}
+          ${item.isDoc ? '<span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text)">📄 Doc</span>' : '<span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text)">🖥️ Interactive</span>'}
+          </div>
+        `;
+          el.appendChild(card);
+        });
+      }
+
+      renderCards('graph-grid', subgraphs);
+      renderCards('system-grid', systemViz);
+      renderCards('docs-grid', docs);
+
+      // ---- Smooth scroll ----
+      document.querySelectorAll('.nav-links a').forEach((a) => {
+        a.addEventListener('click', function (e) {
+          const href = this.getAttribute('href');
+          if (href.startsWith('#')) {
+            e.preventDefault();
+            const el = document.getElementById(href.slice(1));
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.querySelectorAll('.nav-links a').forEach((x) => x.classList.remove('active'));
+            this.classList.add('active');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

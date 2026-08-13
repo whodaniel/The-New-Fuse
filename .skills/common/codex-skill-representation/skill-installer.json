@@ -1,0 +1,12 @@
+{
+  "skillName": "skill-installer",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/.system/skill-installer/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/.system/skill-installer/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/skill-installer.json",
+  "status": "present"
+}

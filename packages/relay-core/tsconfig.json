@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "strict": false,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "ignoreDeprecations": "5.0",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "composite": true,
+    "types": ["node"],
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "paths": {
+      "@the-new-fuse/infrastructure": ["../infrastructure/dist"],
+      "@the-new-fuse/database": ["../database/dist"],
+      "@the-new-fuse/types": ["../types/dist"],
+      "@the-new-fuse/tnf-cli": ["../tnf-cli/dist"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"],
+  "references": [
+    { "path": "../infrastructure" },
+    { "path": "../database" },
+    { "path": "../types" },
+    { "path": "../tnf-cli" },
+    { "path": "../security" }
+  ]
+}

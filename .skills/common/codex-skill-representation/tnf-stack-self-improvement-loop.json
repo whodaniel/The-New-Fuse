@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-stack-self-improvement-loop",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-stack-self-improvement-loop/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-stack-self-improvement-loop.json",
+  "status": "present"
+}
