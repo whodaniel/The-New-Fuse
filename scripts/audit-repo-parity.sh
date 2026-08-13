@@ -36,12 +36,12 @@ slugify() {
 
 remote_for_slug() {
   case "$1" in
-    fuse|old-fuse) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
-    fuse-master|private-origin) echo "https://github.com/whodaniel/The-New-Fuse-master.git" ;;
+    fuse|old-fuse) echo "https://github.com/whodaniel/fuse.git" ;;
+    fuse-master|private-origin) echo "https://github.com/whodaniel/fuse-master.git" ;;
     the-new-fuse-next-gen) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
     The-New-Fuse|open-runtime) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
-    fuse-control-plane|control-plane) echo "https://github.com/whodaniel/The-New-Fuse-control-plane.git" ;;
-    fuse-mirror|mirror) echo "https://github.com/whodaniel/The-New-Fuse-mirror.git" ;;
+    fuse-control-plane|control-plane) echo "https://github.com/whodaniel/fuse-control-plane.git" ;;
+    fuse-mirror|mirror) echo "https://github.com/whodaniel/fuse-mirror.git" ;;
     NexusOrchestrator|nexus-orchestrator) echo "https://github.com/whodaniel/NexusOrchestrator.git" ;;
     SkIDEancer|skideancer) echo "https://github.com/whodaniel/SkIDEancer.git" ;;
     MyPhone-Remote|myphone-remote) echo "https://github.com/whodaniel/MyPhone-Remote.git" ;;

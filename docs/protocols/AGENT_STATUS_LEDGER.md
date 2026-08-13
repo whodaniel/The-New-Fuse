@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T20:21:30.656Z** — handoff
+Updated: **2026-08-13T20:30:38.855Z** — handoff
+`89115730-2fb6-4f5c-a112-e91f967071b6` (`800bb2a94df7`).
 `d2f04a2b-74d6-4444-82fa-82f7790b89cc` (`aaca77ef0700`).
 `1b577255-a6dc-4860-86f3-48dcd07d76df` (`944c848dc71f`).
 `227120de-b92d-4aaf-aa27-0d57295f43b4` (`88a570307ddc`).
@@ -229,12 +230,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Keep TNF Repo Separation Sync disabled until a dry-run of sync/open-runtime against restored public main is proven. |
-| **P0**   | Do not merge the conflicted a11y PRs (#126-#131) until that path is proven.                                         |
-| **P0**   | #124 SQL injection and #125 Hosted Spaces are mergeable after Build Summary.                                        |
-| **P0**   | Land user_data_locations only after sync is safe.                                                                   |
+| Priority | Action                                                                          |
+| -------- | ------------------------------------------------------------------------------- |
+| **P0**   | Do not delete the three fuse\* GitHub archives unless the operator says delete. |
+| **P0**   | Do not re-add old-fuse, private-origin, or split-mirror remotes.                |
+| **P0**   | Keep TNF Repo Separation Sync disabled.                                         |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1176,3 +1176,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d2f04a2b-74d6-4444-82fa-82f7790b89cc) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(89115730-2fb6-4f5c-a112-e91f967071b6) | ✅ HANDOFF_READY |

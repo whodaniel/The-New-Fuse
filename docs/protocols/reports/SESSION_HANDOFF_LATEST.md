@@ -1,28 +1,30 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T20:21:30.656Z`  
-Handoff ID: `d2f04a2b-74d6-4444-82fa-82f7790b89cc`
+Created At: `2026-08-13T20:30:38.855Z`  
+Handoff ID: `89115730-2fb6-4f5c-a112-e91f967071b6`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `aaca77ef0700c4ae6f73a65d5326bf61387ca2bc`
+- Head SHA: `800bb2a94df728e7f1e749fbc8e7ea21bd959a41`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Satellites are each their own private GitHub repo, not a packaged
-  TNF-Extensions offering. Empty leftover apps/ dirs removed; boundary checker
-  requires github URLs.
+- Leave fuse, fuse-mirror, and fuse-master GitHub-archived; drop write remotes;
+  stop lineage scripts from targeting live publication repos.
 
 ## Changed Paths
 
-- data/distribution/oss-app-boundary.json
-- scripts/packaging/check-oss-app-boundary.cjs
-- docs/packaging/OSS_APP_BOUNDARY.md
 - docs/REPO_SEPARATION.md
+- docs/lineage/ARCHIVE_STATUS.md
+- docs/lineage/REPO_LINEAGE.md
+- scripts/audit-repo-parity.sh
+- scripts/create-lineage-bundle.sh
+- scripts/push-private-master.sh
+- scripts/setup-private-master-remote.sh
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -50,8 +52,7 @@ Handoff ID: `d2f04a2b-74d6-4444-82fa-82f7790b89cc`
 
 ## Next Actions
 
-- Keep TNF Repo Separation Sync disabled until a dry-run of sync/open-runtime
-  against restored public main is proven.
-- Do not merge the conflicted a11y PRs (#126-#131) until that path is proven.
-- #124 SQL injection and #125 Hosted Spaces are mergeable after Build Summary.
-- Land user_data_locations only after sync is safe.
+- Do not delete the three fuse\* GitHub archives unless the operator says
+  delete.
+- Do not re-add old-fuse, private-origin, or split-mirror remotes.
+- Keep TNF Repo Separation Sync disabled.

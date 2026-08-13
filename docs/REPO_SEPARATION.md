@@ -362,3 +362,8 @@ sync, then dispatch the workflow.
 **Q: Are TNF-Extensions one GitHub repo?** A: No. Each satellite is its own
 private repo (`tnf-ai-arcade`, `tnf-nexus-orchestrator`, …). The
 `TNF-Extensions/` directory is a local workspace of those clones.
+
+**Q: Should I delete `fuse`, `fuse-mirror`, or `fuse-master`?** A: No. Leave
+them GitHub-archived. Do not add write remotes (`old-fuse`, `private-origin`,
+`split-mirror`). Canonical history is `tnf-monorepo`. GitHub deletion is
+irreversible and needs an explicit operator "delete" — archive is the default.

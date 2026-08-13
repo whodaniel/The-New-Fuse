@@ -1,21 +1,24 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "d2f04a2b-74d6-4444-82fa-82f7790b89cc",
-  "created_at": "2026-08-13T20:21:30.656Z",
+  "handoff_id": "89115730-2fb6-4f5c-a112-e91f967071b6",
+  "created_at": "2026-08-13T20:30:38.855Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "aaca77ef0700c4ae6f73a65d5326bf61387ca2bc",
+  "head_sha": "800bb2a94df728e7f1e749fbc8e7ea21bd959a41",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Satellites are each their own private GitHub repo, not a packaged TNF-Extensions offering. Empty leftover apps/ dirs removed; boundary checker requires github URLs."
+    "Leave fuse, fuse-mirror, and fuse-master GitHub-archived; drop write remotes; stop lineage scripts from targeting live publication repos."
   ],
   "changed_paths": [
-    "data/distribution/oss-app-boundary.json",
-    "scripts/packaging/check-oss-app-boundary.cjs",
-    "docs/packaging/OSS_APP_BOUNDARY.md",
     "docs/REPO_SEPARATION.md",
+    "docs/lineage/ARCHIVE_STATUS.md",
+    "docs/lineage/REPO_LINEAGE.md",
+    "scripts/audit-repo-parity.sh",
+    "scripts/create-lineage-bundle.sh",
+    "scripts/push-private-master.sh",
+    "scripts/setup-private-master-remote.sh",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
@@ -26,7 +29,7 @@
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "node scripts/packaging/check-oss-app-boundary.cjs OK. apps/ now 9 form factors plus extensions symlink. 12 tnf-* satellite repos private."
+    "notes": "GitHub API 2026-08-13: fuse, fuse-mirror, fuse-master all private+archived. Local remotes old-fuse, private-origin, split-mirror removed. Remaining remotes: origin=tnf-monorepo, split-open-runtime=The-New-Fuse, split-control-plane=fuse-control-plane, nexus-orchestrator=NexusOrchestrator."
   },
   "continuation": {
     "owner": "cursor-agent",
@@ -39,12 +42,11 @@
     ]
   },
   "next_actions": [
-    "Keep TNF Repo Separation Sync disabled until a dry-run of sync/open-runtime against restored public main is proven.",
-    "Do not merge the conflicted a11y PRs (#126-#131) until that path is proven.",
-    "#124 SQL injection and #125 Hosted Spaces are mergeable after Build Summary.",
-    "Land user_data_locations only after sync is safe."
+    "Do not delete the three fuse* GitHub archives unless the operator says delete.",
+    "Do not re-add old-fuse, private-origin, or split-mirror remotes.",
+    "Keep TNF Repo Separation Sync disabled."
   ],
   "artifacts": {
-    "commits": ["aaca77ef0700c4ae6f73a65d5326bf61387ca2bc"]
+    "commits": ["800bb2a94df728e7f1e749fbc8e7ea21bd959a41"]
   }
 }

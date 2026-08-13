@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Keep TNF Repo Separation Sync disabled until a dry-run of
-sync/open-runtime against restored public main is proven.
+**Current Directive:** Do not delete the three fuse\* GitHub archives unless the
+operator says delete.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -950,6 +950,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-13T20:30:38.924Z handoff `89115730-2fb6-4f5c-a112-e91f967071b6` head
+  `800bb2a94df7` project `TNF-SESSION` — Do not delete the three fuse\* GitHub
+  archives unless the operator says delete.
 
 - 2026-08-13T20:21:30.716Z handoff `d2f04a2b-74d6-4444-82fa-82f7790b89cc` head
   `aaca77ef0700` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled

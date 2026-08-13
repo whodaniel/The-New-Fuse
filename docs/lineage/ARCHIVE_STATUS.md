@@ -1,6 +1,10 @@
 # Lineage Archive Status
 
-> Updated: 2026-06-22
+> Updated: 2026-08-13
+
+`fuse`, `fuse-master`, and `fuse-mirror` stay GitHub-archived. Do not delete
+them. Do not add `old-fuse` / `private-origin` / `split-mirror` remotes back to
+the monorepo. Canonical development is `whodaniel/tnf-monorepo`.
 
 ## Completed
 
@@ -18,8 +22,8 @@ by alias bundle._
 
 ## Never archive (live)
 
-- `The-New-Fuse` (ex `The-New-Fuse`) — canonical dev
-- `The-New-Fuse` — open distribution
+- `tnf-monorepo` — canonical private development
+- `The-New-Fuse` — public open-runtime publication
 - `fuse-control-plane` — proprietary distribution
 
 ## Product satellites (Phase 4 — keep active)

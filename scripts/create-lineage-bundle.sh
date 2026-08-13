@@ -10,9 +10,9 @@ SLUG="${1:-}"
 
 remote_for_slug() {
   case "$1" in
-    fuse) echo "https://github.com/whodaniel/The-New-Fuse.git" ;;
-    fuse-master) echo "https://github.com/whodaniel/The-New-Fuse-master.git" ;;
-    fuse-mirror) echo "https://github.com/whodaniel/The-New-Fuse-mirror.git" ;;
+    fuse) echo "https://github.com/whodaniel/fuse.git" ;;
+    fuse-master) echo "https://github.com/whodaniel/fuse-master.git" ;;
+    fuse-mirror) echo "https://github.com/whodaniel/fuse-mirror.git" ;;
     NexusOrchestrator) echo "https://github.com/whodaniel/NexusOrchestrator.git" ;;
     *) echo "" ;;
   esac
