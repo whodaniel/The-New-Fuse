@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 
 describe('useKeyboardShortcuts', () => {
   beforeEach(() => {

@@ -4,10 +4,10 @@ const vi = jest;
 
 // Create mock implementations
 const createMockRedisService = () => ({
-  subscribe: jest.fn().mockResolvedValue(undefined),
-  unsubscribe: jest.fn().mockResolvedValue(undefined),
-  publish: jest.fn().mockResolvedValue(1),
-  hset: jest.fn().mockResolvedValue(undefined),
+  subscribe: jest.fn<any>().mockResolvedValue(undefined),
+  unsubscribe: jest.fn<any>().mockResolvedValue(undefined),
+  publish: jest.fn<any>().mockResolvedValue(1),
+  hset: jest.fn<any>().mockResolvedValue(undefined),
   on: jest.fn(),
   emit: jest.fn(),
 });
@@ -18,11 +18,11 @@ const createMockHeartbeatService = () => ({
 });
 
 const createMockMetricsService = () => ({
-  collectMetric: jest.fn().mockResolvedValue(undefined),
-  getMetrics: jest.fn().mockResolvedValue({}),
-  getSystemMetrics: jest.fn().mockResolvedValue({}),
-  getApplicationMetrics: jest.fn().mockResolvedValue({}),
-  generateReport: jest.fn().mockResolvedValue({}),
+  collectMetric: jest.fn<any>().mockResolvedValue(undefined),
+  getMetrics: jest.fn<any>().mockResolvedValue({}),
+  getSystemMetrics: jest.fn<any>().mockResolvedValue({}),
+  getApplicationMetrics: jest.fn<any>().mockResolvedValue({}),
+  generateReport: jest.fn<any>().mockResolvedValue({}),
 });
 
 describe('MasterClockService', () => {
@@ -253,7 +253,7 @@ describe('MasterClockService', () => {
 
     it('should handle clock sync messages from other instances', () => {
       const subscribeCall = mockRedisService.subscribe.mock.calls.find(
-        (call) => call[0] === config.redisChannels.clockSync
+        (call: any) => call[0] === config.redisChannels.clockSync
       );
       expect(subscribeCall).toBeDefined();
 
@@ -272,7 +272,7 @@ describe('MasterClockService', () => {
 
     it('should handle drift alert messages', () => {
       const subscribeCall = mockRedisService.subscribe.mock.calls.find(
-        (call) => call[0] === config.redisChannels.driftAlert
+        (call: any) => call[0] === config.redisChannels.driftAlert
       );
       expect(subscribeCall).toBeDefined();
 
@@ -290,7 +290,7 @@ describe('MasterClockService', () => {
 
     it('should handle correction acknowledgments', () => {
       const subscribeCall = mockRedisService.subscribe.mock.calls.find(
-        (call) => call[0] === config.redisChannels.correction
+        (call: any) => call[0] === config.redisChannels.correction
       );
       expect(subscribeCall).toBeDefined();
 
@@ -330,7 +330,7 @@ describe('MasterClockService', () => {
 
     it('should update instance clocks on heartbeat received', () => {
       const heartbeatHandler = mockHeartbeatService.on.mock.calls.find(
-        (call) => call[0] === 'heartbeat_received'
+        (call: any) => call[0] === 'heartbeat_received'
       )?.[1];
 
       expect(heartbeatHandler).toBeDefined();
@@ -345,7 +345,7 @@ describe('MasterClockService', () => {
 
     it('should remove failed instances from tracking', () => {
       const statusHandler = mockHeartbeatService.on.mock.calls.find(
-        (call) => call[0] === 'agent_status_changed'
+        (call: any) => call[0] === 'agent_status_changed'
       )?.[1];
 
       expect(statusHandler).toBeDefined();
@@ -457,7 +457,7 @@ describe('MasterClockService', () => {
 
     it('should handle malformed clock sync messages', () => {
       const subscribeCall = mockRedisService.subscribe.mock.calls.find(
-        (call) => call[0] === config.redisChannels.clockSync
+        (call: any) => call[0] === config.redisChannels.clockSync
       );
       const messageHandler = subscribeCall![1];
 

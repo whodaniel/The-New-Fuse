@@ -2719,12 +2719,12 @@ export class UnifiedLedgerService implements OnModuleInit {
           key: 'fuse-repo-created-2025',
           title: 'Public Monorepo Goes Live',
           description:
-            'The `whodaniel/fuse` repository is created on April 11, 2025 as a public monorepo foundation.',
+            'The `whodaniel/The-New-Fuse` repository is created on April 11, 2025 as a public monorepo foundation.',
           point: 58,
           timestamp: '2025-04-11T20:44:10.000Z',
           segment: 'Build',
           confidence: 'hard',
-          evidenceRefs: ['https://api.github.com/repos/whodaniel/fuse'],
+          evidenceRefs: ['https://api.github.com/repos/whodaniel/The-New-Fuse'],
         },
         {
           key: 'monorepo-build',
