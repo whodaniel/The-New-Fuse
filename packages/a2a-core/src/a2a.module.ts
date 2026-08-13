@@ -13,6 +13,32 @@ import { A2ASignatureWrapper } from './signature-wrapper.js';
 import { A2AConfig } from './types.js';
 import { A2AWebSocketAdapter } from './websocket-adapter.js';
 
+/** Secrets that provide no security and must never reach the signer. */
+const PLACEHOLDER_SECRETS = new Set(['default-secret', 'changeme', 'secret', '']);
+
+/**
+ * Resolve the A2A signing secret, or refuse to start.
+ *
+ * This previously fell back to the literal string 'default-secret', which meant
+ * a misconfigured deployment silently signed every message with a value in the
+ * source tree. That was survivable only because nothing verified signatures;
+ * now that `A2ASignatureWrapper.verify` exists, a placeholder secret would make
+ * every peer trust forged traffic. Failing at boot is the safe direction — a
+ * process that will not start is far easier to notice than one that starts with
+ * authentication quietly disabled.
+ */
+function requireSigningSecret(configService: ConfigService): string {
+  const secret = configService.get<string>('A2A_SECRET_KEY');
+  if (!secret || PLACEHOLDER_SECRETS.has(secret) || secret.length < 16) {
+    throw new Error(
+      'A2A_SECRET_KEY is missing, a placeholder, or shorter than 16 characters. ' +
+        'A2A message signing cannot be trusted without it. ' +
+        'Generate one with: openssl rand -hex 32'
+    );
+  }
+  return secret;
+}
+
 @Global()
 @Module({})
 export class A2ACoreModule {
@@ -62,8 +88,7 @@ export class A2ACoreModule {
           provide: A2ASignatureWrapper,
           useFactory: (configService: ConfigService) => {
             const agentId = configService.get<string>('AGENT_ID') || 'system-gateway';
-            const secret = configService.get<string>('A2A_SECRET_KEY') || 'default-secret';
-            return new A2ASignatureWrapper(agentId, secret);
+            return new A2ASignatureWrapper(agentId, requireSigningSecret(configService));
           },
           inject: [ConfigService],
         },
@@ -142,8 +167,7 @@ export class A2ACoreModule {
           provide: A2ASignatureWrapper,
           useFactory: (configService: ConfigService) => {
             const agentId = configService.get<string>('AGENT_ID') || 'system-gateway';
-            const secret = configService.get<string>('A2A_SECRET_KEY') || 'default-secret';
-            return new A2ASignatureWrapper(agentId, secret);
+            return new A2ASignatureWrapper(agentId, requireSigningSecret(configService));
           },
           inject: [ConfigService],
         },

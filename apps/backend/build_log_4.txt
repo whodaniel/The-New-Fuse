@@ -1,0 +1,833 @@
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm.
+npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm.
+npm warn Unknown project config "node-linker". This will stop working in the next major version of npm.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm.
+[96msrc/agents/AIResourceMonitorAgent.ts[0m:[93m90[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'processAnnouncement' does not exist on type 'AIResourceMonitorAgent'.
+
+[7m90[0m             await this.processAnnouncement(update);
+[7m  [0m [91m                       ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/auth/auth.controller.ts[0m:[93m142[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'photoURL' does not exist on type '{ name: string; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; email: string; username: string; hashedPassword: string; role: "USER" | "ADMIN" | "SUPER_ADMIN" | "AGENCY_OWNER" | "AGENCY_ADMIN" | "AGENCY_MANAGER" | "AGENT_OPERATOR"; ... 6 more ...; walletAddress: string; }'.
+
+[7m142[0m         photoURL: user.photoURL,
+[7m   [0m [91m                       ~~~~~~~~[0m
+[96msrc/auth/auth.service.ts[0m:[93m54[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m54[0m       name,
+[7m  [0m [91m      ~~~~[0m
+[96msrc/auth/auth.service.ts[0m:[93m99[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m99[0m         name: domain,
+[7m  [0m [91m        ~~~~[0m
+[96msrc/auth/auth.service.ts[0m:[93m112[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type 'Partial<{ email: string; hashedPassword: string; }>'.
+
+[7m112[0m           name: domain,
+[7m   [0m [91m          ~~~~[0m
+[96msrc/auth/base-oauth.strategy.ts[0m:[93m61[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m61[0m           name: displayName || username || email.split('@')[0],
+[7m  [0m [91m          ~~~~[0m
+[96msrc/auth/google.service.ts[0m:[93m38[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type 'Partial<{ email: string; hashedPassword: string; }>'.
+
+[7m38[0m         name: payload.name,
+[7m  [0m [91m        ~~~~[0m
+[96msrc/auth/google.service.ts[0m:[93m49[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m49[0m         name: payload.name,
+[7m  [0m [91m        ~~~~[0m
+[96msrc/cache/examples/cache-usage.example.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2305: [0mModule '"../decorators/cacheable.decorator"' has no exported member 'HttpCache'.
+
+[7m7[0m   HttpCache,
+[7m [0m [91m  ~~~~~~~~~[0m
+[96msrc/cache/examples/cache-usage.example.ts[0m:[93m8[0m:[93m3[0m - [91merror[0m[90m TS2305: [0mModule '"../decorators/cacheable.decorator"' has no exported member 'HttpCacheTTL'.
+
+[7m8[0m   HttpCacheTTL,
+[7m [0m [91m  ~~~~~~~~~~~~[0m
+[96msrc/cache/services/cache-invalidation.service.ts[0m:[93m53[0m:[93m16[0m - [91merror[0m[90m TS2367: [0mThis comparison appears to be unintentional because the types 'true' and 'false' have no overlap.
+
+[7m53[0m       enabled: rule.enabled !== false,
+[7m  [0m [91m               ~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/cache/services/cache-warming.service.ts[0m:[93m46[0m:[93m16[0m - [91merror[0m[90m TS2367: [0mThis comparison appears to be unintentional because the types 'true' and 'false' have no overlap.
+
+[7m46[0m       enabled: task.enabled !== false,
+[7m  [0m [91m               ~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/config/passport.ts[0m:[93m37[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m37[0m             name: profile.displayName,
+[7m  [0m [91m            ~~~~[0m
+[96msrc/config/passport.ts[0m:[93m44[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'emailVerified' does not exist in type 'Partial<{ email: string; hashedPassword: string; }>'.
+
+[7m44[0m             emailVerified: true
+[7m  [0m [91m            ~~~~~~~~~~~~~[0m
+[96msrc/controllers/agentController.ts[0m:[93m11[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m11[0m       const userId = req.user?.id;
+[7m  [0m [91m                               ~~[0m
+[96msrc/controllers/agentController.ts[0m:[93m25[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m25[0m       const userId = req.user?.id;
+[7m  [0m [91m                               ~~[0m
+[96msrc/controllers/agentController.ts[0m:[93m39[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m39[0m       const userId = req.user?.id;
+[7m  [0m [91m                               ~~[0m
+[96msrc/controllers/agentController.ts[0m:[93m56[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m56[0m       const userId = req.user?.id;
+[7m  [0m [91m                               ~~[0m
+[96msrc/controllers/agentController.ts[0m:[93m73[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m73[0m       const userId = req.user?.id;
+[7m  [0m [91m                               ~~[0m
+[96msrc/controllers/authController.ts[0m:[93m66[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m66[0m       name: name || null,
+[7m  [0m [91m      ~~~~[0m
+[96msrc/jobs/services/job-metrics.service.ts[0m:[93m65[0m:[93m22[0m - [91merror[0m[90m TS2339: [0mProperty 'paused' does not exist on type 'JobCounts'.
+
+[7m65[0m       paused: counts.paused || 0,
+[7m  [0m [91m                     ~~~~~~[0m
+[96msrc/middleware/firebase-auth.ts[0m:[93m2[0m:[93m22[0m - [91merror[0m[90m TS2307: [0mCannot find module '../lib/firebase-admin' or its corresponding type declarations.
+
+[7m2[0m import { auth } from '../lib/firebase-admin';
+[7m [0m [91m                     ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m76[0m:[93m11[0m - [91merror[0m[90m TS2322: [0mType '{ agentId: string; }' is not assignable to type 'AgentRegistrationWhereUniqueInput'.
+  Type '{ agentId: string; }' is not assignable to type '{ id: string; authToken: string; } & { id?: string; authToken?: string; AND?: AgentRegistrationWhereInput | AgentRegistrationWhereInput[]; ... 15 more ...; onboardingEvents?: AgentOnboardingEventListRelationFilter; }'.
+    Type '{ agentId: string; }' is missing the following properties from type '{ id: string; authToken: string; }': id, authToken
+
+[7m76[0m           where: { agentId: entry.agentId },
+[7m  [0m [91m          ~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
+    [7m41361[0m     where: AgentRegistrationWhereUniqueInput
+    [7m     [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m79[0m:[93m24[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'isActive' does not exist in type 'AgentCapabilityRegistryWhereInput'.
+
+[7m79[0m               where: { isActive: true },
+[7m  [0m [91m                       ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m94[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'lastActiveAt' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m94[0m           lastActiveAt: entry.lastActiveAt,
+[7m  [0m [91m                              ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m95[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'featured' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m95[0m           featured: entry.featured,
+[7m  [0m [91m                          ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m96[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'capabilities' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; metadata: JsonValue; agentId: string; heartbeatInterval: number; lastHeartbeat: Date; authToken: string; verificationStatus: string; onboardingStatus: string; registrationData: JsonValue; onboardingProgress: number; isOnline: boolean; }'.
+
+[7m96[0m           capabilities: registration?.capabilities.map((c) => c.capabilityName) || [],
+[7m  [0m [91m                                      ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m137[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType '{ agentId: string; }' is not assignable to type 'AgentRegistrationWhereUniqueInput'.
+  Type '{ agentId: string; }' is not assignable to type '{ id: string; authToken: string; } & { id?: string; authToken?: string; AND?: AgentRegistrationWhereInput | AgentRegistrationWhereInput[]; ... 15 more ...; onboardingEvents?: AgentOnboardingEventListRelationFilter; }'.
+    Type '{ agentId: string; }' is missing the following properties from type '{ id: string; authToken: string; }': id, authToken
+
+[7m137[0m         where: { agentId },
+[7m   [0m [91m        ~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
+    [7m41361[0m     where: AgentRegistrationWhereUniqueInput
+    [7m     [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m140[0m:[93m22[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'isActive' does not exist in type 'AgentCapabilityRegistryWhereInput'.
+
+[7m140[0m             where: { isActive: true },
+[7m   [0m [91m                     ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m156[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'lastActiveAt' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m156[0m       lastActiveAt: entry.lastActiveAt,
+[7m   [0m [91m                          ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m157[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'featured' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m157[0m       featured: entry.featured,
+[7m   [0m [91m                      ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m159[0m:[93m35[0m - [91merror[0m[90m TS2339: [0mProperty 'capabilities' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; metadata: JsonValue; agentId: string; heartbeatInterval: number; lastHeartbeat: Date; authToken: string; verificationStatus: string; onboardingStatus: string; registrationData: JsonValue; onboardingProgress: number; isOnline: boolean; }'.
+
+[7m159[0m       capabilities: registration?.capabilities.map((c) => ({
+[7m   [0m [91m                                  ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m166[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'metadata' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m166[0m       metadata: entry.metadata,
+[7m   [0m [91m                      ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m178[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'featured' does not exist in type 'AgentDirectoryEntryWhereInput'.
+
+[7m178[0m         featured: true,
+[7m   [0m [91m        ~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m44939[0m:[93m5[0m
+    [7m44939[0m     where?: AgentDirectoryEntryWhereInput
+    [7m     [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: AgentDirectoryEntrySelect<DefaultArgs>; omit?: AgentDirectoryEntryOmit<DefaultArgs>; ... 6 more ...; distinct?: AgentDirectoryEntryScalarFieldEnum | AgentDirectoryEntryScalarFieldEnum[]; }'
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m189[0m:[93m11[0m - [91merror[0m[90m TS2322: [0mType '{ agentId: string; }' is not assignable to type 'AgentRegistrationWhereUniqueInput'.
+  Type '{ agentId: string; }' is not assignable to type '{ id: string; authToken: string; } & { id?: string; authToken?: string; AND?: AgentRegistrationWhereInput | AgentRegistrationWhereInput[]; ... 15 more ...; onboardingEvents?: AgentOnboardingEventListRelationFilter; }'.
+    Type '{ agentId: string; }' is missing the following properties from type '{ id: string; authToken: string; }': id, authToken
+
+[7m189[0m           where: { agentId: entry.agentId },
+[7m   [0m [91m          ~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
+    [7m41361[0m     where: AgentRegistrationWhereUniqueInput
+    [7m     [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m190[0m:[93m47[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'isActive' does not exist in type 'AgentCapabilityRegistryWhereInput'.
+
+[7m190[0m           include: { capabilities: { where: { isActive: true } } },
+[7m   [0m [91m                                              ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m203[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'lastActiveAt' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m203[0m           lastActiveAt: entry.lastActiveAt,
+[7m   [0m [91m                              ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m204[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'featured' does not exist on type '{ description: string; tags: string[]; id: string; createdAt: Date; updatedAt: Date; displayName: string; agentId: string; category: string; isPublic: boolean; usageCount: number; rating: number; isVerified: boolean; searchableData: string; }'.
+
+[7m204[0m           featured: entry.featured,
+[7m   [0m [91m                          ~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m205[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'capabilities' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; metadata: JsonValue; agentId: string; heartbeatInterval: number; lastHeartbeat: Date; authToken: string; verificationStatus: string; onboardingStatus: string; registrationData: JsonValue; onboardingProgress: number; isOnline: boolean; }'.
+
+[7m205[0m           capabilities: registration?.capabilities.map((c) => c.capabilityName) || [],
+[7m   [0m [91m                                      ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m229[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'lastActiveAt' does not exist in type '(Without<AgentDirectoryEntryUpdateInput, AgentDirectoryEntryUncheckedUpdateInput> & AgentDirectoryEntryUncheckedUpdateInput) | (Without<...> & AgentDirectoryEntryUpdateInput)'.
+
+[7m229[0m         lastActiveAt: new Date(),
+[7m   [0m [91m        ~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m45042[0m:[93m5[0m
+    [7m45042[0m     data: XOR<AgentDirectoryEntryUpdateInput, AgentDirectoryEntryUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: AgentDirectoryEntrySelect<DefaultArgs>; omit?: AgentDirectoryEntryOmit<DefaultArgs>; include?: AgentDirectoryEntryInclude<...>; data: (Without<...> & AgentDirectoryEntryUncheckedUpdateInput) | (Without<...> & AgentDirectoryEntryUpdateInput); where: AgentDirectoryEntryWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m238[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'DrizzleService'.
+
+[7m238[0m     await this.drizzle.agentMetrics.create({
+[7m   [0m [91m                      ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m270[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'DrizzleService'.
+
+[7m270[0m     const metrics = await this.drizzle.agentMetrics.findMany({
+[7m   [0m [91m                                      ~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m35[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onboardingStep' does not exist in type '(Without<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput)'.
+
+[7m35[0m         onboardingStep: 'welcome',
+[7m  [0m [91m        ~~~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
+    [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m87[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'verifiedAt' does not exist in type '(Without<AgentCapabilityRegistryUpdateInput, AgentCapabilityRegistryUncheckedUpdateInput> & AgentCapabilityRegistryUncheckedUpdateInput) | (Without<...> & AgentCapabilityRegistryUpdateInput)'.
+
+[7m87[0m           verifiedAt: testResult.passed ? new Date() : null,
+[7m  [0m [91m          ~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m42779[0m:[93m5[0m
+    [7m42779[0m     data: XOR<AgentCapabilityRegistryUpdateInput, AgentCapabilityRegistryUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: AgentCapabilityRegistrySelect<DefaultArgs>; omit?: AgentCapabilityRegistryOmit<DefaultArgs>; include?: AgentCapabilityRegistryInclude<...>; data: (Without<...> & AgentCapabilityRegistryUncheckedUpdateInput) | (Without<...> & AgentCapabilityRegistryUpdateInput); where: AgentCapabilityRegistryWhereUniqueInp...'
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m107[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onboardingStep' does not exist in type '(Without<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput)'.
+
+[7m107[0m         onboardingStep: 'capabilities_verified',
+[7m   [0m [91m        ~~~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
+    [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m163[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onboardingStep' does not exist in type '(Without<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput)'.
+
+[7m163[0m         onboardingStep: stepId,
+[7m   [0m [91m        ~~~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
+    [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs>; omit?: AgentRegistrationOmit<DefaultArgs>; include?: AgentRegistrationInclude<...>; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: AgentRegistrationWhereUniqueInput; }'
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m227[0m:[93m33[0m - [91merror[0m[90m TS2339: [0mProperty 'onboardingStep' does not exist on type '{ agent: { name: string; type: AgentType; description: string; capabilities: AgentCapability[]; systemPrompt: string; userId: string; status: AgentStatus; ... 5 more ...; deletedAt: Date; }; capabilities: { ...; }[]; onboardingEvents: { ...; }[]; } & { ...; }'.
+
+[7m227[0m       currentStep: registration.onboardingStep,
+[7m   [0m [91m                                ~~~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m231[0m:[93m42[0m - [91merror[0m[90m TS2339: [0mProperty 'orientationCompleted' does not exist on type '{ agent: { name: string; type: AgentType; description: string; capabilities: AgentCapability[]; systemPrompt: string; userId: string; status: AgentStatus; ... 5 more ...; deletedAt: Date; }; capabilities: { ...; }[]; onboardingEvents: { ...; }[]; } & { ...; }'.
+
+[7m231[0m       orientationCompleted: registration.orientationCompleted,
+[7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/agent-registry/services/agent-registration.service.ts[0m:[93m32[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'status' does not exist in type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; userId: string; }'.
+
+[7m32[0m         status: 'INITIALIZING',
+[7m  [0m [91m        ~~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m17[0m:[93m28[0m - [91merror[0m[90m TS2339: [0mProperty 'config' does not exist on type 'Agent'.
+
+[7m17[0m       configuration: agent.config as any,
+[7m  [0m [91m                           ~~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m37[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'description' does not exist in type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; userId: string; }'.
+
+[7m37[0m         description: data.description,
+[7m  [0m [91m        ~~~~~~~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m47[0m:[93m34[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m47[0m       return this.transformAgent(agent);
+[7m  [0m [91m                                 ~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m63[0m:[93m49[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m63[0m         data: data.map(a => this.transformAgent(a)),
+[7m  [0m [91m                                                ~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m85[0m:[93m32[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m85[0m     return this.transformAgent(agent);
+[7m  [0m [91m                               ~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m109[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'updatedAt' does not exist in type 'Partial<{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; userId: string; }>'.
+
+[7m109[0m         updatedAt: new Date()
+[7m   [0m [91m        ~~~~~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m117[0m:[93m34[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m117[0m       return this.transformAgent(agent);
+[7m   [0m [91m                                 ~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m146[0m:[93m50[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m146[0m       return agents.map(a => this.transformAgent(a));
+[7m   [0m [91m                                                 ~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m157[0m:[93m50[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m157[0m       return agents.map(a => this.transformAgent(a));
+[7m   [0m [91m                                                 ~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m173[0m:[93m34[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m173[0m       return this.transformAgent(agent);
+[7m   [0m [91m                                 ~~~~~[0m
+[96msrc/modules/agent/agent.service.ts[0m:[93m201[0m:[93m50[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m201[0m       return agents.map(a => this.transformAgent(a));
+[7m   [0m [91m                                                 ~[0m
+[96msrc/modules/chat-rooms/chat-rooms.gateway.ts[0m:[93m455[0m:[93m11[0m - [91merror[0m[90m TS2322: [0mType '{ title: string; description: string; assignedTo?: string; dueDate?: string; }' is not assignable to type '{ assignedTo: string; dueDate?: string; priority?: string; }'.
+  Property 'assignedTo' is optional in type '{ title: string; description: string; assignedTo?: string; dueDate?: string; }' but required in type '{ assignedTo: string; dueDate?: string; priority?: string; }'.
+
+[7m455[0m           taskAssignment: taskData,
+[7m   [0m [91m          ~~~~~~~~~~~~~~[0m
+
+  [96msrc/modules/chat-rooms/dto/chat-room.dto.ts[0m:[93m185[0m:[93m3[0m
+    [7m185[0m   taskAssignment?: {
+    [7m   [0m [96m  ~~~~~~~~~~~~~~[0m
+    The expected type comes from property 'taskAssignment' which is declared here on type 'CreateMessageDto'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m45[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'topic' does not exist in type '(Without<ChatRoomCreateInput, ChatRoomUncheckedCreateInput> & ChatRoomUncheckedCreateInput) | (Without<...> & ChatRoomCreateInput)'.
+
+[7m45[0m             topic: createDto.topic,
+[7m  [0m [91m            ~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m15356[0m:[93m5[0m
+    [7m15356[0m     data: XOR<ChatRoomCreateInput, ChatRoomUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ChatRoomSelect<DefaultArgs>; omit?: ChatRoomOmit<DefaultArgs>; include?: ChatRoomInclude<DefaultArgs>; data: (Without<...> & ChatRoomUncheckedCreateInput) | (Without<...> & ChatRoomCreateInput); }'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m61[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, LogLevel, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+
+[7m61[0m         await tx.chatRoomParticipant.create({
+[7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m73[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, LogLevel, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+
+[7m73[0m               tx.chatRoomParticipant
+[7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m92[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, LogLevel, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+
+[7m92[0m               tx.chatRoomParticipant
+[7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m124[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomCountOutputTypeSelect<DefaultArgs>'.
+
+[7m124[0m             participants: true,
+[7m   [0m [91m            ~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m145[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomWhereInput'.
+
+[7m145[0m         participants: {
+[7m   [0m [91m        ~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m15309[0m:[93m5[0m
+    [7m15309[0m     where?: ChatRoomWhereInput
+    [7m     [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: ChatRoomSelect<DefaultArgs>; omit?: ChatRoomOmit<DefaultArgs>; include?: ChatRoomInclude<DefaultArgs>; ... 5 more ...; distinct?: ChatRoomScalarFieldEnum | ChatRoomScalarFieldEnum[]; }'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m155[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomCountOutputTypeSelect<DefaultArgs>'.
+
+[7m155[0m             participants: true,
+[7m   [0m [91m            ~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m214[0m:[93m21[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomCountOutputTypeSelect<DefaultArgs>'.
+
+[7m214[0m           select: { participants: true },
+[7m   [0m [91m                    ~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m223[0m:[93m14[0m - [91merror[0m[90m TS2339: [0mProperty '_count' does not exist on type '{ name: string; description: string; settings: JsonValue; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; isActive: boolean; metadata: JsonValue; isPrivate: boolean; lastMessageAt: Date; ownerId: string; }'.
+
+[7m223[0m     if (room._count.participants >= room.maxParticipants) {
+[7m   [0m [91m             ~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m223[0m:[93m42[0m - [91merror[0m[90m TS2339: [0mProperty 'maxParticipants' does not exist on type '{ name: string; description: string; settings: JsonValue; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; isActive: boolean; metadata: JsonValue; isPrivate: boolean; lastMessageAt: Date; ownerId: string; }'.
+
+[7m223[0m     if (room._count.participants >= room.maxParticipants) {
+[7m   [0m [91m                                         ~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m227[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m227[0m     const participant = await this.drizzle.chatRoomParticipant.create({
+[7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m248[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m248[0m     await this.drizzle.chatRoomParticipant.update({
+[7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m259[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m259[0m     const participants = await this.drizzle.chatRoomParticipant.findMany({
+[7m   [0m [91m                                           ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m280[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m280[0m     const participant = await this.drizzle.chatRoomParticipant.update({
+[7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m306[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'type' does not exist in type '(Without<MessageCreateInput, MessageUncheckedCreateInput> & MessageUncheckedCreateInput) | (Without<...> & MessageCreateInput)'.
+
+[7m306[0m           type: createDto.type,
+[7m   [0m [91m          ~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m16633[0m:[93m5[0m
+    [7m16633[0m     data: XOR<MessageCreateInput, MessageUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: MessageSelect<DefaultArgs>; omit?: MessageOmit<DefaultArgs>; include?: MessageInclude<DefaultArgs>; data: (Without<...> & MessageUncheckedCreateInput) | (Without<...> & MessageCreateInput); }'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m357[0m:[93m15[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'readReceipts' does not exist in type 'MessageCountOutputTypeSelect<DefaultArgs>'.
+
+[7m357[0m               readReceipts: true,
+[7m   [0m [91m              ~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m435[0m:[93m15[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'isPinned' does not exist in type '(Without<MessageUpdateInput, MessageUncheckedUpdateInput> & MessageUncheckedUpdateInput) | (Without<...> & MessageUpdateInput)'.
+
+[7m435[0m       data: { isPinned: true },
+[7m   [0m [91m              ~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m16689[0m:[93m5[0m
+    [7m16689[0m     data: XOR<MessageUpdateInput, MessageUncheckedUpdateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: MessageSelect<DefaultArgs>; omit?: MessageOmit<DefaultArgs>; include?: MessageInclude<DefaultArgs>; data: (Without<...> & MessageUncheckedUpdateInput) | (Without<...> & MessageUpdateInput); where: MessageWhereUniqueInput; }'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m447[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m447[0m     await this.drizzle.chatRoomParticipant.updateMany({
+[7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m466[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'readReceipt' does not exist on type 'DrizzleService'.
+
+[7m466[0m     await this.drizzle.readReceipt.upsert({
+[7m   [0m [91m                      ~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m483[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m483[0m     await this.drizzle.chatRoomParticipant.updateMany({
+[7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m567[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomInclude<DefaultArgs>'.
+
+[7m567[0m         participants: true,
+[7m   [0m [91m        ~~~~~~~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m15157[0m:[93m5[0m
+    [7m15157[0m     include?: ChatRoomInclude<ExtArgs> | null
+    [7m     [0m [96m    ~~~~~~~[0m
+    The expected type comes from property 'include' which is declared here on type '{ select?: ChatRoomSelect<DefaultArgs>; omit?: ChatRoomOmit<DefaultArgs>; include?: ChatRoomInclude<DefaultArgs>; where: ChatRoomWhereUniqueInput; }'
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m586[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'messages' does not exist on type '{ name: string; description: string; settings: JsonValue; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; isActive: boolean; metadata: JsonValue; isPrivate: boolean; lastMessageAt: Date; ownerId: string; }'.
+
+[7m586[0m           messages: room.messages.map((msg) => ({
+[7m   [0m [91m                         ~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m595[0m:[93m30[0m - [91merror[0m[90m TS2339: [0mProperty 'participants' does not exist on type '{ name: string; description: string; settings: JsonValue; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; isActive: boolean; metadata: JsonValue; isPrivate: boolean; lastMessageAt: Date; ownerId: string; }'.
+
+[7m595[0m           participants: room.participants.map((p) => ({
+[7m   [0m [91m                             ~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m606[0m:[93m14[0m - [91merror[0m[90m TS2339: [0mProperty 'messages' does not exist on type '{ name: string; description: string; settings: JsonValue; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; isActive: boolean; metadata: JsonValue; isPrivate: boolean; lastMessageAt: Date; ownerId: string; }'.
+
+[7m606[0m         room.messages.forEach((msg) => {
+[7m   [0m [91m             ~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m674[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m674[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
+[7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m688[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m688[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
+[7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m705[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
+
+[7m705[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
+[7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m42[0m:[93m65[0m - [91merror[0m[90m TS2551: [0mProperty 'getRegistrationsByUser' does not exist on type 'AgentRegistrationService'. Did you mean 'getRegistration'?
+
+[7m42[0m       const registrations = await this.agentRegistrationService.getRegistrationsByUser(user.id);
+[7m  [0m [91m                                                                ~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  [96msrc/modules/agent-registry/services/agent-registration.service.ts[0m:[93m151[0m:[93m9[0m
+    [7m151[0m   async getRegistration(registrationId: string) {
+    [7m   [0m [96m        ~~~~~~~~~~~~~~~[0m
+    'getRegistration' is declared here.
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m90[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'type' does not exist in type 'RegisterAgentDto'.
+
+[7m90[0m           type: createAgentDto.type,
+[7m  [0m [91m          ~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m105[0m:[93m40[0m - [91merror[0m[90m TS2339: [0mProperty 'createDirectoryEntry' does not exist on type 'AgentDirectoryService'.
+
+[7m105[0m       await this.agentDirectoryService.createDirectoryEntry({
+[7m   [0m [91m                                       ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m121[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType '"INITIALIZING"' is not assignable to type 'AgentStatus'.
+
+[7m121[0m         status: 'INITIALIZING',
+[7m   [0m [91m        ~~~~~~[0m
+
+  [96msrc/modules/dashboard/dto/agent.dto.ts[0m:[93m147[0m:[93m3[0m
+    [7m147[0m   status: AgentStatus;
+    [7m   [0m [96m  ~~~~~~[0m
+    The expected type comes from property 'status' which is declared here on type 'AgentResponseDto'
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m124[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType 'string[]' is not assignable to type '{ name: string; type: string; version: string; description: string; }[]'.
+  Type 'string' is not assignable to type '{ name: string; type: string; version: string; description: string; }'.
+
+[7m124[0m         capabilities: createAgentDto.capabilities || [],
+[7m   [0m [91m        ~~~~~~~~~~~~[0m
+
+  [96msrc/modules/dashboard/dto/agent.dto.ts[0m:[93m173[0m:[93m3[0m
+    [7m173[0m   capabilities: Array<{
+    [7m   [0m [96m  ~~~~~~~~~~~~[0m
+    The expected type comes from property 'capabilities' which is declared here on type 'AgentResponseDto'
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m152[0m:[93m64[0m - [91merror[0m[90m TS2339: [0mProperty 'getRegistrationByAgentId' does not exist on type 'AgentRegistrationService'.
+
+[7m152[0m       const registration = await this.agentRegistrationService.getRegistrationByAgentId(id);
+[7m   [0m [91m                                                               ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m200[0m:[93m64[0m - [91merror[0m[90m TS2339: [0mProperty 'getRegistrationByAgentId' does not exist on type 'AgentRegistrationService'.
+
+[7m200[0m       const registration = await this.agentRegistrationService.getRegistrationByAgentId(id);
+[7m   [0m [91m                                                               ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m207[0m:[93m64[0m - [91merror[0m[90m TS2339: [0mProperty 'updateAgent' does not exist on type 'AgentRegistrationService'.
+
+[7m207[0m       const updatedAgent = await this.agentRegistrationService.updateAgent(id, updateAgentDto);
+[7m   [0m [91m                                                               ~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m210[0m:[93m40[0m - [91merror[0m[90m TS2339: [0mProperty 'updateDirectoryEntry' does not exist on type 'AgentDirectoryService'.
+
+[7m210[0m       await this.agentDirectoryService.updateDirectoryEntry(id, {
+[7m   [0m [91m                                       ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m255[0m:[93m64[0m - [91merror[0m[90m TS2339: [0mProperty 'getRegistrationByAgentId' does not exist on type 'AgentRegistrationService'.
+
+[7m255[0m       const registration = await this.agentRegistrationService.getRegistrationByAgentId(id);
+[7m   [0m [91m                                                               ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m264[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'startAgent' does not exist on type 'AgentRegistrationService'.
+
+[7m264[0m           result = await this.agentRegistrationService.startAgent(id);
+[7m   [0m [91m                                                       ~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m267[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'stopAgent' does not exist on type 'AgentRegistrationService'.
+
+[7m267[0m           result = await this.agentRegistrationService.stopAgent(id);
+[7m   [0m [91m                                                       ~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m270[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'pauseAgent' does not exist on type 'AgentRegistrationService'.
+
+[7m270[0m           result = await this.agentRegistrationService.pauseAgent(id);
+[7m   [0m [91m                                                       ~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m273[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'deleteAgent' does not exist on type 'AgentRegistrationService'.
+
+[7m273[0m           result = await this.agentRegistrationService.deleteAgent(id);
+[7m   [0m [91m                                                       ~~~~~~~~~~~[0m
+[96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m333[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'preferences' does not exist in type 'Partial<{ email: string; hashedPassword: string; }>'.
+
+[7m333[0m         preferences: settingsData.preferences,
+[7m   [0m [91m        ~~~~~~~~~~~[0m
+[96msrc/modules/mass/mass-orchestration.service.ts[0m:[93m200[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'description' does not exist in type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; userId: string; }'.
+
+[7m200[0m       description: `${sourceAgent.description || ''} - Optimized using MASS framework`,
+[7m   [0m [91m      ~~~~~~~~~~~[0m
+[96msrc/modules/mass/mass-orchestration.service.ts[0m:[93m274[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'status' does not exist in type '{ type: string; config: unknown; targetId: string; }'.
+
+[7m274[0m       status: 'pending',
+[7m   [0m [91m      ~~~~~~[0m
+[96msrc/modules/mass/mass-orchestration.service.ts[0m:[93m302[0m:[93m53[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'results' does not exist in type 'Partial<{ type: string; config: unknown; targetId: string; }>'.
+
+[7m302[0m     await optimizationJobRepository.update(jobId, { results });
+[7m   [0m [91m                                                    ~~~~~~~[0m
+[96msrc/modules/mass/mass.controller.ts[0m:[93m130[0m:[93m7[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string[]' is not assignable to parameter of type 'string'.
+
+[7m130[0m       request.agentIds,
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/mass/mass.controller.ts[0m:[93m150[0m:[93m32[0m - [91merror[0m[90m TS2554: [0mExpected 4 arguments, but got 3.
+
+[7m150[0m     return this.reflectService.execute(
+[7m   [0m [91m                               ~~~~~~~[0m
+
+  [96msrc/modules/mass/building-blocks/reflect.service.ts[0m:[93m16[0m:[93m5[0m
+    [7m16[0m     config: {
+    [7m  [0m [96m    ~~~~~~~~~[0m
+    [7m17[0m       maxRounds?: number;
+    [7m  [0m [96m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m18[0m       userId?: string;
+    [7m  [0m [96m~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m19[0m     }
+    [7m  [0m [96m~~~~~[0m
+    An argument for 'config' was not provided.
+[96msrc/modules/mass/prompt-optimizer.service.ts[0m:[93m516[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'exemplars' does not exist in type '{ agentId: string; versionNumber: number; instruction: string; }'.
+
+[7m516[0m         exemplars: prompt.exemplars as any, // Cast for jsonb compatibility
+[7m   [0m [91m        ~~~~~~~~~[0m
+[96msrc/modules/mass/topology-optimizer.service.ts[0m:[93m477[0m:[93m5[0m - [91merror[0m[90m TS2740: [0mType 'Promise<WorkflowTopology>' is missing the following properties from type 'WorkflowTopology': id, name, nodes, edges, and 4 more.
+
+[7m477[0m     return this.generateTopologyByPattern(randomPattern, selectedAgents, influenceScores, config);
+[7m   [0m [91m    ~~~~~~[0m
+[96msrc/modules/mass/topology-optimizer.service.ts[0m:[93m542[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'description' does not exist in type '{ name: string; nodes: unknown; edges: unknown; }'.
+
+[7m542[0m         description: topology.description,
+[7m   [0m [91m        ~~~~~~~~~~~[0m
+[96msrc/modules/mass/workflow-prompt-optimizer.service.ts[0m:[93m385[0m:[93m11[0m - [91merror[0m[90m TS2554: [0mExpected 3 arguments, but got 4.
+
+[7m385[0m           config
+[7m   [0m [91m          ~~~~~~[0m
+[96msrc/modules/mass/workflow-prompt-optimizer.service.ts[0m:[93m414[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'exemplars' does not exist in type '{ agentId: string; versionNumber: number; instruction: string; }'.
+
+[7m414[0m         exemplars: prompt.exemplars || [],
+[7m   [0m [91m        ~~~~~~~~~[0m
+[96msrc/modules/mass/workflow-prompt-optimizer.service.ts[0m:[93m476[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'performanceMetrics' does not exist in type 'Partial<{ name: string; nodes: unknown; edges: unknown; }>'.
+
+[7m476[0m         performanceMetrics: {
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m3[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/broker' or its corresponding type declarations.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/broker/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+
+[7m3[0m import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m4[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/client' or its corresponding type declarations.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/client/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+
+[7m4[0m import { MCPClient } from '@the-new-fuse/mcp-core/client';
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/orchestrator/AgentLifecycleManager.ts[0m:[93m5[0m:[93m44[0m - [91merror[0m[90m TS2307: [0mCannot find module '../orchestrator.service' or its corresponding type declarations.
+
+[7m5[0m import { HeartbeatMonitoringService } from '../orchestrator.service';
+[7m [0m [91m                                           ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/system-metrics/system-metrics.service.ts[0m:[93m20[0m:[93m45[0m - [91merror[0m[90m TS2367: [0mThis comparison appears to be unintentional because the types '"healthy"' and '"unhealthy"' have no overlap.
+
+[7m20[0m     const hasUnhealthy = services.some(s => s.status === 'unhealthy');
+[7m  [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/system-metrics/system-metrics.service.ts[0m:[93m21[0m:[93m44[0m - [91merror[0m[90m TS2367: [0mThis comparison appears to be unintentional because the types '"healthy"' and '"degraded"' have no overlap.
+
+[7m21[0m     const hasDegraded = services.some(s => s.status === 'degraded');
+[7m  [0m [91m                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/notifications/notification.service.ts[0m:[93m20[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
+
+[7m20[0m     await this.drizzle.notification.create({
+[7m  [0m [91m                      ~~~~~~~~~~~~[0m
+[96msrc/notifications/notification.service.ts[0m:[93m34[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
+
+[7m34[0m     return this.drizzle.notification.findMany({
+[7m  [0m [91m                       ~~~~~~~~~~~~[0m
+[96msrc/notifications/notification.service.ts[0m:[93m42[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
+
+[7m42[0m     return this.drizzle.notification.update({
+[7m  [0m [91m                       ~~~~~~~~~~~~[0m
+[96msrc/profile/profile.service.ts[0m:[93m16[0m:[93m42[0m - [91merror[0m[90m TS2339: [0mProperty 'findOne' does not exist on type 'UsersService'.
+
+[7m16[0m     const user = await this.usersService.findOne(userId);
+[7m  [0m [91m                                         ~~~~~~~[0m
+[96msrc/profile/profile.service.ts[0m:[93m22[0m:[93m33[0m - [91merror[0m[90m TS2554: [0mExpected 2-3 arguments, but got 1.
+
+[7m22[0m     await this.eventBus.publish(new ProfileUpdatedEvent(user));
+[7m  [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  [96msrc/profile/events/profile.events.ts[0m:[93m4[0m:[93m5[0m
+    [7m4[0m     public readonly updates: any,
+    [7m [0m [96m    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    An argument for 'updates' was not provided.
+[96msrc/profile/profile.service.ts[0m:[93m27[0m:[93m49[0m - [91merror[0m[90m TS2554: [0mExpected 2-3 arguments, but got 1.
+
+[7m27[0m     const avatarUrl = await this.storageService.uploadFile(file);
+[7m  [0m [91m                                                ~~~~~~~~~~[0m
+
+  [96msrc/services/storage.service.ts[0m:[93m27[0m:[93m5[0m
+    [7m27[0m     filename: string,
+    [7m  [0m [96m    ~~~~~~~~~~~~~~~~[0m
+    An argument for 'filename' was not provided.
+[96msrc/routes/agent.ts[0m:[93m10[0m:[93m39[0m - [91merror[0m[90m TS2554: [0mExpected 0 arguments, but got 2.
+
+[7m10[0m const agentService = new AgentService(drizzleService, configService);
+[7m  [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/routes/workspaceRoutes.ts[0m:[93m81[0m:[93m29[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
+
+[7m81[0m               id: req.user?.id || 'dev-user',
+[7m  [0m [91m                            ~~[0m
+[96msrc/routes/workspaceRoutes.ts[0m:[93m82[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'name' does not exist on type 'User'.
+
+[7m82[0m               name: req.user?.name || 'Dev User',
+[7m  [0m [91m                              ~~~~[0m
+[96msrc/routes/workspaceRoutes.ts[0m:[93m83[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'email' does not exist on type 'User'.
+
+[7m83[0m               email: req.user?.email || 'dev@local',
+[7m  [0m [91m                               ~~~~~[0m
+[96msrc/routing/CostOptimizedRouter.ts[0m:[93m211[0m:[93m75[0m - [91merror[0m[90m TS2345: [0mArgument of type 'unknown' is not assignable to parameter of type 'number'.
+
+[7m211[0m       score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget)
+[7m   [0m [91m                                                                          ~~~~~~[0m
+[96msrc/services/agent-nft.service.ts[0m:[93m370[0m:[93m24[0m - [91merror[0m[90m TS2322: [0mType '"ACTIVE"' is not assignable to type 'EnumOfferStatusFilter<"MarketplaceOffer"> | OfferStatus'.
+
+[7m370[0m               where: { status: 'ACTIVE' }
+[7m   [0m [91m                       ~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m62579[0m:[93m5[0m
+    [7m62579[0m     status?: EnumOfferStatusFilter<"MarketplaceOffer"> | $Enums.OfferStatus
+    [7m     [0m [96m    ~~~~~~[0m
+    The expected type comes from property 'status' which is declared here on type 'MarketplaceOfferWhereInput'
+[96msrc/services/agent-nft.service.ts[0m:[93m413[0m:[93m20[0m - [91merror[0m[90m TS2322: [0mType '"ACTIVE"' is not assignable to type 'EnumOfferStatusFilter<"MarketplaceOffer"> | OfferStatus'.
+
+[7m413[0m           where: { status: 'ACTIVE' }
+[7m   [0m [91m                   ~~~~~~[0m
+
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m62579[0m:[93m5[0m
+    [7m62579[0m     status?: EnumOfferStatusFilter<"MarketplaceOffer"> | $Enums.OfferStatus
+    [7m     [0m [96m    ~~~~~~[0m
+    The expected type comes from property 'status' which is declared here on type 'MarketplaceOfferWhereInput'
+[96msrc/services/agent/agent-coordinator.ts[0m:[93m4[0m:[93m32[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/feature-tracker' or its corresponding type declarations.
+
+[7m4[0m import { FeatureTracker } from '@the-new-fuse/feature-tracker';
+[7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m21[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m21[0m     return await drizzleAgentRepository.create(agentData);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m25[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }[]' is not assignable to type 'Agent[]'.
+  Type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+    Types of property 'type' are incompatible.
+      Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+        Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m25[0m     return await drizzleAgentRepository.findByUserId(userId);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m31[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m31[0m       return agent;
+[7m  [0m [91m      ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m41[0m:[93m26[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to parameter of type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m41[0m       createdAgents.push(createdAgent);
+[7m  [0m [91m                         ~~~~~~~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m51[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m51[0m     return await drizzleAgentRepository.updateStatus(id, status);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m55[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }[]' is not assignable to type 'Agent[]'.
+  Type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+    Types of property 'type' are incompatible.
+      Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+        Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m55[0m     return await drizzleAgentRepository.findByStatusAndUserId('ACTIVE', userId);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m59[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }[]' is not assignable to type 'Agent[]'.
+  Type '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+    Types of property 'type' are incompatible.
+      Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+        Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m59[0m     return await drizzleAgentRepository.findByCapability(capability, userId);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/agentService.ts[0m:[93m67[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ name: string; type: "BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | ... 85 more ... | "TNF_CLEANUP"; ... 10 more ...; deletedAt: Date; }' is not assignable to type 'Agent'.
+  Types of property 'type' are incompatible.
+    Type '"BASIC" | "CHAT" | "WORKFLOW" | "TASK" | "ASSISTANT" | "ANALYSIS" | "CONVERSATIONAL" | "IDE_EXTENSION" | "API" | "ORCHESTRATOR" | "BROKER" | "MONITOR" | "VALIDATOR" | "ROUTER" | ... 84 more ... | "TNF_CLEANUP"' is not assignable to type 'AgentType'.
+      Type '"BASIC"' is not assignable to type 'AgentType'.
+
+[7m67[0m     return await drizzleAgentRepository.update(id, data);
+[7m  [0m [91m    ~~~~~~[0m
+[96msrc/services/authService.ts[0m:[93m47[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'name' does not exist in type '{ email: string; hashedPassword: string; }'.
+
+[7m47[0m       name: data.name,
+[7m  [0m [91m      ~~~~[0m
+[96msrc/services/blockchain-util.service.ts[0m:[93m319[0m:[93m19[0m - [91merror[0m[90m TS2365: [0mOperator '>' cannot be applied to types '() => Promise<number>' and 'number'.
+
+[7m319[0m           status: tx.confirmations > 0 ? 'confirmed' : 'pending'
+[7m   [0m [91m                  ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/services/chatService.ts[0m:[93m21[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'MessageRole' is not assignable to type '"ASSISTANT" | "USER" | "SYSTEM" | "AGENT" | "TOOL"'.
+
+[7m21[0m       role,
+[7m  [0m [91m      ~~~~[0m
+
+  [96m../../node_modules/drizzle-orm/utils.d.ts[0m:[93m11[0m:[93m27[0m
+    [7m11[0m export type Simplify<T> = {
+    [7m  [0m [96m                          ~[0m
+    [7m12[0m     [K in keyof T]: T[K];
+    [7m  [0m [96m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m13[0m } & {};
+    [7m  [0m [96m~[0m
+    The expected type comes from property 'role' which is declared here on type '{ userId: string; content: string; role: "ASSISTANT" | "USER" | "SYSTEM" | "AGENT" | "TOOL"; }'
+[96msrc/services/production-blockchain.service.ts[0m:[93m129[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'smartAccountAddress' does not exist in type '{ contractAddress: string; agentId: string; tokenId: number; }'.
+
+[7m129[0m           smartAccountAddress: request.smartAccountAddress,
+[7m   [0m [91m          ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/services/production-blockchain.service.ts[0m:[93m293[0m:[93m50[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'metadataUri' does not exist in type 'Partial<{ contractAddress: string; agentId: string; tokenId: number; }>'.
+
+[7m293[0m       await agentNftRepository.update(agentId, { metadataUri: newMetadataUri });
+[7m   [0m [91m                                                 ~~~~~~~~~~~[0m
+[96m../../node_modules/ox/core/Errors.ts[0m:[93m27[0m:[93m12[0m - [91merror[0m[90m TS4113: [0mThis member cannot have an 'override' modifier because it is not declared in the base class 'Error'.
+
+[7m27[0m   override cause: cause
+[7m  [0m [91m           ~~~~~[0m
+[96m../../node_modules/ox/core/Errors.ts[0m:[93m89[0m:[93m20[0m - [91merror[0m[90m TS2554: [0mExpected 0-1 arguments, but got 2.
+
+[7m89[0m     super(message, options.cause ? { cause: options.cause } : undefined)
+[7m  [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96m../../node_modules/ox/core/Secp256k1.ts[0m:[93m391[0m:[93m63[0m - [91merror[0m[90m TS2322: [0mType '{ r: bigint; s: bigint; yParity: number; } | { r: bigint; s: bigint; yParity?: number; }' is not assignable to type '{ r: bigint; s: bigint; yParity: number; }'.
+  Type '{ r: bigint; s: bigint; yParity?: number; }' is not assignable to type '{ r: bigint; s: bigint; yParity: number; }'.
+    Property 'yParity' is optional in type '{ r: bigint; s: bigint; yParity?: number; }' but required in type '{ r: bigint; s: bigint; yParity: number; }'.
+
+[7m391[0m     return Address.isEqual(address, recoverAddress({ payload, signature }))
+[7m   [0m [91m                                                              ~~~~~~~~~[0m
+
+  [96m../../node_modules/ox/core/Secp256k1.ts[0m:[93m228[0m:[93m5[0m
+    [7m228[0m     signature: Signature.Signature
+    [7m   [0m [96m    ~~~~~~~~~[0m
+    The expected type comes from property 'signature' which is declared here on type 'Options'
+[96m../../node_modules/ox/core/Signature.ts[0m:[93m288[0m:[93m40[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ r: bigint; s: bigint; yParity: number; v?: undefined; } | { r: bigint; s: bigint; yParity?: number; v?: undefined; } | { r: bigint; s: bigint; v: number; yParity?: undefined; }' is not assignable to parameter of type 'Legacy<bigint, number>'.
+  Type '{ r: bigint; s: bigint; yParity: number; v?: undefined; }' is not assignable to type 'Legacy<bigint, number>'.
+    Property 'v' is optional in type '{ r: bigint; s: bigint; yParity: number; v?: undefined; }' but required in type 'Legacy<bigint, number>'.
+
+[7m288[0m     if (signature.v) return fromLegacy(signature)
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+[96m../../node_modules/ox/tempo/SignatureEnvelope.ts[0m:[93m549[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'prehash' does not exist on type 'Secp256k1Flat<bigint, number> | UnionPartialBy<SignatureEnvelope<bigint, number>, "type" | "prehash">'.
+  Property 'prehash' does not exist on type 'Secp256k1Flat<bigint, number>'.
+
+[7m549[0m     ...(type === 'p256' ? { prehash: value.prehash } : {}),
+[7m   [0m [91m                                           ~~~~~~~[0m
+[96msrc/modules/relay/relay.controller.ts[0m:[93m115[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+
+[7m115[0m   async getAgent(@Param('id') id: string) {
+[7m   [0m [91m        ~~~~~~~~[0m
+[96msrc/modules/relay/relay.controller.ts[0m:[93m128[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+
+[7m128[0m   async registerAgent(@Body() dto: RegisterAgentDto) {
+[7m   [0m [91m        ~~~~~~~~~~~~~[0m
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m79[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+
+[7m79[0m   async handleAgentRegistration(
+[7m  [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+
+[7m231[0m   async handleStatusRequest() {
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'SystemStatus' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+
+[7m231[0m   async handleStatusRequest() {
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m
+
+Found 156 error(s).
+

@@ -1,8 +1,12 @@
 // Core types and interfaces
 export type * from './types.js';
 export {
+  A2AConnectionError,
+  A2AError,
   A2AMessageType,
   A2APriority,
+  A2ATimeoutError,
+  A2AValidationError,
   AgentStatus,
   AgentType,
   LoadBalancingStrategy,

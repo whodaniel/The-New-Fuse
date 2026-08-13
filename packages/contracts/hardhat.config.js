@@ -3,8 +3,13 @@ require('@nomicfoundation/hardhat-ethers');
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: '0.8.20',
+    // 0.8.24+ required by @openzeppelin/contracts@^5.4.0 (pragma ^0.8.24),
+    // and OZ Bytes.sol uses the Cancun-only `mcopy` opcode, so pin an solc
+    // with Cancun support and set evmVersion explicitly. Local contracts use
+    // caret pragmas (^0.8.19/^0.8.20) so they accept the newer compiler.
+    version: '0.8.28',
     settings: {
+      evmVersion: 'cancun',
       optimizer: {
         enabled: true,
         runs: 200,

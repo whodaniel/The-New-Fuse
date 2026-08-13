@@ -9,7 +9,6 @@
 import type { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { EventEmitter } from 'events';
-import crypto from 'crypto';
 import { Logger } from '../utils/Logger.js';
 import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService.js';
 import { BlockchainConfig, BlockchainService } from './shared/BlockchainService.js';
@@ -798,7 +797,7 @@ export class MasterAgentRegistry extends EventEmitter {
       throw new Error(`Agent not found in Master Registry: ${agentId}`);
     }
 
-    const todoId = `${agentId}_todo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+    const todoId = `${agentId}_todo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const todo: MasterAgentTodo = {
       id: todoId,
@@ -1569,7 +1568,7 @@ export class MasterAgentRegistry extends EventEmitter {
 
   private generateAgentId(type: string, platform: string): string {
     const timestamp = Date.now();
-    const random = crypto.randomBytes(3).toString('hex');
+    const random = Math.random().toString(36).substr(2, 6);
     return `${type.toLowerCase()}_${platform}_${timestamp}_${random}`;
   }
 
