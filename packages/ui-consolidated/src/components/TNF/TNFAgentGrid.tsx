@@ -1,7 +1,7 @@
 import React from 'react';
-import { Badge } from '../components/Badge/Badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card/Card';
-import { AGENT_EMOJIS, STATUS_COLORS, useTNFAgentStatus } from '../hooks/useTNFAgentStatus';
+import { AGENT_EMOJIS, STATUS_COLORS, useTNFAgentStatus } from '../../hooks/useTNFAgentStatus.js';
+import { Badge } from '../Badge/Badge.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../Card/Card.js';
 
 export const TNFAgentGrid: React.FC = () => {
   const { data, loading, error } = useTNFAgentStatus(5000);

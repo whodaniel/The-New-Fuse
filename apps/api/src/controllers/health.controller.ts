@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 
 /**
  * Health Controller
@@ -46,6 +47,7 @@ import { DatabaseService } from '@the-new-fuse/database';
  */
 @ApiTags('health')
 @Controller('health')
+@RequireAuthLevel(AuthLevel.PUBLIC)
 export class HealthController {
   /**
    * Constructor for HealthController

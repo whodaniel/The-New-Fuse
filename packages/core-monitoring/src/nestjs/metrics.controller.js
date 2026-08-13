@@ -1,29 +1,29 @@
-'use strict';
+"use strict";
 /**
  * NestJS Metrics Controller Template
  * Provides Prometheus metrics endpoint for NestJS applications
  */
-Object.defineProperty(exports, '__esModule', { value: true });
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.metricsControllerExample = exports.MetricsControllerTemplate = void 0;
 class MetricsControllerTemplate {
-  /**
-   * Prometheus metrics endpoint
-   */
-  static async metrics(metricsService) {
-    if (!metricsService) {
-      return '# No metrics available\n';
+    /**
+     * Prometheus metrics endpoint
+     */
+    static async metrics(metricsService) {
+        if (!metricsService) {
+            return '# No metrics available\n';
+        }
+        return metricsService.getMetrics();
     }
-    return metricsService.getMetrics();
-  }
-  /**
-   * Get content type for metrics
-   */
-  static getContentType(metricsService) {
-    if (!metricsService) {
-      return 'text/plain';
+    /**
+     * Get content type for metrics
+     */
+    static getContentType(metricsService) {
+        if (!metricsService) {
+            return 'text/plain';
+        }
+        return metricsService.getContentType();
     }
-    return metricsService.getContentType();
-  }
 }
 exports.MetricsControllerTemplate = MetricsControllerTemplate;
 /**

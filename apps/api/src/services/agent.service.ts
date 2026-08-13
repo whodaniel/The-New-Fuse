@@ -1,7 +1,7 @@
 /**
  * Agent Service - Updated for Drizzle ORM compatibility
  * Manages AI agent lifecycle and operations.
- * 
+ *
  * Note: This service integrates with the 'Agent Swarm' modules in apps/casin8-games/swarm
  * to provide agent crafting (strategy profiles) and nurturing (performance tracking)
  * scoped to the user's Workspace context.
@@ -291,6 +291,124 @@ export class AgentService {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Failed to fetch agent type counts: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Progressive disclosure: returns categories with sample agents.
+   * Public method that doesn't require user authentication.
+   */
+  async getAgentDirectory(
+    category?: string,
+    limit: number = 10
+  ): Promise<{
+    categories: Array<{ name: string; count: number; agents: any[] }>;
+    total: number;
+    tier: number;
+  }> {
+    try {
+      const allAgents: any[] = await (this.agentRepository as any).findAll();
+      const filtered = category
+        ? allAgents.filter((a: any) => {
+            const profile = (a.profile || {}) as any;
+            return profile.category === category || a.metadata?.category === category;
+          })
+        : allAgents;
+
+      const categoryMap = new Map<string, any[]>();
+      for (const agent of filtered) {
+        const profile = (agent.profile || {}) as any;
+        const agentCategory = profile.category || agent.metadata?.category || 'Uncategorized';
+        if (!categoryMap.has(agentCategory)) {
+          categoryMap.set(agentCategory, []);
+        }
+        categoryMap.get(agentCategory)!.push(agent);
+      }
+
+      const categories = Array.from(categoryMap.entries()).map(([name, agents]) => ({
+        name,
+        count: agents.length,
+        agents: agents.slice(0, limit).map((a: any) => this.mapAgentToResponse(a)),
+      }));
+
+      return {
+        categories,
+        total: filtered.length,
+        tier: 1,
+      };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent directory: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Public method to list available agent categories with counts.
+   */
+  async getAgentCategories(): Promise<{
+    categories: Array<{ name: string; count: number }>;
+    total: number;
+  }> {
+    try {
+      const allAgents: any[] = await (this.agentRepository as any).findAll();
+      const categoryCounts = new Map<string, number>();
+
+      for (const agent of allAgents) {
+        const profile = (agent.profile || {}) as any;
+        const category = profile.category || agent.metadata?.category || 'Uncategorized';
+        categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+      }
+
+      const categories = Array.from(categoryCounts.entries()).map(([name, count]) => ({
+        name,
+        count,
+      }));
+
+      return {
+        categories,
+        total: allAgents.length,
+      };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent categories: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Filter agents by semantic chain properties.
+   */
+  async getAgentsWithFilters(
+    userId: string,
+    filters: {
+      category?: string;
+      domain?: string;
+      visibility?: string;
+      dacc_role?: string;
+    },
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<{ data: AgentResponseDto[]; total: number }> {
+    try {
+      const allAgents: any[] = await (this.agentRepository as any).findByUserId(userId);
+      const filtered = allAgents.filter((agent: any) => {
+        const profile = (agent.profile || {}) as any;
+        if (filters.category && profile.category !== filters.category) return false;
+        if (filters.domain && profile.domain !== filters.domain) return false;
+        if (filters.visibility && profile.visibility !== filters.visibility) return false;
+        if (filters.dacc_role && profile.dacc_role !== filters.dacc_role) return false;
+        return true;
+      });
+
+      const paginated = filtered.slice(offset, offset + limit);
+      const enriched = await this.attachMetadata(paginated);
+
+      return {
+        data: enriched.map((agent: any) => this.mapAgentToResponse(agent)),
+        total: filtered.length,
+      };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to filter agents: ${errorMessage}`);
     }
   }
 

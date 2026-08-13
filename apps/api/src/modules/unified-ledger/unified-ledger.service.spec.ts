@@ -420,7 +420,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
               date: '2025-04-11',
               title: 'Fuse core repo begins',
               track: 'tnf-core',
-              evidence: { type: 'repo_created', repo: 'whodaniel/fuse' },
+              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
             },
           ],
         },
@@ -428,7 +428,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
       narrative_connections: [
         {
           from: 'whodaniel/The-New-Fuse',
-          to: 'whodaniel/fuse',
+          to: 'whodaniel/The-New-Fuse',
           connection_type: 'architectural_refinement',
         },
       ],
@@ -508,7 +508,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
               date: '2025-04-11',
               title: 'Fuse core repo begins',
               track: 'tnf-core',
-              evidence: { type: 'repo_created', repo: 'whodaniel/fuse' },
+              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
             },
           ],
         },
@@ -516,7 +516,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
       narrative_connections: [
         {
           from: 'whodaniel/The-New-Fuse',
-          to: 'whodaniel/fuse',
+          to: 'whodaniel/The-New-Fuse',
           connection_type: 'architectural_refinement',
           rationale: 'lineage',
         },

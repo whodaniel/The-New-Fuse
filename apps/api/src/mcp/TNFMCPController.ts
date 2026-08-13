@@ -14,13 +14,14 @@ export class TNFMCPController {
 
   @Post('start-remote')
   async startRemoteServer(@Body() body: { port?: number }) {
-    const port = body.port || 3001;
+    // Let the service pick the default; it must not be the API's own port.
+    const port = body.port || Number(process.env.MCP_HTTP_PORT) || 3399;
 
     try {
       await this.mcpService.startRemoteServer(port);
       return {
         success: true,
-        message: `MCP Server started on port ${port}`,
+        message: `MCP Server (Streamable HTTP) started on http://127.0.0.1:${port}/mcp`,
         port,
       };
     } catch (error) {

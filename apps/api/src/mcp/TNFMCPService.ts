@@ -46,7 +46,11 @@ export class TNFMCPService implements OnModuleInit {
     return this.mcpServer;
   }
 
-  async startRemoteServer(port: number = 3001): Promise<void> {
+  /**
+   * Start the Streamable HTTP transport on loopback. Deliberately not the API's
+   * own port (3001) — binding there collides with the running API.
+   */
+  async startRemoteServer(port: number = Number(process.env.MCP_HTTP_PORT) || 3399): Promise<void> {
     if (!this.mcpServer) {
       throw new Error('MCP Server not initialized');
     }
