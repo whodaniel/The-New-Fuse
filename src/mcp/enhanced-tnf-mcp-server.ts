@@ -1,8 +1,16 @@
 #!/usr/bin/env node
-/**
- * Placeholder for TNF Enhanced MCP Server.
- * This is a minimal implementation to satisfy the doctor check.
- * TODO: Implement actual MCP server using @the-new-fuse/mcp-core.
- */
-console.log('TNF Enhanced MCP Server placeholder - not implemented');
-process.exit(0);
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { enhancedTnfTools } from './tool-sets.js';
+import { initializeAndConnectMcpServer } from './utils/server-utils.js';
+
+async function main() {
+  const registerTools = (server: McpServer) => {
+    for (const tool of enhancedTnfTools) {
+      tool(server);
+    }
+  };
+
+  await initializeAndConnectMcpServer('enhanced-tnf', registerTools, 'Enhanced TNF MCP Server');
+}
+
+main().catch(console.error);
