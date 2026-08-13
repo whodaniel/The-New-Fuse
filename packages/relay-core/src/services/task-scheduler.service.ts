@@ -146,6 +146,11 @@ export class TaskSchedulerService {
       'redis_sync',
       'tauri_sync',
       'directive',
+      'orchestration',
+      'reliability',
+      'quality',
+      'context',
+      'self_improvement',
     ].includes(lane);
   }
 

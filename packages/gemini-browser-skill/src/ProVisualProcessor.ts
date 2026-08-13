@@ -9,8 +9,11 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { resolve } from 'node:path';
 import * as process from 'node:process';
 import { chromium, type BrowserContext, type Locator, type Page } from 'playwright';
+// Resolved at runtime so this package works in any checkout.
+const TNF_ROOT = process.env.TNF_ROOT || resolve(__dirname, '..', '..', '..');
 
 interface VideoEntry {
   index: number;
@@ -33,7 +36,7 @@ class ProVisualProcessor {
   private data: any;
 
   constructor() {
-    const dataDir = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data';
+    const dataDir = TNF_ROOT + '/data';
     this.stateFilePath = path.join(dataDir, 'pro-ingestion-state.json');
     this.reportsDir = path.join(dataDir, 'pro-video-reports');
 
@@ -54,8 +57,7 @@ class ProVisualProcessor {
 
   async initialize() {
     const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-alt');
-    const extensionPath =
-      '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/aivi';
+    const extensionPath = TNF_ROOT + '/apps/chrome-extension/aivi';
 
     console.log(`[Pro] Launching Authenticated Chrome with AIVI Extension: ${profileDir}`);
 
@@ -414,8 +416,7 @@ class ProVisualProcessor {
   async run(startIndex: number, endIndex: number) {
     await this.initialize();
 
-    const libraryPath =
-      '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html';
+    const libraryPath = process.env.TNF_VIDEO_LIBRARY || '';
     const content = fs.readFileSync(libraryPath, 'utf-8');
     const queue: VideoEntry[] = [];
 

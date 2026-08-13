@@ -466,7 +466,131 @@ jobs:
         run: |
           PROBLEMATIC_FILES=""
           # Get only added or modified .js files
-          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js$')
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js
+
+          for file in $CHANGED_FILES; do
+            if [ ! -f "$file" ]; then continue; fi
+
+            dir=$(dirname "$file")
+            # Find the nearest package.json
+            pkg_json=$(find "$dir" -maxdepth 5 -name "package.json" -print -quit)
+
+            if [ -n "$pkg_json" ] && grep -q '"type": "module"' "$pkg_json"; then
+              # If it's a module and uses require(), it's a problem
+              if grep -q "require(" "$file"; then
+                PROBLEMATIC_FILES="${PROBLEMATIC_FILES} \n- \`${file}\`"
+              fi
+            fi
+          done
+
+          if [ -n "$PROBLEMATIC_FILES" ]; then
+            echo "problem_found=true" >> $GITHUB_OUTPUT
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$PROBLEMATIC_FILES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "problem_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post comment and fail job if problems found
+        if: steps.find-problems.outputs.problem_found == 'true'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const files = `${{ steps.find-problems.outputs.files }}`;
+            const comment = `### 🤖 Proactive Module Check Failed\n\nI've detected a potential ESM/CJS module conflict in this PR. The following files use \`require()\` but appear to be in an ES Module context (due to a nearby \`package.json\` with \`"type": "module"\`):\n${files}\n\n**To fix this, please either:**\n1.  Rename the file(s) to use a \`.cjs\` extension.\n2.  Refactor the file(s) to use ES Module \`import\` syntax instead of \`require()\`.`;
+
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: comment });
+            core.setFailed('Potential module system conflict detected. Please see the comment for details.');
+
+  codebase-steward:
+    name: Codebase Steward
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Check for outdated dependencies
+        id: outdated
+        run: |
+          pnpm outdated --long --json > outdated.json || true
+          echo "report=$(cat outdated.json)" >> $GITHUB_OUTPUT
+
+      - name: Create issue for outdated dependencies
+        if: steps.outdated.outputs.report != '[]'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const report = JSON.parse('${{ steps.outdated.outputs.report }}');
+            if (report.length === 0) return;
+
+            let body = `### 🤖 Codebase Steward Report: Outdated Dependencies\n\nI have identified the following outdated dependencies:\n\n| Package | Current | Wanted | Latest |\n|---|---|---|---|\n`;
+            for (const pkg of report) {
+              body += `| ${pkg.name} | ${pkg.current} | ${pkg.wanted} | ${pkg.latest} |\n`;
+            }
+            body += `\n\nPlease review and create PRs to update these packages.`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Codebase Steward: Outdated Dependencies Found',
+              body: body,
+              labels: ['tech-debt', 'dependencies', 'agent-task']
+            });
+
+  quality-summary:
+    name: Quality Gates Summary
+    needs:
+      - architecture-audits
+      - tnf-parity-audit
+      - coverage-check
+      - dependency-audit
+      - code-quality
+      - circular-dependencies
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check quality gates
+        run: |
+          echo "Architecture Audits: ${{ needs.architecture-audits.result }}"
+          echo "TNF Parity Audit: ${{ needs.tnf-parity-audit.result }}"
+          echo "Coverage Check: ${{ needs.coverage-check.result }}"
+          echo "Dependency Audit: ${{ needs.dependency-audit.result }}"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Circular Dependencies: ${{ needs.circular-dependencies.result }}"
+
+          if [[ "${{ needs.architecture-audits.result }}" == "failure" ]] || \
+             [[ "${{ needs.tnf-parity-audit.result }}" == "failure" ]] || \
+             [[ "${{ needs.coverage-check.result }}" == "failure" ]] || \
+             [[ "${{ needs.dependency-audit.result }}" == "failure" ]]; then
+            echo "Quality gates failed"
+            exit 1
+          fi
+
+      - name: Post summary
+        run: |
+          echo "### Quality Gates Results :shield:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Architecture Audits | ${{ needs.architecture-audits.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TNF Parity Audit | ${{ needs.tnf-parity-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage | ${{ needs.coverage-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | ${{ needs.dependency-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Quality | ${{ needs.code-quality.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Circular Dependencies | ${{ needs.circular-dependencies.result }} |" >> $GITHUB_STEP_SUMMARY
+ || true)
 
           for file in $CHANGED_FILES; do
             if [ ! -f "$file" ]; then continue; fi

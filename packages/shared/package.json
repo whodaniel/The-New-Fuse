@@ -30,6 +30,11 @@
       "types": "./dist/browser-control/protocol.d.ts",
       "import": "./dist/browser-control/protocol.js",
       "require": "./dist/browser-control/protocol.js"
+    },
+    "./federation/FederationNodeClient": {
+      "types": "./dist/federation/FederationNodeClient.d.ts",
+      "import": "./dist/federation/FederationNodeClient.js",
+      "require": "./dist/federation/FederationNodeClient.js"
     }
   },
   "scripts": {

@@ -5,9 +5,9 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from './database.service';
 import { HealthIndicator } from '@nestjs/terminus';
 import { toError } from '../utils/error.js';
+import { DatabaseService } from './database.service.js';
 
 // Local type definitions to avoid cross-package import issues
 interface HealthIndicatorResult {
@@ -18,7 +18,10 @@ interface HealthIndicatorResult {
 }
 
 class HealthCheckError extends Error {
-  constructor(message: string, public causes: HealthIndicatorResult) {
+  constructor(
+    message: string,
+    public causes: HealthIndicatorResult
+  ) {
     super(message);
   }
 }
@@ -49,7 +52,7 @@ export class HealthService extends HealthIndicator {
       );
     }
   }
-  
+
   // Add other health checks as needed (e.g., external APIs, cache)
 }
 

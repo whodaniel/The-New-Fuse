@@ -3,11 +3,10 @@
  * Categorizes n8n workflows based on their content, nodes, and metadata
  */
 
-import {
+import type {
   N8nWorkflow,
   WorkflowCategory,
   CategoryConfig,
-  WorkflowNode,
 } from '../types/index.js';
 
 export class WorkflowCategorizer {
@@ -452,7 +451,7 @@ export class WorkflowCategorizer {
     const maxScore = Math.max(...allScores);
     const totalScore = allScores.reduce((sum, s) => sum + s, 0);
 
-    if (totalScore === 0) return 0;
+    if (totalScore === 0) {return 0;}
 
     // Normalize between 0 and 1
     const normalizedScore = score / maxScore;

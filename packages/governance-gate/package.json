@@ -1,0 +1,19 @@
+{
+  "name": "@the-new-fuse/governance-gate",
+  "version": "0.1.0",
+  "description": "Governance gate framework for AI5 directive approval",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@the-new-fuse/logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
