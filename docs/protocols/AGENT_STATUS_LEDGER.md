@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T12:43:01.008Z** — handoff
+Updated: **2026-08-13T14:35:56.947Z** — handoff
+`4b9ef86b-190e-4041-8bac-b60c83abeaf2` (`0a811ca5e0f8`).
+`1b345534-9a1f-458a-ac6f-61f016ee6773` (`0a811ca5e0f8`).
 `677835ef-4b17-4c99-a238-95d906d07d17` (`b5a7afdf2d1f`).
 `a456d278-b2cf-42eb-bed2-36f2524a48f3` (`b5a7afdf2d1f`).
 `1502fd6c-4d2c-4ce6-8984-25c8432514d3` (`875857824f97`).
@@ -315,6 +317,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | pi-coding-agent | `TNF:LOCAL:AGENT:PI-CODING-AGENT:001` | **STANDING-BY** |
 | claude-code     | `TNF:LOCAL:AGENT:CLAUDE-CODE:001`     | **STANDING-BY** |
 | tnf-hermes      | `TNF:LOCAL:AGENT:TNF-HERMES:001`      | **STANDING-BY** |
+| jules           | `TNF:LOCAL:AGENT:JULES:001`           | **STANDING-BY** |
 
 ## Protocol Gaps (prioritized)
 
@@ -1136,3 +1139,12 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (677835ef-4b17-4c99-a238-95d906d07d17) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(05138f65-28aa-400a-8cfd-ea24a55ae8ee) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1b345534-9a1f-458a-ac6f-61f016ee6773) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4b9ef86b-190e-4041-8bac-b60c83abeaf2) | ✅ HANDOFF_READY |

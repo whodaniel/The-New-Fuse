@@ -1,14 +1,29 @@
 # Full TNF Vocabulary Alignment Audit — 2026-08-13
 
-**Verdict: NOT FULLY CONSISTENT** — 7 inconsistencies found across schema,
-static vocabulary, and emit-point layers. Three are structural (role hierarchy
-divergence, missing ledger entries, ROLE_DEFINITIONS drift), four are
-documentation/formula drift.
+**Verdict: FULLY CONSISTENT (re-verified 2026-08-13T14:30Z)** — All 7
+inconsistencies resolved in commit `0a811ca5e0` (Phase 10 Alignment Pass).
+Originally 7 inconsistencies found across schema, static vocabulary, and
+emit-point layers; all now fixed. 8 gap areas remain for future sweeps.
 
 **Operator session:** `agent:local-subdirector:session:2026-08-13T06:29:48.796Z`
 **Audit scope:** Full codebase vocabulary sweep across all 11 canonical surfaces
 (post-Phase-9). **Companion JSON:**
 `docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.json`
+
+> **Re-verification stamp (2026-08-13T14:30Z):** Independent re-check of all 7
+> INCs against live codebase state. All PASS:
+>
+> - INC-1: `AGENT_ROLE_TRAITS` = 5 roles, matches DACC-v1 exactly
+> - INC-2: All 6 seeded agents present in AGENT_STATUS_LEDGER (lines 313-318)
+> - INC-3: `canonicalEntityId` defined as hierarchical string (line 45)
+> - INC-4: ID Band Allocation section present (lines 37-40)
+> - INC-5: CI check script `scripts/ci/check-federated-alphabet.sh` enforces
+>   lock-step
+> - INC-6: Line 337 uses `a.traits` (canonical), not `a.qualities`
+> - INC-7: `vector_id` documented at line 47 with disambiguation
+>
+> **Gates:** type-check (database, relay-core, tnf-cli) PASS, drizzle:check
+> PASS, validator round-trip `TNF:AGENT:TNFCORE:TEST_X:001` PASS.
 
 ---
 
@@ -280,10 +295,15 @@ federated `ID#` routing logic and overall TNF protocols:
    - **Drift Risk**: Separate from federated IDs, often conflated
 9. **Gap Area**: `FEDERATED_BASE58_ALPHABET` single source
    - **Location**: 5 files duplicate it
-   - **Drift Risk**: Must import from `a2a-core`
+   - **Status**: **ADDRESSED** - Browser environments (Chrome extension,
+     gemini-browser-skill, scripts/lib) cannot import from a2a-core due to
+     Node.js dependency constraints. CI check script
+     `scripts/ci/check-federated-alphabet.sh` enforces lock-step sync across all
+     5 mirrors at build time.
 10. **Gap Area**: `vector_id` vs `idNumber`
     - **Location**: Both use `ID#:` prefix; semantic difference undocumented
-    - **Drift Risk**: Routing ambiguity
+    - **Status**: **ADDRESSED** - Documented in `ROLE_DEFINITIONS.md` line 47
+      with explicit disambiguation
 11. **Gap Area**: Test Registry Sync
     - **Location**: test-sync.ts
     - **Drift Risk**: Minor validation drift risk
