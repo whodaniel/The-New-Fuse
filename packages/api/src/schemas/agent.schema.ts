@@ -1,4 +1,4 @@
-import { ValidationSchema } from '../middleware/validation.middleware';
+import { ValidationSchema } from '../middleware/validation.middleware.js';
 
 /**
  * Validation schema for creating an agent

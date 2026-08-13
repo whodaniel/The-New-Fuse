@@ -1,0 +1,19 @@
+{
+  "name": "@the-new-fuse/logger",
+  "version": "0.1.0",
+  "description": "Logging utilities for TNF",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@the-new-fuse/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
