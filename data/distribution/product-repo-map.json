@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-08-13",
+  "policy": {
+    "canonicalDevelopment": "whodaniel/tnf-monorepo",
+    "delete": "never unless the operator says delete",
+    "superseded": "GitHub-archive; keep history; do not add write remotes",
+    "localFolderName": "TNF/The-New-Fuse is the tnf-monorepo working tree. The folder name is historical."
+  },
+  "core": {
+    "development": {
+      "github": "https://github.com/whodaniel/tnf-monorepo",
+      "visibility": "private",
+      "role": "Combined monorepo. All TNF runtime and control-plane source is developed here."
+    },
+    "openRuntime": {
+      "github": "https://github.com/whodaniel/The-New-Fuse",
+      "visibility": "public",
+      "role": "Open-runtime publication (~90%). Do not commit here."
+    },
+    "controlPlane": {
+      "github": "https://github.com/whodaniel/fuse-control-plane",
+      "visibility": "private",
+      "role": "Proprietary control-plane extract (~10%). Do not commit here."
+    }
+  },
+  "monorepoRemotes": {
+    "required": {
+      "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+      "split-open-runtime": "https://github.com/whodaniel/The-New-Fuse.git",
+      "split-control-plane": "https://github.com/whodaniel/fuse-control-plane.git"
+    },
+    "forbidden": [
+      "old-fuse",
+      "private-origin",
+      "split-mirror",
+      "nexus-orchestrator"
+    ]
+  },
+  "localWorkspace": {
+    "root": "Desktop/A1-Inter-LLM-Com/TNF",
+    "gitRepo": false,
+    "children": [
+      {
+        "path": "The-New-Fuse",
+        "github": "https://github.com/whodaniel/tnf-monorepo",
+        "note": "Working tree folder name is historical; origin is tnf-monorepo."
+      },
+      {
+        "path": "TNF-Extensions",
+        "github": null,
+        "note": "Local checkout root of per-app clones. Not a git repo and not a packaged offering."
+      }
+    ]
+  },
+  "standaloneProducts": [
+    {
+      "github": "https://github.com/whodaniel/SkIDEancer",
+      "visibility": "public",
+      "role": "TNF-adjacent Cloud IDE. Own product repo, not part of the OSS runtime download."
+    },
+    {
+      "github": "https://github.com/whodaniel/MyPhone-Remote",
+      "visibility": "public",
+      "role": "Public phone-remote client. Private API satellite is tnf-myphoneremote-api."
+    },
+    {
+      "github": "https://github.com/whodaniel/EXTREAMIX",
+      "visibility": "public",
+      "role": "Standalone streaming product. Not TNF runtime."
+    },
+    {
+      "github": "https://github.com/whodaniel/LPM-Standalone",
+      "visibility": "private",
+      "role": "Localhost port monitor product. Canonical LPM repo."
+    }
+  ],
+  "infraBackups": [
+    {
+      "github": "https://github.com/whodaniel/the-new-fuse-docs-private",
+      "visibility": "private",
+      "role": "Docs safety backup. Never develop TNF here."
+    }
+  ],
+  "lineageArchives": [
+    {
+      "github": "https://github.com/whodaniel/fuse",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Historical TNF clone. Archived 2026-06-22."
+    },
+    {
+      "github": "https://github.com/whodaniel/fuse-mirror",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Structural reconstruction mirror. Archived 2026-06-22."
+    },
+    {
+      "github": "https://github.com/whodaniel/fuse-master",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Private snapshot. Archived 2026-06-22."
+    },
+    {
+      "github": "https://github.com/whodaniel/NexusOrchestrator",
+      "successor": "https://github.com/whodaniel/tnf-nexus-orchestrator",
+      "reason": "Old Nexus viz. Current source is tnf-nexus-orchestrator."
+    },
+    {
+      "github": "https://github.com/whodaniel/the-new-fuse-legacy-v1",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Legacy TNF tree."
+    },
+    {
+      "github": "https://github.com/whodaniel/the-new-fuse-legacy-2025",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Legacy TNF tree."
+    },
+    {
+      "github": "https://github.com/whodaniel/AI-ARCADE.XYZ---POKER-ROOM",
+      "successor": "https://github.com/whodaniel/tnf-ai-arcade",
+      "also": "https://github.com/whodaniel/tnf-poker-room",
+      "reason": "Combined arcade/poker dump. Split into tnf-ai-arcade and tnf-poker-room."
+    },
+    {
+      "github": "https://github.com/whodaniel/Casin8",
+      "successor": "https://github.com/whodaniel/tnf-casin8-games",
+      "reason": "Older Casin8 dump. Current satellite is tnf-casin8-games."
+    },
+    {
+      "github": "https://github.com/whodaniel/Localhost-Port-Monitor",
+      "successor": "https://github.com/whodaniel/LPM-Standalone",
+      "reason": "Earlier LPM dump. Canonical product is LPM-Standalone."
+    },
+    {
+      "github": "https://github.com/whodaniel/SkIDEancer2",
+      "successor": "https://github.com/whodaniel/SkIDEancer",
+      "reason": "Empty stub. Live Cloud IDE is SkIDEancer."
+    },
+    {
+      "github": "https://github.com/whodaniel/docs",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Generic-name TNF docs dump. Live docs are in the monorepo; backup is the-new-fuse-docs-private."
+    },
+    {
+      "github": "https://github.com/whodaniel/vscode-extension",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Old extract. Canonical VS Code extension is apps/vscode-extension in tnf-monorepo."
+    },
+    {
+      "github": "https://github.com/whodaniel/tnf-railway-configs-backup",
+      "successor": "https://github.com/whodaniel/tnf-railway-era-archive",
+      "reason": "Smaller Railway config dump. Retired with the Railway era."
+    },
+    {
+      "github": "https://github.com/whodaniel/tnf-railway-era-archive",
+      "successor": "https://github.com/whodaniel/tnf-monorepo",
+      "reason": "Retired Railway-era deploy scripts. Reference only."
+    },
+    {
+      "github": "https://github.com/whodaniel/Video-Intelligence-Archive",
+      "successor": null,
+      "reason": "Content archive, not a live product."
+    },
+    {
+      "github": "https://github.com/whodaniel/BizSynth",
+      "successor": null,
+      "reason": "Empty 2022 public name. Not TNF."
+    },
+    {
+      "github": "https://github.com/whodaniel/SocialSalez",
+      "successor": null,
+      "reason": "Empty 2022 public name. Not TNF."
+    },
+    {
+      "github": "https://github.com/whodaniel/EventSynth",
+      "successor": null,
+      "reason": "Empty 2022 public name. Not TNF."
+    },
+    {
+      "github": "https://github.com/whodaniel/StarTree",
+      "successor": null,
+      "reason": "Dormant 2022 public name. Not TNF."
+    },
+    {
+      "github": "https://github.com/whodaniel/W3MARKETING",
+      "successor": null,
+      "reason": "Empty 2022 public name. Not TNF."
+    }
+  ],
+  "keepLiveNotTnfScaffolding": [
+    "courseforge",
+    "ai-video-intelligence-suite",
+    "Manifest",
+    "AGENTRONIC",
+    "bolt4Ollama",
+    "wormhole-rhythm"
+  ],
+  "outOfScope": "Other personal experiments and upstream forks are not TNF products. Do not develop TNF in them. Do not archive them as part of TNF scaffolding unless they collide with a TNF name."
+}

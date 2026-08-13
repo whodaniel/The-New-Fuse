@@ -21,6 +21,9 @@ Archived sketches (`gemini-bridge-extension`, `stripe-provider-bridge`, …) liv
 under `archive/apps/`. Names in `excludedTopLevelApps` are a denylist: if they
 reappear under `apps/`, sync must still withhold them.
 
+Which GitHub repo is canonical for each product (including standalone products
+and archives) is `docs/lineage/PRODUCT_REPO_MAP.md`.
+
 The machine-readable source is `data/distribution/oss-app-boundary.json`. Every
 TNF-owned satellite must declare `github`. `external` is vendored research and
 must set `github: null`. Verify with:

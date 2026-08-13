@@ -18,17 +18,16 @@
 
 ## Remote map (local monorepo)
 
-| Remote                | GitHub                       | Role                                                                |
-| --------------------- | ---------------------------- | ------------------------------------------------------------------- |
-| `origin`              | whodaniel/tnf-monorepo       | **Canonical development**                                           |
-| `split-open-runtime`  | whodaniel/The-New-Fuse       | Open distribution (~90%)                                            |
-| `split-control-plane` | whodaniel/fuse-control-plane | Proprietary distribution (~10%)                                     |
-| `nexus-orchestrator`  | whodaniel/NexusOrchestrator  | Legacy 3D viz (archived; current Nexus is `tnf-nexus-orchestrator`) |
+| Remote                | GitHub                       | Role                            |
+| --------------------- | ---------------------------- | ------------------------------- |
+| `origin`              | whodaniel/tnf-monorepo       | **Canonical development**       |
+| `split-open-runtime`  | whodaniel/The-New-Fuse       | Open distribution (~90%)        |
+| `split-control-plane` | whodaniel/fuse-control-plane | Proprietary distribution (~10%) |
 
-Do **not** recreate `old-fuse`, `private-origin`, or `split-mirror`. Those
-pointed at `whodaniel/fuse`, `fuse-master`, and `fuse-mirror`. Operator decision
-2026-08-13: leave those three GitHub repos archived; do not delete them; do not
-add write remotes.
+Do **not** recreate `old-fuse`, `private-origin`, `split-mirror`, or
+`nexus-orchestrator`. Those pointed at archived lineage repos. Current Nexus is
+`tnf-nexus-orchestrator`. Product map:
+[PRODUCT_REPO_MAP.md](./PRODUCT_REPO_MAP.md).
 
 ## Parity audit status
 

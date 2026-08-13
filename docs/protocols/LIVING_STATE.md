@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Do not delete the three fuse\* GitHub archives unless the
-operator says delete.
+**Current Directive:** Develop only in tnf-monorepo.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -950,6 +949,9 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-13T20:42:17.355Z handoff `57b97048-5bea-496f-a548-d6ffbec12a81` head
+  `83c2cf1d6e5c` project `TNF-SESSION` — Develop only in tnf-monorepo.
 
 - 2026-08-13T20:30:38.924Z handoff `89115730-2fb6-4f5c-a112-e91f967071b6` head
   `800bb2a94df7` project `TNF-SESSION` — Do not delete the three fuse\* GitHub

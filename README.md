@@ -76,19 +76,34 @@ pnpm run release:gate:strict
 
 ## Public Release Flow
 
-TNF is developed and published from a single public monorepo:
-`whodaniel/The-New-Fuse`.
+TNF is developed in the private combined monorepo `whodaniel/tnf-monorepo` and
+published to two downstream repos. Do not commit directly to the publication
+targets.
 
-- `whodaniel/The-New-Fuse`: Open-source runtime distribution and application
-  code.
-- Proprietary SaaS control plane infrastructure is maintained privately.
+- `whodaniel/tnf-monorepo` — private development (all source)
+- `whodaniel/The-New-Fuse` — public open-runtime publication (~90%)
+- `whodaniel/fuse-control-plane` — private control-plane extract (~10%)
 
-See `docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run
-sync before publishing downstream repositories:
+This public clone is the open runtime. If you have monorepo access, develop
+there. Scaffolding map: `docs/lineage/PRODUCT_REPO_MAP.md`. See
+`docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run sync
+before publishing downstream repositories:
 
 ```bash
 pnpm run sync:repos:dry-run
 ```
+
+Product doctrine for future work lives in
+`docs/product/TNF_PRODUCT_BOUNDARY.md`: classify each new artifact as public OSS
+runtime, public contract, private SaaS control plane, separate satellite, or
+personal/client business material before it lands.
+
+Member storage doctrine lives in
+`docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md` and
+`docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`: TNF stores bounded
+working artifacts, indexes, and consented external-location references. Durable
+member docs and media should stay in Google Drive, another connected storage
+provider, customer object storage, or a private repository.
 
 ## Primary Workspaces
 

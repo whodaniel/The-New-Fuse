@@ -367,3 +367,9 @@ private repo (`tnf-ai-arcade`, `tnf-nexus-orchestrator`, …). The
 them GitHub-archived. Do not add write remotes (`old-fuse`, `private-origin`,
 `split-mirror`). Canonical history is `tnf-monorepo`. GitHub deletion is
 irreversible and needs an explicit operator "delete" — archive is the default.
+
+**Q: Where does each product live?** A:
+[`docs/lineage/PRODUCT_REPO_MAP.md`](lineage/PRODUCT_REPO_MAP.md). Develop in
+`tnf-monorepo`. Satellites are one private GitHub repo each under the local
+`TNF-Extensions/` workspace. Related products (`SkIDEancer`, `MyPhone-Remote`,
+`EXTREAMIX`, `LPM-Standalone`) stay in their own repos.

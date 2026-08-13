@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T20:30:38.855Z** — handoff
+Updated: **2026-08-13T20:42:17.302Z** — handoff
+`57b97048-5bea-496f-a548-d6ffbec12a81` (`83c2cf1d6e5c`).
 `89115730-2fb6-4f5c-a112-e91f967071b6` (`800bb2a94df7`).
 `d2f04a2b-74d6-4444-82fa-82f7790b89cc` (`aaca77ef0700`).
 `1b577255-a6dc-4860-86f3-48dcd07d76df` (`944c848dc71f`).
@@ -230,11 +231,12 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                          |
-| -------- | ------------------------------------------------------------------------------- |
-| **P0**   | Do not delete the three fuse\* GitHub archives unless the operator says delete. |
-| **P0**   | Do not re-add old-fuse, private-origin, or split-mirror remotes.                |
-| **P0**   | Keep TNF Repo Separation Sync disabled.                                         |
+| Priority | Action                                                         |
+| -------- | -------------------------------------------------------------- |
+| **P0**   | Develop only in tnf-monorepo.                                  |
+| **P0**   | Do not commit to The-New-Fuse or fuse-control-plane.           |
+| **P0**   | Do not unarchive superseded dumps or re-add forbidden remotes. |
+| **P0**   | Keep TNF Repo Separation Sync disabled.                        |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1179,3 +1181,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (89115730-2fb6-4f5c-a112-e91f967071b6) | ✅ HANDOFF_READY |
+
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(57b97048-5bea-496f-a548-d6ffbec12a81) | ✅ HANDOFF_READY |

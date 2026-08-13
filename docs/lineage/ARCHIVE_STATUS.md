@@ -3,8 +3,10 @@
 > Updated: 2026-08-13
 
 `fuse`, `fuse-master`, and `fuse-mirror` stay GitHub-archived. Do not delete
-them. Do not add `old-fuse` / `private-origin` / `split-mirror` remotes back to
-the monorepo. Canonical development is `whodaniel/tnf-monorepo`.
+them. Do not add `old-fuse` / `private-origin` / `split-mirror` /
+`nexus-orchestrator` remotes back to the monorepo. Canonical development is
+`whodaniel/tnf-monorepo`. See [PRODUCT_REPO_MAP.md](./PRODUCT_REPO_MAP.md) for
+the full live-vs-archive map.
 
 ## Completed
 
@@ -25,11 +27,25 @@ by alias bundle._
 - `tnf-monorepo` — canonical private development
 - `The-New-Fuse` — public open-runtime publication
 - `fuse-control-plane` — proprietary distribution
+- all `tnf-*` satellite repos listed in PRODUCT_REPO_MAP
+- `virtual-library-blueprints`
 
-## Product satellites (Phase 4 — keep active)
+## Product satellites and related products (keep active)
 
-- `SkIDEancer` — standalone Cloud IDE product
-- `MyPhone-Remote` — standalone mobile remote product
+- `SkIDEancer` — TNF-adjacent Cloud IDE
+- `MyPhone-Remote` — public phone-remote client (`tnf-myphoneremote-api` is the
+  API)
+- `EXTREAMIX` — standalone streaming product
+- `LPM-Standalone` — localhost port monitor
+
+## Scaffolding archives (2026-08-13)
+
+GitHub-archived, not deleted. No new cold bundles; history stays on GitHub.
+
+`AI-ARCADE.XYZ---POKER-ROOM`, `Casin8`, `Localhost-Port-Monitor`, `SkIDEancer2`,
+`docs`, `vscode-extension`, `tnf-railway-configs-backup`,
+`tnf-railway-era-archive`, `Video-Intelligence-Archive`, `BizSynth`,
+`SocialSalez`, `EventSynth`, `StarTree`, `W3MARKETING`.
 
 ## Cold backup location
 

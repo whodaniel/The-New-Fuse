@@ -1,30 +1,33 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T20:30:38.855Z`  
-Handoff ID: `89115730-2fb6-4f5c-a112-e91f967071b6`
+Created At: `2026-08-13T20:42:17.302Z`  
+Handoff ID: `57b97048-5bea-496f-a548-d6ffbec12a81`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `800bb2a94df728e7f1e749fbc8e7ea21bd959a41`
+- Head SHA: `83c2cf1d6e5ca91ae36c8219c5c0133446b39fd9`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Leave fuse, fuse-mirror, and fuse-master GitHub-archived; drop write remotes;
-  stop lineage scripts from targeting live publication repos.
+- Lock a single TNF product/repo scaffolding map; archive superseded duplicate
+  GitHub dumps; keep live products in their own repos.
 
 ## Changed Paths
 
-- docs/REPO_SEPARATION.md
-- docs/lineage/ARCHIVE_STATUS.md
+- README.md
+- GITHUB_README.md
+- data/distribution/product-repo-map.json
+- docs/lineage/PRODUCT_REPO_MAP.md
 - docs/lineage/REPO_LINEAGE.md
-- scripts/audit-repo-parity.sh
-- scripts/create-lineage-bundle.sh
-- scripts/push-private-master.sh
-- scripts/setup-private-master-remote.sh
+- docs/lineage/ARCHIVE_STATUS.md
+- docs/REPO_SEPARATION.md
+- docs/packaging/OSS_APP_BOUNDARY.md
+- docs/product/TNF_PRODUCT_BOUNDARY.md
+- scripts/packaging/check-product-repo-map.cjs
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -52,7 +55,7 @@ Handoff ID: `89115730-2fb6-4f5c-a112-e91f967071b6`
 
 ## Next Actions
 
-- Do not delete the three fuse\* GitHub archives unless the operator says
-  delete.
-- Do not re-add old-fuse, private-origin, or split-mirror remotes.
+- Develop only in tnf-monorepo.
+- Do not commit to The-New-Fuse or fuse-control-plane.
+- Do not unarchive superseded dumps or re-add forbidden remotes.
 - Keep TNF Repo Separation Sync disabled.
