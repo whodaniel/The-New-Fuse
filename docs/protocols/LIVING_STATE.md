@@ -3,8 +3,20 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+**Current Directive:** Confirm TNF Repo Separation Sync succeeds on
+tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
+
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-13 Grok Bot / Grok 4.6 response package (Cursor)** — Logged
+  market read; published positioning
+  (`docs/marketing/VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md`); blog +
+  marketing competitive frame; External Teammate Runtime Interop protocol +
+  bridge + demo (`demo-external-teammate-handoff.cjs` PASS); seeded Grok 4.6
+  fleet lane in `~/.tnf/model-providers.json`, `llm-config.json`,
+  `~/.config/tnf/providers.json`, and `provider-config.ts` (`xai`). Connective
+  journal + PROTOCOL_MAP indexed.
 
 - [✅] **2026-08-13 Extension DOM Injection Parity Check (Cursor)** — Verified
   and integrated Phase 9 DACC formatting + UFTE identity fulfillment into the
@@ -72,7 +84,9 @@
   deprecated alias used in registry stats; INC-7 (LOW): vector_id namespace
   undocumented. All verification gates PASS. Report:
   `docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.{md,json}`.
-  Recommended: Phase 10 alignment pass (3-4h).
+  **Phase 10 Alignment Pass completed** — All 7 INC issues resolved: added jules
+  agent to ledger, fixed getStats() to use traits, clarified vector_id docs, CI
+  check script for Base58 sync. Handoff emitted: 2026-08-13T13:19:42.233Z
 
 **Cleared / no longer P0:**
 
@@ -144,6 +158,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-10T17:45:54.079Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
+- [✅] 2026-08-13T18:20:07.698Z New script(s) created:
+  check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
+  codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
+
   bounded-loop-evaluator.cjs, progressive-disclosure-loader.cjs,
   todo-provider.cjs
 
@@ -933,11 +951,29 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-13T18:09:07.487Z handoff `75904602-0f3a-4853-b740-34910f9660ba` head `5bb153f7afc0` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-13T19:09:59.519Z handoff `e481a67e-e9a4-4a97-8fe6-60782aa048af` head
+  `0fd96c848c9b` project `TNF-SYNC` — Confirm TNF Repo Separation Sync succeeds
+  on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
 
-- 2026-08-13T18:04:33.110Z handoff `7949a361-4fe6-4d06-a7e5-c6550e6db638` head `5935e4705cd0` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-13T19:08:22.087Z handoff `51091426-cadb-419a-9d29-4760ec7d0bb5` head
+  `0fd96c848c9b` project `TNF-SYNC` — Confirm TNF Repo Separation Sync succeeds
+  on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
 
-- 2026-08-13T18:00:18.054Z handoff `52d520bc-c4e5-407b-a3f6-960e55ced537` head `4f36df2601e3` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-13T18:02:10.519Z handoff `5c0459eb-5c0b-4cc8-b9ce-ce30a8eb3056` head
+  `5935e4705cd0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T14:35:57.002Z handoff `4b9ef86b-190e-4041-8bac-b60c83abeaf2` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T14:34:57.560Z handoff `1b345534-9a1f-458a-ac6f-61f016ee6773` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T13:19:42.280Z handoff `05138f65-28aa-400a-8cfd-ea24a55ae8ee` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-13T12:43:01.063Z handoff `677835ef-4b17-4c99-a238-95d906d07d17` head
   `b5a7afdf2d1f` project `TNF-SESSION` — Continue priority queue from

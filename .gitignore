@@ -461,7 +461,10 @@ apps/frontend/docs/audits/live-link-crawl.md
 docs/operations/tnf-full-auto-runs.jsonl
 docs/operations/tnf-full-auto-state.json
 
-.gitignore
+# Never ignore this file. A bare `.gitignore` rule here made `git add -A` in the
+# open-runtime export skip the file, so public The-New-Fuse shipped with no
+# ignore rules at all (contents API 404). Ambient-decl exceptions above only
+# help if the published clone actually has this file.
 
 # Stale compiled output previously committed directly into src/ (see
 # packages/ui-consolidated cleanup) -- outputs belong in dist/, not src/.

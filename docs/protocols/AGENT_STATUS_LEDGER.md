@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T18:09:07.421Z** — handoff `75904602-0f3a-4853-b740-34910f9660ba` (`5bb153f7afc0`).
+Updated: **2026-08-13T19:09:59.474Z** — handoff
+`e481a67e-e9a4-4a97-8fe6-60782aa048af` (`0fd96c848c9b`).
+`51091426-cadb-419a-9d29-4760ec7d0bb5` (`0fd96c848c9b`).
 `4b9ef86b-190e-4041-8bac-b60c83abeaf2` (`0a811ca5e0f8`).
 `1b345534-9a1f-458a-ac6f-61f016ee6773` (`0a811ca5e0f8`).
 `677835ef-4b17-4c99-a238-95d906d07d17` (`b5a7afdf2d1f`).
@@ -224,10 +226,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Confirm TNF Repo Separation Sync succeeds on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1149,8 +1150,11 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (4b9ef86b-190e-4041-8bac-b60c83abeaf2) | ✅ HANDOFF_READY |
 
-| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST (52d520bc-c4e5-407b-a3f6-960e55ced537) | ✅ HANDOFF_READY |
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(5c0459eb-5c0b-4cc8-b9ce-ce30a8eb3056) | ✅ HANDOFF_READY |
 
-| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST (7949a361-4fe6-4d06-a7e5-c6550e6db638) | ✅ HANDOFF_READY |
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(51091426-cadb-419a-9d29-4760ec7d0bb5) | ✅ HANDOFF_READY |
 
-| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST (75904602-0f3a-4853-b740-34910f9660ba) | ✅ HANDOFF_READY |
+| 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e481a67e-e9a4-4a97-8fe6-60782aa048af) | ✅ HANDOFF_READY |
