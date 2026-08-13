@@ -51,6 +51,8 @@ const VideoChat: React.FC = () => {
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
             title={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
+            aria-label={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
+            aria-pressed={isAudioOn}
           >
             {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </button>
@@ -63,6 +65,8 @@ const VideoChat: React.FC = () => {
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
             title={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+            aria-label={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+            aria-pressed={isCameraOn}
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </button>

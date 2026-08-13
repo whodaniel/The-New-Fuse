@@ -48,4 +48,37 @@ describe('auth-policy', () => {
     expect(isInviteCodeAccepted('delta', policy)).toBe(false);
     expect(isInviteCodeAccepted(undefined, policy)).toBe(false);
   });
+
+  it('supports parsing invite codes from a valid JSON array', () => {
+    const config = {
+      get: (key: string) => {
+        if (key === 'AUTH_INVITE_ONLY') return 'true';
+        if (key === 'AUTH_INVITE_CODES') return '["json-alpha", "json-beta"]';
+        return undefined;
+      },
+    };
+
+    const policy = resolveInvitePolicy(config);
+
+    expect(policy.enabled).toBe(true);
+    expect(isInviteCodeAccepted('json-alpha', policy)).toBe(true);
+    expect(isInviteCodeAccepted('json-beta', policy)).toBe(true);
+    expect(isInviteCodeAccepted('json-gamma', policy)).toBe(false);
+  });
+
+  it('falls back to delimiter parsing if JSON parsing fails', () => {
+    const config = {
+      get: (key: string) => {
+        if (key === 'AUTH_INVITE_ONLY') return 'true';
+        if (key === 'AUTH_INVITE_CODES') return '[invalid-json]';
+        return undefined;
+      },
+    };
+
+    const policy = resolveInvitePolicy(config);
+
+    expect(policy.enabled).toBe(true);
+    // "[invalid-json]" should be parsed as a code
+    expect(isInviteCodeAccepted('[invalid-json]', policy)).toBe(true);
+  });
 });
