@@ -50,10 +50,8 @@ export class AssimilationService {
       child.on('close', (code) => {
         if (code === 0) {
           console.log(chalk.green(`[Assimilation Engine] ${provider} execution complete.`));
-          // Assimilation loop: write result to the agent status ledger so
-          // the assimilation tenet's step 4 (Propagate) and step 5 (Attribute)
-          // are satisfied for every provider, not just the interactive one.
-          this.writeAssimilationEntry(provider);
+          // TODO: In a more advanced iteration, intercept the output stream
+          // and auto-write it to AGENT_STATUS_LEDGER.md here.
           resolve();
         } else {
           reject(new Error(`Provider '${provider}' exited with code ${code}`));
@@ -110,19 +108,5 @@ export class AssimilationService {
   public linkProvider(provider: string): void {
     console.log(chalk.green(`[Assimilation Engine] Linked external provider: ${provider}`));
     // In future: write this to .agent/assimilation-routes.json
-  }
-
-  /**
-   * Write assimilation entry to AGENT_STATUS_LEDGER.md.
-   * Satisfies the assimilation tenet step 5 (Attribute) + the TODO removed
-   * from runAssimilatedCommand. Verified by the presence of this file after
-   * any successful assimilation run.
-   */
-  private writeAssimilationEntry(provider: string): void {
-    const ledgerPath = path.join(this.repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md');
-    const timestamp = new Date().toISOString();
-    const line = `\n- [${timestamp}] Assimilated provider: \`${provider}\` (protocol gate: passed; attribution: TNF native).`;
-    // Append mode — writes to the actual file, not stdout.
-    fs.appendFileSync(ledgerPath, line, { encoding: 'utf8' });
   }
 }

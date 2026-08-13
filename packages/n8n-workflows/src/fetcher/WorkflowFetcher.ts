@@ -6,11 +6,10 @@
 import * as fs from 'fs-extra';
 import { glob } from 'glob';
 import * as path from 'path';
-import type { SimpleGit } from 'simple-git';
-import { simpleGit } from 'simple-git';
+import { simpleGit, SimpleGit } from 'simple-git';
 import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
 import { WorkflowParser } from '../parser/WorkflowParser.js';
-import type { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
+import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
 
 export interface RepositoryConfig {
   source: WorkflowSource;

@@ -7,13 +7,13 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  WorkflowExecutionRepository,
   WorkflowRepository,
-  type NewWorkflow,
-  type NewWorkflowExecution,
+  WorkflowExecutionRepository,
   type Workflow,
+  type NewWorkflow,
   type WorkflowExecution,
-} from '../repositories/workflow.repository.js';
+  type NewWorkflowExecution,
+} from '../repositories/workflow.repository';
 import { toError } from '../utils/error.js';
 
 @Injectable()
@@ -99,11 +99,7 @@ export class WorkflowService {
   /**
    * Update a workflow
    */
-  async updateWorkflow(
-    id: string,
-    updates: Partial<NewWorkflow>,
-    userId: string
-  ): Promise<Workflow> {
+  async updateWorkflow(id: string, updates: Partial<NewWorkflow>, userId: string): Promise<Workflow> {
     try {
       // Verify ownership
       await this.getWorkflowById(id, userId);

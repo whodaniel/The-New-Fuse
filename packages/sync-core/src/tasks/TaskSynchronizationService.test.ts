@@ -12,7 +12,7 @@ describe('TaskSynchronizationService', () => {
   let service: TaskSynchronizationService;
   let mockRedisService: jest.Mocked<UnifiedRedisService>;
   let mockWebSocketService: jest.Mocked<any>;
-  let mockDbService: any;
+  let mockDbService: jest.Mocked<DrizzleService>;
   let mockSyncOrchestrator: jest.Mocked<SyncOrchestrator>;
 
   beforeEach(async () => {

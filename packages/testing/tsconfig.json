@@ -22,8 +22,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/types": ["../types/dist/index.d.ts"]
+      "@/*": ["./src/*"]
     },
     "lib": ["dom", "es2020"],
     "jsx": "react-jsx",

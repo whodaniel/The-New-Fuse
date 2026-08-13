@@ -143,7 +143,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       ...config
     };
 
-    super(syncConfig, logger as any);
+    super(syncConfig, logger);
     
     this.syncLogger = logger || new Logger('SyncErrorHandler');
     this.fallbackQueue = syncConfig.fallbackQueueName;
@@ -736,7 +736,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       });
 
       if (result) {
-        this.syncLogger.log(`Fallback operation succeeded: ${operation.id}`);
+        this.syncLogger.info(`Fallback operation succeeded: ${operation.id}`);
         this.emit('fallbackOperationSuccess', operation);
       } else {
         this.syncLogger.warn(`Fallback operation failed: ${operation.id}`);

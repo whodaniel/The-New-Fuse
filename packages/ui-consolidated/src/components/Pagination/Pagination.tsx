@@ -1,22 +1,25 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 /**
  * Pagination variants using class-variance-authority
  */
-export const paginationVariants = cva('flex flex-wrap items-center gap-1', {
-  variants: {
-    variant: {
-      default: '',
-      outline: '',
-      ghost: '',
+export const paginationVariants = cva(
+  'flex flex-wrap items-center gap-1',
+  {
+    variants: {
+      variant: {
+        default: '',
+        outline: '',
+        ghost: '',
+      },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
 
 /**
  * Pagination item variants using class-variance-authority
@@ -44,14 +47,12 @@ export const paginationItemVariants = cva(
       {
         variant: 'outline',
         isActive: true,
-        className:
-          'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
+        className: 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
       },
       {
         variant: 'ghost',
         isActive: true,
-        className:
-          'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
+        className: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
       },
     ],
     defaultVariants: {
@@ -65,7 +66,8 @@ export const paginationItemVariants = cva(
 /**
  * Pagination component props
  */
-export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
+export interface PaginationProps
+  extends React.HTMLAttributes<HTMLElement> {
   /**
    * Total number of pages
    */
@@ -113,8 +115,7 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
  * Pagination item component props
  */
 export interface PaginationItemProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof paginationItemVariants> {
   /**
    * Whether this is the current/active page
@@ -211,29 +212,23 @@ const generatePaginationRange = (
  * <Pagination count={10} page={5} size="lg" />
  */
 const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
-  (
-    {
-      className,
-      variant,
-      count,
-      page = 1,
-      onPageChange,
-      siblingCount = 1,
-      boundaryCount = 1,
-      showControls = true,
-      showFirstLast = false,
-      size,
-      ...props
-    },
-    ref
-  ) => {
-    const handlePageChange = React.useCallback(
-      (newPage: number) => {
-        if (newPage < 1 || newPage > count) return;
-        onPageChange?.(newPage);
-      },
-      [count, onPageChange]
-    );
+  ({
+    className,
+    variant,
+    count,
+    page = 1,
+    onPageChange,
+    siblingCount = 1,
+    boundaryCount = 1,
+    showControls = true,
+    showFirstLast = false,
+    size,
+    ...props
+  }, ref) => {
+    const handlePageChange = React.useCallback((newPage: number) => {
+      if (newPage < 1 || newPage > count) return;
+      onPageChange?.(newPage);
+    }, [count, onPageChange]);
 
     const range = generatePaginationRange(count, page, siblingCount, boundaryCount);
 
@@ -386,7 +381,14 @@ Pagination.displayName = 'Pagination';
  * Pagination item component for displaying a pagination item
  */
 const PaginationItem = React.forwardRef<HTMLButtonElement, PaginationItemProps>(
-  ({ className, variant, size, isActive, children, ...props }, ref) => {
+  ({
+    className,
+    variant,
+    size,
+    isActive,
+    children,
+    ...props
+  }, ref) => {
     const { variant: contextVariant, size: contextSize } = usePagination();
 
     return (

@@ -27,6 +27,10 @@ export class TelegramService {
 
   private readonly logger: any;
 
+  private readonly WHISPER_PATH =
+    process.env.TNF_WHISPER_PATH || path.join(os.homedir(), 'bin', 'whisper.cpp');
+  private readonly WHISPER_MODEL =
+    process.env.TNF_WHISPER_MODEL || path.join(os.homedir(), '.whisper-models', 'ggml-base.en.bin');
   private readonly EDGE_TTS_VOICE = 'en-US-AriaNeural';
 
   constructor(repoRoot: string) {
@@ -120,28 +124,27 @@ export class TelegramService {
   }
 
   /**
-   * Transcribe audio using ffmpeg conversion and python transcribe_audio.py
+   * Transcribe audio using whisper.cpp
    */
   private async transcribeAudio(filePath: string): Promise<string> {
-    const wavPath = filePath.replace(/\.[^.]+$/, '.wav');
-    try {
-      // 1. Convert OGG voice note to 16kHz WAV format using ffmpeg
-      await execAsync(
-        `ffmpeg -y -i "${filePath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}" 2>/dev/null`
-      );
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'tnf-tts-'));
+    const outputFile = path.join(tempDir, 'transcript.txt');
 
-      // 2. Execute dedicated Python transcriber
-      const scriptPath = path.join(this.repoRoot, 'scripts', 'transcribe_audio.py');
-      const { stdout } = await execAsync(`python3 "${scriptPath}" "${wavPath}"`);
-      if (stdout && stdout.trim()) {
-        return stdout.trim();
-      }
-    } catch (e: any) {
-      this.logger.error('Audio transcription process error:', e?.message || e);
+    try {
+      const cmd = `"${this.WHISPER_PATH}" -m "${this.WHISPER_MODEL}" -f "${filePath}" --output_format txt --output_dir "${tempDir}" 2>/dev/null`;
+      await execAsync(cmd);
+
+      // whisper.cpp outputs to a file with same name as input, extension .txt
+      const transcriptFile = filePath.replace(/\.[^.]+$/, '.txt');
+      const transcript = await fs.readFile(transcriptFile, 'utf-8');
+
+      return transcript.trim();
     } finally {
-      await fs.unlink(wavPath).catch(() => {});
+      // Cleanup
+      try {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      } catch {}
     }
-    return '';
   }
 
   /**

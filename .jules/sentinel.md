@@ -18,21 +18,3 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
-
-## 2026-08-08 - Hardcoded Fallback Secrets in API Gateway
-
-**Vulnerability:** The `GatewayAuthService` used hardcoded fallback strings (`'dev-secret-key-123'`) for `JWT_SECRET` and `JWT_REFRESH_SECRET`.
-**Learning:** Providing default weak secrets in the source code as fallback for missing environment variables means that in production environments where the configuration fails to load properly, the app will start up securely compromised without warning. This silently exposes endpoints since anyone could generate a valid token using the fallback secret.
-**Prevention:** Instead of fallback strings, throw a hard error at runtime (fail securely) when critical security environment variables (like JWT secrets) are missing or too weak.
-
-## 2026-08-08 - Gemini Native Host Command Injection
-
-**Vulnerability:** The Gemini bridge native host passed an extension-provided path through a shell command when handling `open-folder`, allowing shell metacharacters in a crafted path to execute arbitrary commands.
-**Learning:** Quoting an interpolated value does not make shell construction safe. Paths controlled by another process must be passed as discrete arguments.
-**Prevention:** Use `execFile('open', [targetPath])` for macOS folder opening so the path bypasses shell parsing.
-
-## 2026-08-08 - Predictable ID Generation in Message Relays
-
-**Vulnerability:** Weak random number generation using `Math.random().toString(36)` in `packages/relay-core` to generate message IDs, task IDs, and client IDs for real-time WebSocket communication and inter-agent event broadcasting.
-**Learning:** `Math.random()` is pseudo-random, highly predictable, and completely unsuited for distributed message brokers where attackers could theoretically guess connection IDs or message IDs to spoof system events or disrupt relay communication.
-**Prevention:** Always use Node's built-in `crypto.randomBytes(4).toString('hex')` or UUID libraries to ensure identifiers in message brokers are cryptographically secure and unguessable.

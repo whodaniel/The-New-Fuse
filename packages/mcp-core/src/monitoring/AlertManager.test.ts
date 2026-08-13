@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
+import { AlertManager } from './AlertManager.js';
 import { AlertSeverity, AlertStatus } from '../types/monitoring.js';
 import { Logger } from '../utils/Logger.js';
-import { AlertManager } from './AlertManager.js';
 
 describe('AlertManager', () => {
   let alertManager: AlertManager;
@@ -13,13 +13,10 @@ describe('AlertManager', () => {
 
   beforeEach(() => {
     logger = new Logger('TestAlertManager');
-    alertManager = new AlertManager(
-      {
-        checkInterval: 1000, // 1 second for testing
-        retentionPeriod: 60000, // 1 minute for testing
-      },
-      logger
-    );
+    alertManager = new AlertManager({
+      checkInterval: 1000, // 1 second for testing
+      retentionPeriod: 60000 // 1 minute for testing
+    }, logger);
   });
 
   afterEach(() => {
@@ -37,14 +34,14 @@ describe('AlertManager', () => {
         cooldown: 5000,
         enabled: true,
         condition: () => true,
-        action: async () => {},
+        action: async () => {}
       };
 
       alertManager.registerAlertRule(rule);
 
       const rules = alertManager.getAlertRules();
-      expect(rules).toHaveLength(7); // 6 default + 1 test rule
-      expect(rules.find((r) => r.name === 'test-rule')).toBeDefined();
+      expect(rules).toHaveLength(6); // 5 default + 1 test rule
+      expect(rules.find(r => r.name === 'test-rule')).toBeDefined();
     });
 
     it('should remove alert rules', () => {
@@ -55,15 +52,15 @@ describe('AlertManager', () => {
         cooldown: 5000,
         enabled: true,
         condition: () => false,
-        action: async () => {},
+        action: async () => {}
       };
 
       alertManager.registerAlertRule(rule);
-      expect(alertManager.getAlertRules().find((r) => r.name === 'removable-rule')).toBeDefined();
+      expect(alertManager.getAlertRules().find(r => r.name === 'removable-rule')).toBeDefined();
 
       const removed = alertManager.removeAlertRule('removable-rule');
       expect(removed).toBe(true);
-      expect(alertManager.getAlertRules().find((r) => r.name === 'removable-rule')).toBeUndefined();
+      expect(alertManager.getAlertRules().find(r => r.name === 'removable-rule')).toBeUndefined();
     });
 
     it('should return false when removing non-existent rule', () => {
@@ -76,9 +73,9 @@ describe('AlertManager', () => {
       expect(rules.length).toBeGreaterThan(0);
 
       // Check for some default rules
-      expect(rules.find((r) => r.name === 'high-error-rate')).toBeDefined();
-      expect(rules.find((r) => r.name === 'high-response-time')).toBeDefined();
-      expect(rules.find((r) => r.name === 'low-health-score')).toBeDefined();
+      expect(rules.find(r => r.name === 'high-error-rate')).toBeDefined();
+      expect(rules.find(r => r.name === 'high-response-time')).toBeDefined();
+      expect(rules.find(r => r.name === 'low-health-score')).toBeDefined();
     });
   });
 
@@ -106,7 +103,11 @@ describe('AlertManager', () => {
         done();
       });
 
-      alertManager.triggerAlert('event-test-alert', 'Event test alert', AlertSeverity.CRITICAL);
+      alertManager.triggerAlert(
+        'event-test-alert',
+        'Event test alert',
+        AlertSeverity.CRITICAL
+      );
     });
   });
 
@@ -147,7 +148,7 @@ describe('AlertManager', () => {
 
       // Alert should be moved to history
       const activeAlerts = alertManager.getActiveAlerts();
-      expect(activeAlerts.find((a) => a.id === testAlert.id)).toBeUndefined();
+      expect(activeAlerts.find(a => a.id === testAlert.id)).toBeUndefined();
     });
 
     it('should suppress alerts', async () => {
@@ -163,13 +164,9 @@ describe('AlertManager', () => {
     });
 
     it('should throw error for non-existent alert operations', async () => {
-      await expect(alertManager.acknowledgeAlert('non-existent', 'user')).rejects.toThrow(
-        'Alert not found'
-      );
+      await expect(alertManager.acknowledgeAlert('non-existent', 'user')).rejects.toThrow('Alert not found');
       await expect(alertManager.resolveAlert('non-existent')).rejects.toThrow('Alert not found');
-      await expect(alertManager.suppressAlert('non-existent', 1000)).rejects.toThrow(
-        'Alert not found'
-      );
+      await expect(alertManager.suppressAlert('non-existent', 1000)).rejects.toThrow('Alert not found');
     });
   });
 
@@ -179,25 +176,21 @@ describe('AlertManager', () => {
       alertManager.triggerAlert('active-alert-1', 'Active alert 1', AlertSeverity.LOW);
       alertManager.triggerAlert('active-alert-2', 'Active alert 2', AlertSeverity.HIGH);
 
-      const resolvedAlert = alertManager.triggerAlert(
-        'resolved-alert',
-        'Resolved alert',
-        AlertSeverity.MEDIUM
-      );
+      const resolvedAlert = alertManager.triggerAlert('resolved-alert', 'Resolved alert', AlertSeverity.MEDIUM);
       alertManager.resolveAlert(resolvedAlert.id);
     });
 
     it('should get active alerts', () => {
       const activeAlerts = alertManager.getActiveAlerts();
       expect(activeAlerts.length).toBeGreaterThanOrEqual(2);
-      expect(activeAlerts.every((a) => a.status === AlertStatus.ACTIVE)).toBe(true);
+      expect(activeAlerts.every(a => a.status === AlertStatus.ACTIVE)).toBe(true);
     });
 
     it('should get alert history', () => {
       const history = alertManager.getAlertHistory(1); // 1 hour
       expect(history.length).toBeGreaterThanOrEqual(1);
 
-      const resolvedAlert = history.find((a) => a.name === 'resolved-alert');
+      const resolvedAlert = history.find(a => a.name === 'resolved-alert');
       expect(resolvedAlert).toBeDefined();
       expect(resolvedAlert!.status).toBe(AlertStatus.RESOLVED);
     });
@@ -225,7 +218,7 @@ describe('AlertManager', () => {
           actionExecuted = true;
           expect(alert.name).toBe('condition-test-rule');
           done();
-        },
+        }
       };
 
       alertManager.registerAlertRule(rule);
@@ -251,18 +244,18 @@ describe('AlertManager', () => {
         condition: () => true, // Always trigger
         action: async () => {
           executionCount++;
-        },
+        }
       };
 
       alertManager.registerAlertRule(rule);
       alertManager.start();
 
       // Wait for first execution
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
       expect(executionCount).toBe(1);
 
       // Wait a bit more, should not execute again due to cooldown
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       expect(executionCount).toBe(1);
     });
 
@@ -278,14 +271,14 @@ describe('AlertManager', () => {
         condition: () => true,
         action: async () => {
           executionCount++;
-        },
+        }
       };
 
       alertManager.registerAlertRule(rule);
       alertManager.start();
 
       // Wait for potential execution
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
       expect(executionCount).toBe(0);
     });
   });

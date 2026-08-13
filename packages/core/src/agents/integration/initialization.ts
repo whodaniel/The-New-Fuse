@@ -94,6 +94,7 @@ export class AgentInitializationService {
       // Store agent information
       this.agents.set(agentId, initMessage);
 
+      // Mock broadcast - in real implementation would use message bus
       await this.broadcastMessage(initMessage);
 
       this.initialized.add(agentId);
@@ -163,23 +164,11 @@ export class AgentInitializationService {
   }
 
   private static async broadcastMessage(message: InitializationMessage): Promise<void> {
+    // Mock implementation - would integrate with actual message bus
     this.logger.log(`Broadcasting to ${message.target}`, message);
 
-    const redisUrl = process.env.REDIS_URL || process.env.TNF_REDIS_URL;
-    if (!redisUrl) {
-      return;
-    }
-
-    try {
-      const { default: Redis } = await import('ioredis');
-      const publisher = new Redis(redisUrl, { lazyConnect: true, maxRetriesPerRequest: 1 });
-      await publisher.connect();
-      await publisher.publish('tnf:agents', JSON.stringify(message));
-      await publisher.quit();
-    } catch (error) {
-      this.logger.error('Failed to publish initialization message to Redis bus', error);
-      throw error;
-    }
+    // Simulate async operation
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   static async shutdown(agentId: string): Promise<boolean> {

@@ -1,7 +1,7 @@
-import { spawnSync } from 'child_process';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
+import * as os from 'os';
+import { spawnSync } from 'child_process';
 import { stripJsoncComments } from '../utils/jsonc.js';
 
 export interface DebugPaths {
@@ -126,11 +126,7 @@ export class DebugService {
 
     const jsoncPath = path.join(root, 'tnf.jsonc');
     const jsonPath = path.join(root, 'tnf.json');
-    const configPath = fs.existsSync(jsoncPath)
-      ? jsoncPath
-      : fs.existsSync(jsonPath)
-        ? jsonPath
-        : null;
+    const configPath = fs.existsSync(jsoncPath) ? jsoncPath : (fs.existsSync(jsonPath) ? jsonPath : null);
 
     if (configPath && fs.existsSync(configPath)) {
       try {
@@ -164,10 +160,7 @@ export class DebugService {
         const entries = fs.readdirSync(commandDir);
         for (const entry of entries) {
           if (entry.endsWith('.md')) {
-            commands.push({
-              name: entry.replace(/\.md$/, ''),
-              filePath: path.join(commandDir, entry),
-            });
+            commands.push({ name: entry.replace(/\.md$/, ''), filePath: path.join(commandDir, entry) });
           }
         }
       } catch {}
@@ -207,79 +200,36 @@ export class DebugService {
     }
   }
 
-  // Phase-1.2 (tnf pi parity): extend discovery to match `.pi`'s Agent Skills
-  // standard topology exactly. Mirrors .pi docs/skills.md "Locations" section:
-  //   - ~/.pi/agent/skills/, ~/.agents/skills/  → discover recursively for SKILL.md
-  //     and individual root .md files (per .pi: root .md in those two allowed)
-  //   - ~/.claude/skills/                       → existing tnf behavior preserved
-  //   - ~/.config/tnf/skills                    → TNF-native fallback preserved
-  // Order is stable; first match by `(source, name)` wins, later sources skipped.
   listSkills(): Array<{ name: string; source: string; path: string }> {
-    const seen = new Set<string>();
-    const result: Array<{ name: string; source: string; path: string }> = [];
-    const home = os.homedir();
+    const skills: Array<{ name: string; source: string; path: string }> = [];
 
-    const sources: Array<{ source: string; dir: string }> = [
-      { source: 'tnf', dir: path.join(this.configDir, 'skills') },
-      { source: 'pi', dir: path.join(home, '.pi', 'agent', 'skills') },
-      { source: 'agents', dir: path.join(home, '.agents', 'skills') },
-      { source: 'claude', dir: path.join(home, '.claude', 'skills') },
-    ];
-
-    for (const { source, dir } of sources) {
-      if (!fs.existsSync(dir)) continue;
-      this.walkDirWithSource(source, dir, (filePath, root) => {
-        const base = path.basename(filePath);
-        const atRoot = path.dirname(filePath) === dir;
-        // .pi agents/.claude: root .md is a skill; nested SKILL.md is a skill;
-        // anything else is ignored (per .pi docs/skills.md recursive SKILL.md rule)
-        const accepted = (atRoot && base.endsWith('.md')) || base === 'SKILL.md';
-        if (!accepted) return;
-        const name =
-          base === 'SKILL.md' ? path.basename(path.dirname(filePath)) : base.replace(/\.md$/, '');
-        const key = `${source}::${name}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-        result.push({ name, source, path: filePath });
+    const tnfSkillsDir = path.join(this.configDir, 'skills');
+    if (fs.existsSync(tnfSkillsDir)) {
+      this.walkDir(tnfSkillsDir, (filePath) => {
+        if (filePath.endsWith('.md') || filePath.endsWith('SKILL.md')) {
+          skills.push({
+            name: path.basename(filePath, path.extname(filePath)),
+            source: 'tnf',
+            path: filePath,
+          });
+        }
       });
     }
 
-    return result;
-  }
+    const claudeSkillsDir = path.join(os.homedir(), '.claude', 'skills');
+    if (fs.existsSync(claudeSkillsDir)) {
+      this.walkDir(claudeSkillsDir, (filePath) => {
+        if (filePath.endsWith('.md') || filePath.endsWith('SKILL.md')) {
+          skills.push({
+            name: path.basename(filePath, path.extname(filePath)),
+            source: 'claude',
+            path: filePath,
+          });
+        }
+      });
+    }
 
-  private walkDirWithSource(
-    source: string,
-    dir: string,
-    callback: (filePath: string, root: string) => void
-  ): void {
-    try {
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-        let isDir = entry.isDirectory();
-        // `.pi` discovery roots often contain symlinks (e.g. ~/.pi/agent/skills
-        // points at ~/.hermes/skills/tnf/<name>). Follow the link to a real path
-        // and reclassify by what the link actually contains.
-        if (!isDir && entry.isSymbolicLink()) {
-          try {
-            const real = fs.realpathSync(fullPath);
-            const stat = fs.statSync(real);
-            if (stat.isDirectory()) isDir = true;
-            else {
-              callback(real, dir);
-              continue;
-            }
-          } catch {
-            continue;
-          }
-        }
-        if (isDir) {
-          this.walkDirWithSource(source, fullPath, callback);
-        } else if (entry.isFile()) {
-          callback(fullPath, dir);
-        }
-      }
-    } catch {}
+    return skills;
   }
 
   private walkDir(dir: string, callback: (filePath: string) => void): void {
@@ -301,9 +251,7 @@ export class DebugService {
       const result = spawnSync('which', ['typescript-language-server'], { encoding: 'utf8' });
       if (result.status === 0) {
         const serverPath = result.stdout.trim();
-        const versionResult = spawnSync('typescript-language-server', ['--version'], {
-          encoding: 'utf8',
-        });
+        const versionResult = spawnSync('typescript-language-server', ['--version'], { encoding: 'utf8' });
         return {
           available: true,
           path: serverPath,
@@ -334,13 +282,7 @@ export class DebugService {
     return { available: false };
   }
 
-  debugFile(filePath: string): {
-    exists: boolean;
-    size?: number;
-    modified?: string;
-    permissions?: string;
-    error?: string;
-  } {
+  debugFile(filePath: string): { exists: boolean; size?: number; modified?: string; permissions?: string; error?: string } {
     try {
       if (!fs.existsSync(filePath)) {
         return { exists: false };
@@ -374,8 +316,7 @@ export class DebugService {
       skills: this.listSkills(),
     };
 
-    const snapshotPath =
-      outputPath || path.join(this.dataDir, 'snapshots', `snapshot-${Date.now()}.json`);
+    const snapshotPath = outputPath || path.join(this.dataDir, 'snapshots', `snapshot-${Date.now()}.json`);
     const snapshotDir = path.dirname(snapshotPath);
     if (!fs.existsSync(snapshotDir)) {
       fs.mkdirSync(snapshotDir, { recursive: true });

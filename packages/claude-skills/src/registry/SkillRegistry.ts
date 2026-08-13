@@ -5,41 +5,19 @@
  */
 
 import type { ClaudeSkill, ISkillRegistry, SkillFilter } from '../types/index.js';
-import { QdrantDriver, OpenAIEmbeddingProvider } from '@the-new-fuse/core-vector-db';
 
 /**
- * In-memory skill registry implementation backed by Qdrant for vector search
+ * In-memory skill registry implementation
  */
 export class SkillRegistry implements ISkillRegistry {
   private skills: Map<string, ClaudeSkill>;
   private skillsByCategory: Map<string, Set<string>>;
   private skillsByTag: Map<string, Set<string>>;
-  private qdrantDriver: QdrantDriver;
-  private embeddingProvider: OpenAIEmbeddingProvider;
-  private readonly collectionName = 'skills';
 
   constructor() {
     this.skills = new Map();
     this.skillsByCategory = new Map();
     this.skillsByTag = new Map();
-
-    this.qdrantDriver = new QdrantDriver({
-      provider: 'qdrant',
-      host: 'http://localhost:6333',
-    });
-
-    this.embeddingProvider = new OpenAIEmbeddingProvider({
-      provider: 'openai',
-      model: 'text-embedding-3-small',
-      apiKey: process.env.OPENAI_API_KEY || '',
-    });
-    
-    // Ensure collection exists
-    this.qdrantDriver.createCollection({
-      name: this.collectionName,
-      dimension: this.embeddingProvider.getDimension(),
-      metric: 'cosine'
-    }).catch(console.error);
   }
 
   /**
@@ -61,25 +39,6 @@ export class SkillRegistry implements ISkillRegistry {
         this.skillsByTag.set(tag, new Set());
       }
       this.skillsByTag.get(tag)!.add(skill.id);
-    }
-
-    // Index in Qdrant
-    try {
-      const content = `${skill.name}\n${skill.description}\nCategory: ${skill.category}\nTags: ${skill.tags.join(', ')}`;
-      const embedding = await this.embeddingProvider.generateEmbedding(content);
-      await this.qdrantDriver.addDocuments(this.collectionName, [
-        {
-          id: skill.id,
-          content,
-          embedding,
-          metadata: {
-            name: skill.name,
-            category: skill.category,
-          }
-        }
-      ]);
-    } catch (e: any) {
-      console.error(`Failed to index skill ${skill.id} in vector DB: ${e.message}`);
     }
   }
 
@@ -113,13 +72,6 @@ export class SkillRegistry implements ISkillRegistry {
           this.skillsByTag.delete(tag);
         }
       }
-    }
-
-    // Remove from vector DB
-    try {
-      await this.qdrantDriver.deleteDocument(this.collectionName, skillId);
-    } catch (e: any) {
-      console.error(`Failed to delete skill ${skillId} from vector DB: ${e.message}`);
     }
   }
 
@@ -199,51 +151,6 @@ export class SkillRegistry implements ISkillRegistry {
     }
 
     return results;
-  }
-
-  /**
-   * Search skills by semantic relevance for Dynamic Skill Retrieval (RAG)
-   */
-  async searchSemantic(query: string, limit: number = 3): Promise<ClaudeSkill[]> {
-    try {
-      const embedding = await this.embeddingProvider.generateEmbedding(query);
-      const results = await this.qdrantDriver.similaritySearch(this.collectionName, {
-        embedding,
-        limit,
-        threshold: 0.2
-      });
-
-      const matchedSkills: ClaudeSkill[] = [];
-      for (const res of results) {
-        const skill = this.skills.get(res.id);
-        if (skill) {
-          matchedSkills.push(skill);
-        }
-      }
-      return matchedSkills;
-    } catch (e: any) {
-      console.error(`Semantic search failed: ${e.message}. Falling back to textual search.`);
-      
-      // Fallback
-      const queryLower = query.toLowerCase();
-      const scoredResults: { skill: ClaudeSkill; score: number }[] = [];
-
-      for (const skill of this.skills.values()) {
-        let score = 0;
-        
-        if (skill.name.toLowerCase().includes(queryLower)) score += 10;
-        if (skill.description.toLowerCase().includes(queryLower)) score += 5;
-        if (skill.tags.some((tag) => tag.toLowerCase().includes(queryLower))) score += 3;
-        if (skill.category.toLowerCase().includes(queryLower)) score += 2;
-
-        if (score > 0) {
-          scoredResults.push({ skill, score });
-        }
-      }
-
-      scoredResults.sort((a, b) => b.score - a.score);
-      return scoredResults.slice(0, limit).map(r => r.skill);
-    }
   }
 
   /**

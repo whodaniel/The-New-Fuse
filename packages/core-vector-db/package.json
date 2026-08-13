@@ -14,7 +14,7 @@
     "start": "node dist/main.js",
     "start:grpc": "node dist/main.js",
     "dev:grpc": "pnpm run build && pnpm run start:grpc",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -54,12 +54,6 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
     "collectCoverageFrom": [
       "src/**/*.ts",
       "!src/**/*.d.ts"

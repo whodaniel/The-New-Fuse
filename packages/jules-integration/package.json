@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b --watch",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -27,10 +27,9 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
-    "@types/uuid": "^9.0.8",
+    "typescript": "^6.0.2",
     "jest": "^30.3.0",
-    "ts-jest": "^29.4.6",
-    "typescript": "^6.0.2"
+    "ts-jest": "^29.4.6"
   },
   "exports": {
     ".": {

@@ -2,70 +2,30 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
+import { checkPort } from 'node-port-check'; // Import checkPort from node-port-check
 import { execFileSync } from 'node:child_process';
 import * as portfinder from 'portfinder';
-import { createClient, type RedisClientType } from 'redis';
+import { createClient } from 'redis'; // Assume redis client is available or mocked
 
-/**
- * Port locks MUST carry a TTL.
- *
- * These were plain SETNX keys with no expiry, released only on the happy path.
- * Any crash, kill, or Ctrl-C between acquire and release left the key in Redis
- * forever — permanently poisoning that port for every future run. Because the
- * allocator scans upward from portRangeMin, the poisoned low ports are the
- * first ones retried every time, so a handful of interrupted runs was enough
- * to make findAvailablePort fail outright across a 7000-port range.
- *
- * A self-expiring lock makes an interrupted run cost `ttlMs`, not forever.
- */
-const PORT_LOCK_TTL_MS = 30_000;
-
-interface PortLockClient {
-  connect(): Promise<void>;
-  disconnect(): Promise<void>;
-  /** Acquire `key` only if unset, expiring after `ttlMs`. Returns 1 on acquire. */
-  setnx(key: string, value: string, ttlMs: number): Promise<number>;
-  del(key: string): Promise<number>;
-}
-
-function createLocalPortLockClient(): PortLockClient {
-  const locks = new Map<string, { value: string; expiresAt: number }>();
-  return {
-    connect: async () => {},
-    disconnect: async () => {
-      locks.clear();
-    },
-    setnx: async (key: string, value: string, ttlMs: number) => {
-      const existing = locks.get(key);
-      if (existing && existing.expiresAt > Date.now()) return 0;
-      locks.set(key, { value, expiresAt: Date.now() + ttlMs });
-      return 1;
-    },
-    del: async (key: string) => (locks.delete(key) ? 1 : 0),
-  };
-}
-
-async function createPortLockClient(): Promise<PortLockClient> {
-  const url = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-  const client: RedisClientType = createClient({ url });
-  client.on('error', () => {});
-  try {
-    await client.connect();
-    return {
-      connect: async () => {},
-      disconnect: async () => {
-        await client.disconnect();
-      },
-      setnx: async (key: string, value: string, ttlMs: number) => {
-        const result = await client.set(key, value, { NX: true, PX: ttlMs });
-        return result ? 1 : 0;
-      },
-      del: async (key: string) => await client.del(key),
-    };
-  } catch {
-    return createLocalPortLockClient();
-  }
-}
+// Mock Redis client and lock functions for now
+const mockRedisClient = {
+  connect: async () => {}, // Mock connect
+  disconnect: async () => {}, // Mock disconnect
+  setnx: async (key: string, value: string) => {
+    // Mock setnx (set if not exists)
+    const isLocked = process.env[key] === 'locked';
+    if (!isLocked) {
+      process.env[key] = 'locked';
+      return 1; // Successfully acquired lock
+    }
+    return 0; // Failed to acquire lock
+  },
+  del: async (key: string) => {
+    // Mock del
+    delete process.env[key];
+    return 1; // Successfully released lock
+  },
+};
 
 export interface PortRegistration {
   id: string;
@@ -135,14 +95,12 @@ export interface RuntimePortPreflightResult {
 }
 
 const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
-  { port: 3000, serviceName: 'relay-core', protected: false },
   { port: 3001, serviceName: 'api/backend', protected: false },
   { port: 3004, serviceName: 'backend', protected: false },
   { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },
   { port: 3006, serviceName: 'skideancer/ws', protected: false },
   { port: 3007, serviceName: 'skideancer/ide', protected: false },
   { port: 3008, serviceName: 'skideancer websocket', protected: true },
-  { port: 1420, serviceName: 'tauri-desktop', protected: false },
   { port: 5173, serviceName: 'vite', protected: false },
   { port: 5174, serviceName: 'vite-alt', protected: false },
   { port: 5555, serviceName: 'drizzle-studio', protected: true },
@@ -166,8 +124,7 @@ function parsePortList(value: string | undefined): number[] {
 }
 
 export class PortRegistryService extends EventEmitter {
-  private redisClient: PortLockClient | null = null;
-  private redisInitPromise: Promise<void> | null = null;
+  private redisClient: typeof mockRedisClient; // Using mock client for now
 
   private registry: Map<string, PortRegistration> = new Map();
   private configurations: Map<string, ServiceConfiguration> = new Map();
@@ -176,25 +133,12 @@ export class PortRegistryService extends EventEmitter {
 
   constructor() {
     super();
-    this.redisInitPromise = this.initializeRedisClient();
+    this.redisClient = mockRedisClient; // Initialize mock client
+    this.redisClient.connect().catch(console.error); // Connect mock client
     this.loadConfigurations();
   }
-
-  private async initializeRedisClient(): Promise<void> {
-    this.redisClient = await createPortLockClient();
-    await this.redisClient.connect();
-  }
-
-  private async getRedisClient(): Promise<PortLockClient> {
-    if (!this.redisInitPromise) {
-      this.redisInitPromise = this.initializeRedisClient();
-    }
-    await this.redisInitPromise;
-    if (!this.redisClient) {
-      this.redisClient = createLocalPortLockClient();
-      await this.redisClient.connect();
-    }
-    return this.redisClient;
+    super();
+    this.loadConfigurations();
   }
 
   /**
@@ -214,7 +158,7 @@ export class PortRegistryService extends EventEmitter {
       serviceName,
       serviceType,
       environment,
-      host = '127.0.0.1',
+      host = 'localhost',
       protocol = 'http',
       healthCheckUrl,
       metadata = {},
@@ -237,6 +181,8 @@ export class PortRegistryService extends EventEmitter {
         );
       }
       preReservedPort = true; // Mark as pre-reserved
+    } else {
+      // If an explicit port is provided, try to acquire a lock immediately
       const lockAcquired = await this.acquirePortLock(port);
       if (!lockAcquired) {
         throw new Error(
@@ -269,6 +215,7 @@ export class PortRegistryService extends EventEmitter {
     } else {
       // If not pre-reserved, but an explicit port was given and locked, release the lock
       await this.releasePortLock(port!);
+    }
     }
 
     return registration;
@@ -303,24 +250,16 @@ export class PortRegistryService extends EventEmitter {
           stopPort: config.portRangeMax,
         });
 
-        // Lock first, then bind — reservePortTemporarily opens and HOLDS a real
-        // socket, so calling it twice on the same port guarantees the second
-        // call hits EADDRINUSE against our own reservation. That is what used
-        // to happen here (an unconditional bind before the lock, then a second
-        // bind inside it, the inner `const` shadowing the outer): every
-        // candidate port failed, every iteration leaked a bound socket, and a
-        // range of 7000 free ports reported "no available ports found".
+        const reservedServer = await this.reservePortTemporarily(potentialPort);
+        // Try to acquire a lock before attempting to bind
         const lockAcquired = await this.acquirePortLock(potentialPort);
         if (lockAcquired) {
           const reservedServer = await this.reservePortTemporarily(potentialPort);
-          // The lock only has to serialize check-and-bind. Once we hold the
-          // bound socket, that socket IS the exclusion, so release the lock on
-          // both paths — holding it past the bind made every subsequent caller
-          // block for the full acquire timeout on a port that was already
-          // decided.
-          await this.releasePortLock(potentialPort);
           if (reservedServer) {
             return potentialPort;
+          } else {
+            // If temporary reservation failed, release the lock
+            await this.releasePortLock(potentialPort);
           }
         }
       } catch (err: unknown) {
@@ -338,18 +277,11 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Check if a port is available
    */
-  async isPortAvailable(port: number, host: string = '127.0.0.1'): Promise<boolean> {
-    // Prefer IPv4 loopback — binding `localhost` can succeed on ::1 while
-    // 127.0.0.1 (or vice versa) is already occupied (see tauri HMR / relay clash).
-    return new Promise((resolve) => {
-      const server = net.createServer();
-      server.once('error', () => resolve(false));
-      server.once('listening', () => {
-        server.close();
-        resolve(true);
-      });
-      server.listen(port, host);
-    });
+  async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
+    // Use node-port-check for port availability
+    return checkPort(port, host)
+      .then(() => true)
+      .catch(() => false);
   }
 
   /**
@@ -459,31 +391,13 @@ export class PortRegistryService extends EventEmitter {
   private async loadConfigurations(): Promise<void> {
     const defaultConfigs: ServiceConfiguration[] = [
       {
-        serviceName: 'relay-core',
+        serviceName: 'frontend',
         environment: 'development',
         preferredPort: 3000,
         fallbackPorts: [3010, 3020, 3030],
-        autoAssign: false,
+        autoAssign: true,
         portRangeMin: 3000,
-        portRangeMax: 3000,
-      },
-      {
-        serviceName: 'tauri-desktop',
-        environment: 'development',
-        preferredPort: 1420,
-        fallbackPorts: [1421, 1422, 1423, 5173],
-        autoAssign: true,
-        portRangeMin: 1420,
-        portRangeMax: 1499,
-      },
-      {
-        serviceName: 'frontend',
-        environment: 'development',
-        preferredPort: 5173,
-        fallbackPorts: [5174, 5175, 3010],
-        autoAssign: true,
-        portRangeMin: 5173,
-        portRangeMax: 5199,
+        portRangeMax: 3099,
       },
       {
         serviceName: 'api',
@@ -561,16 +475,8 @@ export class PortRegistryService extends EventEmitter {
       // No need to acquire lock here, as it should be acquired before calling this function.
       // This function only attempts to bind the port physically.
       const server = net.createServer();
-      server.listen(port, '127.0.0.1', () => {
-        // Port successfully bound, keep it open temporarily.
-        //
-        // unref() so an outstanding reservation never keeps the process alive.
-        // The socket still holds the port for as long as this process runs —
-        // which is the semantic callers want — but Node can exit once its real
-        // work is done. Without this, `PORT=$(find-available-port.cjs …)` in
-        // api-gateway's start:dev hangs forever: the reservation pins the event
-        // loop, the process never exits, and command substitution never returns.
-        server.unref();
+      server.listen(port, 'localhost', () => {
+        // Port successfully bound, keep it open temporarily
         this.temporaryReservations.set(port, server);
         resolve(server); // Return the server instance
       });
@@ -595,18 +501,19 @@ export class PortRegistryService extends EventEmitter {
   private async acquirePortLock(port: number, timeoutMs: number = 2000): Promise<boolean> {
     const lockKey = `port_lock:${port}`;
     const startTime = Date.now();
-    const redisClient = await this.getRedisClient();
     while (Date.now() - startTime < timeoutMs) {
       try {
-        const acquired = await redisClient.setnx(lockKey, 'locked', PORT_LOCK_TTL_MS);
+        const acquired = await this.redisClient.setnx(lockKey, 'locked');
         if (acquired === 1) {
+          // console.log(`Acquired lock for port ${port}`);
           return true;
         }
       } catch (err) {
         console.error(`Error acquiring Redis lock for port ${port}:`, err);
+        // In case of Redis error, proceed without lock to avoid blocking indefinitely
         return true;
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait a bit before retrying
     }
     console.warn(`Failed to acquire lock for port ${port} after ${timeoutMs}ms.`);
     return false;
@@ -615,8 +522,8 @@ export class PortRegistryService extends EventEmitter {
   private async releasePortLock(port: number): Promise<void> {
     const lockKey = `port_lock:${port}`;
     try {
-      const redisClient = await this.getRedisClient();
-      await redisClient.del(lockKey);
+      await this.redisClient.del(lockKey);
+      // console.log(`Released lock for port ${port}`);
     } catch (err) {
       console.error(`Error releasing Redis lock for port ${port}:`, err);
     }
@@ -628,8 +535,7 @@ export class PortRegistryService extends EventEmitter {
       this.monitoringInterval = null;
     }
     this.removeAllListeners();
-    if (this.redisClient) {
-      this.redisClient.disconnect().catch(console.error);
-    }
+    // Disconnect Redis client on destroy
+    this.redisClient.disconnect().catch(console.error);
   }
 }

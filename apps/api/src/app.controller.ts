@@ -1,10 +1,8 @@
 import { Controller, Get, Redirect } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthLevel, RequireAuthLevel } from './guards/secure-auth.guard';
 
 @ApiTags('app')
 @Controller()
-@RequireAuthLevel(AuthLevel.PUBLIC)
 export class AppController {
   constructor() {}
 

@@ -7,9 +7,8 @@ import axios from 'axios';
 import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
 import { WorkflowFetcher } from '../fetcher/WorkflowFetcher.js';
 import { WorkflowParser } from '../parser/WorkflowParser.js';
-import type { RegistryConfig} from '../registry/WorkflowRegistry.js';
-import { WorkflowRegistry } from '../registry/WorkflowRegistry.js';
-import type {
+import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry.js';
+import {
   CategoryConfig,
   N8nWorkflow,
   WorkflowCategory,

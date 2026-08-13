@@ -3,10 +3,6 @@
  * Registers agents with Master Clock and keeps them alive via heartbeat
  * Acts as a living agent on the relay — always present, always listening
  */
-import {
-  connectStandaloneRedisClient,
-  createStandaloneRedisClient,
-} from '@the-new-fuse/infrastructure';
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
 import { buildCanonicalEntityId } from './contracts/identity.js';
@@ -30,43 +26,15 @@ function encodeBase58(num: number): string {
   return encoded;
 }
 
-/**
- * PROVISIONAL bridge ID# — the fourth mirror of this hash.
- *
- * Band allocation (Phase 9, revised 2026-08-09). The bands exist so an ID#'s
- * provenance is readable from its value:
- *
- *   1 – 999,999,999      production sequential (Redis INCR, FederatedIdentityService)
- *   1,000 – 9,999        seeder  (legacy, overlaps production — see note)
- *   1e9 – 2e9            PROVISIONAL: this function + the three edge mirrors
- *
- * The previous band was `5000 + (h % 10000)`, chosen to be "visually distinct
- * from production sequential (1-N) and from seeder (1000-9999)". It was neither
- * distinct nor large enough:
- *
- *   - it OVERLAPPED the seeder band at 5,000–9,999, so provenance was not in
- *     fact readable from the value;
- *   - 10,000 values against a 194-agent roster produced two live collisions
- *     (`ID#:4gV`, `ID#:3Ub`). This runs on the registration path, so those were
- *     ambiguous addresses for `resolveMessageTarget`, which routes on `@ID#:…`.
- *
- * Must stay in lock-step with `federation-identity.ts`,
- * `federation-protocol.cjs`, and `recovery-federation.ts` — a divergence yields
- * a different ID# for the same agent depending on which side computed it.
- *
- * Still provisional: a server-assigned sequential `idNumber` always wins.
- */
-const PROVISIONAL_ID_FLOOR = 1_000_000_000;
-const PROVISIONAL_ID_SPACE = 1_000_000_000;
-
 function deterministicBridgeIdNumber(agentId: string): string {
   let h = 0x811c9dc5;
-  const id = String(agentId || 'agent');
-  for (let i = 0; i < id.length; i += 1) {
-    h ^= id.charCodeAt(i);
+  for (let i = 0; i < agentId.length; i += 1) {
+    h ^= agentId.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  return `ID#:${encodeBase58(PROVISIONAL_ID_FLOOR + (h % PROVISIONAL_ID_SPACE))}`;
+  // Bias 5000-14999 so deterministic bridge IDs are visually distinct
+  // from production sequential (1-N) and from seeder (1000-9999).
+  return `ID#:${encodeBase58(5000 + (h % 10000))}`;
 }
 
 // Phase 9 FOLLOWUP-3: build a fresh mcid envelope at registration time.
@@ -107,9 +75,9 @@ class AgentRegistryBridge {
     return new Promise<void>((resolve, reject) => {
       this.ws = new WebSocket(RELAY_URL);
 
-      this.ws.on('open', async () => {
+      this.ws.on('open', () => {
         console.log(`[${AGENT_ID}] Connected to relay ${RELAY_URL}`);
-        await this.register();
+        this.register();
         resolve();
       });
 
@@ -134,31 +102,7 @@ class AgentRegistryBridge {
     });
   }
 
-  private async allocateAuthoritativeIdNumber(agentId: string): Promise<string> {
-    try {
-      const redis = createStandaloneRedisClient({ lazyConnect: true });
-      await connectStandaloneRedisClient(redis as any);
-
-      const key = `tnf:identity:seq:${agentId}`;
-      const seq = await redis.incr(key);
-      const encoded = encodeBase58(seq);
-
-      if ('quit' in redis && typeof redis.quit === 'function') {
-        await redis.quit();
-      } else if ('disconnect' in redis && typeof redis.disconnect === 'function') {
-        await redis.disconnect();
-      }
-
-      return `ID#:${encoded}`;
-    } catch (e) {
-      console.warn(
-        `[${AGENT_ID}] Failed to connect to Redis for authoritative ID#. Falling back to provisional hash. Reason: ${e instanceof Error ? e.message : e}`
-      );
-      return deterministicBridgeIdNumber(agentId);
-    }
-  }
-
-  private async register() {
+  private register() {
     if (!this.ws || this.registered) return;
     this.ws.send(
       JSON.stringify({
@@ -181,7 +125,7 @@ class AgentRegistryBridge {
             // payload. In production this is allocated by FederatedIdentityService;
             // here we use a deterministic hash so it survives restarts and
             // does not collide with seeder-generated values.
-            idNumber: await this.allocateAuthoritativeIdNumber(AGENT_ID),
+            idNumber: deterministicBridgeIdNumber(AGENT_ID),
             // Phase 9 FOLLOWUP-3: emit mcid envelope at registration. mcid is
             // the cumulative event id; correlation_id links registration events
             // originating from the same bridge session.
@@ -190,20 +134,6 @@ class AgentRegistryBridge {
             name: AGENT_ID,
             platform: 'tnf-core',
             capabilities: ['launchpad', 'orchestrator', 'heartbeat'],
-            // Phase 9 (audit 2026-06-14) FIX: preserve fulfillment + traits
-            // from upstream persona payload so broker can route by model/tool.
-            fulfillment: {
-              vendor: 'tnf',
-              model: process.env.TNF_MODEL || 'default',
-              transport: 'cli',
-              protocol_version: 'tnf/protocol/1.0',
-            },
-            traits: {
-              daccRole: 'broker',
-              autonomy_level: 'autonomous',
-              subAgent_capable: true,
-              observability: 'native',
-            },
           },
         },
         source: this.sessionId,

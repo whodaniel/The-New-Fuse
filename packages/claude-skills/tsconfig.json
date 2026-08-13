@@ -21,9 +21,6 @@
     },
     {
       "path": "../core-monitoring"
-    },
-    {
-      "path": "../core-vector-db"
     }
   ]
 }

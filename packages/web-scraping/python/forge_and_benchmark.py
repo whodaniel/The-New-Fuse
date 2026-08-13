@@ -15,7 +15,7 @@ def benchmark_forged():
     forge = ForgeCompiler(output_dir="bin/forged")
     
     # Read the C code
-    c_source = (Path(__file__).resolve().parent / "clean_text.c").read_text()
+    c_source = Path("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/web-scraping/python/clean_text.c").read_text()
     
     print("Forging native text cleaner...")
     lib_path = forge.compile_c(c_source, "clean_text", shared=True)

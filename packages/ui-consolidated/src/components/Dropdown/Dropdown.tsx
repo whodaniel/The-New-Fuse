@@ -1,6 +1,6 @@
 import { cn } from '@the-new-fuse/utils';
 import React, { useEffect, useRef, useState } from 'react';
-import { Icon } from '../Icon/index.js';
+import { Icon } from '../Icon';
 
 export interface DropdownOption {
   value: string;

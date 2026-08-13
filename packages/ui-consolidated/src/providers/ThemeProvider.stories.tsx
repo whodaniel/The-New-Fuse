@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '../components/Button.js';
-import { Card } from '../components/Card.js';
-import { Checkbox } from '../components/Checkbox/index.js';
-import { Input } from '../components/Input.js';
-import { Select } from '../components/Select/index.js';
-import { Switch } from '../components/Switch/index.js';
-import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider.js';
+import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider';
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
+import { Input } from '../components/Input';
+import { Select } from '../components/Select';
+import { Checkbox } from '../components/Checkbox';
+import { Switch } from '../components/Switch';
 
 const meta: Meta<typeof ThemeProvider> = {
   title: 'Providers/ThemeProvider',
@@ -31,19 +31,11 @@ const ThemeInfo = () => {
 
   return (
     <div className="mb-4 p-4 bg-muted rounded-md">
-      <p className="mb-2">
-        Current theme: <strong>{theme}</strong>
-      </p>
+      <p className="mb-2">Current theme: <strong>{theme}</strong></p>
       <div className="flex gap-2">
-        <Button size="sm" onClick={() => setTheme('light')}>
-          Light
-        </Button>
-        <Button size="sm" onClick={() => setTheme('dark')}>
-          Dark
-        </Button>
-        <Button size="sm" onClick={() => setTheme('system')}>
-          System
-        </Button>
+        <Button size="sm" onClick={() => setTheme('light')}>Light</Button>
+        <Button size="sm" onClick={() => setTheme('dark')}>Dark</Button>
+        <Button size="sm" onClick={() => setTheme('system')}>System</Button>
       </div>
     </div>
   );
@@ -106,9 +98,7 @@ export const Default: Story = {
           <div className="p-4 bg-secondary text-secondary-foreground rounded-md">Secondary</div>
           <div className="p-4 bg-accent text-accent-foreground rounded-md">Accent</div>
           <div className="p-4 bg-muted text-muted-foreground rounded-md">Muted</div>
-          <div className="p-4 bg-destructive text-destructive-foreground rounded-md">
-            Destructive
-          </div>
+          <div className="p-4 bg-destructive text-destructive-foreground rounded-md">Destructive</div>
           <div className="p-4 bg-success text-success-foreground rounded-md">Success</div>
         </div>
       </div>

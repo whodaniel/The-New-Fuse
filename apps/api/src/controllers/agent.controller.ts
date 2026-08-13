@@ -24,13 +24,7 @@ import {
 import { AgentProfileDto } from '../agents/dto/agent.dto';
 import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import {
-  AuthLevel,
-  JwtAuth,
-  RateLimitTier,
-  RequireAuthLevel,
-  SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
 import { AgentService } from '../services/agent.service';
 
 /**
@@ -999,106 +993,6 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to delete agent',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  /**
-   * Get agent directory with progressive disclosure.
-   * Returns tier-1 agents by default, drill-down by category.
-   * Public endpoint - no authentication required.
-   */
-  @Get('directory')
-  @RequireAuthLevel(AuthLevel.PUBLIC)
-  @ApiOperation({ summary: 'Get agent directory with progressive disclosure (public)' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    type: Object,
-    description: 'Agent directory grouped by category',
-  })
-  async getAgentDirectory(
-    @Query('category') category?: string,
-    @Query('limit') limit?: string
-  ): Promise<{
-    categories: Array<{ name: string; count: number; agents: any[] }>;
-    total: number;
-    tier: number;
-  }> {
-    try {
-      const limitNum = limit ? parseInt(limit, 10) : 10;
-      return await this.agentService.getAgentDirectory(category, limitNum);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      throw new HttpException(
-        `Failed to fetch agent directory: ${errorMessage}`,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  /**
-   * Get available agent categories with counts.
-   * Public endpoint for browsing departments.
-   */
-  @Get('categories')
-  @RequireAuthLevel(AuthLevel.PUBLIC)
-  @ApiOperation({ summary: 'Get agent categories with counts (public)' })
-  @ApiResponse({ status: HttpStatus.OK, type: Object, description: 'Available agent categories' })
-  async getAgentCategories(): Promise<{
-    categories: Array<{ name: string; count: number }>;
-    total: number;
-  }> {
-    try {
-      return await this.agentService.getAgentCategories();
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      throw new HttpException(
-        `Failed to fetch agent categories: ${errorMessage}`,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  /**
-   * Get agents filtered by semantic chain properties.
-   * Supports filtering by category, domain, visibility, dacc_role.
-   */
-  @Get()
-  @ApiOperation({ summary: 'Get agents with semantic chain filters' })
-  @ApiResponse({ status: HttpStatus.OK, type: Object })
-  async getAgentsWithFilters(
-    @CurrentUser() user: User,
-    @Query('category') category?: string,
-    @Query('domain') domain?: string,
-    @Query('visibility') visibility?: string,
-    @Query('dacc_role') daccRole?: string,
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string
-  ): Promise<{
-    data: AgentResponseDto[];
-    total: number;
-    filters: Record<string, string | undefined>;
-  }> {
-    if (!user || !user.id) {
-      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
-    }
-
-    try {
-      const filters = { category, domain, visibility, dacc_role: daccRole };
-      const limitNum = limit ? parseInt(limit, 10) : 50;
-      const offsetNum = offset ? parseInt(offset, 10) : 0;
-      const result = await this.agentService.getAgentsWithFilters(
-        user.id,
-        filters,
-        limitNum,
-        offsetNum
-      );
-      return { ...result, filters };
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      throw new HttpException(
-        `Failed to fetch agents: ${errorMessage}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

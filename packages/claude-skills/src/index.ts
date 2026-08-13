@@ -8,19 +8,19 @@
 export * from './types/index.js';
 
 // Parser
-export { SkillParser } from './parser/index.js';
+export { SkillParser } from './parser.js';
 
 // Loader
-export { SkillLoader } from './loader/index.js';
+export { SkillLoader } from './loader.js';
 
 // Executor
-export { SkillExecutor } from './executor/index.js';
+export { SkillExecutor } from './executor.js';
 
 // Registry
-export { SkillRegistry } from './registry/index.js';
+export { SkillRegistry } from './registry.js';
 
 // MCP Integration
-export { MCPSkillProvider } from './integration/index.js';
+export { MCPSkillProvider } from './integration.js';
 
 // Main orchestrator
 export { ClaudeSkillsManager } from './ClaudeSkillsManager.js';

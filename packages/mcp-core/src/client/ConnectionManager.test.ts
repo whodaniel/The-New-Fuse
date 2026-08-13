@@ -3,56 +3,17 @@
  */
 
 import { EventEmitter } from 'events';
-import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection.js';
 import { ConnectionManager } from './ConnectionManager.js';
+import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
-// ConnectionManager's real implementation talks to the browser-style
-// WebSocket API (assigning to onopen/onmessage/onerror/onclose properties),
-// not Node's EventEmitter API. Every mock WebSocket in this file is written
-// in EventEmitter style (`.emit('open')` etc.) for convenience, so this
-// shared base bridges both styles: emit() also invokes the matching
-// property callback. All mock classes below extend this instead of
-// EventEmitter directly.
-abstract class EventBridgedWebSocket extends EventEmitter {
+// Mock WebSocket
+class MockWebSocket extends EventEmitter {
+  public readyState: number = WebSocket.CONNECTING;
   public static CONNECTING = 0;
   public static OPEN = 1;
   public static CLOSING = 2;
   public static CLOSED = 3;
-
-  public onopen: (() => void) | null = null;
-  public onmessage: ((event: { data: string }) => void) | null = null;
-  public onerror: ((error: unknown) => void) | null = null;
-  public onclose: (() => void) | null = null;
-
-  override emit(event: string | symbol, ...args: any[]): boolean {
-    switch (event) {
-      case 'open':
-        this.onopen?.();
-        break;
-      case 'message':
-        this.onmessage?.(args[0]);
-        break;
-      case 'error':
-        this.onerror?.(args[0]);
-        break;
-      case 'close':
-        this.onclose?.();
-        break;
-    }
-    // Only forward to real EventEmitter-style listeners if any are
-    // registered. Node's EventEmitter treats an unhandled 'error' emit as a
-    // fatal, thrown exception -- and nothing here ever listens via .on(),
-    // only via the onopen/onmessage/onerror/onclose properties above.
-    if (this.listenerCount(event) > 0) {
-      return super.emit(event, ...args);
-    }
-    return false;
-  }
-}
-
-// Mock WebSocket
-class MockWebSocket extends EventBridgedWebSocket {
-  public readyState: number = WebSocket.CONNECTING;
 
   constructor(public url: string) {
     super();
@@ -75,8 +36,8 @@ class MockWebSocket extends EventBridgedWebSocket {
           data: JSON.stringify({
             jsonrpc: '2.0',
             id: message.id,
-            result: 'pong',
-          }),
+            result: 'pong'
+          })
         });
       }, 5);
     }
@@ -101,14 +62,14 @@ describe('ConnectionManager', () => {
       maxIdleTime: 1000,
       healthCheckInterval: 100,
       reconnectInterval: 50,
-      maxReconnectAttempts: 3,
+      maxReconnectAttempts: 3
     });
 
     defaultOptions = {
       timeout: 5000,
       retryAttempts: 2,
       retryDelay: 100,
-      keepAlive: true,
+      keepAlive: true
     };
   });
 
@@ -140,7 +101,9 @@ describe('ConnectionManager', () => {
 
       // Create connections up to the limit
       for (let i = 0; i < 5; i++) {
-        promises.push(connectionManager.createConnection(`ws://localhost:808${i}`, defaultOptions));
+        promises.push(
+          connectionManager.createConnection(`ws://localhost:808${i}`, defaultOptions)
+        );
       }
 
       await Promise.all(promises);
@@ -153,7 +116,7 @@ describe('ConnectionManager', () => {
 
     it('should handle connection timeout', async () => {
       // Mock WebSocket that never connects
-      class TimeoutWebSocket extends EventBridgedWebSocket {
+      class TimeoutWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
         constructor(url: string) {
           super();
@@ -210,7 +173,7 @@ describe('ConnectionManager', () => {
 
       const connections = connectionManager.listConnections();
       expect(connections).toHaveLength(2);
-      expect(connections.map((c) => c.endpoint)).toEqual(expect.arrayContaining(endpoints));
+      expect(connections.map(c => c.endpoint)).toEqual(expect.arrayContaining(endpoints));
     });
 
     it('should close all connections', async () => {
@@ -233,7 +196,7 @@ describe('ConnectionManager', () => {
       let attemptCount = 0;
 
       // Mock WebSocket that fails first two attempts
-      class RetryWebSocket extends EventBridgedWebSocket {
+      class RetryWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
 
         constructor(url: string) {
@@ -260,10 +223,7 @@ describe('ConnectionManager', () => {
 
       (global as any).WebSocket = RetryWebSocket;
 
-      const connection = await connectionManager.createConnection(
-        'ws://localhost:8080',
-        defaultOptions
-      );
+      const connection = await connectionManager.createConnection('ws://localhost:8080', defaultOptions);
 
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
       expect(attemptCount).toBe(3);
@@ -274,7 +234,7 @@ describe('ConnectionManager', () => {
 
     it('should fail after max retry attempts', async () => {
       // Mock WebSocket that always fails
-      class FailingWebSocket extends EventBridgedWebSocket {
+      class FailingWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
 
         constructor(url: string) {
@@ -447,7 +407,7 @@ describe('ConnectionManager', () => {
       await connection.close();
 
       // Wait for cleanup interval
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       expect(connectionManager.getConnection(endpoint)).toBeNull();
     });
@@ -480,7 +440,7 @@ describe('ConnectionManager', () => {
   describe('Error Handling', () => {
     it('should handle WebSocket errors gracefully', async () => {
       // Mock WebSocket that emits error
-      class ErrorWebSocket extends EventBridgedWebSocket {
+      class ErrorWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
 
         constructor(url: string) {
@@ -501,7 +461,7 @@ describe('ConnectionManager', () => {
 
       await expect(
         connectionManager.createConnection('ws://localhost:8080', defaultOptions)
-      ).rejects.toThrow('WebSocket error');
+      ).rejects.toThrow('Connection failed');
 
       // Restore mock
       (global as any).WebSocket = MockWebSocket;
@@ -519,7 +479,7 @@ describe('ConnectionManager', () => {
           type: 'request',
           content: { jsonrpc: '2.0', id: 1, method: 'test' },
           timestamp: new Date(),
-          source: 'test',
+          source: 'test'
         })
       ).rejects.toThrow('Connection not active');
     });

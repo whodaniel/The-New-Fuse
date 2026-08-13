@@ -1,6 +1,6 @@
 import { A2AMessage, AgentRegistration, AgentStatus } from '@the-new-fuse/a2a-core';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { A2AConnectionConfig, A2AHookReturn, useA2A } from '../../hooks/useA2A.js';
+import { A2AConnectionConfig, A2AHookReturn, useA2A } from '../../hooks/useA2A';
 
 interface A2AContextType extends A2AHookReturn {
   agents: AgentRegistration[];

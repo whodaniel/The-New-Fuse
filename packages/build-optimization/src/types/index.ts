@@ -46,8 +46,6 @@ export interface BuildStrategy {
   enableIncremental: boolean;
   /** Clean up memory between stages */
   cleanupBetweenStages: boolean;
-  /** Build timeout in milliseconds */
-  buildTimeout?: number;
 }
 
 /**

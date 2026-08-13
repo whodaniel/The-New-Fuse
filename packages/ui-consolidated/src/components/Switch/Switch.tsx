@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../utils/index.js';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils';
 
 /**
  * Switch variants using class-variance-authority
@@ -44,8 +44,7 @@ export const switchThumbVariants = cva(
  * Switch component props
  */
 export interface SwitchProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof switchVariants> {
   /**
    * Label for the switch
@@ -106,21 +105,18 @@ export interface SwitchProps
  * <Switch labelPosition="left" label="Label on left" />
  */
 const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  (
-    {
-      className,
-      size,
-      label,
-      helperText,
-      error,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      labelPosition = 'right',
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    size,
+    label,
+    helperText,
+    error,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    labelPosition = 'right',
+    ...props
+  }, ref) => {
     const id = React.useMemo(() => `switch-${Math.random().toString(36).substr(2, 9)}`, []);
     const [checked, setChecked] = React.useState(props.defaultChecked || props.checked || false);
 
@@ -139,14 +135,10 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
 
     return (
       <div className={cn('flex flex-col space-y-2', containerClassName)}>
-        <div
-          className={cn(
-            'flex items-center',
-            labelPosition === 'left'
-              ? 'flex-row-reverse justify-end space-x-reverse space-x-2'
-              : 'space-x-2'
-          )}
-        >
+        <div className={cn(
+          'flex items-center',
+          labelPosition === 'left' ? 'flex-row-reverse justify-end space-x-reverse space-x-2' : 'space-x-2'
+        )}>
           <div className="relative">
             <input
               type="checkbox"
@@ -161,11 +153,16 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               onChange={handleChange}
             />
             <div
-              className={cn(switchVariants({ size }), className)}
+              className={cn(
+                switchVariants({ size }),
+                className
+              )}
               data-state={checked ? 'checked' : 'unchecked'}
             >
               <div
-                className={cn(switchThumbVariants({ size }))}
+                className={cn(
+                  switchThumbVariants({ size })
+                )}
                 data-state={checked ? 'checked' : 'unchecked'}
               />
             </div>

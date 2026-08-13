@@ -1,6 +1,6 @@
 import { HTMLMotionProps, motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils';
 
 export interface MagneticButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: 'primary' | 'secondary' | 'ghost';

@@ -522,6 +522,6 @@ REDIS_SENTINEL_HOSTS=sentinel-us,sentinel-eu,sentinel-ap
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/whodaniel/The-New-Fuse/issues
+- GitHub Issues: https://github.com/whodaniel/fuse/issues
 - Documentation: https://docs.thenewfuse.com
 - Slack: #sync-core channel

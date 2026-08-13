@@ -1,3 +1,3 @@
-export async function isValidPublicUrl(_url: string): Promise<{ valid: boolean; reason?: string }> {
+export async function isValidPublicUrl(url: string): Promise<{ valid: boolean; reason?: string }> {
   return { valid: true };
 }

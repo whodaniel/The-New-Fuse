@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { Pagination } from './Pagination.js';
+import { Pagination } from './Pagination';
 
 const meta: Meta<typeof Pagination> = {
   title: 'Components/Pagination',
@@ -34,7 +34,13 @@ export const Default: Story = {
   render: () => {
     const [page, setPage] = useState(1);
 
-    return <Pagination count={10} page={page} onPageChange={setPage} />;
+    return (
+      <Pagination
+        count={10}
+        page={page}
+        onPageChange={setPage}
+      />
+    );
   },
 };
 
@@ -42,7 +48,14 @@ export const WithFirstLast: Story = {
   render: () => {
     const [page, setPage] = useState(5);
 
-    return <Pagination count={10} page={page} onPageChange={setPage} showFirstLast />;
+    return (
+      <Pagination
+        count={10}
+        page={page}
+        onPageChange={setPage}
+        showFirstLast
+      />
+    );
   },
 };
 
@@ -72,17 +85,32 @@ export const Variants: Story = {
       <div className="flex flex-col gap-4">
         <div>
           <h3 className="mb-2 text-sm font-medium">Default</h3>
-          <Pagination count={10} page={page1} onPageChange={setPage1} variant="default" />
+          <Pagination
+            count={10}
+            page={page1}
+            onPageChange={setPage1}
+            variant="default"
+          />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium">Outline</h3>
-          <Pagination count={10} page={page2} onPageChange={setPage2} variant="outline" />
+          <Pagination
+            count={10}
+            page={page2}
+            onPageChange={setPage2}
+            variant="outline"
+          />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium">Ghost</h3>
-          <Pagination count={10} page={page3} onPageChange={setPage3} variant="ghost" />
+          <Pagination
+            count={10}
+            page={page3}
+            onPageChange={setPage3}
+            variant="ghost"
+          />
         </div>
       </div>
     );
@@ -99,17 +127,32 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-4">
         <div>
           <h3 className="mb-2 text-sm font-medium">Small</h3>
-          <Pagination count={10} page={page1} onPageChange={setPage1} size="sm" />
+          <Pagination
+            count={10}
+            page={page1}
+            onPageChange={setPage1}
+            size="sm"
+          />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium">Default</h3>
-          <Pagination count={10} page={page2} onPageChange={setPage2} size="default" />
+          <Pagination
+            count={10}
+            page={page2}
+            onPageChange={setPage2}
+            size="default"
+          />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium">Large</h3>
-          <Pagination count={10} page={page3} onPageChange={setPage3} size="lg" />
+          <Pagination
+            count={10}
+            page={page3}
+            onPageChange={setPage3}
+            size="lg"
+          />
         </div>
       </div>
     );
@@ -120,7 +163,14 @@ export const LargeNumberOfPages: Story = {
   render: () => {
     const [page, setPage] = useState(50);
 
-    return <Pagination count={100} page={page} onPageChange={setPage} showFirstLast />;
+    return (
+      <Pagination
+        count={100}
+        page={page}
+        onPageChange={setPage}
+        showFirstLast
+      />
+    );
   },
 };
 
@@ -128,7 +178,14 @@ export const WithoutControls: Story = {
   render: () => {
     const [page, setPage] = useState(5);
 
-    return <Pagination count={10} page={page} onPageChange={setPage} showControls={false} />;
+    return (
+      <Pagination
+        count={10}
+        page={page}
+        onPageChange={setPage}
+        showControls={false}
+      />
+    );
   },
 };
 
@@ -164,12 +221,16 @@ export const ControlledPagination: Story = {
           </div>
 
           <div className="text-sm">
-            Showing {(page - 1) * itemsPerPage + 1}-{Math.min(page * itemsPerPage, totalItems)} of{' '}
-            {totalItems} items
+            Showing {(page - 1) * itemsPerPage + 1}-{Math.min(page * itemsPerPage, totalItems)} of {totalItems} items
           </div>
         </div>
 
-        <Pagination count={totalPages} page={page} onPageChange={setPage} showFirstLast />
+        <Pagination
+          count={totalPages}
+          page={page}
+          onPageChange={setPage}
+          showFirstLast
+        />
       </div>
     );
   },

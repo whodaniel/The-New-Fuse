@@ -2,29 +2,9 @@
  * Unit tests for ErrorMonitor
  */
 
-import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { ErrorMonitor, MonitorConfig, AlertRule, ErrorMetrics } from './ErrorMonitor.js';
+import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error.js';
 import { Logger } from '../utils/Logger.js';
-import { AlertRule, ErrorMonitor, MonitorConfig } from './ErrorMonitor.js';
-
-import * as os from 'os';
-
-// The Alert System and Metrics History suites compute error RATES against
-// the real clock (recordError -> real setTimeout -> rate/window assertion).
-// On a saturated host (this box runs a multi-agent swarm; load averages in
-// the hundreds occur), wall-clock stretch dilutes the computed rates and the
-// assertions flake nondeterministically. Skip just those suites when 1-min
-// load exceeds 2x cores. TNF_FORCE_PERF_TESTS=1 forces them on.
-// TODO(tnf): refactor these suites onto jest fake timers so they are
-// deterministic under any load, then remove this guard.
-const hostOverloaded =
-  process.env.TNF_FORCE_PERF_TESTS !== '1' && os.loadavg()[0] > os.cpus().length * 2;
-const describeTimingSensitive = hostOverloaded ? describe.skip : describe;
-if (hostOverloaded) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    `[ErrorMonitor.test] timing-sensitive suites skipped: 1-min load ${os.loadavg()[0].toFixed(0)} > ${os.cpus().length * 2} (2x cores).`
-  );
-}
 
 describe('ErrorMonitor', () => {
   let monitor: ErrorMonitor;
@@ -37,14 +17,14 @@ describe('ErrorMonitor', () => {
       warn: jest.fn(),
       error: jest.fn(),
       setLogLevel: jest.fn(),
-      getLogLevel: jest.fn(),
+      getLogLevel: jest.fn()
     } as any;
 
     const config: Partial<MonitorConfig> = {
       metricsInterval: 100, // Fast for testing
       retentionPeriod: 60000, // 1 minute for testing
       enableAlerting: true,
-      alertInterval: 50, // Fast for testing
+      alertInterval: 50 // Fast for testing
     };
 
     monitor = new ErrorMonitor(config, mockLogger);
@@ -61,7 +41,7 @@ describe('ErrorMonitor', () => {
       monitor.recordError(error);
 
       // Wait for metrics update
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const metrics = monitor.getCurrentMetrics();
       expect(metrics.totalErrors).toBe(1);
@@ -81,9 +61,11 @@ describe('ErrorMonitor', () => {
     });
 
     it('should immediately update metrics for critical errors', async () => {
-      const criticalError = new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'System overloaded', {
-        severity: ErrorSeverity.CRITICAL,
-      });
+      const criticalError = new MCPErrorClass(
+        MCPErrorCode.SYSTEM_OVERLOADED,
+        'System overloaded',
+        { severity: ErrorSeverity.CRITICAL }
+      );
 
       monitor.recordError(criticalError);
 
@@ -97,13 +79,13 @@ describe('ErrorMonitor', () => {
       const errors = [
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 1'),
         new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 2'),
-        new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Error 3'),
+        new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Error 3')
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
       // Wait for metrics update
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const metrics = monitor.getCurrentMetrics();
       expect(metrics.errorRate).toBe(3);
@@ -115,12 +97,12 @@ describe('ErrorMonitor', () => {
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Resource error 1'),
         new MCPErrorClass(MCPErrorCode.RESOURCE_ACCESS_DENIED, 'Resource error 2'),
         new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Tool error'),
-        new MCPErrorClass(MCPErrorCode.AUTHENTICATION_FAILED, 'Auth error'),
+        new MCPErrorClass(MCPErrorCode.AUTHENTICATION_FAILED, 'Auth error')
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const metrics = monitor.getCurrentMetrics();
       expect(metrics.categoryDistribution[ErrorCategory.RESOURCE]).toBe(2);
@@ -134,24 +116,24 @@ describe('ErrorMonitor', () => {
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 2'),
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 3'),
         new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 4'),
-        new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 5'),
+        new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 5')
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const metrics = monitor.getCurrentMetrics();
       expect(metrics.topErrorCodes).toHaveLength(2);
       expect(metrics.topErrorCodes[0]).toEqual({
         code: MCPErrorCode.RESOURCE_NOT_FOUND,
         count: 3,
-        percentage: 60,
+        percentage: 60
       });
       expect(metrics.topErrorCodes[1]).toEqual({
         code: MCPErrorCode.TOOL_EXECUTION_FAILED,
         count: 2,
-        percentage: 40,
+        percentage: 40
       });
     });
 
@@ -163,36 +145,33 @@ describe('ErrorMonitor', () => {
       // Add some errors
       const errors = [
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 1'),
-        new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 2'),
+        new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 2')
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       metrics = monitor.getCurrentMetrics();
       expect(metrics.healthScore).toBeLessThan(100);
 
       // Add critical error
-      const criticalError = new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'Critical error', {
-        severity: ErrorSeverity.CRITICAL,
-      });
+      const criticalError = new MCPErrorClass(
+        MCPErrorCode.SYSTEM_OVERLOADED,
+        'Critical error',
+        { severity: ErrorSeverity.CRITICAL }
+      );
 
       monitor.recordError(criticalError);
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       metrics = monitor.getCurrentMetrics();
-      // With the configured healthWeights (severity: 0.3, capped severity
-      // impact of 30), a single critical error can only ever deduct up to 9
-      // points -- <90 is unreachable from severity alone. Assert the
-      // critical error further degrades the score instead of a fixed
-      // threshold the weighting formula can't actually produce.
-      expect(metrics.healthScore).toBeLessThan(96);
+      expect(metrics.healthScore).toBeLessThan(90);
     });
   });
 
-  describeTimingSensitive('Alert System', () => {
+  describe('Alert System', () => {
     it('should register and trigger alert rules', async () => {
       let alertTriggered = false;
 
@@ -204,7 +183,7 @@ describe('ErrorMonitor', () => {
         condition: (metrics) => metrics.errorRate > 2,
         action: async () => {
           alertTriggered = true;
-        },
+        }
       };
 
       monitor.registerAlertRule(alertRule);
@@ -213,13 +192,13 @@ describe('ErrorMonitor', () => {
       const errors = [
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 1'),
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 2'),
-        new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 3'),
+        new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 3')
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
       // Wait for metrics and alert check
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       expect(alertTriggered).toBe(true);
     });
@@ -235,17 +214,17 @@ describe('ErrorMonitor', () => {
         condition: () => true, // Always trigger
         action: async () => {
           alertCount++;
-        },
+        }
       };
 
       monitor.registerAlertRule(alertRule);
 
       // Trigger multiple times quickly
       monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Error 1'));
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Error 2'));
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(alertCount).toBeLessThanOrEqual(1); // Should only trigger once due to cooldown
     });
@@ -257,7 +236,7 @@ describe('ErrorMonitor', () => {
         severity: 'low',
         cooldown: 0,
         condition: () => true,
-        action: async () => {},
+        action: async () => {}
       };
 
       monitor.registerAlertRule(alertRule);
@@ -279,7 +258,7 @@ describe('ErrorMonitor', () => {
         severity: 'low',
         cooldown: 0,
         condition: () => false,
-        action: async () => {},
+        action: async () => {}
       };
 
       monitor.registerAlertRule(alertRule);
@@ -294,11 +273,11 @@ describe('ErrorMonitor', () => {
     });
   });
 
-  describeTimingSensitive('Metrics History', () => {
+  describe('Metrics History', () => {
     it('should maintain metrics history', async () => {
       monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Error'));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const history = monitor.getMetricsHistory(1);
       expect(history.length).toBeGreaterThan(0);
@@ -309,14 +288,10 @@ describe('ErrorMonitor', () => {
     it('should filter metrics history by time window', async () => {
       monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Error'));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const fullHistory = monitor.getMetricsHistory(24);
-      // getMetricsHistory converts hours to ms (hours * 60 * 60 * 1000), so
-      // 0.001 hours is 3.6 seconds -- comfortably longer than the 150ms
-      // wait above, and so didn't actually exclude the recorded entry.
-      // Use a window well under 150ms instead.
-      const shortHistory = monitor.getMetricsHistory(0.00001); // ~36ms window
+      const shortHistory = monitor.getMetricsHistory(0.001); // Very short window
 
       expect(fullHistory.length).toBeGreaterThan(0);
       expect(shortHistory.length).toBe(0);
@@ -328,14 +303,16 @@ describe('ErrorMonitor', () => {
       const errors = [
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Error 1'),
         new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Error 2'),
-        new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'Critical error', {
-          severity: ErrorSeverity.CRITICAL,
-        }),
+        new MCPErrorClass(
+          MCPErrorCode.SYSTEM_OVERLOADED,
+          'Critical error',
+          { severity: ErrorSeverity.CRITICAL }
+        )
       ];
 
-      errors.forEach((error) => monitor.recordError(error));
+      errors.forEach(error => monitor.recordError(error));
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const report = monitor.generateReport(1);
 
@@ -345,7 +322,7 @@ describe('ErrorMonitor', () => {
       expect(report.recommendations.length).toBeGreaterThan(0);
 
       // Should have recommendation for critical errors
-      expect(report.recommendations.some((r) => r.includes('Critical errors'))).toBe(true);
+      expect(report.recommendations.some(r => r.includes('Critical errors'))).toBe(true);
     });
 
     it('should provide relevant recommendations', async () => {
@@ -354,33 +331,30 @@ describe('ErrorMonitor', () => {
         monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, `Error ${i}`));
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const report = monitor.generateReport(1);
 
-      expect(report.recommendations.some((r) => r.includes('High error rate'))).toBe(true);
+      expect(report.recommendations.some(r => r.includes('High error rate'))).toBe(true);
     });
   });
 
   describe('Data Cleanup', () => {
     it('should clean up old error history', async () => {
       // Create monitor with very short retention period
-      const shortRetentionMonitor = new ErrorMonitor(
-        {
-          retentionPeriod: 100, // 100ms
-          metricsInterval: 50,
-        },
-        mockLogger
-      );
+      const shortRetentionMonitor = new ErrorMonitor({
+        retentionPeriod: 100, // 100ms
+        metricsInterval: 50
+      }, mockLogger);
 
       shortRetentionMonitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Old error'));
 
       // Wait for retention period to pass
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       shortRetentionMonitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'New error'));
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       const metrics = shortRetentionMonitor.getCurrentMetrics();
       expect(metrics.errorRate).toBe(1); // Should only count recent error
@@ -394,9 +368,9 @@ describe('ErrorMonitor', () => {
       const rules = monitor.getAlertRules();
 
       expect(rules.length).toBeGreaterThan(0);
-      expect(rules.some((r) => r.name === 'high-error-rate')).toBe(true);
-      expect(rules.some((r) => r.name === 'critical-errors')).toBe(true);
-      expect(rules.some((r) => r.name === 'low-health-score')).toBe(true);
+      expect(rules.some(r => r.name === 'high-error-rate')).toBe(true);
+      expect(rules.some(r => r.name === 'critical-errors')).toBe(true);
+      expect(rules.some(r => r.name === 'low-health-score')).toBe(true);
     });
 
     it('should trigger high error rate alert', async () => {
@@ -412,7 +386,7 @@ describe('ErrorMonitor', () => {
         }
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       expect(alertTriggered).toBe(true);
     });
@@ -433,7 +407,7 @@ describe('ErrorMonitor', () => {
 
       monitor.recordError(criticalError);
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       expect(alertTriggered).toBe(true);
     });
@@ -443,13 +417,13 @@ describe('ErrorMonitor', () => {
     it('should detect increasing error trends', async () => {
       // Simulate increasing error pattern
       monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Error 1'));
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       // Add more errors
       for (let i = 0; i < 5; i++) {
         monitor.recordError(new MCPErrorClass(MCPErrorCode.TIMEOUT, `Error ${i + 2}`));
       }
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const metrics = monitor.getCurrentMetrics();
       // Note: Trend detection requires multiple data points over time

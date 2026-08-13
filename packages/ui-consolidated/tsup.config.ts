@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-  splitting: false,
+  splitting: true,
   sourcemap: true,
   clean: true,
   external: [
@@ -32,5 +32,9 @@ export default defineConfig({
     '*.module.css',
   ],
   treeshake: true,
-  minify: false,
+  minify: true,
+  esbuildOptions(options) {
+    options.loader = options.loader || {}; // Ensure loader object exists
+    options.loader['.css'] = 'copy'; // Use 'copy' loader for CSS files
+  },
 });

@@ -69,7 +69,7 @@ export class AgentDto {
   @Allow()
   @ApiProperty({
     description: 'Primary configuration payload',
-    selfRequired: false,
+    required: false,
     type: 'object',
     additionalProperties: true,
   })
@@ -78,7 +78,7 @@ export class AgentDto {
   @Allow()
   @ApiProperty({
     description: 'Configuration alias from legacy/new UI payloads',
-    selfRequired: false,
+    required: false,
     type: 'object',
     additionalProperties: true,
   })
@@ -87,7 +87,7 @@ export class AgentDto {
   @Allow()
   @ApiProperty({
     description: 'Public profile metadata',
-    selfRequired: false,
+    required: false,
     type: 'object',
     additionalProperties: true,
   })

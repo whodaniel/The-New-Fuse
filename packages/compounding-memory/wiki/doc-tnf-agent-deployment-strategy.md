@@ -29,7 +29,7 @@ pnpm tnf-agent register "TNF-Content-Agent" worker vscode
 pnpm tnf-agent register "TNF-Analytics-Agent" worker gemini
 
 # Register orchestration agent
-pnpm tnf-agent register "TNF-Coordinator" worker antigravity
+pnpm tnf-agent register "TNF-Orchestrator" orchestrator antigravity
 ```
 
 ### 2. Execute Network-Beneficial Workflows

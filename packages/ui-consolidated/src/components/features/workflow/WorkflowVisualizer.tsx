@@ -1,4 +1,4 @@
-import { WorkflowModel, WorkflowStepDefinition } from '@the-new-fuse/api-types/workflow';
+import { WorkflowModel, WorkflowStepDefinition } from '@the-new-fuse/api-types/src/workflow';
 import React, { useMemo } from 'react';
 
 interface VisualizerNode {

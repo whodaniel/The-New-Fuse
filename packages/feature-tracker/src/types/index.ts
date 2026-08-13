@@ -36,23 +36,3 @@ export interface StageTransition {
   createdAt: Date;
   updatedAt: Date;
 }
-
-export interface CodeMetrics {
-  linesOfCode?: number;
-  testCoverage?: number;
-  complexity?: number;
-  maintainabilityIndex?: number;
-}
-
-export interface QualitativeAssessment {
-  codeQuality?: number;
-  documentation?: number;
-  testQuality?: number;
-  notes?: string;
-}
-
-export interface FeatureProgress extends Feature {
-  stage: FeatureStage;
-  metrics?: CodeMetrics;
-  assessment?: QualitativeAssessment;
-}

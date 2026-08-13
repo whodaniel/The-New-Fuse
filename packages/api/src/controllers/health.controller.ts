@@ -4,9 +4,9 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HealthCheck } from '@nestjs/terminus';
-import { HealthService } from '../services/health.service.js';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { HealthService } from '../services/health.service';
 // Local type definition to avoid cross-package import issues
 interface HealthIndicatorResult {
   [key: string]: {
@@ -18,7 +18,9 @@ interface HealthIndicatorResult {
 @ApiTags('health')
 @Controller('health')
 export class HealthController {
-  constructor(private readonly healthService: HealthService) {}
+  constructor(
+    private readonly healthService: HealthService,
+  ) {}
 
   /**
    * Basic health check endpoint using Terminus

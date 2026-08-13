@@ -3,26 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { CacheFactory, LRUCache, MultiLevelCache } from './CacheStrategy.js';
+import { LRUCache, MultiLevelCache, CacheFactory } from './CacheStrategy.js';
 
-import * as os from 'os';
-
-// Wall-clock performance assertions are meaningless when the host is
-// saturated (this box regularly runs a multi-agent swarm; load averages in
-// the hundreds have been observed). Skip the suite — rather than flake —
-// when 1-min load exceeds 2x the core count. Set TNF_FORCE_PERF_TESTS=1 to
-// run regardless.
-const hostOverloaded =
-  process.env.TNF_FORCE_PERF_TESTS !== '1' && os.loadavg()[0] > os.cpus().length * 2;
-const describePerf = hostOverloaded ? describe.skip : describe;
-if (hostOverloaded) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    `[perf-tests] skipped: 1-min load ${os.loadavg()[0].toFixed(0)} > ${os.cpus().length * 2} (2x cores). TNF_FORCE_PERF_TESTS=1 to force.`
-  );
-}
-
-describePerf('CacheStrategy', () => {
+describe('CacheStrategy', () => {
   describe('LRUCache', () => {
     let cache: LRUCache<string, string>;
 
@@ -31,7 +14,7 @@ describePerf('CacheStrategy', () => {
         maxSize: 3,
         defaultTTL: 1000,
         cleanupInterval: 100,
-        enableStats: true,
+        enableStats: true
       });
     });
 
@@ -85,7 +68,7 @@ describePerf('CacheStrategy', () => {
       expect(cache.get('key1')).toBe('value1');
 
       // Wait for TTL to expire
-      await new Promise((resolve) => setTimeout(resolve, 60));
+      await new Promise(resolve => setTimeout(resolve, 60));
 
       expect(cache.get('key1')).toBeUndefined();
     });
@@ -132,7 +115,7 @@ describePerf('CacheStrategy', () => {
       expect(cache.size()).toBe(2);
 
       // Wait for first key to expire and cleanup to run
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       expect(cache.size()).toBe(1);
       expect(cache.get('key1')).toBeUndefined();
@@ -150,14 +133,14 @@ describePerf('CacheStrategy', () => {
         maxSize: 2,
         defaultTTL: 1000,
         cleanupInterval: 0,
-        enableStats: true,
+        enableStats: true
       });
 
       l2Cache = new LRUCache({
         maxSize: 5,
         defaultTTL: 2000,
         cleanupInterval: 0,
-        enableStats: true,
+        enableStats: true
       });
 
       multiCache = new MultiLevelCache([l1Cache, l2Cache]);
@@ -241,7 +224,7 @@ describePerf('CacheStrategy', () => {
     it('should create LRU cache with custom config', () => {
       const cache = CacheFactory.createLRUCache<string, string>({
         maxSize: 10,
-        defaultTTL: 5000,
+        defaultTTL: 5000
       });
 
       expect(cache).toBeInstanceOf(LRUCache);
@@ -252,7 +235,7 @@ describePerf('CacheStrategy', () => {
     it('should create multi-level cache', () => {
       const cache = CacheFactory.createMultiLevelCache<string, string>([
         { maxSize: 5 },
-        { maxSize: 20 },
+        { maxSize: 20 }
       ]);
 
       expect(cache).toBeInstanceOf(MultiLevelCache);
@@ -283,7 +266,7 @@ describePerf('CacheStrategy', () => {
     it('should handle large number of entries efficiently', () => {
       const cache = CacheFactory.createLRUCache<string, string>({
         maxSize: 10000,
-        enableStats: true,
+        enableStats: true
       });
 
       const startTime = Date.now();
@@ -315,14 +298,13 @@ describePerf('CacheStrategy', () => {
       const cache = CacheFactory.createLRUCache<string, string>({
         maxSize: 1000,
         maxMemory: 1024 * 1024, // 1MB
-        enableStats: true,
+        enableStats: true
       });
 
       // Create large values to trigger memory-based eviction
       const largeValue = 'x'.repeat(2048); // 2KB per value
 
-      for (let i = 0; i < 600; i++) {
-        // 600 * 2KB = 1.2MB
+      for (let i = 0; i < 600; i++) { // 600 * 2KB = 1.2MB
         cache.set(`key${i}`, largeValue);
       }
 

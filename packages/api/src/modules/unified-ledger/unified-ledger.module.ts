@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UnifiedLedgerController } from './unified-ledger.controller.js';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { UnifiedLedgerController } from './unified-ledger.controller';
+import { UnifiedLedgerService } from './unified-ledger.service';
 
 @Module({
   controllers: [UnifiedLedgerController],

@@ -104,7 +104,6 @@ docs/project-management/*analysis*.md
 # Additional Private Data
 # Ignore private/runtime state but keep definition banks and pathway matrix.
 .agent/*
-!.agent/SYSTEM_PROMPT.md
 !.agent/agents/
 !.agent/agents/**
 !.agent/skills/

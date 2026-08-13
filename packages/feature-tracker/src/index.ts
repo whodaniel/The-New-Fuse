@@ -8,4 +8,4 @@ export {
   type CodeMetrics,
   type FeatureProgress,
   type QualitativeAssessment,
-} from './types.js';
+} from './types/index.js';

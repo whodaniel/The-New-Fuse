@@ -3,10 +3,10 @@
  * Protects API routes requiring authentication
  */
 
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { JwtService } from '@nestjs/jwt';
+import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -31,9 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       return true;
     } catch (error) {
-      throw new UnauthorizedException(
-        'Authentication failed: ' + (error instanceof Error ? error.message : 'Unknown error')
-      );
+      throw new UnauthorizedException('Authentication failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }
 
@@ -51,13 +49,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         try {
           const errorObj = toError(err); // Use helper
           errorMessage += `: ${errorObj.message}`;
-        } catch (parseError: unknown) {
-          // Add inner catch with unknown
+        } catch (parseError: unknown) { // Add inner catch with unknown
           const parseErr = toError(parseError); // Use helper
           errorMessage += `: Invalid error object (${parseErr.message})`;
         }
       } else if (info) {
-        errorMessage += `: ${String(info)}`;
+         errorMessage += `: ${String(info)}`;
       }
 
       // Use toError for the original error if it exists

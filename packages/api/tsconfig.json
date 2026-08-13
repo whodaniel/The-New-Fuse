@@ -19,14 +19,7 @@
     "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts",
-    "src/test-db.ts",
-    "**/*.test.ts",
-    "**/__tests__/**"
-  ],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "src/test-db.ts"],
   "references": [
     {
       "path": "../../packages/types"

@@ -2,22 +2,22 @@
 export * from './api-optimization.module';
 
 // Rate Limiting
-export * from './rate-limiting/index.js';
+export * from './rate-limiting.js';
 
 // Caching
-export * from './caching/index.js';
+export * from './caching.js';
 
 // CDN
-export * from './cdn/index.js';
+export * from './cdn.js';
 
 // Monitoring
 export * from './monitoring/index.js';
 
 // Quota Management
-export * from './quota/index.js';
+export * from './quota.js';
 
 // Backpressure
-export * from './backpressure/index.js';
+export * from './backpressure.js';
 
 // Cache Warming
-export * from './warming/index.js';
+export * from './warming.js';

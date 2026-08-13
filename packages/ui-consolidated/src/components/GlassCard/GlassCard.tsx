@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils';
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
   type CardProps,
-} from '../Card/Card.js';
+} from '../Card/Card';
 
 export interface GlassCardProps extends CardProps {
   gradient?: string;

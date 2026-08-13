@@ -7,7 +7,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { AgentCapability } from '@the-new-fuse/types';
-import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository.js';
+import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository';
 import { toError } from '../utils/error.js';
 
 // Mock LocalAIDetectionService to avoid cross-package import issues
@@ -220,53 +220,6 @@ export class AgentService {
       });
     } catch (error) {
       return this.handleError(error, 'getAgentsByCapability');
-    }
-  }
-
-  /**
-   * Get agents with semantic chain filters for progressive disclosure.
-   * Supports filtering by category (department), visibility, dacc_role, and domain.
-   * This is the key method for the progressive disclosure API.
-   */
-  async getAgentsWithFilters(options: {
-    userId?: string;
-    category?: string;
-    visibility?: string;
-    daccRole?: string;
-    domain?: string;
-    limit?: number;
-  }): Promise<Agent[]> {
-    try {
-      return await this.agentRepository.findWithSemanticFilters(options);
-    } catch (error) {
-      return this.handleError(error, 'getAgentsWithFilters');
-    }
-  }
-
-  /**
-   * Get agent directory with optional category filtering.
-   * Returns tier-1 (core/infra) agents by default; allow drill-down by category.
-   */
-  async getAgentDirectory(options: {
-    category?: string;
-    isPublicOnly?: boolean;
-    limit?: number;
-  }): Promise<any[]> {
-    try {
-      return await this.agentRepository.findDirectoryEntries(options);
-    } catch (error) {
-      return this.handleError(error, 'getAgentDirectory');
-    }
-  }
-
-  /**
-   * Get all distinct agent categories (departments) for progressive disclosure navigation.
-   */
-  async getAgentCategories(): Promise<string[]> {
-    try {
-      return await this.agentRepository.getDistinctCategories();
-    } catch (error) {
-      return this.handleError(error, 'getAgentCategories');
     }
   }
 
