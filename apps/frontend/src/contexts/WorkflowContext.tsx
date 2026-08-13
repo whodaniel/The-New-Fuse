@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import {
   addEdge,
   Connection,
@@ -309,7 +309,11 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   );
 
   // Create context value
-  const contextValue: WorkflowContextType = {
+  // ⚡ Bolt Performance Optimization:
+  // Memoized the context value to prevent unnecessary re-renders of all consumer components.
+  // Impact: Prevents O(n) child components from re-rendering when the WorkflowProvider
+  // re-renders but the underlying state values haven't changed.
+  const contextValue: WorkflowContextType = useMemo(() => ({
     nodes,
     edges,
     onNodesChange,
@@ -334,7 +338,30 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       saveWorkflow,
       loadWorkflow,
     },
-  };
+  }), [
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    isReadOnly,
+    selectedNode,
+    selectedEdge,
+    addNode,
+    updateNode,
+    removeNode,
+    executeNode,
+    addEdgeAction,
+    updateEdge,
+    removeEdge,
+    selectNode,
+    selectEdge,
+    setIsReadOnly,
+    clearSelection,
+    executeWorkflow,
+    saveWorkflow,
+    loadWorkflow
+  ]);
 
   return <WorkflowContext.Provider value={contextValue}>{children}</WorkflowContext.Provider>;
 };
