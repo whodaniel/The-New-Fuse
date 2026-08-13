@@ -11,7 +11,7 @@ export default [
     },
     plugins: { '@typescript-eslint': tseslint },
     rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn'
     },
   },

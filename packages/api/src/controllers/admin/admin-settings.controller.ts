@@ -6,10 +6,10 @@
 import { Body, Controller, Get, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { CurrentUser } from '../../modules/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
-import { AdminConfigurationService } from '../../services/admin-configuration.service';
-import { toError } from '../../utils/error';
+import { CurrentUser } from '../../modules/decorators/current-user.decorator.js';
+import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
+import { AdminConfigurationService } from '../../services/admin-configuration.service.js';
+import { toError } from '../../utils/error.js';
 
 interface User {
   id: string;

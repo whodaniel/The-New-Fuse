@@ -1,0 +1,1206 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> @the-new-fuse/sync-core@0.1.1 test:unit $TNF_ROOT/packages/sync-core
+> jest --testPathIgnorePatterns=integration --passWithNoTests
+
+FAIL src/services/SyncOrchestrator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
+    export * from './standalone.js';
+    ^^^^^^
+
+    SyntaxError: Unexpected token 'export'
+
+      1 | // Infrastructure Services
+    > 2 | export * from './database/index.js';
+        | ^
+      3 | export * from './logging/index.js';
+      4 | export * from './redis/index.js';
+      5 | export * from './storage/index.js';
+
+      at Runtime.createScriptFromCode (../../node_modules/jest-runtime/build/index.js:1314:40)
+      at Object.<anonymous> (../infrastructure/src/index.ts:2:1)
+      at Object.<anonymous> (src/services/SyncOrchestrator.test.ts:3:1)
+
+FAIL src/watchers/EnhancedFileSystemWatcher.test.ts
+  ● Test suite failed to run
+
+    [96msrc/database/SyncDatabaseService.ts[0m:[93m7[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/generated/drizzle' or its corresponding type declarations.
+
+    [7m7[0m } from '@the-new-fuse/database/generated/drizzle';
+    [7m [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL src/tasks/TaskSynchronizationService.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
+    export * from './standalone.js';
+    ^^^^^^
+
+    SyntaxError: Unexpected token 'export'
+
+      1 | // Infrastructure Services
+    > 2 | export * from './database/index.js';
+        | ^
+      3 | export * from './logging/index.js';
+      4 | export * from './redis/index.js';
+      5 | export * from './storage/index.js';
+
+      at Runtime.createScriptFromCode (../../node_modules/jest-runtime/build/index.js:1314:40)
+      at Object.<anonymous> (../infrastructure/src/index.ts:2:1)
+      at Object.<anonymous> (src/tasks/TaskSynchronizationService.test.ts:3:1)
+
+FAIL src/performance/PerformanceOptimizationService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m167[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m167[0m         const t = setTimeout(() => { this.retryTimers.delete(t); this.addFileChange(event); }, 1000);
+    [7m   [0m [91m                                          ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m168[0m:[93m14[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m168[0m         this.retryTimers.add(t); // Retry after 1 second
+    [7m   [0m [91m             ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m279[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m279[0m     for (const t of this.retryTimers) clearTimeout(t);
+    [7m   [0m [91m                         ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m280[0m:[93m10[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m280[0m     this.retryTimers.clear();
+    [7m   [0m [91m         ~~~~~~~~~~~[0m
+
+FAIL src/performance/FileChangeBatcher.test.ts
+  ● Test suite failed to run
+
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m167[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m167[0m         const t = setTimeout(() => { this.retryTimers.delete(t); this.addFileChange(event); }, 1000);
+    [7m   [0m [91m                                          ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m168[0m:[93m14[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m168[0m         this.retryTimers.add(t); // Retry after 1 second
+    [7m   [0m [91m             ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m279[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m279[0m     for (const t of this.retryTimers) clearTimeout(t);
+    [7m   [0m [91m                         ~~~~~~~~~~~[0m
+    [96msrc/performance/FileChangeBatcher.ts[0m:[93m280[0m:[93m10[0m - [91merror[0m[90m TS2339: [0mProperty 'retryTimers' does not exist on type 'FileChangeBatcher'.
+
+    [7m280[0m     this.retryTimers.clear();
+    [7m   [0m [91m         ~~~~~~~~~~~[0m
+
+FAIL src/monitoring/SyncAwareHeartbeatMonitoringService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m2[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/relay-core' or its corresponding type declarations.
+
+    [7m2[0m import { StagnationAlert } from '@the-new-fuse/relay-core';
+    [7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m153[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'agentId' does not exist on type 'SyncAwareAgentHeartbeat'.
+
+    [7m153[0m         expect(heartbeat?.agentId).toBe(agentId);
+    [7m   [0m [91m                          ~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m174[0m:[93m22[0m - [91merror[0m[90m TS2339: [0mProperty 'agentId' does not exist on type 'SyncAwareStagnationAlert'.
+
+    [7m174[0m         expect(alert.agentId).toBe(agentId);
+    [7m   [0m [91m                     ~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m421[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'agentId' does not exist in type 'SyncAwareStagnationAlert'.
+
+    [7m421[0m         agentId,
+    [7m   [0m [91m        ~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m449[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'agentId' does not exist in type 'SyncAwareStagnationAlert'.
+
+    [7m449[0m         agentId,
+    [7m   [0m [91m        ~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m478[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'agentId' does not exist in type 'SyncAwareStagnationAlert'.
+
+    [7m478[0m         agentId,
+    [7m   [0m [91m        ~~~~~~~[0m
+    [96msrc/monitoring/SyncAwareHeartbeatMonitoringService.test.ts[0m:[93m504[0m:[93m25[0m - [91merror[0m[90m TS2339: [0mProperty 'agentId' does not exist on type 'SyncAwareAgentHeartbeat'.
+
+    [7m504[0m       expect(heartbeat?.agentId).toBe(agentId);
+    [7m   [0m [91m                        ~~~~~~~[0m
+
+FAIL src/messaging/SyncAwareMessagingService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/messaging/SyncAwareMessagingService.test.ts[0m:[93m25[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m25[0m     id: 'test-message-1',
+    [7m  [0m [91m    ~~[0m
+    [96msrc/messaging/SyncAwareMessagingService.test.ts[0m:[93m507[0m:[93m10[0m - [91merror[0m[90m TS7006: [0mParameter 'agentId' implicitly has an 'any' type.
+
+    [7m507[0m         (agentId, message, options) => {
+    [7m   [0m [91m         ~~~~~~~[0m
+    [96msrc/messaging/SyncAwareMessagingService.test.ts[0m:[93m507[0m:[93m19[0m - [91merror[0m[90m TS7006: [0mParameter 'message' implicitly has an 'any' type.
+
+    [7m507[0m         (agentId, message, options) => {
+    [7m   [0m [91m                  ~~~~~~~[0m
+    [96msrc/messaging/SyncAwareMessagingService.test.ts[0m:[93m507[0m:[93m28[0m - [91merror[0m[90m TS7006: [0mParameter 'options' implicitly has an 'any' type.
+
+    [7m507[0m         (agentId, message, options) => {
+    [7m   [0m [91m                           ~~~~~~~[0m
+
+FAIL src/services/ConflictManager.test.ts
+  ● Test suite failed to run
+
+    [96msrc/services/ConflictManager.test.ts[0m:[93m44[0m:[93m20[0m - [91merror[0m[90m TS2693: [0m'DrizzleClient' only refers to a type, but is being used as a value here.
+
+    [7m44[0m           provide: DrizzleClient,
+    [7m  [0m [91m                   ~~~~~~~~~~~~~[0m
+    [96msrc/services/ConflictManager.test.ts[0m:[93m55[0m:[93m26[0m - [91merror[0m[90m TS2693: [0m'DrizzleClient' only refers to a type, but is being used as a value here.
+
+    [7m55[0m     drizzle = module.get(DrizzleClient);
+    [7m  [0m [91m                         ~~~~~~~~~~~~~[0m
+    [96msrc/services/ConflictManager.test.ts[0m:[93m144[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m144[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m167[0m:[93m22[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m167[0m       expect(drizzle.$transaction).toHaveBeenCalled();
+    [7m   [0m [91m                     ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m221[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m221[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m272[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m272[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m321[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m321[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m352[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m352[0m       drizzle.$transaction.mockImplementation(async (callback: any) => {
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+    [96msrc/services/ConflictManager.test.ts[0m:[93m540[0m:[93m15[0m - [91merror[0m[90m TS2551: [0mProperty '$transaction' does not exist on type 'Mocked<PostgresJsDatabase<typeof import("$TNF_ROOT/packages/database/dist/drizzle/schema")> & { $client: Sql<...>; }>'. Did you mean 'transaction'?
+
+    [7m540[0m       drizzle.$transaction.mockRejectedValue(error);
+    [7m   [0m [91m              ~~~~~~~~~~~~[0m
+
+      [96m../../node_modules/drizzle-orm/pg-core/db.d.cts[0m:[93m277[0m:[93m5[0m
+        [7m277[0m     transaction<T>(transaction: (tx: PgTransaction<TQueryResult, TFullSchema, TSchema>) => Promise<T>, config?: PgTransactionConfig): Promise<T>;
+        [7m   [0m [96m    ~~~~~~~~~~~[0m
+        'transaction' is declared here.
+
+FAIL src/messaging/SyncAwareA2AMessage.test.ts
+  ● Test suite failed to run
+
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m61[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'SyncAwareA2AMessage'.
+      Property 'id' does not exist on type 'SyncAwareA2AMessageV1'.
+
+    [7m61[0m       expect(syncAwareMessage.id).toBe('test-msg-1');
+    [7m  [0m [91m                              ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m62[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'type' does not exist on type 'SyncAwareA2AMessage'.
+      Property 'type' does not exist on type 'SyncAwareA2AMessageV1'.
+
+    [7m62[0m       expect(syncAwareMessage.type).toBe('TEST_MESSAGE');
+    [7m  [0m [91m                              ~~~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m63[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'metadata' does not exist on type 'SyncAwareA2AMessage'.
+      Property 'metadata' does not exist on type 'SyncAwareA2AMessageV2'.
+
+    [7m63[0m       expect(syncAwareMessage.metadata.sync).toBeDefined();
+    [7m  [0m [91m                              ~~~~~~~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m64[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'metadata' does not exist on type 'SyncAwareA2AMessage'.
+      Property 'metadata' does not exist on type 'SyncAwareA2AMessageV2'.
+
+    [7m64[0m       expect(syncAwareMessage.metadata.sync.tenantId).toBe('test-tenant');
+    [7m  [0m [91m                              ~~~~~~~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m65[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'metadata' does not exist on type 'SyncAwareA2AMessage'.
+      Property 'metadata' does not exist on type 'SyncAwareA2AMessageV2'.
+
+    [7m65[0m       expect(syncAwareMessage.metadata.sync.priority).toBe('high');
+    [7m  [0m [91m                              ~~~~~~~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m75[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m75[0m         id: 'test-msg-1',
+    [7m  [0m [91m        ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m96[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m96[0m         id: 'test-msg-1',
+    [7m  [0m [91m        ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m111[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m111[0m         id: 'test-msg-2',
+    [7m   [0m [91m        ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m131[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m131[0m         id: 'test-msg-1',
+    [7m   [0m [91m        ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m151[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m151[0m         id: 'test-msg-1',
+    [7m   [0m [91m        ~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m165[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType '{ payload: { test: string; value: number; }; metadata: any; } | { payload: { test: string; value: number; }; header: any; body: any; }' is not assignable to type 'SyncAwareA2AMessage'.
+      Object literal may only specify known properties, and 'payload' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m165[0m         payload: { test: 'different-data', value: 456 },
+    [7m   [0m [91m        ~~~~~~~[0m
+    [96msrc/messaging/SyncAwareA2AMessage.test.ts[0m:[93m202[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'id' does not exist in type 'SyncAwareA2AMessage'.
+
+    [7m202[0m         id: 'test-msg-1',
+    [7m   [0m [91m        ~~[0m
+
+FAIL src/handoff/PromptHandoffFlywheel.simple.test.ts
+  ● Test suite failed to run
+
+    [96msrc/handoff/PromptHandoffFlywheel.ts[0m:[93m227[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType 'string | null' is not assignable to type 'string | undefined'.
+      Type 'null' is not assignable to type 'string | undefined'.
+
+    [7m227[0m         context.targetAgentId = await this.selectOptimalAgent(
+    [7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/handoff/PromptHandoffFlywheel.ts[0m:[93m317[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'type' does not exist in type 'AgentState'.
+
+    [7m317[0m         type: 'handoff_execution',
+    [7m   [0m [91m        ~~~~[0m
+
+FAIL src/handoff/PromptHandoffFlywheel.test.ts
+  ● Test suite failed to run
+
+    [96msrc/handoff/PromptHandoffFlywheel.test.ts[0m:[93m153[0m:[93m33[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string' is not assignable to parameter of type 'symbol'.
+
+    [7m153[0m         .spyOn(flywheel as any, 'handoffTemplates', 'get')
+    [7m   [0m [91m                                ~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/handoff/PromptHandoffFlywheel.test.ts[0m:[93m346[0m:[93m33[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string' is not assignable to parameter of type 'symbol'.
+
+    [7m346[0m         .spyOn(flywheel as any, 'handoffTemplates', 'get')
+    [7m   [0m [91m                                ~~~~~~~~~~~~~~~~~~[0m
+
+FAIL src/error/SyncErrorHandler.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    $TNF_ROOT/packages/infrastructure/src/database/index.js:1
+    export * from './standalone.js';
+    ^^^^^^
+
+    SyntaxError: Unexpected token 'export'
+
+      1 | // Infrastructure Services
+    > 2 | export * from './database/index.js';
+        | ^
+      3 | export * from './logging/index.js';
+      4 | export * from './redis/index.js';
+      5 | export * from './storage/index.js';
+
+      at Runtime.createScriptFromCode (../../node_modules/jest-runtime/build/index.js:1314:40)
+      at Object.<anonymous> (../infrastructure/src/index.ts:2:1)
+      at Object.<anonymous> (src/error/SyncErrorHandler.ts:24:1)
+      at Object.<anonymous> (src/error/SyncErrorHandler.test.ts:10:1)
+
+FAIL src/error/SyncRetryManager.test.ts
+  ● Test suite failed to run
+
+    [96msrc/error/SyncRetryManager.ts[0m:[93m257[0m:[93m19[0m - [91merror[0m[90m TS2339: [0mProperty 'info' does not exist on type 'Logger'.
+
+    [7m257[0m       this.logger.info(`Circuit breaker reset for operation: ${operation}`);
+    [7m   [0m [91m                  ~~~~[0m
+    [96msrc/error/SyncRetryManager.ts[0m:[93m269[0m:[93m17[0m - [91merror[0m[90m TS2339: [0mProperty 'info' does not exist on type 'Logger'.
+
+    [7m269[0m     this.logger.info(`Cleared ${count.length} pending retries`);
+    [7m   [0m [91m                ~~~~[0m
+    [96msrc/error/SyncRetryManager.ts[0m:[93m353[0m:[93m17[0m - [91merror[0m[90m TS2339: [0mProperty 'info' does not exist on type 'Logger'.
+
+    [7m353[0m     this.logger.info(`Retry succeeded: ${retry.id}`, {
+    [7m   [0m [91m                ~~~~[0m
+    [96msrc/error/SyncRetryManager.ts[0m:[93m460[0m:[93m19[0m - [91merror[0m[90m TS2339: [0mProperty 'info' does not exist on type 'Logger'.
+
+    [7m460[0m       this.logger.info(`Circuit breaker closed: ${operation}`);
+    [7m   [0m [91m                  ~~~~[0m
+
+FAIL src/database/SyncDatabaseService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/database/SyncDatabaseService.test.ts[0m:[93m2[0m:[93m31[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/generated/drizzle' or its corresponding type declarations.
+
+    [7m2[0m import { DrizzleClient } from '@the-new-fuse/database/generated/drizzle';
+    [7m [0m [91m                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL src/dashboard/SyncDashboardService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/dashboard/SyncDashboardService.test.ts[0m:[93m348[0m:[93m47[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ operations: { sync: number; conflicts: number; fileChanges: number; }; performance: { avgSyncTime: number; successRate: number; throughput: number; }; errors: { networkErrors: number; conflictErrors: number; validationErrors: number; }; }' is not assignable to parameter of type 'SyncMetrics'.
+      Property 'resources' is missing in type '{ operations: { sync: number; conflicts: number; fileChanges: number; }; performance: { avgSyncTime: number; successRate: number; throughput: number; }; errors: { networkErrors: number; conflictErrors: number; validationErrors: number; }; }' but required in type 'SyncMetrics'.
+
+    [7m348[0m       service['metricsCache'].set('tenant-1', testMetrics);
+    [7m   [0m [91m                                              ~~~~~~~~~~~[0m
+
+      [96msrc/types/index.ts[0m:[93m77[0m:[93m3[0m
+        [7m77[0m   resources: {
+        [7m  [0m [96m  ~~~~~~~~~[0m
+        'resources' is declared here.
+    [96msrc/dashboard/SyncDashboardService.test.ts[0m:[93m371[0m:[93m44[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ status: "healthy"; clockSync: { status: "synced"; lastSync: Date; drift: number; }; services: { redis: string; database: string; fileSystem: string; webSocket: string; }; lastCheck: Date; }' is not assignable to parameter of type 'SyncHealth'.
+      Type '{ status: "healthy"; clockSync: { status: "synced"; lastSync: Date; drift: number; }; services: { redis: string; database: string; fileSystem: string; webSocket: string; }; lastCheck: Date; }' is missing the following properties from type 'SyncHealth': fileWatchers, conflicts
+
+    [7m371[0m       service['healthCache'].set('global', globalHealth);
+    [7m   [0m [91m                                           ~~~~~~~~~~~~[0m
+
+PASS src/services/MasterClockService.test.ts
+  ● Console
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.error
+      Failed to initialize MasterClockService: Error: Redis connection failed
+          at Object.<anonymous> ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:121:56)
+          at Promise.finally.completed ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at _runTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at $TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter ($TNF_ROOT/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:497:12)
+
+      119 |       console.log(`MasterClockService initialized with instance ID: ${this.config.instanceId}`);
+      120 |     } catch (error) {
+    > 121 |       console.error('Failed to initialize MasterClockService:', error);
+          |               ^
+      122 |       throw error;
+      123 |     }
+      124 |   }
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:121:15)
+      at Object.<anonymous> (src/services/MasterClockService.test.ts:123:7)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      Clock drift corrected for 2 instances
+
+      at MasterClockService.correctDrift (src/services/MasterClockService.ts:254:13)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.error
+      Error handling clock sync message: SyntaxError: Unexpected token 'i', "invalid-json" is not valid JSON
+          at JSON.parse (<anonymous>)
+          at MasterClockService.handleClockSyncMessage ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.ts:382:44)
+          at $TNF_ROOT/packages/sync-core/src/services/MasterClockService.ts:270:12
+          at $TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:467:20
+          at Object.<anonymous> ($TNF_ROOT/node_modules/jest-circus/node_modules/expect/build/index.js:1824:9)
+          at Object.throwingMatcher [as toThrow] ($TNF_ROOT/node_modules/jest-circus/node_modules/expect/build/index.js:2235:93)
+          at Object.<anonymous> ($TNF_ROOT/packages/sync-core/src/services/MasterClockService.test.ts:467:58)
+          at Promise.finally.completed ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at $TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat ($TNF_ROOT/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter ($TNF_ROOT/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker ($TNF_ROOT/node_modules/jest-runner/build/testWorker.js:497:12)
+
+      394 |       this.emit('instance_sync_received', syncData);
+      395 |     } catch (error) {
+    > 396 |       console.error('Error handling clock sync message:', error);
+          |               ^
+      397 |     }
+      398 |   }
+      399 |
+
+      at MasterClockService.handleClockSyncMessage (src/services/MasterClockService.ts:396:15)
+      at src/services/MasterClockService.ts:270:12
+      at src/services/MasterClockService.test.ts:467:20
+      at Object.<anonymous> (src/services/MasterClockService.test.ts:467:58)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+    console.log
+      Redis subscriptions established for clock synchronization
+
+      at MasterClockService.setupRedisSubscriptions (src/services/MasterClockService.ts:283:13)
+
+    console.log
+      HeartbeatMonitoringService integration established
+
+      at MasterClockService.setupHeartbeatIntegration (src/services/MasterClockService.ts:307:13)
+
+    console.log
+      Periodic sync operations started
+
+      at MasterClockService.startSyncOperations (src/services/MasterClockService.ts:334:13)
+
+    console.log
+      Master clock registered in Redis
+
+      at MasterClockService.registerMasterClock (src/services/MasterClockService.ts:357:13)
+
+    console.log
+      MasterClockService initialized with instance ID: test-master-clock
+
+      at MasterClockService.initialize (src/services/MasterClockService.ts:119:15)
+
+    console.log
+      MasterClockService shutdown completed
+
+      at MasterClockService.shutdown (src/services/MasterClockService.ts:153:13)
+
+PASS src/config/SyncRedisConfig.test.ts
+FAIL src/cms/CMSIntegrationService.test.ts
+  ● Test suite failed to run
+
+    [96msrc/cms/CMSIntegrationService.ts[0m:[93m10[0m:[93m41[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/generated/drizzle' or its corresponding type declarations.
+
+    [7m10[0m import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
+    [7m  [0m [91m                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/cms/CMSIntegrationService.ts[0m:[93m449[0m:[93m11[0m - [91merror[0m[90m TS2722: [0mCannot invoke an object which is possibly 'undefined'.
+
+    [7m449[0m     await this.redis.subscribe('cms_events', (message) => {
+    [7m   [0m [91m          ~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/cms/CMSIntegrationService.ts[0m:[93m459[0m:[93m11[0m - [91merror[0m[90m TS2722: [0mCannot invoke an object which is possibly 'undefined'.
+
+    [7m459[0m     await this.redis.subscribe('privacy_events', (message) => {
+    [7m   [0m [91m          ~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/cms/CMSIntegrationService.ts[0m:[93m471[0m:[93m22[0m - [91merror[0m[90m TS2339: [0mProperty 'onFileChange' does not exist on type 'EnhancedFileSystemWatcher'.
+
+    [7m471[0m     this.fileWatcher.onFileChange(async (event) => {
+    [7m   [0m [91m                     ~~~~~~~~~~~~[0m
+    [96msrc/cms/CMSIntegrationService.ts[0m:[93m471[0m:[93m42[0m - [91merror[0m[90m TS7006: [0mParameter 'event' implicitly has an 'any' type.
+
+    [7m471[0m     this.fileWatcher.onFileChange(async (event) => {
+    [7m   [0m [91m                                         ~~~~~[0m
+
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+Test Suites: 16 failed, 2 passed, 18 total
+Tests:       35 passed, 35 total
+Snapshots:   0 total
+Time:        122.083 s
+Ran all test suites.
+ ELIFECYCLE  Command failed with exit code 1.

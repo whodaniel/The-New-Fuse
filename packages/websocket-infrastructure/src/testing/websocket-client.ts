@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { Logger } from '@nestjs/common';
-import { ReconnectionManager, ExponentialBackoffStrategy } from '../strategies.js';
+import { ReconnectionManager, ExponentialBackoffStrategy } from '../strategies/index.js';
 import { CompressionMiddleware } from '../utils/compression.js';
 
 export interface ClientConfig {
@@ -221,7 +221,7 @@ export class WebSocketTestClient {
         () => {
           this.logger.log('Reconnection successful');
         },
-        (error) => {
+        (error: Error) => {
           this.logger.error(`Reconnection failed: ${error.message}`);
         }
       );
