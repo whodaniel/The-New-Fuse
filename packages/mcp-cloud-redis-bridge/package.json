@@ -9,7 +9,7 @@
     "build": "tsc -b",
     "start": "node ./dist/index.js",
     "dev": "ts-node-esm src/index.ts",
-    "test": "echo \"No tests for this package\" && exit 0"
+    "test": "tsx tests/scaffold.test.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

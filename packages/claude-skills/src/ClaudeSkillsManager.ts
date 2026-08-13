@@ -4,11 +4,11 @@
  * Main orchestrator for Claude Skills integration
  */
 
-import { SkillExecutor } from './executor.js';
-import { MCPSkillProvider } from './integration.js';
-import { SkillLoader } from './loader.js';
-import { SkillParser } from './parser.js';
-import { SkillRegistry } from './registry.js';
+import { SkillExecutor } from './executor/index.js';
+import { MCPSkillProvider } from './integration/index.js';
+import { SkillLoader } from './loader/index.js';
+import { SkillParser } from './parser/index.js';
+import { SkillRegistry } from './registry/index.js';
 import {
   ClaudeSkill,
   SkillExecutionContext,

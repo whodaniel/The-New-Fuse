@@ -24,10 +24,10 @@ export * from './concurrency/BuildProcessThrottler.js';
 export * from './concurrency/ConcurrencyController.js';
 
 // Export TypeScript compilation optimization
-export * from './typescript.js';
+export * from './typescript/index.js';
 
 // Export build orchestration
-export * from './orchestration.js';
+export * from './orchestration/index.js';
 
 // Export monitoring and reporting
 export * from './monitoring/index.js';

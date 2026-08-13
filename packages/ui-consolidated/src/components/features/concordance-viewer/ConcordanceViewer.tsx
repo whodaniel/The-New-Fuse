@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card';
-import { Input } from '../../Input/Input';
-import { Badge } from '../../Badge/Badge';
-import { Skeleton } from '../../Skeleton/Skeleton';
-import { Alert, AlertDescription, AlertTitle } from '../../Alert/Alert';
+import { Alert, AlertDescription, AlertTitle } from '../../Alert/Alert.js';
+import { Badge } from '../../Badge/Badge.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card.js';
+import { Input } from '../../Input/Input.js';
+import { Skeleton } from '../../Skeleton/Skeleton.js';
 
 export interface ConcordanceWord {
   word: string;
@@ -55,32 +55,104 @@ const POWER_PHRASE_GROUPS = [
   {
     title: 'Agent Directives',
     icon: '\u{1F916}',
-    patterns: ['directive', 'autonomy', 'orchestrat', 'self_prompt', 'agent_loop', 'prime_directive', 'self_improve', 'coordination', 'heartbeat', 'consciousness'],
+    patterns: [
+      'directive',
+      'autonomy',
+      'orchestrat',
+      'self_prompt',
+      'agent_loop',
+      'prime_directive',
+      'self_improve',
+      'coordination',
+      'heartbeat',
+      'consciousness',
+    ],
   },
   {
     title: 'Communication Patterns',
     icon: '\u{1F4AC}',
-    patterns: ['broadcast', 'relay', 'dispatch', 'subscribe', 'emit', 'notify', 'handoff', 'bridge', 'channel', 'message', 'protocol', 'negotiate'],
+    patterns: [
+      'broadcast',
+      'relay',
+      'dispatch',
+      'subscribe',
+      'emit',
+      'notify',
+      'handoff',
+      'bridge',
+      'channel',
+      'message',
+      'protocol',
+      'negotiate',
+    ],
   },
   {
     title: 'Effective Vocabulary',
     icon: '\u{1F3AF}',
-    patterns: ['execute', 'actualiz', 'optimize', 'validate', 'enrich', 'transform', 'orchestrat', 'compounding', 'cascade', 'amplif', 'accelerat', 'operationaliz'],
+    patterns: [
+      'execute',
+      'actualiz',
+      'optimize',
+      'validate',
+      'enrich',
+      'transform',
+      'orchestrat',
+      'compounding',
+      'cascade',
+      'amplif',
+      'accelerat',
+      'operationaliz',
+    ],
   },
   {
     title: 'System Intelligence',
     icon: '\u{1F9E0}',
-    patterns: ['embedding', 'vector', 'similarity', 'retrieval', 'rag', 'semantic', 'knowledge', 'memory', 'context_pack', 'skill_bank', 'blueprint'],
+    patterns: [
+      'embedding',
+      'vector',
+      'similarity',
+      'retrieval',
+      'rag',
+      'semantic',
+      'knowledge',
+      'memory',
+      'context_pack',
+      'skill_bank',
+      'blueprint',
+    ],
   },
   {
     title: 'Resilience Patterns',
     icon: '\u{1F6E1}\uFE0F',
-    patterns: ['retry', 'fallback', 'circuit', 'degraded', 'graceful', 'recovery', 'resilien', 'timeout', 'backoff', 'health_check', 'watchdog'],
+    patterns: [
+      'retry',
+      'fallback',
+      'circuit',
+      'degraded',
+      'graceful',
+      'recovery',
+      'resilien',
+      'timeout',
+      'backoff',
+      'health_check',
+      'watchdog',
+    ],
   },
   {
     title: 'Governance and Control',
     icon: '\u2696\uFE0F',
-    patterns: ['authorize', 'permission', 'policy', 'compliance', 'audit', 'govern', 'enforce', 'constraint', 'mandate', 'escalat'],
+    patterns: [
+      'authorize',
+      'permission',
+      'policy',
+      'compliance',
+      'audit',
+      'govern',
+      'enforce',
+      'constraint',
+      'mandate',
+      'escalat',
+    ],
   },
 ];
 
@@ -107,17 +179,25 @@ function useConcordanceData(url?: string, initialData?: ConcordanceData) {
     let cancelled = false;
     setLoading(true);
     fetch(url)
-      .then(r => {
+      .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
       .then((json: ConcordanceData) => {
-        if (!cancelled) { setData(json); setLoading(false); }
+        if (!cancelled) {
+          setData(json);
+          setLoading(false);
+        }
       })
-      .catch(err => {
-        if (!cancelled) { setError(err.message); setLoading(false); }
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message);
+          setLoading(false);
+        }
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [url, initialData]);
 
   return { data, loading, error };
@@ -140,11 +220,11 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
     let words = data.topWords;
     if (search) {
       const q = search.toLowerCase();
-      words = words.filter(w => w.word.toLowerCase().includes(q));
+      words = words.filter((w) => w.word.toLowerCase().includes(q));
     }
     if (selectedCategory && data.categories[selectedCategory]) {
-      const catWords = new Set(data.categories[selectedCategory].topWords.map(w => w.word));
-      words = words.filter(w => catWords.has(w.word));
+      const catWords = new Set(data.categories[selectedCategory].topWords.map((w) => w.word));
+      words = words.filter((w) => catWords.has(w.word));
     }
     return [...words].sort((a, b) => {
       if (sortBy === 'alpha') return a.word.localeCompare(b.word);
@@ -155,23 +235,26 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
 
   const maxCount = useMemo(() => {
     if (!data) return 1;
-    return Math.max(...data.topWords.slice(0, 100).map(w => w.count), 1);
+    return Math.max(...data.topWords.slice(0, 100).map((w) => w.count), 1);
   }, [data]);
 
-  const wordSize = useCallback((count: number) => {
-    const ratio = count / maxCount;
-    return 0.65 + ratio * 0.95;
-  }, [maxCount]);
+  const wordSize = useCallback(
+    (count: number) => {
+      const ratio = count / maxCount;
+      return 0.65 + ratio * 0.95;
+    },
+    [maxCount]
+  );
 
   const powerPhraseData = useMemo(() => {
     if (!data) return [];
-    return POWER_PHRASE_GROUPS.map(group => {
+    return POWER_PHRASE_GROUPS.map((group) => {
       const matches: ConcordanceWord[] = [];
-      group.patterns.forEach(pat => {
-        const found = data.topWords.filter(w => w.word.toLowerCase().includes(pat.toLowerCase()));
+      group.patterns.forEach((pat) => {
+        const found = data.topWords.filter((w) => w.word.toLowerCase().includes(pat.toLowerCase()));
         matches.push(...found.slice(0, 3));
       });
-      const unique = [...new Map(matches.map(m => [m.word, m])).values()].slice(0, 6);
+      const unique = [...new Map(matches.map((m) => [m.word, m])).values()].slice(0, 6);
       return { ...group, matches: unique };
     });
   }, [data]);
@@ -187,7 +270,13 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
   }, [data]);
 
   if (loading) return <Skeleton />;
-  if (error || !data) return <Alert><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
+  if (error || !data)
+    return (
+      <Alert>
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
 
   const m = data.metadata;
 
@@ -199,25 +288,36 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
           { val: (m.totalOccurrences / 1000).toFixed(1) + 'K', label: 'Total Occurrences' },
           { val: m.filesIndexed.toLocaleString(), label: 'Source Files' },
           { val: Object.keys(data.categories).length, label: 'Categories' },
-        ].map(s => (
+        ].map((s) => (
           <Card key={s.label} className="bg-slate-950/60 border-white/[0.08] backdrop-blur-xl">
             <CardContent className="p-4">
               <div className="text-2xl font-extrabold font-mono text-white">{s.val}</div>
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-1">{s.label}</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-1">
+                {s.label}
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <Card className="bg-slate-950/60 border-white/[0.08] backdrop-blur-xl">
-        <CardHeader><CardTitle className="text-slate-100">Power Phrases &amp; Communication Patterns</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-slate-100">
+            Power Phrases &amp; Communication Patterns
+          </CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {powerPhraseData.map(group => (
-              <div key={group.title} className="bg-slate-900/40 border border-white/[0.06] rounded-xl p-3">
-                <h4 className="text-sm font-bold text-slate-200 mb-2">{group.icon} {group.title}</h4>
+            {powerPhraseData.map((group) => (
+              <div
+                key={group.title}
+                className="bg-slate-900/40 border border-white/[0.06] rounded-xl p-3"
+              >
+                <h4 className="text-sm font-bold text-slate-200 mb-2">
+                  {group.icon} {group.title}
+                </h4>
                 <div className="flex flex-wrap gap-1.5">
-                  {group.matches.map(w => (
+                  {group.matches.map((w) => (
                     <button
                       key={w.word}
                       onClick={() => setSelectedWord(w.word)}
@@ -238,7 +338,12 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
           <div className="flex items-center justify-between">
             <CardTitle className="text-slate-100">Categories</CardTitle>
             {selectedCategory && (
-              <button onClick={() => setSelectedCategory(null)} className="text-xs text-slate-500 hover:text-slate-300">Clear filter</button>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="text-xs text-slate-500 hover:text-slate-300"
+              >
+                Clear filter
+              </button>
             )}
           </div>
         </CardHeader>
@@ -257,8 +362,11 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
                 <div className="text-sm font-bold text-slate-200">{name}</div>
                 <div className="text-xs text-slate-500 mt-1">{cat.count} identifiers</div>
                 <div className="flex flex-wrap gap-1 mt-2">
-                  {cat.topWords.slice(0, 3).map(w => (
-                    <span key={w.word} className="text-[10px] text-slate-400 bg-white/[0.05] rounded px-1.5 py-0.5">
+                  {cat.topWords.slice(0, 3).map((w) => (
+                    <span
+                      key={w.word}
+                      className="text-[10px] text-slate-400 bg-white/[0.05] rounded px-1.5 py-0.5"
+                    >
                       {w.word}
                     </span>
                   ))}
@@ -277,16 +385,18 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
               <Input
                 placeholder="Search identifiers..."
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
                 className="w-56 bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600"
               />
               <div className="flex gap-1">
-                {(['cloud', 'list'] as ViewTab[]).map(v => (
+                {(['cloud', 'list'] as ViewTab[]).map((v) => (
                   <button
                     key={v}
                     onClick={() => setView(v)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                      view === v ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                      view === v
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                     }`}
                   >
                     {v === 'cloud' ? 'Cloud' : 'List'}
@@ -295,7 +405,7 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
               </div>
               <select
                 value={sortBy}
-                onChange={e => setSortBy(e.target.value as SortKey)}
+                onChange={(e) => setSortBy(e.target.value as SortKey)}
                 className="bg-slate-800 border border-white/10 text-slate-300 text-xs rounded-lg px-2 py-1.5"
               >
                 <option value="count">By Frequency</option>
@@ -308,7 +418,7 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
         <CardContent>
           {view === 'cloud' ? (
             <div className="flex flex-wrap gap-1.5">
-              {filteredWords.slice(0, 200).map(w => {
+              {filteredWords.slice(0, 200).map((w) => {
                 const scale = wordSize(w.count);
                 const opacity = 0.4 + (w.count / maxCount) * 0.6;
                 return (
@@ -319,14 +429,16 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
                     style={{ fontSize: `${scale}rem`, opacity }}
                   >
                     <span className="text-slate-100">{w.word}</span>
-                    <span className="text-slate-600 ml-1" style={{ fontSize: '0.65rem' }}>({w.count.toLocaleString()})</span>
+                    <span className="text-slate-600 ml-1" style={{ fontSize: '0.65rem' }}>
+                      ({w.count.toLocaleString()})
+                    </span>
                   </button>
                 );
               })}
             </div>
           ) : (
             <div className="max-h-96 overflow-y-auto space-y-1">
-              {filteredWords.slice(0, 100).map(w => {
+              {filteredWords.slice(0, 100).map((w) => {
                 const barWidth = (w.count / maxCount) * 100;
                 return (
                   <div key={w.word} className="flex items-center gap-3 text-sm">
@@ -342,7 +454,9 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
-                    <span className="text-xs text-slate-500 font-mono w-16 text-right">{w.count.toLocaleString()}</span>
+                    <span className="text-xs text-slate-500 font-mono w-16 text-right">
+                      {w.count.toLocaleString()}
+                    </span>
                   </div>
                 );
               })}
@@ -353,7 +467,9 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-slate-950/60 border-white/[0.08] backdrop-blur-xl">
-          <CardHeader><CardTitle className="text-slate-100 text-sm">Frequency Distribution</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-slate-100 text-sm">Frequency Distribution</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={freqChartData}>
@@ -361,7 +477,11 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
                 <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} />
                 <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                  contentStyle={{
+                    background: '#0f172a',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8,
+                  }}
                   labelStyle={{ color: '#f1f5f9' }}
                 />
                 <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
@@ -371,7 +491,9 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
         </Card>
 
         <Card className="bg-slate-950/60 border-white/[0.08] backdrop-blur-xl">
-          <CardHeader><CardTitle className="text-slate-100 text-sm">Length Distribution</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-slate-100 text-sm">Length Distribution</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={lengthChartData}>
@@ -379,7 +501,11 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
                 <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} />
                 <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                  contentStyle={{
+                    background: '#0f172a',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8,
+                  }}
                   labelStyle={{ color: '#f1f5f9' }}
                 />
                 <Bar dataKey="value" fill="#7c3aed" radius={[4, 4, 0, 0]} />
@@ -390,16 +516,21 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
       </div>
 
       <Card className="bg-slate-950/60 border-white/[0.08] backdrop-blur-xl">
-        <CardHeader><CardTitle className="text-slate-100 text-sm">Top Files by Identifier Density</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-slate-100 text-sm">Top Files by Identifier Density</CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="max-h-64 overflow-y-auto space-y-1">
-            {data.topFiles.slice(0, 30).map(f => {
+            {data.topFiles.slice(0, 30).map((f) => {
               const maxFileId = data.topFiles[0]?.identifiers || 1;
               const barWidth = (f.identifiers / maxFileId) * 100;
               const shortPath = f.file.split('/').slice(-2).join('/');
               return (
                 <div key={f.file} className="flex items-center gap-3 text-xs">
-                  <span className="w-40 text-right text-slate-400 truncate font-mono" title={f.file}>
+                  <span
+                    className="w-40 text-right text-slate-400 truncate font-mono"
+                    title={f.file}
+                  >
                     {shortPath}
                   </span>
                   <div className="flex-1 h-4 bg-white/[0.03] rounded overflow-hidden">
@@ -423,30 +554,44 @@ export const ConcordanceViewer: React.FC<ConcordanceViewerProps> = ({
         >
           <div
             className="bg-slate-950 border border-white/10 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white font-mono">{selectedWord}</h3>
-              <button onClick={() => setSelectedWord(null)} className="text-slate-500 hover:text-white transition-colors text-xl">&times;</button>
+              <button
+                onClick={() => setSelectedWord(null)}
+                className="text-slate-500 hover:text-white transition-colors text-xl"
+              >
+                &times;
+              </button>
             </div>
             {(() => {
-              const wordData = data.topWords.find(w => w.word === selectedWord);
+              const wordData = data.topWords.find((w) => w.word === selectedWord);
               if (!wordData) return <p className="text-slate-500 text-sm">No data available.</p>;
               return (
                 <div className="space-y-3">
                   <div className="flex gap-3">
-                    <Badge className="bg-blue-600">{wordData.count.toLocaleString()} occurrences</Badge>
+                    <Badge className="bg-blue-600">
+                      {wordData.count.toLocaleString()} occurrences
+                    </Badge>
                     <Badge className="bg-violet-600">{wordData.files?.length ?? 0} files</Badge>
                   </div>
                   {wordData.files && wordData.files.length > 0 && (
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Files</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                        Files
+                      </p>
                       <div className="space-y-1.5">
-                        {wordData.files.slice(0, 5).map(f => (
-                          <div key={f.file} className="text-xs text-slate-400 font-mono bg-white/[0.03] rounded px-3 py-1.5">
+                        {wordData.files.slice(0, 5).map((f) => (
+                          <div
+                            key={f.file}
+                            className="text-xs text-slate-400 font-mono bg-white/[0.03] rounded px-3 py-1.5"
+                          >
                             {f.file}
                             {f.lines && f.lines.length > 0 && (
-                              <span className="text-slate-600 ml-2">lines {f.lines.slice(0, 5).join(', ')}</span>
+                              <span className="text-slate-600 ml-2">
+                                lines {f.lines.slice(0, 5).join(', ')}
+                              </span>
                             )}
                           </div>
                         ))}

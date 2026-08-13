@@ -12,7 +12,10 @@ import { RedisService } from '../services/redis.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production'
+      ? (process.env.CORS_ORIGINS?.split(',') || ['https://your-domain.com'])
+      : '*',
+    credentials: true,
   },
 })
 export class AgentCommunicationGateway

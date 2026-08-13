@@ -9,7 +9,7 @@ import {
   AuditLogEntry,
   AuditLogQuery,
   AuditLogsRepository,
-} from '../repositories/audit-logs.repository';
+} from '../repositories/audit-logs.repository.js';
 
 @Injectable()
 export class AdminAuditLogsService {

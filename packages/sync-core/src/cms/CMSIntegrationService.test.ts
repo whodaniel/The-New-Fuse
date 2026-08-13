@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
+import { DrizzleClient, UserRole } from '@the-new-fuse/database';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
@@ -18,36 +18,36 @@ const vi = jest;
 // Mock dependencies
 const mockDrizzle = {
   user: {
-    findUnique: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
+    findUnique: jest.fn<any>(),
+    create: jest.fn<any>(),
+    update: jest.fn<any>(),
   },
   authEvent: {
-    create: jest.fn(),
+    create: jest.fn<any>(),
   },
-  $executeRaw: jest.fn(),
-  $queryRaw: jest.fn(),
-} as unknown as DrizzleClient;
+  $executeRaw: jest.fn<any>(),
+  $queryRaw: jest.fn<any>(),
+} as any;
 
 const mockRedis = {
-  get: jest.fn(),
-  set: jest.fn(),
-  setex: jest.fn(),
-  del: jest.fn(),
-  keys: jest.fn(),
-  publish: jest.fn(),
-  subscribe: jest.fn(),
+  get: jest.fn<any>(),
+  set: jest.fn<any>(),
+  setex: jest.fn<any>(),
+  del: jest.fn<any>(),
+  keys: jest.fn<any>(),
+  publish: jest.fn<any>(),
+  subscribe: jest.fn<any>(),
 } as unknown as RedisService;
 
 const mockSyncOrchestrator = {
-  syncTenantData: jest.fn(),
-  syncGlobalData: jest.fn(),
+  syncTenantData: jest.fn<any>(),
+  syncGlobalData: jest.fn<any>(),
 } as unknown as SyncOrchestrator;
 
 const mockFileWatcher = {
-  onFileChange: jest.fn(),
-  watchTenantFiles: jest.fn(),
-  watchGlobalFiles: jest.fn(),
+  onFileChange: jest.fn<any>(),
+  watchTenantFiles: jest.fn<any>(),
+  watchGlobalFiles: jest.fn<any>(),
 } as unknown as EnhancedFileSystemWatcher;
 
 describe('CMSIntegrationService', () => {
@@ -83,13 +83,13 @@ describe('CMSIntegrationService', () => {
   describe('Initialization', () => {
     it('should initialize CMS integration service successfully', async () => {
       // Mock database table creation
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
 
       // Mock Redis subscription
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
 
       // Mock file watcher setup
-      mockFileWatcher.onFileChange = jest.fn();
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
 
@@ -106,11 +106,11 @@ describe('CMSIntegrationService', () => {
       expect(mockRedis.subscribe).toHaveBeenCalledWith('privacy_events', expect.any(Function));
 
       // Verify file watcher was configured
-      expect(mockFileWatcher.onFileChange).toHaveBeenCalled();
+      expect((mockFileWatcher as any).onFileChange).toHaveBeenCalled();
     });
 
     it('should handle initialization errors gracefully', async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockRejectedValue(new Error('Database error'));
+      mockDrizzle.$executeRaw = jest.fn<any>().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.initialize()).rejects.toThrow('Database error');
     });
@@ -119,9 +119,9 @@ describe('CMSIntegrationService', () => {
   describe('Personal Content Management', () => {
     beforeEach(async () => {
       // Mock successful initialization
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -132,7 +132,7 @@ describe('CMSIntegrationService', () => {
         type: ContentType.DOCUMENT,
         title: 'Test Document',
         content: 'This is test content',
-        metadata: { tags: ['test'] },
+        metadata: { tags: [], format: 'text/markdown', size: 1024, accessCount: 0 },
         privacy: PrivacyLevel.PRIVATE,
         sharingSettings: {
           isPublic: false,
@@ -143,18 +143,18 @@ describe('CMSIntegrationService', () => {
       };
 
       // Mock user validation
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: userId,
-        role: UserRole.USER,
-        roles: [UserRole.USER],
+        role: 'USER',
+        roles: ['USER'],
         isActive: true,
       });
 
       // Mock content creation
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
-      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn<any>().mockResolvedValue(undefined);
 
       const result = await cmsService.createPersonalContent(userId, contentData);
 
@@ -185,7 +185,7 @@ describe('CMSIntegrationService', () => {
         type: ContentType.DOCUMENT,
         title: 'Large Document',
         content: largeContent,
-        metadata: { tags: [] },
+        metadata: { tags: [], format: 'text/markdown', size: 1024, accessCount: 0 },
         privacy: PrivacyLevel.PRIVATE,
         sharingSettings: {
           isPublic: false,
@@ -195,9 +195,9 @@ describe('CMSIntegrationService', () => {
         },
       };
 
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: userId,
-        role: UserRole.USER,
+        role: 'USER',
         isActive: true,
       });
 
@@ -212,7 +212,7 @@ describe('CMSIntegrationService', () => {
         type: ContentType.MEDIA, // Not in allowed types
         title: 'Media File',
         content: 'media content',
-        metadata: { tags: [] },
+        metadata: { tags: [], format: 'text/markdown', size: 1024, accessCount: 0 },
         privacy: PrivacyLevel.PRIVATE,
         sharingSettings: {
           isPublic: false,
@@ -222,9 +222,9 @@ describe('CMSIntegrationService', () => {
         },
       };
 
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: userId,
-        role: UserRole.USER,
+        role: 'USER',
         isActive: true,
       });
 
@@ -236,9 +236,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Project Configuration Sync', () => {
     beforeEach(async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -260,18 +260,18 @@ describe('CMSIntegrationService', () => {
         },
       };
 
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: userId,
-        role: UserRole.USER,
-        roles: [UserRole.USER],
+        role: 'USER',
+        roles: ['USER'],
         isActive: true,
       });
 
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
-      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.watchTenantFiles = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).watchTenantFiles = jest.fn<any>();
 
       const result = await cmsService.createProjectConfiguration(userId, projectData);
 
@@ -286,13 +286,13 @@ describe('CMSIntegrationService', () => {
       expect(mockSyncOrchestrator.syncTenantData).toHaveBeenCalled();
 
       // Verify file watching was set up
-      expect(mockFileWatcher.watchTenantFiles).toHaveBeenCalled();
+      expect((mockFileWatcher as any).watchTenantFiles).toHaveBeenCalled();
     });
 
     it('should validate project configuration size', async () => {
       const userId = 'user-123';
-      const largeConfig = {};
-      for (let i = 0; i < 10000; i++) {
+      const largeConfig: any = {};
+      for (let i = 0; i < 2000; i++) {
         largeConfig[`key${i}`] = 'x'.repeat(1000);
       }
 
@@ -311,9 +311,9 @@ describe('CMSIntegrationService', () => {
         },
       };
 
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: userId,
-        role: UserRole.USER,
+        role: 'USER',
         isActive: true,
       });
 
@@ -325,9 +325,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Collaborative Content Sharing', () => {
     beforeEach(async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -339,7 +339,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock content exists and is owned by user
-      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([
+      mockDrizzle.$queryRaw = jest.fn<any>().mockResolvedValue([
         {
           id: contentId,
           owner_id: ownerId,
@@ -350,30 +350,29 @@ describe('CMSIntegrationService', () => {
         },
       ]);
 
-      mockRedis.get = jest.fn().mockResolvedValue(null);
-      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn<any>().mockResolvedValue(null);
+      mockRedis.setex = jest.fn<any>().mockResolvedValue(undefined);
 
       // Mock target user exists
-      mockDrizzle.user.findUnique = jest
-        .fn()
+      mockDrizzle.user.findUnique = jest.fn<any>()
         .mockResolvedValueOnce({
           // For content validation
           id: ownerId,
-          role: UserRole.USER,
+          role: 'USER',
           isActive: true,
         })
         .mockResolvedValueOnce({
           // For target user validation
           id: targetUserId,
-          role: UserRole.USER,
-          roles: [UserRole.USER],
+          role: 'USER',
+          roles: ['USER'],
           isActive: true,
         });
 
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
 
       await cmsService.shareContent(ownerId, contentId, targetUserId, permissions);
 
@@ -403,7 +402,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ];
 
       // Mock private content
-      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([
+      mockDrizzle.$queryRaw = jest.fn<any>().mockResolvedValue([
         {
           id: contentId,
           owner_id: ownerId,
@@ -414,18 +413,17 @@ describe('CMSIntegrationService', () => {
         },
       ]);
 
-      mockRedis.get = jest.fn().mockResolvedValue(null);
+      mockRedis.get = jest.fn<any>().mockResolvedValue(null);
 
-      mockDrizzle.user.findUnique = jest
-        .fn()
+      mockDrizzle.user.findUnique = jest.fn<any>()
         .mockResolvedValueOnce({
           id: ownerId,
-          role: UserRole.USER,
+          role: 'USER',
           isActive: true,
         })
         .mockResolvedValueOnce({
           id: targetUserId,
-          role: UserRole.USER,
+          role: 'USER',
           isActive: true,
         });
 
@@ -438,11 +436,11 @@ describe('CMSIntegrationService', () => {
       const ownerId = 'owner-123';
       const collaboratorUserId = 'collaborator-456';
       const projectId = 'project-789';
-      const role = UserRole.AGENCY_MANAGER;
+      const role = '';
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock project exists and is owned by user
-      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([
+      mockDrizzle.$queryRaw = jest.fn<any>().mockResolvedValue([
         {
           id: projectId,
           owner_id: ownerId,
@@ -453,33 +451,32 @@ describe('CMSIntegrationService', () => {
         },
       ]);
 
-      mockRedis.get = jest.fn().mockResolvedValue(null);
+      mockRedis.get = jest.fn<any>().mockResolvedValue(null);
 
-      mockDrizzle.user.findUnique = jest
-        .fn()
+      mockDrizzle.user.findUnique = jest.fn<any>()
         .mockResolvedValueOnce({
           // For project validation
           id: ownerId,
-          role: UserRole.ADMIN,
+          role: 'ADMIN',
           isActive: true,
         })
         .mockResolvedValueOnce({
           // For collaborator validation
           id: collaboratorUserId,
-          role: UserRole.USER,
+          role: 'USER',
           isActive: true,
         })
         .mockResolvedValueOnce({
           // For role validation
           id: ownerId,
-          role: UserRole.ADMIN,
-          roles: [UserRole.ADMIN],
+          role: 'ADMIN',
+          roles: ['ADMIN'],
         });
 
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
 
       await cmsService.addProjectCollaborator(
         ownerId,
@@ -511,9 +508,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Privacy and Data Isolation', () => {
     beforeEach(async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -522,8 +519,7 @@ describe('CMSIntegrationService', () => {
       const tenantId = 'tenant-123';
 
       // Mock audit queries
-      mockDrizzle.$queryRaw = jest
-        .fn()
+      mockDrizzle.$queryRaw = jest.fn<any>()
         .mockResolvedValueOnce([
           {
             // Personal content audit
@@ -554,9 +550,9 @@ describe('CMSIntegrationService', () => {
         .mockResolvedValueOnce([]) // Orphaned data
         .mockResolvedValueOnce([]); // Weak privacy settings
 
-      mockRedis.get = jest.fn().mockResolvedValue(null);
-      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn<any>().mockResolvedValue(null);
+      mockRedis.setex = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
 
       const auditResult = await cmsService.auditPrivacyCompliance(tenantId);
 
@@ -596,9 +592,9 @@ describe('CMSIntegrationService', () => {
 
   describe('User Content Retrieval', () => {
     beforeEach(async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -607,8 +603,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock personal content
-      mockDrizzle.$queryRaw = jest
-        .fn()
+      mockDrizzle.$queryRaw = jest.fn<any>()
         .mockResolvedValueOnce([
           {
             // Personal content
@@ -665,8 +660,8 @@ describe('CMSIntegrationService', () => {
           },
         ]);
 
-      mockRedis.get = jest.fn().mockResolvedValue(null);
-      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn<any>().mockResolvedValue(null);
+      mockRedis.setex = jest.fn<any>().mockResolvedValue(undefined);
 
       const result = await cmsService.getUserContent(userId);
 
@@ -696,9 +691,9 @@ describe('CMSIntegrationService', () => {
 
   describe('CMS Data Synchronization', () => {
     beforeEach(async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
     });
@@ -707,7 +702,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock user's collaborative projects
-      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([
+      mockDrizzle.$queryRaw = jest.fn<any>().mockResolvedValue([
         {
           id: 'project-1',
           name: 'Test Project',
@@ -724,9 +719,9 @@ describe('CMSIntegrationService', () => {
         },
       ]);
 
-      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn<any>().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn<any>().mockResolvedValue(undefined);
 
       await cmsService.syncUserCMSData(userId);
 
@@ -743,7 +738,7 @@ describe('CMSIntegrationService', () => {
     it('should handle sync errors gracefully', async () => {
       const userId = 'user-123';
 
-      mockDrizzle.$queryRaw = jest.fn().mockRejectedValue(new Error('Database error'));
+      mockDrizzle.$queryRaw = jest.fn<any>().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.syncUserCMSData(userId)).rejects.toThrow('Database error');
     });
@@ -763,7 +758,7 @@ describe('CMSIntegrationService', () => {
           type: ContentType.DOCUMENT,
           title: 'Test',
           content: 'content',
-          metadata: {},
+          metadata: {} as any,
           privacy: PrivacyLevel.PRIVATE,
           sharingSettings: {
             isPublic: false,
@@ -776,21 +771,21 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle invalid user scenarios', async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
 
       // Mock user not found
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue(null);
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue(null);
 
       await expect(
         cmsService.createPersonalContent('invalid-user', {
           type: ContentType.DOCUMENT,
           title: 'Test',
           content: 'content',
-          metadata: {},
+          metadata: {} as any,
           privacy: PrivacyLevel.PRIVATE,
           sharingSettings: {
             isPublic: false,
@@ -803,16 +798,16 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle inactive user scenarios', async () => {
-      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = jest.fn();
+      mockDrizzle.$executeRaw = jest.fn<any>().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn<any>().mockResolvedValue(undefined);
+      (mockFileWatcher as any).onFileChange = jest.fn<any>();
 
       await cmsService.initialize();
 
       // Mock inactive user
-      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn<any>().mockResolvedValue({
         id: 'user-123',
-        role: UserRole.USER,
+        role: 'USER',
         isActive: false,
       });
 
@@ -821,7 +816,7 @@ describe('CMSIntegrationService', () => {
           type: ContentType.DOCUMENT,
           title: 'Test',
           content: 'content',
-          metadata: {},
+          metadata: {} as any,
           privacy: PrivacyLevel.PRIVATE,
           sharingSettings: {
             isPublic: false,

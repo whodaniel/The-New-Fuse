@@ -1,4 +1,4 @@
-import { ValidationSchema } from '../middleware/validation.middleware';
+import { ValidationSchema } from '../middleware/validation.middleware.js';
 
 // Schema for validating export conversation requests
 export const exportSchema: ValidationSchema = {

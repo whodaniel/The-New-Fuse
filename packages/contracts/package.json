@@ -19,7 +19,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "build": "hardhat compile 2>/dev/null || tsc --noEmit --skipLibCheck || echo 'contracts: build ok (solidity-only package)'"
+    "build": "hardhat compile 2>/dev/null || tsc --noEmit --skipLibCheck"
   },
   "keywords": [
     "blockchain",

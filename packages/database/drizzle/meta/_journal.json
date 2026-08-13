@@ -78,6 +78,27 @@
       "when": 1780257600000,
       "tag": "0012_add_project_runtime_configuration",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782358200000,
+      "tag": "0013_add_cli_qoder",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786308305047,
+      "tag": "0014_align_agent_definition_vocabulary",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786308305048,
+      "tag": "0015_add_federated_ids",
+      "breakpoints": true
     }
   ]
 }
