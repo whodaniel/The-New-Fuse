@@ -1,13 +1,13 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T18:00:17.983Z`  
-Handoff ID: `52d520bc-c4e5-407b-a3f6-960e55ced537`
+Created At: `2026-08-13T18:04:33.055Z`  
+Handoff ID: `7949a361-4fe6-4d06-a7e5-c6550e6db638`
 
 ## Scope
 - Repository: `tnf-sync-publish`
-- Branch: `HEAD`
-- Head SHA: `4f36df2601e3dbf9f72d5e3f9ac5ad1991a120ac`
+- Branch: `main`
+- Head SHA: `5935e4705cd05b5b6f6b013c47af99eb20a5295c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -16,8 +16,7 @@ Handoff ID: `52d520bc-c4e5-407b-a3f6-960e55ced537`
 
 ## Changed Paths
 - scripts/sync-repos.sh
-- .github/workflows/repo-sync.yml
-- docs/REPO_SEPARATION.md
+- scripts/verify-progressive-disclosure.mjs
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
