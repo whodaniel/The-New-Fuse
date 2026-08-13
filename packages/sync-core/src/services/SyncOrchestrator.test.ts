@@ -9,7 +9,7 @@ describe('SyncOrchestrator', () => {
   let service: SyncOrchestrator;
   let redisService: jest.Mocked<UnifiedRedisService>;
   let wsService: jest.Mocked<IWebSocketService>;
-  let dbService: jest.Mocked<DrizzleService>;
+  let dbService: any;
   let promptTemplateService: jest.Mocked<PromptTemplateServiceImpl>;
 
   const mockUser = {

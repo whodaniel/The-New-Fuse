@@ -8,6 +8,8 @@ export interface StandaloneRedisConfig {
   port: number;
   password?: string;
   db: number;
+  /** Present for rediss:// (TLS) endpoints such as Upstash. */
+  tls?: Record<string, unknown>;
   connectTimeout: number;
   lazyConnect: boolean;
   maxRetriesPerRequest: number | null;
@@ -30,6 +32,8 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
   let port = parseInt(process.env.REDIS_PORT || '6379', 10);
   let password = process.env.REDIS_PASSWORD;
   let db = parseInt(process.env.REDIS_DB || '0', 10);
+  let tls: Record<string, unknown> | undefined =
+    process.env.REDIS_TLS === 'true' || process.env.REDIS_TLS === '1' ? {} : undefined;
 
   if (redisUrl) {
     try {
@@ -47,6 +51,10 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
       const dbFromPath =
         url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
       db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+      // ioredis does not infer TLS from host/port alone — rediss:// must set tls.
+      if (url.protocol === 'rediss:') {
+        tls = {};
+      }
     } catch (error) {
       console.error('[Standalone-Redis] Failed to parse REDIS_URL, using defaults');
     }
@@ -57,6 +65,7 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
     port,
     password,
     db,
+    tls,
     connectTimeout: parseInt(process.env.REDIS_CONNECT_TIMEOUT || '10000', 10),
     lazyConnect: process.env.REDIS_LAZY_CONNECT === 'true',
     maxRetriesPerRequest: null,
@@ -92,6 +101,7 @@ export function createStandaloneRedisClient(
     maxRetriesPerRequest: fullConfig.maxRetriesPerRequest,
     keyPrefix: fullConfig.keyPrefix,
     retryStrategy: (times: number) => Math.min(times * 50, fullConfig.retryDelay),
+    ...(fullConfig.tls ? { tls: fullConfig.tls } : {}),
   };
 
   if (fullConfig.clusterMode && fullConfig.clusterNodes.length > 0) {
@@ -144,6 +154,7 @@ export function parseRedisUrl(redisUrl: string): Partial<StandaloneRedisConfig> 
   let port: number | undefined;
   let password: string | undefined;
   let db: number | undefined;
+  let tls: Record<string, unknown> | undefined;
 
   if (redisUrl) {
     try {
@@ -160,6 +171,9 @@ export function parseRedisUrl(redisUrl: string): Partial<StandaloneRedisConfig> 
       const dbFromPath =
         url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
       db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+      if (url.protocol === 'rediss:') {
+        tls = {};
+      }
     } catch (error) {
       console.error(
         '[Standalone-Redis] Failed to parse Redis URL, using defaults for URL component parsing:',
@@ -172,5 +186,5 @@ export function parseRedisUrl(redisUrl: string): Partial<StandaloneRedisConfig> 
     }
   }
 
-  return { host, port, password, db };
+  return { host, port, password, db, tls };
 }

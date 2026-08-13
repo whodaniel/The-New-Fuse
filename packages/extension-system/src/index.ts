@@ -1,22 +1,43 @@
 /**
  * Unified Extension System - Main Export File
- * 
+ *
  * Consolidates all extension system components for The New Fuse Framework
  * Provides a single entry point for all extension-related functionality
  */
 
 // Core components
-export { ExtensionManager } from './manager/ExtensionManager.js';
 export { ExtensionLoader, type ExtensionLoaderConfig } from './loader/ExtensionLoader.js';
-export { ExtensionRegistry, type ExtensionRegistryConfig, type ExtensionSearchQuery, type ExtensionSearchResult } from './registry/ExtensionRegistry.js';
-export { ExtensionValidator, type ExtensionValidatorConfig, type SecurityScanResult, type SecurityIssue } from './validator/ExtensionValidator.js';
+export { ExtensionManager } from './manager/ExtensionManager.js';
+export {
+  ExtensionRegistry,
+  type ExtensionRegistryConfig,
+  type ExtensionSearchQuery,
+  type ExtensionSearchResult,
+} from './registry/ExtensionRegistry.js';
+export {
+  ExtensionValidator,
+  type ExtensionValidatorConfig,
+  type SecurityIssue,
+  type SecurityScanResult,
+} from './validator/ExtensionValidator.js';
 
 // Types and interfaces
 export * from './types/ExtensionTypes.js';
 
+// Satellite app path resolution (TNF-Extensions / apps/extensions redirect)
+export {
+  APPS_EXTENSIONS_REDIRECT,
+  listSatelliteAppDirs,
+  resolveDefaultExtensionDirectory,
+  resolveTnfExtensionsRoot,
+  TNF_EXTENSIONS_DIR_NAME,
+  type ResolveTnfExtensionsRootOptions,
+} from './paths.js';
+
 // Factory for creating extension system
 import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { ExtensionManager } from './manager/ExtensionManager.js';
+import { resolveDefaultExtensionDirectory } from './paths.js';
 import { ExtensionManagerConfig } from './types/ExtensionTypes.js';
 
 export interface ExtensionSystemConfig {
@@ -52,7 +73,7 @@ export class ExtensionSystemFactory {
       maxLoadTime: config.maxLoadTime,
       maxMemoryUsage: config.maxMemoryUsage,
       allowDevelopmentExtensions: config.allowDevelopmentExtensions,
-      trustedSources: config.trustedSources
+      trustedSources: config.trustedSources,
     };
 
     return new ExtensionManager(managerConfig, logger, agentRegistry, workflowEngine);
@@ -68,7 +89,8 @@ export class ExtensionSystemFactory {
     workflowEngine?: any
   ): ExtensionManager {
     const config: ExtensionSystemConfig = {
-      extensionDirectory: `${baseDirectory}/extensions`,
+      // Prefer sibling TNF-Extensions (via apps/extensions redirect) when present
+      extensionDirectory: resolveDefaultExtensionDirectory(baseDirectory),
       configDirectory: `${baseDirectory}/config`,
       logDirectory: `${baseDirectory}/logs`,
       tempDirectory: `${baseDirectory}/temp`,
@@ -77,7 +99,7 @@ export class ExtensionSystemFactory {
       maxLoadTime: 30000, // 30 seconds
       maxMemoryUsage: 128 * 1024 * 1024, // 128MB
       allowDevelopmentExtensions: process.env.NODE_ENV === 'development',
-      trustedSources: ['@the-new-fuse/', 'https://registry.npmjs.org/']
+      trustedSources: ['@the-new-fuse/', 'https://registry.npmjs.org/'],
     };
 
     return this.create(config, logger, agentRegistry, workflowEngine);
@@ -86,7 +108,7 @@ export class ExtensionSystemFactory {
 
 /**
  * Extension System Integration Helper
- * 
+ *
  * Provides utilities for integrating the extension system with existing modules
  */
 export class ExtensionSystemIntegrator {
@@ -108,7 +130,9 @@ export class ExtensionSystemIntegrator {
       try {
         await this.createExtensionFromModule(moduleClass);
       } catch (error) {
-        this.logger.warn(`Failed to migrate module ${moduleClass.name}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.warn(
+          `Failed to migrate module ${moduleClass.name}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
@@ -132,7 +156,9 @@ export class ExtensionSystemIntegrator {
       try {
         await this.createWorkflowNodeExtension(nodeType, nodeClass);
       } catch (error) {
-        this.logger.warn(`Failed to migrate workflow node ${nodeType}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.warn(
+          `Failed to migrate workflow node ${nodeType}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
@@ -155,7 +181,9 @@ export class ExtensionSystemIntegrator {
       try {
         await this.createAgentCapabilityExtension(capabilityName, capabilityClass);
       } catch (error) {
-        this.logger.warn(`Failed to migrate capability ${capabilityName}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.warn(
+          `Failed to migrate capability ${capabilityName}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
@@ -163,7 +191,10 @@ export class ExtensionSystemIntegrator {
   /**
    * Create agent capability extension
    */
-  private async createAgentCapabilityExtension(capabilityName: string, _capabilityClass: any): Promise<void> {
+  private async createAgentCapabilityExtension(
+    capabilityName: string,
+    _capabilityClass: any
+  ): Promise<void> {
     // This would create an agent capability extension
     this.logger.debug(`Creating agent capability extension: ${capabilityName}`);
   }
@@ -179,23 +210,27 @@ export class ExtensionDevelopmentUtils {
   static generateExtensionTemplate(type: string, name: string): Record<string, string> {
     const templates: Record<string, Record<string, string>> = {
       'workflow-node': {
-        'extension.json': JSON.stringify({
-          name: `@my-org/${name}`,
-          version: '1.0.0',
-          description: `Custom workflow node: ${name}`,
-          type: 'workflow_node',
-          category: 'workflow',
-          main: 'index.js',
-          author: 'Your Name',
-          keywords: ['workflow', 'node', name],
-          permissions: [],
-          configuration: {
-            schema: {
-              type: 'object',
-              properties: {}
-            }
-          }
-        }, null, 2),
+        'extension.json': JSON.stringify(
+          {
+            name: `@my-org/${name}`,
+            version: '1.0.0',
+            description: `Custom workflow node: ${name}`,
+            type: 'workflow_node',
+            category: 'workflow',
+            main: 'index.js',
+            author: 'Your Name',
+            keywords: ['workflow', 'node', name],
+            permissions: [],
+            configuration: {
+              schema: {
+                type: 'object',
+                properties: {},
+              },
+            },
+          },
+          null,
+          2
+        ),
         'index.js': `/**
  * ${name} Workflow Node Extension
  */
@@ -231,26 +266,30 @@ To develop this extension:
 1. Install dependencies: \`npm install\`
 2. Build: \`npm run build\`
 3. Test: \`npm run test\`
-`
+`,
       },
       'agent-capability': {
-        'extension.json': JSON.stringify({
-          name: `@my-org/${name}`,
-          version: '1.0.0',
-          description: `Custom agent capability: ${name}`,
-          type: 'agent_capability',
-          category: 'agent',
-          main: 'index.js',
-          author: 'Your Name',
-          keywords: ['agent', 'capability', name],
-          permissions: [],
-          configuration: {
-            schema: {
-              type: 'object',
-              properties: {}
-            }
-          }
-        }, null, 2),
+        'extension.json': JSON.stringify(
+          {
+            name: `@my-org/${name}`,
+            version: '1.0.0',
+            description: `Custom agent capability: ${name}`,
+            type: 'agent_capability',
+            category: 'agent',
+            main: 'index.js',
+            author: 'Your Name',
+            keywords: ['agent', 'capability', name],
+            permissions: [],
+            configuration: {
+              schema: {
+                type: 'object',
+                properties: {},
+              },
+            },
+          },
+          null,
+          2
+        ),
         'index.js': `/**
  * ${name} Agent Capability Extension
  */
@@ -291,8 +330,8 @@ To develop this extension:
 1. Install dependencies: \`npm install\`
 2. Build: \`npm run build\`
 3. Test: \`npm run test\`
-`
-      }
+`,
+      },
     };
 
     return templates[type] || {};

@@ -1,25 +1,31 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import ReactFlow, {
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+// reactflow@11's bundled types predate React 19's JSX namespace changes, so its
+// default export doesn't structurally match React 19's JSX.ElementType. This is
+// a types-only mismatch (tracked upstream; fixed in the @xyflow/react v12
+// successor) — cast to a valid component type rather than swap the library.
+import { Brain, Cpu, Shield } from 'lucide-react';
+import ReactFlowLib, {
   Background,
   Controls,
+  Edge,
   MiniMap,
+  Node,
+  NodeChange,
+  NodeProps,
   Panel,
   useReactFlow,
-  Node,
-  Edge,
-  NodeProps,
-  NodeChange,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import { Brain, Cpu, MessageSquare, Shield, Zap, Info, AlertCircle, Play } from 'lucide-react';
-import { useGraphWebSocket } from '../hooks/useGraphWebSocket';
-import { MemoryGraphAdapter } from '../memory/memory-graph-adapter';
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import { useGraphWebSocket } from '../hooks/useGraphWebSocket.js';
+import { MemoryGraphAdapter } from '../memory/memory-graph-adapter.js';
 import styles from './graph-visualization.module.css';
+
+const ReactFlow = ReactFlowLib as unknown as React.FC<Record<string, unknown>>;
 
 interface NodeData {
   label: string;
-  status?: "running" | "error" | "idle";
-  priority?: "high" | "medium" | "low";
+  status?: 'running' | 'error' | 'idle';
+  priority?: 'high' | 'medium' | 'low';
   metadata?: Record<string, string | number>;
   expanded?: boolean;
 }
@@ -58,12 +64,17 @@ const DefaultNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
         </div>
         <span>{data.label}</span>
       </div>
-      
+
       <div className={styles.statusBadge}>
-        <div className={`${styles.statusIndicator} ${
-          data.status === "running" ? styles.statusRunning : 
-          data.status === "error" ? styles.statusError : styles.statusIdle
-        }`} />
+        <div
+          className={`${styles.statusIndicator} ${
+            data.status === 'running'
+              ? styles.statusRunning
+              : data.status === 'error'
+                ? styles.statusError
+                : styles.statusIdle
+          }`}
+        />
         <span>{data.status || 'idle'}</span>
       </div>
 
@@ -90,12 +101,17 @@ const TaskNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
         </div>
         <span>{data.label}</span>
       </div>
-      
+
       <div className={styles.statusBadge}>
-        <div className={`${styles.statusIndicator} ${
-          data.status === "running" ? styles.statusRunning : 
-          data.status === "error" ? styles.statusError : styles.statusIdle
-        }`} />
+        <div
+          className={`${styles.statusIndicator} ${
+            data.status === 'running'
+              ? styles.statusRunning
+              : data.status === 'error'
+                ? styles.statusError
+                : styles.statusIdle
+          }`}
+        />
         <span>{data.status || 'queued'}</span>
       </div>
 
@@ -122,11 +138,13 @@ const AgentNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
         </div>
         <span>{data.label}</span>
       </div>
-      
+
       <div className={styles.statusBadge}>
-        <div className={`${styles.statusIndicator} ${
-          data.status === "running" ? styles.statusRunning : styles.statusIdle
-        }`} />
+        <div
+          className={`${styles.statusIndicator} ${
+            data.status === 'running' ? styles.statusRunning : styles.statusIdle
+          }`}
+        />
         <span>{data.status || 'standby'}</span>
       </div>
     </div>
@@ -142,49 +160,41 @@ const nodeTypes = {
 function toReactFlowNode(node: GraphNode): Node<NodeData> {
   return {
     id: node.id,
-    type: node.type || "default",
+    type: node.type || 'default',
     position: node.position || { x: 0, y: 0 },
     data: node.data,
   };
 }
 
 function toReactFlowEdge(edge: GraphEdge): Edge {
-  const isAnimated = edge.animated ?? (edge.type === "message" || edge.type === "data-flow");
+  const isAnimated = edge.animated ?? (edge.type === 'message' || edge.type === 'data-flow');
   return {
     id: edge.id || `${edge.source}-${edge.target}`,
     source: edge.source,
     target: edge.target,
-    type: edge.type || "smoothstep",
+    type: edge.type || 'smoothstep',
     animated: isAnimated,
     style: {
       ...edge.style,
       strokeWidth: isAnimated ? 2 : 1,
-      stroke: isAnimated ? "#6366f1" : "rgba(255, 255, 255, 0.2)",
+      stroke: isAnimated ? '#6366f1' : 'rgba(255, 255, 255, 0.2)',
     },
     label: edge.label,
   };
 }
 
 export function GraphVisualization({
-  websocketUrl = "ws://localhost:3000/graph",
-  className = "",
+  websocketUrl = 'ws://localhost:3000/graph',
+  className = '',
   showMiniMap = true,
   showControls = true,
   darkMode = false,
 }: GraphVisualizationProps) {
-  const {
-    data,
-    config,
-    loading,
-    error,
-    updateLayout,
-    selectNodes,
-    expandNode,
-    filterGraph,
-  } = useGraphWebSocket({
-    url: websocketUrl,
-    autoConnect: true,
-  });
+  const { data, config, loading, error, updateLayout, selectNodes, expandNode, filterGraph } =
+    useGraphWebSocket({
+      url: websocketUrl,
+      autoConnect: true,
+    });
 
   const { fitView } = useReactFlow();
   const [memoryAdapter] = useState(() => new MemoryGraphAdapter({ dimensions: 128 }));
@@ -211,18 +221,21 @@ export function GraphVisualization({
     return [...data.edges.map(toReactFlowEdge), ...suggestedConnections];
   }, [data.edges, suggestedConnections]);
 
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    changes.forEach((change) => {
-      if (change.type === "select") {
-        selectNodes(
-          changes
-            .filter((c) => c.type === "select" && 'selected' in c && c.selected)
-            .map((c) => 'id' in c ? c.id : '')
-            .filter(Boolean)
-        );
-      }
-    });
-  }, [selectNodes]);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      changes.forEach((change) => {
+        if (change.type === 'select') {
+          selectNodes(
+            changes
+              .filter((c) => c.type === 'select' && 'selected' in c && c.selected)
+              .map((c) => ('id' in c ? c.id : ''))
+              .filter(Boolean)
+          );
+        }
+      });
+    },
+    [selectNodes]
+  );
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node<NodeData>) => {
@@ -241,9 +254,9 @@ export function GraphVisualization({
 
   const graphStyles = useMemo(
     () => ({
-      background: darkMode ? "#1a1a1a" : "#ffffff",
-      width: "100%",
-      height: "100%",
+      background: darkMode ? '#1a1a1a' : '#ffffff',
+      width: '100%',
+      height: '100%',
     }),
     [darkMode]
   );
@@ -268,7 +281,7 @@ export function GraphVisualization({
     );
   }
 
-  const containerClass = `${styles.graphContainer} ${className} ${darkMode ? styles.darkMode : ""}`;
+  const containerClass = `${styles.graphContainer} ${className} ${darkMode ? styles.darkMode : ''}`;
 
   return (
     <div className={containerClass}>
@@ -289,15 +302,15 @@ export function GraphVisualization({
         nodesConnectable={config.nodesConnectable}
         elementsSelectable={config.elementsSelectable}
       >
-        <Background color={darkMode ? "#333333" : "#aaaaaa"} gap={16} />
+        <Background color={darkMode ? '#333333' : '#aaaaaa'} gap={16} />
         {showControls && <Controls />}
         {showMiniMap && (
           <MiniMap
             nodeColor={(n) => {
               const data = n.data as NodeData;
-              return data.status === "running" ? "#34d399" : "#3b82f6";
+              return data.status === 'running' ? '#34d399' : '#3b82f6';
             }}
-            maskColor={darkMode ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.7)"}
+            maskColor={darkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)'}
           />
         )}
         <Panel position="top-right" className="space-y-2">

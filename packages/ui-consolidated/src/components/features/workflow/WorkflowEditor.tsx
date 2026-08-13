@@ -2,11 +2,11 @@ import {
   WorkflowModel,
   WorkflowStepDefinition,
   WorkflowStepType,
-} from '@the-new-fuse/api-types/src/workflow';
+} from '@the-new-fuse/api-types/workflow';
 import { Edit, PlusCircle, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Button } from '../../Button/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card';
+import { Button } from '../../Button/Button.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card.js';
 import {
   Dialog,
   DialogClose,
@@ -15,10 +15,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../Dialog/Dialog';
-import { Input } from '../../Input/Input';
-import { Textarea } from '../../Textarea/Textarea';
-import { WorkflowVisualizer } from './WorkflowVisualizer';
+} from '../../Dialog/Dialog.js';
+import { Input } from '../../Input/Input.js';
+import { Textarea } from '../../Textarea/Textarea.js';
+import { WorkflowVisualizer } from './WorkflowVisualizer.js';
 
 // Explicitly define props interface for the component
 interface WorkflowEditorProps {

@@ -5,11 +5,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.integration.test.ts"
-  ]
+  ],
+  "exclude": ["node_modules", "dist"]
 }
