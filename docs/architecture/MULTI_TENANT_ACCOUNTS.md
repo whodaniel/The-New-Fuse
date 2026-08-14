@@ -6,6 +6,13 @@ The New Fuse (TNF) framework operates as a multi-tenant system with distinct
 account tiers, each with specific privileges and resource quotas. This document
 defines the account hierarchy and associated quotas.
 
+Storage quotas below mean hosted TNF working-set storage for small artifacts,
+metadata, extracts, and generated outputs. They do not grant member cloud-drive
+capacity. Durable docs and media should live in connected storage; TNF stores
+links, provider metadata, extracts, summaries, and indexes. See
+`docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md` and
+`docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`.
+
 ## Account Hierarchy
 
 ```
@@ -45,7 +52,7 @@ defines the account hierarchy and associated quotas.
 | API Calls/Day     | ∞     |
 | Jules Tasks/Day   | ∞     |
 | Concurrent Agents | ∞     |
-| Storage           | ∞     |
+| Hosted Working-Set Storage | Operator local/runtime only |
 
 **Special Privileges:**
 
@@ -65,7 +72,7 @@ defines the account hierarchy and associated quotas.
 | API Calls/Day     | 100,000 |
 | Jules Tasks/Day   | 100     |
 | Concurrent Agents | 50      |
-| Storage           | 10 GB   |
+| Hosted Working-Set Storage | 10 GB internal/admin only |
 
 **Privileges:**
 
@@ -84,7 +91,7 @@ defines the account hierarchy and associated quotas.
 | API Calls/Day     | 10,000 |
 | Jules Tasks/Day   | 10     |
 | Concurrent Agents | 10     |
-| Storage           | 1 GB   |
+| Hosted Working-Set Storage | 1 GB |
 
 **Privileges:**
 
@@ -102,7 +109,7 @@ defines the account hierarchy and associated quotas.
 | API Calls/Day     | 1,000  |
 | Jules Tasks/Day   | 0      |
 | Concurrent Agents | 2      |
-| Storage           | 100 MB |
+| Hosted Working-Set Storage | 100 MB |
 
 **Privileges:**
 

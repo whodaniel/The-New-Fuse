@@ -1,57 +1,123 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-13T20:42:17.302Z`  
-Handoff ID: `57b97048-5bea-496f-a548-d6ffbec12a81`
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Created At: `2026-08-13T22:43:46.302Z`
+Handoff ID: `fa753e06-126c-4c2c-852f-07047d1d2d16`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `83c2cf1d6e5ca91ae36c8219c5c0133446b39fd9`
+- Head SHA: `b353493329ccbd89ec2fb521b7985ef519e54d68`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Lock a single TNF product/repo scaffolding map; archive superseded duplicate
-  GitHub dumps; keep live products in their own repos.
+- Added 4 new script file(s)
+- Modified 49 file(s)
 
 ## Changed Paths
 
-- README.md
-- GITHUB_README.md
-- data/distribution/product-repo-map.json
-- docs/lineage/PRODUCT_REPO_MAP.md
-- docs/lineage/REPO_LINEAGE.md
-- docs/lineage/ARCHIVE_STATUS.md
-- docs/REPO_SEPARATION.md
-- docs/packaging/OSS_APP_BOUNDARY.md
-- docs/product/TNF_PRODUCT_BOUNDARY.md
-- scripts/packaging/check-product-repo-map.cjs
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-
-## Verification
-
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
-- supabase_rls_audit: `na`
+- .gcloudignore
+- apps/backend/src/modules/files/files.controller.spec.ts
+- apps/backend/src/modules/files/files.controller.ts
+- apps/backend/src/modules/files/files.module.ts
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- apps/frontend/src/data/codebase_map.json
+- apps/frontend/src/pages/Blog.tsx
+- apps/tauri-desktop/e2e/helpers/interactionAudit.ts
+- data/llm-intel/arena-intel-latest.json
+- data/llm-intel/arena-intel.json
+- data/llm-intel/ranking-recommendations.json
+- data/llm-intel/ranking-report-latest.md
+- data/marketplace/catalog-items.json
+- data/providers/catalog.json
+- docs/MCP_TROUBLESHOOTING_GUIDE.md
+- docs/SKILL_BANK_OPERATIONS.md
+- docs/architecture/MULTI_TENANT_ACCOUNTS.md
+- docs/integrations/supabase.md
+- docs/marketing/PUBLIC_LAUNCH_MARKETING_PLAN.md
+- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/operations/tnf-action-receipts.jsonl
+- docs/operations/tnf-master-reconciliation-report-latest.json
+- docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/protocols/PROTOCOL_MAP.md
+- docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/twip-terminal-macro-board-latest.md
+- package.json
+- packages/contracts/artifacts/build-info/1b41c2fcca4bec8c9737ced85e66a52d.json
+- packages/database/src/drizzle/schema/index.ts
+- packages/relay-core/src/services/agent-registry.service.ts
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/agents-run.ts
+- packages/tnf-cli/src/commands/config.ts
+- packages/tnf-cli/src/services/DebugService.ts
+- packages/tnf-cli/src/services/MCPManagerService.ts
+- packages/tnf-cli/src/services/ToolPermissionService.test.ts
+- packages/tnf-cli/src/services/ToolPermissionService.ts
+- packages/tnf-cli/src/services/provider-config.ts
+- packages/tnf-cli/src/utils/llm-tools.browser.test.ts
+- packages/tnf-cli/src/utils/llm-tools.ts
+- scripts/autonomy/brain_sync.sh
+- scripts/deployment/cloudbuild.gateway.yaml
+- scripts/install-agent-frontload.cjs
+- scripts/release-gate.cjs
+- scripts/sub-director/model-policy.example.yaml
+- scripts/verify-progressive-disclosure.mjs
+- .agent/skills/tnf-supabase-agent-connection/
+- .agents/
+- .claude/agents/master-of-taxonomies.md
+- apps/api/src/email/
+- apps/api/src/middleware/types.ts
+- apps/api/src/security/encryption.service.ts
+- apps/api/src/types/agent.types.ts
+- apps/api/src/types/common.ts
+- apps/backend/src/modules/files/storage-policy.ts
+- apps/chrome-extension/.gitignore
+- apps/frontend/.gitignore
+- apps/vscode-extension/.gitignore
+- archive/apps/gemini-bridge-extension/aivi/.gitignore
+- archive/apps/gemini-bridge-extension/aivi/backend/.gitignore
+- data/llm-intel/history/intel_2026-08-12.json
+- data/llm-intel/history/intel_2026-08-13.json
+- data/product/
+- docs/marketing/VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md
+- docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md
+- docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md
+- docs/protocols/CONNECTIVE_JOURNAL_GROK_BOT_AND_GROK_4_6.md
+- docs/protocols/TNF_EXTERNAL_TEAMMATE_HANDOFF_DEMO.md
+- docs/protocols/TNF_EXTERNAL_TEAMMATE_RUNTIME_INTEROP.md
+- docs/protocols/bridges/tnf-to-external-teammate-runtime.yml
+- docs/protocols/instant-error-awareness-pipeline.md
+- docs/protocols/reports/GROK_BOT_GROK_4_6_TNF_RESPONSE_2026-08-13.md
+- packages/database/migrations/20260813000100_add_user_data_locations.down.sql
+- packages/database/migrations/20260813000100_add_user_data_locations.sql
+- packages/database/src/drizzle/schema/personal-data-locations.ts
+- packages/tnf-cli/src/services/DebugService.test.ts
+- packages/tnf-cli/src/services/MCPToolRuntimeService.test.ts
+- packages/tnf-cli/src/services/MCPToolRuntimeService.ts
+- scripts/ci/check-federated-alphabet.sh
+- scripts/codex-mcp-oauth-login.cjs
+- scripts/product/
+- scripts/protocols/demo-external-teammate-handoff.cjs
+- scripts/skills/codex-skill-disclosure-guard.cjs
+- scripts/supabase-agent-connection-check.cjs
 
 ## Continuation
 
-- Owner: `cursor-agent`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
+- **Owner:** operator
+- **Priority:** medium
 
-### Resume Checklist
+**Targets:**
+- orchestrator
 
+**Resume Checklist:**
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them
 
 ## Next Actions
 
@@ -59,3 +125,9 @@ Handoff ID: `57b97048-5bea-496f-a548-d6ffbec12a81`
 - Do not commit to The-New-Fuse or fuse-control-plane.
 - Do not unarchive superseded dumps or re-add forbidden remotes.
 - Keep TNF Repo Separation Sync disabled.
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 82 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+
+## Artifacts
+
+**Commits:**
+- b353493329ccbd89ec2fb521b7985ef519e54d68

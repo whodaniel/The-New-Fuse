@@ -21,6 +21,12 @@
 #   cloud-primary : cloud first, local last-resort (paid pass-through).
 #
 # allow_cloud: false|true — operator-controlled gate.
+#
+# Fleet note (2026-08-13): Grok 4.6 is seeded as a long-running-agent cloud lane
+# (provider `xai` / OpenRouter `x-ai/grok-4.6`). It remains unreachable while
+# default_tier=local-only and allow_cloud=false — by design. Grok Bot is NOT a
+# model lane; it is an External Teammate Runtime (see
+# docs/protocols/TNF_EXTERNAL_TEAMMATE_RUNTIME_INTEROP.md).
 
 default_tier: local-only
 allow_cloud: false

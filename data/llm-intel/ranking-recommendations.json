@@ -1,7 +1,7 @@
 {
   "spec": "tnf/llm-ranking-recommendations/0.1",
-  "generatedAt": "2026-08-13T10:00:57.321Z",
-  "intelSnapshotId": "intel_1786615203240",
+  "generatedAt": "2026-08-13T16:30:02.853Z",
+  "intelSnapshotId": "intel_1786636805079",
   "compositeScores": [
     {
       "nvidiaId": "openai/gpt-oss-20b",
@@ -9,7 +9,7 @@
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "live",
-      "latencyMs": 463,
+      "latencyMs": 325,
       "compositeRank": 1
     },
     {
@@ -49,22 +49,13 @@
       "compositeRank": 5
     },
     {
-      "nvidiaId": "google/gemma-4-31b-it",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
-      "compositeRank": 6
-    },
-    {
       "nvidiaId": "z-ai/glm-5.1",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 7
+      "compositeRank": 6
     },
     {
       "nvidiaId": "moonshotai/kimi-k2.6",
@@ -73,7 +64,7 @@
       "bestRank": null,
       "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 8
+      "compositeRank": 7
     },
     {
       "nvidiaId": "minimaxai/minimax-m2.7",
@@ -82,7 +73,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 9
+      "compositeRank": 8
     },
     {
       "nvidiaId": "minimaxai/minimax-m2.5",
@@ -91,7 +82,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 10
+      "compositeRank": 9
     },
     {
       "nvidiaId": "deepseek-ai/deepseek-v4-flash",
@@ -100,7 +91,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 11
+      "compositeRank": 10
     },
     {
       "nvidiaId": "deepseek-ai/deepseek-v4-pro",
@@ -109,7 +100,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 12
+      "compositeRank": 11
     },
     {
       "nvidiaId": "qwen/qwen3.5-397b-a17b",
@@ -118,7 +109,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 13
+      "compositeRank": 12
     },
     {
       "nvidiaId": "qwen/qwen3.5-122b-a10b",
@@ -127,7 +118,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 14
+      "compositeRank": 13
     },
     {
       "nvidiaId": "mistralai/mistral-large-3-675b-instruct-2512",
@@ -136,7 +127,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 15
+      "compositeRank": 14
     },
     {
       "nvidiaId": "mistralai/mistral-medium-3.5-128b",
@@ -145,7 +136,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 16
+      "compositeRank": 15
     },
     {
       "nvidiaId": "mistralai/devstral-2-123b-instruct-2512",
@@ -154,7 +145,7 @@
       "bestRank": null,
       "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 17
+      "compositeRank": 16
     },
     {
       "nvidiaId": "mistralai/mistral-small-4-119b-2603",
@@ -163,7 +154,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 18
+      "compositeRank": 17
     },
     {
       "nvidiaId": "mistralai/magistral-small-2506",
@@ -172,7 +163,7 @@
       "bestRank": null,
       "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 19
+      "compositeRank": 18
     },
     {
       "nvidiaId": "mistralai/ministral-14b-instruct-2512",
@@ -181,7 +172,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 20
+      "compositeRank": 19
     },
     {
       "nvidiaId": "google/gemma-3n-e4b-it",
@@ -190,7 +181,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 21
+      "compositeRank": 20
     },
     {
       "nvidiaId": "google/gemma-3-27b-it",
@@ -199,7 +190,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 22
+      "compositeRank": 21
     },
     {
       "nvidiaId": "meta/llama-4-maverick-17b-128e-instruct",
@@ -208,7 +199,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 23
+      "compositeRank": 22
     },
     {
       "nvidiaId": "meta/llama-3.1-405b-instruct",
@@ -217,7 +208,7 @@
       "bestRank": null,
       "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 24
+      "compositeRank": 23
     },
     {
       "nvidiaId": "microsoft/phi-4-multimodal-instruct",
@@ -226,7 +217,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 25
+      "compositeRank": 24
     },
     {
       "nvidiaId": "microsoft/phi-4-mini-instruct",
@@ -235,7 +226,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 26
+      "compositeRank": 25
     },
     {
       "nvidiaId": "bytedance/seed-oss-36b-instruct",
@@ -244,7 +235,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 27
+      "compositeRank": 26
     },
     {
       "nvidiaId": "stockmark/stockmark-2-100b-instruct",
@@ -253,7 +244,7 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 28
+      "compositeRank": 27
     },
     {
       "nvidiaId": "abacusai/dracarys-llama-3.1-70b-instruct",
@@ -261,6 +252,15 @@
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 28
+    },
+    {
+      "nvidiaId": "google/gemma-4-31b-it",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "error",
       "latencyMs": null,
       "compositeRank": 29
     },
@@ -1206,16 +1206,6 @@
       "healthStatus": "timeout"
     },
     {
-      "model": "google/gemma-4-31b-it",
-      "action": "reorder",
-      "currentPriority": 1,
-      "proposedPriority": 5,
-      "delta": 4,
-      "reason": "Arena score change suggests priority shift of 4 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
       "model": "nvidia/nemotron-3-ultra-550b-a55b",
       "action": "demote",
       "currentPriority": 0,
@@ -1224,6 +1214,16 @@
       "reason": "Model not found in arena rankings; consider demoting",
       "compositeScore": 0,
       "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "action": "demote",
+      "currentPriority": 1,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "error"
     },
     {
       "model": "z-ai/glm-5.2",
@@ -2222,9 +2222,9 @@
     "liveModels": 1,
     "recommendationsCount": 125,
     "addAction": 0,
-    "reorderAction": 6,
+    "reorderAction": 5,
     "removeEolAction": 19,
-    "demoteAction": 100,
+    "demoteAction": 101,
     "newsItems": 0
   },
   "advisory": "This is an advisory report. No config files were modified. Review recommendations and apply manually or via tnf llm-apply-rankings."

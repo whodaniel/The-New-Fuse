@@ -36,6 +36,13 @@ tnf mcp codex-login supabase --no-open
 tnf mcp codex-login supabase --browser "open"
 ```
 
+For an agent-facing assurance report:
+
+```bash
+tnf mcp supabase-agent-check --json --write
+tnf mcp supabase-agent-check --login --write
+```
+
 For opt-in TNF Codex startup handling:
 
 ```bash

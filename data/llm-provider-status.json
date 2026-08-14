@@ -1,8 +1,8 @@
 {
-  "lastChecked": "2026-08-10T21:00:27.138Z",
+  "lastChecked": "2026-08-13T23:59:06.070Z",
   "bestAvailable": {
     "id": "openrouter",
-    "name": "OpenRouter (Free Tier)",
+    "name": "OpenRouter",
     "tier": "free",
     "type": "cloud",
     "envKey": "OPENROUTER_API_KEY",
@@ -13,7 +13,7 @@
   "allocations": {
     "orchestrator": {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -23,7 +23,7 @@
     },
     "worker": {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -33,7 +33,7 @@
     },
     "reviewer": {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -43,7 +43,7 @@
     },
     "subagent": {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -55,7 +55,7 @@
   "fallbackChain": [
     {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -71,15 +71,25 @@
       "tier": "free",
       "type": "local",
       "testUrl": "http://localhost:11434/api/tags",
+      "defaultModel": "qwen2.5-coder:7b",
       "active": false
     },
     {
-      "id": "gemini",
-      "name": "Google Gemini",
+      "id": "llamacpp",
+      "name": "Local llama.cpp",
+      "tier": "free",
+      "type": "local",
+      "testUrl": "http://127.0.0.1:8081/health",
+      "defaultModel": "qwen2.5-coder-3b-instruct",
+      "active": false
+    },
+    {
+      "id": "google",
+      "name": "Google AI",
       "tier": "free",
       "type": "cloud",
-      "envKey": "GEMINI_API_KEY",
-      "testUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "envKey": "GOOGLE_API_KEY",
+      "testUrl": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
       "defaultModel": "gemini-pro",
       "active": false
     },
@@ -94,8 +104,28 @@
       "active": false
     },
     {
+      "id": "nvidia",
+      "name": "NVIDIA NIM",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "NVIDIA_API_KEY",
+      "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "defaultModel": "meta/llama-3.3-70b-instruct",
+      "active": false
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "DEEPSEEK_API_KEY",
+      "testUrl": "https://api.deepseek.com/v1/chat/completions",
+      "defaultModel": "deepseek-chat",
+      "active": false
+    },
+    {
       "id": "openrouter",
-      "name": "OpenRouter (Free Tier)",
+      "name": "OpenRouter",
       "tier": "free",
       "type": "cloud",
       "envKey": "OPENROUTER_API_KEY",
@@ -104,9 +134,19 @@
       "active": true
     },
     {
+      "id": "xai",
+      "name": "SpaceXAI (xAI)",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "XAI_API_KEY",
+      "testUrl": "https://api.x.ai/v1/chat/completions",
+      "defaultModel": "grok-4.6",
+      "active": false
+    },
+    {
       "id": "sambanova",
       "name": "SambaNova",
-      "tier": "free",
+      "tier": "cheap",
       "type": "cloud",
       "envKey": "SAMBANOVA_API_KEY",
       "testUrl": "https://api.sambanova.ai/v1/chat/completions",
@@ -124,13 +164,13 @@
       "active": false
     },
     {
-      "id": "deepseek",
-      "name": "DeepSeek",
-      "tier": "cheap",
+      "id": "anthropic",
+      "name": "Anthropic",
+      "tier": "premium",
       "type": "cloud",
-      "envKey": "DEEPSEEK_API_KEY",
-      "testUrl": "https://api.deepseek.com/v1/chat/completions",
-      "defaultModel": "deepseek-chat",
+      "envKey": "ANTHROPIC_API_KEY",
+      "testUrl": "https://api.anthropic.com/v1/chat/completions",
+      "defaultModel": "claude-3-haiku-20240307",
       "active": false
     },
     {
@@ -139,18 +179,8 @@
       "tier": "premium",
       "type": "cloud",
       "envKey": "OPENAI_API_KEY",
-      "testUrl": "https://api.openai.com/v1/models",
+      "testUrl": "https://api.openai.com/v1/chat/completions",
       "defaultModel": "gpt-4o-mini",
-      "active": false
-    },
-    {
-      "id": "anthropic",
-      "name": "Anthropic Claude",
-      "tier": "premium",
-      "type": "cloud",
-      "envKey": "ANTHROPIC_API_KEY",
-      "testUrl": "https://api.anthropic.com/v1/messages",
-      "defaultModel": "claude-3-haiku-20240307",
       "active": false
     }
   ]

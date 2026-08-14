@@ -804,17 +804,28 @@ pub async fn start_story_architect_relay(app: AppHandle) -> Result<ServiceLifecy
 
     let repo = resolve_repo_root(&app)
         .ok_or_else(|| "Could not locate TNF repo root for Story Architect relay".to_string())?;
-    let relay_dir = repo
-        .join("apps")
-        .join("virtual-library-blueprints")
-        .join("ai-relay");
+    // Canonical path lives under apps/extensions/; keep legacy apps/ path as fallback.
+    let relay_candidates = [
+        repo
+            .join("apps")
+            .join("extensions")
+            .join("virtual-library-blueprints")
+            .join("ai-relay"),
+        repo
+            .join("apps")
+            .join("virtual-library-blueprints")
+            .join("ai-relay"),
+    ];
+    let relay_dir = relay_candidates
+        .into_iter()
+        .find(|dir| dir.join("server.mjs").is_file())
+        .ok_or_else(|| {
+            format!(
+                "Story Architect relay not found under apps/extensions/virtual-library-blueprints/ai-relay (or legacy apps/virtual-library-blueprints/ai-relay) in {}",
+                repo.display()
+            )
+        })?;
     let server = relay_dir.join("server.mjs");
-    if !server.is_file() {
-        return Err(format!(
-            "Story Architect relay not found at {}",
-            server.display()
-        ));
-    }
     let node = resolve_node().ok_or_else(|| "node not found on PATH".to_string())?;
     let cmd_display = format!("{} {}", node.display(), server.display());
 

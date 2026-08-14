@@ -26,6 +26,11 @@ import {
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { FileListQueryDto, FileListResponseDto, FileUploadResponseDto } from './dto/file.dto';
 import { FilesService } from './files.service';
+import {
+  directUploadLimitMessage,
+  TNF_DIRECT_UPLOAD_MAX_BYTES,
+  TNF_DIRECT_UPLOAD_MAX_LABEL,
+} from './storage-policy';
 
 @ApiTags('files')
 @Controller('files')
@@ -38,7 +43,7 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({
     summary: 'Upload a file',
-    description: 'Upload a file to the server. Maximum file size: 10MB',
+    description: `Upload a small working-set file. Maximum file size: ${TNF_DIRECT_UPLOAD_MAX_LABEL}. Larger docs and media must be attached by external storage link.`,
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -64,10 +69,8 @@ export class FilesController {
       throw new BadRequestException('No file provided');
     }
 
-    // Validate file size (10MB limit)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-      throw new BadRequestException('File size exceeds 10MB limit');
+    if (file.size > TNF_DIRECT_UPLOAD_MAX_BYTES) {
+      throw new BadRequestException(directUploadLimitMessage());
     }
 
     const userId = req.user?.id || 'usr_default';

@@ -284,12 +284,38 @@ function getRuntimeHealth(entry) {
   // Only attempt health checks for HTTP-based services
   // Ports like Redis (6379) or Postgres (5432) do not expose HTTP health endpoints
   if (
-    ![3000, 3001, 3004, 3005, 3006, 3007, 5173, 5174].includes(entry.port)
+    ![1420, 3000, 3001, 3004, 3005, 3006, 3007, 43110, 43120, 5173, 5174].includes(entry.port)
   ) {
     return null;
   }
 
-  const raw = run('curl', ['-fsS', '--max-time', '1', `http://127.0.0.1:${entry.port}/health`]);
+  // Vite / SPA surfaces (tauri-desktop :1420, library UI) often lack /health —
+  // treat an HTTP 200 on / as healthy intentional listeners.
+  if ([1420, 5173, 5174].includes(entry.port)) {
+    const root = run('curl', [
+      '-fsS',
+      '-o',
+      '/dev/null',
+      '-w',
+      '%{http_code}',
+      '--max-time',
+      '1',
+      `http://127.0.0.1:${entry.port}/`,
+    ]);
+    if (String(root).trim() === '200') {
+      return { ok: true, service: entry.service, status: 'ok' };
+    }
+    return null;
+  }
+
+  const healthPath =
+    entry.port === 43120 ? '/v1/health' : entry.port === 43110 ? '/healthz' : '/health';
+  const raw = run('curl', [
+    '-fsS',
+    '--max-time',
+    '1',
+    `http://127.0.0.1:${entry.port}${healthPath}`,
+  ]);
   if (!raw.trim()) return null;
 
   try {

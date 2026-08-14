@@ -45,6 +45,8 @@ export const KNOWN_TOOLS = [
   'list_skills',
   'load_skill',
   'memory_recall',
+  'mcp_list_tools',
+  'mcp_call_tool',
 ] as const;
 
 export type KnownTool = (typeof KNOWN_TOOLS)[number];
@@ -58,10 +60,11 @@ const READ_ONLY_TOOLS: KnownTool[] = [
   'list_skills',
   'load_skill',
   'memory_recall',
+  'mcp_list_tools',
 ];
 
 /** Tools that change the workspace or run arbitrary code. */
-const MUTATING_TOOLS: KnownTool[] = ['bash', 'write_file', 'browser_interact'];
+const MUTATING_TOOLS: KnownTool[] = ['bash', 'write_file', 'browser_interact', 'mcp_call_tool'];
 
 export type PermissionMode = 'default' | 'plan' | 'acceptEdits' | 'bypassPermissions' | 'readOnly';
 

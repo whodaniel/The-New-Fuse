@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-08-13",
+  "status": "active",
+  "principle": "TNF remembers where each user's personal and business data lives by storing consented location metadata, not raw private files or cloud-drive mirrors.",
+  "defaultPreferredProvider": "google_drive",
+  "allowedProviders": [
+    "google_drive",
+    "dropbox",
+    "box",
+    "onedrive",
+    "customer_s3_or_r2",
+    "private_github_repo",
+    "local_device_reference",
+    "other_url"
+  ],
+  "locationKinds": [
+    "document_library",
+    "media_library",
+    "exports",
+    "backups",
+    "project_assets",
+    "generated_outputs",
+    "client_artifacts",
+    "personal_business_artifacts"
+  ],
+  "allowedRegistryFields": [
+    "user_id",
+    "workspace_id",
+    "project_id",
+    "provider",
+    "provider_account_label",
+    "external_location_id",
+    "external_url",
+    "root_path_hint",
+    "location_kind",
+    "data_classification",
+    "consent_status",
+    "sync_status",
+    "oauth_secret_ref",
+    "last_indexed_at",
+    "last_verified_at",
+    "retention_policy",
+    "hash_and_provenance_metadata",
+    "created_at",
+    "updated_at"
+  ],
+  "forbiddenRegistryFields": [
+    "oauth_access_token",
+    "oauth_refresh_token",
+    "raw_file_bytes",
+    "raw_file_content",
+    "unredacted_credentials",
+    "full_private_path_without_user_consent",
+    "entire_drive_mirror",
+    "unbounded_file_content"
+  ],
+  "consentRules": {
+    "optInRequired": true,
+    "scopeMustBeDisplayed": true,
+    "revocationMustDisconnectSync": true,
+    "deleteMustRemoveRegistryAndDerivedIndexes": true,
+    "tokensMustLiveInEncryptedSecretStore": true
+  },
+  "statuses": {
+    "consent": ["active", "pending", "revoked", "expired"],
+    "sync": ["active", "paused", "reauth_required", "disconnected", "deleted"]
+  },
+  "productPrompts": {
+    "selectPrimaryLocation": "Where should TNF remember your durable docs and media live?",
+    "oversizeUpload": "This file is larger than TNF hosted working-set storage. Save it in Google Drive or another connected storage location, then attach the link.",
+    "reauthRequired": "TNF cannot verify this storage location until you reconnect the provider.",
+    "deleteLocation": "Deleting this location removes TNF's pointer and derived indexes; it does not delete the original files from your storage provider."
+  }
+}

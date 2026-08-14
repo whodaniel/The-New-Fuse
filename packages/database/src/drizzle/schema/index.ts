@@ -21,6 +21,7 @@ export * from './feedback.js';
 export * from './jules.js';
 export * from './marketplace.js';
 export * from './mass.js';
+export * from './personal-data-locations.js';
 export * from './personal-skills.js';
 export * from './prompt-templates.js';
 export * from './resource-interactions.js';

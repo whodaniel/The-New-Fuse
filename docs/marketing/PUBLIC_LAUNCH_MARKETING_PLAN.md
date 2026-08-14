@@ -55,12 +55,16 @@ proxy).
 
 ### Competitive Frame (do not name-drop in hero; use in comparison content)
 
+- vs. **Grok Bot / Claude Cowork / Copilot Tasks / ChatGPT Work**: those are
+  teammate *runtimes*; TNF is the nervous system that assigns work to them,
+  keeps handoff lineage, and federates heterogeneous agents (see
+  `VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md`, 2026-08-13)
 - vs. **LangGraph / CrewAI**: TNF adds browser federation, MCP-native tooling,
   and hosted relay
 - vs. **OpenClaw / raw MCP**: TNF is the control plane that routes _through_
   interoperability layers
 - vs. **ChatGPT / Claude projects**: TNF is multi-agent, multi-surface,
-  persistent
+  persistent — including across vendor teammate products
 
 ### Taglines (test rotation)
 
@@ -68,6 +72,7 @@ proxy).
 2. **Dev:** Stop duct-taping APIs. Start orchestrating intelligence.
 3. **OSS:** The open control plane for agent swarms.
 4. **Urgency:** The New Fuse 2.0 — federate now.
+5. **Category (2026-08-13):** Vendors ship teammates. TNF ships the nervous system.
 
 ---
 

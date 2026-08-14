@@ -22,7 +22,7 @@ import {
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
-import { registerAgentsRunCommand } from './commands/agents-run.js';
+import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
@@ -115,6 +115,7 @@ import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -147,7 +148,7 @@ const _filename =
 const require = createRequire(_filename);
 const repoRoot = path.resolve(_dirname, '../../..');
 const invocationCwd = process.env.TNF_INVOCATION_CWD || process.cwd();
-const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
+const LOCAL_ENV_FILES = ['.tnf.local.env', '.env.local', '.env'];
 const FALLBACK_ENV_SOURCES = [
   'apps/api/.env',
   'apps/frontend/.env.local',
@@ -4732,6 +4733,39 @@ function printSessionCost(context: InteractiveSlashContext): void {
   console.log('');
 }
 
+function printTuiStatus(context: InteractiveSlashContext): void {
+  const tokens = estimateSessionTokens(context.messages);
+  const permissions = context.permissions;
+  let mcpServers: string[] = [];
+  try {
+    mcpServers = new MCPManagerService().listServers().map((server) => server.name);
+  } catch {
+    mcpServers = [];
+  }
+
+  console.log(chalk.bold('\nTUI Status\n'));
+  console.log(`  Provider:       ${context.client?.providerName || 'unknown'}`);
+  console.log(`  Model:          ${context.client?.model || 'unknown'}`);
+  if (context.client?.baseUrl) console.log(`  Base URL:       ${context.client.baseUrl}`);
+  console.log(`  Autonomous:     ${context.autonomousMode ? 'on' : 'off'}`);
+  if (context.autonomousState) {
+    console.log(
+      `  Turn budget:    ${context.autonomousState.turnsThisSession}/${context.autonomousState.maxTurnsPerSession} (ceiling ${context.autonomousState.capCeiling})`
+    );
+    console.log(`  Operator hold:  ${context.autonomousState.operatorHold ? 'on' : 'off'}`);
+  }
+  console.log(`  Permissions:    ${permissions?.summary || 'unrestricted'}`);
+  console.log(
+    `  Native tools:   ${
+      permissions ? permissions.allowed.join(', ') || 'none' : KNOWN_TOOLS.join(', ')
+    }`
+  );
+  console.log(`  MCP servers:    ${mcpServers.length ? mcpServers.join(', ') : 'none configured'}`);
+  console.log(`  Messages:       ${context.messages.length}`);
+  console.log(`  Tokens:         ${tokens.total} estimated`);
+  console.log('');
+}
+
 /**
  * Flags that belong to the root program itself and must NOT be rerouted into
  * a `tui` session.
@@ -4961,6 +4995,11 @@ async function handleInteractiveSlashCommand(
 
   if (command.name === 'cost') {
     printSessionCost(context);
+    return { handled: true };
+  }
+
+  if (command.name === 'status') {
+    printTuiStatus(context);
     return { handled: true };
   }
 
@@ -8641,6 +8680,23 @@ metaskills
     }
   });
 
+function parseHeaderOptions(entries: string[]): Record<string, string> {
+  const headers: Record<string, string> = {};
+  for (const entry of entries) {
+    const separator = entry.indexOf(':');
+    if (separator <= 0) {
+      throw new Error(`Invalid --header value "${entry}". Use "Name: value".`);
+    }
+    const name = entry.slice(0, separator).trim();
+    const value = entry.slice(separator + 1).trim();
+    if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) {
+      throw new Error(`Invalid header name "${name}"`);
+    }
+    headers[name] = value;
+  }
+  return headers;
+}
+
 const mcp = program.command('mcp').description('MCP utilities');
 
 mcp
@@ -8700,22 +8756,30 @@ mcp
   .command('add')
   .description('Add an MCP server')
   .argument('<name>', 'Server name')
-  .requiredOption('--command <cmd>', 'Command to run')
+  .option('--command <cmd>', 'Command to run for local stdio MCP servers')
   .option('--args <args...>', 'Arguments for the command')
   .option('--env <json>', 'Environment variables as JSON (alias: --environment)')
   .option('--environment <json>', 'Environment variables as JSON (kilo parity)')
   .option('--type <type>', 'Server type (local|remote|sse|ws)', 'local')
+  .option('--transport <transport>', 'Transport (stdio|streamable-http|sse|ws)')
+  .option('--url <url>', 'Remote MCP endpoint URL (http(s) or ws(s))')
+  .option('--header <header...>', 'HTTP/SSE header as "Name: value" (repeatable)')
+  .option('--bearer-token-env <env>', 'Environment variable containing a bearer token')
   .option('--cwd <path>', 'Working directory')
   .option('--enabled <bool>', 'Enable server (true|false)', 'true')
   .action(
     (
       name: string,
       options: {
-        command: string;
+        command?: string;
         args?: string[];
         env?: string;
         environment?: string;
         type?: string;
+        transport?: string;
+        url?: string;
+        header?: string[];
+        bearerTokenEnv?: string;
         cwd?: string;
         enabled?: string;
       }
@@ -8726,6 +8790,10 @@ mcp
         if (envJson) {
           env = JSON.parse(envJson);
         }
+        const headers = parseHeaderOptions(options.header || []);
+        if (!options.command && !options.url) {
+          throw new Error('Provide --command for local stdio servers or --url for remote MCP servers');
+        }
         const mcpManager = new MCPManagerService();
         mcpManager.addServer(name, {
           command: options.command,
@@ -8733,6 +8801,10 @@ mcp
           env,
           environment: env,
           type: options.type as 'local' | 'remote' | 'sse' | 'ws',
+          transport: options.transport as 'stdio' | 'streamable-http' | 'sse' | 'ws' | undefined,
+          url: options.url,
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
+          bearerTokenEnv: options.bearerTokenEnv,
           cwd: options.cwd,
           enabled: options.enabled !== 'false',
         });
@@ -8783,6 +8855,84 @@ mcp
       process.exit(1);
     }
   });
+
+mcp
+  .command('tools')
+  .description('List tools advertised by configured local stdio MCP servers')
+  .argument('[server]', 'Optional MCP server name')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--timeout-ms <n>', 'Per-server MCP request timeout in milliseconds', '15000')
+  .action(async (server: string | undefined, options: { json?: boolean; timeoutMs?: string }) => {
+    try {
+      const runtime = new MCPToolRuntimeService(repoRoot);
+      const results = await runtime.listTools(server, Number(options.timeoutMs || 15000));
+      if (options.json) {
+        console.log(JSON.stringify(results, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nMCP Tools\n'));
+      for (const result of results) {
+        if (!result.ok) {
+          console.log(`${chalk.cyan(result.server)}: ${chalk.red(result.error || 'failed')}`);
+          continue;
+        }
+        console.log(`${chalk.cyan(result.server)}: ${result.tools.length} tool(s)`);
+        for (const tool of result.tools) {
+          console.log(
+            `  ${chalk.green(tool.name)}${tool.description ? chalk.dim(` - ${tool.description}`) : ''}`
+          );
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('call')
+  .description('Call a tool on a configured local stdio MCP server')
+  .argument('<server>', 'MCP server name')
+  .argument('<tool>', 'MCP tool name')
+  .argument('[argumentsJson]', 'JSON object for the MCP tool arguments', '{}')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--timeout-ms <n>', 'MCP request timeout in milliseconds', '30000')
+  .action(
+    async (
+      server: string,
+      tool: string,
+      argumentsJson: string,
+      options: { json?: boolean; timeoutMs?: string }
+    ) => {
+      try {
+        const parsedArgs = JSON.parse(argumentsJson || '{}');
+        if (!parsedArgs || typeof parsedArgs !== 'object' || Array.isArray(parsedArgs)) {
+          throw new Error('argumentsJson must be a JSON object');
+        }
+        const runtime = new MCPToolRuntimeService(repoRoot);
+        const result = await runtime.callTool(
+          server,
+          tool,
+          parsedArgs as Record<string, unknown>,
+          Number(options.timeoutMs || 30000)
+        );
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          return;
+        }
+        if (!result.ok) {
+          console.error(chalk.red(`Error: ${result.error}`));
+          process.exit(1);
+        }
+        console.log(JSON.stringify(result.result, null, 2));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 mcp
   .command('auth')
@@ -8853,6 +9003,41 @@ mcp
       }
     }
   );
+
+mcp
+  .command('supabase-agent-check')
+  .description('Verify evidence before an agent claims Supabase MCP/data-plane access')
+  .option('--server <name>', 'Codex MCP server name', 'supabase')
+  .option('--codex-bin <path>', 'Codex executable', 'codex')
+  .option('--login', 'Run the Codex MCP OAuth login wrapper if configured')
+  .option('--no-open', 'Pass --no-open to the login wrapper')
+  .option('--write', 'Write SUPABASE_AGENT_CONNECTION_LATEST.json')
+  .option('--strict', 'Exit non-zero unless Codex Supabase MCP is configured and OAuth-capable')
+  .option('--json', 'Print machine-readable JSON')
+  .action(async (options: {
+    server?: string;
+    codexBin?: string;
+    login?: boolean;
+    open?: boolean;
+    write?: boolean;
+    strict?: boolean;
+    json?: boolean;
+  }) => {
+    try {
+      const args = ['scripts/supabase-agent-connection-check.cjs'];
+      if (options.server) args.push('--server', options.server);
+      if (options.codexBin) args.push('--codex-bin', options.codexBin);
+      if (options.login) args.push('--login');
+      if (options.open === false) args.push('--no-open');
+      if (options.write) args.push('--write');
+      if (options.strict) args.push('--strict');
+      if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 mcp
   .command('logout')
@@ -15746,8 +15931,9 @@ import {
   ShellType,
 } from './services/CompletionService.js';
 import { DatabaseService } from './services/DatabaseService.js';
-import { DebugService } from './services/DebugService.js';
+import { DebugService, redactSensitiveConfig } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
+import { MCPToolRuntimeService } from './services/MCPToolRuntimeService.js';
 import { ModelsService } from './services/ModelsService.js';
 import { PermissionService } from './services/PermissionService.js';
 import {
@@ -16424,7 +16610,7 @@ debug
   .action((options: { path?: string; json?: boolean }) => {
     try {
       if (options.path) {
-        const value = debugService.getConfigPath(options.path);
+        const value = redactSensitiveConfig(debugService.getConfigPath(options.path, invocationCwd));
         if (options.json) {
           console.log(JSON.stringify({ path: options.path, value }, null, 2));
         } else {
@@ -16433,7 +16619,7 @@ debug
           );
         }
       } else {
-        const config = debugService.getConfig();
+        const config = redactSensitiveConfig(debugService.getEffectiveConfig(invocationCwd));
         if (options.json) {
           console.log(JSON.stringify(config, null, 2));
         } else {
@@ -16713,7 +16899,7 @@ configCmd
   .description('Get a specific config value (dot notation)')
   .action((key: string) => {
     try {
-      const value = debugService.getConfigPath(key);
+      const value = redactSensitiveConfig(debugService.getConfigPath(key, invocationCwd));
       if (value !== undefined) {
         console.log(typeof value === 'string' ? value : JSON.stringify(value, null, 2));
       } else {
@@ -17047,7 +17233,7 @@ projectCmd
       const agents = projService.getAgents();
 
       if (options.json) {
-        console.log(JSON.stringify({ config, commands, agents }, null, 2));
+        console.log(JSON.stringify({ config: redactSensitiveConfig(config), commands, agents }, null, 2));
       } else {
         console.log(chalk.bold('\nProject Configuration\n'));
         if (config) {
@@ -19570,44 +19756,63 @@ async function executeCapturedBash(
 type NativeToolTurnResult = {
   content: string;
   toolCallsMade: number;
-  executed: Array<{ command: string; code: number; timedOut: boolean }>;
+  executed: Array<{ tool: string; summary: string; ok: boolean }>;
 };
 
 async function runAutonomousNativeToolTurn(
   client: any,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  permissions?: PermissionResolution
 ): Promise<NativeToolTurnResult> {
   const executed: NativeToolTurnResult['executed'] = [];
+  const enabledTools = permissions ? [...permissions.allowed] : [...KNOWN_TOOLS];
+  const tools = resolveBuiltinToolsAsOpenAI({ builtinTools: enabledTools } as any);
+  if (enabledTools.includes('bash' as any)) {
+    tools.push(TUI_RUN_BASH_TOOL);
+  }
   const result = await client.chatCompleteWithTools(
     messages,
     async (name: string, args: Record<string, unknown>) => {
-      if (name !== 'run_bash') {
-        return { ok: false, error: `Unknown tool: ${name}. Only run_bash is available.` };
+      if (name === 'run_bash') {
+        const command = String(args.command ?? '').trim();
+        if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
+        if (!enabledTools.includes('bash' as any)) {
+          return { ok: false, error: 'run_bash disabled by this session permission mode' };
+        }
+        const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
+        console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
+        const res = await executeCapturedBash(command, timeoutSec * 1000);
+        executed.push({
+          tool: 'run_bash',
+          summary: `(exit ${res.code}${res.timedOut ? ', timed out' : ''}) ${command.slice(0, 200)}`,
+          ok: res.ok,
+        });
+        console.log(
+          res.ok
+            ? chalk.green(`  ✓ exit 0`)
+            : chalk.red(`  ✗ exit ${res.code}${res.timedOut ? ' (timed out)' : ''}`)
+        );
+        const tail =
+          res.output.length > RUN_BASH_OUTPUT_TAIL_CHARS
+            ? `[output truncated to last ${RUN_BASH_OUTPUT_TAIL_CHARS} chars]\n` +
+              res.output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS)
+            : res.output;
+        return { ok: res.ok, exit_code: res.code, timed_out: res.timedOut, output: tail };
       }
-      const command = String(args.command ?? '').trim();
-      if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
-      const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
-      console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
-      const res = await executeCapturedBash(command, timeoutSec * 1000);
-      executed.push({ command, code: res.code, timedOut: res.timedOut });
-      console.log(
-        res.ok
-          ? chalk.green(`  ✓ exit 0`)
-          : chalk.red(`  ✗ exit ${res.code}${res.timedOut ? ' (timed out)' : ''}`)
-      );
-      const tail =
-        res.output.length > RUN_BASH_OUTPUT_TAIL_CHARS
-          ? `[output truncated to last ${RUN_BASH_OUTPUT_TAIL_CHARS} chars]\n` +
-            res.output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS)
-          : res.output;
-      return { ok: res.ok, exit_code: res.code, timed_out: res.timedOut, output: tail };
+      if (!enabledTools.includes(name as any)) {
+        return { ok: false, error: `tool '${name}' disabled by this session permission mode` };
+      }
+      const response = await executeBuiltinTool(name, args, { cwd: repoRoot, quiet: false });
+      const ok = !(response && typeof response === 'object' && (response as any).ok === false);
+      executed.push({ tool: name, summary: summarizeNativeToolCall(name, args, response), ok });
+      return response;
     },
     {
       temperature: 0.7,
       // Bound one autonomous turn: up to AUTONOMOUS_MAX_SHELL_BLOCKS tool
       // rounds plus a final answer. The outer turn cap governs the session.
       maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 1,
-      tools: [TUI_RUN_BASH_TOOL],
+      tools,
     }
   );
   return {
@@ -19615,6 +19820,29 @@ async function runAutonomousNativeToolTurn(
     toolCallsMade: Number(result?.toolCallsMade ?? 0),
     executed,
   };
+}
+
+function summarizeNativeToolCall(
+  name: string,
+  args: Record<string, unknown>,
+  response: string | Record<string, unknown>
+): string {
+  const subject =
+    name === 'bash'
+      ? String(args.command ?? '')
+      : name === 'read_file' || name === 'write_file'
+        ? String(args.path ?? '')
+        : name === 'mcp_call_tool'
+          ? `${String(args.server ?? '')}.${String(args.tool ?? '')}`
+          : (() => {
+              try {
+                return JSON.stringify(args);
+              } catch {
+                return '<args>';
+              }
+            })();
+  const ok = !(response && typeof response === 'object' && (response as any).ok === false);
+  return `${ok ? 'ok' : 'failed'} ${subject.slice(0, 220)}`;
 }
 
 function readAbsoluteTextFileIfPresent(absolutePath: string, maxChars = 1600): string | null {
@@ -20287,7 +20515,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (useNativeTools) {
         let nativeSucceeded = false;
         try {
-          const native = await runAutonomousNativeToolTurn(client, messages);
+          const native = await runAutonomousNativeToolTurn(client, messages, options?.permissions);
           stopProcessingIndicator(true);
           nativeSucceeded = true;
           nativeToolCallsMade = native.toolCallsMade;
@@ -20302,12 +20530,9 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
             messages.push({
               role: 'system',
               content:
-                `[run_bash] ${native.executed.length} command(s) executed this turn:\n` +
+                `[native_tools] ${native.executed.length} tool call(s) executed this turn:\n` +
                 native.executed
-                  .map(
-                    (e, i) =>
-                      `${i + 1}. (exit ${e.code}${e.timedOut ? ', timed out' : ''}) ${e.command.slice(0, 200)}`
-                  )
+                  .map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`)
                   .join('\n'),
             });
           }

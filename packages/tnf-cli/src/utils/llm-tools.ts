@@ -30,7 +30,7 @@ export interface BuiltinTool {
     additionalProperties?: boolean;
   };
   /** What capability group this tool belongs to (for filtering). */
-  category: 'filesystem' | 'shell' | 'search' | 'web' | 'agent' | 'observability';
+  category: 'filesystem' | 'shell' | 'search' | 'web' | 'agent' | 'observability' | 'mcp';
   /**
    * Whether the tool is considered safe by default for fully autonomous
    * loops. False here means callers must opt-in via LLMOptions.toolFilter.
@@ -246,7 +246,7 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
   },
   {
     name: 'memory_recall',
-    category: 'observer-builtin',
+    category: 'observability',
     defaultEnabled: true,
     description:
       'Read durable notes saved to the agent memory provider (Hermes / Redis / holistic) that match a query. Use this to remember decisions made in earlier sessions.',
@@ -257,6 +257,43 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
         limit: { type: 'integer', description: 'Default 10.' },
       },
       required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'mcp_list_tools',
+    category: 'mcp',
+    defaultEnabled: true,
+    description:
+      'Start a configured local stdio MCP server, initialize the MCP session, and return the tools it advertises. Optionally filter to one server by name.',
+    parameters: {
+      type: 'object',
+      properties: {
+        server: {
+          type: 'string',
+          description: 'Optional configured MCP server name. Omit to list tools from every enabled server.',
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'mcp_call_tool',
+    category: 'mcp',
+    defaultEnabled: true,
+    description:
+      'Call a tool exposed by a configured local stdio MCP server. MCP tools may mutate external systems, so only use this when the permission mode allows mutating tools.',
+    parameters: {
+      type: 'object',
+      properties: {
+        server: { type: 'string', description: 'Configured MCP server name.' },
+        tool: { type: 'string', description: 'MCP tool name advertised by the server.' },
+        arguments: {
+          type: 'object',
+          description: 'JSON object passed as the MCP tools/call arguments payload.',
+        },
+      },
+      required: ['server', 'tool'],
       additionalProperties: false,
     },
   },

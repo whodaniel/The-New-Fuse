@@ -81,6 +81,16 @@ function buildBlock(repoRoot) {
     '',
     'Operating loop: **Inspect → Act → Verify.** Never assume an action succeeded.',
     '',
+    'Skill disclosure: keep startup lean. Use `.agent/SKILL_MANIFEST.md` as the',
+    'Tier-0 skill map, then run `node scripts/skills/skill-bank-query.cjs <term>`',
+    'for candidates, and read one `SKILL.md` body only when invoking it.',
+    '',
+    'If Codex reports shortened skill descriptions, audit with:',
+    '',
+    '```bash',
+    `cd ${repoRoot} && node scripts/skills/codex-skill-disclosure-guard.cjs`,
+    '```',
+    '',
     'Autonomy (directive D1): routine long-running execution needs no confirmation.',
     'Process kills, commits/pushes, hard deletes, and credential handling always do.',
     'Financial actions are forbidden outright (D9).',
@@ -129,15 +139,22 @@ const TARGETS = [
 ];
 
 function parseArgs(argv) {
-  const o = { dryRun: false, verify: false, includeUnverified: false, repair: false };
-  for (const a of argv) {
+  const o = { dryRun: false, verify: false, includeUnverified: false, repair: false, targets: null };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
     if (a === '--dry-run') o.dryRun = true;
     else if (a === '--verify') o.verify = true;
     else if (a === '--repair') o.repair = true;
     else if (a === '--include-unverified') o.includeUnverified = true;
+    else if (a === '--target' && argv[i + 1]) {
+      o.targets = argv[++i]
+        .split(',')
+        .map((v) => v.trim().toLowerCase())
+        .filter(Boolean);
+    }
     else if (a === '-h' || a === '--help') {
       console.log(
-        'Usage: node scripts/install-agent-frontload.cjs [--dry-run|--verify|--repair] [--include-unverified]'
+        'Usage: node scripts/install-agent-frontload.cjs [--dry-run|--verify|--repair] [--include-unverified] [--target codex,gemini-home]'
       );
       process.exit(0);
     } else throw new Error(`Unknown option: ${a}`);
@@ -223,14 +240,52 @@ function applyBlock(existing, block) {
   return existing.trim().length ? `${block}\n\n${existing}` : `${block}\n`;
 }
 
+function timestamp() {
+  return new Date().toISOString().replace(/[:.]/g, '-');
+}
+
+function backupContextFile(file) {
+  const primary = fs.existsSync(`${file}.tnf-bak`)
+    ? `${file}.tnf-bak-${timestamp()}`
+    : `${file}.tnf-bak`;
+  try {
+    fs.copyFileSync(file, primary);
+    return primary;
+  } catch (primaryError) {
+    const fallbackDir = path.join(HOME, '.tnf', 'backups', 'agent-frontload');
+    const fallback = path.join(fallbackDir, `${path.basename(file)}.${timestamp()}.bak`);
+    try {
+      fs.mkdirSync(fallbackDir, { recursive: true });
+      fs.copyFileSync(file, fallback);
+      return fallback;
+    } catch (fallbackError) {
+      throw new Error(
+        `backup failed (${primaryError.message}); fallback failed (${fallbackError.message})`
+      );
+    }
+  }
+}
+
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   const block = buildBlock(REPO_ROOT);
   const rows = [];
   let failures = 0;
   let changed = 0;
+  const requestedTargets = opts.targets ? new Set(opts.targets) : null;
+  const targets = requestedTargets
+    ? TARGETS.filter(
+        (target) =>
+          requestedTargets.has(target.id.toLowerCase()) ||
+          requestedTargets.has(target.runtime.toLowerCase())
+      )
+    : TARGETS;
 
-  for (const t of TARGETS) {
+  if (requestedTargets && targets.length === 0) {
+    throw new Error(`No matching target(s): ${opts.targets.join(', ')}`);
+  }
+
+  for (const t of targets) {
     const c = classify(t);
     const shown = t.contextFile.replace(HOME, '~');
     let action = 'skip';
@@ -263,12 +318,13 @@ function main() {
       } else {
         try {
           fs.mkdirSync(path.dirname(t.contextFile), { recursive: true });
+          let backupPath = null;
           if (c.fileExists) {
-            fs.copyFileSync(t.contextFile, `${t.contextFile}.tnf-bak`);
+            backupPath = backupContextFile(t.contextFile);
           }
           fs.writeFileSync(t.contextFile, next, 'utf8');
           action = c.state === 'managed' ? 'updated' : 'installed';
-          status = c.fileExists ? 'backup: .tnf-bak' : 'created';
+          status = c.fileExists ? `backup: ${backupPath.replace(HOME, '~')}` : 'created';
           changed += 1;
         } catch (err) {
           action = 'FAILED';
@@ -282,7 +338,9 @@ function main() {
 
   console.log('\nTNF agent frontload installer');
   console.log(`repo: ${REPO_ROOT}`);
-  console.log(`mode: ${opts.verify ? 'verify' : opts.dryRun ? 'dry-run' : 'install'}${opts.includeUnverified ? ' +unverified' : ''}\n`);
+  console.log(
+    `mode: ${opts.verify ? 'verify' : opts.dryRun ? 'dry-run' : 'install'}${opts.includeUnverified ? ' +unverified' : ''}${opts.targets ? ` target=${opts.targets.join(',')}` : ''}\n`
+  );
   const w = [12, 34, 18, 14];
   console.log(
     'RUNTIME'.padEnd(w[0]) + 'CONTEXT FILE'.padEnd(w[1]) + 'STATE'.padEnd(w[2]) + 'ACTION'.padEnd(w[3]) + 'DETAIL'
@@ -293,32 +351,34 @@ function main() {
     );
   }
 
-  // Claude Code frontloads via SessionStart hook (not markdown context).
-  // --repair registers the existing ~/.claude/hooks/tnf-frontload.sh entry.
-  const hookScript = path.join(HOME, '.claude', 'hooks', 'tnf-frontload.sh');
-  const settingsPath = path.join(HOME, '.claude', 'settings.json');
-  let claudeStatus;
-  if (!fs.existsSync(hookScript)) {
-    claudeStatus = 'hook script MISSING — expected ~/.claude/hooks/tnf-frontload.sh';
-    failures += 1;
-  } else if (opts.repair && !opts.verify) {
-    const reg = registerClaudeSessionStartHook({ dryRun: opts.dryRun });
-    claudeStatus = reg.detail;
-    if (!reg.ok) failures += 1;
-  } else {
-    let registered = false;
-    try {
-      const s = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-      registered = JSON.stringify(s.hooks?.SessionStart || []).includes('tnf-frontload.sh');
-    } catch {
-      registered = false;
+  if (!requestedTargets || requestedTargets.has('claude') || requestedTargets.has('claude code')) {
+    // Claude Code frontloads via SessionStart hook (not markdown context).
+    // --repair registers the existing ~/.claude/hooks/tnf-frontload.sh entry.
+    const hookScript = path.join(HOME, '.claude', 'hooks', 'tnf-frontload.sh');
+    const settingsPath = path.join(HOME, '.claude', 'settings.json');
+    let claudeStatus;
+    if (!fs.existsSync(hookScript)) {
+      claudeStatus = 'hook script MISSING — expected ~/.claude/hooks/tnf-frontload.sh';
+      failures += 1;
+    } else if (opts.repair && !opts.verify) {
+      const reg = registerClaudeSessionStartHook({ dryRun: opts.dryRun });
+      claudeStatus = reg.detail;
+      if (!reg.ok) failures += 1;
+    } else {
+      let registered = false;
+      try {
+        const s = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        registered = JSON.stringify(s.hooks?.SessionStart || []).includes('tnf-frontload.sh');
+      } catch {
+        registered = false;
+      }
+      claudeStatus = registered
+        ? 'hook installed and registered'
+        : 'hook script present but NOT registered in ~/.claude/settings.json (run with --repair)';
+      if (!registered) failures += 1;
     }
-    claudeStatus = registered
-      ? 'hook installed and registered'
-      : 'hook script present but NOT registered in ~/.claude/settings.json (run with --repair)';
-    if (!registered) failures += 1;
+    console.log(`\nClaude Code  ${claudeStatus}`);
   }
-  console.log(`\nClaude Code  ${claudeStatus}`);
 
   const uncovered = rows.filter((r) => r.state === 'uncovered' && r.action === 'audit').length;
   console.log(

@@ -5,6 +5,8 @@
 apps/*
 !apps/api/
 !apps/api/**
+!apps/api-gateway/
+!apps/api-gateway/**
 !packages/
 packages/*
 !packages/a2a-core/
@@ -78,7 +80,11 @@ packages/*
 !tsconfig.base.json
 !.npmrc
 !Dockerfile.api
+!Dockerfile.api-gateway
 !cloudbuild-api.yaml
+!scripts/
+!scripts/**
+!scripts/deployment/cloudbuild.gateway.yaml
 # Packaged stock banks for Library (Cloud Run fallback when FS banks slim)
 !data/
 !data/agent-bank/

@@ -3,6 +3,15 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 const BLOG_POSTS = [
   {
+    slug: 'vendors-ship-teammates-tnf-nervous-system',
+    title: 'Vendors Ship Teammates. TNF Ships the Nervous System.',
+    date: '2026-08-13',
+    excerpt:
+      'Grok Bot and Grok 4.6 prove the digital-coworker wave. The New Fuse response: treat vendor teammate runtimes as peers, wire Grok 4.6 as a fleet lane, and own identity, handoffs, and policy across them.',
+    category: 'Positioning',
+    readTime: '6 min',
+  },
+  {
     slug: 'tnf-launch',
     title: 'The New Fuse Autonomous Agent Platform is Now Live',
     date: '2026-06-01',

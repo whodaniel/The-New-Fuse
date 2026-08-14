@@ -11,6 +11,7 @@ import {
   type LibraryAudioDependency,
 } from '../config/virtualLibrary';
 import { useVoiceBridge } from '../hooks/useVoiceBridge';
+import { isTauriRuntime } from '../lib/isTauri';
 import { openExternal } from '../lib/openExternal';
 
 type LifecycleResult = {
@@ -18,6 +19,9 @@ type LifecycleResult = {
   message: string;
   already_running?: boolean;
 };
+
+const LIBRARY_DEV_CMD = 'pnpm --filter virtual-library-blueprints dev';
+const LIBRARY_AUDIO_CMD = 'node scripts/library/ensure-library-audio-stack.cjs';
 
 const VirtualLibraryHub: React.FC = () => {
   const [baseUrl, setBaseUrlState] = useState(getVirtualLibraryBaseUrl);
@@ -27,6 +31,7 @@ const VirtualLibraryHub: React.FC = () => {
   const [booting, setBooting] = useState(false);
   const [bootNote, setBootNote] = useState<string | null>(null);
   const { snapshot: voice, pauseBeam } = useVoiceBridge();
+  const inTauri = isTauriRuntime();
 
   const embedUrl = useMemo(() => buildVirtualLibraryEmbedUrl(baseUrl), [baseUrl, reloadKey]);
   const libraryOnline = deps.find((d) => d.id === 'library')?.online ?? null;
@@ -54,23 +59,48 @@ const VirtualLibraryHub: React.FC = () => {
     void probe();
   };
 
+  const copyText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setBootNote(`Copied: ${text}`);
+    } catch {
+      setBootNote(text);
+    }
+  };
+
   const startLibraryAudioStack = async () => {
     setBooting(true);
     setBootNote(null);
     try {
-      const result = await invoke<LifecycleResult>('ensure_library_audio_stack');
-      setBootNote(result.message);
-      // Whisper listen and Library Web Speech both need the mic — pause beam so
-      // Story Architect "Enable Voice" keeps the complete Library experience.
-      if (beamMayConflict) {
-        try {
-          await pauseBeam();
+      if (inTauri) {
+        const result = await invoke<LifecycleResult>('ensure_library_audio_stack');
+        setBootNote(result.message);
+        if (beamMayConflict) {
+          try {
+            await pauseBeam();
+            setBootNote(
+              (prev) =>
+                `${prev || result.message} · Whisper beam paused so Library browser STT can own the mic.`
+            );
+          } catch {
+            /* optional */
+          }
+        }
+      } else {
+        // Chrome / Vite preview cannot spawn local processes — probe and guide.
+        const after = await probeLibraryAudioDependencies(baseUrl);
+        setDeps(after);
+        const story = after.find((d) => d.id === 'storyArchitect')?.online;
+        const kws = after.find((d) => d.id === 'kws')?.online;
+        if (story && kws) {
           setBootNote(
-            (prev) =>
-              `${prev || result.message} · Whisper beam paused so Library browser STT can own the mic.`
+            'Story Architect + KWS already live. Inside the Library, click Enable Voice.'
           );
-        } catch {
-          /* optional */
+        } else {
+          setBootNote(
+            `Browser preview cannot spawn local services. From the TNF repo root run: ${LIBRARY_AUDIO_CMD}` +
+              (!libraryOnline ? ` · then ${LIBRARY_DEV_CMD}` : '')
+          );
         }
       }
       window.setTimeout(() => void probe(), 1200);
@@ -136,23 +166,28 @@ const VirtualLibraryHub: React.FC = () => {
           >
             <strong style={{ color: '#fca5a5' }}>Library Engine is Offline</strong>
             <span>
-              Start the Virtual Library UI, then reload. Library voice also needs Story Architect
+              Start the Virtual Library UI on :5173, then reload. Voice needs Story Architect
               (:43120) and KWS (:43110) — use Start library voice stack once the UI is up.
             </span>
             <div style={{ display: 'flex', gap: '10px', marginTop: '4px', flexWrap: 'wrap' }}>
               <code
                 style={{ background: 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '6px' }}
               >
-                pnpm --filter virtual-library-blueprints dev
+                {LIBRARY_DEV_CMD}
               </code>
               <button
                 type="button"
                 className="secondary-button"
-                onClick={() => {
-                  navigator.clipboard.writeText('pnpm --filter virtual-library-blueprints dev');
-                }}
+                onClick={() => void copyText(LIBRARY_DEV_CMD)}
               >
                 Copy Command
+              </button>
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={() => void copyText(LIBRARY_AUDIO_CMD)}
+              >
+                Copy voice stack cmd
               </button>
             </div>
           </div>
@@ -176,12 +211,30 @@ const VirtualLibraryHub: React.FC = () => {
             ? 'Whisper beam active — may steal mic from Library voice'
             : 'Mic path clear for Library Web Speech'}
         </div>
+        {!inTauri ? (
+          <div className="lib-audio-chip warn">
+            <span className="dot" aria-hidden />
+            Chrome preview — start services via repo script
+          </div>
+        ) : null}
         <p className="library-audio-hint">
           Inside the Library, use Story Architect <strong>Enable Voice</strong> — that is the
           complete path (browser STT → KWS rules → AI relay TTS). Desktop Voice Hub remains the
-          Whisper beam for terminals/agents.
+          Whisper beam for terminals/agents. Shortcuts: <kbd>Tab</kbd> Story Architect ·{' '}
+          <kbd>T</kbd> Timeline · <kbd>M</kbd> Empire Map.
         </p>
         {bootNote ? <p className="library-boot-note">{bootNote}</p> : null}
+        {!audioReady ? (
+          <div className="library-boot-actions">
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => void copyText(LIBRARY_AUDIO_CMD)}
+            >
+              Copy ensure-audio command
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <div className="library-toolbar">
@@ -202,7 +255,7 @@ const VirtualLibraryHub: React.FC = () => {
             setReloadKey((value) => value + 1);
           }}
         >
-          Use :3000 dev
+          Use :5173 dev
         </button>
         <button
           type="button"
@@ -214,20 +267,31 @@ const VirtualLibraryHub: React.FC = () => {
             setReloadKey((value) => value + 1);
           }}
         >
-          Use :5173 docker
+          Use default host
         </button>
       </div>
 
       <div className="library-frame-wrap">
-        <iframe
-          key={embedUrl}
-          src={embedUrl}
-          title="Virtual Library"
-          className="library-frame"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; xr-spatial-tracking; microphone; camera"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-pointer-lock allow-modals"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
+        {libraryOnline ? (
+          <iframe
+            key={embedUrl}
+            src={embedUrl}
+            title="Virtual Library"
+            className="library-frame"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; xr-spatial-tracking; microphone; camera"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-pointer-lock allow-modals"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        ) : (
+          <div className="library-frame-placeholder">
+            <strong>Waiting for Library UI</strong>
+            <p>
+              The hub embeds the 3D Library once :5173 answers. Run the blueprints Vite app, then
+              click Reload.
+            </p>
+            <code>{LIBRARY_DEV_CMD}</code>
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -284,11 +348,24 @@ const VirtualLibraryHub: React.FC = () => {
           color: var(--tnf-text-secondary, #cbd5e1);
           line-height: 1.45;
         }
+        .library-audio-hint kbd {
+          font-size: 11px;
+          padding: 1px 5px;
+          border-radius: 4px;
+          border: 1px solid var(--tnf-border);
+          background: rgba(0,0,0,0.35);
+        }
         .library-boot-note {
           flex-basis: 100%;
           margin: 0;
           font-size: 12px;
           color: #c4a35a;
+        }
+        .library-boot-actions {
+          flex-basis: 100%;
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
         }
         .library-toolbar {
           display: flex;
@@ -326,6 +403,23 @@ const VirtualLibraryHub: React.FC = () => {
           min-height: calc(100vh - 320px);
           border: 0;
           display: block;
+        }
+        .library-frame-placeholder {
+          min-height: calc(100vh - 320px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 24px;
+          color: #d4b896;
+          text-align: center;
+        }
+        .library-frame-placeholder code {
+          background: rgba(0,0,0,0.35);
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-size: 12px;
         }
         .page-fill .page-fill-body,
                 .page-fill > :not(.page-header):not(.synergy-status-bar):not(style) {

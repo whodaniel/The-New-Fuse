@@ -21,8 +21,8 @@ describe('virtualLibrary config', () => {
   });
 
   it('persists a custom base URL', () => {
-    setVirtualLibraryBaseUrl('http://127.0.0.1:3000');
-    expect(getVirtualLibraryBaseUrl()).toBe('http://127.0.0.1:3000');
+    setVirtualLibraryBaseUrl('http://127.0.0.1:5173');
+    expect(getVirtualLibraryBaseUrl()).toBe('http://127.0.0.1:5173');
   });
 
   it('pins desktop embed to local Story Architect + KWS audio path', () => {

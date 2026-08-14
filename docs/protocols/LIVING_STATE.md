@@ -158,6 +158,8 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
 - [✅] 2026-08-13T18:20:07.698Z New script(s) created:
+- [✅] 2026-08-13T22:43:46.297Z New script(s) created: check-federated-alphabet.sh, codex-mcp-oauth-login.cjs, demo-external-teammate-handoff.cjs, codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
+
   check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
   codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
 

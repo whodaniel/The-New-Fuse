@@ -87,6 +87,18 @@
       "openaiCompatible": true
     },
     {
+      "id": "xai",
+      "name": "SpaceXAI (xAI)",
+      "aliases": ["spacexai"],
+      "type": "cloud",
+      "tier": 55,
+      "enabled": true,
+      "envKey": "XAI_API_KEY",
+      "baseUrl": "https://api.x.ai/v1",
+      "defaultModel": "grok-4.6",
+      "openaiCompatible": true
+    },
+    {
       "id": "sambanova",
       "name": "SambaNova",
       "type": "cloud",

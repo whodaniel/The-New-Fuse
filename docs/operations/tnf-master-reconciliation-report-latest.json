@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-13T12:39:39.105Z",
+  "timestamp": "2026-08-13T23:23:37.916Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 81,
+      "durationMs": 760,
       "data": {
         "branch": "main",
-        "commit": "b5a7afdf2d",
+        "commit": "b353493329",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 117,
+      "durationMs": 1011,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 0,
+      "durationMs": 2,
       "data": {
         "status": "skipped"
       }
@@ -33,7 +33,7 @@
     "codebaseLineage": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 0,
+      "durationMs": 7,
       "data": {
         "status": "skipped"
       }
@@ -41,33 +41,41 @@
     "processHealth": {
       "ok": false,
       "verdict": "findings",
-      "findings": 2,
-      "durationMs": 156,
+      "findings": 10,
+      "durationMs": 1526,
       "data": {
-        "findings": 2,
-        "healthy": 28,
+        "findings": 10,
+        "healthy": 18,
         "detail": [
+          "never-ran: tenant-continuous-qa-loop",
           "never-ran: tenant-daily-priority-plan",
-          "never-ran: tenant-nightly-maintenance"
+          "never-ran: tenant-knowledge-scout-sprint",
+          "never-ran: tenant-nightly-maintenance",
+          "never-ran: tnf-growth-blocker-audit",
+          "never-ran: tnf-llm-arena-intel-collector",
+          "never-ran: tnf-llm-ranking-optimizer",
+          "never-ran: tnf-llm-verified-fleet-cycle",
+          "never-ran: tnf-runtime-log-rotation",
+          "never-ran: tnf-self-improvement-scorecard"
         ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 1,
+      "durationMs": 90,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 360,
+  "totalDurationMs": 3416,
   "summary": {
     "clean": 3,
     "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 2
+    "totalFindings": 10
   }
 }

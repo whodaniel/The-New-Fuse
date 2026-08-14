@@ -6,14 +6,9 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const CONTROLLER_PATH = path.join(
-  REPO_ROOT,
-  'apps/api/src/controllers/agent.controller.ts',
-);
-const SERVICE_PATH = path.join(REPO_ROOT, 'apps/api/src/services/agent.service.ts');
+const CONTROLLER_PATH = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/controllers/agent.controller.ts';
+const SERVICE_PATH = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/src/services/agent.service.ts';
 
 async function verifyImplementation() {
   console.log('='.repeat(60));
@@ -57,10 +52,7 @@ async function verifyImplementation() {
 
   // 3. Verify compiled output contains the methods
   console.log('\n[3] Compiled Output Check');
-  const COMPILED_PATH = path.join(
-    REPO_ROOT,
-    'apps/api/dist/controllers/agent.controller.js',
-  );
+  const COMPILED_PATH = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api/dist/controllers/agent.controller.js';
   try {
     const compiled = await fs.readFile(COMPILED_PATH, 'utf8');
     const methodChecks = ['getAgentDirectory', 'getAgentCategories', 'getAgentsWithFilters'];
@@ -87,7 +79,7 @@ async function verifyImplementation() {
 
   // 4. Check agent definitions
   console.log('\n[4] Agent Definition Audit');
-  const AGENTS_DIR = path.join(REPO_ROOT, '.agent/agents');
+  const AGENTS_DIR = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents';
   try {
     const files = await fs.readdir(AGENTS_DIR);
     const mdFiles = files.filter(f => f.endsWith('.md'));

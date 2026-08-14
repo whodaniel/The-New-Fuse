@@ -1,0 +1,35 @@
+name: tnf-to-external-teammate-runtime
+from:
+  - skill: interoperability-protocol-agent
+    output: docs/protocols/TNF_EXTERNAL_TEAMMATE_RUNTIME_INTEROP.md
+  - skill: fleet-coordinator
+    output: docs/protocols/TNF_EXTERNAL_TEAMMATE_HANDOFF_DEMO.md
+  - skill: twip-bridge-agent
+    output: docs/protocols/bridges/twip-to-agent-handoff.yml
+to:
+  - skill: orchestrator-agent
+    input: payload.etr_assign
+  - skill: inter-agentic-workflow-definer
+    input: docs/protocols/AGENT_TARGETED_HANDOFF_V1.md
+validate:
+  - envelope type is tnf.etr.assign.v1
+  - tenant_id, correlation_id, target.runtime_id present
+  - policy.require_approval is a non-empty array or explicit empty with rationale
+  - credential_grant is one of none|named-connector|session-delegate
+  - callback.channel is one of relay|webhook|twip-bridge
+fail:
+  - reject with ERROR code INVALID_REQUEST if required fields missing
+  - quarantine and emit POLICY.DECISION=deny when credential_grant exceeds operator grant
+  - escalate to orchestrator with correlation_id when ETR callback times out
+log:
+  - docs/protocols/bridges/reports/tnf-to-external-teammate-runtime.md
+  - ~/.tnf/logs/etr-handoff.jsonl
+peers:
+  - runtime_id: etr:spacexai:grok-bot
+    status: seeded-2026-08-13
+  - runtime_id: etr:anthropic:claude-cowork
+    status: planned
+  - runtime_id: etr:microsoft:copilot-tasks
+    status: planned
+  - runtime_id: etr:openai:chatgpt-work
+    status: planned

@@ -9,7 +9,7 @@ steps:
     args:
     - 'build'
     - '--file'
-    - 'Dockerfile.api-gateway'
+    - 'scripts/deployment/Dockerfile.api-gateway'
     - '--tag'
     - 'us-central1-docker.pkg.dev/$PROJECT_ID/tnf-services/api-gateway:${_IMAGE_TAG}'
     - '--progress=plain'

@@ -5,8 +5,8 @@ export const VIRTUAL_LIBRARY_URL_KEY = 'tnf.virtualLibrary.url';
 /** Docker Compose maps virtual-library → host 5173 */
 export const DEFAULT_VIRTUAL_LIBRARY_URL = 'http://127.0.0.1:5173';
 
-/** Direct `pnpm dev` in apps/virtual-library-blueprints (vite.config port 3000) */
-export const DIRECT_DEV_VIRTUAL_LIBRARY_URL = 'http://127.0.0.1:3000';
+/** Direct `pnpm --filter virtual-library-blueprints dev` (vite port 5173) */
+export const DIRECT_DEV_VIRTUAL_LIBRARY_URL = 'http://127.0.0.1:5173';
 
 /** Story Architect local AI relay (apps/virtual-library-blueprints/ai-relay) */
 export const STORY_ARCHITECT_RELAY_URL = 'http://127.0.0.1:43120';
