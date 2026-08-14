@@ -167,22 +167,18 @@ export class AdminUsersController {
       throw new BadRequestException('Invalid expiresAt timestamp');
     }
 
-    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
-    const safeUserId = escapeSqlLiteral(id);
-    const requesterSql =
-      req?.user?.id !== undefined && req?.user?.id !== null
-        ? `'${escapeSqlLiteral(String(req.user.id))}'`
-        : 'NULL';
+    const requesterId = req?.user?.id !== undefined && req?.user?.id !== null ? String(req.user.id) : null;
 
     // Revoke any existing active overrides for this user
     await this.db.executeRaw(
       `UPDATE membership_overrides
        SET status = 'REVOKED',
            revoked_at = now(),
-           revoked_by_user_id = ${requesterSql},
+           revoked_by_user_id = $2,
            updated_at = now()
-       WHERE user_id = '${safeUserId}'
-         AND status = 'ACTIVE'`
+       WHERE user_id = $1
+         AND status = 'ACTIVE'`,
+       [id, requesterId]
     );
 
     const [override] = await this.db.client
@@ -233,29 +229,26 @@ export class AdminUsersController {
       throw new NotFoundException('User not found');
     }
 
-    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
-    const safeUserId = escapeSqlLiteral(id);
-    const requesterSql =
-      req?.user?.id !== undefined && req?.user?.id !== null
-        ? `'${escapeSqlLiteral(String(req.user.id))}'`
-        : 'NULL';
+    const requesterId = req?.user?.id !== undefined && req?.user?.id !== null ? String(req.user.id) : null;
 
     await this.db.executeRaw(
       `UPDATE membership_overrides
        SET status = 'REVOKED',
            revoked_at = now(),
-           revoked_by_user_id = ${requesterSql},
+           revoked_by_user_id = $2,
            updated_at = now()
-       WHERE user_id = '${safeUserId}'
-         AND status = 'ACTIVE'`
+       WHERE user_id = $1
+         AND status = 'ACTIVE'`,
+       [id, requesterId]
     );
 
     const activeRows = await this.db.executeRaw<{ count?: number | string }>(
       `SELECT count(*)::int AS count
        FROM membership_overrides
-       WHERE user_id = '${safeUserId}'
+       WHERE user_id = $1
          AND status = 'ACTIVE'
-         AND (expires_at IS NULL OR expires_at > now())`
+         AND (expires_at IS NULL OR expires_at > now())`,
+       [id]
     );
     const active = Number(activeRows?.[0]?.count || 0);
     if (active === 0) {
@@ -287,14 +280,13 @@ export class AdminUsersController {
       throw new NotFoundException('User not found');
     }
 
-    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
-    const safeUserId = escapeSqlLiteral(id);
     const overrides = await this.db.executeRaw<Record<string, unknown>>(
       `SELECT *
        FROM membership_overrides
-       WHERE user_id = '${safeUserId}'
+       WHERE user_id = $1
        ORDER BY created_at DESC
-       LIMIT 25`
+       LIMIT 25`,
+       [id]
     );
     return overrides;
   }

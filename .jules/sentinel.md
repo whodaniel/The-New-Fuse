@@ -36,3 +36,8 @@
 **Vulnerability:** Weak random number generation using `Math.random().toString(36)` in `packages/relay-core` to generate message IDs, task IDs, and client IDs for real-time WebSocket communication and inter-agent event broadcasting.
 **Learning:** `Math.random()` is pseudo-random, highly predictable, and completely unsuited for distributed message brokers where attackers could theoretically guess connection IDs or message IDs to spoof system events or disrupt relay communication.
 **Prevention:** Always use Node's built-in `crypto.randomBytes(4).toString('hex')` or UUID libraries to ensure identifiers in message brokers are cryptographically secure and unguessable.
+
+## 2026-08-14 - Drizzle ORM Raw Query Parameterization Pattern
+**Vulnerability:** Raw SQL queries executed using Drizzle's `db.execute(sql.raw(query))` in this codebase were bypassing parameterization, leading to developers manually escaping variables (e.g., using `replace(/'/g, "''")`), which introduces high SQL injection risk.
+**Learning:** Drizzle's `sql.raw()` function intentionally does not support query parameters. To securely execute raw queries with parameter bindings (`$1`, `$2`), the code must bypass the Drizzle abstraction and use the underlying database driver (e.g., postgres.js).
+**Prevention:** We updated `DatabaseService.executeRaw` to detect parameters. If parameters are provided, it securely routes the query via the driver `queryClient.unsafe(query, params)`. Ensure `queryClient` is properly imported in `database.service.ts` to avoid runtime reference errors. All future raw queries should use standard `$1`, `$2` parameterization and pass the array to `executeRaw`.
