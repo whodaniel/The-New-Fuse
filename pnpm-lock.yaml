@@ -351,6 +351,9 @@ importers:
       '@the-new-fuse/jules-skill':
         specifier: workspace:*
         version: link:../../packages/jules-skill
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@the-new-fuse/n8n-workflows':
         specifier: workspace:*
         version: link:../../packages/n8n-workflows
@@ -583,6 +586,9 @@ importers:
       '@the-new-fuse/jules-integration':
         specifier: workspace:*
         version: link:../../packages/jules-integration
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@the-new-fuse/relay-core':
         specifier: workspace:*
         version: link:../../packages/relay-core
@@ -1012,6 +1018,9 @@ importers:
       '@the-new-fuse/infrastructure':
         specifier: workspace:*
         version: link:../../packages/infrastructure
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@the-new-fuse/workflow-engine':
         specifier: workspace:*
         version: link:../../packages/workflow-engine
@@ -1169,6 +1178,9 @@ importers:
       '@the-new-fuse/fairtable-core':
         specifier: workspace:*
         version: link:../../packages/fairtable-core
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@the-new-fuse/protocol-contracts':
         specifier: workspace:*
         version: link:../../packages/protocol-contracts
@@ -1642,6 +1654,9 @@ importers:
       '@the-new-fuse/infrastructure':
         specifier: workspace:*
         version: link:../../packages/infrastructure
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@the-new-fuse/port-management':
         specifier: workspace:*
         version: link:../../packages/port-management
@@ -1964,6 +1979,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.29.0(zod@4.4.3)
+      '@the-new-fuse/llm-catalog':
+        specifier: workspace:*
+        version: link:../../packages/llm-catalog
       '@vscode/codicons':
         specifier: ^0.0.36
         version: 0.0.36
@@ -3985,6 +4003,8 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
+
+  packages/llm-catalog: {}
 
   packages/logger:
     dependencies:

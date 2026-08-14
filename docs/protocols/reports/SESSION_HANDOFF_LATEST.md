@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-14T19:13:08.051Z`  
-Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
+Created At: `2026-08-14T21:16:23.698Z`  
+Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `51dc0376cc7e20336368def04740bce7075fbbd0`
+- Head SHA: `7425a9344a7bafc58336e3bec9d3cd54ac1ce5cc`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,11 +19,15 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 
 ## Changed Paths
 
-- docs/protocols/STATE_FRESHNESS_MANDATE.md
-- docs/protocols/state-freshness.registry.json
-- scripts/protocols/state-freshness-gate.cjs
-- scripts/protocols/state-freshness-gate.test.cjs
-- scripts/tnf-onboard.cjs
+- .gcloudignore
+- Dockerfile.api
+- apps/api/package.json
+- docs/operations/tnf-substrate-seal.json
+- packages/llm-catalog/package.json
+- packages/llm-catalog/src/index.ts
+- packages/llm-catalog/tsconfig.json
+- pnpm-lock.yaml
+- scripts/deployment/Dockerfile.api-gateway
 - .agent/skills/agent-browser/SKILL.md
 - .agent/skills/tnf-supabase-agent-connection/SKILL.md
 - .agents/skills/tnf-hallucination-archeology/SKILL.md
@@ -31,7 +35,6 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - .agents/skills/tnf-protocol-gap-registrar/SKILL.md
 - .agents/skills/tnf-protocol-gap-registrar/scripts/register_gaps.py
 - .claude/agents/master-of-taxonomies.md
-- .gcloudignore
 - apps/api/src/email/email.service.ts
 - apps/api/src/middleware/types.ts
 - apps/api/src/security/encryption.service.ts
@@ -88,6 +91,7 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - docs/protocols/CONNECTIVE_JOURNAL_GROK_BOT_AND_GROK_4_6.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/PROTOCOL_MAP.md
+- docs/protocols/STATE_FRESHNESS_MANDATE.md
 - docs/protocols/TNF_EXTERNAL_TEAMMATE_HANDOFF_DEMO.md
 - docs/protocols/TNF_EXTERNAL_TEAMMATE_RUNTIME_INTEROP.md
 - docs/protocols/bridges/tnf-to-external-teammate-runtime.yml
@@ -97,6 +101,7 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
+- docs/protocols/state-freshness.registry.json
 - package.json
 - packages/contracts/artifacts/build-info/1b41c2fcca4bec8c9737ced85e66a52d.json
 - packages/database/migrations/20260813000100_add_user_data_locations.down.sql
@@ -129,10 +134,13 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - scripts/product/check-personal-data-location-policy.cjs
 - scripts/protocols/agent-self-edit-gate.cjs
 - scripts/protocols/demo-external-teammate-handoff.cjs
+- scripts/protocols/state-freshness-gate.cjs
+- scripts/protocols/state-freshness-gate.test.cjs
 - scripts/release-gate.cjs
 - scripts/skills/codex-skill-disclosure-guard.cjs
 - scripts/sub-director/model-policy.example.yaml
 - scripts/supabase-agent-connection-check.cjs
+- scripts/tnf-onboard.cjs
 - scripts/tnf-ports.cjs
 - scripts/verify-progressive-disclosure.mjs
 - .agent/skill-bank/resource-registry-import.json
@@ -140,6 +148,8 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - .agent/skill-bank/skills-summary.md
 - .agent/skill-bank/snapshots/project-agent/agent-browser-04afeeb5/SKILL.md
 - .agent/skills/antigravity/loki-mode/benchmarks/run-benchmarks.sh
+- apps/api-gateway/package.json
+- apps/api-gateway/src/gateway/ide-gateway.controller.ts
 - apps/api/src/app.module.ts
 - apps/api/src/controllers/available-models.controller.ts
 - apps/api/src/controllers/relay-health.controller.ts
@@ -180,6 +190,7 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - apps/chrome-extension/src/v6/shared/federation-identity.ts
 - apps/chrome-extension/src/v6/shared/utils.ts
 - apps/chrome-extension/webpack.v7.config.cjs
+- apps/frontend/package.json
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.md
 - apps/frontend/src/ComprehensiveRouter.tsx
@@ -189,11 +200,24 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - apps/frontend/src/config/platformParityFeatures.ts
 - apps/frontend/src/config/routeCatalog.ts
 - apps/frontend/src/config/sidebarNavigation.ts
+- apps/frontend/src/hooks/useModels.tsx
 - apps/frontend/src/pages/chat/ChatPage.tsx
 - apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx
 - apps/frontend/src/pages/mcp/MCPHub.tsx
+- apps/frontend/src/services/llm/providers.ts
+- apps/frontend/src/shared/features/settings/LLMConfigManager.tsx
+- apps/tauri-desktop/package.json
+- apps/tauri-desktop/src/config/verifiedModels.ts
+- apps/tauri-desktop/src/pages/Settings.tsx
 - apps/tauri-desktop/src/pages/WebBrowser.tsx
+- apps/vscode-extension/package.json
+- apps/vscode-extension/src/core/config.ts
+- apps/vscode-extension/src/core/models.ts
+- apps/vscode-extension/src/core/types.ts
+- apps/vscode-extension/src/extension.ts
+- apps/vscode-extension/src/providers/ChatViewProvider.ts
 - concordance_results/unified_graph_stats.json
+- data/harness/harness-config.json
 - docker-compose.yml
 - docs/ARCHIVE_CHERRY_PICK_SUMMARY.md
 - docs/BROWSER_HUB_IMPROVEMENT_SESSION.md
@@ -211,19 +235,27 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - docs/consolidation/archived-from-home/openclaw-workspace/DOCUMENT_SECURITY_AUDIT.md
 - docs/history/TNF_PROJECT_HISTORY.md
 - docs/incidents/APPLE_NOTES_IMPORT_2026-05-04.md
-- docs/operations/tnf-substrate-seal.json
 - docs/protocols/INFORMATION_INTENTIONS.md
 - docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md
 - docs/status-reports/SELF_IMPROVEMENT_REPORT.md
 - docs/ui-ux/FEATURE_SHOWCASE_SUMMARY.md
 - docs/vscode-extension/TNF_INTEGRATION_COMPLETE.md
 - packages/a2a-core/a2a-migration-85pct-complete.patch
+- packages/infrastructure/src/redis/standalone.js
+- packages/infrastructure/src/redis/standalone.ts
+- packages/tnf-cli/src/RedisAgentClient.ts
+- packages/tnf-cli/src/utils/command-palette.test.ts
 - packages/tnf-cli/src/utils/command-palette.ts
 - packages/tnf-cli/src/utils/llm-provider-detector.ts
 - packages/tnf-cli/src/utils/palette-readline.test.ts
 - packages/tnf-cli/src/utils/palette-readline.ts
+- pnpm-workspace.yaml
 - scripts/NATIVE_SENSORY_SUITE.md
+- scripts/agents/tnf-agent-daemon.py
 - scripts/audio_trigger_test.py
+- scripts/harness/tnf-harness.cjs
+- scripts/runtime/harness-boot.sh
+- scripts/runtime/redis-local-bootstrap.sh
 - scripts/safe-merge-to-main.sh
 - scripts/vision_benchmark_report.py
 - scripts/ws_monitor.py
@@ -247,7 +279,6 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - apps/api/src/modules/browser/
 - apps/api/src/modules/harness/
 - apps/browser-control-surfaces/
-- apps/chrome-extension/jest.focus.config.cjs
 - apps/frontend/pages/mcp.tsx
 - apps/frontend/src/components/control-surface/HarnessStatusPanel.tsx
 - apps/frontend/src/components/control-surface/useHarnessStatus.ts
@@ -262,6 +293,11 @@ Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 - infrastructure/load-balancer/
 - infrastructure/redis/
 - packages/tnf-cli/src/commands/catalog.ts
+- packages/tnf-cli/src/utils/palette-recents.ts
+- scripts/runtime/redis-connection-guard-cron.sh
+- scripts/runtime/redis-connection-guard.cjs
+- scripts/runtime/tnf-agent-daemon-launch.sh
+- scripts/runtime/tnf-agent-daemon-launchd.sh
 - zi17BkeA
 
 ## Verification
