@@ -864,7 +864,7 @@ pub async fn start_kws_server(app: AppHandle) -> Result<ServiceLifecycleResult, 
         return Ok(ServiceLifecycleResult {
             ok: true,
             message: "KWS already responding on :43110".into(),
-            command: "pnpm --filter @the-new-fuse/audio-trigger-kws-mvp serve".into(),
+            command: "npx tsx src/server.ts (audio-trigger-kws-mvp)".into(),
             already_running: true,
             port: Some(43110),
         });
@@ -872,18 +872,41 @@ pub async fn start_kws_server(app: AppHandle) -> Result<ServiceLifecycleResult, 
 
     let repo = resolve_repo_root(&app)
         .ok_or_else(|| "Could not locate TNF repo root for KWS start".to_string())?;
-    let pnpm = resolve_pnpm().ok_or_else(|| "pnpm not found on PATH".to_string())?;
+    // Package lives under TNF-Extensions (symlinked as apps/extensions); not in pnpm workspace.
+    let kws_candidates = [
+        repo
+            .join("apps")
+            .join("extensions")
+            .join("audio-trigger-kws-mvp"),
+        repo
+            .parent()
+            .unwrap_or(&repo)
+            .join("TNF-Extensions")
+            .join("audio-trigger-kws-mvp"),
+    ];
+    let kws_dir = kws_candidates
+        .into_iter()
+        .find(|dir| dir.join("src").join("server.ts").is_file())
+        .ok_or_else(|| {
+            format!(
+                "KWS package not found under apps/extensions/audio-trigger-kws-mvp in {}",
+                repo.display()
+            )
+        })?;
+    let node = resolve_node().ok_or_else(|| "node not found on PATH".to_string())?;
     let cmd_display = format!(
-        "{} --filter @the-new-fuse/audio-trigger-kws-mvp serve",
-        pnpm.display()
+        "{} npx tsx src/server.ts (cwd={})",
+        node.display(),
+        kws_dir.display()
     );
 
-    let mut child = Command::new(&pnpm);
+    let mut child = Command::new(&node);
     child
-        .arg("--filter")
-        .arg("@the-new-fuse/audio-trigger-kws-mvp")
-        .arg("serve")
-        .current_dir(&repo)
+        .arg("npx")
+        .arg("--yes")
+        .arg("tsx")
+        .arg("src/server.ts")
+        .current_dir(&kws_dir)
         .env("APP_PORT", "43110")
         .env("PORT", "43110")
         .stdin(Stdio::null())

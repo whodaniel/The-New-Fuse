@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import LibraryScene from './components/3d/LibraryScene';
 import BlockerOverlay from './components/ui/BlockerOverlay';
 import BookDetailPanel from './components/ui/BookDetailPanel';
@@ -173,7 +173,8 @@ export default function App() {
                   borderRadius: 8,
                 }}
               >
-                pnpm --filter virtual-library-blueprints dev
+                pnpm --filter virtual-library-blueprints is excluded from the workspace — run:{' '}
+                <code>cd apps/extensions/virtual-library-blueprints && npx vite --host 127.0.0.1 --port 5173</code>
               </code>
               <div style={{ marginTop: 12 }}>
                 <button type="button" style={btnStyle} onClick={() => void refreshDeps()}>
@@ -237,7 +238,7 @@ function Chip({ ok, label, detail }: { ok: DepState; label: string; detail: stri
   );
 }
 
-const btnStyle: React.CSSProperties = {
+const btnStyle: CSSProperties = {
   background: 'rgba(240,217,181,0.12)',
   border: '1px solid rgba(240,217,181,0.28)',
   color: '#d4b896',

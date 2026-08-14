@@ -35,9 +35,18 @@ function probe(url, timeoutMs = 2000) {
   });
 }
 
+function resolveKwsDir() {
+  const candidates = [
+    path.join(ROOT, 'apps/extensions/audio-trigger-kws-mvp'),
+    path.join(ROOT, '../TNF-Extensions/audio-trigger-kws-mvp'),
+  ];
+  return candidates.find((dir) => fs.existsSync(path.join(dir, 'src/server.ts')));
+}
+
 function resolveRelayDir() {
   const candidates = [
     path.join(ROOT, 'apps/extensions/virtual-library-blueprints/ai-relay'),
+    path.join(ROOT, '../TNF-Extensions/virtual-library-blueprints/ai-relay'),
     path.join(ROOT, 'apps/virtual-library-blueprints/ai-relay'),
   ];
   return candidates.find((dir) => fs.existsSync(path.join(dir, 'server.mjs')));
@@ -91,11 +100,17 @@ async function main() {
   }
 
   if (!kwsAlready) {
-    log('[library-audio] starting KWS on :43110');
-    detach('pnpm', ['--filter', '@the-new-fuse/audio-trigger-kws-mvp', 'serve'], {
-      cwd: ROOT,
-      env: { ...process.env, APP_PORT: '43110', PORT: '43110' },
-    });
+    const kwsDir = resolveKwsDir();
+    if (!kwsDir) {
+      log('[library-audio] KWS package not found (apps/extensions/audio-trigger-kws-mvp)');
+    } else {
+      log('[library-audio] starting KWS on :43110');
+      // Not in pnpm workspace — run package-local via npx tsx.
+      detach(process.execPath, ['npx', '--yes', 'tsx', 'src/server.ts'], {
+        cwd: kwsDir,
+        env: { ...process.env, APP_PORT: '43110', PORT: '43110' },
+      });
+    }
   } else {
     log('[library-audio] KWS already up');
   }
