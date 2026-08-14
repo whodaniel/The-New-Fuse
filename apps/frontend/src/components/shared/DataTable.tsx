@@ -98,15 +98,20 @@ export function DataTable<T extends { id: string | number }>({
     // Search
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
-      // Precompute filterable columns to avoid O(N * C) lookups during filter
-      const filterableColumnIds = new Set(
-        columns.filter((col) => col.filterable !== false).map((col) => col.id)
+      // Precompute the opt-outs to avoid an O(N * C) find() during the filter.
+      // Tracking the excluded ids (rather than the included ones) is what keeps
+      // behaviour identical: the original tested `column?.filterable !== false`,
+      // which is true for a row key that matches no column at all, so undeclared
+      // keys were searched. A set of filterable ids would silently stop matching
+      // them and narrow search results.
+      const nonFilterableColumnIds = new Set(
+        columns.filter((col) => col.filterable === false).map((col) => col.id)
       );
 
       result = result.filter((row) =>
         Object.entries(row).some(([key, value]) => {
           return (
-            filterableColumnIds.has(key) &&
+            !nonFilterableColumnIds.has(key) &&
             String(value).toLowerCase().includes(lowerSearchTerm)
           );
         })
