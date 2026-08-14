@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-13T20:42:17.302Z** — handoff
+Updated: **2026-08-14T16:44:37.998Z** — handoff
+`e557dc46-8b39-4b51-93ce-4c62379b0c37` (`6a3fcf89dab4`).
 `57b97048-5bea-496f-a548-d6ffbec12a81` (`83c2cf1d6e5c`).
 `89115730-2fb6-4f5c-a112-e91f967071b6` (`800bb2a94df7`).
 `d2f04a2b-74d6-4444-82fa-82f7790b89cc` (`aaca77ef0700`).
@@ -231,12 +232,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                         |
-| -------- | -------------------------------------------------------------- |
-| **P0**   | Develop only in tnf-monorepo.                                  |
-| **P0**   | Do not commit to The-New-Fuse or fuse-control-plane.           |
-| **P0**   | Do not unarchive superseded dumps or re-add forbidden remotes. |
-| **P0**   | Keep TNF Repo Separation Sync disabled.                        |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1184,3 +1183,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-13 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (57b97048-5bea-496f-a548-d6ffbec12a81) | ✅ HANDOFF_READY |
+
+| 2026-08-14 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e557dc46-8b39-4b51-93ce-4c62379b0c37) | ✅ HANDOFF_READY |

@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Develop only in tnf-monorepo.
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -158,7 +159,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
 - [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
 - [✅] 2026-08-13T18:20:07.698Z New script(s) created:
-- [✅] 2026-08-13T22:43:46.297Z New script(s) created: check-federated-alphabet.sh, codex-mcp-oauth-login.cjs, demo-external-teammate-handoff.cjs, codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
+- [✅] 2026-08-13T22:43:46.297Z New script(s) created:
+  check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
+  demo-external-teammate-handoff.cjs, codex-skill-disclosure-guard.cjs,
+  supabase-agent-connection-check.cjs
 
   check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
   codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
@@ -951,6 +955,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-14T16:44:38.148Z handoff `e557dc46-8b39-4b51-93ce-4c62379b0c37` head
+  `6a3fcf89dab4` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-13T20:42:17.355Z handoff `57b97048-5bea-496f-a548-d6ffbec12a81` head
   `83c2cf1d6e5c` project `TNF-SESSION` — Develop only in tnf-monorepo.

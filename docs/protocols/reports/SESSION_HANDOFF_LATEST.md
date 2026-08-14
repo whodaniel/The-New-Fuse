@@ -1,56 +1,198 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Created At: `2026-08-13T22:43:46.302Z`
-Updated At: `2026-08-13T20:02:00Z`
-Handoff ID: `fa753e06-126c-4c2c-852f-07047d1d2d16`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-08-14T16:44:37.998Z`  
+Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `8fada002d3d3e3c3c3c3c3c3c3c3c3c3c3c3c3c3`
+- Head SHA: `6a3fcf89dab42fd129505f4900f3825b5cb8a37e`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Added 4 new script file(s)
-- Modified 105 source files
-- Created ~/.tnf/handoff/matrix.json
-- Created ~/.tnf/handoff/LATEST.md
-- Committed 82 files to git
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
-## Changes Overview
+## Changed Paths
 
-- New scripts: tnf-self-improvement-loop integration
-- Backend files: files module, controllers, storage policy
-- Frontend: Blog page, data maps, visualizations
-- CLI: New debug/test services, command surface updates
-- Documentation: External teammate handoff protocols, vendor docs
-- Database: Personal data location schema and migrations
-- Tauri Desktop: Service lifecycle, virtual library
+- scripts/protocols/agent-self-edit-gate.cjs
+- .agent/skills/agent-browser/SKILL.md
+- .agent/skills/tnf-supabase-agent-connection/SKILL.md
+- .agents/skills/tnf-hallucination-archeology/SKILL.md
+- .agents/skills/tnf-hallucination-archeology/scripts/tnf_hallucination_hunter.py
+- .agents/skills/tnf-protocol-gap-registrar/SKILL.md
+- .agents/skills/tnf-protocol-gap-registrar/scripts/register_gaps.py
+- .claude/agents/master-of-taxonomies.md
+- .gcloudignore
+- apps/api/src/email/email.service.ts
+- apps/api/src/middleware/types.ts
+- apps/api/src/security/encryption.service.ts
+- apps/api/src/types/agent.types.ts
+- apps/api/src/types/common.ts
+- apps/backend/src/modules/files/files.controller.spec.ts
+- apps/backend/src/modules/files/files.controller.ts
+- apps/backend/src/modules/files/files.module.ts
+- apps/backend/src/modules/files/storage-policy.ts
+- apps/chrome-extension/.gitignore
+- apps/frontend/.gitignore
+- apps/frontend/components/Layout.tsx
+- apps/frontend/pages/docs.tsx
+- apps/frontend/pages/features.tsx
+- apps/frontend/pages/index.tsx
+- apps/frontend/pages/pricing.tsx
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- apps/frontend/src/data/codebase_map.json
+- apps/frontend/src/pages/Blog.tsx
+- apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx
+- apps/tauri-desktop/e2e/helpers/interactionAudit.ts
+- apps/tauri-desktop/src-tauri/src/service_lifecycle.rs
+- apps/tauri-desktop/src/config/virtualLibrary.test.ts
+- apps/tauri-desktop/src/config/virtualLibrary.ts
+- apps/tauri-desktop/src/pages/VirtualLibraryHub.tsx
+- apps/vscode-extension/.gitignore
+- archive/apps/gemini-bridge-extension/aivi/.gitignore
+- archive/apps/gemini-bridge-extension/aivi/backend/.gitignore
+- data/llm-intel/arena-intel-latest.json
+- data/llm-intel/arena-intel.json
+- data/llm-intel/history/intel_2026-08-12.json
+- data/llm-intel/history/intel_2026-08-13.json
+- data/llm-intel/ranking-recommendations.json
+- data/llm-intel/ranking-report-latest.md
+- data/llm-provider-status.json
+- data/marketplace/catalog-items.json
+- data/product/member-storage-policy.json
+- data/product/personal-data-location-policy.json
+- data/providers/catalog.json
+- docs/MCP_TROUBLESHOOTING_GUIDE.md
+- docs/SKILL_BANK_OPERATIONS.md
+- docs/architecture/MULTI_TENANT_ACCOUNTS.md
+- docs/integrations/supabase.md
+- docs/marketing/PUBLIC_LAUNCH_MARKETING_PLAN.md
+- docs/marketing/VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md
+- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/operations/tnf-action-receipts.jsonl
+- docs/operations/tnf-master-reconciliation-report-latest.json
+- docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md
+- docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md
+- docs/protocols/CONNECTIVE_JOURNAL_GROK_BOT_AND_GROK_4_6.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/PROTOCOL_MAP.md
+- docs/protocols/TNF_EXTERNAL_TEAMMATE_HANDOFF_DEMO.md
+- docs/protocols/TNF_EXTERNAL_TEAMMATE_RUNTIME_INTEROP.md
+- docs/protocols/bridges/tnf-to-external-teammate-runtime.yml
+- docs/protocols/instant-error-awareness-pipeline.md
+- docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/GROK_BOT_GROK_4_6_TNF_RESPONSE_2026-08-13.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/reports/twip-terminal-macro-board-latest.md
+- package.json
+- packages/contracts/artifacts/build-info/1b41c2fcca4bec8c9737ced85e66a52d.json
+- packages/database/migrations/20260813000100_add_user_data_locations.down.sql
+- packages/database/migrations/20260813000100_add_user_data_locations.sql
+- packages/database/src/drizzle/schema/index.ts
+- packages/database/src/drizzle/schema/personal-data-locations.ts
+- packages/relay-core/src/services/agent-registry.service.ts
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/agents-run.ts
+- packages/tnf-cli/src/commands/config.ts
+- packages/tnf-cli/src/services/DebugService.test.ts
+- packages/tnf-cli/src/services/DebugService.ts
+- packages/tnf-cli/src/services/MCPManagerService.ts
+- packages/tnf-cli/src/services/MCPToolRuntimeService.test.ts
+- packages/tnf-cli/src/services/MCPToolRuntimeService.ts
+- packages/tnf-cli/src/services/ToolPermissionService.test.ts
+- packages/tnf-cli/src/services/ToolPermissionService.ts
+- packages/tnf-cli/src/services/provider-config.ts
+- packages/tnf-cli/src/utils/llm-tools.browser.test.ts
+- packages/tnf-cli/src/utils/llm-tools.ts
+- scripts/autonomy/brain_sync.sh
+- scripts/ci/check-federated-alphabet.sh
+- scripts/codex-mcp-oauth-login.cjs
+- scripts/deployment/cloudbuild.gateway.yaml
+- scripts/install-agent-frontload.cjs
+- scripts/library/ensure-library-audio-stack.cjs
+- scripts/product/check-member-storage-policy.cjs
+- scripts/product/check-personal-data-location-policy.cjs
+- scripts/protocols/demo-external-teammate-handoff.cjs
+- scripts/release-gate.cjs
+- scripts/skills/codex-skill-disclosure-guard.cjs
+- scripts/sub-director/model-policy.example.yaml
+- scripts/supabase-agent-connection-check.cjs
+- scripts/tnf-ports.cjs
+- scripts/verify-progressive-disclosure.mjs
+- .agent/skill-bank/resource-registry-import.json
+- .agent/skill-bank/skills-index.json
+- .agent/skill-bank/skills-summary.md
+- .agent/skill-bank/snapshots/project-agent/agent-browser-04afeeb5/SKILL.md
+- apps/api/src/app.module.ts
+- apps/api/src/controllers/relay-health.controller.ts
+- apps/api/src/controllers/self-improvement.controller.ts
+- apps/api/src/controllers/tnf-autonomous.controller.ts
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/components/UnifiedChat/ToolsetConfigDrawer.tsx
+- apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
+- apps/frontend/src/components/control-surface/index.ts
+- apps/frontend/src/config/platformParityFeatures.ts
+- apps/frontend/src/config/routeCatalog.ts
+- apps/frontend/src/config/sidebarNavigation.ts
+- apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx
+- apps/frontend/src/pages/mcp/MCPHub.tsx
+- apps/tauri-desktop/src/pages/WebBrowser.tsx
+- concordance_results/unified_graph_stats.json
+- docs/operations/tnf-substrate-seal.json
+- packages/tnf-cli/src/utils/command-palette.ts
+- tnf
+- apps/api-gateway/src/auth.controller.ts
+- apps/api-gateway/src/auth.module.ts
+- apps/api-gateway/src/auth.service.ts
+- apps/api/src/modules/browser/
+- apps/api/src/modules/harness/
+- apps/browser-control-surfaces/
+- apps/frontend/pages/mcp.tsx
+- apps/frontend/src/components/control-surface/HarnessStatusPanel.tsx
+- apps/frontend/src/components/control-surface/useHarnessStatus.ts
+- apps/frontend/src/pages/ComputerUsePage.tsx
+- apps/frontend/src/services/browserAgent.service.ts
+- apps/tauri-desktop/src/services/cache/
+- data/llm-intel/history/intel_2026-08-14.json
+- documentation/
+- infrastructure/README.md
+- infrastructure/hpa/
+- infrastructure/load-balancer/
+- infrastructure/redis/
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
 ## Continuation
 
-- **Owner:** operator
-- **Priority:** medium
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
-**Targets:**
-- orchestrator
+### Resume Checklist
 
-**Resume Checklist:**
-- Run pnpm run type-check to verify TypeScript
-- Run pnpm run lint to verify code style
-- Read updated SESSION_HANDOFF_LATEST.json
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
 
-- Run pnpm run type-check
-- Run pnpm run lint
-- Handle validation warnings (matrix pathways populate)
-- Verify documentation updates
-
-## Artifacts
-
-**Commits:**
-- 8fada002d3 feat(session): add 4 scripts + 105 file modifications per handoff fa753e06
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.

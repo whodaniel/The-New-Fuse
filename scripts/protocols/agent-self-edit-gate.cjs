@@ -215,7 +215,15 @@ function checkStagedAuthoritySurfaces(registryPath, asJson) {
   }
 
   const staged = require('node:child_process')
-    .execSync('git diff --cached --name-only', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+    // maxBuffer: the default 1 MB overflows with ENOBUFS on large changesets
+    // (~30k staged paths), which aborted the commit before the gate could
+    // evaluate anything. A gate that crashes open on big diffs inspects the
+    // changes least likely to be routine, so give it room to read them.
+    .execSync('git diff --cached --name-only', {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 256 * 1024 * 1024,
+    })
     .split('\n')
     .map((s) => normalizePath(s))
     .filter(Boolean);
