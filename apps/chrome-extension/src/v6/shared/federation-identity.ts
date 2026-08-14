@@ -185,6 +185,8 @@ export function buildMcidEnvelope(input: {
 function platformProvider(platform: string): string {
   const p = platform.toLowerCase();
   if (p.includes('gemini')) return 'GOOGLE_GEMINI';
+  if (p.includes('cursor')) return 'CURSOR';
+  if (p.includes('codex')) return 'OPENAI_CODEX';
   if (p.includes('chatgpt') || p.includes('openai')) return 'OPENAI_CHATGPT';
   if (p.includes('claude')) return 'ANTHROPIC_CLAUDE';
   if (p.includes('glm') || p.includes('z.ai')) return 'ZHIPU_GLM';
@@ -373,6 +375,8 @@ const PLATFORM_ALIASES: Record<string, string[]> = {
   glm: ['glm', 'z.ai', 'chat.z.ai', 'zhipu'],
   gemini: ['gemini', 'bard'],
   chatgpt: ['chatgpt', 'gpt', 'openai'],
+  cursor: ['cursor'],
+  codex: ['codex'],
   claude: ['claude', 'anthropic'],
   qwen: ['qwen'],
   kimi: ['kimi', 'moonshot'],

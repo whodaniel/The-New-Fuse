@@ -9,6 +9,7 @@
  */
 
 import { buildPageAgentIdentity } from '../shared/federation-identity';
+import { isControlPlaneRelayMessage } from '../shared/utils';
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
@@ -432,7 +433,9 @@ class FuseConnectContentScript {
             return true;
 
           case 'INJECT_MESSAGE':
-            this.injectMessage(message.content).then((success) => {
+            this.injectMessage(message.content, message.metadata, {
+              preserveUserFocus: true,
+            }).then((success) => {
               safeSendResponse({
                 success,
                 result: simpleChatBridge.getLastSendResult(),
@@ -681,10 +684,12 @@ class FuseConnectContentScript {
                   return true;
                 }
                 console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
-                this.injectMessage(msg.content).then((success) => {
-                  if (success) console.log('[FuseConnect v7] Injection successful');
-                  else console.warn('[FuseConnect v7] Injection failed');
-                });
+                this.injectMessage(msg.content, msg.metadata, { preserveUserFocus: true }).then(
+                  (success) => {
+                    if (success) console.log('[FuseConnect v7] Injection successful');
+                    else console.warn('[FuseConnect v7] Injection failed');
+                  }
+                );
               }
               // CHANNEL BROADCAST INJECTION: If from external agent on same channel
               else if (msg.to === 'broadcast' && msg.content && msg.from) {
@@ -795,10 +800,12 @@ class FuseConnectContentScript {
                     });
                   }
 
-                  this.injectMessage(msg.content).then((success) => {
-                    if (success) console.log('[FuseConnect v7] ✅ Injection successful');
-                    else console.warn('[FuseConnect v7] ⚠️ Injection failed');
-                  });
+                  this.injectMessage(msg.content, msg.metadata, { preserveUserFocus: true }).then(
+                    (success) => {
+                      if (success) console.log('[FuseConnect v7] ✅ Injection successful');
+                      else console.warn('[FuseConnect v7] ⚠️ Injection failed');
+                    }
+                  );
                 }
               }
             }
@@ -874,46 +881,21 @@ class FuseConnectContentScript {
 
   /**
    * Only conversational payloads should be auto-injected into page chat.
-   * Control-plane events (activity/wake/heartbeat) must stay out of model input.
+   * Control-plane events (activity/wake/heartbeat) stay in the injectable panel
+   * and must not be submitted into the host model input.
    */
   private shouldInjectRelayMessage(msg: any): boolean {
     const content = String(msg?.content || '').trim();
     if (!content) return false;
-
-    const messageType = String(msg?.messageType || '').toLowerCase();
-    const eventType = String(msg?.metadata?.eventType || '').toLowerCase();
-    const lower = content.toLowerCase();
-
-    if (messageType === 'event') return false;
-
-    const blockedEventTypes = new Set([
-      'activity',
-      'wake_ping',
-      'wake_ack',
-      'monitor_idle',
-      'page_agent_registered',
-      'agent_registered',
-      // 'heartbeat', // HEARTBEAT RECOVERY: allow heartbeats to be injected
-    ]);
-    if (blockedEventTypes.has(eventType)) return false;
-
-    // Explicitly allow heartbeats even if eventType check above was modified
-    if (lower.includes('tnf heartbeat') || msg?.metadata?.isRecoveryAttempt) {
-      return true;
-    }
-
-    if (
-      lower.startsWith('[activity]') ||
-      lower.startsWith('[wake_ping') ||
-      lower.startsWith('[wake_ack')
-    ) {
-      return false;
-    }
-
+    if (isControlPlaneRelayMessage(msg)) return false;
     return true;
   }
 
-  private async injectMessage(content: string, metadata?: any): Promise<boolean> {
+  private async injectMessage(
+    content: string,
+    metadata?: any,
+    options?: { preserveUserFocus?: boolean }
+  ): Promise<boolean> {
     console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
 
     let finalContent = content;
@@ -939,7 +921,9 @@ class FuseConnectContentScript {
       finalContent = `[Sender: ${handle} (@${idNumber})][Channel: ${channel}]\n${finalContent}`;
     }
 
-    const success = await simpleChatBridge.sendMessage(finalContent);
+    const preserveUserFocus =
+      options?.preserveUserFocus === true || isControlPlaneRelayMessage({ content, metadata });
+    const success = await simpleChatBridge.sendMessage(finalContent, { preserveUserFocus });
 
     if (success) {
       this.selfPrompter.updateActivity();
@@ -1097,7 +1081,7 @@ class FuseConnectContentScript {
           });
         }
 
-        await this.injectMessage(item.content, item.metadata);
+        await this.injectMessage(item.content, item.metadata, { preserveUserFocus: true });
 
         // Wait a bit before next injection to allow UI to update
         // (Wait longer than the _sendingGuard in SimpleChatBridge to avoid self-blocking)

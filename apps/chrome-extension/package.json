@@ -8,10 +8,11 @@
   "scripts": {
     "generate-icons": "node generate-icons.js",
     "generate-notification-icons": "node scripts/generate-notification-icons.cjs",
-    "build": "webpack --config webpack.config.cjs --mode production",
+    "build": "webpack --config webpack.v7.config.cjs --mode production && rm -rf dist && cp -R dist-v7 dist",
+    "build:legacy": "webpack --config webpack.config.cjs --mode production",
     "build:v5": "webpack --config webpack.v5.config.cjs --mode production",
     "build:v6": "webpack --config webpack.v6.config.cjs --mode production",
-    "build:v7": "webpack --config webpack.v7.config.cjs --mode production",
+    "build:v7": "webpack --config webpack.v7.config.cjs --mode production && rm -rf dist && cp -R dist-v7 dist",
     "dev:v5": "webpack --config webpack.v5.config.cjs --mode development --watch",
     "dev:v6": "webpack --config webpack.v6.config.cjs --mode development --watch",
     "dev:v7": "webpack --config webpack.v7.config.cjs --mode development --watch",
@@ -45,13 +46,14 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/llm-catalog": "workspace:*",
+    "@the-new-fuse/workflow-engine": "workspace:*",
     "ajv": "^8.18.0",
     "ajv-keywords": "^5.1.0",
     "dompurify": "^3.3.2",
     "highlight.js": "^11.11.1",
-    "pako": "^2.1.0",
-    "@the-new-fuse/infrastructure": "workspace:*",
-    "@the-new-fuse/workflow-engine": "workspace:*"
+    "pako": "^2.1.0"
   },
   "overrides": {
     "serialize-javascript": "7.0.3"

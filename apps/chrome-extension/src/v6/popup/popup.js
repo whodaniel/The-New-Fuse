@@ -67,6 +67,13 @@ class FuseConnectPopup {
   }
 
   async init() {
+    // Wake the MV3 service worker without blocking first paint.
+    try {
+      chrome.runtime.sendMessage({ type: 'PING' }, () => void chrome.runtime.lastError);
+    } catch {
+      // Popup can still render from static HTML + local state.
+    }
+
     // Setup tabs synchronously
     this.setupTabs();
 
@@ -82,17 +89,19 @@ class FuseConnectPopup {
     // Load settings asynchronously (non-blocking)
     this.loadSettings().catch(console.error);
 
-    // Check native host (non-blocking)
-    this.checkNativeHost().catch(console.error);
+    // Native host probes can stall the popup for seconds if the host is missing.
+    setTimeout(() => this.checkNativeHost().catch(() => {}), 0);
 
     // Load state from background in background
-    this.loadState().then(() => {
-      this.updateUI();
-      // Check relay health after state is loaded
-      this.checkRelayAndUpdateHelper().catch(console.error);
-      // Refresh autonomy status
-      this.refreshAutonomyStatus().catch(console.error);
-    }).catch(console.error);
+    this.loadState()
+      .then(() => {
+        this.updateUI();
+        // Check relay health after state is loaded
+        this.checkRelayAndUpdateHelper().catch(console.error);
+        // Refresh autonomy status
+        this.refreshAutonomyStatus().catch(console.error);
+      })
+      .catch(console.error);
   }
 
   async checkRelayAndUpdateHelper() {
@@ -108,12 +117,12 @@ class FuseConnectPopup {
         .replace(/^ws:/, 'http:')
         .replace(/^wss:/, 'https:')
         .replace(/\/ws$/, '/health');
-      
+
       const response = await fetch(healthUrl, {
         method: 'GET',
         signal: AbortSignal.timeout(1000),
       }).catch(() => null);
-      
+
       if (response && response.ok) {
         try {
           const data = await response.json();
@@ -794,8 +803,10 @@ class FuseConnectPopup {
 
   async sendNativeMessage(message) {
     return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Native host timeout')), 400);
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
+          clearTimeout(timer);
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message));
           } else {
@@ -803,6 +814,7 @@ class FuseConnectPopup {
           }
         });
       } catch (e) {
+        clearTimeout(timer);
         reject(e);
       }
     });
@@ -1977,31 +1989,64 @@ class FuseConnectPopup {
     });
   }
 
-  async loadState() {
+  applyStateResponse(response) {
+    if (!response) return;
+
+    this.state.connectionStatus = response.connectionStatus || 'disconnected';
+    this.state.agents = response.agents || [];
+    this.state.channels = response.channels || [];
+    this.state.joinedChannels = response.joinedChannels || [];
+    this.state.agentId = response.agentId || null;
+
+    const responseSelected = response.selectedChannel || null;
+    const settingsSelected = this.state.settings.popupSelectedChannel || null;
+    this.state.selectedChannel = responseSelected || settingsSelected || null;
+
+    if (typeof response.autoMonitor === 'boolean')
+      this.state.settings.autoMonitor = response.autoMonitor;
+    if (typeof response.autoMasterClock === 'boolean')
+      this.state.settings.autoMasterClock = response.autoMasterClock;
+    if (typeof response.autoWakePing === 'boolean')
+      this.state.settings.autoWakePing = response.autoWakePing;
+    if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
+  }
+
+  requestState(timeoutMs = 250) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-        if (response) {
-          this.state.connectionStatus = response.connectionStatus || 'disconnected';
-          this.state.agents = response.agents || [];
-          this.state.channels = response.channels || [];
-          this.state.joinedChannels = response.joinedChannels || [];
-          this.state.agentId = response.agentId || null;
-
-          const responseSelected = response.selectedChannel || null;
-          const settingsSelected = this.state.settings.popupSelectedChannel || null;
-          this.state.selectedChannel = responseSelected || settingsSelected || null;
-
-          if (typeof response.autoMonitor === 'boolean')
-            this.state.settings.autoMonitor = response.autoMonitor;
-          if (typeof response.autoMasterClock === 'boolean')
-            this.state.settings.autoMasterClock = response.autoMasterClock;
-          if (typeof response.autoWakePing === 'boolean')
-            this.state.settings.autoWakePing = response.autoWakePing;
-          if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
-        }
-        resolve();
-      });
+      let settled = false;
+      const finish = (payload) => {
+        if (settled) return;
+        settled = true;
+        resolve(payload);
+      };
+      const timer = setTimeout(() => finish({ response: null, err: 'timeout' }), timeoutMs);
+      try {
+        chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+          clearTimeout(timer);
+          finish({
+            response: response || null,
+            err: chrome.runtime.lastError?.message || null,
+          });
+        });
+      } catch (e) {
+        clearTimeout(timer);
+        finish({ response: null, err: String(e?.message || e) });
+      }
     });
+  }
+
+  async loadState() {
+    const first = await this.requestState(250);
+    if (first.response) {
+      this.applyStateResponse(first.response);
+      return;
+    }
+
+    const shouldRetry = /Receiving end does not exist|timeout/i.test(String(first.err || ''));
+    if (!shouldRetry) return;
+
+    const second = await this.requestState(250);
+    this.applyStateResponse(second.response);
   }
 
   async loadSettings() {
@@ -2880,7 +2925,14 @@ class FuseConnectPopup {
   }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
+function bootPopup() {
+  if (window.__fuseConnectPopupBooted) return;
+  window.__fuseConnectPopupBooted = true;
   new FuseConnectPopup();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootPopup, { once: true });
+} else {
+  bootPopup();
+}

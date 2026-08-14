@@ -25,6 +25,13 @@ describe('federation identity', () => {
     expect(identity.aliases).toContain('tnf:local:agent:fuse:moonshot_kimi_page:042');
   });
 
+  it('assigns Cursor page agents a first-class federated identity', () => {
+    const identity = buildPageAgentIdentity('page-agent-9-cursor1', 'www.cursor.com', 9);
+
+    expect(identity.canonicalEntityId).toBe('TNF:LOCAL:AGENT:FUSE:CURSOR_PAGE:009');
+    expect(identity.aliases).toContain('www.cursor.com');
+  });
+
   it('enriches outbound channel metadata with ID number and MCID', () => {
     const identity = buildPageAgentIdentity('page-agent-7-green1', 'gemini.google.com', 7);
     const metadata = enrichOutboundMetadata(identity, {

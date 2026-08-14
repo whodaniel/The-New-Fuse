@@ -37,7 +37,12 @@ export interface ChatSendResult {
   error?: string;
 }
 
+export interface ChatSendOptions {
+  preserveUserFocus?: boolean;
+}
+
 import { DEFAULT_NODES } from '../../shared/constants';
+import { isControlPlaneRelayMessage } from '../../shared/utils';
 import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
@@ -74,6 +79,8 @@ class SimpleChatBridge {
     'chatgpt.com',
     'chat.openai.com',
     'claude.ai',
+    'cursor.com',
+    'cursor.sh',
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
@@ -298,6 +305,11 @@ class SimpleChatBridge {
       hostname.endsWith('.kimi.moonshot.cn') ||
       hostname === 'moonshot.cn' ||
       hostname.endsWith('.moonshot.cn');
+    const isCursorHost =
+      hostname === 'cursor.com' ||
+      hostname.endsWith('.cursor.com') ||
+      hostname === 'cursor.sh' ||
+      hostname.endsWith('.cursor.sh');
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
@@ -375,6 +387,16 @@ class SimpleChatBridge {
       'textarea[placeholder*="Kimi" i]',
       'textarea[aria-label*="Kimi" i]',
       'div[contenteditable="true"][aria-label*="Kimi" i]',
+      ...(isCursorHost
+        ? [
+            'div.ProseMirror[contenteditable="true"]',
+            'div[contenteditable="true"][role="textbox"]',
+            'textarea[placeholder*="Agent" i]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Plan" i]',
+            'main [contenteditable="true"][role="textbox"]',
+          ]
+        : []),
       // Claude-specific
       'div[contenteditable="true"][aria-label*="Message" i]',
       // Generic fallbacks
@@ -430,6 +452,13 @@ class SimpleChatBridge {
       'button:has(path[d*="M2.01"])', // Common send icon path
       // ChatGPT-specific
       'button[data-testid="send-button"]',
+      ...(isCursorHost
+        ? [
+            'button[aria-label*="Send" i]',
+            'button[title*="Submit" i]',
+            'form button[type="submit"]',
+          ]
+        : []),
       // Generic
       'button.send-button',
       'button[type="submit"]',
@@ -1005,8 +1034,22 @@ class SimpleChatBridge {
     this.dispatchInputEvents(input, text);
   }
 
-  private setContentEditableText(input: HTMLElement, text: string): void {
-    input.focus();
+  private setContentEditableText(
+    input: HTMLElement,
+    text: string,
+    options?: { skipFocus?: boolean }
+  ): void {
+    if (!options?.skipFocus) {
+      input.focus();
+    }
+
+    // execCommand requires the target to be focused; if we must not steal
+    // the injectable composer, write textContent instead.
+    if (options?.skipFocus && document.activeElement !== input) {
+      input.textContent = text;
+      this.dispatchInputEvents(input, text);
+      return;
+    }
 
     try {
       const selection = window.getSelection();
@@ -1039,7 +1082,38 @@ class SimpleChatBridge {
   /**
    * Send a message to the AI - Enhanced with button re-fetch and robust clicking
    */
-  async sendMessage(text: string): Promise<boolean> {
+  async sendMessage(text: string, options?: ChatSendOptions): Promise<boolean> {
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousSelection =
+      previousFocus && this.isTextControl(previousFocus)
+        ? {
+            start: previousFocus.selectionStart ?? 0,
+            end: previousFocus.selectionEnd ?? 0,
+            value: previousFocus.value,
+          }
+        : null;
+    const preserveUserFocus =
+      options?.preserveUserFocus === true ||
+      this.isExtensionUiElement(previousFocus) ||
+      isControlPlaneRelayMessage({ content: text });
+
+    const restoreUserFocus = () => {
+      if (!preserveUserFocus || !previousFocus || !previousFocus.isConnected) return;
+      const stolen = document.activeElement !== previousFocus;
+      if (stolen) {
+        previousFocus.focus({ preventScroll: true });
+      }
+      // Never yank the caret while the user is still typing in the injectable composer.
+      if (!stolen || !this.isTextControl(previousFocus) || !previousSelection) return;
+      if (previousFocus.value !== previousSelection.value) return;
+      try {
+        previousFocus.setSelectionRange(previousSelection.start, previousSelection.end);
+      } catch {
+        // Some inputs (number/email) do not support setSelectionRange.
+      }
+    };
+
     this.lastSendResult = {
       success: false,
       injected: false,
@@ -1080,27 +1154,31 @@ class SimpleChatBridge {
     const input = initialElements.input;
 
     try {
-      // Focus and clear the input
-      input.focus();
-      await this.delay(100);
+      if (!preserveUserFocus) {
+        input.focus();
+        await this.delay(100);
+      }
+      restoreUserFocus();
 
       const isContentEditable =
         input.isContentEditable || input.getAttribute('contenteditable') === 'true';
 
       // Input simulation
       if (isContentEditable) {
-        this.setContentEditableText(input, text);
+        this.setContentEditableText(input, text, { skipFocus: preserveUserFocus });
       } else {
         this.setNativeTextValue(input, text);
       }
+      restoreUserFocus();
 
       if (!(await this.verifyInjectedText(input, text))) {
         console.warn('[SimpleChatBridge] Text injection verification failed; retrying once');
         if (isContentEditable) {
-          this.setContentEditableText(input, text);
+          this.setContentEditableText(input, text, { skipFocus: preserveUserFocus });
         } else {
           this.setNativeTextValue(input, text);
         }
+        restoreUserFocus();
       }
 
       if (!(await this.verifyInjectedText(input, text))) {
@@ -1178,6 +1256,7 @@ class SimpleChatBridge {
       input.dispatchEvent(new KeyboardEvent('keypress', enterKeyInit));
       await this.delay(50);
       input.dispatchEvent(new KeyboardEvent('keyup', enterKeyInit));
+      restoreUserFocus();
       console.log('[SimpleChatBridge] Dispatched Enter key sequence on input');
 
       // Some textarea-based UIs submit only on form submit handlers.
@@ -1211,10 +1290,12 @@ class SimpleChatBridge {
 
       // Method 2: Direct button click (if Enter didn't work)
       if (sendButton) {
-        // Focus button first to simulate real click
-        sendButton.focus();
-        await this.delay(100);
+        if (!preserveUserFocus) {
+          sendButton.focus();
+          await this.delay(100);
+        }
         sendButton.click();
+        restoreUserFocus();
         console.log('[SimpleChatBridge] Clicked send button directly');
         // Check again with increased delay
         await this.delay(1000);
@@ -1279,14 +1360,20 @@ class SimpleChatBridge {
         submitted: false,
         error: `Send failed: ${error}`,
       });
+    } finally {
+      restoreUserFocus();
+      if (preserveUserFocus) {
+        setTimeout(restoreUserFocus, 0);
+        setTimeout(restoreUserFocus, 50);
+      }
     }
   }
 
   /**
    * Inject message (alias for sendMessage)
    */
-  async injectMessage(text: string): Promise<boolean> {
-    return this.sendMessage(text);
+  async injectMessage(text: string, options?: ChatSendOptions): Promise<boolean> {
+    return this.sendMessage(text, options);
   }
 
   /**

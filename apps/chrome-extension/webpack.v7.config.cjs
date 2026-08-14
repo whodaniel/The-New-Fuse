@@ -1,4 +1,4 @@
-// chrome-extension/webpack.config.cjs
+// Fuse Connect v7 webpack config
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -10,15 +10,23 @@ module.exports = (env, argv) => {
 
   return {
     mode: isProduction ? 'production' : 'development',
-    devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
+    // Source maps delay MV3 popup load if DevTools auto-attaches; keep them off in prod.
+    devtool: isProduction ? false : 'cheap-module-source-map',
+    target: ['web', 'es2020'],
     entry: {
       'background/index': './src/v6/background/index.ts',
       'content/index': './src/v6/content/index.ts',
+      'popup/popup': './src/v6/popup/popup.js',
+      'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
+      'content/iframe-bridge': './src/v6/content/ai-studio/iframe-bridge.js',
+      'content/youtube-integration': './src/v6/content/ai-studio/youtube.js',
+      'content/notebooklm-integration': './src/v6/content/ai-studio/notebooklm.js',
     },
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'dist-v7'),
       filename: '[name].js',
       clean: true,
+      iife: true,
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
@@ -40,7 +48,7 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true, // Skip type checking for faster builds
+              transpileOnly: true,
               compilerOptions: {
                 module: 'ESNext',
                 moduleResolution: 'bundler',
@@ -72,16 +80,26 @@ module.exports = (env, argv) => {
             to: 'manifest.json',
             transform(content) {
               const manifest = JSON.parse(content.toString());
-              // Adjust paths if needed
               return JSON.stringify(manifest, null, 2);
             },
           },
-          { from: './src/v6/popup', to: 'popup', noErrorOnMissing: true },
+          {
+            from: './src/v6/popup',
+            to: 'popup',
+            noErrorOnMissing: true,
+            globOptions: {
+              // Webpack emits the bundled popup.js; copying source would break it.
+              ignore: ['**/popup.js'],
+            },
+          },
           { from: './icons', to: 'icons', noErrorOnMissing: true },
+          { from: './src/v6/native-host', to: 'native-host', noErrorOnMissing: true },
         ],
       }),
     ],
     optimization: {
+      splitChunks: false,
+      runtimeChunk: false,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -93,25 +111,6 @@ module.exports = (env, argv) => {
         }),
         new CssMinimizerPlugin(),
       ],
-      splitChunks: {
-        chunks: 'all',
-        maxInitialRequests: 3,
-        cacheGroups: {
-          defaultVendors: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendor',
-            chunks: 'all',
-            priority: -10,
-            reuseExistingChunk: true,
-          },
-          commons: {
-            name: 'commons',
-            chunks: 'all',
-            minChunks: 2,
-            enforce: true,
-          },
-        },
-      },
     },
   };
 };

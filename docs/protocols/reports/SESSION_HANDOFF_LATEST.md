@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-14T21:16:23.698Z`  
-Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
+Created At: `2026-08-14T21:32:59.149Z`  
+Handoff ID: `dfcf8ccb-17a0-46b8-ab02-8ff6a3a7b1ca`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `7425a9344a7bafc58336e3bec9d3cd54ac1ce5cc`
+- Head SHA: `c2ef2a75ae2ebeac251ce29612132f09a54881c0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,15 +19,42 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 
 ## Changed Paths
 
-- .gcloudignore
-- Dockerfile.api
-- apps/api/package.json
-- docs/operations/tnf-substrate-seal.json
-- packages/llm-catalog/package.json
-- packages/llm-catalog/src/index.ts
-- packages/llm-catalog/tsconfig.json
-- pnpm-lock.yaml
-- scripts/deployment/Dockerfile.api-gateway
+- apps/chrome-extension/dist-v7/background/index.js
+- apps/chrome-extension/dist-v7/content/ai-studio-automation.js
+- apps/chrome-extension/dist-v7/content/iframe-bridge.js
+- apps/chrome-extension/dist-v7/content/index.js
+- apps/chrome-extension/dist-v7/content/notebooklm-integration.js
+- apps/chrome-extension/dist-v7/content/youtube-integration.js
+- apps/chrome-extension/dist-v7/icons/icon128-connected.png
+- apps/chrome-extension/dist-v7/icons/icon128-error.png
+- apps/chrome-extension/dist-v7/icons/icon128.png
+- apps/chrome-extension/dist-v7/icons/icon16-connected.png
+- apps/chrome-extension/dist-v7/icons/icon16-error.png
+- apps/chrome-extension/dist-v7/icons/icon16.png
+- apps/chrome-extension/dist-v7/icons/icon48-connected.png
+- apps/chrome-extension/dist-v7/icons/icon48-error.png
+- apps/chrome-extension/dist-v7/icons/icon48.png
+- apps/chrome-extension/dist-v7/manifest.json
+- apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs
+- apps/chrome-extension/dist-v7/popup/index.html
+- apps/chrome-extension/dist-v7/popup/popup.css
+- apps/chrome-extension/dist-v7/popup/popup.js
+- apps/chrome-extension/generate-icons.js
+- apps/chrome-extension/package.json
+- apps/chrome-extension/src/v6/background/index.ts
+- apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts
+- apps/chrome-extension/src/v6/content/adapters/**tests**/SimpleChatBridge.test.ts
+- apps/chrome-extension/src/v6/content/index.ts
+- apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts
+- apps/chrome-extension/src/v6/manifest.json
+- apps/chrome-extension/src/v6/popup/index.html
+- apps/chrome-extension/src/v6/popup/popup.js
+- apps/chrome-extension/src/v6/shared/**tests**/federation-identity.test.ts
+- apps/chrome-extension/src/v6/shared/**tests**/utils.test.ts
+- apps/chrome-extension/src/v6/shared/catalog.ts
+- apps/chrome-extension/src/v6/shared/federation-identity.ts
+- apps/chrome-extension/src/v6/shared/utils.ts
+- apps/chrome-extension/webpack.v7.config.cjs
 - .agent/skills/agent-browser/SKILL.md
 - .agent/skills/tnf-supabase-agent-connection/SKILL.md
 - .agents/skills/tnf-hallucination-archeology/SKILL.md
@@ -35,6 +62,9 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - .agents/skills/tnf-protocol-gap-registrar/SKILL.md
 - .agents/skills/tnf-protocol-gap-registrar/scripts/register_gaps.py
 - .claude/agents/master-of-taxonomies.md
+- .gcloudignore
+- Dockerfile.api
+- apps/api/package.json
 - apps/api/src/email/email.service.ts
 - apps/api/src/middleware/types.ts
 - apps/api/src/security/encryption.service.ts
@@ -85,6 +115,7 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - docs/operations/tnf-action-receipts.jsonl
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/operations/tnf-substrate-seal.json
 - docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md
 - docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -108,6 +139,9 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - packages/database/migrations/20260813000100_add_user_data_locations.sql
 - packages/database/src/drizzle/schema/index.ts
 - packages/database/src/drizzle/schema/personal-data-locations.ts
+- packages/llm-catalog/package.json
+- packages/llm-catalog/src/index.ts
+- packages/llm-catalog/tsconfig.json
 - packages/relay-core/src/services/agent-registry.service.ts
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
@@ -124,9 +158,11 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - packages/tnf-cli/src/services/provider-config.ts
 - packages/tnf-cli/src/utils/llm-tools.browser.test.ts
 - packages/tnf-cli/src/utils/llm-tools.ts
+- pnpm-lock.yaml
 - scripts/autonomy/brain_sync.sh
 - scripts/ci/check-federated-alphabet.sh
 - scripts/codex-mcp-oauth-login.cjs
+- scripts/deployment/Dockerfile.api-gateway
 - scripts/deployment/cloudbuild.gateway.yaml
 - scripts/install-agent-frontload.cjs
 - scripts/library/ensure-library-audio-stack.cjs
@@ -155,41 +191,6 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - apps/api/src/controllers/relay-health.controller.ts
 - apps/api/src/controllers/self-improvement.controller.ts
 - apps/api/src/controllers/tnf-autonomous.controller.ts
-- apps/chrome-extension/dist-v7/background/index.js
-- apps/chrome-extension/dist-v7/content/ai-studio-automation.js
-- apps/chrome-extension/dist-v7/content/iframe-bridge.js
-- apps/chrome-extension/dist-v7/content/index.js
-- apps/chrome-extension/dist-v7/content/notebooklm-integration.js
-- apps/chrome-extension/dist-v7/content/youtube-integration.js
-- apps/chrome-extension/dist-v7/icons/icon128-connected.png
-- apps/chrome-extension/dist-v7/icons/icon128-error.png
-- apps/chrome-extension/dist-v7/icons/icon128.png
-- apps/chrome-extension/dist-v7/icons/icon16-connected.png
-- apps/chrome-extension/dist-v7/icons/icon16-error.png
-- apps/chrome-extension/dist-v7/icons/icon16.png
-- apps/chrome-extension/dist-v7/icons/icon48-connected.png
-- apps/chrome-extension/dist-v7/icons/icon48-error.png
-- apps/chrome-extension/dist-v7/icons/icon48.png
-- apps/chrome-extension/dist-v7/manifest.json
-- apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs
-- apps/chrome-extension/dist-v7/popup/index.html
-- apps/chrome-extension/dist-v7/popup/popup.css
-- apps/chrome-extension/dist-v7/popup/popup.js
-- apps/chrome-extension/generate-icons.js
-- apps/chrome-extension/package.json
-- apps/chrome-extension/src/v6/background/index.ts
-- apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts
-- apps/chrome-extension/src/v6/content/adapters/**tests**/SimpleChatBridge.test.ts
-- apps/chrome-extension/src/v6/content/index.ts
-- apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts
-- apps/chrome-extension/src/v6/manifest.json
-- apps/chrome-extension/src/v6/popup/index.html
-- apps/chrome-extension/src/v6/popup/popup.js
-- apps/chrome-extension/src/v6/shared/**tests**/federation-identity.test.ts
-- apps/chrome-extension/src/v6/shared/**tests**/utils.test.ts
-- apps/chrome-extension/src/v6/shared/federation-identity.ts
-- apps/chrome-extension/src/v6/shared/utils.ts
-- apps/chrome-extension/webpack.v7.config.cjs
 - apps/frontend/package.json
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.md
@@ -287,6 +288,7 @@ Handoff ID: `6b3cd7e5-349a-4098-a51b-86d3418af9ff`
 - apps/tauri-desktop/src/services/cache/
 - data/llm-intel/history/intel_2026-08-14.json
 - data/providers/nvidia-models.json
+- docs/UNIFIED_LLM_CATALOG.md
 - documentation/
 - infrastructure/README.md
 - infrastructure/hpa/

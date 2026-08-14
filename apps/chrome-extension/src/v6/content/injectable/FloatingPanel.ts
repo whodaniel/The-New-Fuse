@@ -17,6 +17,7 @@ import type {
   PanelTab,
   StreamingState,
 } from '../../shared/types';
+import { isControlPlaneRelayMessage } from '../../shared/utils';
 
 const PANEL_MIN_WIDTH = 300;
 const PANEL_MIN_HEIGHT = 200;
@@ -1442,73 +1443,81 @@ export class EnhancedFloatingPanel {
     }
 
     // Messages - render in a scrollable container (oldest first, newest at bottom)
-    const messagesHtml =
-      this.messages.length > 0
-        ? this.messages
-            .slice(-50) // Get last 50 messages
-            .map((msg) => {
-              // Resolve Sender Name and ID
-              let senderName = msg.from;
-              let senderId = msg.from;
-              let isMe = false;
+    return `
+      ${detectionHtml}
+      <div class="fcp6-chat-scroll" id="fuse-chat-scroll" style="flex: 1; overflow-y: auto; max-height: 300px; padding-right: 4px;">
+        ${this.renderChatMessagesHtml()}
+      </div>
+    `;
+  }
 
-              if (
-                msg.from === 'You' ||
-                msg.from === 'You (Fuse)' ||
-                (this.myAgentId && msg.from === this.myAgentId)
-              ) {
-                senderName = 'You';
-                senderId = this.myAgentId || 'unknown-id';
-                isMe = true;
-              } else {
-                // Try to resolve name from agents list
-                const agent = this.agents.find((a) => a.id === msg.from);
-                if (agent) {
-                  senderName = agent.name;
-                  senderId = agent.id;
-                }
-              }
+  private renderChatMessagesHtml(): string {
+    if (this.messages.length === 0) {
+      return `<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>`;
+    }
 
-              // Handler for System Messages
-              if (msg.metadata?.isSystemMessage) {
-                return `
+    return this.messages
+      .slice(-50)
+      .map((msg) => {
+        // Resolve Sender Name and ID
+        let senderName = msg.from;
+        let senderId = msg.from;
+
+        if (
+          msg.from === 'You' ||
+          msg.from === 'You (Fuse)' ||
+          (this.myAgentId && msg.from === this.myAgentId)
+        ) {
+          senderName = 'You';
+          senderId = this.myAgentId || 'unknown-id';
+        } else {
+          // Try to resolve name from agents list
+          const agent = this.agents.find((a) => a.id === msg.from);
+          if (agent) {
+            senderName = agent.name;
+            senderId = agent.id;
+          }
+        }
+
+        // Handler for System Messages
+        if (msg.metadata?.isSystemMessage) {
+          return `
                   <div class="fcp6-system-message" style="text-align: center; margin: 8px 0; font-size: 11px; color: rgba(255, 255, 255, 0.5); font-style: italic;">
                     <span style="background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 10px;">
                       ${this.escapeHtml(msg.content)}
                     </span>
                   </div>
                  `;
-              }
+        }
 
-              // Metadata ID check (if present)
-              if (msg.metadata && typeof msg.metadata.senderId === 'string') {
-                senderId = msg.metadata.senderId;
-              }
+        // Metadata ID check (if present)
+        if (msg.metadata && typeof msg.metadata.senderId === 'string') {
+          senderId = msg.metadata.senderId;
+        }
 
-              // Shorten ID for display
-              const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
+        // Shorten ID for display
+        const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
 
-              // Prefer the federated tokens: a truncated raw id cannot be addressed,
-              // whereas `@ID#:<base58>` pasted into the composer resolves to this exact
-              // agent on any channel. Fall back to the short id when the sender predates
-              // federated identity.
-              const senderAgent = this.agents.find((a) => a.id === senderId);
-              const senderIdNumber =
-                (typeof msg.metadata?.idNumber === 'string' && msg.metadata.idNumber) ||
-                senderAgent?.idNumber ||
-                '';
-              const senderHandle =
-                (typeof msg.metadata?.operationalHandle === 'string' &&
-                  msg.metadata.operationalHandle) ||
-                senderAgent?.operationalHandle ||
-                '';
-              const addressChip = senderIdNumber ? `@${senderIdNumber}` : `#${shortId}`;
-              const addressCopyValue = senderIdNumber ? `@${senderIdNumber} ` : senderId;
-              const addressTitle = senderHandle
-                ? `${senderHandle} (${senderId}) — copy to address this agent`
-                : `Agent ID: ${senderId}`;
+        // Prefer the federated tokens: a truncated raw id cannot be addressed,
+        // whereas `@ID#:<base58>` pasted into the composer resolves to this exact
+        // agent on any channel. Fall back to the short id when the sender predates
+        // federated identity.
+        const senderAgent = this.agents.find((a) => a.id === senderId);
+        const senderIdNumber =
+          (typeof msg.metadata?.idNumber === 'string' && msg.metadata.idNumber) ||
+          senderAgent?.idNumber ||
+          '';
+        const senderHandle =
+          (typeof msg.metadata?.operationalHandle === 'string' && msg.metadata.operationalHandle) ||
+          senderAgent?.operationalHandle ||
+          '';
+        const addressChip = senderIdNumber ? `@${senderIdNumber}` : `#${shortId}`;
+        const addressCopyValue = senderIdNumber ? `@${senderIdNumber} ` : senderId;
+        const addressTitle = senderHandle
+          ? `${senderHandle} (${senderId}) — copy to address this agent`
+          : `Agent ID: ${senderId}`;
 
-              return `
+        return `
             <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
@@ -1529,17 +1538,8 @@ export class EnhancedFloatingPanel {
             <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(msg.content)}</div>
           </div>
         `;
-            })
-            .join('')
-        : `<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>`;
-
-    return `
-      ${detectionHtml}
-      <div class="fcp6-chat-scroll" id="fuse-chat-scroll" style="flex: 1; overflow-y: auto; max-height: 300px; padding-right: 4px;">
-        ${messagesHtml}
-      </div>
-      </div>
-    `;
+      })
+      .join('');
   }
 
   /**
@@ -2415,7 +2415,13 @@ export class EnhancedFloatingPanel {
         // Messages from OURSELVES should NOT be re-injected (prevents loops).
 
         if (message.message) {
-          const msg = message.message;
+          const incoming = message.message;
+          const msg = isControlPlaneRelayMessage(incoming)
+            ? {
+                ...incoming,
+                metadata: { ...(incoming.metadata || {}), isSystemMessage: true },
+              }
+            : incoming;
 
           // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
           const senderIdFromMeta = msg.metadata?.senderId;
@@ -2692,13 +2698,16 @@ export class EnhancedFloatingPanel {
   }
 
   /**
-   * Update UI
-   */
-  /**
-   * Update UI
+   * Update UI without destroying the injectable composer while the user is typing.
    */
   private update(): void {
     if (!this.container) return;
+
+    if (this.isPanelComposerActive() && this.updateChatListInPlace()) {
+      return;
+    }
+
+    const composer = this.captureComposerState();
 
     // Save scroll position if chat is open
     let scrollTop = 0;
@@ -2706,32 +2715,13 @@ export class EnhancedFloatingPanel {
     if (chatScroll) {
       scrollTop = chatScroll.scrollTop;
     }
-
-    // Save input value
-    const input = this.container.querySelector('[data-input="message"]') as HTMLTextAreaElement;
-    const inputValue = input ? input.value : '';
-
-    // Save channel name input value
-    const channelInput = this.container.querySelector('#fuse-new-channel-name') as HTMLInputElement;
-    const channelInputValue = channelInput ? channelInput.value : '';
+    const wasNearBottom =
+      !!chatScroll && chatScroll.scrollHeight - chatScroll.scrollTop - chatScroll.clientHeight < 50;
 
     // Re-render
     this.container.innerHTML = this.render();
 
-    // Restore input value
-    const newInput = this.container.querySelector('[data-input="message"]') as HTMLTextAreaElement;
-    if (newInput && inputValue) {
-      newInput.value = inputValue;
-    }
-
-    // Restore channel name input value
-    const newChannelInput = this.container.querySelector(
-      '#fuse-new-channel-name'
-    ) as HTMLInputElement;
-    if (newChannelInput && channelInputValue) {
-      newChannelInput.value = channelInputValue;
-      // If it had focus, we should try to restore focus too, but simple value restore helps most
-    }
+    this.restoreComposerState(composer);
 
     // Apply styles/position
     this.applyPositionAndSize();
@@ -2742,17 +2732,79 @@ export class EnhancedFloatingPanel {
     // Restore scroll position or scroll to bottom if it was at bottom
     const newChatScroll = this.container.querySelector('#fuse-chat-scroll');
     if (newChatScroll) {
-      // If was near bottom, scroll to bottom (auto-scroll)
-      // Otherwise restore position
-      const wasNearBottom =
-        chatScroll && chatScroll.scrollHeight - chatScroll.scrollTop - chatScroll.clientHeight < 50;
-
       if (wasNearBottom) {
         newChatScroll.scrollTop = newChatScroll.scrollHeight;
       } else {
         newChatScroll.scrollTop = scrollTop;
       }
     }
+  }
+
+  private isPanelComposerActive(): boolean {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !this.container?.contains(active)) return false;
+    return active.matches('[data-input="message"], #fuse-new-channel-name, .fcp6-input');
+  }
+
+  private captureComposerState(): {
+    message: { value: string; start: number; end: number; hadFocus: boolean } | null;
+    channel: { value: string; start: number; end: number; hadFocus: boolean } | null;
+  } {
+    const active = document.activeElement;
+    const capture = (selector: string) => {
+      const el = this.container?.querySelector(selector) as
+        | HTMLTextAreaElement
+        | HTMLInputElement
+        | null;
+      if (!el) return null;
+      return {
+        value: el.value,
+        start: el.selectionStart ?? el.value.length,
+        end: el.selectionEnd ?? el.value.length,
+        hadFocus: active === el,
+      };
+    };
+    return {
+      message: capture('[data-input="message"]'),
+      channel: capture('#fuse-new-channel-name'),
+    };
+  }
+
+  private restoreComposerState(
+    state: ReturnType<EnhancedFloatingPanel['captureComposerState']>
+  ): void {
+    const restore = (
+      selector: string,
+      snap: { value: string; start: number; end: number; hadFocus: boolean } | null
+    ) => {
+      if (!snap) return;
+      const el = this.container?.querySelector(selector) as
+        | HTMLTextAreaElement
+        | HTMLInputElement
+        | null;
+      if (!el) return;
+      el.value = snap.value;
+      if (!snap.hadFocus) return;
+      el.focus({ preventScroll: true });
+      try {
+        el.setSelectionRange(snap.start, snap.end);
+      } catch {
+        // ignore unsupported selection
+      }
+    };
+    restore('[data-input="message"]', state.message);
+    restore('#fuse-new-channel-name', state.channel);
+  }
+
+  private updateChatListInPlace(): boolean {
+    const chatScroll = this.container?.querySelector('#fuse-chat-scroll') as HTMLElement | null;
+    if (!chatScroll) return false;
+    const wasNearBottom =
+      chatScroll.scrollHeight - chatScroll.scrollTop - chatScroll.clientHeight < 50;
+    const scrollTop = chatScroll.scrollTop;
+    chatScroll.innerHTML = this.renderChatMessagesHtml();
+    chatScroll.scrollTop = wasNearBottom ? chatScroll.scrollHeight : scrollTop;
+    return true;
   }
 
   // Utility methods
@@ -2796,6 +2848,7 @@ export class EnhancedFloatingPanel {
    * Set the Page Agent ID for this panel
    */
   setAgentId(id: string): void {
+    if (this.myAgentId === id) return;
     console.log('[FuseConnect] Panel assigned Agent ID:', id);
     this.myAgentId = id;
     this.update(); // Update UI if needed (e.g. to show ID)

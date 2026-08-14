@@ -4159,6 +4159,8 @@ Format as JSON array:
             // Clean hostname for better display (e.g. "gemini.google.com" -> "Gemini")
             let platformName = hostname;
             if (hostname.includes('gemini.google')) platformName = 'Gemini';
+            else if (hostname.includes('cursor.com') || hostname.includes('cursor.sh'))
+              platformName = 'Cursor';
             else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
             else if (hostname.includes('claude.ai')) platformName = 'Claude';
             else if (hostname.includes('perplexity.ai')) platformName = 'Perplexity';
@@ -4275,6 +4277,10 @@ Format as JSON array:
                 let platformName = message.platform || 'unknown';
                 if (!message.platform) {
                   if (tabUrl.includes('gemini.google')) platformName = 'Gemini';
+                  else if (tabUrl.includes('cursor.com') || tabUrl.includes('cursor.sh'))
+                    platformName = 'Cursor';
+                  else if (tabUrl.includes('/codex') || tabUrl.includes('codex.openai'))
+                    platformName = 'Codex';
                   else if (tabUrl.includes('chat.openai') || tabUrl.includes('chatgpt'))
                     platformName = 'ChatGPT';
                   else if (tabUrl.includes('claude.ai')) platformName = 'Claude';

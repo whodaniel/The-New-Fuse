@@ -144,4 +144,73 @@ describe('SimpleChatBridge injection', () => {
 
     expect(elements.input).toBe(pageTextarea);
   });
+
+  it('does not steal focus from the injectable composer when injecting a heartbeat', async () => {
+    jest.setTimeout(10000);
+    document.body.innerHTML = `
+      <div id="fuse-connect-panel-v7">
+        <textarea class="fcp6-input" data-input="message" placeholder="Message the channel..."></textarea>
+      </div>
+      <main>
+        <textarea placeholder="Message"></textarea>
+        <button type="button" aria-label="Send message">Send</button>
+      </main>
+    `;
+
+    const panel = document.querySelector('.fcp6-input') as HTMLTextAreaElement;
+    const page = document.querySelector('main textarea') as HTMLTextAreaElement;
+    const send = document.querySelector('main button') as HTMLButtonElement;
+    send.addEventListener('click', () => {
+      page.value = '';
+    });
+
+    panel.value = 'hello I am typ';
+    panel.focus();
+    panel.setSelectionRange(14, 14);
+
+    const success = await simpleChatBridge.sendMessage('TNF heartbeat from page-agent', {
+      preserveUserFocus: true,
+    });
+
+    expect(success).toBe(true);
+    expect(document.activeElement).toBe(panel);
+    expect(panel.value).toBe('hello I am typ');
+    expect(panel.selectionStart).toBe(14);
+    expect(panel.selectionEnd).toBe(14);
+  });
+
+  it('keeps the injectable caret in place when the user keeps typing during injection', async () => {
+    jest.setTimeout(10000);
+    document.body.innerHTML = `
+      <div id="fuse-connect-panel-v7">
+        <textarea class="fcp6-input" data-input="message" placeholder="Message the channel..."></textarea>
+      </div>
+      <main>
+        <textarea placeholder="Message"></textarea>
+        <button type="button" aria-label="Send message">Send</button>
+      </main>
+    `;
+
+    const panel = document.querySelector('.fcp6-input') as HTMLTextAreaElement;
+    const page = document.querySelector('main textarea') as HTMLTextAreaElement;
+    const send = document.querySelector('main button') as HTMLButtonElement;
+    send.addEventListener('click', () => {
+      page.value = '';
+    });
+
+    panel.value = 'hello I am typ';
+    panel.focus();
+    panel.setSelectionRange(14, 14);
+
+    const sendPromise = simpleChatBridge.sendMessage('TNF heartbeat from page-agent');
+    panel.value = 'hello I am typing a full sentence';
+    panel.setSelectionRange(panel.value.length, panel.value.length);
+
+    const success = await sendPromise;
+
+    expect(success).toBe(true);
+    expect(document.activeElement).toBe(panel);
+    expect(panel.value).toBe('hello I am typing a full sentence');
+    expect(panel.selectionStart).toBe(panel.value.length);
+  });
 });
