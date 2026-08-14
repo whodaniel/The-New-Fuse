@@ -1431,6 +1431,25 @@ async function main() {
     'apps/mcp-servers/devops-bridge/src/index.ts',
   ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
+  printHeader('State Freshness (volatile external state)');
+  try {
+    const freshness = require('node:child_process').spawnSync(
+      process.execPath,
+      ['scripts/protocols/state-freshness-gate.cjs', '--frontload'],
+      { cwd: ROOT, encoding: 'utf8', timeout: 20_000, env: process.env }
+    );
+    const text = String(freshness.stdout || '').trim();
+    if (text) {
+      text.split('\n').forEach((line) => console.log(line));
+    } else {
+      console.log('- unavailable — treat ALL external state as unverified until re-probed');
+    }
+  } catch (error) {
+    // Freshness reporting must never wedge a session shut. A failure here
+    // means "you know nothing", which is the safe default, not a hard stop.
+    console.log(`- unavailable (${error?.message || 'unknown'}) — treat ALL external state as unverified`);
+  }
+
   printHeader('Runtime Snapshot');
   await writeRuntimeStateSnapshot(parsed.runtimeTimeoutMs);
 

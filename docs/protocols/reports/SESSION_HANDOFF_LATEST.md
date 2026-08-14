@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-14T16:44:37.998Z`  
-Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
+Created At: `2026-08-14T19:13:08.051Z`  
+Handoff ID: `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `6a3fcf89dab42fd129505f4900f3825b5cb8a37e`
+- Head SHA: `51dc0376cc7e20336368def04740bce7075fbbd0`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,7 +19,11 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 
 ## Changed Paths
 
-- scripts/protocols/agent-self-edit-gate.cjs
+- docs/protocols/STATE_FRESHNESS_MANDATE.md
+- docs/protocols/state-freshness.registry.json
+- scripts/protocols/state-freshness-gate.cjs
+- scripts/protocols/state-freshness-gate.test.cjs
+- scripts/tnf-onboard.cjs
 - .agent/skills/agent-browser/SKILL.md
 - .agent/skills/tnf-supabase-agent-connection/SKILL.md
 - .agents/skills/tnf-hallucination-archeology/SKILL.md
@@ -80,6 +84,7 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md
 - docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/CONNECTIVE_JOURNAL_GROK_BOT_AND_GROK_4_6.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/PROTOCOL_MAP.md
@@ -122,6 +127,7 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 - scripts/library/ensure-library-audio-stack.cjs
 - scripts/product/check-member-storage-policy.cjs
 - scripts/product/check-personal-data-location-policy.cjs
+- scripts/protocols/agent-self-edit-gate.cjs
 - scripts/protocols/demo-external-teammate-handoff.cjs
 - scripts/release-gate.cjs
 - scripts/skills/codex-skill-disclosure-guard.cjs
@@ -133,10 +139,49 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 - .agent/skill-bank/skills-index.json
 - .agent/skill-bank/skills-summary.md
 - .agent/skill-bank/snapshots/project-agent/agent-browser-04afeeb5/SKILL.md
+- .agent/skills/antigravity/loki-mode/benchmarks/run-benchmarks.sh
 - apps/api/src/app.module.ts
+- apps/api/src/controllers/available-models.controller.ts
 - apps/api/src/controllers/relay-health.controller.ts
 - apps/api/src/controllers/self-improvement.controller.ts
 - apps/api/src/controllers/tnf-autonomous.controller.ts
+- apps/chrome-extension/dist-v7/background/index.js
+- apps/chrome-extension/dist-v7/content/ai-studio-automation.js
+- apps/chrome-extension/dist-v7/content/iframe-bridge.js
+- apps/chrome-extension/dist-v7/content/index.js
+- apps/chrome-extension/dist-v7/content/notebooklm-integration.js
+- apps/chrome-extension/dist-v7/content/youtube-integration.js
+- apps/chrome-extension/dist-v7/icons/icon128-connected.png
+- apps/chrome-extension/dist-v7/icons/icon128-error.png
+- apps/chrome-extension/dist-v7/icons/icon128.png
+- apps/chrome-extension/dist-v7/icons/icon16-connected.png
+- apps/chrome-extension/dist-v7/icons/icon16-error.png
+- apps/chrome-extension/dist-v7/icons/icon16.png
+- apps/chrome-extension/dist-v7/icons/icon48-connected.png
+- apps/chrome-extension/dist-v7/icons/icon48-error.png
+- apps/chrome-extension/dist-v7/icons/icon48.png
+- apps/chrome-extension/dist-v7/manifest.json
+- apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs
+- apps/chrome-extension/dist-v7/popup/index.html
+- apps/chrome-extension/dist-v7/popup/popup.css
+- apps/chrome-extension/dist-v7/popup/popup.js
+- apps/chrome-extension/generate-icons.js
+- apps/chrome-extension/package.json
+- apps/chrome-extension/src/v6/background/index.ts
+- apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts
+- apps/chrome-extension/src/v6/content/adapters/**tests**/SimpleChatBridge.test.ts
+- apps/chrome-extension/src/v6/content/index.ts
+- apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts
+- apps/chrome-extension/src/v6/manifest.json
+- apps/chrome-extension/src/v6/popup/index.html
+- apps/chrome-extension/src/v6/popup/popup.js
+- apps/chrome-extension/src/v6/shared/**tests**/federation-identity.test.ts
+- apps/chrome-extension/src/v6/shared/**tests**/utils.test.ts
+- apps/chrome-extension/src/v6/shared/federation-identity.ts
+- apps/chrome-extension/src/v6/shared/utils.ts
+- apps/chrome-extension/webpack.v7.config.cjs
+- apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html
+- apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.md
 - apps/frontend/src/ComprehensiveRouter.tsx
 - apps/frontend/src/components/UnifiedChat/ToolsetConfigDrawer.tsx
 - apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
@@ -144,19 +189,65 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 - apps/frontend/src/config/platformParityFeatures.ts
 - apps/frontend/src/config/routeCatalog.ts
 - apps/frontend/src/config/sidebarNavigation.ts
+- apps/frontend/src/pages/chat/ChatPage.tsx
 - apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx
 - apps/frontend/src/pages/mcp/MCPHub.tsx
 - apps/tauri-desktop/src/pages/WebBrowser.tsx
 - concordance_results/unified_graph_stats.json
+- docker-compose.yml
+- docs/ARCHIVE_CHERRY_PICK_SUMMARY.md
+- docs/BROWSER_HUB_IMPROVEMENT_SESSION.md
+- docs/BROWSER_HUB_SWARM.md
+- docs/COMPLETE_URL_MAP.md
+- docs/CTO_FEATURE_PARITY_MATRIX_REDACTED.md
+- docs/PROCEDURAL_SKILL_MATRICES.md
+- docs/TNF_HERMES_FEATURE_PARITY_SUMMARY.md
+- docs/TNF_STABILITY_AND_SECURITY_LEDGER.md
+- docs/archive/MERGE_INSTRUCTIONS.md
+- docs/archive/NEXT_STEPS.md
+- docs/archive/deployment/DEPLOY_API_FIX.md
+- docs/archive/electron-browser-hub/BROWSER_HUB_AUDIT_REPORT.md
+- docs/archive/session-reports/EXECUTION_SUMMARY.md
+- docs/consolidation/archived-from-home/openclaw-workspace/DOCUMENT_SECURITY_AUDIT.md
+- docs/history/TNF_PROJECT_HISTORY.md
+- docs/incidents/APPLE_NOTES_IMPORT_2026-05-04.md
 - docs/operations/tnf-substrate-seal.json
+- docs/protocols/INFORMATION_INTENTIONS.md
+- docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md
+- docs/status-reports/SELF_IMPROVEMENT_REPORT.md
+- docs/ui-ux/FEATURE_SHOWCASE_SUMMARY.md
+- docs/vscode-extension/TNF_INTEGRATION_COMPLETE.md
+- packages/a2a-core/a2a-migration-85pct-complete.patch
 - packages/tnf-cli/src/utils/command-palette.ts
+- packages/tnf-cli/src/utils/llm-provider-detector.ts
+- packages/tnf-cli/src/utils/palette-readline.test.ts
+- packages/tnf-cli/src/utils/palette-readline.ts
+- scripts/NATIVE_SENSORY_SUITE.md
+- scripts/audio_trigger_test.py
+- scripts/safe-merge-to-main.sh
+- scripts/vision_benchmark_report.py
+- scripts/ws_monitor.py
 - tnf
 - apps/api-gateway/src/auth.controller.ts
 - apps/api-gateway/src/auth.module.ts
 - apps/api-gateway/src/auth.service.ts
+- apps/chrome-extension/dist-v7/background/index.js.map
+- apps/chrome-extension/dist-v7/content/ai-studio-automation.js.map
+- apps/chrome-extension/dist-v7/content/iframe-bridge.js.map
+- apps/chrome-extension/dist-v7/content/index.js.map
+- apps/chrome-extension/dist-v7/content/notebooklm-integration.js.map
+- apps/chrome-extension/dist-v7/content/youtube-integration.js.map
+- apps/chrome-extension/dist-v7/icons/icon128-connecting.png
+- apps/chrome-extension/dist-v7/icons/icon128-disconnected.png
+- apps/chrome-extension/dist-v7/icons/icon16-connecting.png
+- apps/chrome-extension/dist-v7/icons/icon16-disconnected.png
+- apps/chrome-extension/dist-v7/icons/icon48-connecting.png
+- apps/chrome-extension/dist-v7/icons/icon48-disconnected.png
+- apps/chrome-extension/dist-v7/popup/popup.js.map
 - apps/api/src/modules/browser/
 - apps/api/src/modules/harness/
 - apps/browser-control-surfaces/
+- apps/chrome-extension/jest.focus.config.cjs
 - apps/frontend/pages/mcp.tsx
 - apps/frontend/src/components/control-surface/HarnessStatusPanel.tsx
 - apps/frontend/src/components/control-surface/useHarnessStatus.ts
@@ -164,11 +255,14 @@ Handoff ID: `e557dc46-8b39-4b51-93ce-4c62379b0c37`
 - apps/frontend/src/services/browserAgent.service.ts
 - apps/tauri-desktop/src/services/cache/
 - data/llm-intel/history/intel_2026-08-14.json
+- data/providers/nvidia-models.json
 - documentation/
 - infrastructure/README.md
 - infrastructure/hpa/
 - infrastructure/load-balancer/
 - infrastructure/redis/
+- packages/tnf-cli/src/commands/catalog.ts
+- zi17BkeA
 
 ## Verification
 

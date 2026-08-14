@@ -956,6 +956,14 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-14T19:13:08.120Z handoff `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f` head
+  `51dc0376cc7e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T16:57:32.420Z handoff `ba6ba151-9ddf-40c6-9fe9-56b174be19f5` head
+  `51dc0376cc7e` project `TNF-SESSION` — Continue monitoring federation
+  transport lanes for regression
+
 - 2026-08-14T16:44:38.148Z handoff `e557dc46-8b39-4b51-93ce-4c62379b0c37` head
   `6a3fcf89dab4` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
