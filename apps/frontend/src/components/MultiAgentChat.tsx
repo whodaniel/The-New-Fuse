@@ -112,6 +112,34 @@ const extractAssistantText = (
   };
 };
 
+// ⚡ Bolt: Extracted AgentItem and wrapped in React.memo to prevent O(n) re-renders
+// of the agent list during typing in the main chat input.
+const AgentItem = React.memo<{ agent: ChatAgent }>(({ agent }) => (
+  <div className="flex items-center gap-3 p-3 rounded-md bg-transparent/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group">
+    <div className="relative">
+      <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10">
+        <Bot className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
+      </div>
+      <div
+        className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
+          agent.status === 'online'
+            ? 'bg-emerald-500'
+            : agent.status === 'busy'
+              ? 'bg-amber-500'
+              : 'bg-transparent0'
+        }`}
+      />
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="text-sm font-bold text-white truncate">{agent.name}</div>
+      <div className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+        {agent.role}
+      </div>
+    </div>
+  </div>
+));
+AgentItem.displayName = 'AgentItem';
+
 export const MultiAgentChat: React.FC = () => {
   const { api, agentService } = useApi();
   const { toast } = useToast();
@@ -237,31 +265,7 @@ export const MultiAgentChat: React.FC = () => {
 
           <div className="space-y-3">
             {activeAgents.map((agent) => (
-              <div
-                key={agent.id}
-                className="flex items-center gap-3 p-3 rounded-md bg-transparent/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group"
-              >
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10">
-                    <Bot className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
-                  </div>
-                  <div
-                    className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                      agent.status === 'online'
-                        ? 'bg-emerald-500'
-                        : agent.status === 'busy'
-                          ? 'bg-amber-500'
-                          : 'bg-transparent0'
-                    }`}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-white truncate">{agent.name}</div>
-                  <div className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
-                    {agent.role}
-                  </div>
-                </div>
-              </div>
+              <AgentItem key={agent.id} agent={agent} />
             ))}
           </div>
 
@@ -385,7 +389,8 @@ export const MultiAgentChat: React.FC = () => {
   );
 };
 
-const ParamSlider: React.FC<{ label: string; value: number }> = ({ label, value }) => (
+// ⚡ Bolt: Wrapped ParamSlider in React.memo to prevent unnecessary re-renders
+const ParamSlider = React.memo<{ label: string; value: number }>(({ label, value }) => (
   <div className="space-y-2">
     <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
       <span>{label}</span>
@@ -395,6 +400,7 @@ const ParamSlider: React.FC<{ label: string; value: number }> = ({ label, value 
       <div className="h-full bg-blue-600 rounded-full" style={{ width: `${value * 100}%` }} />
     </div>
   </div>
-);
+));
+ParamSlider.displayName = 'ParamSlider';
 
 export default MultiAgentChat;
