@@ -97,12 +97,17 @@ export function DataTable<T extends { id: string | number }>({
 
     // Search
     if (searchTerm) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      // Precompute filterable columns to avoid O(N * C) lookups during filter
+      const filterableColumnIds = new Set(
+        columns.filter((col) => col.filterable !== false).map((col) => col.id)
+      );
+
       result = result.filter((row) =>
         Object.entries(row).some(([key, value]) => {
-          const column = columns.find((col) => col.id === key);
           return (
-            column?.filterable !== false &&
-            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+            filterableColumnIds.has(key) &&
+            String(value).toLowerCase().includes(lowerSearchTerm)
           );
         })
       );
@@ -110,12 +115,15 @@ export function DataTable<T extends { id: string | number }>({
 
     // Sort
     if (sortBy) {
+      // Find sort column once outside the sort loop to prevent O(N log N) lookups
+      const sortColumn = columns.find((col) => col.id === sortBy);
+      const isNumeric = sortColumn?.numeric;
+
       result.sort((a, b) => {
         const aValue = (a as any)[sortBy];
         const bValue = (b as any)[sortBy];
-        const column = columns.find((col) => col.id === sortBy);
 
-        if (column?.numeric) {
+        if (isNumeric) {
           return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
         }
 
