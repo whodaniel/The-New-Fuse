@@ -61,6 +61,7 @@ import { LocalRuntimeModule } from './modules/local-runtime/local-runtime.module
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { ResourcesModule } from './modules/resources/resources.module';
+import { SpacesModule } from './modules/spaces/spaces.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
 import { TerminalsModule } from './modules/terminals/terminals.module';
@@ -162,6 +163,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     PromptTemplatesModule,
     MarketplaceModule,
     ResourcesModule,
+    SpacesModule, // TNF Hosted Spaces — managed page/API route hosting (docs/TNF_HOSTED_SPACES_ARCHITECTURE.md)
     TerminalsModule,
     LocalRuntimeModule,
     UnifiedLedgerModule,

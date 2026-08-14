@@ -47,6 +47,7 @@ const outputs = [
   ["openclaw", "openclaw.mcp.json"],
   ["hermes", "hermes.mcp.json"],
   ["pi", "pi.mcp.json"],
+  ["zo", "zo.mcp.json"],
 ];
 
 for (const [client, file] of outputs) {

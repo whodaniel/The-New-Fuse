@@ -61,6 +61,7 @@ const clientCommandMap = {
   openclaw: "openclaw",
   hermes: "hermes",
   pi: "pi",
+  zo: "zo",
 };
 
 const cmd = clientCommandMap[client];

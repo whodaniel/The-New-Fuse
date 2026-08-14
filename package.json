@@ -135,6 +135,7 @@
     "tnf:start:gemini": "node scripts/tnf-start-ai.cjs gemini",
     "tnf:start:cursor": "node scripts/tnf-start-ai.cjs cursor",
     "tnf:start:pi": "node scripts/tnf-start-ai.cjs pi",
+    "tnf:start:zo": "node scripts/tnf-start-ai.cjs zo",
     "tnf:tauri:dmg": "node scripts/packaging/build-tauri-dmg.cjs",
     "tnf:journey:extract": "node scripts/timeline/extract-development-journey-evidence.mjs",
     "tnf:journey:extract:local": "node scripts/timeline/extract-development-journey-evidence.mjs --include-default-local-roots --include-project-roots",
