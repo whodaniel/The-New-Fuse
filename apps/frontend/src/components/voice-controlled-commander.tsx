@@ -63,6 +63,7 @@ export function VoiceControlledCommander() {
           variant={isListening ? 'destructive' : 'primary'}
           size="lg"
           className="rounded-full"
+          aria-label={isListening ? 'Stop voice command' : 'Start voice command'}
         >
           {isListening ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
         </Button>
