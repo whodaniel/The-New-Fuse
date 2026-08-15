@@ -6,3 +6,7 @@
 ## 2025-05-18 - [Missing Accessibility on Custom Raw HTML Elements]
 **Learning:** When bypassing the core design system components and writing raw custom HTML elements like `<button>` and `<input type="checkbox">` (as seen in `DataTable.tsx`), these elements are prone to missing accessibility attributes (like `aria-label`) and focus states for keyboard users (`focus-visible` ring styling). Additionally, wrapper elements like `<Tooltip>` need explicitly bound `onFocus` and `onBlur` listeners to support keyboard navigation.
 **Action:** Always verify that raw HTML buttons and inputs explicitly contain `aria-label` attributes (especially when icon-only) and incorporate `focus-visible` styles to match the accessibility defaults provided by the core components.
+
+## 2025-05-18 - [Tooltip Label ARIA Mapping]
+**Learning:** The UI's `Tooltip` component does not automatically map its `label` prop to an `aria-label` on the wrapped trigger element, which causes missing labels for screen readers when wrapping icon-only buttons.
+**Action:** Always explicitly add an `aria-label` attribute directly to icon-only buttons, even if they are wrapped in a `<Tooltip label="...">` component, matching the label text for consistency.

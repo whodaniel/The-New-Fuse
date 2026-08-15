@@ -335,6 +335,7 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
                       size="icon"
                       className="h-6 w-6 shrink-0 text-slate-400 hover:text-red-400 hover:bg-red-500/20 transition-all"
                       onClick={() => handleRemoveInput(key)}
+                      aria-label="Remove this input"
                     >
                       <X className="h-3.5 w-3.5" />
                     </Button>

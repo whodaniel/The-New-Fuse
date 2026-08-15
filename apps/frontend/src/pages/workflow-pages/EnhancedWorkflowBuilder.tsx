@@ -869,6 +869,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={onSaveModalOpen}
                       variant="secondary"
                       className="h-8 w-8"
+                      aria-label="Save Workflow"
                     >
                       <FiSave className="h-4 w-4" />
                     </Button>
@@ -880,6 +881,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={exportWorkflow}
                       variant="outline"
                       className="h-8 w-8"
+                      aria-label="Export Workflow"
                     >
                       <FiDownload className="h-4 w-4" />
                     </Button>
@@ -891,6 +893,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={onExecutionLogOpen}
                       variant="ghost"
                       className="h-8 w-8"
+                      aria-label="View Logs"
                     >
                       <FiEye className="h-4 w-4" />
                     </Button>
@@ -902,6 +905,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={() => onLayout('TB')}
                       variant="secondary"
                       className="h-8 w-8"
+                      aria-label="Auto Layout"
                     >
                       <FiGrid className="h-4 w-4" />
                     </Button>
@@ -913,6 +917,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={onDryRun}
                       variant="outline"
                       className="h-8 w-8 text-blue-500 border-blue-500"
+                      aria-label="Dry Run Validation"
                     >
                       <FiCheckCircle className="h-4 w-4" />
                     </Button>
@@ -933,6 +938,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       variant="ghost"
                       className="h-8 w-8"
                       disabled={!canUndo}
+                      aria-label="Undo (Ctrl+Z)"
                     >
                       <FiRotateCcw className="h-4 w-4" />
                     </Button>
@@ -951,6 +957,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       variant="ghost"
                       className="h-8 w-8"
                       disabled={!canRedo}
+                      aria-label="Redo (Ctrl+Y)"
                     >
                       <FiRotateCw className="h-4 w-4" />
                     </Button>
@@ -962,6 +969,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       onClick={resetWorkflow}
                       variant="danger"
                       className="h-8 w-8"
+                      aria-label="Reset Workflow"
                     >
                       <FiXCircle className="h-4 w-4" />
                     </Button>
