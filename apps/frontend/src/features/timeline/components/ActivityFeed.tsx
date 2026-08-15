@@ -6,6 +6,42 @@ interface ActivityFeedProps {
   loading?: boolean;
 }
 
+
+// ⚡ Bolt: Extracted inline item into React.memo to prevent O(n) re-renders when parent updates
+const ActivityItem = React.memo(({ event }: { event: any }) => (
+  <div
+    className="flex items-center gap-4 p-4 bg-slate-900/40 border border-slate-800/50 rounded-xl hover:bg-sky-500/5 transition-all group"
+  >
+    <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400 group-hover:border-sky-500/50 transition-colors">
+      {event.actor?.charAt(0).toUpperCase() || 'S'}
+    </div>
+
+    <div className="flex-grow min-w-0">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-black text-slate-200">{event.actor}</span>
+        <span className="text-xs text-slate-400 italic">
+          {event.eventType?.replace(/_/g, ' ')}
+        </span>
+        <span className="text-xs font-bold text-sky-400">
+          {event.payload?.title || event.payload?.message || 'Update'}
+        </span>
+      </div>
+      <div className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-wider">
+        {format(new Date(event.timestamp), 'h:mm a')}
+      </div>
+    </div>
+
+    <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+      <button
+        className="text-[10px] font-bold text-sky-500 hover:text-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded px-1"
+        aria-label={`View details for ${event.payload?.title || event.payload?.message || 'Update'}`}
+      >
+        VIEW
+      </button>
+    </div>
+  </div>
+));
+
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
   const groupedEvents = useMemo(() => {
     const groups: Record<string, any[]> = {};
@@ -58,38 +94,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
 
             <div className="space-y-3">
               {items.map((event) => (
-                <div
-                  key={event.id}
-                  className="flex items-center gap-4 p-4 bg-slate-900/40 border border-slate-800/50 rounded-xl hover:bg-sky-500/5 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400 group-hover:border-sky-500/50 transition-colors">
-                    {event.actor?.charAt(0).toUpperCase() || 'S'}
-                  </div>
-
-                  <div className="flex-grow min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black text-slate-200">{event.actor}</span>
-                      <span className="text-xs text-slate-400 italic">
-                        {event.eventType?.replace(/_/g, ' ')}
-                      </span>
-                      <span className="text-xs font-bold text-sky-400">
-                        {event.payload?.title || event.payload?.message || 'Update'}
-                      </span>
-                    </div>
-                    <div className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-wider">
-                      {format(new Date(event.timestamp), 'h:mm a')}
-                    </div>
-                  </div>
-
-                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
-                    <button
-                      className="text-[10px] font-bold text-sky-500 hover:text-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded px-1"
-                      aria-label={`View details for ${event.payload?.title || event.payload?.message || 'Update'}`}
-                    >
-                      VIEW
-                    </button>
-                  </div>
-                </div>
+                <ActivityItem key={event.id} event={event} />
               ))}
             </div>
           </div>
@@ -107,5 +112,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
     </div>
   );
 };
+
+ActivityItem.displayName = 'ActivityItem';
 
 export default ActivityFeed;
