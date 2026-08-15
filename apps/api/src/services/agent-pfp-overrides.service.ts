@@ -59,21 +59,20 @@ export class AgentPfpOverridesService {
   async listOverrides(userId: string, namespace = 'global'): Promise<AgentPfpOverrideMap> {
     await this.ensureSchema();
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
+    const safeNamespace = this.normalizeNamespace(namespace);
 
     const rows = await this.db.executeRaw<AgentPfpOverrideRow>(`
       SELECT agent_id, image_url, prompt, provider, model, style, source, updated_at
       FROM agent_pfp_overrides
-      WHERE user_id = '${safeUserId}'
-        AND namespace = '${safeNamespace}'
+      WHERE user_id = $1
+        AND namespace = $2
       ORDER BY updated_at DESC
-    `);
+    `, [userId, safeNamespace]);
 
     const overrides: AgentPfpOverrideMap = {};
 
     for (const row of rows) {
-      if (!row?.agent_id || !row?.image_url) continue;
+      if (!row?.agent_id || !row?.image_url) {continue;}
       overrides[row.agent_id] = {
         imageUrl: row.image_url,
         prompt: row.prompt || undefined,
@@ -101,9 +100,8 @@ export class AgentPfpOverridesService {
       await this.assertCloudWriteAccess(userId);
     }
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
-    const safeAgentId = this.escapeSqlLiteral(agentId.trim());
+    const safeNamespace = this.normalizeNamespace(namespace);
+    const safeAgentId = agentId.trim();
     const now = new Date().toISOString();
     const storedImageUrl = await this.prepareImageForStorage(
       userId,
@@ -113,12 +111,7 @@ export class AgentPfpOverridesService {
     );
 
     const id = randomUUID();
-    const imageUrlSql = this.toSqlString(storedImageUrl);
-    const promptSql = this.toSqlNullableString(override.prompt);
-    const providerSql = this.toSqlNullableString(override.provider);
-    const modelSql = this.toSqlNullableString(override.model);
-    const styleSql = this.toSqlNullableString(override.style);
-    const sourceSql = this.toSqlString(this.normalizeSource(override.source));
+    const source = this.normalizeSource(override.source);
 
     await this.db.executeRaw(`
       INSERT INTO agent_pfp_overrides (
@@ -135,18 +128,7 @@ export class AgentPfpOverridesService {
         updated_at,
         created_at
       ) VALUES (
-        '${id}',
-        '${safeNamespace}',
-        '${safeUserId}',
-        '${safeAgentId}',
-        ${imageUrlSql},
-        ${promptSql},
-        ${providerSql},
-        ${modelSql},
-        ${styleSql},
-        ${sourceSql},
-        '${now}',
-        '${now}'
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
       )
       ON CONFLICT (namespace, user_id, agent_id)
       DO UPDATE SET
@@ -157,7 +139,20 @@ export class AgentPfpOverridesService {
         style = EXCLUDED.style,
         source = EXCLUDED.source,
         updated_at = EXCLUDED.updated_at
-    `);
+    `, [
+      id,
+      safeNamespace,
+      userId,
+      safeAgentId,
+      storedImageUrl,
+      override.prompt || null,
+      override.provider || null,
+      override.model || null,
+      override.style || null,
+      source,
+      now,
+      now
+    ]);
   }
 
   async removeOverride(
@@ -172,16 +167,15 @@ export class AgentPfpOverridesService {
       await this.assertCloudWriteAccess(userId);
     }
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
-    const safeAgentId = this.escapeSqlLiteral(agentId.trim());
+    const safeNamespace = this.normalizeNamespace(namespace);
+    const safeAgentId = agentId.trim();
 
     await this.db.executeRaw(`
       DELETE FROM agent_pfp_overrides
-      WHERE user_id = '${safeUserId}'
-        AND namespace = '${safeNamespace}'
-        AND agent_id = '${safeAgentId}'
-    `);
+      WHERE user_id = $1
+        AND namespace = $2
+        AND agent_id = $3
+    `, [userId, safeNamespace, safeAgentId]);
   }
 
   private async assertCloudWriteAccess(userId: string): Promise<void> {
@@ -243,8 +237,8 @@ export class AgentPfpOverridesService {
   }
 
   private getStorageBackend(): 'gcs' | 'cloudflare-images' | 'inline' {
-    if (process.env.GCS_BUCKET) return 'gcs';
-    if (this.hasCloudflareImagesConfig()) return 'cloudflare-images';
+    if (process.env.GCS_BUCKET) {return 'gcs';}
+    if (this.hasCloudflareImagesConfig()) {return 'cloudflare-images';}
     return 'inline';
   }
 
@@ -323,7 +317,7 @@ export class AgentPfpOverridesService {
 
   private parseDataUrl(dataUrl: string): { mimeType: string; buffer: Buffer } | null {
     const match = /^data:([^;,]+)(;base64)?,(.*)$/i.exec(dataUrl);
-    if (!match) return null;
+    if (!match) {return null;}
 
     const mimeType = match[1] || 'image/png';
     const isBase64 = Boolean(match[2]);
@@ -333,7 +327,7 @@ export class AgentPfpOverridesService {
       const buffer = isBase64
         ? Buffer.from(payload, 'base64')
         : Buffer.from(decodeURIComponent(payload), 'utf8');
-      if (!buffer.length) return null;
+      if (!buffer.length) {return null;}
       return { mimeType, buffer };
     } catch {
       return null;
@@ -349,7 +343,7 @@ export class AgentPfpOverridesService {
   }): Promise<string | null> {
     const accountId = this.getCloudflareAccountId();
     const token = this.getCloudflareApiToken();
-    if (!accountId || !token) return null;
+    if (!accountId || !token) {return null;}
 
     const endpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`;
     const fileExt = this.extensionForMimeType(input.mimeType);
@@ -406,37 +400,22 @@ export class AgentPfpOverridesService {
 
   private extensionForMimeType(mimeType: string): string {
     const normalized = String(mimeType || '').toLowerCase();
-    if (normalized.includes('jpeg') || normalized.includes('jpg')) return 'jpg';
-    if (normalized.includes('webp')) return 'webp';
-    if (normalized.includes('gif')) return 'gif';
+    if (normalized.includes('jpeg') || normalized.includes('jpg')) {return 'jpg';}
+    if (normalized.includes('webp')) {return 'webp';}
+    if (normalized.includes('gif')) {return 'gif';}
     return 'png';
   }
 
   private normalizeSource(source: string | null | undefined): PfpSource {
-    if (source === 'upload') return 'upload';
-    if (source === 'cloud') return 'cloud';
+    if (source === 'upload') {return 'upload';}
+    if (source === 'cloud') {return 'cloud';}
     return 'generated';
   }
 
   private toIso(value: string | Date): string {
-    if (value instanceof Date) return value.toISOString();
+    if (value instanceof Date) {return value.toISOString();}
     const parsed = new Date(value);
-    if (!Number.isFinite(parsed.getTime())) return new Date().toISOString();
+    if (!Number.isFinite(parsed.getTime())) {return new Date().toISOString();}
     return parsed.toISOString();
-  }
-
-  private toSqlString(value: string): string {
-    return `'${this.escapeSqlLiteral(value)}'`;
-  }
-
-  private toSqlNullableString(value: string | null | undefined): string {
-    if (value == null) return 'NULL';
-    const normalized = String(value).trim();
-    if (!normalized) return 'NULL';
-    return `'${this.escapeSqlLiteral(normalized)}'`;
-  }
-
-  private escapeSqlLiteral(value: string): string {
-    return String(value).replace(/'/g, "''");
   }
 }
