@@ -9,6 +9,34 @@ continuation.resume_checklist.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
+- [✅] **2026-08-16 Apple Notes Sequential Ingestion, Storage Transparency &
+  Persistent Cron Backup Suite (Gemini)**:
+  - **Sequential Chronological Ingestion**: Processed all 267 entries from Apple
+    Notes `NEW- May-2026` strictly from oldest to newest
+    (`May 4 → May 17, 2026`), registering them into
+    `data/ingestion-runs/ai6-new-may-2026-manifest.json` (384 total active EIA
+    artifacts).
+  - **Privacy & Personal Storage Isolation**: Secured raw developer thought
+    streams into gitignored operator-local storage (`docs/personal/` and
+    `~/.tnf/personal-intelligence/`).
+  - **Durable Intake Forwarder & Gauntlet Gatekeeper**: Deployed
+    `scripts/autonomy/tnf_intake_forwarder.py` and
+    `data/harness/intake-forwarder-config.json` to evaluate intakes against the
+    4-gate Gauntlet, graduating sanitized intelligence into
+    `docs/distilled-intel/`.
+  - **Storage Transparency & Persistent Cron Backup Engine**: Implemented
+    `scripts/autonomy/tnf_backup_cron.py` providing real-time storage inventory
+    across 5 domains (652.75 MB total footprint), custom destination path
+    configuration, retention pruning, and persistent OS `crontab` sync.
+  - **Frontend UI/UX Exposure**: Modernized
+    `apps/frontend/src/pages/Admin/BackupRestore.tsx` with live storage topology
+    visualizers, custom destination picker, cron schedule controls, and archive
+    tables; wired directly into `apps/frontend/src/pages/Settings.tsx`
+    (`data_storage` tab).
+  - **Unified Semantic Knowledge Graph**: Recompiled
+    `concordance_results/unified_graph.json.gz` (31,477 nodes, 76,338 edges) and
+    regenerated all HTML graph visualizers and wordcount reports.
+
 - [✅] **2026-08-13 Grok Bot / Grok 4.6 response package (Cursor)** — Logged
   market read; published positioning
   (`docs/marketing/VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md`); blog +
@@ -162,8 +190,16 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-13T22:43:46.297Z New script(s) created:
 - [✅] 2026-08-14T21:51:09.127Z New script(s) created:
 - [✅] 2026-08-16T05:00:07.885Z New script(s) created:
+- [✅] 2026-08-16T20:31:26.857Z New agent(s) created: command-code
+- [✅] 2026-08-16T20:31:26.857Z New script(s) created: tnf-authority-keys.cjs,
+  tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
   redis-connection-guard-cron.sh, redis-connection-guard.cjs,
   tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+- [✅] 2026-08-16T20:31:26.857Z Agent definition change: 1 added, 0 removed
+
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
 - [✅] 2026-08-16T05:03:07.479Z New script(s) created:
   redis-connection-guard-cron.sh, redis-connection-guard.cjs,
   tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
@@ -969,6 +1005,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T21:00:44.855Z handoff `c9e8906d-b301-4f89-a593-9fdb61775593` head
+  `b4e3627c19de` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-16T18:01:25.501Z handoff `f202ac36-a0eb-427d-84eb-d19a1826ed62` head
   `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from

@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-16T18:01:23.650Z** — handoff
+Updated: **2026-08-16T21:00:44.792Z** — handoff
+`c9e8906d-b301-4f89-a593-9fdb61775593` (`b4e3627c19de`).
 `f202ac36-a0eb-427d-84eb-d19a1826ed62` (`84d0c9d15899`).
 `49214223-37de-444a-92f5-4b40c6d6d66a` (`84d0c9d15899`).
 `34832506-cd3e-447e-b649-47643444be12` (`84d0c9d15899`).
@@ -437,6 +438,12 @@ Detail: `docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md`.
 3. **Master Clock sequential idNumber** — requires Redis bridge live for
    REGISTRATION_CONFIRMED
 4. **Phase 2** — intent frames, CER, snapshot versioning (ChatGPT spec)
+
+### Newly Registered (This Session)
+
+| Agent        | Identity                           | Status                                           |
+| ------------ | ---------------------------------- | ------------------------------------------------ |
+| command-code | `TNF:LOCAL:AGENT:COMMAND-CODE:001` | **NEW** — registered at 2026-08-16T20:21:07.680Z |
 
 ## Session Logs
 
@@ -1228,3 +1235,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (f202ac36-a0eb-427d-84eb-d19a1826ed62) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c9e8906d-b301-4f89-a593-9fdb61775593) | ✅ HANDOFF_READY |

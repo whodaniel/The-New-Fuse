@@ -59,6 +59,83 @@ handoffs, and silent overwrites of each other's output.
 > on the same path. Resolution required one authoritative consolidation. This
 > protocol exists so the _next_ overlapping agent detects the sibling first.
 
+> **Canonical incident #2 — shared-report overwrite, two variants
+> (2026-08-16):** A fleet of multiple agents (Hermes sessions,
+> `tnf-interactive-01`, the `command-code` worker added on 2026-08-16, and any
+> `tnf-cli-agent` running autonomous commits) all emit into the same shared
+> canonical report `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`. Two
+> distinct overwrite variants have been observed in the same session:
+>
+> 1. **Schema-INVALID clobber** — a concurrent emitter writes a payload that
+>    fails `docs/protocols/schemas/tnf-session-handoff.schema.json` (e.g.
+>    missing `repository` / `branch` / `head_sha` / `changed_paths`, a
+>    `work_summary` string instead of array, a `continuation` with no `owner`).
+>    Observed once: an emitter stamped `source_agent: tnf-interactive-01`
+>    clobbered the working-tree copy that a committed, schema-valid handoff
+>    (`f202ac36`) had just established.
+> 2. **Schema-VALID clobber** (more common) — a concurrent emitter writes a
+>    _schema-valid_ handoff whose `created_at` is _newer than your own
+>    session-start time_. Observed in real fleet activity: a `command-code`
+>    worker emitted handoff `56ff164f` (`created_at: 20:31Z`,
+>    `head_sha: b4e3627c19`,
+>    `work_summary: ["Created 1 new agent(s): command-code", ...]`) while this
+>    session was still running. The on-disk file passes every schema check, but
+>    it is **not your** handoff and not your `next_actions`. If you
+>    `git checkout HEAD --` this version, you destroy the other agent's session
+>    continuity — the right move is to **detect and decide**, not blindly
+>    restore.
+>
+> Both variants share the same failure class as incident #1 above: a shared
+> persistence path written by multiple actors. They did **not** affect the
+> already-pushed `HEAD` (that stays clean); they only dirtied the working tree
+> and would have poisoned the next agent's `handoff:gate` (variant 1) or its
+> continuity assumptions (variant 2) unless detected.
+>
+> **Detection — the concurrent-write invariant (catches BOTH variants):** before
+> trusting or acting on any diff to the handoff report, run all three:
+>
+> ```bash
+> # (a) Schema-invariant (catches variant 1: invalid clobbers)
+> node -e "const A=require(require.resolve('ajv/dist/2020',{paths:[process.cwd()+'/scripts/protocols']})).default;
+> const F=require(require.resolve('ajv-formats',{paths:[process.cwd()+'/scripts/protocols']}));
+> const fs=require('fs');const s=JSON.parse(fs.readFileSync('docs/protocols/schemas/tnf-session-handoff.schema.json','utf8'));
+> const h=JSON.parse(fs.readFileSync('docs/protocols/reports/SESSION_HANDOFF_LATEST.json','utf8'));
+> const ajv=new A({allErrors:true,strict:false});F(ajv);console.log('VALID:',ajv.compile(s)(h));"
+> # (b) Freshness comparison (catches variant 2: valid clobbers newer than your session start)
+> stat -f '%Sm' docs/protocols/reports/SESSION_HANDOFF_LATEST.json   # mtime
+> # Compare against your session start (the timestamp you booted at).
+> # If mtime > session-start AND the file's commits[] does NOT include
+> # any sha you committed this session, a concurrent emitter overwrote it.
+> git show HEAD:docs/protocols/reports/SESSION_HANDOFF_LATEST.json | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const h=JSON.parse(s);console.log('committed id:',h.handoff_id,'commits:',(h.artifacts?.commits||[]).length);});"
+> # (c) Live-writer check (always required before any restore)
+> pgrep -fl "emit-session-handoff|turn-end"     # must be empty
+> crontab -l | grep -iE "handoff|turn-end"      # must be empty
+> ```
+>
+> Interpretation:
+>
+> - (a) on-disk invalid AND `git show HEAD:` valid → variant 1 overwrite.
+> - (b) on-disk mtime > your session-start AND on-disk `commits[]` excludes the
+>   sha you authored this session → variant 2 overwrite.
+> - (c) any live writer → **stop**; surface to operator instead of restoring.
+>
+> **Recovery — depends on the variant:**
+>
+> - Variant 1 (invalid clobber): restore canonical truth from HEAD, then re-emit
+>   your own handoff on top:
+>   ```bash
+>   git checkout HEAD -- docs/protocols/reports/SESSION_HANDOFF_LATEST.json \
+>     docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+>   # re-emit your work unit's handoff (script: emit-session-handoff.cjs)
+>   ```
+> - Variant 2 (valid clobber): do NOT destroy the other agent's work. Either (i)
+>   keep their handoff and append your `next_actions` via a fresh
+>   `emit-session-handoff` (the emitter's coverage check tolerates multiple
+>   actors if their `changed_paths` are disjoint), or (ii) raise to operator and
+>   pause. The handoff is **shared canonical state**, not a single-writer log.
+> - In either case, **never** `git add -A` a clobbered version into a commit;
+>   **never** restore while a live emitter may still be writing.
+
 ---
 
 ## 2. Detection — the Overlap Check (run BEFORE producing output)
@@ -135,6 +212,15 @@ Run `pnpm run conflict:tier` (or apply manually):
 - Re-run the Overlap Check after acting. Confirm exactly one canonical artifact
   exists on the target path; the other agent's work is either merged (with
   attribution) or redirected to a distinct path.
+- **Shared canonical report invariant:** before trusting or acting on any diff
+  to `docs/protocols/reports/SESSION_HANDOFF_LATEST.{json,md}`, run all three
+  checks (schema-invariant, freshness-vs-session-start, live-writer) per §1.3
+  incident #2. An invalid-on-disk payload, **or** a valid-on-disk payload newer
+  than your session-start whose `commits[]` excludes the sha you authored this
+  session, means a concurrent emitter overwrote the shared report. Variant 1
+  (invalid) → restore from `HEAD` and re-emit. Variant 2 (valid) → keep the
+  other agent's handoff and either append your `next_actions` or raise to
+  operator; do not destroy their work.
 
 ---
 
@@ -198,6 +284,14 @@ live group chat to stay on one direction.
   the other (or git conflict). → Overlap Check (§2) before any shared artifact.
 - **Divergent canons** — two valid but different `DIRECTIVES.md` exist; no
   single source of truth. → Yield/merge/escalate (§3.3); pick one canonical.
+- **Shared-report clobber** — one or more agents emit into the single shared
+  `SESSION_HANDOFF_LATEST.json` after another committed a handoff (incident #2,
+  §1.3, two variants observed: schema-INVALID clobbers and schema-VALID clobbers
+  newer than your session-start). → concurrent-write invariant test first
+  (schema + freshness + live-writer); never `git add -A` a clobbered version;
+  for variant 1 restore from `HEAD` then re-emit; for variant 2 keep the other
+  agent's handoff and either append your `next_actions` via a fresh emit or
+  pause for operator decision.
 - **Orphaned handoffs** — work done but not recorded; next agent rediscovers it.
   → Turn End + handoff artifacts (D14) after resolving.
 - **State-dir damage** — one agent "cleans up" another's `.agent/`/`.tnf/`. →

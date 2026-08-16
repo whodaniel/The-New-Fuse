@@ -97,6 +97,7 @@ import {
   resolvePostStepTimeoutMs,
   tallyFullAutoRuns,
 } from './utils/full-auto-cycle.js';
+import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -115,7 +116,6 @@ import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
-import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -8792,7 +8792,9 @@ mcp
         }
         const headers = parseHeaderOptions(options.header || []);
         if (!options.command && !options.url) {
-          throw new Error('Provide --command for local stdio servers or --url for remote MCP servers');
+          throw new Error(
+            'Provide --command for local stdio servers or --url for remote MCP servers'
+          );
         }
         const mcpManager = new MCPManagerService();
         mcpManager.addServer(name, {
@@ -9014,30 +9016,32 @@ mcp
   .option('--write', 'Write SUPABASE_AGENT_CONNECTION_LATEST.json')
   .option('--strict', 'Exit non-zero unless Codex Supabase MCP is configured and OAuth-capable')
   .option('--json', 'Print machine-readable JSON')
-  .action(async (options: {
-    server?: string;
-    codexBin?: string;
-    login?: boolean;
-    open?: boolean;
-    write?: boolean;
-    strict?: boolean;
-    json?: boolean;
-  }) => {
-    try {
-      const args = ['scripts/supabase-agent-connection-check.cjs'];
-      if (options.server) args.push('--server', options.server);
-      if (options.codexBin) args.push('--codex-bin', options.codexBin);
-      if (options.login) args.push('--login');
-      if (options.open === false) args.push('--no-open');
-      if (options.write) args.push('--write');
-      if (options.strict) args.push('--strict');
-      if (options.json) args.push('--json');
-      await runCommand('node', args);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+  .action(
+    async (options: {
+      server?: string;
+      codexBin?: string;
+      login?: boolean;
+      open?: boolean;
+      write?: boolean;
+      strict?: boolean;
+      json?: boolean;
+    }) => {
+      try {
+        const args = ['scripts/supabase-agent-connection-check.cjs'];
+        if (options.server) args.push('--server', options.server);
+        if (options.codexBin) args.push('--codex-bin', options.codexBin);
+        if (options.login) args.push('--login');
+        if (options.open === false) args.push('--no-open');
+        if (options.write) args.push('--write');
+        if (options.strict) args.push('--strict');
+        if (options.json) args.push('--json');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 mcp
   .command('logout')
@@ -9505,6 +9509,19 @@ ai.command('chat')
       const ask = (prompt: string): Promise<string> =>
         new Promise((resolve) => rl.question(prompt, resolve));
 
+      // Persist this chat session so it can be resumed via tnf session list/export.
+      let chatSessionId: string | undefined;
+      try {
+        const chatSession = sessionManager.create({
+          provider: client.providerName || 'unknown',
+          model: client.model || 'unknown',
+          projectPath: repoRoot,
+        });
+        chatSessionId = chatSession.id;
+      } catch {
+        // Non-fatal: persistence is a convenience, not a requirement.
+      }
+
       while (true) {
         const input = resolveSlashDropdownInput(await ask(chalk.green('\n> ')), slashDropdown);
         const trimmed = input.trim();
@@ -9538,6 +9555,15 @@ ai.command('chat')
           messages.push({ role: 'assistant' as const, content: response });
         } catch (err: any) {
           console.error(chalk.red('Error: ' + err.message));
+        }
+
+        // Persist transcript to disk after each exchange.
+        if (chatSessionId) {
+          try {
+            sessionManager.saveMessages(chatSessionId, messages);
+          } catch {
+            // Non-fatal: persistence failure must not crash the chat loop.
+          }
         }
       }
 
@@ -16610,7 +16636,9 @@ debug
   .action((options: { path?: string; json?: boolean }) => {
     try {
       if (options.path) {
-        const value = redactSensitiveConfig(debugService.getConfigPath(options.path, invocationCwd));
+        const value = redactSensitiveConfig(
+          debugService.getConfigPath(options.path, invocationCwd)
+        );
         if (options.json) {
           console.log(JSON.stringify({ path: options.path, value }, null, 2));
         } else {
@@ -17233,7 +17261,9 @@ projectCmd
       const agents = projService.getAgents();
 
       if (options.json) {
-        console.log(JSON.stringify({ config: redactSensitiveConfig(config), commands, agents }, null, 2));
+        console.log(
+          JSON.stringify({ config: redactSensitiveConfig(config), commands, agents }, null, 2)
+        );
       } else {
         console.log(chalk.bold('\nProject Configuration\n'));
         if (config) {
@@ -20106,6 +20136,31 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     }
   }
 
+  // Persist this session so it can be resumed via --continue / --resume.
+  // If we resumed an existing session, reuse its id; otherwise create a new one.
+  let currentSessionId: string | undefined;
+  if (options?.continueSession) {
+    try {
+      const sessions = sessionManager.list();
+      const resumedId =
+        (options.resumeId && sessionManager.get(options.resumeId)?.id) || sessions[0]?.id;
+      if (resumedId) currentSessionId = resumedId;
+    } catch {}
+  }
+  if (!currentSessionId) {
+    try {
+      const session = sessionManager.create({
+        provider: client.providerName || 'unknown',
+        model: client.model || 'unknown',
+        projectPath: repoRoot,
+      });
+      currentSessionId = session.id;
+    } catch (err: any) {
+      // Non-fatal: session persistence is a convenience, not a requirement.
+      console.log(chalk.dim(`  Session persistence disabled: ${err?.message ?? err}`));
+    }
+  }
+
   console.log('');
   console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
   console.log(chalk.cyan('║') + chalk.bold(' TNF Agent — Interactive Session ') + chalk.cyan(' ║'));
@@ -20531,9 +20586,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
               role: 'system',
               content:
                 `[native_tools] ${native.executed.length} tool call(s) executed this turn:\n` +
-                native.executed
-                  .map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`)
-                  .join('\n'),
+                native.executed.map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`).join('\n'),
             });
           }
         } catch (nativeErr: any) {
@@ -20693,6 +20746,14 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (queuedPaste) {
         pendingQueuedPrompt = sanitizeUtf8Prompt(queuedPaste);
         console.log(chalk.dim(`\n  Queued paste: ${pendingQueuedPrompt.length} chars (next turn)`));
+      }
+      // Persist transcript to disk so --continue / --resume works across restarts.
+      if (currentSessionId) {
+        try {
+          sessionManager.saveMessages(currentSessionId, messages);
+        } catch {
+          // Non-fatal: persistence failure must not crash the agent loop.
+        }
       }
     }
   }
