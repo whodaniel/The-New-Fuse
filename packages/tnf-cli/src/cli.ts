@@ -39,6 +39,7 @@ import { registerRefreshContextCommand } from './commands/refresh-context/comman
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
+import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
@@ -18885,6 +18886,7 @@ workspaceCommand
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 registerSparkCommand(program);
+registerSubdirectorCommand(program, { repoRoot, runCommand });
 
 async function createNotesService(options: {
   vaultPath?: string;

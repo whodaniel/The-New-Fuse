@@ -1393,7 +1393,8 @@ class BrokerAgent {
       await this.redis.lpush(CONFIG.SUBDIRECTOR_REVIEW_QUEUE, reviewPayload);
     }
 
-    // Also report onto direct sub-director worker queues (tnf-cli-agent aliases).
+    // Report onto the primary Local Subdirector direct queue only (aliases are
+    // drained for legacy residue; fan-out caused triple acks).
     const reportEnvelope = JSON.stringify({
       type: 'task',
       version: '1.0',
@@ -1426,12 +1427,11 @@ class BrokerAgent {
       },
     });
 
-    for (const queueKey of this.localSubdirectorReportQueues()) {
-      if (this.upstash) {
-        await this.upstash.lpush(queueKey, reportEnvelope);
-      } else if (this.redis) {
-        await this.redis.lpush(queueKey, reportEnvelope);
-      }
+    const primaryDirectQueue = `tnf:direct:sub-director:${subdirectorId}`;
+    if (this.upstash) {
+      await this.upstash.lpush(primaryDirectQueue, reportEnvelope);
+    } else if (this.redis) {
+      await this.redis.lpush(primaryDirectQueue, reportEnvelope);
     }
   }
 

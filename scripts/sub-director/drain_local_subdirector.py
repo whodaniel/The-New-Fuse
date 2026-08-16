@@ -90,8 +90,40 @@ def lrem(key: str, value: str) -> None:
     redis("LREM", key, "1", value)
 
 
-def acknowledge_payload(raw: str, source_queue: str) -> dict:
+def logical_dedupe_key(raw: str) -> str:
+    """Collapse alias fan-out / dual-write copies to one logical work item."""
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        return f"raw:{hash(raw)}"
+    if "reviewAuthority" in payload or "localSubdirectorAgentId" in payload:
+        task = payload.get("task") or {}
+        return f"review:{task.get('id') or payload.get('escalatedAt') or hash(raw)}"
+    if payload.get("type") == "task" and isinstance(payload.get("payload"), dict):
+        inner = (payload.get("payload") or {}).get("payload") or {}
+        meta = inner.get("metadata") or {}
+        original = meta.get("originalTaskId")
+        if original:
+            return f"original:{original}"
+        env_id = (payload.get("payload") or {}).get("id")
+        return f"envelope:{env_id or hash(raw)}"
+    task_id = payload.get("id")
+    if task_id:
+        return f"task:{task_id}"
+    return f"opaque:{hash(raw)}"
+
+
+def acknowledge_payload(raw: str, source_queue: str, *, duplicate: bool = False) -> dict:
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    if duplicate:
+        return {
+            "schema": "tnf.local_subdirector.ack/0.1",
+            "outcome": "skipped-duplicate",
+            "source_queue": source_queue,
+            "dedupe_key": logical_dedupe_key(raw),
+            "completed_at": now,
+            "action": "Dropped alias/dual-write duplicate; already acknowledged this cycle.",
+        }
     try:
         payload = json.loads(raw)
     except json.JSONDecodeError as e:
@@ -196,23 +228,36 @@ def acknowledge_payload(raw: str, source_queue: str) -> dict:
     return body
 
 
-def drain_queue(queue: str, max_items: int, block_sec: int = 1) -> list[dict]:
+def drain_queue(
+    queue: str,
+    max_items: int,
+    block_sec: int = 1,
+    seen: set[str] | None = None,
+) -> list[dict]:
     processing = f"{queue}:processing"
     results = []
+    seen_keys = seen if seen is not None else set()
     for _ in range(max_items):
         raw = brpoplpush(queue, processing, block_sec=block_sec)
         if not raw:
             break
         try:
-            result = acknowledge_payload(raw, queue)
+            key = logical_dedupe_key(raw)
+            duplicate = key in seen_keys
+            if not duplicate:
+                seen_keys.add(key)
+            result = acknowledge_payload(raw, queue, duplicate=duplicate)
             results.append(result)
         finally:
             lrem(processing, raw)
     return results
 
 
-def purge_specialty_from_pending(max_items: int = 200) -> list[dict]:
+def purge_specialty_from_pending(
+    max_items: int = 200, seen: set[str] | None = None
+) -> list[dict]:
     """Remove analytics/maintenance copies stranded on pending (dual-write residue)."""
+    seen_keys = seen if seen is not None else set()
     try:
         import redis as redis_py
 
@@ -228,7 +273,11 @@ def purge_specialty_from_pending(max_items: int = 200) -> list[dict]:
                 continue
             lane = str(((task.get("itinerary") or {}).get("lane") or "")).lower()
             if lane in SPECIALTY_LANES and len(results) < max_items:
-                results.append(acknowledge_payload(raw, PENDING_QUEUE))
+                key = logical_dedupe_key(raw)
+                duplicate = key in seen_keys
+                if not duplicate:
+                    seen_keys.add(key)
+                results.append(acknowledge_payload(raw, PENDING_QUEUE, duplicate=duplicate))
             else:
                 keep.append(raw)
         pipe = r.pipeline()
@@ -303,12 +352,20 @@ def main(argv: list[str]) -> int:
             "direct": 0,
             "specialty": 0,
             "pending_specialty_purged": 0,
+            "duplicates_skipped": 0,
         },
     }
+    seen: set[str] = set()
 
-    review_results = drain_queue(REVIEW_QUEUE, args.max_per_queue, args.block_sec)
+    def count_dupes(items: list[dict]) -> int:
+        return sum(1 for x in items if x.get("outcome") == "skipped-duplicate")
+
+    review_results = drain_queue(REVIEW_QUEUE, args.max_per_queue, args.block_sec, seen=seen)
     drained["review"] = review_results
-    drained["totals"]["review"] = len(review_results)
+    drained["totals"]["review"] = len(
+        [x for x in review_results if x.get("outcome") == "acknowledged"]
+    )
+    drained["totals"]["duplicates_skipped"] += count_dupes(review_results)
 
     for alias in aliases_from_env():
         q = f"tnf:direct:sub-director:{alias}"
@@ -316,22 +373,30 @@ def main(argv: list[str]) -> int:
             q,
             args.max_per_queue,
             block_sec=0 if drained["totals"]["direct"] else args.block_sec,
+            seen=seen,
         )
         if items:
             drained["direct"][alias] = items
-            drained["totals"]["direct"] += len(items)
+            drained["totals"]["direct"] += len(
+                [x for x in items if x.get("outcome") == "acknowledged"]
+            )
+            drained["totals"]["duplicates_skipped"] += count_dupes(items)
 
     for q in SPECIALTY_QUEUES:
-        items = drain_queue(q, args.max_per_queue, block_sec=0)
+        items = drain_queue(q, args.max_per_queue, block_sec=0, seen=seen)
         if items:
             drained["specialty"][q] = items
-            drained["totals"]["specialty"] += len(items)
+            drained["totals"]["specialty"] += len(
+                [x for x in items if x.get("outcome") == "acknowledged"]
+            )
+            drained["totals"]["duplicates_skipped"] += count_dupes(items)
 
-    purged = purge_specialty_from_pending(args.max_per_queue)
+    purged = purge_specialty_from_pending(args.max_per_queue, seen=seen)
     drained["pending_specialty_purged"] = purged
     drained["totals"]["pending_specialty_purged"] = len(
         [x for x in purged if x.get("outcome") == "acknowledged"]
     )
+    drained["totals"]["duplicates_skipped"] += count_dupes(purged)
 
     if args.json:
         print(json.dumps(drained, indent=2, default=str))
@@ -345,6 +410,7 @@ def main(argv: list[str]) -> int:
                     "direct_drained": drained["totals"]["direct"],
                     "specialty_drained": drained["totals"]["specialty"],
                     "pending_specialty_purged": drained["totals"]["pending_specialty_purged"],
+                    "duplicates_skipped": drained["totals"]["duplicates_skipped"],
                 },
                 indent=2,
             )

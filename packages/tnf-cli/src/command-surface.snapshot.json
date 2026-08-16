@@ -315,7 +315,7 @@
         {
           "name": "run",
           "aliases": [],
-          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall.",
+          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool, todo_add, todo_list, todo_update, todo_done.",
           "options": [
             {
               "flags": "--cwd <path>",
@@ -565,9 +565,7 @@
       "commands": [
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List providers",
           "options": [
             {
@@ -735,9 +733,7 @@
     },
     {
       "name": "boot",
-      "aliases": [
-        "boor"
-      ],
+      "aliases": ["boor"],
       "description": "Master entry point to boot the entire TNF stack",
       "options": [
         {
@@ -1028,9 +1024,7 @@
     },
     {
       "name": "commands",
-      "aliases": [
-        "palette"
-      ],
+      "aliases": ["palette"],
       "description": "Search the flat command index the palette uses: every CLI path at every depth, plus Markdown commands/agents/skills from .tnf/, .claude/, .agent/, .gemini/, .cursor/, .codex/ and .pi/",
       "options": [
         {
@@ -1773,9 +1767,7 @@
       "commands": [
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List all feedback",
           "options": [
             {
@@ -2417,9 +2409,7 @@
         },
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List all strategic goals",
           "options": [
             {
@@ -2470,9 +2460,7 @@
       "commands": [
         {
           "name": "generate",
-          "aliases": [
-            "emit"
-          ],
+          "aliases": ["emit"],
           "description": "Emit SESSION_HANDOFF_LATEST.json and markdown mirror",
           "options": [
             {
@@ -2630,9 +2618,7 @@
         },
         {
           "name": "fleet-status",
-          "aliases": [
-            "status"
-          ],
+          "aliases": ["status"],
           "description": "Show current fleet pause state + fleet health snapshot",
           "options": [
             {
@@ -3401,8 +3387,12 @@
               "description": "Arguments for the command"
             },
             {
+              "flags": "--bearer-token-env <env>",
+              "description": "Environment variable containing a bearer token"
+            },
+            {
               "flags": "--command <cmd>",
-              "description": "Command to run"
+              "description": "Command to run for local stdio MCP servers"
             },
             {
               "flags": "--cwd <path>",
@@ -3421,8 +3411,20 @@
               "description": "Environment variables as JSON (kilo parity)"
             },
             {
+              "flags": "--header <header...>",
+              "description": "HTTP/SSE header as \"Name: value\" (repeatable)"
+            },
+            {
+              "flags": "--transport <transport>",
+              "description": "Transport (stdio|streamable-http|sse|ws)"
+            },
+            {
               "flags": "--type <type>",
               "description": "Server type (local|remote|sse|ws)"
+            },
+            {
+              "flags": "--url <url>",
+              "description": "Remote MCP endpoint URL (http(s) or ws(s))"
             }
           ],
           "commands": []
@@ -3432,6 +3434,22 @@
           "aliases": [],
           "description": "Authenticate with an OAuth-enabled MCP server",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "call",
+          "aliases": [],
+          "description": "Call a tool on a configured local stdio MCP server",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            },
+            {
+              "flags": "--timeout-ms <n>",
+              "description": "MCP request timeout in milliseconds"
+            }
+          ],
           "commands": []
         },
         {
@@ -3508,9 +3526,7 @@
         },
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List MCP servers and their status",
           "options": [
             {
@@ -3575,6 +3591,22 @@
             {
               "flags": "--json",
               "description": "Output machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "tools",
+          "aliases": [],
+          "description": "List tools advertised by configured local stdio MCP servers",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            },
+            {
+              "flags": "--timeout-ms <n>",
+              "description": "Per-server MCP request timeout in milliseconds"
             }
           ],
           "commands": []
@@ -4872,9 +4904,7 @@
     },
     {
       "name": "services",
-      "aliases": [
-        "svc"
-      ],
+      "aliases": ["svc"],
       "description": "Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded",
       "options": [
         {
@@ -4917,9 +4947,7 @@
     },
     {
       "name": "skill",
-      "aliases": [
-        "skills"
-      ],
+      "aliases": ["skills"],
       "description": "Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias; Hermes-parity alias: `tnf skills`).",
       "options": [],
       "commands": [
@@ -5103,9 +5131,7 @@
       "commands": [
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List standard, TNF, and project slash commands",
           "options": [],
           "commands": []
@@ -5386,9 +5412,7 @@
         },
         {
           "name": "draft",
-          "aliases": [
-            "resume"
-          ],
+          "aliases": ["resume"],
           "description": "Start or resume an interactive story drafting session",
           "options": [
             {
@@ -5408,9 +5432,7 @@
         },
         {
           "name": "list",
-          "aliases": [
-            "ls"
-          ],
+          "aliases": ["ls"],
           "description": "List all story sessions",
           "options": [
             {
@@ -5428,6 +5450,41 @@
             {
               "flags": "-o, --owner <principal>",
               "description": "Owner principal id (defaults to env or daniel)"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "subdirector",
+      "aliases": [],
+      "description": "Local Subdirector (tnf-cli-agent) control-plane utilities",
+      "options": [],
+      "commands": [
+        {
+          "name": "cycle",
+          "aliases": [],
+          "description": "Run the Local Subdirector cron cycle wrapper (sync + drain + log)",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "drain",
+          "aliases": [],
+          "description": "Drain Local Subdirector review/direct/specialty queues (acks watchdog + analytics/maintenance reports)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit full JSON drain report"
+            },
+            {
+              "flags": "--max-per-queue <n>",
+              "description": "Max items per queue"
+            },
+            {
+              "flags": "--skip-register",
+              "description": "Skip registry heartbeat refresh"
             }
           ],
           "commands": []
@@ -5680,7 +5737,7 @@
       "options": [
         {
           "flags": "--allowed-tools <list>",
-          "description": "Comma-separated tool allowlist (bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall)"
+          "description": "Comma-separated tool allowlist (bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool)"
         },
         {
           "flags": "--autonomous",
@@ -5789,9 +5846,7 @@
     },
     {
       "name": "upgrade",
-      "aliases": [
-        "update"
-      ],
+      "aliases": ["update"],
       "description": "Upgrade tnf to the latest or a specific version",
       "options": [
         {
@@ -6302,9 +6357,7 @@
     },
     {
       "name": "workspace",
-      "aliases": [
-        "packages"
-      ],
+      "aliases": ["packages"],
       "description": "Monorepo package reconnect and availability utilities (alias: `tnf packages`)",
       "options": [],
       "commands": [

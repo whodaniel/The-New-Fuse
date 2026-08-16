@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optional alias-ack dedupe + tnf subdirector drain CLI.
+**Current Directive:** Optional: build/test/commit unrelated dirty tree in a
+separate pass.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1004,6 +1005,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T22:39:24.222Z handoff `a99de94e-7865-4263-9cc4-b146e1da10ac` head
+  `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated
+  dirty tree in a separate pass.
+
+- 2026-08-16T22:31:10.658Z handoff `8c89abfc-113a-431a-a203-b4162f19b37a` head
+  `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated
+  dirty tree in a separate pass.
 
 - 2026-08-16T22:24:29.027Z handoff `524c8381-cf6a-43e5-8262-872f19b52e2c` head
   `35792eb67aad` project `TNF-SESSION` — Optional alias-ack dedupe + tnf

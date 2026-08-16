@@ -1,28 +1,29 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-16T22:24:28.955Z`  
-Handoff ID: `524c8381-cf6a-43e5-8262-872f19b52e2c`
+Created At: `2026-08-16T22:39:24.141Z`  
+Handoff ID: `a99de94e-7865-4263-9cc4-b146e1da10ac`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `35792eb67aad4194dae80159cfcca6fa965b5b2e`
+- Head SHA: `25d51faad2a76ee322bf121880350b5bb1eca4f5`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Pushed control-plane commits to origin; Local Subdirector now drains
-  analytics/maintenance specialty queues and stops dual-writing them into
-  pending.
+- Added tnf subdirector drain/cycle CLI module; broker primary-only direct
+  reports; drain-side logical dedupe.
 
 ## Changed Paths
 
-- scripts/protocols/chronological-dispatch.cjs
+- packages/relay-core/src/broker-agent.ts
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/commands/subdirector.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
 - scripts/sub-director/drain_local_subdirector.py
-- scripts/agents/subdirector-local-cli-agent-cycle.sh
-- docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T22-23-specialty-drain.md
+- docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T22-30-subdirector-cli-dedupe.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/LIVING_STATE.md
@@ -43,11 +44,10 @@ Handoff ID: `524c8381-cf6a-43e5-8262-872f19b52e2c`
 
 ### Resume Checklist
 
-- origin/main includes 9638ca199f + 35792eb67a
-- specialty queues drained
-- dual-write skip for specialty targets
+- tnf subdirector drain works
+- command-surface snapshot updated
+- broker single fan-out
 
 ## Next Actions
 
-- Optional alias-ack dedupe + tnf subdirector drain CLI.
-- Defer unrelated dirty-tree build/test/commit.
+- Optional: build/test/commit unrelated dirty tree in a separate pass.
