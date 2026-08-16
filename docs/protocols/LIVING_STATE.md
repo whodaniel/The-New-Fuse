@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Optional: git push origin HEAD when operator wants remote
+durable.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1005,6 +1005,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T22:19:28.764Z handoff `7161308e-c0f4-461c-9362-f27455bada4c` head
+  `9638ca199fca` project `TNF-SESSION` — Optional: git push origin HEAD when
+  operator wants remote durable.
 
 - 2026-08-16T22:07:40.066Z handoff `5f7bdf54-232d-4c66-913a-ad1920e9f4a7` head
   `8628c62b096c` project `TNF-SESSION` — Continue priority queue from
