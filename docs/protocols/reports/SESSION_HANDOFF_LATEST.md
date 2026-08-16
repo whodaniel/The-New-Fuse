@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-16T21:00:44.792Z`  
-Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
+Created At: `2026-08-16T21:18:52.441Z`  
+Handoff ID: `6e8c1168-8265-4098-920c-29b2b6cc6914`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `b4e3627c19defc873bc5d8d37f79d0485627c1bc`
+- Head SHA: `58714c3e5843b53d98cacef24a70eecd15932def`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,10 +19,10 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 
 ## Changed Paths
 
-- docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md
-- docs/protocols/reports/TASK_PLATFORM_INVESTIGATION_2026-08-16.md
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/services/SessionManagerService.ts
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - .agent/skill-bank/resource-registry-import.json
 - .agent/skill-bank/skills-index.json
 - .agent/skill-bank/skills-summary.md
@@ -69,6 +69,9 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - apps/frontend/package.json
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html
 - apps/frontend/public/visualizations/CAPABILITY-PACKAGING-COMPLETE.md
+- apps/frontend/public/visualizations/semantic/index.html
+- apps/frontend/public/visualizations/semantic/unified_graph_explorer.html
+- apps/frontend/public/visualizations/semantic/unified_graph_stats.json
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/ComprehensiveRouter.tsx
@@ -100,6 +103,7 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - apps/vscode-extension/src/core/types.ts
 - apps/vscode-extension/src/extension.ts
 - apps/vscode-extension/src/providers/ChatViewProvider.ts
+- concordance_results/embedding_edges.json
 - concordance_results/index.html
 - concordance_results/unified_graph_explorer.html
 - concordance_results/unified_graph_stats.json
@@ -381,13 +385,9 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - docs/operations/tnf-action-receipts.jsonl
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/INFORMATION_INTENTIONS.md
-- docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/TNF_AI5_CONVERSION_REPORT_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - docs/status-reports/SELF_IMPROVEMENT_REPORT.md
@@ -396,6 +396,9 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - eslint.config.mjs
 - packages/a2a-core/a2a-migration-85pct-complete.patch
 - packages/common/src/index.ts
+- packages/governance-gate/src/governance-gate.ts
+- packages/governance-gate/src/pii-detection-gate.ts
+- packages/governance-gate/src/security-review-gate.ts
 - packages/infrastructure/src/redis/standalone.js
 - packages/infrastructure/src/redis/standalone.ts
 - packages/relay-core/src/master-clock.ts
@@ -403,6 +406,10 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - packages/relay-core/src/standalone-relay.ts
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/RedisAgentClient.ts
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/orchestration-enhancements.ts
+- packages/tnf-cli/src/orchestration.ts
 - packages/tnf-cli/src/utils/command-palette.test.ts
 - packages/tnf-cli/src/utils/command-palette.ts
 - packages/tnf-cli/src/utils/llm-provider-detector.ts
@@ -412,7 +419,9 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - scripts/NATIVE_SENSORY_SUITE.md
 - scripts/agents/tnf-agent-daemon.py
 - scripts/audio_trigger_test.py
+- scripts/harness/memory-layer.cjs
 - scripts/harness/tnf-harness.cjs
+- scripts/install-agent-frontload.cjs
 - scripts/lib/sync-handoff-cache.cjs
 - scripts/lib/tnf-capability-grant.cjs
 - scripts/library/ensure-library-audio-stack.cjs
@@ -423,12 +432,15 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - scripts/runtime/redis-local-bootstrap.sh
 - scripts/runtime/tnf-local-launchd-services.sh
 - scripts/safe-merge-to-main.sh
+- scripts/semantic-graph/build_embedding_edges.py
 - scripts/vision_benchmark_report.py
 - scripts/ws_monitor.py
 - tnf
 - validation-results/post-change-report.json
 - validation-results/pre-change-report.json
-- scripts/harness/verify-harness-completeness.cjs
+- docs/protocols/TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md
+- docs/protocols/reports/TASK_PLATFORM_INVESTIGATION_2026-08-16.md
+- packages/tnf-cli/src/services/SessionManagerService.ts
 - apps/api-gateway/src/auth.controller.ts
 - apps/api-gateway/src/auth.module.ts
 - apps/api-gateway/src/auth.service.ts
@@ -759,6 +771,7 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T14-19-26.md
 - docs/protocols/PROTOCOL_GAP_ASSUMPTION_FIX.md
 - docs/protocols/reports/FRESH_HANDOFF_2026-08-16.md
+- docs/protocols/reports/SESSION_LOG.md
 - documentation/
 - infrastructure/README.md
 - infrastructure/hpa/
@@ -783,6 +796,7 @@ Handoff ID: `c9e8906d-b301-4f89-a593-9fdb61775593`
 - scripts/runtime/redis-connection-guard.cjs
 - scripts/runtime/tnf-agent-daemon-launch.sh
 - scripts/runtime/tnf-agent-daemon-launchd.sh
+- scripts/skills/universal-skill-disclosure-guard.cjs
 - zi17BkeA
 
 ## Verification

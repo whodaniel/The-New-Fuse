@@ -32,6 +32,10 @@ export interface WorkerDispatch {
   capability: string; // 'code' or 'infra' for routing
   createdAt: string;
   priority: number; // Lower = higher priority
+  /** Tenant scope for federated broker dispatch (Phase: goal→broker rewire) */
+  tenantId?: string;
+  /** Workspace scope for federated broker dispatch */
+  workspaceId?: string;
 }
 
 export class WorkerDispatcher {
@@ -67,6 +71,67 @@ export class WorkerDispatcher {
     }
 
     await this.dispatchToWorker(workerId, task);
+  }
+
+  /**
+   * Dispatch a task through the federated broker queue
+   * (`tnf:master:tasks:realtime`) instead of bypassing it with hardcoded
+   * worker queues. The broker evaluates `itinerary.lane` + tenant scope +
+   * federation gates, does live agent discovery, and routes to the right
+   * worker via pub/sub. This closes the "goals don't reach the fleet" gap:
+   * `tnf orchestrate <goal>` now flows through the same verified
+   * broker → WorkerEnvelope chain as every other task.
+   *
+   * Falls back to `dispatchByCapability()` if the broker queue is unreachable
+   * (Redis down, connection refused) so the orchestrator degrades gracefully
+   * rather than hard-failing on infrastructure availability.
+   */
+  async dispatchToBroker(task: WorkerDispatch): Promise<boolean> {
+    const brokerQueue = 'tnf:master:tasks:realtime';
+
+    // Shape the task as a QueueTask matching the broker's expected schema
+    // (see packages/relay-core/src/broker-agent.ts:19).
+    const queueTask = {
+      id: task.id,
+      title: task.goal,
+      description: `Orchestrated goal task: ${task.goal} (capability: ${task.capability}, skill: ${task.skillRef})`,
+      priority: task.priority <= 1 ? 'critical' : task.priority <= 2 ? 'high' : 'normal',
+      requiredCapabilities: [task.capability],
+      // itinerary.lane is mandatory — the broker denies dispatch without it
+      // ("Missing itinerary lane for dispatch governance", broker-agent.ts:983).
+      itinerary: {
+        lane: 'goal',
+        source: 'tnf-orchestrate',
+        skillRef: task.skillRef,
+        capability: task.capability,
+      },
+      // Tenant scope: the broker extracts tenantId from metadata.scope or
+      // top-level metadata.tenantId (broker-agent.ts:491-498).
+      metadata: {
+        scope: task.tenantId ? { tenantId: task.tenantId, tenant_id: task.tenantId } : {},
+        workspaceId: task.workspaceId || process.env.TNF_WORKSPACE_ID || undefined,
+        payload: task.payload,
+        createdAt: task.createdAt,
+        source: 'tnf-orchestrate',
+      },
+    };
+
+    try {
+      const payload = JSON.stringify(queueTask);
+      await this.redis.lpush(brokerQueue, payload);
+      console.log(
+        `Dispatched task ${task.id} to broker queue ${brokerQueue} ` +
+          `(lane: goal, tenant: ${task.tenantId || 'default'})`
+      );
+      return true;
+    } catch (err: any) {
+      console.warn(
+        `Broker dispatch failed (${err?.message ?? err}); falling back to direct worker queue`
+      );
+      // Degrade to the hardcoded direct-dispatch path (the pre-rewire behavior)
+      await this.dispatchByCapability(task);
+      return false;
+    }
   }
 
   /** Get queue depth for monitoring */

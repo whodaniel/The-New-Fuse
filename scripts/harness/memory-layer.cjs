@@ -20,7 +20,7 @@ function ensureDirs() {
 }
 
 function parseArgs(argv) {
-  const args = { cmd: argv[0] || 'status', text: '', query: '', tags: [], scope: 'project', id: '', limit: 5, json: false };
+  const args = { cmd: argv[0] || 'status', text: '', query: '', tags: [], scope: 'project', id: '', limit: 5, json: false, taskStatus: 'in_progress' };
   for (let i = 1; i < argv.length; i += 1) {
     const t = argv[i];
     if (t === '--text') args.text = argv[++i] || '';
@@ -30,6 +30,7 @@ function parseArgs(argv) {
     else if (t === '--id') args.id = argv[++i] || '';
     else if (t === '--limit') args.limit = Number(argv[++i] || 5);
     else if (t === '--json') args.json = true;
+    else if (t === '--status' || t === '--task-status') args.taskStatus = argv[++i] || args.taskStatus;
     else if (t === '-h' || t === '--help') args.cmd = 'help';
   }
   return args;
@@ -82,17 +83,45 @@ function recall(args) {
   const q = String(args.query || '').toLowerCase().trim();
   if (!q) throw new Error('recall requires --query');
   const terms = q.split(/\s+/).filter(Boolean);
+  const now = Date.now();
+  // Recency decay: half-life of 30 days. Entries older than the horizon
+  // (default 90d, configurable via TNF_MEMORY_TTL_DAYS) are auto-tombstoned
+  // during recall — EXCEPT pinned entries, which are exempt from decay/TTL.
+  const ttlDays = Number(process.env.TNF_MEMORY_TTL_DAYS || 90);
+  const ttlMs = ttlDays * 24 * 60 * 60 * 1000;
+  const halfLifeMs = 30 * 24 * 60 * 60 * 1000; // 30-day half-life
   const scored = readEntries()
     .map((e) => {
       const hay = `${e.text} ${(e.tags || []).join(' ')} ${e.scope}`.toLowerCase();
       let score = 0;
       for (const term of terms) if (hay.includes(term)) score += 1;
-      if (e.pinned) score += 0.5;
+      if (e.pinned) {
+        score += 0.5; // pinned boost (preserved from original)
+      } else {
+        // Recency decay: score *= 0.5^(age / halfLife).
+        // A 30-day-old entry retains half its term-match weight; 60 days → quarter.
+        const ageMs = now - new Date(e.at).getTime();
+        const decay = Math.pow(0.5, ageMs / halfLifeMs);
+        score *= decay;
+        // TTL sweep: entries past the horizon are tombstoned, not scored.
+        if (ageMs > ttlMs) return null;
+      }
       return { score, entry: e };
     })
-    .filter((x) => x.score > 0)
+    .filter((x) => x !== null && x.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, Math.max(1, args.limit));
+  // Promotion-on-recall: re-append touched entries to the tail of the store
+  // to refresh their recency position. This preserves the append-only audit
+  // model (we never truncate or rewrite history) — the old entry stays in the
+  // log, and a new retain row with the same id supersedes it in readEntries()
+  // (which keeps the last by id).
+  if (scored.length > 0 && process.env.TNF_MEMORY_PROMOTE !== '0') {
+    for (const m of scored) {
+      const promoted = { ...m.entry, op: 'retain', at: new Date().toISOString(), promotedFrom: 'recall' };
+      fs.appendFileSync(STORE, `${JSON.stringify(promoted)}\n`);
+    }
+  }
   return { ok: true, query: args.query, matches: scored };
 }
 
@@ -106,13 +135,52 @@ function pin(args) {
   return { ok: true, entry: next };
 }
 
+/**
+ * taskup — tie a task/goal to a memory entry with progress + status.
+ * Creates a memory entry that records the current state of a task,
+ * so future recall queries can answer "where did we leave this task?"
+ * without re-reading the full session transcript.
+ *
+ * Usage: taskup --id <taskId> --text "progress description" --status pending|in_progress|completed|blocked [--tags a,b]
+ */
+function taskup(args) {
+  if (!args.id) throw new Error('taskup requires --id <taskId>');
+  if (!args.text.trim()) throw new Error('taskup requires --text');
+  ensureDirs();
+  const entry = {
+    op: 'retain',
+    id: `task:${args.id}`,
+    at: new Date().toISOString(),
+    text: args.text.trim(),
+    tags: [...(args.tags || []), 'taskup'],
+    scope: args.scope,
+    pinned: false,
+    task: {
+      id: args.id,
+      status: args.taskStatus || 'in_progress',
+      updatedAt: new Date().toISOString(),
+    },
+  };
+  fs.appendFileSync(STORE, `${JSON.stringify(entry)}\n`);
+  const receipt = writeReceipt('taskup', { entry });
+  return { ok: true, entry, receipt };
+}
+
 function status() {
   const entries = readEntries();
+  const now = Date.now();
+  const ttlDays = Number(process.env.TNF_MEMORY_TTL_DAYS || 90);
+  const ttlMs = ttlDays * 24 * 60 * 60 * 1000;
+  const expired = entries.filter(
+    (e) => !e.pinned && now - new Date(e.at).getTime() > ttlMs,
+  ).length;
   return {
     ok: true,
     store: path.relative(ROOT, STORE),
     count: entries.length,
     pinned: entries.filter((e) => e.pinned).length,
+    expired, // entries past TTL horizon (will be tombstoned on next recall)
+    ttlDays,
     scopes: Object.fromEntries(
       ['global', 'project', 'session'].map((s) => [s, entries.filter((e) => e.scope === s).length])
     ),
@@ -124,7 +192,12 @@ function help() {
   node scripts/harness/memory-layer.cjs retain --text "..." [--tags a,b] [--scope project]
   node scripts/harness/memory-layer.cjs recall --query "..." [--limit 5]
   node scripts/harness/memory-layer.cjs pin --id <id>
-  node scripts/harness/memory-layer.cjs status [--json]`);
+  node scripts/harness/memory-layer.cjs taskup --id <taskId> --text "progress" [--status pending|in_progress|completed|blocked] [--tags a,b]
+  node scripts/harness/memory-layer.cjs status [--json]
+
+Environment:
+  TNF_MEMORY_TTL_DAYS=90   TTL horizon for auto-tombstoning stale entries (pinned exempt)
+  TNF_MEMORY_PROMOTE=0     Disable promotion-on-recall (re-appending touched entries)`);
 }
 
 function main() {
@@ -137,6 +210,7 @@ function main() {
   if (args.cmd === 'retain') result = retain(args);
   else if (args.cmd === 'recall') result = recall(args);
   else if (args.cmd === 'pin') result = pin(args);
+  else if (args.cmd === 'taskup') result = taskup(args);
   else if (args.cmd === 'status') result = status();
   else throw new Error(`unknown command: ${args.cmd}`);
 

@@ -827,12 +827,15 @@ export class EnhancedOrchestrator {
   private async executeTask(task: Task): Promise<boolean> {
     console.log(chalk.cyan(`   ▶️  Executing: ${task.name}`));
 
-    // Try real worker dispatch first (Redis LPUSH to actual worker queue)
+    // Try real worker dispatch first — now through the federated broker queue
+    // (`tnf:master:tasks:realtime`) instead of hardcoded worker queues.
+    // The broker evaluates policy, does live agent discovery, applies tenant
+    // scope and federation gates. Falls back to direct dispatch if Redis is down.
     if (task.capability && (task.capability === 'code' || task.capability === 'infra')) {
       console.log(
-        chalk.dim(`      📡 Pushing to worker queue via Redis (capability: ${task.capability})`)
+        chalk.dim(`      📡 Dispatching via broker queue (capability: ${task.capability})`)
       );
-      await this.workerDispatcher.dispatchByCapability({
+      await this.workerDispatcher.dispatchToBroker({
         id: task.id,
         skillRef: task.skillRef || 'unknown',
         goal: task.name,
@@ -840,6 +843,10 @@ export class EnhancedOrchestrator {
         capability: task.capability,
         createdAt: new Date().toISOString(),
         priority: task.priority === 'critical' ? 1 : task.priority === 'high' ? 2 : 3,
+        // Pass tenant scope from environment so the broker can enforce
+        // multitenant isolation (goal-driven tasks were previously tenant-agnostic).
+        tenantId: process.env.TNF_TENANT_ID || undefined,
+        workspaceId: process.env.TNF_WORKSPACE_ID || undefined,
       });
       return true;
     }
