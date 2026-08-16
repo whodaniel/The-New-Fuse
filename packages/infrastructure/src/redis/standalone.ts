@@ -98,9 +98,23 @@ export function createStandaloneRedisClient(
     db: fullConfig.db,
     connectTimeout: fullConfig.connectTimeout,
     lazyConnect: fullConfig.lazyConnect,
-    maxRetriesPerRequest: fullConfig.maxRetriesPerRequest,
+    // Cap per-request retries; null previously allowed unbounded offline queuing.
+    maxRetriesPerRequest:
+      fullConfig.maxRetriesPerRequest === null ? 3 : (fullConfig.maxRetriesPerRequest ?? 3),
     keyPrefix: fullConfig.keyPrefix,
-    retryStrategy: (times: number) => Math.min(times * 50, fullConfig.retryDelay),
+    // Name clients so redis-connection-guard can protect / attribute them.
+    connectionName:
+      process.env.TNF_REDIS_CLIENT_NAME ||
+      process.env.REDIS_CLIENT_NAME ||
+      `tnf:node:${process.pid}`,
+    enableOfflineQueue: process.env.REDIS_ENABLE_OFFLINE_QUEUE === 'true',
+    retryStrategy: (times: number) => {
+      const maxAttempts = Number.parseInt(process.env.REDIS_MAX_RETRY_ATTEMPTS || '20', 10);
+      if (Number.isFinite(maxAttempts) && times > maxAttempts) {
+        return null; // stop reconnecting — prevents connection accumulation
+      }
+      return Math.min(times * 50, fullConfig.retryDelay);
+    },
     ...(fullConfig.tls ? { tls: fullConfig.tls } : {}),
   };
 

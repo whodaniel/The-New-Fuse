@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue dirty-tree batches: relay redis leak tests;
-chrome-extension; frontend backup UI; defer bulk data/intelligence-artifacts.
+**Current Directive:** Continue dirty-tree: chrome-extension v6/v7; frontend
+backup UI; defer bulk data/intelligence-artifacts.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1015,6 +1015,22 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T23:28:27.123Z handoff `7d20be19-7db2-4a02-806d-6746e20636df` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:28:26.076Z handoff `348a52bb-a18e-4dde-a414-592ccc832a89` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:24:04.855Z handoff `2f9b9d3d-bc8e-4dab-bb1b-811fd1e0a664` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:24:01.985Z handoff `bc8e9967-f74d-4a39-8df0-c9aa57c14942` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
 
 - 2026-08-16T22:57:55.146Z handoff `54428d94-2559-482f-8753-4fc7c57ed068` head
   `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay

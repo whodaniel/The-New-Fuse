@@ -8,25 +8,32 @@ PORT="${REDIS_PORT:-6379}"
 BIND="${REDIS_BIND:-127.0.0.1}"
 MAXCLIENTS="${REDIS_MAXCLIENTS:-10000}"
 MAXMEMORY="${REDIS_MAXMEMORY:-256mb}"
+# Idle timeout (seconds). 0 = never disconnect — that caused local harness saturation.
+IDLE_TIMEOUT="${REDIS_IDLE_TIMEOUT:-${TNF_REDIS_IDLE_TIMEOUT:-300}}"
 TNF_HOME="${TNF_HOME:-$HOME/.tnf}"
 REDIS_DIR="${TNF_REDIS_DIR:-$TNF_HOME/redis}"
 LOG_DIR="${TNF_LOG_DIR:-$TNF_HOME/logs}"
 REDIS_CONF="${TNF_REDIS_CONF:-$REDIS_DIR/redis.conf}"
 LOG_FILE="${REDIS_LOG_FILE:-$LOG_DIR/redis.log}"
-CLIENT_WARN="${REDIS_CLIENT_WARN:-8000}"
+# Soft local-harness budget (absolute clients). Utilization gate also applies.
+CLIENT_WARN="${REDIS_CLIENT_WARN:-1500}"
 REDIS_CLI_TIMEOUT_SECONDS="${REDIS_CLI_TIMEOUT_SECONDS:-2}"
 REDIS_LOCALE="${TNF_REDIS_LOCALE:-C}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+GUARD_SCRIPT="${ROOT_DIR}/scripts/runtime/redis-connection-guard.cjs"
 LABEL="com.thenewfuse.redis-tnf-bus"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LAUNCH_DOMAIN="gui/$(id -u)"
 
 usage() {
-  echo "Usage: $0 <start|restart|status|gate|launchd-install|launchd-start>"
+  echo "Usage: $0 <start|restart|status|gate|guard|reap|launchd-install|launchd-start>"
   echo "  start          — start redis-server if not reachable"
   echo "  restart        — force restart with maxclients=${MAXCLIENTS}"
   echo "  status  — ping + client count"
   echo "  gate    — exit 0 only if ping ok and clients < ${CLIENT_WARN}"
-  echo "  launchd-install/start — macOS LaunchAgent with StartInterval, not KeepAlive"
+  echo "  guard   — run connection-guard --preflight (idle timeout + reap + gate)"
+  echo "  reap    — run connection-guard --apply (remediate without failing gate)"
+  echo "  launchd-install/start — macOS LaunchAgent with KeepAlive + ThrottleInterval"
 }
 
 redis_cli() {
@@ -75,8 +82,8 @@ bind 127.0.0.1 ::1
 protected-mode yes
 port ${PORT}
 tcp-backlog 511
-timeout 0
-tcp-keepalive 300
+timeout ${IDLE_TIMEOUT}
+tcp-keepalive 60
 save ""
 stop-writes-on-bgsave-error no
 dir ${REDIS_DIR}
@@ -215,8 +222,13 @@ launchd_install() {
   <string>${LOG_DIR}/redis-stdout.log</string>
   <key>StandardErrorPath</key>
   <string>${LOG_DIR}/redis-stderr.log</string>
+  <!-- Interactive, not Background: the Background band is CPU/IO throttled, so
+       under high system load redis-server could not even reach "Configuration
+       loaded" (observed 2026-08-16: 9m34s runnable at 0.0% CPU, 464KB RSS,
+       nothing logged). The coordination bus is latency-critical for the whole
+       local fleet and must not be descheduled behind batch work. -->
   <key>ProcessType</key>
-  <string>Background</string>
+  <string>Interactive</string>
 </dict>
 </plist>
 PLIST
@@ -284,7 +296,27 @@ gate_redis() {
     echo "gate: redis clients ${connected} >= warn ${CLIENT_WARN}"
     exit 1
   fi
-  echo "gate: ok (clients=${connected:-?}/${maxclients:-?})"
+  # Also enforce idle timeout live so long-running launchd Redis picks up the safeguard
+  # without requiring a full restart every time the gate runs.
+  redis_cli CONFIG SET timeout "${IDLE_TIMEOUT}" >/dev/null 2>&1 || true
+  echo "gate: ok (clients=${connected:-?}/${maxclients:-?} timeout=${IDLE_TIMEOUT})"
+}
+
+guard_redis() {
+  if [[ ! -f "$GUARD_SCRIPT" ]]; then
+    echo "ERROR: missing connection guard at $GUARD_SCRIPT" >&2
+    exit 1
+  fi
+  start_redis
+  node "$GUARD_SCRIPT" --preflight
+}
+
+reap_redis() {
+  if [[ ! -f "$GUARD_SCRIPT" ]]; then
+    echo "ERROR: missing connection guard at $GUARD_SCRIPT" >&2
+    exit 1
+  fi
+  node "$GUARD_SCRIPT" --apply
 }
 
 case "${1:-}" in
@@ -292,6 +324,8 @@ case "${1:-}" in
   restart) restart_redis ;;
   status) status_redis ;;
   gate) gate_redis ;;
+  guard) guard_redis ;;
+  reap) reap_redis ;;
   launchd-install) launchd_install ;;
   launchd-start) launchd_start ;;
   *) usage; exit 1 ;;

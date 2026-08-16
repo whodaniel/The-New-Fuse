@@ -58,6 +58,8 @@
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
 import fs from 'fs/promises';
+import fsSync from 'node:fs';
+import os from 'node:os';
 import path from 'path';
 
 import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit.js';
@@ -1023,6 +1025,87 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     log('info', 'MASTER', `Final metrics:`, this.metrics);
   }
 }
+
+// ============================================================================
+// SINGLE INSTANCE
+// ============================================================================
+
+/**
+ * The master clock is the baton holder — exactly one may run per host.
+ *
+ * The guard lives here, in the process itself, because it is the only place every
+ * launch path passes through. Guards in `tnf master-clock start` and in
+ * factory-boot.sh each cover one launcher and miss the others: on 2026-08-16 four
+ * instances were live at once, spawned as `pnpm run master-clock` straight from the
+ * root package script, which never touches either guard. Four baton holders each
+ * reconnecting to Redis every 5s is what took the coordination bus down.
+ *
+ * Uses O_EXCL on a pidfile so the check-and-claim is one atomic syscall, and treats a
+ * lock whose pid is gone as stale rather than fatal — a crashed clock must not lock
+ * the host out of ever starting another.
+ */
+function claimSingletonLock(): boolean {
+  const lockPath =
+    process.env.TNF_MASTER_CLOCK_LOCK || path.join(os.homedir(), '.tnf', 'master-clock.pid');
+
+  const takeLock = (): boolean => {
+    try {
+      fsSync.mkdirSync(path.dirname(lockPath), { recursive: true });
+      fsSync.writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
+      return true;
+    } catch (err: any) {
+      if (err?.code !== 'EEXIST') throw err;
+      return false;
+    }
+  };
+
+  if (takeLock()) return true;
+
+  // Someone holds it. Alive, or a corpse?
+  let holder = 0;
+  try {
+    holder = Number.parseInt(fsSync.readFileSync(lockPath, 'utf8').trim(), 10);
+  } catch {
+    /* unreadable lock is treated as stale below */
+  }
+
+  if (Number.isFinite(holder) && holder > 0 && holder !== process.pid) {
+    try {
+      process.kill(holder, 0); // signal 0 = liveness probe only
+      log('warn', 'MASTER', `Master clock already running (pid ${holder}); exiting.`);
+      return false;
+    } catch {
+      // ESRCH: holder is gone.
+    }
+  }
+
+  log('warn', 'MASTER', `Removing stale master-clock lock (pid ${holder || 'unknown'}).`);
+  try {
+    fsSync.unlinkSync(lockPath);
+  } catch {
+    /* another starter cleaned it up first; the retry below settles the race */
+  }
+  return takeLock();
+}
+
+function releaseSingletonLock(): void {
+  const lockPath =
+    process.env.TNF_MASTER_CLOCK_LOCK || path.join(os.homedir(), '.tnf', 'master-clock.pid');
+  try {
+    // Only drop the lock if it is still ours; never delete a successor's claim.
+    if (Number.parseInt(fsSync.readFileSync(lockPath, 'utf8').trim(), 10) === process.pid) {
+      fsSync.unlinkSync(lockPath);
+    }
+  } catch {
+    /* nothing to release */
+  }
+}
+
+if (!claimSingletonLock()) {
+  process.exit(0);
+}
+
+process.on('exit', releaseSingletonLock);
 
 // ============================================================================
 // MAIN
