@@ -1,6 +1,7 @@
 import {
   CronPanel,
   GoalsPanel,
+  HarnessStatusPanel,
   TerminalMirrorPanel,
   ZoneBadge,
 } from '@/components/control-surface';
@@ -194,6 +195,7 @@ export const TNFConsoleDashboard: React.FC = () => {
                 <GoalsPanel />
                 <CronPanel />
               </div>
+              <HarnessStatusPanel />
               <div className="grid gap-4 xl:grid-cols-[3fr_2fr]">
                 <TerminalMirrorPanel />
                 <div className="grid gap-4 content-start">

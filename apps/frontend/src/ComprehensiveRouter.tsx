@@ -60,6 +60,7 @@ const WorkflowNexus = lazy(() => import('./pages/SynapticNexus'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
+const ComputerUsePage = lazy(() => import('./pages/ComputerUsePage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsGeneral = lazy(() => import('./pages/settings/General'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
@@ -500,6 +501,15 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
+              <Route
+                path="/computer-use"
+                element={
+                  <RequireMemberAccess>
+                    <ComputerUsePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route path="/browser" element={<Navigate to="/computer-use" replace />} />
               <Route
                 path="/dashboard/command-center"
                 element={<Navigate to="/command-center" replace />}

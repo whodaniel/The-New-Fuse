@@ -14,13 +14,23 @@ import {
   type AIAssistPreferences,
 } from '@/services/aiAssistPreferences';
 import { aiSourceService } from '@/services/aiSource.service';
+import { formatBrowserTaskForChat, runBrowserTask } from '@/services/browserAgent.service';
 import { submitReplaceFeedback } from '@/services/replaceFeedback';
 import { resourcesService } from '@/services/resources.service';
 import { bootstrapUserSessionFactors, readUserSessionFactors } from '@/services/userSessionFactors';
 import { AI_ASSIST_OPEN_EVENT } from '@/utils/aiAssistEvents';
 import { capturePageContentSnapshot } from '@/utils/pageContextSnapshot';
 import { filterByTenancyContext } from '@/utils/tenancy';
-import { Bot, FilePenLine, MessageSquare, Settings2, Sparkles, Wand2, X } from 'lucide-react';
+import {
+  Bot,
+  FilePenLine,
+  Globe,
+  MessageSquare,
+  Settings2,
+  Sparkles,
+  Wand2,
+  X,
+} from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -103,6 +113,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [prefs, setPrefs] = useState<AIAssistPreferences>(() => readAIAssistPreferences());
+  const [browserAgentMode, setBrowserAgentMode] = useState(false);
   const [pageSnapshotChars, setPageSnapshotChars] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -272,6 +283,15 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       prefs.systemPromptOverride?.trim() || systemPromptForFocus(prefs.focusMode);
 
     try {
+      if (browserAgentMode) {
+        const task = await runBrowserTask(userMessage);
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', content: formatBrowserTaskForChat(task) },
+        ]);
+        return;
+      }
+
       if (selectedAgent) {
         const execution = await agentService.executeAgent(selectedAgent, userMessage, {
           context: pageContext,
@@ -446,6 +466,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
                     : ' · catalog only'}
                   {' · '}
                   {focusModeLabel(prefs.focusMode)}
+                  {browserAgentMode ? ' · browser agent' : ''}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1">
@@ -493,6 +514,21 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
               {showSettings && (
                 <div className="space-y-3 border-b border-white/10 px-4 py-3 text-xs">
                   <p className="font-medium text-slate-200">Settings</p>
+                  <label className="flex items-center justify-between gap-2 text-slate-300">
+                    <span className="flex items-center gap-1.5">
+                      <Globe className="h-3.5 w-3.5" />
+                      Browser agent mode
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={browserAgentMode}
+                      onChange={(e) => setBrowserAgentMode(e.target.checked)}
+                    />
+                  </label>
+                  <p className="text-[10px] text-slate-500">
+                    Boots agent-browser, opens URLs in your message, snapshots the page. API must
+                    run on the operator machine.
+                  </p>
                   <label className="flex items-center justify-between gap-2 text-slate-300">
                     <span>Include visible page content</span>
                     <input

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { formatBrowserTaskForChat, runBrowserTask } from '@/services/browserAgent.service';
 import {
   chatApiService,
   type ChatAgent,
@@ -8,6 +9,7 @@ import {
 } from '@/services/chatApi';
 import {
   Copy,
+  Globe,
   Lightbulb,
   Paperclip,
   Pause,
@@ -263,6 +265,7 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
 
 function ChatPage() {
   const [newMessage, setNewMessage] = useState('');
+  const [browserAgentMode, setBrowserAgentMode] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<string>('general');
   const [loading, setLoading] = useState(true);
   const [senderId, setSenderId] = useState('You');
@@ -450,19 +453,47 @@ function ChatPage() {
   ]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !recipientAgentId) return;
+    if (!newMessage.trim()) return;
+    if (!browserAgentMode && !recipientAgentId) return;
+
+    const userContent = newMessage;
+    setNewMessage('');
+    setSendError(null);
+
+    if (browserAgentMode) {
+      try {
+        setIsGenerating(true);
+        await addMessage({
+          content: userContent,
+          sender: 'user',
+          timestamp: new Date().toISOString(),
+          type: 'text',
+        });
+        const result = await runBrowserTask(userContent);
+        await addMessage({
+          content: formatBrowserTaskForChat(result),
+          sender: 'agent',
+          timestamp: new Date().toISOString(),
+          agentName: 'Browser agent',
+          type: 'text',
+        });
+      } catch (error) {
+        setSendError(String((error as Error)?.message || 'Browser task failed.'));
+      } finally {
+        setIsGenerating(false);
+      }
+      return;
+    }
 
     const respondingAgent = getAgentById(recipientAgentId);
     if (!respondingAgent) return;
 
     const userMessage: Omit<Message, 'id'> = {
-      content: newMessage,
+      content: userContent,
       sender: 'user' as const,
       timestamp: new Date().toISOString(),
       type: 'text' as const,
     };
-    setNewMessage('');
-    setSendError(null);
 
     try {
       await addMessage(userMessage);
@@ -553,7 +584,10 @@ function ChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col" translate="no">
+    <div
+      className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col"
+      translate="no"
+    >
       {/* Header */}
       <div className="mb-6 flex-none">
         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -825,7 +859,13 @@ function ChatPage() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder={isGenerating ? 'Thinking...' : 'Type a message...'}
+                  placeholder={
+                    isGenerating
+                      ? 'Thinking...'
+                      : browserAgentMode
+                        ? 'Open https://thenewfuse.com and snapshot the page'
+                        : 'Type a message...'
+                  }
                   className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                   disabled={isGenerating || !agents || agents.length === 0}
                 />
@@ -834,9 +874,7 @@ function ChatPage() {
                   disabled={
                     !newMessage.trim() ||
                     isGenerating ||
-                    !agents ||
-                    agents.length === 0 ||
-                    !recipientAgentId
+                    (!browserAgentMode && (!agents || agents.length === 0 || !recipientAgentId))
                   }
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
@@ -845,8 +883,21 @@ function ChatPage() {
                 </button>
               </div>
               <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                <span>Press Enter to send</span>
-                <span>{newMessage.length}/500</span>
+                <label className="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={browserAgentMode}
+                    onChange={(e) => setBrowserAgentMode(e.target.checked)}
+                  />
+                  <Globe size={12} />
+                  Browser agent
+                </label>
+                <Link
+                  to="/computer-use"
+                  className="hover:text-foreground underline-offset-2 hover:underline"
+                >
+                  Open Computer Use
+                </Link>
               </div>
               {sendError && (
                 <p className="mt-2 text-xs text-red-400" role="alert">

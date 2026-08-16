@@ -139,7 +139,7 @@ export default function App() {
           Open in new tab
         </button>
         <span style={{ color: '#8a7560', fontSize: 12, marginLeft: 'auto' }}>
-          Enable Voice inside the Library · Tab = Story Architect · T = Timeline
+          Enable Voice inside the Library (optional) · Tab = Story Architect · T = Timeline
         </span>
       </div>
 
@@ -173,14 +173,18 @@ export default function App() {
                   borderRadius: 8,
                 }}
               >
-                pnpm --filter virtual-library-blueprints is excluded from the workspace — run:{' '}
-                <code>cd apps/extensions/virtual-library-blueprints && npx vite --host 127.0.0.1 --port 5173</code>
+                cd apps/extensions/virtual-library-blueprints && npx vite --host 127.0.0.1 --port
+                5173
               </code>
               <div style={{ marginTop: 12 }}>
                 <button type="button" style={btnStyle} onClick={() => void refreshDeps()}>
                   Recheck
                 </button>
-                <button type="button" style={{ ...btnStyle, marginLeft: 8 }} onClick={() => setMode('native')}>
+                <button
+                  type="button"
+                  style={{ ...btnStyle, marginLeft: 8 }}
+                  onClick={() => setMode('native')}
+                >
                   Use lightweight scene
                 </button>
               </div>

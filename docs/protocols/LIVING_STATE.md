@@ -3,10 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Continue dirty-tree: frontend backup/settings UI; defer
-bulk data/intelligence-artifacts.
-
+**Current Directive:** Defer bulk data/intelligence-artifacts; next optional: browser-control-surfaces + api harness/browser modules.
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-16 Apple Notes Sequential Ingestion, Storage Transparency &
@@ -1015,6 +1012,18 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T23:51:24.210Z handoff `d2b506ee-2124-4f7e-b0b7-1de4fc75396f` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; next optional: browser-control-surfaces + api harness/browser modules.
+
+- 2026-08-16T23:51:22.727Z handoff `423fa937-710e-4e11-8693-5ffbd88e0c74` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; next optional: browser-control-surfaces + api harness/browser modules.
+
+- 2026-08-16T23:49:48.372Z handoff `af8c0004-e64a-418a-84b4-4e57f562ceae` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:45.042Z handoff `947a718f-c650-4e97-ba26-5bfb38b6afd7` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:07.703Z handoff `8d233dd6-69e1-4276-826f-168f9b5fc8b3` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:04.215Z handoff `13b94a78-8998-470f-9a92-8c54ed4c28c1` head `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts; optionally batch browser-control-surfaces + api harness/browser modules next.
 
 - 2026-08-16T23:36:20.806Z handoff `1132dbda-3c8d-4afe-91d2-9234155f969e` head
   `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend

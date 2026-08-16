@@ -113,6 +113,13 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   },
   { name: 'Agent Fleet', href: '/agents', icon: Bot, section: 'forge', access: 'authenticated' },
   {
+    name: 'Computer Use',
+    href: '/computer-use',
+    icon: Globe,
+    section: 'forge',
+    access: 'authenticated',
+  },
+  {
     name: 'Workflows',
     href: '/workflows',
     icon: Workflow,

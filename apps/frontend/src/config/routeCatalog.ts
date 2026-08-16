@@ -84,6 +84,11 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Knowledge Hub', path: '/knowledge-hub', description: 'Central Knowledge Repository' },
   { name: 'MCP Hub', path: '/mcp-hub', description: 'Model Context Protocol Management' },
+  {
+    name: 'Computer Use',
+    path: '/computer-use',
+    description: 'Agent browser control — canonical web entry (alias /browser)',
+  },
 
   // Workspace Management
   { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },
