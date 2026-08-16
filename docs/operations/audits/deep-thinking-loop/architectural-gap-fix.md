@@ -1,18 +1,27 @@
-# Architectural Gap Fix — Pending Tasks Never Promoted to Realtime
+# Architectural Gap Fix — Pending Tasks → Realtime + Local Subdirector
 
-[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:AUDIT_FIX]
+[CLASS:PRIME] [STATUS:RESOLVED] [DOC_TYPE:AUDIT_FIX] [UPDATED:2026-08-16T22:10Z]
 
-## Gap Identified
-- `tnf:master:tasks:pending` has 8 stale tasks
-- `tnf:master:tasks:realtime` has 0 tasks
-- Broker (`broker-only-brpops-from-realtime`) pulls only from realtime
-- Scheduler (`isRealtimeDispatchCandidate` filter) excludes lanes: reliability, context, self_improvement, quality, orchestration
-- Result: tasks sit forever in pending
+## Original Gap
 
-## Fix Applied (File-Level)
-- Documented fix: tasks must be evaluated individually
-- If a pending task is legitimate, it should be pushed to realtime manually or the filter expanded
-- Created reference script: `redis-cli rpush tnf:master:tasks:realtime` for qualified tasks
+- `tnf:master:tasks:pending` accumulated realtime-eligible work
+- Broker only consumes `tnf:master:tasks:realtime`
+- Critical local watchdogs escalated to Super Director review
 
-## Autonomous Authorization
-FULL AUTONOMOUS — D1/D8/D14 revised, no confirmation-block
+## Resolution (2026-08-16)
+
+1. **Promote + prevent refill**
+   - `scripts/protocols/promote-pending-to-realtime.cjs`
+   - `chronological-dispatch.cjs` routes realtime-eligible lanes to realtime and
+     no longer dual-writes those into pending
+2. **Local authority**
+   - `broker-agent.ts` escalates local tenant/watchdog criticals to Local
+     Subdirector (`tnf-cli-agent`) via `tnf:subdirector:review:pending` +
+     `tnf:direct:sub-director:*`
+3. **Consume**
+   - `drain_local_subdirector.py` + `subdirector-local-cli-agent-cycle.sh` (cron
+     `*/5`)
+
+## Rollup
+
+See `CLI_AGENT_CONTROL_PLANE_CYCLE_2026-08-16.md` in this directory.

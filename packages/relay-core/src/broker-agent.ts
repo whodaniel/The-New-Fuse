@@ -37,10 +37,14 @@ type GateDecision = {
 
 type PolicyDecision = 'allow' | 'escalate' | 'deny';
 
+/** Who owns review when policy escalates. Local tenant loops report to Subdirector. */
+type ReviewAuthority = 'director' | 'local_subdirector';
+
 type PolicyResult = {
   decision: PolicyDecision;
   reason: string;
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  reviewAuthority?: ReviewAuthority;
 };
 
 type RegistryAgent = {
@@ -164,6 +168,25 @@ const CONFIG = {
   AGENT_REGISTRY_KEY: process.env.BROKER_AGENT_REGISTRY_KEY || 'tnf:agent-registry',
   AGENT_STALE_MS: parseInt(process.env.BROKER_AGENT_STALE_MS || '', 10) || 120000,
   DIRECTOR_REVIEW_QUEUE: process.env.BROKER_DIRECTOR_REVIEW_QUEUE || 'tnf:director:review:pending',
+  SUBDIRECTOR_REVIEW_QUEUE:
+    process.env.BROKER_SUBDIRECTOR_REVIEW_QUEUE || 'tnf:subdirector:review:pending',
+  /**
+   * Local Subdirector identity. TNF CLI agent is the default local authority
+   * (aliases: tnf-local-subdirector, sub-director).
+   */
+  LOCAL_SUBDIRECTOR_AGENT_ID:
+    process.env.BROKER_LOCAL_SUBDIRECTOR_AGENT_ID ||
+    process.env.TNF_LOCAL_SUBDIRECTOR_AGENT_ID ||
+    process.env.TNF_AGENT_ID ||
+    'tnf-cli-agent',
+  LOCAL_SUBDIRECTOR_ALIASES: String(
+    process.env.BROKER_LOCAL_SUBDIRECTOR_ALIASES ||
+      'tnf-cli-agent,tnf-local-subdirector,sub-director,Local Sub-Director'
+  )
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+  LOCAL_TENANT_ID: process.env.BROKER_LOCAL_TENANT_ID || process.env.TNF_LOCAL_TENANT_ID || 'local',
   GATE_METRICS_HASH: process.env.BROKER_GATE_METRICS_HASH || 'tnf:broker:federation-gate:metrics',
   POLICY_MODE: process.env.BROKER_POLICY_MODE || 'strict',
   FEDERATION_GATE_MODE:
@@ -174,6 +197,9 @@ const CONFIG = {
     process.env.BROKER_GATE_POLICY_TOKEN || process.env.TNF_GATE_POLICY_TOKEN || '',
   ALLOW_CRITICAL_WITHOUT_DIRECTOR:
     (process.env.BROKER_ALLOW_CRITICAL_WITHOUT_DIRECTOR || 'false') === 'true',
+  /** Critical local tenant/watchdog tasks report to Local Subdirector, not Super Director. */
+  LOCAL_CRITICAL_TO_SUBDIRECTOR:
+    (process.env.BROKER_LOCAL_CRITICAL_TO_SUBDIRECTOR || 'true') === 'true',
   HEARTBEAT_INTERVAL_MS: parseInt(process.env.BROKER_HEARTBEAT_INTERVAL_MS || '', 10) || 3000,
   QUEUE_BLOCK_TIMEOUT_SEC: parseInt(process.env.BROKER_QUEUE_BLOCK_TIMEOUT_SEC || '', 10) || 5,
   TWIP_INVENTORY_SNAPSHOT_PATH: path.resolve(
@@ -446,6 +472,73 @@ class BrokerAgent {
 
   private isStrictPolicyMode(): boolean {
     return String(CONFIG.POLICY_MODE || 'strict').toLowerCase() !== 'permissive';
+  }
+
+  /**
+   * Local tenant loops / watchdogs belong to the Local Subdirector (tnf-cli-agent),
+   * not the cloud Super Director. Detect via process id, source, or local tenant scope.
+   */
+  private isLocalWatchdogOrTenantTask(task: QueueTask): boolean {
+    const processId = String(
+      task.processId || (task.metadata as any)?.scheduledProcessId || ''
+    ).toLowerCase();
+    const source = String(
+      task.source || (task.metadata as any)?.dispatchSource || ''
+    ).toLowerCase();
+    const id = String(task.id || '').toLowerCase();
+    const title = String(task.title || '').toLowerCase();
+    const scopeTenant = String(this.getScopeTenant(task) || '').toLowerCase();
+    const localTenant = String(CONFIG.LOCAL_TENANT_ID || 'local').toLowerCase();
+    const reportTo = String(
+      (task.metadata as any)?.reportTo || (task.metadata as any)?.localAuthority || ''
+    )
+      .toLowerCase()
+      .replace(/_/g, '-');
+
+    if (processId.startsWith('tenant-') || processId.includes('watchdog')) return true;
+    if (id.startsWith('tenant-') || id.includes('watchdog')) return true;
+    if (title.includes('tenant') && (title.includes('watchdog') || title.includes('loop'))) {
+      return true;
+    }
+    if (source === 'chronological-dispatch' || source === 'master-clock') return true;
+    if (scopeTenant && (scopeTenant === localTenant || scopeTenant === 'local')) return true;
+    if (
+      reportTo &&
+      (reportTo.includes('subdirector') ||
+        reportTo.includes('sub-director') ||
+        reportTo === 'tnf-cli-agent' ||
+        reportTo === 'tnf-local-subdirector')
+    ) {
+      return true;
+    }
+    if ((task.metadata as any)?.importedFromLegacyCron === true) {
+      const lane = String((task.itinerary as any)?.lane || '').toLowerCase();
+      if (
+        ['reliability', 'orchestration', 'quality', 'context', 'self_improvement'].includes(lane)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private resolveReviewAuthority(task: QueueTask): ReviewAuthority {
+    if (CONFIG.LOCAL_CRITICAL_TO_SUBDIRECTOR && this.isLocalWatchdogOrTenantTask(task)) {
+      return 'local_subdirector';
+    }
+    return 'director';
+  }
+
+  private getLocalSubdirectorAgentId(): string {
+    return String(CONFIG.LOCAL_SUBDIRECTOR_AGENT_ID || 'tnf-cli-agent').trim() || 'tnf-cli-agent';
+  }
+
+  private localSubdirectorReportQueues(): string[] {
+    const ids = new Set<string>([
+      this.getLocalSubdirectorAgentId(),
+      ...CONFIG.LOCAL_SUBDIRECTOR_ALIASES,
+    ]);
+    return Array.from(ids).map((id) => `tnf:direct:sub-director:${id}`);
   }
 
   private getFederationGateMode(): 'off' | 'warn' | 'enforce' {
@@ -935,6 +1028,7 @@ class BrokerAgent {
             decision: 'escalate',
             reason,
             riskLevel: 'high',
+            reviewAuthority: this.resolveReviewAuthority(task),
           };
         }
         console.warn(`[Broker] WARN ${task.id}: ${reason}`);
@@ -959,6 +1053,7 @@ class BrokerAgent {
             decision: 'escalate',
             reason,
             riskLevel: 'high',
+            reviewAuthority: this.resolveReviewAuthority(task),
           };
         }
         console.warn(`[Broker] WARN ${task.id}: ${reason}`);
@@ -982,6 +1077,7 @@ class BrokerAgent {
         decision: 'escalate',
         reason: 'Missing itinerary lane for dispatch governance',
         riskLevel: 'high',
+        reviewAuthority: this.resolveReviewAuthority(task),
       };
     }
 
@@ -990,6 +1086,7 @@ class BrokerAgent {
         decision: 'escalate',
         reason: 'No target worker available in strict policy mode',
         riskLevel: 'high',
+        reviewAuthority: this.resolveReviewAuthority(task),
       };
     }
 
@@ -998,14 +1095,25 @@ class BrokerAgent {
         decision: 'escalate',
         reason: 'Task explicitly requires Director approval',
         riskLevel: priority === 'critical' ? 'critical' : 'high',
+        reviewAuthority: 'director',
       };
     }
 
     if (priority === 'critical' && !CONFIG.ALLOW_CRITICAL_WITHOUT_DIRECTOR) {
+      const reviewAuthority = this.resolveReviewAuthority(task);
+      if (reviewAuthority === 'local_subdirector') {
+        return {
+          decision: 'escalate',
+          reason: 'Critical local task requires Local Subdirector review',
+          riskLevel: 'critical',
+          reviewAuthority: 'local_subdirector',
+        };
+      }
       return {
         decision: 'escalate',
         reason: 'Critical task requires Director review',
         riskLevel: 'critical',
+        reviewAuthority: 'director',
       };
     }
 
@@ -1254,6 +1362,7 @@ class BrokerAgent {
       reason: policy.reason,
       riskLevel: policy.riskLevel,
       sourceQueue: CONFIG.TASK_QUEUE_KEY,
+      reviewAuthority: 'director',
     });
 
     if (this.upstash) {
@@ -1261,6 +1370,78 @@ class BrokerAgent {
     } else if (this.redis) {
       await this.redis.lpush(CONFIG.DIRECTOR_REVIEW_QUEUE, payload);
     }
+  }
+
+  private async escalateToLocalSubdirector(task: QueueTask, policy: PolicyResult): Promise<void> {
+    const subdirectorId = this.getLocalSubdirectorAgentId();
+    const escalatedAt = new Date().toISOString();
+    const reviewPayload = JSON.stringify({
+      task,
+      brokerId: this.brokerId,
+      escalatedAt,
+      reason: policy.reason,
+      riskLevel: policy.riskLevel,
+      sourceQueue: CONFIG.TASK_QUEUE_KEY,
+      reviewAuthority: 'local_subdirector',
+      localSubdirectorAgentId: subdirectorId,
+    });
+
+    // Durable review queue for Local Subdirector / tnf-cli-agent consumers.
+    if (this.upstash) {
+      await this.upstash.lpush(CONFIG.SUBDIRECTOR_REVIEW_QUEUE, reviewPayload);
+    } else if (this.redis) {
+      await this.redis.lpush(CONFIG.SUBDIRECTOR_REVIEW_QUEUE, reviewPayload);
+    }
+
+    // Also report onto direct sub-director worker queues (tnf-cli-agent aliases).
+    const reportEnvelope = JSON.stringify({
+      type: 'task',
+      version: '1.0',
+      payload: {
+        id: `subdirector-review-${task.id}-${Date.now()}`,
+        timestamp: escalatedAt,
+        to: { agentId: subdirectorId },
+        payload: {
+          task: {
+            title: task.title || `Local Subdirector review: ${task.id}`,
+            description:
+              task.description ||
+              `Critical/local watchdog reported for Local Subdirector review. Reason: ${policy.reason}`,
+            acceptanceCriteria: [
+              'Acknowledge or act on the reported local watchdog/tenant loop',
+              'Record outcome in run-artifacts or session handoff',
+            ],
+          },
+          source: this.brokerId,
+          metadata: {
+            reportKind: 'local_subdirector_review',
+            originalTaskId: task.id,
+            processId: task.processId || (task.metadata as any)?.scheduledProcessId || null,
+            policyReason: policy.reason,
+            riskLevel: policy.riskLevel,
+            itinerary: task.itinerary || {},
+            originalTask: task,
+          },
+        },
+      },
+    });
+
+    for (const queueKey of this.localSubdirectorReportQueues()) {
+      if (this.upstash) {
+        await this.upstash.lpush(queueKey, reportEnvelope);
+      } else if (this.redis) {
+        await this.redis.lpush(queueKey, reportEnvelope);
+      }
+    }
+  }
+
+  private async escalateForReview(task: QueueTask, policy: PolicyResult): Promise<void> {
+    const authority = policy.reviewAuthority || this.resolveReviewAuthority(task);
+    if (authority === 'local_subdirector') {
+      await this.escalateToLocalSubdirector(task, policy);
+      return;
+    }
+    await this.escalateToDirector(task, policy);
   }
 
   private async dispatchTask(task: QueueTask): Promise<void> {
@@ -1278,9 +1459,14 @@ class BrokerAgent {
     }
 
     if (policy.decision === 'escalate') {
-      await this.escalateToDirector(task, policy);
+      const authority = policy.reviewAuthority || this.resolveReviewAuthority(task);
+      await this.escalateForReview(task, { ...policy, reviewAuthority: authority });
       await this.persistDecision(task, null, policy, 'under_review');
-      console.warn(`[Broker] Escalated ${task.id} to Director: ${policy.reason}`);
+      const who =
+        authority === 'local_subdirector'
+          ? `Local Subdirector (${this.getLocalSubdirectorAgentId()})`
+          : 'Director';
+      console.warn(`[Broker] Escalated ${task.id} to ${who}: ${policy.reason}`);
       return;
     }
 

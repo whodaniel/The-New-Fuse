@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-16T21:18:52.441Z** — handoff
+Updated: **2026-08-16T22:07:40.013Z** — handoff
+`5f7bdf54-232d-4c66-913a-ad1920e9f4a7` (`8628c62b096c`).
+`3cd24a79-0443-4758-9ffa-be8fa81e09c5` (`8628c62b096c`).
 `6e8c1168-8265-4098-920c-29b2b6cc6914` (`58714c3e5843`).
 `c9e8906d-b301-4f89-a593-9fdb61775593` (`b4e3627c19de`).
 `f202ac36-a0eb-427d-84eb-d19a1826ed62` (`84d0c9d15899`).
@@ -328,12 +330,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 | Agent           | Identity                              | Status          |
 | --------------- | ------------------------------------- | --------------- |
-| kilo-cli        | `TNF:LOCAL:AGENT:KILO-CLI:001`        | **STANDING-BY** |
-| opencode-cli    | `TNF:LOCAL:AGENT:OPENCODE-CLI:001`    | **STANDING-BY** |
 | pi-coding-agent | `TNF:LOCAL:AGENT:PI-CODING-AGENT:001` | **STANDING-BY** |
-| claude-code     | `TNF:LOCAL:AGENT:CLAUDE-CODE:001`     | **STANDING-BY** |
-| tnf-hermes      | `TNF:LOCAL:AGENT:TNF-HERMES:001`      | **STANDING-BY** |
-| jules           | `TNF:LOCAL:AGENT:JULES:001`           | **STANDING-BY** |
 
 ## Protocol Gaps (prioritized)
 
@@ -445,6 +442,21 @@ Detail: `docs/protocols/TNF_UNBOUNDED_GROWTH_AUDIT.md`.
 | Agent        | Identity                           | Status                                           |
 | ------------ | ---------------------------------- | ------------------------------------------------ |
 | command-code | `TNF:LOCAL:AGENT:COMMAND-CODE:001` | **NEW** — registered at 2026-08-16T20:21:07.680Z |
+
+## Historical Agents (Knowledge-Only)
+
+Retired identities kept for ecosystem knowledge. Entries here are never expected
+at boot; they record which federation/tenant scope each agent served and why it
+was retired. See data/boot-stale-expectations.json for path/artifact-level
+equivalents.
+
+| Identity                           | Origin Scope                      | Archived   | Reason                                |
+| ---------------------------------- | --------------------------------- | ---------- | ------------------------------------- |
+| `TNF:LOCAL:AGENT:JULES:001`        | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
+| `TNF:LOCAL:AGENT:TNF-HERMES:001`   | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
+| `TNF:LOCAL:AGENT:CLAUDE-CODE:001`  | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
+| `TNF:LOCAL:AGENT:OPENCODE-CLI:001` | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
+| `TNF:LOCAL:AGENT:KILO-CLI:001`     | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 
 ## Session Logs
 
@@ -1242,3 +1254,12 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (6e8c1168-8265-4098-920c-29b2b6cc6914) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3cd24a79-0443-4758-9ffa-be8fa81e09c5) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(efe13fe5-9a92-4015-8217-461a624b3e65) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(5f7bdf54-232d-4c66-913a-ad1920e9f4a7) | ✅ HANDOFF_READY |

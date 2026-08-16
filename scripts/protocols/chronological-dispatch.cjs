@@ -9,7 +9,33 @@ const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
 const DEFAULT_REDIS_URL = 'redis://127.0.0.1:6379';
 const DEFAULT_QUEUE = 'tnf:master:tasks:planning';
 const COMPAT_QUEUE = 'tnf:master:tasks:pending';
+const REALTIME_QUEUE = 'tnf:master:tasks:realtime';
 const LOG_QUEUE = 'tnf:master:logs';
+
+/** Lanes the broker consumes via realtime (keep in sync with task-scheduler.service.ts). */
+const REALTIME_LANES = new Set([
+  'realtime_broker_routing',
+  'relay_federation',
+  'redis_sync',
+  'tauri_sync',
+  'directive',
+  'orchestration',
+  'reliability',
+  'quality',
+  'context',
+  'self_improvement',
+]);
+
+function resolveTargetQueue(profile, queueItem) {
+  const configured = profile.targetQueue || DEFAULT_QUEUE;
+  const lane = String(queueItem?.itinerary?.lane || '').toLowerCase();
+  // Broker only BRPOPs realtime. Do not park realtime-eligible work on planning
+  // (or dual-write it into pending) or it becomes a write-only black hole.
+  if (REALTIME_LANES.has(lane)) {
+    return REALTIME_QUEUE;
+  }
+  return configured;
+}
 
 function parseArgs(argv) {
   const options = {
@@ -72,9 +98,30 @@ function readJson(filePath, fallback) {
   }
 }
 
+function buildLocalGateDecisions(createdAt) {
+  const gates = [
+    'TENANT_SCOPE_GATE',
+    'TRACE_CONTINUITY_GATE',
+    'TERMINAL_BINDING_GATE',
+    'HIGH_RISK_RUNTIME_GATE',
+    'CHANNEL_MEMBERSHIP_GATE',
+  ];
+  return gates.map((gate) => ({
+    gate,
+    decision: 'allow',
+    reason: 'local chronological dispatch under Local Subdirector authority',
+    at: createdAt,
+  }));
+}
+
 function buildQueueItem(processId, profile) {
   const dispatchId = `${processId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const createdAt = new Date().toISOString();
+  const localTenantId = process.env.TNF_LOCAL_TENANT_ID || 'local';
+  const localSubdirector =
+    process.env.TNF_LOCAL_SUBDIRECTOR_AGENT_ID ||
+    process.env.TNF_AGENT_ID ||
+    'tnf-cli-agent';
   return {
     id: dispatchId,
     title: profile.title || processId,
@@ -86,6 +133,17 @@ function buildQueueItem(processId, profile) {
     processId,
     kind: profile.kind || 'agent-turn',
     createdAt,
+    // Local tenant scope so federation TENANT_SCOPE / cumulative checks pass for
+    // machine-local loops that report to Local Subdirector (tnf-cli-agent).
+    scope: {
+      tenantId: localTenantId,
+      authority: 'local_subdirector',
+    },
+    cumulativeId: {
+      scope: { tenant_id: localTenantId },
+      lineage: { processId, clockSource: 'master-clock' },
+    },
+    gateDecisions: buildLocalGateDecisions(createdAt),
     itinerary: profile.itinerary || {
       lane: 'directive',
       horizon: 'short_term',
@@ -97,6 +155,9 @@ function buildQueueItem(processId, profile) {
       scheduledProcessId: processId,
       dispatchSource: 'master-clock',
       importedFromLegacyCron: true,
+      localAuthority: 'local_subdirector',
+      reportTo: localSubdirector,
+      tenantId: localTenantId,
     },
   };
 }
@@ -105,8 +166,13 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
   const redis = createClient({ url: redisUrl });
   await redis.connect();
   try {
-    await redis.lPush(targetQueue, JSON.stringify(queueItem));
-    await redis.lPush(COMPAT_QUEUE, JSON.stringify(queueItem));
+    const payload = JSON.stringify(queueItem);
+    await redis.lPush(targetQueue, payload);
+    // Compat dual-write only for non-realtime targets. Dual-writing realtime
+    // work into pending recreated the 50+ task black hole.
+    if (targetQueue !== REALTIME_QUEUE && targetQueue !== COMPAT_QUEUE) {
+      await redis.lPush(COMPAT_QUEUE, payload);
+    }
     await redis.lPush(
       LOG_QUEUE,
       JSON.stringify({
@@ -118,6 +184,7 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
           dispatchId: queueItem.id,
           targetQueue,
           priority: queueItem.priority,
+          compatDualWrite: targetQueue !== REALTIME_QUEUE && targetQueue !== COMPAT_QUEUE,
         },
       })
     );
@@ -167,7 +234,7 @@ async function main() {
   }
 
   const queueItem = buildQueueItem(options.processId, profile);
-  const targetQueue = profile.targetQueue || DEFAULT_QUEUE;
+  const targetQueue = resolveTargetQueue(profile, queueItem);
   const explicitUrl = process.env.REDIS_URL || '';
   // An unset REDIS_URL in the cron environment routed every dispatch to the
   // local-artifact fallback for months while Redis was running normally on the

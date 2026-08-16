@@ -1006,6 +1006,18 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
+- 2026-08-16T22:07:40.066Z handoff `5f7bdf54-232d-4c66-913a-ad1920e9f4a7` head
+  `8628c62b096c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T22:02:09.357Z handoff `efe13fe5-9a92-4015-8217-461a624b3e65` head
+  `8628c62b096c` project `TNF-SESSION` — Optional: dedupe alias fan-out so one
+  report does not ack three identical direct envelopes.
+
+- 2026-08-16T21:37:29.545Z handoff `3cd24a79-0443-4758-9ffa-be8fa81e09c5` head
+  `8628c62b096c` project `TNF-SESSION` — Satisfy or relax local federation gates
+  so critical watchdogs execute instead of only escalating to Director.
+
 - 2026-08-16T21:18:52.520Z handoff `6e8c1168-8265-4098-920c-29b2b6cc6914` head
   `58714c3e5843` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
