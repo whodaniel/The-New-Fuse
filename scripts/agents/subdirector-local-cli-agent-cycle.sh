@@ -46,10 +46,10 @@ log() { echo "[$(date -Iseconds)] $*" >> "$LOG"; }
 export TNF_AGENT_ID="$AGENT_ID"
 export TNF_LOCAL_SUBDIRECTOR_AGENT_ID="$AGENT_ID"
 
-log "cycle open review=$(redis-cli -p 6379 LLEN tnf:subdirector:review:pending 2>/dev/null || echo 0) direct=$(redis-cli -p 6379 LLEN tnf:direct:sub-director:$AGENT_ID 2>/dev/null || echo 0)"
+log "cycle open review=$(redis-cli -p 6379 LLEN tnf:subdirector:review:pending 2>/dev/null || echo 0) direct=$(redis-cli -p 6379 LLEN tnf:direct:sub-director:$AGENT_ID 2>/dev/null || echo 0) analytics=$(redis-cli -p 6379 LLEN tnf:master:tasks:analytics 2>/dev/null || echo 0) maintenance=$(redis-cli -p 6379 LLEN tnf:master:tasks:maintenance 2>/dev/null || echo 0) pending=$(redis-cli -p 6379 LLEN tnf:master:tasks:pending 2>/dev/null || echo 0)"
 
 python3 "$DRAIN" --max-per-queue 25 --json >> "$LOG" 2>&1
 RC=$?
 
-log "cycle closed rc=$RC review=$(redis-cli -p 6379 LLEN tnf:subdirector:review:pending 2>/dev/null || echo 0) direct=$(redis-cli -p 6379 LLEN tnf:direct:sub-director:$AGENT_ID 2>/dev/null || echo 0)"
+log "cycle closed rc=$RC review=$(redis-cli -p 6379 LLEN tnf:subdirector:review:pending 2>/dev/null || echo 0) direct=$(redis-cli -p 6379 LLEN tnf:direct:sub-director:$AGENT_ID 2>/dev/null || echo 0) analytics=$(redis-cli -p 6379 LLEN tnf:master:tasks:analytics 2>/dev/null || echo 0) maintenance=$(redis-cli -p 6379 LLEN tnf:master:tasks:maintenance 2>/dev/null || echo 0) pending=$(redis-cli -p 6379 LLEN tnf:master:tasks:pending 2>/dev/null || echo 0)"
 exit "$RC"

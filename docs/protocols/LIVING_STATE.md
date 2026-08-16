@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optional: git push origin HEAD when operator wants remote
-durable.
+**Current Directive:** Optional alias-ack dedupe + tnf subdirector drain CLI.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1005,6 +1004,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T22:24:29.027Z handoff `524c8381-cf6a-43e5-8262-872f19b52e2c` head
+  `35792eb67aad` project `TNF-SESSION` — Optional alias-ack dedupe + tnf
+  subdirector drain CLI.
 
 - 2026-08-16T22:19:28.764Z handoff `7161308e-c0f4-461c-9362-f27455bada4c` head
   `9638ca199fca` project `TNF-SESSION` — Optional: git push origin HEAD when

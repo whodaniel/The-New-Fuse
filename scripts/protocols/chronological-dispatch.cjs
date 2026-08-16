@@ -12,6 +12,17 @@ const COMPAT_QUEUE = 'tnf:master:tasks:pending';
 const REALTIME_QUEUE = 'tnf:master:tasks:realtime';
 const LOG_QUEUE = 'tnf:master:logs';
 
+/** Queues that are first-class homes — never dual-write into pending. */
+const NO_COMPAT_DUAL_WRITE = new Set([
+  REALTIME_QUEUE,
+  COMPAT_QUEUE,
+  'tnf:master:tasks:analytics',
+  'tnf:master:tasks:maintenance',
+  'tnf:master:tasks:context',
+  'tnf:master:tasks:quality',
+  'tnf:master:tasks:planning',
+]);
+
 /** Lanes the broker consumes via realtime (keep in sync with task-scheduler.service.ts). */
 const REALTIME_LANES = new Set([
   'realtime_broker_routing',
@@ -168,9 +179,10 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
   try {
     const payload = JSON.stringify(queueItem);
     await redis.lPush(targetQueue, payload);
-    // Compat dual-write only for non-realtime targets. Dual-writing realtime
-    // work into pending recreated the 50+ task black hole.
-    if (targetQueue !== REALTIME_QUEUE && targetQueue !== COMPAT_QUEUE) {
+    // Compat dual-write only when the target is not already a first-class queue.
+    // Dual-writing realtime/specialty work into pending recreated black holes.
+    const dualWrite = !NO_COMPAT_DUAL_WRITE.has(targetQueue);
+    if (dualWrite) {
       await redis.lPush(COMPAT_QUEUE, payload);
     }
     await redis.lPush(
@@ -184,7 +196,7 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
           dispatchId: queueItem.id,
           targetQueue,
           priority: queueItem.priority,
-          compatDualWrite: targetQueue !== REALTIME_QUEUE && targetQueue !== COMPAT_QUEUE,
+          compatDualWrite: dualWrite,
         },
       })
     );

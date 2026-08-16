@@ -1,23 +1,28 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-16T22:19:28.704Z`  
-Handoff ID: `7161308e-c0f4-461c-9362-f27455bada4c`
+Created At: `2026-08-16T22:24:28.955Z`  
+Handoff ID: `524c8381-cf6a-43e5-8262-872f19b52e2c`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `9638ca199fca4c2dfc921c19f10ebb7be5fa1d1f`
+- Head SHA: `35792eb67aad4194dae80159cfcca6fa965b5b2e`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Control-plane cycle committed as 9638ca199f (ahead of origin by 1). Remaining
-  dirty tree is out of scope.
+- Pushed control-plane commits to origin; Local Subdirector now drains
+  analytics/maintenance specialty queues and stops dual-writing them into
+  pending.
 
 ## Changed Paths
 
+- scripts/protocols/chronological-dispatch.cjs
+- scripts/sub-director/drain_local_subdirector.py
+- scripts/agents/subdirector-local-cli-agent-cycle.sh
+- docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T22-23-specialty-drain.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/LIVING_STATE.md
@@ -34,17 +39,15 @@ Handoff ID: `7161308e-c0f4-461c-9362-f27455bada4c`
 
 - Owner: `tnf-cli-agent`
 - Targets: `sub-director`, `story-architect`, `librarian`
-- Priority: `medium`
+- Priority: `high`
 
 ### Resume Checklist
 
-- Commit 9638ca199f on main
-- Branch ahead 1
-- Cron local subdirector drain still installed
+- origin/main includes 9638ca199f + 35792eb67a
+- specialty queues drained
+- dual-write skip for specialty targets
 
 ## Next Actions
 
-- Optional: git push origin HEAD when operator wants remote durable.
-- Specialty analytics/maintenance pending consumers (6).
 - Optional alias-ack dedupe + tnf subdirector drain CLI.
 - Defer unrelated dirty-tree build/test/commit.
