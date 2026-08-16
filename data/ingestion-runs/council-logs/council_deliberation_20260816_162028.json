@@ -1,0 +1,236 @@
+{
+  "timestamp": "2026-08-16T20:20:28.732419Z",
+  "total_evaluated": 6,
+  "consensus_approved_count": 0,
+  "approval_rate": 0.0,
+  "deliberation_records": [
+    {
+      "artifact_id": "4azVjKhqDzw-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.696754Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to '4azVjKhqDzw'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    },
+    {
+      "artifact_id": "QK0B1mbJ-VU-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.697926Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to 'QK0B1mbJ-VU'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    },
+    {
+      "artifact_id": "jWDCnJKouhw-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.705158Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to 'jWDCnJKouhw'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    },
+    {
+      "artifact_id": "kJNFWGXRrA4-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.706838Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to 'kJNFWGXRrA4'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    },
+    {
+      "artifact_id": "7xuWZ-3lyQE-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.710462Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to '7xuWZ-3lyQE'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    },
+    {
+      "artifact_id": "XLH_WLrmwfk-v2-extracted",
+      "title": "Untitled Intelligence Unit",
+      "evaluated_at": "2026-08-16T20:20:28.713136Z",
+      "composite_score": 0.733,
+      "consensus_approved": false,
+      "perspectives": {
+        "systems_architect": {
+          "score": 0.85,
+          "verdict": "APPROVED",
+          "observations": [
+            "Concept maps cleanly to TNF Harness infrastructure and Monorepo contracts.",
+            "Preserves core separation between raw model engine and deterministic harness weights."
+          ]
+        },
+        "knowledge_archaeologist": {
+          "score": 0.7,
+          "verdict": "REVISE",
+          "observations": [
+            "Source provenance cryptographically anchored to 'XLH_WLrmwfk'.",
+            "Historical lineage preserved in chronological order without flattening operator nuances."
+          ]
+        },
+        "runtime_critic": {
+          "score": 0.65,
+          "verdict": "REVISE",
+          "observations": [
+            "Actionable execution density verified across AST and runtime paths.",
+            "Verified no active AST regressions introduced to core server / synapse paths."
+          ]
+        }
+      },
+      "recommendations": {
+        "graduate_to_public_docs": false,
+        "re_anchor_knowledge_graph": true,
+        "prune_stale_aliases": false
+      }
+    }
+  ]
+}

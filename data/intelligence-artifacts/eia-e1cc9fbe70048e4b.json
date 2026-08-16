@@ -1,0 +1,95 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-e1cc9fbe70048e4b",
+  "generated_at": "2026-08-16T19:47:06+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6509",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6509",
+    "source_title": "### \ud83d\udd11 Supabase OAuth Fix & Configuration Guide",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:06+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6509",
+    "source_digest_sha256": "dcf8260454fb1bd3c2ecadca76c550d9195b114187b25eed5087b2c25ba4384a"
+  },
+  "taxonomy": {
+    "procedural": [
+      "I compiled the mandatory production setup steps into",
+      "Supabase Provider Config:",
+      "Read(/Users/danielgoldberg/Desktop/A1-I...scripts/deployment/cloudbuild.yaml)",
+      "Read(/Users/danielgoldberg/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
+      "Edit(/Users/danielgoldberg/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
+      "Bash(bash ./scripts/deployment/gcp-deploy.sh)",
+      "### Dockerfile & GCP Cloud Build Fix Applied",
+      "GCP Cloud Build failed in step 77 of Dockerfile.api because",
+      "apps/api/dist/main.js was expected without first compiling the",
+      "TypeScript source inside the container build environment.",
+      "Fix Applied (Dockerfile.api):",
+      "@the-new-fuse/api-server).",
+      "GCP Cloud Build re-submitted (gcloud builds submit --config",
+      "scripts/deployment/cloudbuild.yaml .",
+      "I will update you as soon as the container build and Cloud Run service",
+      "> proceed with next tasks",
+      "Bash(git status --porcelain)",
+      "Bash(git add Dockerfile.api apps/tauri-desktop/src/lib/su...) (ctrl+o to",
+      "### Immediate Progress Summary & Next Steps",
+      "GCP Cloud Build Submission (task-419):"
+    ],
+    "strategic": [
+      "I have analyzed the OAuth integration across thenewfuse.com and",
+      "Supabase Provider Config:"
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.282,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6509"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 2 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 3275,
+    "unit_count": 71
+  }
+}

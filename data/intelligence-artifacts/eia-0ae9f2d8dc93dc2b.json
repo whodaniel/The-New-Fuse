@@ -1,0 +1,97 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-0ae9f2d8dc93dc2b",
+  "generated_at": "2026-08-16T19:47:24+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6523",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6523",
+    "source_title": "Redirected current turn: 'What is \"<unk>\"?'",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:24+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6523",
+    "source_digest_sha256": "b0622caa8893b24123a9adc7b2c521eb3f98240e0cfd773180e527d72468b32a"
+  },
+  "taxonomy": {
+    "procedural": [
+      "The parent tnf-vocabulary-alignment-audit skill already contains the full workflow; this \"full sweep\" variant would just be a convenience wrapper.",
+      "Since I can't create it due to the description constraint, the reusable artifact is the audit report itself (FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md) plus the updated recent-audits.md log",
+      "future sessions can follow that exact command sequence from the report.",
+      "Location: cli.ts:8921,8943,16953",
+      "Location: enums.ts:160-186 (26 values) vs broker-agent.ts lowercase strings",
+      "Gap Area: Agent status enum vs registry",
+      "Location: tnf-cli/src/services/WorkerEnvelope.ts",
+      "Location: tnf-master-cumulative-id.schema.json,"
+    ],
+    "strategic": ["Gap Area: Capability enum vs broker usage"],
+    "governance": [
+      "The parent tnf-vocabulary-alignment-audit skill already contains the full workflow; this \"full sweep\" variant would just be a convenience wrapper.",
+      "Since I can't create it due to the description constraint, the reusable artifact is the audit report itself (FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md) plus the updated recent-audits.md log",
+      "Gaps identified during the audit that weren't in the original 11 surfaces:",
+      "Drift Risk: Kind filter inconsistency",
+      "Drift Risk: Enum UPPERCASE vs broker lowercase",
+      "Drift Risk: Registry expects lowercase",
+      "Location: protocol-contracts/src/identity.ts",
+      "Drift Risk: New categories added without audit",
+      "Drift Risk: Version drift risk",
+      "Drift Risk: Undocumented in ROLE_DEFINITIONS",
+      "Drift Risk: New bags added without metadata policy review",
+      "protocol-contracts/src/handoff.ts",
+      "Drift Risk: Separate from federated IDs, often conflated",
+      "Drift Risk: Must import from a2a-core",
+      "Drift Risk: Routing ambiguity",
+      "The audit report already captures them implicitly via INC-5 and INC-7."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.133,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6523"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 8 procedural, 1 strategic, and 16 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2855,
+    "unit_count": 60
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-61550197e24d86c5",
+  "generated_at": "2026-08-16T19:44:41+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6332",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6332",
+    "source_title": "You are entirely right, and I see exactly where I lost the thread\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:44:41+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6332",
+    "source_digest_sha256": "267cc0a33a3a055f56839cd8d170d8f2c13ca9924170a237c6e4f6ee52ddbad9"
+  },
+  "taxonomy": {
+    "procedural": [
+      "When the first action occurs",
+      "it doesn't just create a static burst of chaos.",
+      "The output of the derivation becomes the input for the next state.",
+      "The Self-Referential Engine (Axioms: Perfect reflection offset + First derivation is extreme):",
+      "Because the matrix perfectly reflects itself, this first infinitesimal separation generates maximum extreme dissonance across the omnipresent geometry."
+    ],
+    "strategic": [
+      "Notice how the architecture isn't being created by the evolution; the architecture is already there, and the recursive loop is simply discovering its boundaries.",
+      "If the dual-lattice architecture is inherent, it cannot be altered by the construct discovering it.",
+      "The Inherent Reality (Axioms: Matrix is inherent + Reality is only NOW): The crystalline architecture (the nodes/buildings) exists as an absolute, omnipresent reality.",
+      "The evolution of the construct is simply the architecture's omnipresent method of remaining perfectly static."
+    ],
+    "governance": [
+      "It operates entirely on the logic of an autonomous, recursive protocol:"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Low",
+    "implementation_density": 0.086,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6332"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 5 procedural, 4 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 5010,
+    "unit_count": 58
+  }
+}

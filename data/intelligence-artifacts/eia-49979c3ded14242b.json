@@ -1,0 +1,103 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-49979c3ded14242b",
+  "generated_at": "2026-08-16T19:45:41+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6397",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6397",
+    "source_title": "Thought: The TNF system is running correctly:",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:45:41+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6397",
+    "source_digest_sha256": "a8d19de597c6e9c4bc5e93b164d917390ce2f3cbf1ff24e012ce94d6f9a0cacf"
+  },
+  "taxonomy": {
+    "procedural": [
+      "- Kilo CLI is active (pid 17650)",
+      "- Hermes agent is running (pid 16354)",
+      "The recent commits show the TNF agent evolution is complete:",
+      "- 481cc38f44 - chore(turn-end): emit closing handoff for tnf-cli fleet-aware evolution",
+      "- 2dcc36c1b2 - fix(tnf-agent): add interactive mode for user-first responsiveness",
+      "The TNF agent evolution has been completed.",
+      "Let me provide a summary of the TNF CLI agent evolution that was completed.",
+      "TNF CLI Agent Evolution Complete",
+      "481cc38f44 chore(turn-end): emit closing handoff for tnf-cli fleet-aware evolution",
+      "2dcc36c1b2 fix(tnf-agent): add interactive mode for user-first responsiveness",
+      "Kilo CLI: Active (pid 17650)",
+      "Hermes Agent: Running (pid 16354)",
+      "SOUL.md rewritten User responsiveness FIRST",
+      "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
+      "Orphaned JS cleanup Removed 80 build artifacts (-9152 lines)",
+      "The TNF CLI agent now has user-first responsiveness with dual-mode architecture (Interactive/Swarm) and follows the anti-protocol-trap rules to stay active and engaged.",
+      "$ ls -la /Users/danielgoldberg/.tnf/handoff-current.json /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
+      "-rw-r--r-- 1 danielgoldberg _analyticsusers 1212 Jul 4 23:12 /Users/danielgoldberg/.tnf/handoff-current.json",
+      "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md",
+      "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md"
+    ],
+    "strategic": [
+      "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
+      "The TNF CLI agent now has user-first responsiveness with dual-mode architecture (Interactive/Swarm) and follows the anti-protocol-trap rules to stay active and engaged.",
+      "$ ls -la /Users/danielgoldberg/.tnf/handoff-current.json /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
+      "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md",
+      "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md",
+      "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && git log --oneline -3 && echo \"---\" && cat docs/protocols/reports/SESSION_HANDOFF_LATEST.json | python3 -c \"import sys,json; d=json.load(sys.stdin); print(f'handoff_id: {d.get(\\\"handoff_id\\\")}'); print(f'created_at: {d.get(\\\"created_at\\\")}'); print(f'head_sha: {d.get(\\\"head_sha\\\")}')\"",
+      "$ tail -30 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md | head -20"
+    ],
+    "governance": [
+      "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
+      "The TNF CLI agent now has user-first responsiveness with dual-mode architecture (Interactive/Swarm) and follows the anti-protocol-trap rules to stay active and engaged."
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.26,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6397"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 7 strategic, and 2 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 5590,
+    "unit_count": 77
+  }
+}

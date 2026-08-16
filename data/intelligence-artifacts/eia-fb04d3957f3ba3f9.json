@@ -1,0 +1,83 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-fb04d3957f3ba3f9",
+  "generated_at": "2026-08-16T19:47:35+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6532",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6532",
+    "source_title": "There is an official @modelcontextprotocol/sdk client in the repo\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:35+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6532",
+    "source_digest_sha256": "b56dff038e618144401808411f8a4ae9656dc7ea08b0c8f59625599afbe68a8d"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Title: There is an official @modelcontextprotocol/sdk client in the repo\u2026",
+      "There is an official @modelcontextprotocol/sdk client in the repo.",
+      "switching the runtime to use that instead of hand-rolled JSON-RPC for HTTP/",
+      "m replacing the transport code with the official MCP SDK client transports.",
+      "The official SDK exposes Client.listTools() and Client.callTool() directly.",
+      "s runtime to that API and preserving TNF config/auth",
+      "For WebSocket, the SDK transport follows the MCP mcp subprotocol and does not"
+    ],
+    "strategic": [],
+    "governance": [
+      "stdio, and WebSocket protocol handling from the MCP implementation itself",
+      "Search close\\(\\) in protocol.d.ts",
+      "Read protocol.d.ts, transport.d.ts, websocket.js"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.292,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6532"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 7 procedural, 0 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 1389,
+    "unit_count": 24
+  }
+}

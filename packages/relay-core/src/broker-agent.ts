@@ -514,7 +514,7 @@ class BrokerAgent {
     if ((task.metadata as any)?.importedFromLegacyCron === true) {
       const lane = String((task.itinerary as any)?.lane || '').toLowerCase();
       if (
-        ['reliability', 'orchestration', 'quality', 'context', 'self_improvement'].includes(lane)
+        ['reliability', 'orchestration', 'quality', 'context', 'self_improvement', 'analytics', 'maintenance'].includes(lane)
       ) {
         return true;
       }

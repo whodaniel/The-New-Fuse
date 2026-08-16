@@ -1,0 +1,133 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-2167d0429eaeff01",
+  "generated_at": "2026-08-16T19:47:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6513",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6513",
+    "source_title": "Exploring the TNF codebase and harness framework to build a full picture",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:11+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6513",
+    "source_digest_sha256": "a402f5b00ea194a118b25074276a55618ea3817e96aa718863dd700bae0100fd"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Title: Exploring the TNF codebase and harness framework to build a full picture",
+      "Exploring the TNF codebase and harness framework to build a full picture",
+      "Read .../packages/tnf-cli/src/services/DispatchGuard.ts",
+      "...Inter-LLM-Com/TNF/The-New-Fuse/packages/tnf-cli",
+      "correction about local coders via API in CLI TUIs versus the autonomous",
+      "Repository topology",
+      "OSS public export (data/distribution/oss-app-boundary.json): apps/api,",
+      "api-gateway, backend (orchestrator stubbed), frontend, relay-server,",
+      "Hosted proprietary plane: app.thenewfuse.com, api.thenewfuse.com,",
+      "login, production API, cloud relay, TWIP bridge to local",
+      "Agent = Model + Harness",
+      "Entrypoint policy: prefer tnf <command> over raw openclaw or cursor",
+      "Prior framing collapsed these into one \"install GGUF vs cloud\" decision.",
+      "Interactive CLI TUIs (operator-facing coders)",
+      "claude, cursor-agent, codex, opencode",
+      "each with its own API",
+      "This lane is \"local coders via API in CLI TUIs\"",
+      "cloud/API backends (Anthropic, Cursor, OpenAI, etc.) from your machine",
+      "model-policy.yaml",
+      "Cloud path uses OpenRouter API when allow_cloud: true"
+    ],
+    "strategic": [
+      "of the architecture, open-source vs proprietary components, and how local",
+      "$ ls -la \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF\" 2>/dev/null |",
+      "Grepped \"...der|preferred.*model|cloud escalation\" in",
+      "Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse",
+      "\"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/packages\"",
+      "\"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps\"",
+      "...Inter-LLM-Com/TNF/The-New-Fuse/packages/tnf-cli",
+      "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse.",
+      "Harness = runtime around the model (8 layers: interface, provider",
+      "routing, context/compaction, sandbox, permissions, orchestration,",
+      "Agent = Model + Harness",
+      "evaluate the pair, not just the model",
+      "subscription / provider routing",
+      "model-providers catalog, profiles, and live probes",
+      "Model selection: ~/.tnf/sub-director/model_resolver.py +",
+      "model-policy.yaml",
+      "each routes to its native API/provider",
+      "model policy, not your interactive terminal sessions.",
+      "Awaiting your direction",
+      "Document/clarify the two-lane model in Living State so future agents"
+    ],
+    "governance": [
+      "Used tnf-harness-protocol",
+      "I've read the canonical protocol layer at",
+      "policy, launchd materialization",
+      "TNF = protocol-neutral control plane (Inspect",
+      "Entrypoint policy: prefer tnf <command> over raw openclaw or cursor",
+      "model-policy.yaml",
+      "Current policy on your machine:",
+      "full-auto daemon (gated by policy tokens)",
+      "llama.cpp :8081 OR OpenRouter (policy-gated)",
+      "Recently fixed (silent-gate remediation):",
+      "full-auto quarantine now runs per-cycle (was riding 212-cycle failure",
+      "model policy, not your interactive terminal sessions.",
+      "class of port/protocol mismatch.",
+      "A 2026-08-09 collision audit found 2",
+      "scripts/lib/federation-protocol.cjs",
+      "Channel isolation is a security + coordination property, not just UX.",
+      "TWIP (Terminal Window Identity Protocol) is a parallel identity plane for",
+      "shared (relay protocol, identity envelopes, handoff schema)",
+      "Fix federated WS channel check failure (token delivery +"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.044,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6513"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 19 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 21534,
+    "unit_count": 455
+  }
+}

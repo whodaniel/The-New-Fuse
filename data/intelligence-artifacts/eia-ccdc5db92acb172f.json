@@ -1,0 +1,86 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-ccdc5db92acb172f",
+  "generated_at": "2026-08-16T19:45:08+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6357",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6357",
+    "source_title": "Thought: The Chrome stability fix is in place. The audit script now\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:45:08+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6357",
+    "source_digest_sha256": "574d44b1b5ebe13e09cf81ff0de8654d7fd63f8b73fdcd9ea85edc84b3703cfc"
+  },
+  "taxonomy": {
+    "procedural": [
+      "The audit script now\u2026",
+      "The audit script now:",
+      "The full pipeline (build + audit) completed successfully.",
+      "The pnpm exit code 1 is from FAIL_ON_BROKEN=true, not from crashes.",
+      "(163 links checked, 15 broken - pnpm exits 1 due to FAIL_ON_BROKEN=true)",
+      "The TNF state file (tnf-full-auto-state.json) doesn't update from direct once invocations because the state write happens in the hermes agent runtime, not in the once CLI subprocess."
+    ],
+    "strategic": [],
+    "governance": [
+      "The audit script now\u2026",
+      "The audit script now:",
+      "Restarts browser per-seed on failure",
+      "The full pipeline (build + audit) completed successfully.",
+      "The audit-live-links.mjs Chrome stability issues are resolved.",
+      "main (line ~408): Per-seed browser restart on crawl failure, with a graceful fallback result if both attempts fail",
+      "Live link audit:"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.207,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6357"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 6 procedural, 0 strategic, and 7 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2014,
+    "unit_count": 29
+  }
+}

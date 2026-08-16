@@ -1,0 +1,99 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-9f4036e33c598ab9",
+  "generated_at": "2026-08-16T19:45:14+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6362",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6362",
+    "source_title": "Now I have a comprehensive picture. Let me provide the final synthesis\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:45:14+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6362",
+    "source_digest_sha256": "67b7aaff0ebef0a80c1e6385281fdc8b311c1704d77189c01f4aeb17d616d6fa"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Story Architect Panel (StoryArchitectPanel.tsx) enables:",
+      "LangChain4j Tools Framework",
+      "Dynamic Tool Specification",
+      "Local JSON artifacts",
+      "Create \"drafts\" bucket",
+      "The Github Repo/Branch for Story Drafts",
+      "Repository: whodaniel/virtual-library-blueprints",
+      "Set up rclone or Google Drive",
+      "Set up if desired",
+      "Recommended Next Steps",
+      "Write the first chapter: The story_answers table is empty.",
+      "Set up draft backup pipeline:",
+      "- Create a drafts storage bucket in Supabase",
+      "- Configure rclone to sync Supabase",
+      "- Optionally add pCloud as a second destination",
+      "Rotate the exposed password: The apps/api/.env.20260419004856.bak and .env",
+      "though you trust me as your agent."
+    ],
+    "strategic": [
+      "~/Documents/llm-tools-book/",
+      "It uses a 5-Ring Story Architecture:",
+      "Story Architect Panel (StoryArchitectPanel.tsx) enables:",
+      "### Privacy & RLS Model",
+      "At ~/Documents/llm-tools-book/ (not the TNF novel):",
+      "Webhook Integration",
+      "DRAFT BACKUP STRATEGY (proposed)",
+      "Open Story Architect, write",
+      "Architect panel is built but needs content."
+    ],
+    "governance": []
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.125,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6362"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 17 procedural, 9 strategic, and 0 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 6089,
+    "unit_count": 136
+  }
+}

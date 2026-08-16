@@ -1,0 +1,88 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-503a922c091d0f63",
+  "generated_at": "2026-08-16T19:45:25+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6374",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6374",
+    "source_title": "All four artifacts on disk, cron registered, smoke test green\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:45:25+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6374",
+    "source_digest_sha256": "81a84fcabbd2eb193cdd05e22172f149162f61c2d36a627b4f6caa58d17678ee"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Title: All four artifacts on disk, cron registered, smoke test green\u2026",
+      "All four artifacts on disk, cron registered, smoke test green,",
+      "- process-atlas.payload.json (13,084 B)",
+      "- process-atlas.verify.json (264 B)",
+      "verification report per run",
+      "agent loader (idempotent, failsafe,",
+      "3-test round-trip verification",
+      "protocol scripts, 15 agent scripts, 68 relay-core TS sources",
+      "- cron registered: 0 */4 * * * runs python3",
+      "INTEGRATION PATH for any agent:",
+      "agent cannot drift because"
+    ],
+    "strategic": [
+      "turn-zero grounding for LLM",
+      "INTEGRATION PATH for any agent:"
+    ],
+    "governance": [
+      "protocol scripts, 15 agent scripts, 68 relay-core TS sources"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.244,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6374"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 11 procedural, 2 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 1880,
+    "unit_count": 45
+  }
+}

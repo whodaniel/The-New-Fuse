@@ -35,6 +35,8 @@ const REALTIME_LANES = new Set([
   'quality',
   'context',
   'self_improvement',
+  'analytics',
+  'maintenance',
 ]);
 
 function resolveTargetQueue(profile, queueItem) {

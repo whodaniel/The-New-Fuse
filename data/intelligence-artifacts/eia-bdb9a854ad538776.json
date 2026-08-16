@@ -1,0 +1,99 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-bdb9a854ad538776",
+  "generated_at": "2026-08-16T19:45:32+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6384",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6384",
+    "source_title": "ood, tnf-boot is now executable and jq is available. Let me also create\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:45:31+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6384",
+    "source_digest_sha256": "d0dd991ef6010beae64edf6d4ab2b86ae28ca9c55ec2f7ca67b320e4a50f266e"
+  },
+  "taxonomy": {
+    "procedural": [
+      "Let me also create\u2026",
+      "Let me also create the template checkpoint file since the startup gate agent was asked to create it but it was only created in the sessions directory.",
+      "~/.tnf/sessions/_TEMPLATE_startup-verified.json",
+      "But when I checked, there was only _TEMPLATE_startup-verified.json in ~/.tnf/sessions/.",
+      "The startup gate agent was supposed to write this but it seems to have only written the template, not the actual implementation files.",
+      "The agent successfully created all three files: the Kilo agent definition, the executable bash wrapper, and the template checkpoint schema.",
+      "Let me verify the template checkpoint and then do a quick test of the gate-only mode:",
+      "Read .tnf/sessions/_TEMPLATE_startup-verified.json",
+      "But wait - the user may not want me to actually run it right now since that would invoke the hermes chat which might actually try to run the full startup sequence.",
+      "Let me instead do a dry run check of the script syntax.Actually, let me just verify the script syntax is correct with bash -n.",
+      "The user said \"keep going\" - so I should think about what's the next most important piece of the framework to build.",
+      "The tnf-zero-turn script that was referenced in the bin directory",
+      "Actually, the most impactful next step would be to complete the wiring of the startup gate into the actual Kilo session launch.",
+      "Currently tnf-boot can run the gate, but individual agent sessions (via Kilo) don't automatically go through the gate.",
+      "I should look at the kilo.json config to understand how to make Kilo invoke tnf-startup-gate-wrapper.sh before each session.",
+      "Let me check the kilo config to see where the integration point is."
+    ],
+    "strategic": [
+      "Let me check the kilo config to see where the integration point is."
+    ],
+    "governance": [
+      "Let me also create the template checkpoint file since the startup gate agent was asked to create it but it was only created in the sessions directory.",
+      "The startup gate agent was supposed to write this but it seems to have only written the template, not the actual implementation files.",
+      "Let me verify the template checkpoint and then do a quick test of the gate-only mode:",
+      "Now let me try a quick tnf-boot gate-only to see if the startup gate runs properly.",
+      "Actually, the most impactful next step would be to complete the wiring of the startup gate into the actual Kilo session launch.",
+      "Currently tnf-boot can run the gate, but individual agent sessions (via Kilo) don't automatically go through the gate.",
+      "I should look at the kilo.json config to understand how to make Kilo invoke tnf-startup-gate-wrapper.sh before each session.",
+      "Now let me do a syntax check and look at how to wire the startup gate into Kilo's session launch:"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.421,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6384"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 16 procedural, 1 strategic, and 8 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 2625,
+    "unit_count": 38
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-08-16T19:47:53.581870Z",
+  "seedSource": "tnf-executable-intelligence-activation",
+  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/ingestion-runs/ai6-new-may-2026-manifest.json",
+  "artifactDir": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/intelligence-artifacts",
+  "sourcePrefixes": ["yt-ai6-"],
+  "summary": {
+    "sources_seen": 0,
+    "artifacts_resolved": 0,
+    "tasks_generated": 0,
+    "procedural_artifacts": 0,
+    "dormant_artifacts": 0,
+    "activation_coverage_tasks_per_artifact": 0.0,
+    "immediate_execution_coverage": 0.0,
+    "no_procedural_video_count": 0,
+    "no_procedural_video_sources": [],
+    "missing_transcript_count": 0,
+    "missing_transcript_sources": [],
+    "transcript_present_but_nonprocedural_count": 0,
+    "dispatch_eligible_count": 0,
+    "confidence_counts": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "implementation_area_counts": {},
+    "status_counts": {},
+    "open_tasks": 0,
+    "execution_candidates": 0,
+    "execution_candidate_threshold": "medium"
+  },
+  "tasks": [],
+  "executionCandidates": []
+}

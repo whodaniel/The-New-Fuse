@@ -1497,6 +1497,39 @@ async function main() {
     }
   }
 
+  // Auto-register the onboarding agent with the TNF fleet
+  printHeader('Agent Registration');
+  try {
+    const { spawnSync } = require('node:child_process');
+    const agentName = process.env.TNF_ONBOARD_AGENT_NAME || 'onboarding-agent';
+    const agentRole = process.env.TNF_ONBOARD_AGENT_ROLE || 'orchestrator';
+    const agentPlatform = process.env.TNF_ONBOARD_AGENT_PLATFORM || 'tnf-onboarding';
+    
+    console.log(`- Registering agent: ${agentName} (${agentRole}/${agentPlatform})`);
+    const registerResult = spawnSync(process.execPath, [
+      path.join(__dirname, '..', 'packages', 'tnf-cli', 'src', 'cli.js'),
+      'register',
+      agentName,
+      agentRole,
+      agentPlatform
+    ], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      env: { ...process.env, TNF_AGENT_ID: 'tnf-onboarding-agent' }
+    });
+    
+    if (registerResult.status === 0) {
+      console.log(chalk.green('✅ Agent registration successful'));
+      console.log(`- Agent ID: ${agentName}-${agentRole}-${Date.now().toString().slice(-6)}`);
+    } else {
+      console.log(chalk.yellow(`⚠️  Agent registration failed: ${registerResult.stderr || registerResult.stdout}`));
+      console.log('- Continuing without agent registration (non-fatal)');
+    }
+  } catch (err) {
+    console.log(chalk.yellow(`⚠️  Agent registration encountered an error: ${err.message}`));
+    console.log('- Continuing without agent registration (non-fatal)');
+  }
+
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(
     'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.'

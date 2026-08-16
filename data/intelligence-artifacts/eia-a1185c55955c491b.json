@@ -1,0 +1,84 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-a1185c55955c491b",
+  "generated_at": "2026-08-16T19:47:08+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6511",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6511",
+    "source_title": "Airtight. tnf send reports success for an agent ID that doesn't exist\u2026",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:08+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6511",
+    "source_digest_sha256": "c1386ed9473d10dc313e74a0b881150f048c44821f86286575f5022b89f4e5dd"
+  },
+  "taxonomy": {
+    "procedural": [
+      "tnf send reports success for an agent ID that doesn't exist\u2026",
+      "tnf send reports success for an agent ID that doesn't exist.",
+      "First, where does tnf agents list get its",
+      "I want one liveness source, not a second one:",
+      "Searched for 1 pattern, ran 1 shell command",
+      "Now I'll build the dispatch gate",
+      "reusing listAgents() as the single liveness source rather than inventing a second one:",
+      "* packages/tnf-cli/src/services/DispatchGuard.ts"
+    ],
+    "strategic": [],
+    "governance": [
+      "This is the cohesion gap, and it violates TNF's own Core Tenet 4",
+      "\"Never assume action succeeded without empirical proof.\" It's also the same defect class as the parity 100% I fixed earlier: a protocol that cannot report failure.",
+      "Now I'll build the dispatch gate"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Low",
+    "implementation_density": 0.308,
+    "verification_difficulty": "Easy"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6511"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 8 procedural, 0 strategic, and 3 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 1368,
+    "unit_count": 26
+  }
+}

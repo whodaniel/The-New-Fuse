@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "spec": "tnf/intake-forwarder/1.0",
+  "operator": {
+    "authenticated_role": "lead_architect",
+    "access_level": "developer_privileged",
+    "auto_graduate_vetted": true
+  },
+  "gauntlet_rubric": {
+    "min_implementation_density": 0.04,
+    "required_attribution": true,
+    "pii_redaction_strict": true,
+    "enforce_chronological_lineage": true,
+    "allowed_target_visibility": ["public", "internal_team"]
+  },
+  "pii_redaction_patterns": [
+    "([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)",
+    "(ghp_[a-zA-Z0-9]{36}|sk-[a-zA-Z0-9]{48}|AIzaSy[a-zA-Z0-9_-]{33})",
+    "(\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b)"
+  ],
+  "registered_intake_sources": [
+    {
+      "name": "apple-notes-personal",
+      "path": "docs/personal",
+      "type": "markdown",
+      "gitignored": true
+    },
+    {
+      "name": "operator-local-intel",
+      "path": "~/.tnf/personal-intelligence",
+      "type": "markdown",
+      "gitignored": true
+    },
+    {
+      "name": "youtube-ai6-transcripts",
+      "path": "data/transcripts",
+      "type": "transcript",
+      "gitignored": false
+    },
+    {
+      "name": "concordance-user-overlay",
+      "path": "concordance_results/user",
+      "type": "json",
+      "gitignored": true
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-69b9071ad0f34184",
+  "generated_at": "2026-08-16T19:47:25+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "apple-notes-new-may-2026-6524",
+    "source_type": "note",
+    "source_uri": "apple-notes://on-my-mac/NEW-%20May-2026/6524",
+    "source_title": "I have completed a thorough parity check against the TNF protocols",
+    "source_author": "",
+    "source_publisher": "",
+    "source_published_at": "",
+    "retrieved_at": "2026-08-16T19:47:25+00:00",
+    "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6524",
+    "source_digest_sha256": "56188b1c9dda87eda7e79d9aa95b25187f14b43ff2f94dbae2a364986ffb5f2e"
+  },
+  "taxonomy": {
+    "procedural": [
+      "This guarantees the payload is infused with the exact same canonical state",
+      "harness framework standards.",
+      "Prioritizing Tool Usage",
+      "The background task we were waiting on (the old pnpm install && pnpm run",
+      "build task #620) finally completed in the monorepo, and its output confirms",
+      "what we discovered during our manual inspection: the build is currently",
+      "failing because the build toolchain file webpack.config.cjs is missing from",
+      "previous agent inadvertently removing or renaming the config without",
+      "Would you like me to attempt to restore the missing webpack.config.cjs file",
+      "to fix the build pipeline next, or is there another part of the extension"
+    ],
+    "strategic": [
+      "Here's the technical breakdown of the integration gaps that were just",
+      "parsing by resolveMessageTarget (which reads the text string after the LLM",
+      "z]+)/ will successfully catch the sender when the LLM reads it off the"
+    ],
+    "governance": ["Format Compliance & Routing Unblocking"]
+  },
+  "utility_metrics": {
+    "freshness_decay": "High",
+    "implementation_density": 0.128,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "apple-notes://on-my-mac/NEW-%20May-2026/6524"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 10 procedural, 3 strategic, and 1 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 4381,
+    "unit_count": 78
+  }
+}
