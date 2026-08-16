@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue dirty-tree: chrome-extension v6/v7; frontend
-backup UI; defer bulk data/intelligence-artifacts.
+**Current Directive:** Continue dirty-tree: frontend backup/settings UI; defer
+bulk data/intelligence-artifacts.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1015,6 +1015,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T23:36:20.806Z handoff `1132dbda-3c8d-4afe-91d2-9234155f969e` head
+  `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
+  backup/settings UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:36:19.670Z handoff `9973e7a5-182f-4f46-87f5-2ded03cc1428` head
+  `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
+  backup/settings UI; defer bulk data/intelligence-artifacts.
 
 - 2026-08-16T23:28:27.123Z handoff `7d20be19-7db2-4a02-806d-6746e20636df` head
   `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension

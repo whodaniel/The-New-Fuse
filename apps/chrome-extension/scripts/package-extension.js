@@ -95,7 +95,7 @@ function buildExtension() {
 function validateBuild() {
   const requiredFiles = [
     'manifest.json',
-    'background/index.js',
+    'service-worker.js',
     'content/index.js',
     'popup/index.html',
     'popup/popup.js',

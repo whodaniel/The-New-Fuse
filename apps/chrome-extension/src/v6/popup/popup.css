@@ -258,10 +258,13 @@ body {
 
 .tab-content {
   display: none;
+  content-visibility: hidden;
+  contain: layout style paint;
 }
 
 .tab-content.active {
   display: block;
+  content-visibility: visible;
   animation: fadeIn var(--transition-base);
 }
 

@@ -11,8 +11,8 @@ interface StorageUsage {
 }
 
 class StorageService {
-  private local: Chrome.storage.LocalStorageArea;
-  private sync: Chrome.storage.SyncStorageArea;
+  private local: chrome.storage.LocalStorageArea;
+  private sync: chrome.storage.SyncStorageArea;
 
   constructor() {
     this.local = chrome.storage.local;
@@ -50,7 +50,8 @@ class StorageService {
 
   async getAll(useSync = false): Promise<StorageData> {
     const storage = useSync ? this.sync : this.local;
-    return (await storage.get(null)) as StorageData;
+    // No-arg get() returns the whole area; the null-keys overload types as void.
+    return (await storage.get()) as StorageData;
   }
 
   async has(key: string, useSync = false): Promise<boolean> {

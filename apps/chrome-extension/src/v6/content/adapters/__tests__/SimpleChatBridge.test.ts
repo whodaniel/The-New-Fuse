@@ -12,7 +12,6 @@ describe('SimpleChatBridge injection', () => {
   });
 
   it('injects text into a textarea and submits through the send button', async () => {
-    jest.setTimeout(10000);
     document.body.innerHTML = `
       <main>
         <form>

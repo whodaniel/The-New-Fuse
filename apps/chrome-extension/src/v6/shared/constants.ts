@@ -9,7 +9,7 @@ import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } fro
 // ============================================
 
 export const EXTENSION_NAME = 'Fuse Connect';
-export const EXTENSION_VERSION = '7.0.0';
+export const EXTENSION_VERSION = '7.0.6';
 export const EXTENSION_ID = 'fuse-connect-v7';
 
 // ============================================
@@ -22,15 +22,48 @@ export const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
 // NODE ENDPOINTS
 // ============================================
 
+/**
+ * Local TNF relay/gateway defaults.
+ * Plain ws/http is intentional for the local stack (no TLS terminator).
+ * Use SECURE_LOCAL_NODES when a local reverse proxy serves wss/https.
+ */
 export const DEFAULT_NODES = {
   relay: 'ws://127.0.0.1:3000/ws',
-  apiGateway: 'http://localhost:8080',
-  backend: 'http://localhost:3001',
-  saas: 'http://localhost:3002',
+  apiGateway: 'http://127.0.0.1:8080',
+  backend: 'http://127.0.0.1:3001',
+  saas: 'http://127.0.0.1:3002',
 
   // Cloudflare TNF agent orchestration (canonical edge state)
   tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
 };
+
+/** Optional secure local endpoints (requires a TLS-terminating proxy). */
+export const SECURE_LOCAL_NODES = {
+  relay: 'wss://127.0.0.1:3000/ws',
+  apiGateway: 'https://127.0.0.1:8080',
+  backend: 'https://127.0.0.1:3001',
+  saas: 'https://127.0.0.1:3002',
+  tnfWorker: DEFAULT_NODES.tnfWorker,
+};
+
+/** Convert a relay WS/HTTP URL into its HTTP(S) origin (no trailing slash). */
+export function toHttpOrigin(wsOrHttpUrl: string): string {
+  return String(wsOrHttpUrl || DEFAULT_NODES.relay)
+    .trim()
+    .replace(/^ws:/i, 'http:')
+    .replace(/^wss:/i, 'https:')
+    .replace(/\/ws\/?$/i, '')
+    .replace(/\/+$/, '');
+}
+
+export function relayHealthUrl(relayUrl?: string): string {
+  return `${toHttpOrigin(relayUrl || DEFAULT_NODES.relay)}/health`;
+}
+
+export function relayActivityUrl(relayUrl?: string, count = 100): string {
+  const safeCount = Math.max(1, Math.min(500, Number(count) || 100));
+  return `${toHttpOrigin(relayUrl || DEFAULT_NODES.relay)}/activity/recent?count=${safeCount}`;
+}
 
 // ============================================
 // EXTERNAL API URLs
@@ -67,6 +100,29 @@ export const GOOGLE_OAUTH_SCOPES = [
 // ============================================
 
 export const ACTIVITY_CHANNEL = 'fuse-activity-log';
+
+/**
+ * Channel ids the relay seeds on every boot (see STANDARD_CHANNELS in
+ * packages/relay-core/src/standalone-relay.ts). They are federation
+ * infrastructure, not user channels, so the UI must not offer to delete them.
+ */
+export const STANDARD_CHANNEL_IDS: readonly string[] = [
+  'general',
+  'green',
+  'blue',
+  'red',
+  'yellow',
+  'purple',
+  ACTIVITY_CHANNEL,
+];
+
+export function isStandardChannel(channelId: string): boolean {
+  return STANDARD_CHANNEL_IDS.includes(
+    String(channelId || '')
+      .trim()
+      .toLowerCase()
+  );
+}
 
 // ============================================
 // AI MODELS

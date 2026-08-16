@@ -12,6 +12,7 @@ import {
   AI_MODELS,
   API_URLS,
   DEFAULT_NODES as DEFAULT_NODES_CONST,
+  isStandardChannel,
   NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
   STORAGE_KEYS as STORAGE_KEYS_CONST,
   TIMINGS,
@@ -58,6 +59,16 @@ const DEFAULT_NODES = DEFAULT_NODES_CONST;
 const NATIVE_HOST_NAME = NATIVE_HOST_NAME_CONST;
 const AI_VIDEO_PROCESS_ALARM = 'ai_video_process_tick';
 
+/**
+ * MV3 suspends this worker after ~30s idle, which kills every setInterval/
+ * setTimeout below AND the relay WebSocket. Only an event can revive it, so a
+ * periodic alarm is the one thing that keeps the extension reachable while the
+ * browser sits idle. 0.5 min is the shortest period Chrome honours.
+ */
+const KEEPALIVE_ALARM = 'fuse_keepalive_tick';
+const KEEPALIVE_PERIOD_MINUTES = 0.5;
+const KEEPALIVE_DIAG_KEY = 'fuse_keepalive_diag';
+
 class BackgroundService {
   // Connections
   private connections: Map<string, WebSocket> = new Map();
@@ -103,6 +114,27 @@ class BackgroundService {
   private stallWatchdogTimer: number | null = null;
   private nativeHostUnavailable: boolean = false;
   private nativeHostMissingLogged: boolean = false;
+  private nativeHostBackoffUntil: number = 0;
+  /**
+   * Starting a relay is not idempotent — a second instance takes port 3000 from
+   * the first, which kills it. The existing nativeHostBackoffUntil only covers
+   * the native host *failing*, so a succeeding start could be re-issued on every
+   * reconnect attempt and spawn relays in a loop. This throttles the action.
+   */
+  private relayBootstrapCooldownUntil: number = 0;
+  private readonly RELAY_BOOTSTRAP_COOLDOWN_MS = 120000;
+  private keepAliveTicks = 0;
+  /**
+   * Deadline for an in-flight relay connect. `connections` is only populated in
+   * ws.onopen, so a socket that is still CONNECTING is invisible there and
+   * repeated connect attempts silently stacked up new sockets.
+   */
+  private relayConnectInFlightUntil = 0;
+  private readonly RELAY_CONNECT_INFLIGHT_MS = 15000;
+  private readyContentTabs: Set<number> = new Set();
+  private unreachableTabs: Map<number, number> = new Map();
+  private readonly TAB_UNREACHABLE_COOLDOWN_MS = 30000;
+  private broadcastFailLogAt: Map<number, number> = new Map();
   private extensionEventLog: ExtensionLogEntry[] = [];
   private readonly EVENT_LOG_LIMIT = TIMINGS.eventLogLimit;
   private eventLogFlushTimer: number | null = null;
@@ -114,7 +146,18 @@ class BackgroundService {
   private pendingTaskResolve: ((value: any) => void) | null = null;
 
   constructor() {
-    this.init();
+    this.init().catch((err) => {
+      console.error('[FuseConnect v7] Background init failed:', err);
+      try {
+        this.setupMessageHandlers();
+        this.setupCommands();
+        this.setupTabLifecycleHandlers();
+        this.setupAlarmHandlers();
+        this.ensureKeepAliveAlarm();
+      } catch (setupErr) {
+        console.error('[FuseConnect v7] Emergency handler setup failed:', setupErr);
+      }
+    });
   }
 
   private async init(): Promise<void> {
@@ -126,6 +169,7 @@ class BackgroundService {
     this.setupCommands();
     this.setupTabLifecycleHandlers();
     this.setupAlarmHandlers();
+    this.ensureKeepAliveAlarm();
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
@@ -147,7 +191,9 @@ class BackgroundService {
 
     // Only auto-connect if user has enabled it
     if (this.autoConnect) {
-      this.tryInitialConnection();
+      void this.tryInitialConnection().catch((err) => {
+        console.warn('[FuseConnect v7] Initial connection failed:', err);
+      });
     } else {
       // Set initial status to disconnected without error
       this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
@@ -197,8 +243,33 @@ class BackgroundService {
       return;
     }
 
+    // The health probe is HTTP; the link we actually need is the WebSocket. A
+    // relay whose HTTP handler is wedged still serves WS fine, and treating that
+    // as "relay down" made us spawn a duplicate relay process over native
+    // messaging — which then fights the running one for port 3000. Probe the
+    // socket itself before concluding anything needs starting.
+    if (await this.probeRelaySocket(this.relayUrl)) {
+      console.warn(
+        '[FuseConnect v7] Relay health endpoint unreachable but WebSocket accepted - connecting anyway'
+      );
+      this.connectToNode('relay', this.relayUrl);
+      return;
+    }
+
     console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
     this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
+
+    const now = Date.now();
+    if (now < this.relayBootstrapCooldownUntil) {
+      console.warn(
+        `[FuseConnect v7] Relay bootstrap on cooldown for another ${Math.round(
+          (this.relayBootstrapCooldownUntil - now) / 1000
+        )}s - not spawning another relay`
+      );
+      return;
+    }
+    this.relayBootstrapCooldownUntil = now + this.RELAY_BOOTSTRAP_COOLDOWN_MS;
+
     this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
       if (nativeResp?.error) {
         return;
@@ -222,6 +293,41 @@ class BackgroundService {
   /**
    * Check if relay is available via HTTP health endpoint
    */
+  /**
+   * Open-and-close probe of the relay WebSocket. Used as a second opinion when
+   * the HTTP health endpoint does not answer, so a wedged HTTP handler cannot
+   * make us believe the relay is down.
+   */
+  private probeRelaySocket(relayUrl: string = this.relayUrl, timeoutMs = 2500): Promise<boolean> {
+    return new Promise((resolve) => {
+      let settled = false;
+      let socket: WebSocket | null = null;
+
+      const finish = (result: boolean) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        try {
+          socket?.close();
+        } catch {
+          // already closing
+        }
+        resolve(result);
+      };
+
+      const timer = setTimeout(() => finish(false), timeoutMs);
+
+      try {
+        socket = new WebSocket(relayUrl);
+        socket.onopen = () => finish(true);
+        socket.onerror = () => finish(false);
+        socket.onclose = () => finish(false);
+      } catch {
+        finish(false);
+      }
+    });
+  }
+
   private async checkRelayHealth(relayUrl: string = this.relayUrl): Promise<boolean> {
     try {
       const response = await fetch(this.relayHealthUrl(relayUrl), {
@@ -414,11 +520,16 @@ class BackgroundService {
     console.log(`[FuseConnect v7] Connecting to ${nodeType} at ${url}...`);
     this.updateNodeStatus(nodeType, url, 'connecting');
 
+    if (nodeType === 'relay') {
+      this.relayConnectInFlightUntil = Date.now() + this.RELAY_CONNECT_INFLIGHT_MS;
+    }
+
     try {
       const ws = new WebSocket(url);
 
       ws.onopen = () => {
         console.log(`[FuseConnect v7] Connected to ${nodeType}`);
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connections.set(nodeType, ws);
         this.updateNodeStatus(nodeType, url, 'connected');
         this.connectionAttempts = 0; // Reset on success
@@ -459,6 +570,7 @@ class BackgroundService {
 
       ws.onclose = () => {
         console.log(`[FuseConnect v7] Disconnected from ${nodeType}`);
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connections.delete(nodeType);
         this.updateNodeStatus(nodeType, url, 'disconnected');
 
@@ -484,6 +596,7 @@ class BackgroundService {
 
       ws.onerror = () => {
         // Don't log error details - they're not useful and clutter console
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connectionAttempts++;
         this.updateNodeStatus(nodeType, url, 'disconnected');
 
@@ -948,7 +1061,16 @@ class BackgroundService {
   private startHeartbeat(): void {
     if (this.heartbeatTimer) return;
 
-    this.heartbeatTimer = setInterval(() => {
+    this.heartbeatTimer = setInterval(() => this.sendHeartbeatTick(), 30000) as unknown as number;
+  }
+
+  /**
+   * One heartbeat round. Called by the 30s interval while the worker is alive,
+   * and by the keepalive alarm after the worker has been suspended and revived
+   * (which is when the interval no longer exists).
+   */
+  private sendHeartbeatTick(): void {
+    {
       // Send heartbeat for main browser agent
       this.send({ type: 'HEARTBEAT' });
 
@@ -997,7 +1119,7 @@ class BackgroundService {
           }
         }
       }
-    }, 30000) as unknown as number;
+    }
   }
 
   /**
@@ -1160,6 +1282,37 @@ class BackgroundService {
           });
           this.saveChannels();
         }
+        break;
+      }
+
+      // The relay answers CHANNEL_CREATE directly with one of these, carrying
+      // the authoritative channel (and its real id). These were previously
+      // unhandled, so a newly created channel stayed pinned to its throwaway
+      // `local-` id until some later CHANNEL_LIST broadcast happened to fix it.
+      case 'CHANNEL_CREATED':
+      case 'CHANNEL_JOINED': {
+        const channel = (message.payload as any)?.channel as FederationChannel | undefined;
+        if (!channel?.id) break;
+
+        const existingByName = this.findChannelByName(channel.name);
+        if (existingByName && existingByName.id !== channel.id) {
+          this.channels.delete(existingByName.id);
+          this.remapChannelReferences(existingByName.id, channel.id);
+        }
+
+        this.channels.set(channel.id, channel);
+        this.joinedChannels.add(channel.id);
+        this.joinPageAgentsToChannel(channel.id);
+        this.broadcastToTabs({
+          type: 'CHANNELS_UPDATE',
+          channels: Array.from(this.channels.values()),
+        });
+        this.notifyPopup({
+          type: 'CHANNELS_UPDATE',
+          channels: Array.from(this.channels.values()),
+        });
+        this.saveChannels();
+        console.log(`[FuseConnect v7] Relay confirmed channel: ${channel.name} (${channel.id})`);
         break;
       }
 
@@ -1501,33 +1654,77 @@ class BackgroundService {
   }
 
   /**
-   * Broadcast to all tabs
+   * Broadcast to tabs that actually host Fuse content scripts.
+   * Fire-and-forget: never wait for a reply (avoids "message port closed" spam).
    */
   private async broadcastToTabs(message: Record<string, unknown>): Promise<void> {
+    const now = Date.now();
     const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      if (tab.id) {
-        // Use a wrapper to catch the specific "Receiving end does not exist" error
-        // which occurs when sending to tabs that don't have our content script loaded
+    const targets = tabs.filter((tab) => this.shouldBroadcastToTab(tab, now));
+
+    await Promise.all(
+      targets.map(async (tab) => {
+        const tabId = tab.id!;
         try {
-          // WE MUST usage callback style or await the promise to catch the error
-          chrome.tabs.sendMessage(tab.id, message, () => {
-            // Checking lastError inside the callback suppresses the "Unchecked runtime.lastError"
-            const err = chrome.runtime.lastError;
-            if (
-              err &&
-              !err.message?.includes('Receiving end does not exist') &&
-              !err.message?.includes('Could not establish connection')
-            ) {
-              console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tab.id}:`, err);
-            }
-          });
-        } catch (e) {
-          // This catch block might not be reached for async sendMessage errors,
-          // but good for synchronous ones.
+          // No response callback — content scripts may not reply to every event type.
+          await chrome.tabs.sendMessage(tabId, message);
+          this.unreachableTabs.delete(tabId);
+        } catch (err) {
+          const errMsg = String((err as Error)?.message || err || '');
+          if (this.isBenignTabMessageError(errMsg)) {
+            this.markTabUnreachable(tabId, now);
+            return;
+          }
+
+          const lastLog = this.broadcastFailLogAt.get(tabId) || 0;
+          if (now - lastLog > 15000) {
+            this.broadcastFailLogAt.set(tabId, now);
+            console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tabId}:`, errMsg);
+          }
+          this.markTabUnreachable(tabId, now);
         }
-      }
+      })
+    );
+  }
+
+  private shouldBroadcastToTab(tab: chrome.tabs.Tab, now: number): boolean {
+    if (!tab.id || tab.id < 0) return false;
+    const url = String(tab.url || tab.pendingUrl || '');
+    if (!url || /^(chrome|chrome-extension|devtools|edge|about|brave):/i.test(url)) {
+      return false;
     }
+
+    const unreachableUntil = this.unreachableTabs.get(tab.id) || 0;
+    if (unreachableUntil > now) {
+      return false;
+    }
+
+    // Prefer tabs that announced CONTENT_SCRIPT_READY or host a registered page agent.
+    if (this.readyContentTabs.has(tab.id)) return true;
+    for (const agent of this.agents.values()) {
+      if (agent.metadata?.tabId === tab.id) return true;
+    }
+
+    // Fallback: http(s) pages that may still have the content script injected.
+    return /^https?:/i.test(url);
+  }
+
+  private markTabUnreachable(tabId: number, now = Date.now()): void {
+    this.unreachableTabs.set(tabId, now + this.TAB_UNREACHABLE_COOLDOWN_MS);
+    this.readyContentTabs.delete(tabId);
+  }
+
+  private isBenignTabMessageError(message: string): boolean {
+    const msg = String(message || '').toLowerCase();
+    return (
+      msg.includes('receiving end does not exist') ||
+      msg.includes('could not establish connection') ||
+      msg.includes('message port closed') ||
+      msg.includes('the message port closed before a response was received') ||
+      msg.includes('extension context invalidated') ||
+      msg.includes('no tab with id') ||
+      msg.includes('the tab was closed')
+    );
   }
 
   private notifyPopup(message: Record<string, unknown>): void {
@@ -1666,7 +1863,102 @@ class BackgroundService {
     chrome.alarms.onAlarm.addListener((alarm) => {
       if (alarm.name === AI_VIDEO_PROCESS_ALARM) {
         void this.processAIVideoTick();
+      } else if (alarm.name === KEEPALIVE_ALARM) {
+        this.onKeepAliveTick();
       }
+    });
+  }
+
+  /**
+   * Register the worker-revival alarm. `create` replaces an existing alarm of
+   * the same name, so calling this on every worker boot is safe and idempotent.
+   */
+  private ensureKeepAliveAlarm(): void {
+    try {
+      chrome.alarms.create(KEEPALIVE_ALARM, {
+        periodInMinutes: KEEPALIVE_PERIOD_MINUTES,
+      });
+      // Chrome silently clamps or rejects short periods depending on version and
+      // packed/unpacked state, so record what it ACTUALLY scheduled. Without
+      // this there is no way to tell "alarm never fired" from "alarm never
+      // existed" — the worker is asleep exactly when you would want to look.
+      void chrome.alarms.get(KEEPALIVE_ALARM).then((alarm) => {
+        void this.recordKeepAliveDiag({
+          requestedPeriodMinutes: KEEPALIVE_PERIOD_MINUTES,
+          scheduledPeriodMinutes: alarm?.periodInMinutes ?? null,
+          nextFireAt: alarm?.scheduledTime ?? null,
+          alarmExists: !!alarm,
+          workerBootedAt: Date.now(),
+        });
+        if (!alarm) {
+          console.error('[FuseConnect v7] Keepalive alarm was not registered by Chrome');
+        } else if (alarm.periodInMinutes !== KEEPALIVE_PERIOD_MINUTES) {
+          console.warn(
+            `[FuseConnect v7] Keepalive period clamped by Chrome: requested ${KEEPALIVE_PERIOD_MINUTES}m, scheduled ${alarm.periodInMinutes}m`
+          );
+        }
+      });
+    } catch (err) {
+      console.error('[FuseConnect v7] Failed to create keepalive alarm:', err);
+    }
+  }
+
+  /**
+   * Persist keepalive telemetry. Storage, not memory: the whole point is to
+   * survive the worker being torn down between ticks.
+   */
+  private async recordKeepAliveDiag(patch: Record<string, unknown>): Promise<void> {
+    try {
+      const stored = await chrome.storage.local.get(KEEPALIVE_DIAG_KEY);
+      const current = (stored?.[KEEPALIVE_DIAG_KEY] as Record<string, unknown>) || {};
+      await chrome.storage.local.set({
+        [KEEPALIVE_DIAG_KEY]: { ...current, ...patch, updatedAt: Date.now() },
+      });
+    } catch {
+      // Diagnostics must never break the keepalive path.
+    }
+  }
+
+  /**
+   * Runs on every keepalive alarm. The alarm firing has already woken the
+   * worker (re-running init() if it had been torn down); this decides whether
+   * the relay link needs re-establishing and refreshes agent liveness so the
+   * relay does not time our agents out.
+   */
+  private onKeepAliveTick(): void {
+    this.keepAliveTicks += 1;
+    const relayState = this.connections.get('relay')?.readyState ?? null;
+    void this.recordKeepAliveDiag({
+      lastTickAt: Date.now(),
+      ticksThisWorker: this.keepAliveTicks,
+      lastTickAutoConnect: this.autoConnect,
+      lastTickRelayReadyState: relayState,
+    });
+
+    if (!this.autoConnect) {
+      console.warn('[FuseConnect v7] Keepalive tick ignored: autoConnect is off');
+      return;
+    }
+
+    const relay = this.connections.get('relay');
+    if (relay?.readyState === WebSocket.OPEN) {
+      // Traffic on the socket also resets the worker's idle timer.
+      this.sendHeartbeatTick();
+      return;
+    }
+
+    // A socket that never opens stays in CONNECTING forever, so this must be a
+    // bounded in-flight guard rather than a readyState check — otherwise one
+    // half-open attempt would block every future reconnect.
+    if (this.relayConnectInFlightUntil > Date.now()) {
+      console.warn('[FuseConnect v7] Keepalive: relay connect already in flight');
+      return;
+    }
+
+    console.warn('[FuseConnect v7] Keepalive: relay link down, reconnecting...');
+    this.connectionAttempts = 0;
+    void this.tryInitialConnection().catch((err) => {
+      console.warn('[FuseConnect v7] Keepalive reconnect failed:', err);
     });
   }
 
@@ -2460,6 +2752,9 @@ class BackgroundService {
       if (this.tabPausedChannels.delete(tabId)) {
         void this.saveTabPausedChannels();
       }
+      this.readyContentTabs.delete(tabId);
+      this.unreachableTabs.delete(tabId);
+      this.broadcastFailLogAt.delete(tabId);
       this.logEvent('browser.tabs', 'removed', { tabId });
     });
   }
@@ -2501,14 +2796,18 @@ class BackgroundService {
    * Send native message to control services
    */
   private async sendNativeMessage(message: Record<string, unknown>): Promise<any> {
-    if (this.nativeHostUnavailable) {
+    const now = Date.now();
+    if (this.nativeHostUnavailable || now < this.nativeHostBackoffUntil) {
       return {
-        error: 'Specified native messaging host not found',
+        error:
+          now < this.nativeHostBackoffUntil
+            ? 'Native host temporarily unavailable'
+            : 'Specified native messaging host not found',
         unavailable: true,
       };
     }
 
-    console.log('[NativeMessaging] Sending:', message.action, message.service || '');
+    console.debug('[NativeMessaging] Sending:', message.action, message.service || '');
     return new Promise((resolve) => {
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
@@ -2517,6 +2816,10 @@ class BackgroundService {
             const hostMissing =
               errMsg.includes('Specified native messaging host not found') ||
               errMsg.includes('No such native application');
+            const hostExited =
+              /native host has exited/i.test(errMsg) ||
+              /host .+ has exited/i.test(errMsg) ||
+              /disconnected port/i.test(errMsg);
 
             if (hostMissing) {
               this.nativeHostUnavailable = true;
@@ -2526,17 +2829,28 @@ class BackgroundService {
                   '[NativeMessaging] Native host not installed; native service controls disabled'
                 );
               }
+            } else if (hostExited) {
+              // Host binary exists but crashed/exited — back off instead of spamming errors.
+              this.nativeHostBackoffUntil = Date.now() + 60000;
+              if (!this.nativeHostMissingLogged) {
+                this.nativeHostMissingLogged = true;
+                console.warn(
+                  '[NativeMessaging] Native host exited; retrying after cooldown. Re-run apps/chrome-extension/install.sh if this persists.'
+                );
+              }
             } else {
-              console.error('[NativeMessaging] Error:', errMsg);
+              console.warn('[NativeMessaging] Error:', errMsg);
             }
 
-            resolve({ error: errMsg, unavailable: hostMissing });
+            resolve({ error: errMsg, unavailable: hostMissing || hostExited });
           } else {
+            // Successful response clears the one-shot warning latch for future sessions.
+            this.nativeHostMissingLogged = false;
             resolve(response || {});
           }
         });
       } catch (e) {
-        console.error('[NativeMessaging] Exception:', e);
+        console.warn('[NativeMessaging] Exception:', e);
         resolve({ error: 'Native messaging not available' });
       }
     });
@@ -3262,7 +3576,7 @@ class BackgroundService {
                 chrome.storage.local.set(
                   { processingState: nextState, ai_video_total_count: queue.length },
                   () => {
-                    chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 0.1 });
+                    chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 1 });
                     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
                     sendResponse({ success: true, data: { started: true }, state: nextState });
                   }
@@ -3300,7 +3614,7 @@ class BackgroundService {
               lastUpdated: Date.now(),
             };
             chrome.storage.local.set({ processingState: next }, () => {
-              chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 0.1 });
+              chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 1 });
               this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: next });
               sendResponse({ success: true, data: { resumed: true }, state: next });
             });
@@ -3705,7 +4019,11 @@ Format as JSON array:
           break;
 
         case 'CONTENT_SCRIPT_READY':
-          console.log('📢 Content script ready on:', message.url);
+          if (sender.tab?.id) {
+            this.readyContentTabs.add(sender.tab.id);
+            this.unreachableTabs.delete(sender.tab.id);
+          }
+          console.debug('📢 Content script ready on:', message.url);
           sendResponse({ success: true });
           break;
 
@@ -3833,7 +4151,22 @@ Format as JSON array:
             channelId: newChannel.id,
             name: trimmedName,
           });
-          sendResponse({ success: true, channel: newChannel });
+
+          // The local `local-` channel is a placeholder that only becomes real
+          // when the relay echoes CHANNEL_CREATED/CHANNEL_LIST back and we remap
+          // onto its id. Reporting a flat success while the relay link is down
+          // told the user the channel existed federation-wide when it did not.
+          const relayConnected = this.primaryConnection?.readyState === WebSocket.OPEN;
+          sendResponse({
+            success: true,
+            pending: !relayConnected,
+            channel: newChannel,
+            ...(relayConnected
+              ? {}
+              : {
+                  warning: `Created locally only — relay is not connected, "${trimmedName}" will be published when the link is restored`,
+                }),
+          });
           break;
         }
 
@@ -3965,8 +4298,13 @@ Format as JSON array:
 
         case 'CHANNEL_DELETE': {
           const channelIdToDelete = message.channelId;
-          if (channelIdToDelete === 'general') {
-            sendResponse({ success: false, error: 'Cannot delete general channel' });
+          // Guard the whole seeded set, not just general. These are federation
+          // infrastructure; deleting one propagates to the relay and every peer.
+          if (isStandardChannel(channelIdToDelete)) {
+            sendResponse({
+              success: false,
+              error: `"${channelIdToDelete}" is a standard federation channel and cannot be deleted`,
+            });
             break;
           }
           this.channels.delete(channelIdToDelete);
@@ -3987,6 +4325,30 @@ Format as JSON array:
           this.sendActivityEvent('channel_delete', { channelId: channelIdToDelete });
           sendResponse({ success: true });
           break;
+        }
+
+        case 'GET_KEEPALIVE_STATUS': {
+          void (async () => {
+            const stored = await chrome.storage.local.get(KEEPALIVE_DIAG_KEY);
+            const alarm = await chrome.alarms.get(KEEPALIVE_ALARM).catch(() => undefined);
+            sendResponse({
+              success: true,
+              diag: stored?.[KEEPALIVE_DIAG_KEY] || null,
+              alarm: alarm
+                ? { periodInMinutes: alarm.periodInMinutes, scheduledTime: alarm.scheduledTime }
+                : null,
+              autoConnect: this.autoConnect,
+              relayUrl: this.relayUrl,
+              relayReadyState: this.connections.get('relay')?.readyState ?? null,
+              connectionStatus:
+                this.primaryConnection?.readyState === WebSocket.OPEN
+                  ? 'connected'
+                  : 'disconnected',
+              ticksThisWorker: this.keepAliveTicks,
+              now: Date.now(),
+            });
+          })();
+          return true;
         }
 
         case 'CONTENT_SCRIPT_READY':
@@ -4389,5 +4751,34 @@ Format as JSON array:
   }
 }
 
-// Initialize
-new BackgroundService();
+// Global SW guards — uncaught errors put MV3 workers into "bad state".
+try {
+  self.addEventListener('error', (event) => {
+    console.error(
+      '[FuseConnect v7] Service worker error:',
+      event?.error || event?.message || event
+    );
+  });
+  self.addEventListener('unhandledrejection', (event) => {
+    console.error('[FuseConnect v7] Service worker unhandled rejection:', event?.reason);
+    try {
+      event.preventDefault();
+    } catch (_e) {
+      // ignore
+    }
+  });
+} catch (_e) {
+  // Older runtimes may not expose self event APIs the same way.
+}
+
+chrome.runtime.onInstalled.addListener((details) => {
+  console.log('[FuseConnect v7] onInstalled:', details.reason);
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  console.log('[FuseConnect v7] onStartup');
+});
+
+// Initialize once per worker boot.
+const __fuseBackground = new BackgroundService();
+void __fuseBackground;

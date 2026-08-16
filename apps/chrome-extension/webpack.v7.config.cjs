@@ -14,7 +14,8 @@ module.exports = (env, argv) => {
     devtool: isProduction ? false : 'cheap-module-source-map',
     target: ['web', 'es2020'],
     entry: {
-      'background/index': './src/v6/background/index.ts',
+      // MV3 service workers are most reliably registered from the extension root.
+      'service-worker': './src/v6/background/index.ts',
       'content/index': './src/v6/content/index.ts',
       'popup/popup': './src/v6/popup/popup.js',
       'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
@@ -26,7 +27,9 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist-v7'),
       filename: '[name].js',
       clean: true,
+      // Classic script for MV3 service_worker without "type": "module".
       iife: true,
+      globalObject: 'globalThis',
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
@@ -89,11 +92,20 @@ module.exports = (env, argv) => {
             noErrorOnMissing: true,
             globOptions: {
               // Webpack emits the bundled popup.js; copying source would break it.
+              // popup-boot.js is a classic shell script and must be copied as-is.
               ignore: ['**/popup.js'],
             },
+            // Avoid re-minifying the tiny boot shell (keeps load path predictable).
+            info: { minimized: true },
           },
           { from: './icons', to: 'icons', noErrorOnMissing: true },
-          { from: './src/v6/native-host', to: 'native-host', noErrorOnMissing: true },
+          {
+            from: './src/v6/native-host',
+            to: 'native-host',
+            noErrorOnMissing: true,
+            // Keep host scripts readable; do not run Terser on them.
+            info: { minimized: true },
+          },
         ],
       }),
     ],
@@ -104,8 +116,9 @@ module.exports = (env, argv) => {
         new TerserPlugin({
           terserOptions: {
             compress: {
-              drop_console: isProduction,
-              pure_funcs: isProduction ? ['console.log', 'console.debug'] : [],
+              // Keep console.error / console.warn for popup diagnostics.
+              drop_console: false,
+              pure_funcs: isProduction ? ['console.log', 'console.debug', 'console.info'] : [],
             },
           },
         }),

@@ -83,7 +83,8 @@ class AuthenticationService {
 
   async authenticateYouTube(): Promise<{ success: boolean; token?: string; error?: string }> {
     try {
-      const token = await chrome.identity.getAuthToken({
+      // MV3 resolves to { token?, grantedScopes? } — not a bare string.
+      const { token } = await chrome.identity.getAuthToken({
         interactive: true,
         scopes: GOOGLE_OAUTH_SCOPES.slice(0, 3),
       });
@@ -123,9 +124,7 @@ class AuthenticationService {
 
   async validateGeminiAPIKey(apiKey: string): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${API_URLS.geminiApi}/models?key=${apiKey}`
-      );
+      const response = await fetch(`${API_URLS.geminiApi}/models?key=${apiKey}`);
       return response.ok;
     } catch {
       return false;
@@ -196,9 +195,12 @@ class AuthenticationService {
     const authenticated: string[] = [];
     const missing: string[] = [];
 
-    if (this.authStatus.youtube) authenticated.push('YouTube'); else missing.push('YouTube');
-    if (this.authStatus.geminiApi) authenticated.push('Gemini API'); else missing.push('Gemini API');
-    if (this.authStatus.aiStudio) authenticated.push('AI Studio'); else missing.push('AI Studio');
+    if (this.authStatus.youtube) authenticated.push('YouTube');
+    else missing.push('YouTube');
+    if (this.authStatus.geminiApi) authenticated.push('Gemini API');
+    else missing.push('Gemini API');
+    if (this.authStatus.aiStudio) authenticated.push('AI Studio');
+    else missing.push('AI Studio');
 
     return {
       authenticated,
@@ -227,13 +229,38 @@ class AuthenticationService {
     });
 
     if (this.authStatus.geminiApi) {
-      options.push({ id: 'flash', name: 'Gemini Flash Analysis', cost: '$0.01/video', requires: ['geminiApi'], available: true });
-      options.push({ id: 'pro', name: 'Gemini Pro Analysis', cost: '$0.15/video', requires: ['geminiApi'], available: true });
-      options.push({ id: 'vision', name: 'Gemini Pro Vision', cost: '$0.30/video', requires: ['geminiApi'], available: true });
+      options.push({
+        id: 'flash',
+        name: 'Gemini Flash Analysis',
+        cost: '$0.01/video',
+        requires: ['geminiApi'],
+        available: true,
+      });
+      options.push({
+        id: 'pro',
+        name: 'Gemini Pro Analysis',
+        cost: '$0.15/video',
+        requires: ['geminiApi'],
+        available: true,
+      });
+      options.push({
+        id: 'vision',
+        name: 'Gemini Pro Vision',
+        cost: '$0.30/video',
+        requires: ['geminiApi'],
+        available: true,
+      });
     }
 
     if (this.authStatus.aiStudio) {
-      options.push({ id: 'ai_studio', name: 'AI Studio (Your Gemini Pro)', cost: 'FREE (uses your account)', requires: ['aiStudio'], available: true, recommended: true });
+      options.push({
+        id: 'ai_studio',
+        name: 'AI Studio (Your Gemini Pro)',
+        cost: 'FREE (uses your account)',
+        requires: ['aiStudio'],
+        available: true,
+        recommended: true,
+      });
     }
 
     return options;
@@ -276,7 +303,9 @@ class AuthenticationService {
       return this.accounts.geminiApi.apiKey;
     }
 
-    const { geminiApiKey } = (await chrome.storage.local.get('geminiApiKey')) as { geminiApiKey?: string };
+    const { geminiApiKey } = (await chrome.storage.local.get('geminiApiKey')) as {
+      geminiApiKey?: string;
+    };
     return geminiApiKey;
   }
 
@@ -288,7 +317,11 @@ class AuthenticationService {
     const status = await this.checkStatus();
 
     if (status.aiStudio) {
-      return { method: 'ai_studio', reason: 'Uses your existing Gemini Pro subscription (FREE)', cost: 0 };
+      return {
+        method: 'ai_studio',
+        reason: 'Uses your existing Gemini Pro subscription (FREE)',
+        cost: 0,
+      };
     }
 
     if (status.geminiApi) {
@@ -300,7 +333,7 @@ class AuthenticationService {
 
   async detectAccountChange(): Promise<boolean> {
     try {
-      const token = await chrome.identity.getAuthToken({ interactive: false });
+      const { token } = await chrome.identity.getAuthToken({ interactive: false });
       const stored = (await chrome.storage.local.get('youtubeToken')) as { youtubeToken?: string };
       if (token && token !== stored.youtubeToken) {
         console.log('Account change detected! Updating tokens...');

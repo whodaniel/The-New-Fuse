@@ -68,7 +68,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-16T23:28:27.071Z** — handoff
+Updated: **2026-08-16T23:36:20.757Z** — handoff
+`1132dbda-3c8d-4afe-91d2-9234155f969e` (`197368a76713`).
 `7d20be19-7db2-4a02-806d-6746e20636df` (`f99d234e0f36`).
 `54428d94-2559-482f-8753-4fc7c57ed068` (`d933e9a67a2a`).
 `1f8cb103-f122-44f3-93fc-008ff1a0b1cc` (`d933e9a67a2a`).
@@ -249,9 +250,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                   |
-| -------- | -------------------------------------------------------------------------------------------------------- |
-| **P0**   | Continue dirty-tree: chrome-extension v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts. |
+| Priority | Action                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------- |
+| **P0**   | Continue dirty-tree: frontend backup/settings UI; defer bulk data/intelligence-artifacts. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1302,3 +1303,9 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7d20be19-7db2-4a02-806d-6746e20636df) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(9973e7a5-182f-4f46-87f5-2ded03cc1428) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1132dbda-3c8d-4afe-91d2-9234155f969e) | ✅ HANDOFF_READY |

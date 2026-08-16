@@ -1,51 +1,45 @@
 #!/bin/bash
+# TNF Native Messaging Host Installer for macOS (non-interactive)
 
-# TNF Native Messaging Host Installer for macOS
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HOST_NAME="com.thenewfuse.native_host"
-HOST_PATH="$SCRIPT_DIR/tnf-native-host.cjs"
-NATIVE_MESSAGING_HOSTS_DIR="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
+HOST_JS="$SCRIPT_DIR/tnf-native-host.cjs"
+HOST_SH="$SCRIPT_DIR/tnf-native-host.sh"
+# Fixed ID from apps/chrome-extension manifest key
+EXTENSION_ID="${1:-fkbcklmcikdhpggaimfhomgncneppkbj}"
+
+NATIVE_MESSAGING_HOSTS_DIRS=(
+  "$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
+  "$HOME/Library/Application Support/Chromium/NativeMessagingHosts"
+  "$HOME/Library/Application Support/Arc/User Data/NativeMessagingHosts"
+)
 
 echo "🔧 Installing TNF Native Messaging Host..."
 
-# Create directory if it doesn't exist
-mkdir -p "$NATIVE_MESSAGING_HOSTS_DIR"
+chmod +x "$HOST_JS" "$HOST_SH"
 
-# Make the host executable
-chmod +x "$HOST_PATH"
-
-# Get the extension ID from the user or use placeholder
-read -p "Enter your Chrome extension ID (leave blank to configure later): " EXTENSION_ID
-
-if [ -z "$EXTENSION_ID" ]; then
-  EXTENSION_ID="YOUR_EXTENSION_ID"
-  echo "⚠️  You'll need to update the extension ID later in:"
-  echo "   $NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json"
-fi
-
-# Create the manifest
-cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
+for NATIVE_MESSAGING_HOSTS_DIR in "${NATIVE_MESSAGING_HOSTS_DIRS[@]}"; do
+  mkdir -p "$NATIVE_MESSAGING_HOSTS_DIR"
+  cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
 {
   "name": "$HOST_NAME",
-  "description": "The New Fuse Native Messaging Host - Controls TNF services from Chrome",
-  "path": "$HOST_PATH",
+  "description": "Fuse Connect v7 - Controls TNF services from Chrome Extension",
+  "path": "$HOST_SH",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://$EXTENSION_ID/"
   ]
 }
 EOF
+  echo "   ✅ Registered: $NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json"
+done
 
-echo "✅ Native messaging host installed successfully!"
 echo ""
-echo "📋 Configuration:"
-echo "   Host name: $HOST_NAME"
-echo "   Host path: $HOST_PATH"
-echo "   Manifest:  $NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json"
+echo "✅ Native messaging host installed"
+echo "   Launcher: $HOST_SH"
+echo "   Script:   $HOST_JS"
+echo "   Origin:   chrome-extension://$EXTENSION_ID/"
 echo ""
-echo "🚀 Next steps:"
-echo "   1. Load the Fuse Connect extension in Chrome"
-echo "   2. Get the extension ID from chrome://extensions/"
-echo "   3. Update the allowed_origins in the manifest with your extension ID"
-echo ""
+echo "Reload Fuse Connect in chrome://extensions after install."

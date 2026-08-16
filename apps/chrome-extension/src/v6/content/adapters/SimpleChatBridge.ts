@@ -911,7 +911,15 @@ class SimpleChatBridge {
     for (let i = generic.length - 1; i >= 0; i--) {
       const text = this.extractCleanText(generic[i]);
       if (!text) continue;
-      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      // extractCleanText() collapses whitespace but lastSentText keeps the
+      // header newline, so a raw compare never matched and the message we just
+      // injected could be returned as though it were the assistant's reply.
+      if (
+        this.lastSentText &&
+        this.normalizeForComparison(text) === this.normalizeForComparison(this.lastSentText)
+      ) {
+        continue;
+      }
       return text;
     }
 
@@ -986,10 +994,27 @@ class SimpleChatBridge {
     return typeof value === 'string' ? value.trim() : (input.textContent || '').trim();
   }
 
+  /**
+   * Strip whitespace entirely for comparison purposes.
+   *
+   * Injected messages carry a `[Sender: ...][Channel: ...]\n` header, and rich
+   * editors do not round-trip that newline: ProseMirror (claude.ai, kimi,
+   * cursor) splits it into sibling block nodes whose textContent concatenates
+   * with NO separator, while Quill (gemini) can substitute a space or a
+   * non-breaking space. Collapsing runs to a single space is not enough —
+   * "A\nB" becomes "A B" but the DOM reads "AB" — so whitespace is dropped on
+   * both sides. Comparing raw strings reported "chat input did not accept
+   * injected text" for text that was sitting in the composer, and aborted the
+   * send.
+   */
+  private normalizeForComparison(text: string): string {
+    return String(text || '').replace(/\s+/g, '');
+  }
+
   private inputContainsText(input: HTMLElement, text: string): boolean {
-    const expected = text.trim();
+    const expected = this.normalizeForComparison(text);
     if (!expected) return false;
-    return this.getInputText(input).includes(expected);
+    return this.normalizeForComparison(this.getInputText(input)).includes(expected);
   }
 
   private dispatchInputEvents(input: HTMLElement, text: string): void {
@@ -1696,7 +1721,15 @@ class SimpleChatBridge {
     for (let i = nodes.length - 1; i >= 0; i--) {
       const text = this.extractCleanText(nodes[i]);
       if (!text) continue;
-      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      // extractCleanText() collapses whitespace but lastSentText keeps the
+      // header newline, so a raw compare never matched and the message we just
+      // injected could be returned as though it were the assistant's reply.
+      if (
+        this.lastSentText &&
+        this.normalizeForComparison(text) === this.normalizeForComparison(this.lastSentText)
+      ) {
+        continue;
+      }
       return text;
     }
     return null;

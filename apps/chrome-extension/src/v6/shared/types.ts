@@ -388,6 +388,9 @@ export type MessageType =
   | 'CHANNEL_LEAVE'
   | 'CHANNEL_LIST'
   | 'CHANNEL_MESSAGE'
+  // Relay -> client confirmations for CHANNEL_CREATE, carrying the real channel.
+  | 'CHANNEL_CREATED'
+  | 'CHANNEL_JOINED'
 
   // Chat injection
   | 'INJECT_MESSAGE'

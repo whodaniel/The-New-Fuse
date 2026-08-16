@@ -2,12 +2,19 @@
  * Fuse Connect v7 - Popup Logic
  */
 
-import { API_URLS, DEFAULT_NODES, NATIVE_HOST_NAME } from '../shared/constants.js';
+import {
+  API_URLS,
+  DEFAULT_NODES,
+  NATIVE_HOST_NAME,
+  relayActivityUrl,
+  relayHealthUrl,
+} from '../shared/constants.js';
 
 class FuseConnectPopup {
   constructor() {
     this.state = {
       connectionStatus: 'disconnected',
+      backgroundReachable: null,
       agents: [],
       platform: null,
       messages: [],
@@ -63,45 +70,133 @@ class FuseConnectPopup {
       },
     };
 
+    /** Serializes chrome.storage.local fuse_settings writes to avoid get/set races. */
+    this._settingsWriteChain = Promise.resolve();
+    this._handlersBound = false;
+
     this.init();
   }
 
-  async init() {
-    // Wake the MV3 service worker without blocking first paint.
+  /**
+   * Yield to the browser so popup HTML/CSS can paint before heavy JS work.
+   * Double-rAF is more reliable than a single timeout for first paint.
+   */
+  afterFirstPaint(task) {
+    const run = () => {
+      try {
+        task();
+      } catch (err) {
+        console.error('Popup deferred init error:', err);
+      }
+    };
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => requestAnimationFrame(run));
+      return;
+    }
+    setTimeout(run, 0);
+  }
+
+  /** Run non-critical hydration when the popup is idle (short timeout for MV3). */
+  whenIdle(task, timeoutMs = 120) {
+    const run = () => {
+      try {
+        task();
+      } catch (err) {
+        console.error('Popup idle init error:', err);
+      }
+    };
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(run, { timeout: timeoutMs });
+      return;
+    }
+    setTimeout(run, 0);
+  }
+
+  wakeBackground() {
     try {
-      chrome.runtime.sendMessage({ type: 'PING' }, () => void chrome.runtime.lastError);
-    } catch {
-      // Popup can still render from static HTML + local state.
+      chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+        const err = chrome.runtime.lastError;
+        if (err) {
+          console.error('Background PING failed:', err.message);
+          this.state.backgroundReachable = false;
+          this.markBackgroundDegraded(err.message);
+          return;
+        }
+        this.state.backgroundReachable = true;
+        if (response && typeof response === 'object') {
+          // Optional: background may echo status in PING replies.
+        }
+      });
+    } catch (err) {
+      console.error('Runtime message error:', err);
+      this.state.backgroundReachable = false;
+      this.markBackgroundDegraded(String(err?.message || err));
+    }
+  }
+
+  markBackgroundDegraded(reason) {
+    const statusText = document.getElementById('connection-status-text');
+    if (statusText && this.state.connectionStatus === 'disconnected') {
+      statusText.textContent = 'Background unavailable';
+      statusText.title = reason || 'Extension service worker did not respond';
+    }
+  }
+
+  async init() {
+    // Tabs + connect only — shell stays interactive while the heavy app hydrates.
+    this.setupTabs();
+    this.bindCriticalHandlers();
+    try {
+      document.documentElement.classList.add('fuse-popup-ready');
+    } catch (_e) {
+      // ignore
     }
 
-    // Setup tabs synchronously
-    this.setupTabs();
-
-    // Setup event handlers synchronously (must be before UI update)
+    // Immediately wake background and register listeners
+    this.wakeBackground();
     this.setupEventHandlers();
-
-    // Setup message listener for background updates
     this.setupMessageListener();
+    this.updateConnectionStatus();
 
-    // Show initial UI immediately with default state
-    this.updateUI();
+    // Fast-path state & settings hydration (non-blocking)
+    this.loadSettings().catch((err) => console.error('loadSettings failed:', err));
 
-    // Load settings asynchronously (non-blocking)
-    this.loadSettings().catch(console.error);
-
-    // Native host probes can stall the popup for seconds if the host is missing.
-    setTimeout(() => this.checkNativeHost().catch(() => {}), 0);
-
-    // Load state from background in background
     this.loadState()
       .then(() => {
         this.updateUI();
-        // Check relay health after state is loaded
-        this.checkRelayAndUpdateHelper().catch(console.error);
-        // Refresh autonomy status
-        this.refreshAutonomyStatus().catch(console.error);
+        this.checkRelayAndUpdateHelper().catch((err) =>
+          console.warn('Relay health check failed:', err?.message || err)
+        );
+        // Autonomy status is non-critical for first open — defer
+        setTimeout(() => {
+          this.refreshAutonomyStatus().catch((err) =>
+            console.warn('Autonomy status refresh failed:', err?.message || err)
+          );
+        }, 300);
       })
-      .catch(console.error);
+      .catch((err) => console.error('loadState failed:', err));
+
+    // Native host check runs asynchronously in background
+    setTimeout(() => {
+      this.checkNativeHost().catch((err) => {
+        console.warn('Native host check failed:', err?.message || err);
+      });
+    }, 200);
+  }
+
+  /** Connect / panel actions only — keeps first paint cheap. */
+  bindCriticalHandlers() {
+    document.getElementById('connect-btn')?.addEventListener('click', () => {
+      if (this.state.connectionStatus === 'connected') {
+        this.disconnect();
+      } else {
+        this.connect();
+      }
+    });
+
+    document.getElementById('open-panel-btn')?.addEventListener('click', () => {
+      this.openPanelOnPage();
+    });
   }
 
   async checkRelayAndUpdateHelper() {
@@ -112,15 +207,11 @@ class FuseConnectPopup {
     helper.style.display = 'block';
 
     try {
-      const relayUrl = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay).trim();
-      const healthUrl = relayUrl
-        .replace(/^ws:/, 'http:')
-        .replace(/^wss:/, 'https:')
-        .replace(/\/ws$/, '/health');
+      const healthUrl = relayHealthUrl(this.state.settings?.relayUrl || DEFAULT_NODES.relay);
 
       const response = await fetch(healthUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(1000),
+        signal: AbortSignal.timeout(800),
       }).catch(() => null);
 
       if (response && response.ok) {
@@ -129,13 +220,28 @@ class FuseConnectPopup {
           if (data?.status === 'ok' && data?.relay === 'running') {
             helper.style.display = 'none';
           }
-        } catch {
-          // Keep helper visible on JSON parse error
+        } catch (err) {
+          console.warn('Relay health JSON parse failed:', err?.message || err);
         }
       }
     } catch (e) {
-      // Relay not running, keep helper visible
+      console.warn('Relay health check error:', e?.message || e);
     }
+  }
+
+  enqueueSettingsWrite(mutator) {
+    this._settingsWriteChain = this._settingsWriteChain
+      .then(async () => {
+        const result = await chrome.storage.local.get(['fuse_settings']);
+        const currentSettings = result.fuse_settings || {};
+        const nextSettings = mutator({ ...currentSettings });
+        if (!nextSettings || nextSettings === currentSettings) return;
+        await chrome.storage.local.set({ fuse_settings: nextSettings });
+      })
+      .catch((err) => {
+        console.error('Settings write failed:', err?.message || err);
+      });
+    return this._settingsWriteChain;
   }
 
   setRelayUrlState(relayUrl, persist = false) {
@@ -151,15 +257,14 @@ class FuseConnectPopup {
 
     if (!persist) return;
 
-    chrome.storage.local.get(['fuse_settings'], (result) => {
-      const currentSettings = result.fuse_settings || {};
-      if (String(currentSettings.relayUrl || '').trim() === nextRelayUrl) return;
-      chrome.storage.local.set({
-        fuse_settings: {
-          ...currentSettings,
-          relayUrl: nextRelayUrl,
-        },
-      });
+    this.enqueueSettingsWrite((currentSettings) => {
+      if (String(currentSettings.relayUrl || '').trim() === nextRelayUrl) {
+        return currentSettings;
+      }
+      return {
+        ...currentSettings,
+        relayUrl: nextRelayUrl,
+      };
     });
   }
 
@@ -189,23 +294,18 @@ class FuseConnectPopup {
   }
 
   setupEventHandlers() {
-    // Connect button
-    document.getElementById('connect-btn')?.addEventListener('click', () => {
-      if (this.state.connectionStatus === 'connected') {
-        this.disconnect();
-      } else {
-        this.connect();
-      }
-    });
+    if (this._handlersBound) return;
+    this._handlersBound = true;
+
+    // Connect / open-panel are bound in bindCriticalHandlers() for first paint.
 
     // Refresh agents
     document.getElementById('refresh-agents')?.addEventListener('click', () => {
-      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' });
-    });
-
-    // Open Panel on current page
-    document.getElementById('open-panel-btn')?.addEventListener('click', () => {
-      this.openPanelOnPage();
+      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' }, () => {
+        if (chrome.runtime.lastError) {
+          console.error('REQUEST_SYNC failed:', chrome.runtime.lastError.message);
+        }
+      });
     });
 
     // Central chat controls
@@ -882,9 +982,13 @@ class FuseConnectPopup {
 
   async refreshLastWakePingTime() {
     try {
-      const response = await fetch('http://localhost:3000/activity/recent?count=100', {
+      const activityUrl = relayActivityUrl(
+        this.state.settings?.relayUrl || DEFAULT_NODES.relay,
+        100
+      );
+      const response = await fetch(activityUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(2000),
+        signal: AbortSignal.timeout(1200),
       });
       const data = await response.json();
       const activities = Array.isArray(data?.events)
@@ -900,7 +1004,7 @@ class FuseConnectPopup {
       );
       this.state.autonomy.lastWakePingAt = lastWake?.timestamp || lastWake?.ts || null;
     } catch (e) {
-      // Best effort
+      console.warn('Wake ping activity fetch failed:', e?.message || e);
     }
   }
 
@@ -2061,9 +2165,11 @@ class FuseConnectPopup {
 
           // Defer UI updates to next tick to avoid blocking
           setTimeout(() => {
-            // Update relay URL field
+            // Update relay URL field (don't clobber while the user is typing)
             const relayUrl = document.getElementById('relay-url');
-            if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
+            if (relayUrl && relayUrl !== document.activeElement) {
+              relayUrl.value = this.state.settings.relayUrl;
+            }
 
             // Update toggles
             const autoReconnect = document.getElementById('auto-reconnect');
@@ -2528,7 +2634,13 @@ class FuseConnectPopup {
       },
       (response) => {
         if (response?.success && response.channel?.id) {
-          this.showToast(`Channel "${normalizedName}" created`);
+          // `pending` means the relay was not connected, so the channel exists
+          // locally only until the link comes back. Do not call that "created".
+          this.showToast(
+            response.pending
+              ? response.warning || `Channel "${normalizedName}" created locally (relay offline)`
+              : `Channel "${normalizedName}" created`
+          );
           this.setSelectedChannel(response.channel.id);
         } else if (response?.alreadyExists && response.channel?.id) {
           this.showToast(`Channel "${response.channel.name}" already exists`);

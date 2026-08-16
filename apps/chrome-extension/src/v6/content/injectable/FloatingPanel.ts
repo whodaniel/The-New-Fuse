@@ -3,7 +3,7 @@
  * Fully draggable, resizable, with federation channels and notifications
  */
 
-import { DEFAULT_NODES } from '../../shared/constants';
+import { DEFAULT_NODES, isStandardChannel } from '../../shared/constants';
 import type {
   Agent,
   AgentMessage,
@@ -108,6 +108,10 @@ export class EnhancedFloatingPanel {
   private storageListener:
     | ((changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void)
     | null = null;
+  private pendingDeleteChannelId: string | null = null;
+  private pendingDeleteTimer: number | null = null;
+  private resetSettingsArmed = false;
+  private resetSettingsTimer: number | null = null;
   private containerClickListener: ((e: Event) => void) | null = null;
   private containerKeydownListener: ((e: Event) => void) | null = null;
 
@@ -308,6 +312,35 @@ export class EnhancedFloatingPanel {
 
       #fuse-connect-panel-v7 * {
         box-sizing: border-box !important;
+      }
+
+      .fcp6-toast-stack {
+        position: absolute !important;
+        left: 10px !important;
+        right: 10px !important;
+        bottom: 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        pointer-events: none !important;
+        z-index: 20 !important;
+      }
+      .fcp6-toast {
+        padding: 8px 11px !important;
+        border-radius: 8px !important;
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+        color: #E6F7FF !important;
+        background: rgba(12,16,24,0.97) !important;
+        border: 1px solid rgba(0,217,255,0.35) !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.45) !important;
+        animation: fcp6-toast-in 140ms ease-out !important;
+      }
+      .fcp6-toast.warn { border-color: rgba(255,184,0,0.6) !important; color: #FFE9B0 !important; }
+      .fcp6-toast.error { border-color: rgba(255,51,102,0.6) !important; color: #FFC7D4 !important; }
+      @keyframes fcp6-toast-in {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
       .fcp6-panel {
@@ -1495,8 +1528,15 @@ export class EnhancedFloatingPanel {
           senderId = msg.metadata.senderId;
         }
 
-        // Shorten ID for display
-        const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
+        // Shorten ID for display.
+        // senderId originates from msg.from, which is wire data — a relay message
+        // without `from` (and without a string metadata.senderId) left this
+        // undefined and threw "Cannot read properties of undefined (reading
+        // 'length')", taking down the whole panel render inside the content
+        // script's message handler.
+        const safeSenderId = String(senderId ?? '') || 'unknown-id';
+        const shortId =
+          safeSenderId.length > 8 ? safeSenderId.substring(0, 6) + '...' : safeSenderId;
 
         // Prefer the federated tokens: a truncated raw id cannot be addressed,
         // whereas `@ID#:<base58>` pasted into the composer resolves to this exact
@@ -1512,17 +1552,18 @@ export class EnhancedFloatingPanel {
           senderAgent?.operationalHandle ||
           '';
         const addressChip = senderIdNumber ? `@${senderIdNumber}` : `#${shortId}`;
-        const addressCopyValue = senderIdNumber ? `@${senderIdNumber} ` : senderId;
+        const addressCopyValue = senderIdNumber ? `@${senderIdNumber} ` : safeSenderId;
         const addressTitle = senderHandle
-          ? `${senderHandle} (${senderId}) — copy to address this agent`
-          : `Agent ID: ${senderId}`;
+          ? `${senderHandle} (${safeSenderId}) — copy to address this agent`
+          : `Agent ID: ${safeSenderId}`;
+        const safeSenderName = String(senderName ?? '') || safeSenderId;
 
         return `
             <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(senderId)}">
-                  ${this.escapeHtml(senderName)}
+                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(safeSenderId)}">
+                  ${this.escapeHtml(safeSenderName)}
                 </span>
                 <div style="display: flex; align-items: center; gap: 4px;">
                   <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="${this.escapeHtml(addressTitle)}">
@@ -1558,7 +1599,7 @@ export class EnhancedFloatingPanel {
             <div class="fcp6-channel-icon">${ch.isPrivate ? '🔒' : '#'}</div>
             <div class="fcp6-channel-info">
               <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
-              <div class="fcp6-channel-members">${ch.members.length} active agents</div>
+              <div class="fcp6-channel-members">${ch.members?.length ?? 0} active agents</div>
             </div>
             <div class="fcp6-channel-actions">
               ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
@@ -1680,11 +1721,11 @@ export class EnhancedFloatingPanel {
               ${this.escapeHtml(task.description)}
             </div>
             ${
-              task.instructions.length > 0
+              (task.instructions?.length ?? 0) > 0
                 ? `<div style="font-size:10px; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px;">
                   <div style="opacity:0.6; margin-bottom:2px;">INSTRUCTIONS:</div>
                   <ul style="margin:0; padding-left:16px;">
-                    ${task.instructions.map((i) => `<li>${this.escapeHtml(i)}</li>`).join('')}
+                    ${(task.instructions || []).map((i) => `<li>${this.escapeHtml(i)}</li>`).join('')}
                   </ul>
                 </div>`
                 : ''
@@ -1879,7 +1920,7 @@ export class EnhancedFloatingPanel {
         expected: 'page-agent-XXXXX',
       });
       // Try to recover by requesting page agent ID again
-      alert('Connection not ready. Please wait a moment and try again.');
+      this.showToast('Connection not ready — wait a moment and try again', 'warn');
       input.value = content; // Put the content back
       return;
     }
@@ -1984,16 +2025,31 @@ export class EnhancedFloatingPanel {
   }
 
   /**
-   * Create channel (legacy - using prompt)
+   * Non-blocking in-panel notice.
+   *
+   * The panel is injected into third-party pages, where window.prompt/alert/
+   * confirm freeze the host page's main thread (and break any automation
+   * driving it). Feedback goes here instead.
    */
-  private createChannel(): void {
-    const name = prompt('Enter channel name:');
-    if (name) {
-      this.safeSendMessage({
-        type: 'CHANNEL_CREATE',
-        name,
-      });
+  private showToast(message: string, kind: 'info' | 'warn' | 'error' = 'info'): void {
+    if (!this.container) return;
+
+    let stack = this.container.querySelector('.fcp6-toast-stack') as HTMLDivElement | null;
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.className = 'fcp6-toast-stack';
+      this.container.appendChild(stack);
     }
+
+    const toast = document.createElement('div');
+    toast.className = `fcp6-toast ${kind}`;
+    toast.textContent = message;
+    stack.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+      if (stack && !stack.childElementCount) stack.remove();
+    }, 5000);
   }
 
   /**
@@ -2010,6 +2066,7 @@ export class EnhancedFloatingPanel {
 
     if (!input || !input.value.trim()) {
       console.warn('[FuseConnect] No channel name entered');
+      this.showToast('Enter a channel name first', 'warn');
       return;
     }
 
@@ -2020,6 +2077,7 @@ export class EnhancedFloatingPanel {
     if (existing) {
       console.warn('[FuseConnect] Duplicate channel name blocked:', normalizedName);
       input.value = '';
+      this.showToast(`"${existing.name}" already exists — switched to it`, 'warn');
       this.selectChannel(existing.id);
       return;
     }
@@ -2036,12 +2094,30 @@ export class EnhancedFloatingPanel {
         name,
       },
       (response) => {
-        if (response?.success || response?.channelId) {
-          console.log('[FuseConnect] Channel created successfully:', response.channelId);
-          // The channels will be updated via CHANNELS_UPDATE message
-        } else if (response?.alreadyExists && response?.channel?.id) {
-          this.selectChannel(response.channel.id);
+        // Previously this only logged, so a failed or relay-less create looked
+        // identical to a successful one: nothing happened in the UI.
+        if (!response) {
+          this.showToast('No response from extension — try reopening the panel', 'error');
+          return;
         }
+
+        if (response.alreadyExists && response.channel?.id) {
+          this.showToast(`"${response.channel.name}" already exists — switched to it`, 'warn');
+          this.selectChannel(response.channel.id);
+          return;
+        }
+
+        if (response.success) {
+          if (response.pending) {
+            this.showToast(response.warning || `"${name}" created locally — relay offline`, 'warn');
+          } else {
+            this.showToast(`Channel "${name}" created`);
+          }
+          if (response.channel?.id) this.selectChannel(response.channel.id);
+          return;
+        }
+
+        this.showToast(response.error || `Could not create "${name}"`, 'error');
       }
     );
   }
@@ -2050,17 +2126,29 @@ export class EnhancedFloatingPanel {
    * Delete a channel (Admin only or creator - enforced by relay)
    */
   private deleteChannel(channelId: string): void {
-    if (channelId === 'general') {
-      alert('The General channel cannot be deleted.');
+    // Every seeded federation channel is protected, not just General — the relay
+    // re-creates them on boot, so "deleting" one only desyncs this client.
+    if (isStandardChannel(channelId)) {
+      this.showToast('Standard federation channels cannot be deleted', 'warn');
       return;
     }
 
     const ch = this.channels.find((c) => c.id === channelId);
     const name = ch ? ch.name : channelId;
 
-    if (!confirm(`Are you sure you want to delete the channel "${name}"?`)) {
+    // Two-step confirm instead of window.confirm(), which blocks the host page.
+    if (this.pendingDeleteChannelId !== channelId) {
+      this.pendingDeleteChannelId = channelId;
+      if (this.pendingDeleteTimer) clearTimeout(this.pendingDeleteTimer);
+      this.pendingDeleteTimer = window.setTimeout(() => {
+        this.pendingDeleteChannelId = null;
+      }, 5000);
+      this.showToast(`Delete "${name}"? Click delete again within 5s to confirm`, 'warn');
       return;
     }
+
+    this.pendingDeleteChannelId = null;
+    if (this.pendingDeleteTimer) clearTimeout(this.pendingDeleteTimer);
 
     console.log('[FuseConnect] Deleting channel:', channelId);
 
@@ -2078,6 +2166,9 @@ export class EnhancedFloatingPanel {
             this.currentChannel = null;
           }
           this.update();
+          this.showToast(`Channel "${name}" deleted`);
+        } else {
+          this.showToast(response?.error || `Could not delete "${name}"`, 'error');
         }
       }
     );
@@ -2350,7 +2441,19 @@ export class EnhancedFloatingPanel {
    * Reset settings to defaults
    */
   private resetSettings(): void {
-    if (!confirm('Are you sure you want to reset all settings to defaults?')) return;
+    // Two-step confirm; window.confirm() blocks the host page's main thread.
+    if (!this.resetSettingsArmed) {
+      this.resetSettingsArmed = true;
+      if (this.resetSettingsTimer) clearTimeout(this.resetSettingsTimer);
+      this.resetSettingsTimer = window.setTimeout(() => {
+        this.resetSettingsArmed = false;
+      }, 5000);
+      this.showToast('Reset all settings? Click reset again within 5s to confirm', 'warn');
+      return;
+    }
+
+    this.resetSettingsArmed = false;
+    if (this.resetSettingsTimer) clearTimeout(this.resetSettingsTimer);
 
     const defaults = {
       relayUrl: DEFAULT_NODES.relay,
@@ -2598,12 +2701,8 @@ export class EnhancedFloatingPanel {
           currentChannel: this.currentChannel,
         });
 
-        // When relay is connected, this response will come back via NEW_MESSAGE.
-        // Skip local append here to avoid duplicate AI messages.
-        if (this.connectionStatus === 'connected' && this.currentChannel) {
-          console.log('[FuseConnect] Skipping local RESPONSE_COMPLETE append (relay-connected)');
-          break;
-        }
+        // Ensure local panel displays the completed AI response immediately.
+        // Deduplication in NEW_MESSAGE will prevent duplicate renders if the relay echoes it back.
 
         if (message.content) {
           let responseContent =
@@ -2816,9 +2915,14 @@ export class EnhancedFloatingPanel {
     return text.length > len ? text.slice(0, len) + '...' : text;
   }
 
+  /**
+   * Nearly every caller passes wire data (message content, channel names, task
+   * fields). `textContent = undefined` renders the literal string "undefined",
+   * so normalise nullish input to empty rather than showing it to the user.
+   */
   private escapeHtml(text: string): string {
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = text == null ? '' : String(text);
     return div.innerHTML;
   }
 
