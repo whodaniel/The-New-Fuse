@@ -26,6 +26,7 @@ import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
+import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
@@ -113,10 +114,12 @@ import {
   resolveSlashDropdownInput,
   type SlashDropdownState,
 } from './utils/palette-readline.js';
+import { getPaletteRecents } from './utils/palette-recents.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { renderStatusLine, type StatusSnapshot, type StatusTheme } from './utils/tui-statusline.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -1399,7 +1402,7 @@ async function runFastHarnessProtocolGate(label: string): Promise<void> {
     return;
   }
   console.log(chalk.dim(`[TNF Harness] Protocol gate before ${label}`));
-  new ProtocolInterceptor(repoRoot).runPreFlightChecks();
+  await new ProtocolInterceptor(repoRoot).runPreFlightChecks();
   await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
 }
 
@@ -3385,6 +3388,7 @@ export const PLATFORM_TAXONOMY: string[] = [
   // Bank-target-only (added in Phase 8 to align with reconcile-agent-banks.cjs)
   'augment',
   'codex',
+  'command-code',
   'cursor',
   'hermes',
   'kilo',
@@ -4361,7 +4365,15 @@ function resolveImplicitPassthroughArgs(
 ): { cliName: string; args: string[] } | null {
   const subcommand = argv[2];
   const tnfCommands = getTnfTopLevelCommands();
-  const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor', 'claude', 'pi'];
+  const passthroughTargets = [
+    'openclaw',
+    'hermes',
+    'gemini',
+    'cursor',
+    'claude',
+    'pi',
+    'command-code',
+  ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
   // resolve. Without this guard `tnf --help` fell through to the loop below and
@@ -4536,6 +4548,16 @@ type InteractiveSlashContext = {
   autonomousState?: AutonomousSessionState;
   /** Tool policy the session launched with. Absent means unrestricted. */
   permissions?: PermissionResolution;
+  /* --- status-line inputs ------------------------------------------------ */
+  /** Interaction mode the session launched with: agent / plan / ask. */
+  mode?: string;
+  /** Persisted TUI mode (INTERACTIVE / LONG_RUN / AUTONOMOUS). */
+  tuiMode?: string;
+  /**
+   * Current operator takeover window. Mutated by `/window` mid-session, so the
+   * status line reads it from here rather than re-resolving from disk.
+   */
+  operatorWindowMs?: number;
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4584,8 +4606,10 @@ const PALETTE_THEME: PaletteTheme = {
   dim: (s) => chalk.dim(s),
   accent: (s) => chalk.cyan(s),
   match: (s) => chalk.bold.yellow(s),
-  selected: (s) => chalk.bold.green(s),
+  selected: (s) => chalk.bgCyan.black.bold(s),
   badge: (s) => chalk.dim(s),
+  scrollbar: (s) => chalk.cyan(s),
+  recent: (s) => chalk.yellow(s),
 };
 
 /**
@@ -4656,6 +4680,9 @@ function attachSlashCommandDropdown(
     stdin: process.stdin,
     stdout: process.stdout,
     emitKeypressEvents: readline.emitKeypressEvents,
+    // TNF_PALETTE_RECENTS=0 opts out of the on-disk frecency store entirely,
+    // for shared or ephemeral machines where a usage log is unwelcome.
+    recents: process.env.TNF_PALETTE_RECENTS === '0' ? null : getPaletteRecents(),
   });
 }
 
@@ -4734,6 +4761,97 @@ function printSessionCost(context: InteractiveSlashContext): void {
   console.log('');
 }
 
+/**
+ * Current branch, read straight out of `.git/HEAD`.
+ *
+ * Spawning `git rev-parse` would be a process per prompt in a session that
+ * redraws the status line every turn; the file is one line and the answer only
+ * changes when the operator checks something out, so it is cached briefly.
+ */
+const BRANCH_CACHE_MS = 5000;
+let branchCache: { value: string | null; at: number } | null = null;
+
+function currentGitBranch(): string | null {
+  const now = Date.now();
+  if (branchCache && now - branchCache.at < BRANCH_CACHE_MS) return branchCache.value;
+
+  let value: string | null = null;
+  try {
+    const head = fs.readFileSync(path.join(repoRoot, '.git', 'HEAD'), 'utf8').trim();
+    const match = head.match(/^ref:\s*refs\/heads\/(.+)$/);
+    // Detached HEAD: show the short SHA rather than nothing, so the operator
+    // can still tell that they are not on a branch.
+    value = match ? match[1] : head ? `${head.slice(0, 7)} (detached)` : null;
+  } catch {
+    value = null;
+  }
+
+  branchCache = { value, at: now };
+  return value;
+}
+
+/** `~/Desktop/…/The-New-Fuse` — enough to identify the tree, short enough to fit. */
+function shortDisplayPath(target: string): string {
+  const home = os.homedir();
+  const withTilde = home && target.startsWith(home) ? `~${target.slice(home.length)}` : target;
+  const parts = withTilde.split(path.sep);
+  if (parts.length <= 3) return withTilde;
+  return [parts[0], '…', ...parts.slice(-2)].join(path.sep);
+}
+
+/** Everything the status line and `/status` both want to know. */
+function collectStatusSnapshot(context: InteractiveSlashContext): StatusSnapshot {
+  const tokens = estimateSessionTokens(context.messages);
+  let mcpServers = 0;
+  try {
+    mcpServers = new MCPManagerService().listServers().length;
+  } catch {
+    mcpServers = 0;
+  }
+
+  return {
+    provider: context.client?.providerName,
+    model: context.client?.model,
+    mode: context.mode,
+    tuiMode: context.tuiMode,
+    autonomous: context.autonomousMode,
+    hold: context.autonomousState?.operatorHold,
+    turnsUsed: context.autonomousState?.turnsThisSession,
+    turnsMax: context.autonomousState?.maxTurnsPerSession,
+    tokens: tokens.total,
+    messages: context.messages.length,
+    operatorWindowMs: context.operatorWindowMs,
+    branch: currentGitBranch(),
+    cwd: shortDisplayPath(repoRoot),
+    mcpServers,
+    // Only worth a segment when it actually restricts something.
+    permissions:
+      context.permissions && !context.permissions.mutationsAllowed
+        ? context.permissions.summary || 'restricted'
+        : null,
+    indexedCommands: paletteIndexCache?.length,
+  };
+}
+
+const STATUS_THEME: StatusTheme = {
+  dim: (s) => chalk.dim(s),
+  label: (s) => chalk.dim(s),
+  value: (s) => chalk.white(s),
+  on: (s) => chalk.green.bold(s),
+  off: (s) => chalk.dim(s),
+  warn: (s) => chalk.yellow.bold(s),
+};
+
+/** The status line printed above each prompt. Empty string disables it. */
+function renderTuiStatusLine(context: InteractiveSlashContext): string {
+  if (process.env.TNF_STATUSLINE === '0') return '';
+  return renderStatusLine(
+    collectStatusSnapshot(context),
+    process.stdout.columns || 80,
+    STATUS_THEME
+  );
+}
+
 function printTuiStatus(context: InteractiveSlashContext): void {
   const tokens = estimateSessionTokens(context.messages);
   const permissions = context.permissions;
@@ -4745,15 +4863,25 @@ function printTuiStatus(context: InteractiveSlashContext): void {
   }
 
   console.log(chalk.bold('\nTUI Status\n'));
+  // Lead with the same line that sits above the prompt, so `/status` reads as
+  // an expansion of what the operator is already looking at rather than as a
+  // second, differently-worded source of truth.
+  const line = renderTuiStatusLine(context);
+  if (line) console.log(`${line}\n`);
   console.log(`  Provider:       ${context.client?.providerName || 'unknown'}`);
   console.log(`  Model:          ${context.client?.model || 'unknown'}`);
   if (context.client?.baseUrl) console.log(`  Base URL:       ${context.client.baseUrl}`);
+  if (context.mode) console.log(`  Mode:           ${context.mode}`);
+  if (context.tuiMode) console.log(`  TUI mode:       ${context.tuiMode}`);
   console.log(`  Autonomous:     ${context.autonomousMode ? 'on' : 'off'}`);
   if (context.autonomousState) {
     console.log(
       `  Turn budget:    ${context.autonomousState.turnsThisSession}/${context.autonomousState.maxTurnsPerSession} (ceiling ${context.autonomousState.capCeiling})`
     );
     console.log(`  Operator hold:  ${context.autonomousState.operatorHold ? 'on' : 'off'}`);
+  }
+  if (typeof context.operatorWindowMs === 'number') {
+    console.log(`  Op. window:     ${Math.round(context.operatorWindowMs / 1000)}s`);
   }
   console.log(`  Permissions:    ${permissions?.summary || 'unrestricted'}`);
   console.log(
@@ -4762,8 +4890,13 @@ function printTuiStatus(context: InteractiveSlashContext): void {
     }`
   );
   console.log(`  MCP servers:    ${mcpServers.length ? mcpServers.join(', ') : 'none configured'}`);
+  console.log(`  Workspace:      ${shortDisplayPath(repoRoot)}`);
+  console.log(`  Branch:         ${currentGitBranch() || 'not a git worktree'}`);
   console.log(`  Messages:       ${context.messages.length}`);
   console.log(`  Tokens:         ${tokens.total} estimated`);
+  console.log(
+    `  Palette:        ${paletteIndexCache ? `${paletteIndexCache.length} commands indexed` : 'not built yet'}`
+  );
   console.log('');
 }
 
@@ -5424,6 +5557,11 @@ program
   )
   .option('--worktree-base <ref>', 'Base ref for a new worktree (default: origin/HEAD, else HEAD)')
   .option('--skip-voice-kws', 'Do not auto-start Voice beam + KWS (default: start them)')
+  .option(
+    '--onboard',
+    'Run the full Turn Zero onboard script (default: skip — main preflight already ran)'
+  )
+  .option('--repair', 'Pass --repair to the onboard script (implies --onboard)')
   .action(
     async (
       promptParts: string[] | undefined,
@@ -5446,6 +5584,8 @@ program
         worktree?: string | true;
         worktreeBase?: string;
         skipVoiceKws?: boolean;
+        onboard?: boolean;
+        repair?: boolean;
       }
     ) => {
       try {
@@ -5518,7 +5658,12 @@ program
 
         console.log(chalk.dim(`  ⚿ Permissions — ${permissions.summary}`));
 
-        await runTurnZeroOnboardSurface();
+        // Main() already ran ProtocolInterceptor (Turn Zero + disclosure) before
+        // this handler. Re-running scripts/tnf-onboard.cjs here duplicated the
+        // entire bootstrap wall on every `tnf tui` — opt-in only.
+        if (options.onboard || options.repair) {
+          await runTurnZeroOnboardSurface({ repair: Boolean(options.repair) });
+        }
         if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
           await ensureVoiceKwsAlwaysOn();
         }
@@ -9970,6 +10115,30 @@ function resolveLatestMasterClockLogPath(logDir: string): string | null {
   return path.join(logDir, candidates[candidates.length - 1]);
 }
 
+/**
+ * PIDs of master-clock instances already running on this host.
+ *
+ * Matches the compiled entrypoint, the ts-node entrypoint, and the pnpm wrapper
+ * chain — the same set `scripts/orchestrator/factory-boot.sh` guards on, plus
+ * the pnpm form this CLI itself spawns. Deliberately specific enough not to
+ * match this process's own `tnf master-clock start` argv.
+ */
+function findRunningMasterClockPids(): string[] {
+  const pattern =
+    'dist/master-clock\\.js|ts-node src/master-clock\\.ts|relay-core run master-clock';
+  const result = spawnSync('pgrep', ['-f', pattern], { encoding: 'utf8' });
+
+  // pgrep exits 1 when nothing matches. Any other failure (pgrep missing, or
+  // "Cannot get process list" under heavy load) must not block a legitimate
+  // start, so treat it as "none found" rather than guessing.
+  if (result.error || typeof result.stdout !== 'string') return [];
+
+  return result.stdout
+    .split('\n')
+    .map((pid) => pid.trim())
+    .filter((pid) => /^\d+$/.test(pid) && pid !== String(process.pid));
+}
+
 const masterClock = program
   .command('master-clock')
   .description('Master clock controls (provider-routed; local default)');
@@ -9998,6 +10167,21 @@ masterClock
         await requireSuperAdmin(options, 'master-clock start');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
+          // The master clock is the baton holder — exactly one may run per host.
+          // This path had no guard (factory-boot.sh has always had one), so every
+          // invocation stacked another instance. On 2026-08-16 four were live at
+          // once, each reconnecting to Redis every 5s; their combined leak wedged
+          // the bus and took the whole local fleet's coordination down.
+          const existing = findRunningMasterClockPids();
+          if (existing.length > 0) {
+            console.log(
+              chalk.yellow(
+                `Master clock already running (pid ${existing.join(', ')}); refusing to start a second baton holder.`
+              )
+            );
+            console.log(chalk.dim('   Inspect it with: tnf master-clock status'));
+            return;
+          }
           await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
           return;
         }
@@ -14634,6 +14818,12 @@ agentsLive
         const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
         const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
         const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+        // Redis connection budget gate — refuse start when local bus is saturated.
+        const guardScript = path.join(repoRoot, 'scripts', 'runtime', 'redis-connection-guard.cjs');
+        if (fs.existsSync(guardScript) && process.env.TNF_SKIP_REDIS_GUARD !== '1') {
+          console.log(chalk.dim('[tnf agents live] redis connection guard preflight...'));
+          await runCommand(process.execPath, [guardScript, '--preflight']);
+        }
         const args = [script, 'live'];
         if (options.model) args.push('--model', options.model);
         if (options.interval) args.push('--interval', options.interval);
@@ -18886,7 +19076,6 @@ workspaceCommand
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 registerSparkCommand(program);
-registerSubdirectorCommand(program, { repoRoot, runCommand });
 
 async function createNotesService(options: {
   vaultPath?: string;
@@ -19201,6 +19390,11 @@ registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
 registerStaffingCommands(program);
 registerFleetCommands(program);
+// Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
+// data/providers/catalog.json + data/providers/nvidia-models.json (single
+// source of truth, no hardcoded lists).
+registerCatalogCommand(program);
+registerSubdirectorCommand(program, { repoRoot, runCommand });
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
@@ -20187,6 +20381,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   console.log(
     chalk.dim(
       ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
+        ' Press / to search every command — ↑↓ or ^p/^n to move, ⇞⇟/^u^d to page, ⇱⇲ for the ends, ⇥ to complete\n' +
         ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n' +
         ' Prefer this `tnf tui` session for interactive TNF (paste-safe). `tnf hermes` is external passthrough.\n'
     )
@@ -20262,6 +20457,9 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     permissions: options?.permissions,
     autonomousMode,
     autonomousState,
+    mode: options?.mode || 'agent',
+    tuiMode,
+    operatorWindowMs: resolveOperatorWindowMs(),
   };
   // Mutable session window — /window and natural-language directives update this live.
   let operatorWindowMs = resolveOperatorWindowMs();
@@ -20394,12 +20592,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   while (true) {
     // Pick up /window changes (env + ~/.tnf/tui-mode.json) every turn.
     operatorWindowMs = resolveOperatorWindowMs();
+    slashContext.operatorWindowMs = operatorWindowMs;
 
-    const modelLabel = `${chalk.dim(client.providerName || 'model')}/${chalk.white(client.model.replace(/^.*\//, ''))}`;
-    const promptWithModel =
-      process.env.TNF_SHOW_MODEL_IN_PROMPT !== '0'
-        ? chalk.green('\n') + chalk.dim('[') + modelLabel + chalk.dim(']') + ' '
-        : chalk.green('\n❯ ');
+    // Status goes on its own line ABOVE the prompt, printed as ordinary output
+    // rather than folded into the prompt string. Two reasons: an inline
+    // `[provider/model]` prompt changed width every turn, so the operator's
+    // typing shifted left and right as autonomy or the turn counter moved; and
+    // readline recomputes cursor rows from the prompt on every refresh, so a
+    // taller prompt is exactly the thing the palette's in-place renderer has to
+    // draw underneath. A fixed `❯ ` keeps the input column stable.
+    const statusLine =
+      process.env.TNF_SHOW_MODEL_IN_PROMPT === '0' ? '' : renderTuiStatusLine(slashContext);
+    const promptWithModel = chalk.green('❯ ');
 
     let trimmed: string;
     let fromAutonomousContinue = false;
@@ -20475,6 +20679,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       } else {
         let input: string;
         try {
+          console.log(statusLine ? `\n${statusLine}` : '');
           input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
         } catch {
           break;
@@ -20932,8 +21137,11 @@ function loadVoiceGroundSituation(voiceTurn: number | null): string {
 }
 
 async function startTuiAgent(options?: TuiAgentOptions): Promise<void> {
-  console.clear();
-  await renderSplash({ compact: true, animate: false });
+  const silent = wantsSilentPreflight(process.argv);
+  if (!silent && process.stdout.isTTY) {
+    console.clear();
+    await renderSplash({ compact: true, animate: false });
+  }
   console.log('');
   console.log(chalk.bold.cyan('  ⚡ TNF TUI Agent — Always-on LLM session'));
   console.log(chalk.dim('  ─────────────────────────────────────────────'));
@@ -21010,12 +21218,30 @@ async function loadRedisAgentClient(): Promise<
   return redisAgentClientCtor;
 }
 
+/** Interactive session entrypoints that should not dump protocol walls first. */
+const INTERACTIVE_ENTRY_COMMANDS = new Set(['tui']);
+
+/**
+ * True when argv is launching an interactive agent session (bare `tnf`, `tnf
+ * tui`, or root session flags that route to tui). These paths already pay for
+ * preflight in main(); verbose Turn Zero + disclosure output belongs on
+ * `tnf protocol gate`, not between the operator and the prompt.
+ */
+function isInteractiveSessionArgv(argv: string[]): boolean {
+  const sub = (argv[2] ?? '').toLowerCase();
+  if (!sub) return true;
+  if (INTERACTIVE_ENTRY_COMMANDS.has(sub)) return true;
+  if (sub.startsWith('-') && !isRootOnlyFlag(sub)) return true;
+  return false;
+}
+
 /**
  * Decide whether ProtocolInterceptor cosmetic output should be suppressed.
  * Checks still RUN; failures route to stderr via ProtocolInterceptor.
  *
  * Silenced for: non-TTY stdout, --no-splash, help/version, machine-readable
- * flags (--json / --print / --oneshot), and nested runSelfCli (env).
+ * flags (--json / --print / --oneshot), interactive session entry, and nested
+ * runSelfCli (env).
  */
 function wantsSilentPreflight(argv: string[]): boolean {
   if (isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT)) return true;
@@ -21024,6 +21250,7 @@ function wantsSilentPreflight(argv: string[]): boolean {
   if (argv.includes('--json')) return true;
   if (argv.includes('--print') || argv.includes('-p')) return true;
   if (argv.includes('--oneshot') || argv.includes('-z')) return true;
+  if (isInteractiveSessionArgv(argv)) return true;
   const tail = (argv[2] ?? '').toLowerCase();
   if (!tail || HELP_OR_VERSION_ARGS.has(tail)) return true;
   // Subcommand help: `tnf tui --help`
@@ -21127,7 +21354,18 @@ async function main(): Promise<void> {
   }
 
   if (argv.length <= 2) {
-    await ensureTurnZeroForAgentEntrypoint();
+    // Preflight in main() already ran Turn Zero checks. The full onboard script
+    // (scripts/tnf-onboard.cjs) is opt-in — it duplicated the bootstrap wall
+    // on every bare `tnf` and added ~10s before the first prompt.
+    if (isTruthyEnv(process.env.TNF_FORCE_ONBOARD)) {
+      await ensureTurnZeroForAgentEntrypoint();
+    } else if (!isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
+      console.log(
+        chalk.dim(
+          '[TNF] Interactive session — type /help for commands. Full onboard: `tnf tui --onboard` or TNF_FORCE_ONBOARD=1'
+        )
+      );
+    }
     await startInteractiveAgent();
     return;
   }

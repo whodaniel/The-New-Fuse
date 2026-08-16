@@ -68,7 +68,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-16T22:39:24.141Z** — handoff
+Updated: **2026-08-16T22:57:54.944Z** — handoff
+`54428d94-2559-482f-8753-4fc7c57ed068` (`d933e9a67a2a`).
+`1f8cb103-f122-44f3-93fc-008ff1a0b1cc` (`d933e9a67a2a`).
 `a99de94e-7865-4263-9cc4-b146e1da10ac` (`25d51faad2a7`).
 `8c89abfc-113a-431a-a203-b4162f19b37a` (`25d51faad2a7`).
 `524c8381-cf6a-43e5-8262-872f19b52e2c` (`35792eb67aad`).
@@ -246,9 +248,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                               |
-| -------- | -------------------------------------------------------------------- |
-| **P0**   | Optional: build/test/commit unrelated dirty tree in a separate pass. |
+| Priority | Action                                                                                                                             |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Continue dirty-tree batches: relay redis leak tests; chrome-extension; frontend backup UI; defer bulk data/intelligence-artifacts. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1278,3 +1280,12 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (a99de94e-7865-4263-9cc4-b146e1da10ac) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1f8cb103-f122-44f3-93fc-008ff1a0b1cc) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(166e64da-d6c3-4d3e-af26-32e915cc1f8e) | ✅ HANDOFF_READY |
+
+| 2026-08-16 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(54428d94-2559-482f-8753-4fc7c57ed068) | ✅ HANDOFF_READY |

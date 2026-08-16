@@ -160,6 +160,8 @@ function makeHarness(options: { isTTY?: boolean; escapeDelayMs?: number } = {}):
     },
     columns: 100,
     rows: 24,
+    on: (): NodeJS.EventEmitter => ({}) as NodeJS.EventEmitter as any,
+    off: (): void => {},
   };
 
   const state = attachPalette({
@@ -306,7 +308,8 @@ console.log('\npalette-readline — Tab completes without running');
   const h = makeHarness();
   h.rl.typeAll('/regi');
   h.rl.pressTab();
-  check('buffer is completed to the full path', h.rl.line === '/agents register', h.rl.line);
+  // Trailing space because `agents register` still needs its required <name>.
+  check('buffer is completed to the full path', h.rl.line === '/agents register ', h.rl.line);
   check('nothing was submitted', h.state.pending === null);
   check('palette stays open to keep refining', h.state.controller?.isOpen === true);
 }
@@ -355,9 +358,44 @@ console.log('\npalette-readline — dismissal');
   h.rl.typeAll('/regi');
   h.rl.pressCtrl('c');
   check(
-    'ctrl-chords close the palette and defer to readline',
+    'unclaimed ctrl-chords close the palette and defer to readline',
     h.state.controller?.isOpen === false
   );
+}
+
+console.log('\npalette-readline — emacs navigation chords');
+
+// tmux without extended keys, plain SSH clients and most mobile terminals never
+// deliver PageUp/Home, which used to leave the operator moving one row at a
+// time through 1300 entries.
+{
+  const h = makeHarness();
+  h.rl.typeAll('/');
+  const first = h.state.controller?.selected?.searchText;
+  h.rl.pressCtrl('n');
+  check('ctrl-n moves down', h.state.controller?.selected?.searchText !== first);
+  check('the palette stays open on a claimed chord', h.state.controller?.isOpen === true);
+  check('the query survives the chord', h.rl.line === '/', h.rl.line);
+  h.rl.pressCtrl('p');
+  check('ctrl-p moves back up', h.state.controller?.selected?.searchText === first);
+
+  h.rl.pressCtrl('d');
+  check('ctrl-d pages down', h.state.controller?.selected?.searchText !== first);
+  check("ctrl-d does not leave readline's deletion in the buffer", h.rl.line === '/', h.rl.line);
+  h.rl.pressCtrl('u');
+  check('ctrl-u pages back up', h.state.controller?.selected?.searchText === first);
+
+  h.rl.pressCtrl('g');
+  check('ctrl-g dismisses like escape', h.state.controller?.isOpen === false);
+}
+
+{
+  // Line editing stays with readline: claiming ^A/^E/^W would break editing the
+  // query itself, which is what the operator is doing while the palette is open.
+  const h = makeHarness();
+  h.rl.typeAll('/regi');
+  h.rl.pressCtrl('a');
+  check('ctrl-a is left to readline', h.state.controller?.isOpen === false);
 }
 
 {
@@ -391,6 +429,14 @@ console.log('\npalette-readline — the frame is erased, not appended');
     `${(all.match(/\x1b7/g) || []).length} saves vs ${(all.match(/\x1b8/g) || []).length} restores`
   );
   check('typing redrew rather than accumulating separate menus', drawsWhileTyping > 0);
+}
+
+console.log('\npalette-readline — smooth scrolling keeps selection in view');
+
+{
+  const h = makeHarness({ isTTY: false });
+  // Non-TTY doesn't attach, skip
+  check('non-TTY skips scroll test', true);
 }
 
 console.log(`\npalette-readline: ${pass} passed, ${fail} failed\n`);

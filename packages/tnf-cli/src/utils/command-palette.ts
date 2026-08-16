@@ -70,6 +70,8 @@ export interface RankedEntry {
   entry: PaletteEntry;
   score: number;
   positions: number[];
+  /** Normalised frecency (0..1) that contributed to `score`. Drives the ★ mark. */
+  recency?: number;
 }
 
 /**
@@ -256,18 +258,56 @@ function entryKind(entry: PaletteEntry): string {
   return entry.action.entry.kind;
 }
 
-export function rankPalette(index: PaletteEntry[], line: string, limit = 200): RankedEntry[] {
+/** Anything that can answer "how recently/often was this chosen?" in 0..1. */
+export interface RecentsLike {
+  scoreFor(id: string): number;
+  /** Called when an entry is chosen. Optional so tests can pass a bare stub. */
+  record?(id: string): void;
+}
+
+export interface RankOptions {
+  /** Frecency source. Omitted in tests and on first run. */
+  recents?: RecentsLike | null;
+}
+
+/**
+ * How much a perfectly-frecent entry is worth.
+ *
+ * Deliberately below TIER_WEIGHT: history nudges ties, it does not overrule
+ * what the operator actually typed. A command you ran 50 times still loses to
+ * an exact-segment hit you just spelled out.
+ */
+const RECENCY_WEIGHT = 90;
+
+/**
+ * With an empty query every entry scores 0, so the list would otherwise be
+ * ordered by tier and then alphabetically — the same 20 rows forever. Leaning
+ * harder on frecency here turns the bare `/` into a useful "what do I run"
+ * view without affecting any typed query.
+ */
+const RECENCY_WEIGHT_EMPTY_QUERY = 600;
+
+export function rankPalette(
+  index: PaletteEntry[],
+  line: string,
+  limit = 200,
+  options: RankOptions = {}
+): RankedEntry[] {
   const { query, kinds } = parseQuery(line);
   const pool = kinds ? index.filter((entry) => kinds.has(entryKind(entry))) : index;
   const ranked: RankedEntry[] = [];
+  const recents = options.recents ?? null;
+  const recencyWeight = query ? RECENCY_WEIGHT : RECENCY_WEIGHT_EMPTY_QUERY;
 
   for (const entry of pool) {
     const match = fuzzyMatchEntry(entry.searchText, entry.description, query);
     if (!match) continue;
+    const recency = recents ? recents.scoreFor(entry.id) : 0;
     ranked.push({
       entry,
-      score: match.score + entry.tier * TIER_WEIGHT,
+      score: match.score + entry.tier * TIER_WEIGHT + recency * recencyWeight,
       positions: match.positions,
+      recency,
     });
   }
 
@@ -292,6 +332,10 @@ export interface PaletteTheme {
   match: (s: string) => string;
   selected: (s: string) => string;
   badge: (s: string) => string;
+  /** Optional: the scrollbar thumb. Falls back to `accent`. */
+  scrollbar?: (s: string) => string;
+  /** Optional: the ★ frecency mark. Falls back to `dim`. */
+  recent?: (s: string) => string;
 }
 
 /** Identity theme — used by tests and by non-colour terminals. */
@@ -306,13 +350,21 @@ export const PLAIN_THEME: PaletteTheme = {
 export interface FrameOptions {
   ranked: RankedEntry[];
   selectedIndex: number;
-  /** Max rows of results (excluding header/footer). */
+  /** Max rows of results (excluding header/detail/footer). */
   visibleRows: number;
   /** Terminal width, used to truncate descriptions rather than wrap them. */
   columns: number;
   theme: PaletteTheme;
   /** Total index size, shown when the query is empty. */
   totalCount: number;
+  /** Offset into the ranked list for smooth scrolling. */
+  scrollOffset?: number;
+  /** Max rows allowed for the palette (0 = auto-calculate from terminal). */
+  maxHeight?: number;
+  /** Kind filter currently in force, surfaced in the header. */
+  kinds?: Set<string> | null;
+  /** Suppress the per-selection detail row (small terminals). */
+  showDetail?: boolean;
 }
 
 function truncate(text: string, max: number): string {
@@ -321,66 +373,199 @@ function truncate(text: string, max: number): string {
 }
 
 /**
+ * The visible slice of the ranked list.
+ *
+ * Both the controller (which owns `scrollOffset`) and the frame composer need
+ * this, and they used to compute it separately with different rules — the
+ * controller snapped the offset to the selection while the composer snapped it
+ * to `selection - 1`, so a Down keypress at the bottom edge scrolled a whole
+ * page instead of one line and the highlighted row jumped position. One pure
+ * function, used by both, is the fix.
+ *
+ * Contract: the returned window always contains `selectedIndex`, is exactly
+ * `visibleRows` long whenever the list is long enough, and never runs off
+ * either end.
+ */
+export function resolveWindow(
+  count: number,
+  selectedIndex: number,
+  visibleRows: number,
+  scrollOffset: number
+): { start: number; end: number } {
+  const rows = Math.max(1, visibleRows);
+  if (count <= rows) return { start: 0, end: count };
+
+  const maxStart = count - rows;
+  let start = Math.max(0, Math.min(scrollOffset, maxStart));
+
+  // Scroll by the minimum needed to bring the selection back into view, so a
+  // single Down at the bottom edge advances the window by exactly one row.
+  if (selectedIndex < start) start = selectedIndex;
+  else if (selectedIndex >= start + rows) start = selectedIndex - rows + 1;
+
+  start = Math.max(0, Math.min(start, maxStart));
+  return { start, end: start + rows };
+}
+
+/**
+ * One scrollbar cell per visible row.
+ *
+ * Replaces the old "▲ N more above" / "▼ N more below" lines, which changed
+ * the frame's height depending on scroll position — the renderer erases a
+ * fixed region, so a frame that grows and shrinks under the prompt flickers.
+ * A fixed-width gutter column carries the same information for free.
+ */
+export function scrollbarColumn(
+  count: number,
+  start: number,
+  visibleRows: number
+): Array<'thumb' | 'track' | 'none'> {
+  if (count <= visibleRows) return new Array(visibleRows).fill('none');
+  const thumbSize = Math.max(1, Math.round((visibleRows / count) * visibleRows));
+  const maxStart = count - visibleRows;
+  const travel = visibleRows - thumbSize;
+  const thumbStart = maxStart <= 0 ? 0 : Math.round((start / maxStart) * travel);
+  return Array.from({ length: visibleRows }, (_, i) =>
+    i >= thumbStart && i < thumbStart + thumbSize ? 'thumb' : 'track'
+  );
+}
+
+/**
  * Compose the palette frame as an array of lines.
  *
  * Wrapping is deliberately avoided: every row is truncated to one terminal
  * line so the frame's height is exactly predictable, which is what lets the
  * in-place erase know how much to clear.
+ *
+ * Scrolling: selection is kept in view with smooth scrolling. The palette
+ * scrolls when the selection would otherwise be outside the visible window.
  */
+export const PALETTE_FOOTER_HINT =
+  '  ↑↓/^p^n move · ⇞⇟ page · ⇱⇲ ends · ⏎ run · ⇥ complete · @agents #skills !cli · esc';
+
 export function composeFrame(options: FrameOptions): string[] {
-  const { ranked, selectedIndex, visibleRows, columns, theme, totalCount } = options;
+  const {
+    ranked,
+    selectedIndex,
+    visibleRows,
+    columns,
+    theme,
+    totalCount,
+    scrollOffset = 0,
+    maxHeight,
+    kinds = null,
+    showDetail = true,
+  } = options;
+
+  const paintScrollbar = theme.scrollbar ?? theme.accent;
+  const paintRecent = theme.recent ?? theme.dim;
 
   if (ranked.length === 0) {
-    return [theme.dim(`  no match — esc to dismiss · ${totalCount} commands indexed`)];
+    return [
+      theme.dim(`  no match — esc to dismiss · ${totalCount} commands indexed`),
+      theme.dim(PALETTE_FOOTER_HINT),
+    ];
   }
 
-  const safeIndex = Math.min(Math.max(selectedIndex, 0), ranked.length - 1);
-  const start = Math.max(
-    0,
-    Math.min(safeIndex - visibleRows + 1, Math.max(0, ranked.length - visibleRows))
-  );
-  const window = ranked.slice(start, start + visibleRows);
+  const count = ranked.length;
+  const rows =
+    maxHeight && maxHeight > 0 ? Math.max(1, Math.min(visibleRows, maxHeight)) : visibleRows;
 
+  const { start, end } = resolveWindow(count, selectedIndex, rows, scrollOffset);
+  const window = ranked.slice(start, end);
+  const bar = scrollbarColumn(count, start, window.length);
+
+  // Widths are measured across the WHOLE ranked list, not just the rows
+  // currently on screen. Measuring the window made the label and badge columns
+  // resize as the operator scrolled, so descriptions slid left and right under
+  // a stationary cursor — the single most distracting thing about scrolling a
+  // long result set. The label cap keeps this bounded no matter how long the
+  // worst path in the list is.
   const labelWidth = Math.min(
-    Math.max(...window.map((r) => r.entry.label.length), 10),
-    Math.max(20, Math.floor(columns * 0.45))
+    Math.max(...ranked.map((r) => r.entry.label.length), 10),
+    Math.max(20, Math.floor(columns * 0.5))
   );
-  const badgeWidth = Math.max(...window.map((r) => r.entry.badge.length), 3);
+  const badgeWidth = Math.min(
+    Math.max(...ranked.map((r) => r.entry.badge.length), 3),
+    Math.max(6, Math.floor(columns * 0.2))
+  );
 
   const lines: string[] = [];
-  const shown = `${ranked.length}${ranked.length >= 200 ? '+' : ''}`;
-  lines.push(theme.dim(`  ${shown} matches${start > 0 ? ` · ${start} above` : ''}`));
+  const shown = `${count}${count >= 200 ? '+' : ''}`;
+  const filter = kinds && kinds.size > 0 ? ` · filter ${[...kinds].sort().join('+')}` : '';
+
+  if (count > window.length) {
+    lines.push(
+      theme.dim(
+        `  ${shown} matches${filter} · ${start + 1}-${end} · ${selectedIndex + 1}/${count} selected`
+      )
+    );
+  } else {
+    lines.push(theme.dim(`  ${shown} matches${filter} · ${selectedIndex + 1}/${count} selected`));
+  }
 
   for (let i = 0; i < window.length; i++) {
-    const { entry, positions } = window[i];
-    const isSelected = start + i === safeIndex;
+    const { entry, positions, recency = 0 } = window[i];
+    const globalIndex = start + i;
+    const isSelected = globalIndex === selectedIndex;
 
     const rawLabel = truncate(entry.label, labelWidth);
-    // Highlight only survives truncation when the match is inside the kept
-    // slice; positions past the cut are dropped rather than mis-painted.
     const kept = positions.filter((p) => p < rawLabel.length);
     const painted = highlight(rawLabel, kept, theme.match);
     const label = painted + ' '.repeat(Math.max(0, labelWidth - rawLabel.length));
 
-    const badge = theme.badge(entry.badge.padStart(badgeWidth));
-    const marker = isSelected ? theme.accent('›') : ' ';
-    const argHint = entry.needsArgs ? theme.dim(' ·needs args') : '';
+    const badge = theme.badge(truncate(entry.badge, badgeWidth).padStart(badgeWidth));
+    const marker = isSelected ? theme.accent('▸') : ' ';
+    // ★ marks something this operator actually runs, so a familiar command is
+    // recognisable at a glance among near-identical neighbours.
+    const star = recency >= 0.15 ? paintRecent('★') : ' ';
+    const argHint = entry.needsArgs ? theme.dim('⟳') : ' ';
 
-    // 4 = marker + spaces; keep one column of slack so a full-width row never
-    // wraps and desynchronises the frame height.
-    const descWidth = Math.max(0, columns - labelWidth - badgeWidth - 8);
-    const desc = theme.dim(truncate(entry.description, descWidth));
+    const gutter =
+      bar[i] === 'thumb' ? paintScrollbar('┃') : bar[i] === 'track' ? theme.dim('│') : ' ';
 
-    const body = `${isSelected ? theme.selected(label) : theme.accent(label)} ${badge}  ${desc}${argHint}`;
-    lines.push(`${marker} ${body}`);
+    // Reserve: marker+space(2) star(1) space(1) label badge 2×space argHint(1)
+    // space(1) gutter(1). Descriptions absorb whatever is left.
+    const descWidth = Math.max(0, columns - labelWidth - badgeWidth - 11);
+    const rawDesc = truncate(entry.description, descWidth);
+    const desc = theme.dim(rawDesc + ' '.repeat(Math.max(0, descWidth - rawDesc.length)));
+
+    const body = `${isSelected ? theme.selected(label) : theme.accent(label)} ${badge}  ${desc}`;
+    lines.push(`${marker} ${star} ${body}${argHint} ${gutter}`);
   }
 
-  if (ranked.length > start + window.length) {
-    lines.push(theme.dim(`  ${ranked.length - start - window.length} more below`));
+  if (showDetail) {
+    const selected = ranked[Math.max(0, Math.min(selectedIndex, count - 1))];
+    lines.push(theme.dim(truncate(describeSelection(selected), Math.max(10, columns - 2))));
   }
-  lines.push(theme.dim('  ↑↓ move · ⏎ run · ⇥ complete · @agents #skills !cli · esc dismiss'));
+
+  lines.push(theme.dim(PALETTE_FOOTER_HINT));
 
   return lines;
+}
+
+/**
+ * The detail row under the list.
+ *
+ * The list truncates hard to keep every row one terminal line; without this the
+ * operator can see that `agents register <name> <role>` exists but not what it
+ * wants, and has to run it to find out. One dedicated full-width row costs one
+ * line and removes that guess.
+ */
+export function describeSelection(selected: RankedEntry | undefined): string {
+  if (!selected) return '  —';
+  const { entry } = selected;
+  const bits: string[] = [];
+
+  if (entry.action.type === 'cli') bits.push(`tnf ${entry.tokens.join(' ')}`);
+  else if (entry.action.type === 'slash') bits.push(entry.label);
+  else bits.push(`${entry.action.entry.runtime}:${entry.action.entry.name}`);
+
+  if (entry.needsArgs) bits.push('needs arguments');
+  if ((selected.recency ?? 0) >= 0.15) bits.push('recent');
+  if (entry.description) bits.push(entry.description);
+
+  return `  ${bits.join(' · ')}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -398,6 +583,9 @@ export interface RendererDeps {
   columns: () => number;
   rows: () => number;
 }
+
+/** Header + detail + footer. Must match what `composeFrame` emits. */
+export const PALETTE_CHROME_ROWS = 3;
 
 /**
  * Draws the palette into the region directly below the prompt line and erases
@@ -422,10 +610,37 @@ export class PaletteRenderer {
     return Math.max(40, this.deps.columns());
   }
 
-  /** Max result rows that fit under the prompt on this terminal. */
+  /**
+   * Max result rows that fit under the prompt on this terminal.
+   *
+   * `composeFrame` adds three chrome lines (header, detail, footer) on top of
+   * these, and `PALETTE_CHROME_ROWS` is what keeps the two in agreement.
+   */
   visibleRows(): number {
-    // 3 = header + footer + the prompt line itself.
-    return Math.max(3, Math.min(14, this.deps.rows() - 4));
+    const rows = this.deps.rows();
+    const maxRows = rows - PALETTE_CHROME_ROWS - 5;
+    return Math.max(5, Math.min(24, maxRows));
+  }
+
+  /** True when the terminal is too short to spare a row on the detail line. */
+  showDetail(): boolean {
+    return this.deps.rows() >= 16;
+  }
+
+  /** Height reserved for the palette display (header, results, detail, footer). */
+  getPaletteHeight(): number {
+    return this.visibleRows() + PALETTE_CHROME_ROWS;
+  }
+
+  /**
+   * Check if there's enough room below the cursor for the palette.
+   * Returns the number of free rows below the cursor.
+   */
+  private getFreeRowsBelow(): number {
+    const rows = this.deps.rows();
+    // We can't reliably detect cursor position, so assume we're at the bottom
+    // of the prompt line. Reserve space for prompt (1) + palette height.
+    return rows - 4; // Conservative estimate
   }
 
   draw(lines: string[]): void {
@@ -435,8 +650,14 @@ export class PaletteRenderer {
       return;
     }
 
+    // Only reserve space if we're growing AND there's not enough room.
+    // This avoids the "scroll flash" when opening near terminal bottom.
     if (height > this.drawnHeight) {
-      this.reserve(height - this.drawnHeight);
+      const needed = height - this.drawnHeight;
+      const free = this.getFreeRowsBelow();
+      if (needed > free) {
+        this.reserve(needed - free);
+      }
     }
 
     let out = SAVE_CURSOR;
@@ -473,10 +694,44 @@ export type PaletteKey =
   | 'down'
   | 'pageup'
   | 'pagedown'
+  | 'halfup'
+  | 'halfdown'
+  | 'home'
+  | 'end'
   | 'enter'
   | 'tab'
   | 'escape'
   | 'other';
+
+const NAV_KEYS: ReadonlySet<PaletteKey> = new Set<PaletteKey>([
+  'up',
+  'down',
+  'pageup',
+  'pagedown',
+  'halfup',
+  'halfdown',
+  'home',
+  'end',
+]);
+
+export function isNavKey(key: PaletteKey): boolean {
+  return NAV_KEYS.has(key);
+}
+
+/**
+ * The buffer text Tab should leave behind.
+ *
+ * A trailing space is appended when there is obviously more to type — a branch
+ * node (`/agents ` still needs a verb) or a command with a required `<arg>`.
+ * Without it the operator Tab-completes and then has to press space before the
+ * palette will treat the next character as a new token, which reads as the
+ * completion having jammed.
+ */
+export function completionFor(entry: PaletteEntry): string {
+  const base = entry.action.type === 'slash' ? entry.tokens[0] : `/${entry.tokens.join(' ')}`;
+  const wantsMore = entry.needsArgs || entry.badge.endsWith('▸');
+  return wantsMore ? `${base} ` : base;
+}
 
 export type PaletteOutcome =
   | { type: 'none' }
@@ -494,25 +749,32 @@ export class PaletteController {
   private index: PaletteEntry[] = [];
   private ranked: RankedEntry[] = [];
   private selectedIndex = 0;
+  private scrollOffset = 0;
   private open = false;
   private line = '';
   /**
    * Set by Escape, cleared when the operator abandons the query.
    *
-   * Without this, Escape only hid the palette until the very next keystroke —
-   * `handle()` reopens on any printable key — so dismissing it and continuing
-   * to type brought it straight back. Escape now means "stay out of my way for
-   * this line"; clearing the line (or submitting it) re-arms the palette.
+   * Without this, Escape only hid the palette until the very next keystroke — `handle()`
+   * reopens on any printable key — so dismissing it and continuing to type brought it
+   * straight back. Escape now means "stay out of my way for this line"; clearing the
+   * line (or submitting it) re-arms the palette.
    */
   private suppressed = false;
 
   constructor(
     private readonly renderer: PaletteRenderer,
-    private readonly theme: PaletteTheme = PLAIN_THEME
+    private readonly theme: PaletteTheme = PLAIN_THEME,
+    /** Frecency source. Null keeps ranking purely fuzzy (tests, first run). */
+    private readonly recents: RecentsLike | null = null
   ) {}
 
   setIndex(index: PaletteEntry[]): void {
     this.index = index;
+  }
+
+  private rank(line: string): RankedEntry[] {
+    return rankPalette(this.index, line, 200, { recents: this.recents });
   }
 
   get isOpen(): boolean {
@@ -523,9 +785,75 @@ export class PaletteController {
     return this.ranked[this.selectedIndex]?.entry ?? null;
   }
 
+  /** Get the current scroll offset (number of items hidden above the visible window). */
+  get scrollPosition(): number {
+    return this.scrollOffset;
+  }
+
   /** True when a line should drive the palette at all. */
   static triggers(line: string): boolean {
     return line.startsWith('/');
+  }
+
+  /**
+   * Keep the selection in view, moving the window as little as possible.
+   *
+   * Delegates to the same `resolveWindow` the renderer uses. The previous
+   * version snapped `scrollOffset` to `selectedIndex` on downward overflow,
+   * which put the newly-selected row at the TOP of the window — so one Down
+   * keypress at the bottom edge scrolled a full page and the highlight
+   * teleported.
+   */
+  private updateScroll(): void {
+    const { start } = resolveWindow(
+      this.ranked.length,
+      this.selectedIndex,
+      this.renderer.visibleRows(),
+      this.scrollOffset
+    );
+    this.scrollOffset = start;
+  }
+
+  /**
+   * Apply a navigation key to the selection.
+   *
+   * Up/Down wrap around: at 1300 indexed entries, pressing Up on the first row
+   * to reach the last match is the fastest route there, and every palette the
+   * operator uses elsewhere behaves this way. Page and Home/End clamp instead,
+   * because wrapping a page jump is disorienting rather than fast.
+   */
+  private moveSelection(key: PaletteKey, count: number): void {
+    const page = Math.max(1, this.renderer.visibleRows());
+    const half = Math.max(1, Math.floor(page / 2));
+
+    switch (key) {
+      case 'up':
+        this.selectedIndex = this.selectedIndex > 0 ? this.selectedIndex - 1 : count - 1;
+        break;
+      case 'down':
+        this.selectedIndex = this.selectedIndex < count - 1 ? this.selectedIndex + 1 : 0;
+        break;
+      case 'pageup':
+        this.selectedIndex = Math.max(0, this.selectedIndex - page);
+        break;
+      case 'pagedown':
+        this.selectedIndex = Math.min(count - 1, this.selectedIndex + page);
+        break;
+      case 'halfup':
+        this.selectedIndex = Math.max(0, this.selectedIndex - half);
+        break;
+      case 'halfdown':
+        this.selectedIndex = Math.min(count - 1, this.selectedIndex + half);
+        break;
+      case 'home':
+        this.selectedIndex = 0;
+        break;
+      case 'end':
+        this.selectedIndex = count - 1;
+        break;
+      default:
+        break;
+    }
   }
 
   /**
@@ -537,8 +865,6 @@ export class PaletteController {
    */
   handle(line: string, key: PaletteKey): PaletteOutcome {
     if (!PaletteController.triggers(line)) {
-      // The query was abandoned (line cleared, or no longer a slash command),
-      // so a previous Escape no longer applies — re-arm for the next `/`.
       this.suppressed = false;
       if (this.open) {
         this.close();
@@ -553,42 +879,34 @@ export class PaletteController {
       return { type: 'dismissed' };
     }
 
-    // Enter always re-arms: whatever the operator does next is a new line.
     if (key === 'enter') this.suppressed = false;
 
-    // Stay dismissed while the operator keeps editing the same line. Enter is
-    // handled below so a suppressed palette still submits the typed text.
     if (this.suppressed && key !== 'enter') {
       this.line = line;
       return { type: 'none' };
     }
 
-    // Re-rank whenever the query text changed; navigation keys keep the
-    // existing result set so the selection does not jump under the cursor.
-    const isNav = key === 'up' || key === 'down' || key === 'pageup' || key === 'pagedown';
-    if (!isNav && line !== this.line) {
+    const nav = isNavKey(key);
+
+    if (!nav && line !== this.line) {
       this.line = line;
-      this.ranked = rankPalette(this.index, line);
+      this.ranked = this.rank(line);
       this.selectedIndex = 0;
+      this.scrollOffset = 0;
     }
 
-    if (this.ranked.length === 0 && !isNav) {
-      this.ranked = rankPalette(this.index, line);
+    if (this.ranked.length === 0 && !nav) {
+      this.ranked = this.rank(line);
+      this.selectedIndex = 0;
+      this.scrollOffset = 0;
     }
 
-    const count = this.ranked.length;
-    if (isNav && count > 0) {
-      const page = this.renderer.visibleRows();
-      if (key === 'up') this.selectedIndex = (this.selectedIndex - 1 + count) % count;
-      else if (key === 'down') this.selectedIndex = (this.selectedIndex + 1) % count;
-      else if (key === 'pageup') this.selectedIndex = Math.max(0, this.selectedIndex - page);
-      else this.selectedIndex = Math.min(count - 1, this.selectedIndex + page);
+    if (nav && this.ranked.length > 0) {
+      this.moveSelection(key, this.ranked.length);
+      this.updateScroll();
     }
 
     if (key === 'enter') {
-      // A dismissed palette must not claim the line. Escape means "run what I
-      // typed, not what you highlighted" — without this guard the last ranked
-      // selection survived the dismissal and hijacked the next Enter.
       if (!this.open) return { type: 'none' };
       const entry = this.selected;
       this.close();
@@ -598,28 +916,30 @@ export class PaletteController {
     if (key === 'tab') {
       const entry = this.selected;
       if (!entry) return { type: 'none' };
-      // Tab completes without running so the operator can append arguments.
-      // The palette stays open and re-ranks against the completed text.
-      const completed =
-        entry.action.type === 'slash' ? entry.tokens[0] : `/${entry.tokens.join(' ')}`;
+      const completed = completionFor(entry);
       this.line = completed;
-      this.ranked = rankPalette(this.index, completed);
+      this.ranked = this.rank(completed);
       this.selectedIndex = 0;
+      this.scrollOffset = 0;
+      this.open = true;
       this.render();
       return { type: 'complete', line: completed };
     }
 
     this.open = true;
+    this.updateScroll();
     this.render();
     return { type: 'none' };
   }
 
   close(): void {
     this.open = false;
+    this.scrollOffset = 0;
     this.renderer.clear();
   }
 
-  private render(): void {
+  /** Public render method for resize handling. */
+  render(): void {
     this.renderer.draw(
       composeFrame({
         ranked: this.ranked,
@@ -628,6 +948,9 @@ export class PaletteController {
         columns: this.renderer.columns(),
         theme: this.theme,
         totalCount: this.index.length,
+        scrollOffset: this.scrollOffset,
+        kinds: parseQuery(this.line).kinds,
+        showDetail: this.renderer.showDetail(),
       })
     );
   }

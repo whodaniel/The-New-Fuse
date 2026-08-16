@@ -1,49 +1,61 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "a99de94e-7865-4263-9cc4-b146e1da10ac",
-  "created_at": "2026-08-16T22:39:24.141Z",
+  "handoff_id": "54428d94-2559-482f-8753-4fc7c57ed068",
+  "created_at": "2026-08-16T22:57:54.944Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "25d51faad2a76ee322bf121880350b5bb1eca4f5",
+  "head_sha": "d933e9a67a2af9a2be7509db9d2121e2e814c228",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Added tnf subdirector drain/cycle CLI module; broker primary-only direct reports; drain-side logical dedupe."
+    "Dirty-tree pass batch 1: ship tnf catalog + palette frecency/statusline enhancements with tests and command-surface update."
   ],
   "changed_paths": [
-    "packages/relay-core/src/broker-agent.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/commands/subdirector.ts",
-    "packages/tnf-cli/src/command-surface.snapshot.json",
-    "scripts/sub-director/drain_local_subdirector.py",
-    "docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T22-30-subdirector-cli-dedupe.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "apps/api/src/controllers/available-models.controller.ts",
+    "data/providers/catalog.json",
+    "data/providers/nvidia-models.json",
+    "docs/UNIFIED_LLM_CATALOG.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/commands/catalog.ts",
+    "packages/tnf-cli/src/utils/command-palette.test.ts",
+    "packages/tnf-cli/src/utils/command-palette.ts",
+    "packages/tnf-cli/src/utils/llm-provider-detector.ts",
+    "packages/tnf-cli/src/utils/llm-tools.ts",
+    "packages/tnf-cli/src/utils/palette-readline.test.ts",
+    "packages/tnf-cli/src/utils/palette-readline.ts",
+    "packages/tnf-cli/src/utils/palette-recents.test.ts",
+    "packages/tnf-cli/src/utils/palette-recents.ts",
+    "packages/tnf-cli/src/utils/tui-statusline.test.ts",
+    "packages/tnf-cli/src/utils/tui-statusline.ts"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "command-surface PASS 453 paths; fanout aliases=0"
+    "notes": "tsc clean; palette-recents 19; statusline 47; palette 81; catalog+subdirector help OK"
   },
   "continuation": {
     "owner": "tnf-cli-agent",
     "targets": ["sub-director", "story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "tnf subdirector drain works",
-      "command-surface snapshot updated",
-      "broker single fan-out"
+      "tnf catalog --help works",
+      "palette/statusline tests pass",
+      "command-surface snapshot updated"
     ]
   },
   "next_actions": [
-    "Optional: build/test/commit unrelated dirty tree in a separate pass."
+    "Continue dirty-tree batches: relay redis leak tests; chrome-extension; frontend backup UI; defer bulk data/intelligence-artifacts."
   ],
   "artifacts": {
-    "commits": ["25d51faad2a76ee322bf121880350b5bb1eca4f5"]
+    "commits": ["d933e9a67a2af9a2be7509db9d2121e2e814c228"]
   }
 }

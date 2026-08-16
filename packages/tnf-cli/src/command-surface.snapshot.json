@@ -161,7 +161,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, cursor, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, hermes, kilo, opencode, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -948,6 +948,75 @@
         }
       ],
       "commands": []
+    },
+    {
+      "name": "catalog",
+      "aliases": [],
+      "description": "Inspect the free NVIDIA / LLM catalog and switch the active model",
+      "options": [],
+      "commands": [
+        {
+          "name": "categories",
+          "aliases": [],
+          "description": "List distinct model categories with counts",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": ["ls"],
+          "description": "List free models from the canonical catalog",
+          "options": [
+            {
+              "flags": "--category <cat>",
+              "description": "Filter by category (chat|reasoning|vision|...)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--provider <id>",
+              "description": "Limit to one provider"
+            },
+            {
+              "flags": "--search <query>",
+              "description": "Substring filter on id/family/vendor/category"
+            },
+            {
+              "flags": "--verified-only",
+              "description": "Hide listed/microservice entries"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "refresh",
+          "aliases": [],
+          "description": "Re-fetch /v1/models live from a provider",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "set",
+          "aliases": [],
+          "description": "Make this the active model (writes .env.models)",
+          "options": [
+            {
+              "flags": "--provider <id>",
+              "description": "Provider id (default: nvidia)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Show full metadata for one model id",
+          "options": [],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "channels",
@@ -5752,12 +5821,20 @@
           "description": "Execution mode: agent (default) | plan | ask (plan/ask disable shell auto-exec)"
         },
         {
+          "flags": "--onboard",
+          "description": "Run the full Turn Zero onboard script (default: skip — main preflight already ran)"
+        },
+        {
           "flags": "--output-format <format>",
           "description": "Oneshot/print output format: text | json (default: text)"
         },
         {
           "flags": "--permission-mode <mode>",
           "description": "Tool permission mode: default | plan | acceptEdits | bypassPermissions | readOnly"
+        },
+        {
+          "flags": "--repair",
+          "description": "Pass --repair to the onboard script (implies --onboard)"
         },
         {
           "flags": "--resume [id]",

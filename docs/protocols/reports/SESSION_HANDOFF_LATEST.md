@@ -1,33 +1,45 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-16T22:39:24.141Z`  
-Handoff ID: `a99de94e-7865-4263-9cc4-b146e1da10ac`
+Created At: `2026-08-16T22:57:54.944Z`  
+Handoff ID: `54428d94-2559-482f-8753-4fc7c57ed068`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `25d51faad2a76ee322bf121880350b5bb1eca4f5`
+- Head SHA: `d933e9a67a2af9a2be7509db9d2121e2e814c228`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Added tnf subdirector drain/cycle CLI module; broker primary-only direct
-  reports; drain-side logical dedupe.
+- Dirty-tree pass batch 1: ship tnf catalog + palette frecency/statusline
+  enhancements with tests and command-surface update.
 
 ## Changed Paths
 
-- packages/relay-core/src/broker-agent.ts
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/commands/subdirector.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- scripts/sub-director/drain_local_subdirector.py
-- docs/operations/audits/deep-thinking-loop/deep-thought-cycle-2026-08-16T22-30-subdirector-cli-dedupe.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/LIVING_STATE.md
+- apps/api/src/controllers/available-models.controller.ts
+- data/providers/catalog.json
+- data/providers/nvidia-models.json
+- docs/UNIFIED_LLM_CATALOG.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/catalog.ts
+- packages/tnf-cli/src/utils/command-palette.test.ts
+- packages/tnf-cli/src/utils/command-palette.ts
+- packages/tnf-cli/src/utils/llm-provider-detector.ts
+- packages/tnf-cli/src/utils/llm-tools.ts
+- packages/tnf-cli/src/utils/palette-readline.test.ts
+- packages/tnf-cli/src/utils/palette-readline.ts
+- packages/tnf-cli/src/utils/palette-recents.test.ts
+- packages/tnf-cli/src/utils/palette-recents.ts
+- packages/tnf-cli/src/utils/tui-statusline.test.ts
+- packages/tnf-cli/src/utils/tui-statusline.ts
 
 ## Verification
 
@@ -44,10 +56,11 @@ Handoff ID: `a99de94e-7865-4263-9cc4-b146e1da10ac`
 
 ### Resume Checklist
 
-- tnf subdirector drain works
+- tnf catalog --help works
+- palette/statusline tests pass
 - command-surface snapshot updated
-- broker single fan-out
 
 ## Next Actions
 
-- Optional: build/test/commit unrelated dirty tree in a separate pass.
+- Continue dirty-tree batches: relay redis leak tests; chrome-extension;
+  frontend backup UI; defer bulk data/intelligence-artifacts.

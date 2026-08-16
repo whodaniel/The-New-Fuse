@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Optional: build/test/commit unrelated dirty tree in a
-separate pass.
+**Current Directive:** Continue dirty-tree batches: relay redis leak tests;
+chrome-extension; frontend backup UI; defer bulk data/intelligence-artifacts.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -192,9 +192,19 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T05:00:07.885Z New script(s) created:
 - [✅] 2026-08-16T20:31:26.857Z New agent(s) created: command-code
 - [✅] 2026-08-16T20:31:26.857Z New script(s) created: tnf-authority-keys.cjs,
+- [✅] 2026-08-16T22:49:31.303Z New agent(s) created: command-code
+- [✅] 2026-08-16T22:49:31.303Z New script(s) created:
+  memory-freshness-sweep.cjs, tnf-authority-keys.cjs,
+  tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
+  command-surface-gate.cjs, redis-connection-guard-cron.sh,
+  redis-connection-guard.cjs, tnf-agent-daemon-launch.sh,
+  tnf-agent-daemon-launchd.sh, universal-skill-disclosure-guard.cjs
+- [✅] 2026-08-16T22:49:31.303Z Agent definition change: 1 added, 0 removed
+
   tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
   redis-connection-guard-cron.sh, redis-connection-guard.cjs,
   tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
 - [✅] 2026-08-16T20:31:26.857Z Agent definition change: 1 added, 0 removed
 
   redis-connection-guard-cron.sh, redis-connection-guard.cjs,
@@ -1005,6 +1015,21 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T22:57:55.146Z handoff `54428d94-2559-482f-8753-4fc7c57ed068` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
+
+- 2026-08-16T22:57:50.541Z handoff `166e64da-d6c3-4d3e-af26-32e915cc1f8e` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
+
+- 2026-08-16T22:51:46.946Z handoff `1f8cb103-f122-44f3-93fc-008ff1a0b1cc` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
 
 - 2026-08-16T22:39:24.222Z handoff `a99de94e-7865-4263-9cc4-b146e1da10ac` head
   `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated
