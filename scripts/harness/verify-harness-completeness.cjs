@@ -6,17 +6,29 @@
 'use strict';
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CONFIG = path.join(ROOT, 'data/harness/harness-config.json');
+const HOME = process.env.HOME || process.env.USERPROFILE || os.homedir();
 
 function parseArgs(argv) {
   return { json: argv.includes('--json'), provision: argv.includes('--provision') };
 }
 
+function expandHome(p) {
+  const s = String(p);
+  if (s === '~') return HOME;
+  if (s.startsWith('~/') || s.startsWith('~\\')) return path.join(HOME, s.slice(2));
+  return s;
+}
+
 function exists(rel) {
+  const expanded = expandHome(rel);
+  // Absolute $HOME-relative or already-absolute evidence paths are checked as-is.
+  if (path.isAbsolute(expanded)) return fs.existsSync(expanded);
   return fs.existsSync(path.join(ROOT, rel));
 }
 

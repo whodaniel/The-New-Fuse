@@ -160,6 +160,20 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
 - [✅] 2026-08-13T18:20:07.698Z New script(s) created:
 - [✅] 2026-08-13T22:43:46.297Z New script(s) created:
+- [✅] 2026-08-14T21:51:09.127Z New script(s) created:
+- [✅] 2026-08-16T05:00:07.885Z New script(s) created:
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+- [✅] 2026-08-16T05:03:07.479Z New script(s) created:
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+- [✅] 2026-08-16T05:21:17.411Z New script(s) created:
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
   check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
   demo-external-teammate-handoff.cjs, codex-skill-disclosure-guard.cjs,
   supabase-agent-connection-check.cjs
@@ -955,6 +969,38 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-16T18:01:25.501Z handoff `f202ac36-a0eb-427d-84eb-d19a1826ed62` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T05:51:55.749Z handoff `95e3ef41-8297-4ccb-908b-a28fa8be67a2` head
+  `84d0c9d15899` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
+- 2026-08-16T05:43:41.606Z handoff `2003b3ba-a8e4-4508-81ec-3ab19f56e160` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-15T00:49:46.390Z handoff `49214223-37de-444a-92f5-4b40c6d6d66a` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-15T00:13:47.853Z handoff `34832506-cd3e-447e-b649-47643444be12` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T22:11:52.174Z handoff `ba82f383-10ed-40c4-a2c4-ebd44589954a` head
+  `84d0c9d15899` project `TNF-SESSION` — Operator to commit staged patch:
+  scripts/lib/sync-handoff-cache.cjs
+
+- 2026-08-14T22:02:35.009Z handoff `a072fe48-d84e-48de-be6a-3eab0d041838` head
+  `84d0c9d15899` project `TNF-SESSION` — Surface 132 uncommitted files for
+  operator commit decision
+
+- 2026-08-14T22:01:58.477Z handoff `cf265d52-7a4c-4923-a4b8-08259db01bf8` head
+  `84d0c9d15899` project `TNF-SESSION` — Surface 132 uncommitted files for
+  operator commit decision
 
 - 2026-08-14T21:32:59.195Z handoff `dfcf8ccb-17a0-46b8-ab02-8ff6a3a7b1ca` head
   `c2ef2a75ae2e` project `TNF-SESSION` — Continue priority queue from
