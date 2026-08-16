@@ -439,8 +439,9 @@ const WorkspaceChat: React.FC = () => {
               </div>
             </div>
             <button
+              aria-label="Workspace Settings"
               onClick={() => toast('Workspace Settings coming soon!', { icon: '⚙️' })}
-              className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+              className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -564,7 +565,10 @@ const WorkspaceChat: React.FC = () => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10">
+                <button
+                  aria-label="More options"
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                >
                   <MoreVertical className="w-4 h-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -663,8 +667,9 @@ const WorkspaceChat: React.FC = () => {
                   Chatting with {workspace?.agents.find((a) => a.id === selectedAgent)?.name}
                 </p>
                 <button
+                  aria-label="Close chat"
                   onClick={() => setSelectedAgent(null)}
-                  className="p-1 text-purple-400 hover:text-purple-300 transition-colors"
+                  className="p-1 text-purple-400 hover:text-purple-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -685,14 +690,16 @@ const WorkspaceChat: React.FC = () => {
               />
               <div className="absolute right-3 bottom-3 flex items-center gap-1">
                 <button
+                  aria-label="Attach file"
                   onClick={handleFileUpload}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
                 <button
+                  aria-label="Add emoji"
                   onClick={() => toast('Emoji picker coming soon!', { icon: '😃' })}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                 >
                   <Smile className="w-4 h-4" />
                 </button>
