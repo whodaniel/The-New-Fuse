@@ -508,20 +508,26 @@ function filterLocalTimelineEvents(
   const to = params?.dateTo || '';
   const timelineTrack = params?.timelineTrack?.toLowerCase() || '';
 
+  // ⚡ Bolt: Combine 9 chained .filter() calls into a single .filter() to prevent
+  // O(N * 9) iterations and 8 intermediate array allocations.
   return rows
-    .filter((event) => (ownerId ? event.userId === ownerId : true))
-    .filter((event) => (params?.recordId ? event.recordId === params.recordId : true))
-    .filter((event) => (params?.goalId ? event.goalId === params.goalId : true))
-    .filter((event) => (params?.planId ? event.planId === params.planId : true))
-    .filter((event) => (params?.eventType ? event.eventType === params.eventType : true))
-    .filter((event) => (params?.actor ? event.actor === params.actor : true))
-    .filter((event) => (from ? event.timestamp >= from : true))
-    .filter((event) => (to ? event.timestamp <= to : true))
     .filter((event) => {
-      if (!timelineTrack) return true;
-      const payload = (event.payload || {}) as Record<string, unknown>;
-      const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
-      return track === timelineTrack;
+      if (ownerId && event.userId !== ownerId) return false;
+      if (params?.recordId && event.recordId !== params?.recordId) return false;
+      if (params?.goalId && event.goalId !== params?.goalId) return false;
+      if (params?.planId && event.planId !== params?.planId) return false;
+      if (params?.eventType && event.eventType !== params?.eventType) return false;
+      if (params?.actor && event.actor !== params?.actor) return false;
+      if (from && event.timestamp < from) return false;
+      if (to && event.timestamp > to) return false;
+
+      if (timelineTrack) {
+        const payload = (event.payload || {}) as Record<string, unknown>;
+        const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
+        if (track !== timelineTrack) return false;
+      }
+
+      return true;
     })
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 }
