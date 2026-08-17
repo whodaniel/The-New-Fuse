@@ -441,6 +441,7 @@ const WorkspaceChat: React.FC = () => {
             <button
               onClick={() => toast('Workspace Settings coming soon!', { icon: '⚙️' })}
               className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+              aria-label="Workspace Settings"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -564,7 +565,7 @@ const WorkspaceChat: React.FC = () => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10">
+                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10" aria-label="More options">
                   <MoreVertical className="w-4 h-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -665,6 +666,7 @@ const WorkspaceChat: React.FC = () => {
                 <button
                   onClick={() => setSelectedAgent(null)}
                   className="p-1 text-purple-400 hover:text-purple-300 transition-colors"
+                  aria-label="Deselect Agent"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -687,12 +689,14 @@ const WorkspaceChat: React.FC = () => {
                 <button
                   onClick={handleFileUpload}
                   className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+                  aria-label="Upload file"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => toast('Emoji picker coming soon!', { icon: '😃' })}
                   className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
+                  aria-label="Choose emoji"
                 >
                   <Smile className="w-4 h-4" />
                 </button>
