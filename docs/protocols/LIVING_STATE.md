@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Keep receipts/codebase_map uncommitted.
+**Current Directive:** Operator: confirm .gitignore receipts ignore. Defer
+google-ai leftover, rclone wiring, dist-v7.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1014,6 +1015,30 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-17T03:53:31.029Z handoff `edebdf5e-b735-45d3-9527-f262327c7960` head
+  `12f3aaa035b6` project `TNF-SESSION` — Operator: confirm .gitignore receipts
+  ignore. Defer google-ai leftover, rclone wiring, dist-v7.
+
+- 2026-08-17T03:53:29.749Z handoff `5126d38b-4110-40ac-b6e0-95737ade1ccd` head
+  `12f3aaa035b6` project `TNF-SESSION` — Operator: confirm .gitignore receipts
+  ignore. Defer google-ai leftover, rclone wiring, dist-v7.
+
+- 2026-08-17T03:50:50.118Z handoff `6f799a00-00d6-4b1c-a4ed-376bb9955f6e` head
+  `daaa73d3d421` project `TNF-SESSION` — Operator must confirm .gitignore
+  authority edit (receipts/trackers). Defer google-ai leftover + dist-v7.
+
+- 2026-08-17T03:50:49.240Z handoff `07dde259-510f-46e1-89eb-5dc02d5c7408` head
+  `daaa73d3d421` project `TNF-SESSION` — Operator must confirm .gitignore
+  authority edit (receipts/trackers). Defer google-ai leftover + dist-v7.
+
+- 2026-08-17T03:49:57.623Z handoff `419721f7-b800-42f0-b6f7-78532a3d4ffd` head
+  `daaa73d3d421` project `TNF-SESSION` — Defer google-ai leftover + dist-v7;
+  keep receipts uncommitted. Broker restarted.
+
+- 2026-08-17T03:49:55.992Z handoff `d207b5ab-8690-4190-aa2f-8699d533c066` head
+  `daaa73d3d421` project `TNF-SESSION` — Defer google-ai leftover + dist-v7;
+  keep receipts uncommitted. Broker restarted.
 
 - 2026-08-17T03:39:13.155Z handoff `4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b` head
   `fea3c89faed7` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.

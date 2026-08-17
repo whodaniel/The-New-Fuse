@@ -71,7 +71,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-17T03:39:13.084Z** — handoff
+Updated: **2026-08-17T03:53:30.982Z** — handoff
+`edebdf5e-b735-45d3-9527-f262327c7960` (`12f3aaa035b6`).
 `4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b` (`fea3c89faed7`).
 `06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a` (`e35bc028e742`).
 `8a5ff1b7-aa47-4271-b7e8-90dd112bdfa3` (`e35bc028e742`).
@@ -257,9 +258,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                  |
-| -------- | --------------------------------------- |
-| **P0**   | Keep receipts/codebase_map uncommitted. |
+| Priority | Action                                                                                          |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| **P0**   | Operator: confirm .gitignore receipts ignore. Defer google-ai leftover, rclone wiring, dist-v7. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1367,3 +1368,21 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d207b5ab-8690-4190-aa2f-8699d533c066) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(419721f7-b800-42f0-b6f7-78532a3d4ffd) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(07dde259-510f-46e1-89eb-5dc02d5c7408) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(6f799a00-00d6-4b1c-a4ed-376bb9955f6e) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(5126d38b-4110-40ac-b6e0-95737ade1ccd) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(edebdf5e-b735-45d3-9527-f262327c7960) | ✅ HANDOFF_READY |
