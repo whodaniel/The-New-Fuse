@@ -71,7 +71,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-17T03:04:05.461Z** — handoff
+Updated: **2026-08-17T03:39:13.084Z** — handoff
+`4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b` (`fea3c89faed7`).
 `06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a` (`e35bc028e742`).
 `8a5ff1b7-aa47-4271-b7e8-90dd112bdfa3` (`e35bc028e742`).
 `a0ee822e-5638-417e-a2e5-1cd16e0af2fa` (`4e205676b9ee`).
@@ -1360,3 +1361,9 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4504c107-bcff-4bbc-855a-408a0746a09d) | ✅ HANDOFF_READY |
+
+| 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b) | ✅ HANDOFF_READY |

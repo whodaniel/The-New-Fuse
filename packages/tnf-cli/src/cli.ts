@@ -32,6 +32,7 @@ import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
+import { registerHaltCommand } from './commands/halt.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
@@ -19397,6 +19398,7 @@ registerFleetCommands(program);
 // source of truth, no hardcoded lists).
 registerCatalogCommand(program);
 registerSubdirectorCommand(program, { repoRoot, runCommand });
+registerHaltCommand(program, repoRoot);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
