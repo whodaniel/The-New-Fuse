@@ -124,6 +124,8 @@ if [ -d "apps/relay-server" ]; then
     pnpm run start &
     RELAY_PID=$!
     echo -e "${GREEN}✅ Relay server started (PID: $RELAY_PID)${NC}"
+    # Store PID for later cleanup
+    echo $RELAY_PID > "$PROJECT_ROOT/.tmp/relay.pid"
 
     cd "$PROJECT_ROOT"
 else
@@ -208,6 +210,8 @@ if [ -d "apps/tauri-desktop" ]; then
     pnpm tauri dev &
     TAURI_PID=$!
     echo -e "${GREEN}✅ Tauri desktop app starting (PID: $TAURI_PID)${NC}"
+    # Store PID for later cleanup
+    echo $TAURI_PID > "$PROJECT_ROOT/.tmp/tauri.pid"
 
     cd "$PROJECT_ROOT"
 else
@@ -217,10 +221,51 @@ fi
 echo ""
 
 # ============================================================================
-# STEP 8: Verify Network Health
+# STEP 9: Setup Cleanup Handlers
 # ============================================================================
 
-echo -e "${BLUE}🩺 Verifying Network Health...${NC}"
+echo -e "${BLUE}🛡️  Setting up cleanup handlers...${NC}"
+
+# Create tmp directory for PID files
+mkdir -p "$PROJECT_ROOT/.tmp"
+
+# Cleanup function to kill background processes
+cleanup() {
+  echo -e "\n${YELLOW}🛑 Stopping TNF services...${NC}"
+  
+  # Stop Tauri
+  if [ -f "$PROJECT_ROOT/.tmp/tauri.pid" ]; then
+    TAURI_PID=$(cat "$PROJECT_ROOT/.tmp/tauri.pid")
+    if ps -p $TAURI_PID > /dev/null 2>&1; then
+      echo -e "   Stopping Tauri (PID: $TAURI_PID)..."
+      kill $TAURI_PID 2>/dev/null || true
+      sleep 1
+    fi
+    rm -f "$PROJECT_ROOT/.tmp/tauri.pid"
+  fi
+  
+  # Stop Relay
+  if [ -f "$PROJECT_ROOT/.tmp/relay.pid" ]; then
+    RELAY_PID=$(cat "$PROJECT_ROOT/.tmp/relay.pid")
+    if ps -p $RELAY_PID > /dev/null 2>&1; then
+      echo -e "   Stopping Relay (PID: $RELAY_PID)..."
+      kill $RELAY_PID 2>/dev/null || true
+      sleep 1
+    fi
+    rm -f "$PROJECT_ROOT/.tmp/relay.pid"
+  fi
+  
+  echo -e "${GREEN}✅ Cleanup complete${NC}"
+}
+
+# Trap EXIT signal to ensure cleanup happens
+trap cleanup EXIT
+
+# Also trap SIGINT and SIGTERM for manual interruption
+trap cleanup SIGINT SIGTERM
+
+echo -e "${GREEN}✅ Cleanup handlers registered${NC}"
+echo ""
 
 sleep 3  # Give services time to start
 

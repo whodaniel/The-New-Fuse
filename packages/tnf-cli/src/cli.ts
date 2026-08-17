@@ -31,6 +31,7 @@ import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
+import { registerGoogleAiCommand } from './commands/google-ai.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
@@ -39,7 +40,6 @@ import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gap
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
-import { registerGoogleAiCommand } from './commands/google-ai.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
@@ -19822,6 +19822,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
   const prefix = state.contextRefreshPending
     ? '[Autonomous context refresh]'
     : '[Autonomous continue]';
+  const speakRule =
+    'Always end the turn with a short plain-language update for the operator (what changed, blockers, next step). Never reply with only raw tool JSON.';
 
   if (!actions.length) {
     return [
@@ -19829,7 +19831,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
       summary,
       '',
       'No handoff next_actions found — follow LIVING_STATE.md active directive.',
-      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+      `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+      speakRule,
       'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
     ].join('\n');
   }
@@ -19841,7 +19844,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
       '',
       `All ${actions.length} handoff actions have been attempted this session.`,
       'Review results, commit or deploy as needed, then summarize blockers.',
-      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn if verification is still required.`,
+      `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn if verification is still required.`,
+      speakRule,
     ].join('\n');
   }
 
@@ -19851,9 +19855,30 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
     summary,
     '',
     `Focus on handoff action ${state.handoffTaskIndex + 1}/${actions.length}: ${current}`,
-    `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+    `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+    speakRule,
     'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
   ].join('\n');
+}
+
+/** True when model "content" is just a dumped tool result (not operator-facing prose). */
+function looksLikeRawToolResultDump(text: string): boolean {
+  const trimmed = String(text || '').trim();
+  if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) return false;
+  try {
+    const parsed = JSON.parse(trimmed) as Record<string, unknown>;
+    if (typeof parsed !== 'object' || parsed === null) return false;
+    return (
+      'ok' in parsed ||
+      'stdout' in parsed ||
+      'stderr' in parsed ||
+      'exit_code' in parsed ||
+      'tool' in parsed ||
+      ('path' in parsed && 'content' in parsed)
+    );
+  } catch {
+    return false;
+  }
 }
 
 function isExploratoryShellBlock(script: string): boolean {
@@ -20037,15 +20062,26 @@ async function runAutonomousNativeToolTurn(
     },
     {
       temperature: 0.7,
-      // Bound one autonomous turn: up to AUTONOMOUS_MAX_SHELL_BLOCKS tool
-      // rounds plus a final answer. The outer turn cap governs the session.
-      maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 1,
+      // Tool rounds + room for a final prose answer. chatCompleteWithTools also
+      // forces a tool-free synthesis if the cap is hit mid-tool-loop.
+      maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 2,
+      maxTokens: 4096,
       tools,
     }
   );
+  let content = String(result?.content ?? '');
+  // Never persist/display raw tool JSON as the assistant turn — that is what
+  // made the TUI look "broken" (operators only saw dumps, no conversation).
+  if (looksLikeRawToolResultDump(content)) {
+    const summaries = executed.map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`).join('\n');
+    content =
+      executed.length > 0
+        ? `Completed ${executed.length} tool call(s) this turn:\n${summaries}\n\n(Tool output was kept out of the chat transcript; continuing.)`
+        : 'Received a tool-shaped payload with no prose summary. Continuing with the next inspect/act step.';
+  }
   return {
-    content: String(result?.content ?? ''),
-    toolCallsMade: Number(result?.toolCallsMade ?? 0),
+    content,
+    toolCallsMade: Math.max(Number(result?.toolCallsMade ?? 0), executed.length),
     executed,
   };
 }
@@ -20782,10 +20818,16 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           const native = await runAutonomousNativeToolTurn(client, messages, options?.permissions);
           stopProcessingIndicator(true);
           nativeSucceeded = true;
-          nativeToolCallsMade = native.toolCallsMade;
+          nativeToolCallsMade = Math.max(native.toolCallsMade, native.executed.length);
           turnResponseText = native.content;
           if (native.content) {
             console.log(chalk.cyan('\n  ' + native.content.replace(/\n/g, '\n  ')));
+          } else if (native.executed.length > 0) {
+            console.log(
+              chalk.dim(
+                `\n  ✓ ${native.executed.length} tool call(s) completed (awaiting prose summary next turn)`
+              )
+            );
           }
           messages.push({ role: 'assistant', content: native.content || '' });
           if (native.executed.length > 0) {
@@ -20837,10 +20879,42 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
 
       if (slashContext.autonomousMode) {
         const response = turnResponseText;
-        if (nativeToolCallsMade > 0) {
+        // While the operator has the floor (/hold or auto-hold), do not inject
+        // "call tools / do not narrate" prompts — that is what killed reply
+        // persistence when the operator asked questions.
+        if (autonomousState.operatorHold) {
+          autonomousState.consecutiveNoBashTurns = 0;
+        } else if (nativeToolCallsMade > 0) {
           // Native path already executed everything; don't re-run fences the
           // model may have merely quoted in its final answer.
           autonomousState.consecutiveNoBashTurns = 0;
+        } else if (looksLikeRawToolResultDump(response)) {
+          // Model echoed tool JSON as text without calling tools — count as stall
+          // but demand prose + a real tool call, not more JSON dumps.
+          autonomousState.consecutiveNoBashTurns += 1;
+          messages.push({
+            role: 'system',
+            content: [
+              '[Autonomous stall break]',
+              'Your last reply was raw tool JSON, not an operator-facing update.',
+              'Answer in plain language first. Then call a real tool (bash/run_bash/read_file) or emit fenced ```bash if tools are unavailable.',
+              'Inspect → Act → Verify. Prefer handoff next_actions.',
+            ].join('\n'),
+          });
+          console.log(
+            chalk.yellow(
+              `\n  ⚠ Tool-JSON dump with no tool call (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
+            )
+          );
+          if (autonomousState.consecutiveNoBashTurns >= STALL_AUTO_HOLD_AFTER) {
+            autonomousState.operatorHold = true;
+            autonomousState.continuePending = false;
+            console.log(
+              chalk.yellow(
+                `\n  ⏸ Auto-held after ${STALL_AUTO_HOLD_AFTER} stall turns — type freely. /continue to resume autonomous loop.`
+              )
+            );
+          }
         } else {
           const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
           if (blocks.length > 0) {
@@ -20851,8 +20925,9 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
             const stallMsg = [
               '[Autonomous stall break]',
               `Zero commands executed in the last ${autonomousState.consecutiveNoBashTurns} autonomous turn(s).`,
-              'Do NOT narrate. Call the run_bash tool with a real command now (or emit 1–5 fenced ```bash blocks if tools are unavailable).',
-              'Inspect → Act → Verify. Prefer handoff next_actions.',
+              'If the operator asked a question, answer it in plain language first.',
+              'Otherwise call bash/run_bash with a real command now (or emit 1–5 fenced ```bash blocks if tools are unavailable).',
+              'Always include a short operator-facing summary. Inspect → Act → Verify.',
             ].join('\n');
             messages.push({ role: 'system', content: stallMsg });
             console.log(

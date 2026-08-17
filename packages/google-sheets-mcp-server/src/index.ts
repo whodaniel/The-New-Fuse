@@ -1,4 +1,4 @@
-import { MCPServer } from '@the-new-fuse/mcp-core/server';
+import { MCPServer } from '@the-new-fuse/mcp-core';
 
 import {
   appendToSheet,
@@ -213,7 +213,7 @@ const config = {
 };
 
 // Start the server
-server.start(config).catch((err) => {
+server.start(config).catch((err: unknown) => {
   console.error('Failed to start server:', err);
   process.exit(1);
 });

@@ -1,72 +1,49 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "d2b506ee-2124-4f7e-b0b7-1de4fc75396f",
-  "created_at": "2026-08-16T23:51:24.137Z",
+  "handoff_id": "a0ee822e-5638-417e-a2e5-1cd16e0af2fa",
+  "created_at": "2026-08-17T00:03:20.351Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "46d52c68613190f46f786d0b95322e75ffed377f",
+  "head_sha": "4e205676b9ee4e4402975f47b0bc93b46ca16df1",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Dirty-tree pass batch 4: frontend backup/settings, harness status panel, MCP page, computer-use page, and LLM provider/settings wiring."
+    "Dirty-tree cleanup: stop autonomous TUI from persisting raw tool JSON; harden google-ai CLI; boot-tnf PID cleanup; sheets MCP import fix."
   ],
   "changed_paths": [
-    "apps/frontend/package.json",
-    "apps/frontend/pages/mcp.tsx",
-    "apps/frontend/src/ComprehensiveRouter.tsx",
-    "apps/frontend/src/components/UnifiedChat/ToolsetConfigDrawer.tsx",
-    "apps/frontend/src/components/ai/FeatureAIAssistDock.tsx",
-    "apps/frontend/src/components/control-surface/HarnessStatusPanel.tsx",
-    "apps/frontend/src/components/control-surface/index.ts",
-    "apps/frontend/src/components/control-surface/useHarnessStatus.ts",
-    "apps/frontend/src/config/platformParityFeatures.ts",
-    "apps/frontend/src/config/routeCatalog.ts",
-    "apps/frontend/src/config/sidebarNavigation.ts",
-    "apps/frontend/src/hooks/useModels.tsx",
-    "apps/frontend/src/pages/Admin/BackupRestore.tsx",
-    "apps/frontend/src/pages/ComputerUsePage.tsx",
-    "apps/frontend/src/pages/Settings.tsx",
-    "apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx",
-    "apps/frontend/src/pages/chat/ChatPage.tsx",
-    "apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx",
-    "apps/frontend/src/pages/mcp/MCPHub.tsx",
-    "apps/frontend/src/services/browserAgent.service.ts",
-    "apps/frontend/src/services/llm/providers.ts",
-    "apps/frontend/src/shared/features/settings/LLMConfigManager.tsx",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/google-sheets-mcp-server/src/index.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/commands/google-ai.ts",
+    "packages/tnf-cli/src/utils/llm-client.ts",
+    "scripts/boot-tnf.sh"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Recovered frontend WIP from lint-staged stash; excluded visualizations and intelligence-artifacts"
+    "notes": "bash -n boot-tnf ok; skipped receipts/codebase_map/provider-status noise"
   },
   "continuation": {
     "owner": "tnf-cli-agent",
-    "targets": [
-      "sub-director",
-      "story-architect",
-      "librarian"
-    ],
+    "targets": ["sub-director", "story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "frontend product batch",
-      "killed stuck bulk dirty-tree commit contending on index.lock"
+      "boot-tnf bash -n ok",
+      "staged product+handoff",
+      "no concurrent git commit"
     ]
   },
   "next_actions": [
-    "Defer bulk data/intelligence-artifacts; next optional: browser-control-surfaces + api harness/browser modules."
+    "Smoke tnf google-ai status; optionally restart relay for Redis leak fix; keep receipts/codebase_map uncommitted."
   ],
   "artifacts": {
-    "commits": [
-      "46d52c68613190f46f786d0b95322e75ffed377f"
-    ]
+    "commits": ["4e205676b9ee4e4402975f47b0bc93b46ca16df1"]
   }
 }

@@ -315,7 +315,7 @@
         {
           "name": "run",
           "aliases": [],
-          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool, todo_add, todo_list, todo_update, todo_done.",
+          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.",
           "options": [
             {
               "flags": "--cwd <path>",
@@ -2497,6 +2497,50 @@
           "aliases": [],
           "description": "Show goals summary statistics",
           "options": [],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "google-ai",
+      "aliases": [],
+      "description": "Google Gemini & Antigravity Personal Intelligence integration commands",
+      "options": [],
+      "commands": [
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List recent Google Gemini & Antigravity sessions registered in TNF",
+          "options": [
+            {
+              "flags": "-n, --limit <count>",
+              "description": "Number of sessions to show"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Inspect connection to Google Gemini & Antigravity local database, brains, and projects",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output ecosystem state as JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "sync",
+          "aliases": [],
+          "description": "Synchronize all Google Gemini / Antigravity conversations & brains into TNF session stores",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output sync receipt as JSON"
+            }
+          ],
           "commands": []
         }
       ]

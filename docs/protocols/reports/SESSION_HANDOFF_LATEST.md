@@ -1,60 +1,54 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-16T23:51:24.137Z`  
-Handoff ID: `d2b506ee-2124-4f7e-b0b7-1de4fc75396f`
+Created At: `2026-08-17T00:03:20.351Z`  
+Handoff ID: `a0ee822e-5638-417e-a2e5-1cd16e0af2fa`
 
 ## Scope
+
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `46d52c68613190f46f786d0b95322e75ffed377f`
+- Head SHA: `4e205676b9ee4e4402975f47b0bc93b46ca16df1`
 - Sensitive Scope: `internal`
 
 ## Work Summary
-- Dirty-tree pass batch 4: frontend backup/settings, harness status panel, MCP page, computer-use page, and LLM provider/settings wiring.
+
+- Dirty-tree cleanup: stop autonomous TUI from persisting raw tool JSON; harden
+  google-ai CLI; boot-tnf PID cleanup; sheets MCP import fix.
 
 ## Changed Paths
-- apps/frontend/package.json
-- apps/frontend/pages/mcp.tsx
-- apps/frontend/src/ComprehensiveRouter.tsx
-- apps/frontend/src/components/UnifiedChat/ToolsetConfigDrawer.tsx
-- apps/frontend/src/components/ai/FeatureAIAssistDock.tsx
-- apps/frontend/src/components/control-surface/HarnessStatusPanel.tsx
-- apps/frontend/src/components/control-surface/index.ts
-- apps/frontend/src/components/control-surface/useHarnessStatus.ts
-- apps/frontend/src/config/platformParityFeatures.ts
-- apps/frontend/src/config/routeCatalog.ts
-- apps/frontend/src/config/sidebarNavigation.ts
-- apps/frontend/src/hooks/useModels.tsx
-- apps/frontend/src/pages/Admin/BackupRestore.tsx
-- apps/frontend/src/pages/ComputerUsePage.tsx
-- apps/frontend/src/pages/Settings.tsx
-- apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx
-- apps/frontend/src/pages/chat/ChatPage.tsx
-- apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx
-- apps/frontend/src/pages/mcp/MCPHub.tsx
-- apps/frontend/src/services/browserAgent.service.ts
-- apps/frontend/src/services/llm/providers.ts
-- apps/frontend/src/shared/features/settings/LLMConfigManager.tsx
+
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/google-sheets-mcp-server/src/index.ts
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/google-ai.ts
+- packages/tnf-cli/src/utils/llm-client.ts
+- scripts/boot-tnf.sh
 
 ## Verification
+
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `tnf-cli-agent`
 - Targets: `sub-director`, `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
-- frontend product batch
-- killed stuck bulk dirty-tree commit contending on index.lock
+
+- boot-tnf bash -n ok
+- staged product+handoff
+- no concurrent git commit
 
 ## Next Actions
-- Defer bulk data/intelligence-artifacts; next optional: browser-control-surfaces + api harness/browser modules.
+
+- Smoke tnf google-ai status; optionally restart relay for Redis leak fix; keep
+  receipts/codebase_map uncommitted.
