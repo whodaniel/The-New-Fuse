@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Smoke tnf google-ai status; optionally restart relay for
-Redis leak fix; keep receipts/codebase_map uncommitted.
+**Current Directive:** Keep receipts/codebase_map uncommitted.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1015,6 +1014,29 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-17T03:04:05.681Z handoff `06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T03:04:00.901Z handoff `02a4b7bf-b797-42b0-a5ca-4e578140961f` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:54:40.864Z handoff `8a5ff1b7-aa47-4271-b7e8-90dd112bdfa3` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:54:35.893Z handoff `73cecccb-5921-438f-b475-ba78fcf70578` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:53:59.132Z handoff `c403aac3-cf5e-4e94-8211-8547183349fb` head
+  `e35bc028e742` project `TNF-SESSION` — Smoke /platform and
+  /admin/backup-restore; chrome-extension v7 is webpack packaging of src/v6 (no
+  separate src/v7); optional install-v7 rebuild.
+
+- 2026-08-17T02:53:22.315Z handoff `c37359bf-7f5a-4188-9692-400529c12931` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:53:16.443Z handoff `9dd8d64d-36cd-411c-8fea-a5cd0b63c892` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
 
 - 2026-08-17T00:03:20.416Z handoff `a0ee822e-5638-417e-a2e5-1cd16e0af2fa` head
   `4e205676b9ee` project `TNF-SESSION` — Smoke tnf google-ai status; optionally

@@ -51,6 +51,7 @@ const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const PlatformParityDashboard = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
+const PlatformHub = lazy(() => import('./pages/PlatformHub'));
 const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
@@ -672,7 +673,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
               <Route path="/product-map" element={<MarketplacePublicPage />} />
               <Route path="/capabilities" element={<MarketplacePublicPage />} />
-              <Route path="/platform" element={<Navigate to="/product-map" replace />} />
+              <Route path="/platform" element={<PlatformHub />} />
 
               {/* Admin Marketplace Console */}
               <Route

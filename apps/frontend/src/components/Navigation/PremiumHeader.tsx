@@ -1,5 +1,15 @@
 // @ts-nocheck
-import { Building2, CreditCard, LogOut, Menu, Settings, Sparkles, User, Users } from 'lucide-react';
+import {
+  Brain,
+  Building2,
+  CreditCard,
+  LogOut,
+  Menu,
+  Settings,
+  Sparkles,
+  User,
+  Users,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -49,7 +59,16 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
           {title && <h1 className="text-xl font-semibold text-white hidden sm:block">{title}</h1>}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <Link
+            to="/platform"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-medium text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all hover:scale-105"
+            title="Google AI & Antigravity Personal Intelligence"
+          >
+            <Brain className="w-4 h-4 text-sky-400" />
+            <span className="hidden md:inline">Personal Intelligence</span>
+          </Link>
+
           <button
             type="button"
             onClick={() => openAIAssist()}

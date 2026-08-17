@@ -868,7 +868,7 @@ export const sitemap: SiteMapNode[] = [
   { path: '/careers', title: 'Careers', isPublic: true },
   { path: '/ambassador', title: 'Ambassador', isPublic: true },
   { path: '/testimonials', title: 'Testimonials', isPublic: true },
-  { path: '/platform', title: 'Platform (Alias → Product Map)', isPublic: true },
+  { path: '/platform', title: 'Personal Intelligence Hub', isPublic: false },
   { path: '/help', title: 'Help Center', isPublic: true, sources: ['routing-structure.md'] },
   {
     path: '/documentation',

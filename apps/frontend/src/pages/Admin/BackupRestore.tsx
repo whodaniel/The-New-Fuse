@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useBackup } from '@/hooks';
 import {
   Clock,
   Copy,
@@ -13,7 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface StorageItem {
@@ -38,97 +39,83 @@ interface BackupSnapshot {
   status: 'completed' | 'in_progress' | 'failed';
 }
 
+interface BackupConfig {
+  backup_destination: string;
+  schedule: {
+    enabled: boolean;
+    frequency: 'hourly' | 'daily' | 'weekly';
+    time: string;
+    cron_expression: string;
+  };
+  retention: {
+    keep_last_snapshots: number;
+    compress_format: string;
+  };
+  included_targets: string[];
+}
+
 export default function BackupRestore() {
-  const [loading, setLoading] = useState(false);
+  const {
+    loading,
+    getInventory,
+    getBackups,
+    getConfig,
+    createBackup,
+    updateDestination,
+    updateCronExpression,
+    enableCron,
+    disableCron,
+    syncCron,
+    updateRetention,
+  } = useBackup();
+
+  const [storageItems, setStorageItems] = useState<StorageItem[]>([]);
+  const [snapshots, setSnapshots] = useState<BackupSnapshot[]>([]);
+  const [config, setConfig] = useState<BackupConfig | null>(null);
+  const [totalStorageFormatted, setTotalStorageFormatted] = useState('0 B');
   const [isBackingUp, setIsBackingUp] = useState(false);
+  const [activeTab, setActiveTab] = useState<'storage' | 'schedule' | 'backup'>('storage');
   const [customDestination, setCustomDestination] = useState('~/.tnf/backups');
   const [cronEnabled, setCronEnabled] = useState(true);
-  const [cronFrequency, setCronFrequency] = useState('daily');
+  const [cronFrequency, setCronFrequency] = useState<'hourly' | 'daily' | 'weekly'>('daily');
   const [cronTime, setCronTime] = useState('02:00');
   const [retentionCount, setRetentionCount] = useState(7);
-  const [activeTab, setActiveTab] = useState<'storage' | 'backup' | 'schedule'>('storage');
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const [storageItems, setStorageItems] = useState<StorageItem[]>([
-    {
-      id: 'personal_intel',
-      name: 'Personal Intelligence & Daily Notes',
-      description: 'Sealed operator extractions, raw Apple Notes, and personal thought streams.',
-      path: '~/.tnf/personal-intelligence',
-      alt_path: 'docs/personal/ (repo local)',
-      classification: 'PERSONAL_SEALED',
-      git_status: 'EXCLUDED_GITIGNORED',
-      size_bytes: 428000,
-      size_formatted: '418.00 KB',
-    },
-    {
-      id: 'graduated_intel',
-      name: 'Graduated Codebase Intel (Gauntlet Vetted)',
-      description:
-        'Anonymized, verified knowledge units promoted into the open source knowledge graph.',
-      path: 'docs/distilled-intel',
-      alt_path: 'data/intelligence-artifacts',
-      classification: 'GRADUATED_PUBLIC',
-      git_status: 'TRACKED_OPEN_SOURCE',
-      size_bytes: 5890000,
-      size_formatted: '5.62 MB',
-    },
-    {
-      id: 'transcripts_sensory',
-      name: 'Multimodal Transcripts & Sensory Drops',
-      description: 'YouTube extractions (AI 6/AI 5), audio spectra, and vision capture frames.',
-      path: 'data/transcripts',
-      alt_path: 'data/video-transcripts',
-      classification: 'OPERATOR_SENSORY',
-      git_status: 'LOCAL_DATA_DIR',
-      size_bytes: 4620000,
-      size_formatted: '4.41 MB',
-    },
-    {
-      id: 'concordance_graph',
-      name: 'Unified Semantic Concordance & Merkle Graph',
-      description: 'Codebase term index, Merkle tree, and relational memory graphs.',
-      path: 'concordance_results',
-      alt_path: 'concordance_results/user (local overlay)',
-      classification: 'SYSTEM_AND_USER_OVERLAY',
-      git_status: 'HYBRID_SEPARATED',
-      size_bytes: 28400000,
-      size_formatted: '27.08 MB',
-    },
-    {
-      id: 'harness_config',
-      name: 'Harness Governance & Ingestion Manifests',
-      description: 'Agent state ledgers, scout queues, and execution action queues.',
-      path: 'data/ingestion-runs',
-      alt_path: '~/.tnf/harness-config.json',
-      classification: 'SYSTEM_GOVERNANCE',
-      git_status: 'HYBRID_CONFIG',
-      size_bytes: 14890000,
-      size_formatted: '14.20 MB',
-    },
-  ]);
+  // Load data on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [inventory, backups, cfg] = await Promise.all([
+          getInventory(),
+          getBackups(),
+          getConfig(),
+        ]);
 
-  const [snapshots, setSnapshots] = useState<BackupSnapshot[]>([
-    {
-      id: 'backup-20260816_152420',
-      filename: 'tnf_backup_20260816_152420.tar.gz',
-      path: '~/.tnf/backups/tnf_backup_20260816_152420.tar.gz',
-      created_at: '2026-08-16T15:24:20Z',
-      size_bytes: 51728000,
-      size_formatted: '49.33 MB',
-      status: 'completed',
-    },
-    {
-      id: 'backup-20260815_020000',
-      filename: 'tnf_backup_20260815_020000.tar.gz',
-      path: '~/.tnf/backups/tnf_backup_20260815_020000.tar.gz',
-      created_at: '2026-08-15T02:00:00Z',
-      size_bytes: 50410000,
-      size_formatted: '48.07 MB',
-      status: 'completed',
-    },
-  ]);
+        if (inventory) {
+          setStorageItems(inventory.inventory);
+          setTotalStorageFormatted(inventory.total_storage_formatted);
+        }
+        if (backups) {
+          setSnapshots(backups);
+        }
+        if (cfg) {
+          setConfig(cfg);
+          setCustomDestination(cfg.backup_destination);
+          setCronEnabled(cfg.schedule.enabled);
+          setCronFrequency(cfg.schedule.frequency);
+          setCronTime(cfg.schedule.time);
+          setRetentionCount(cfg.retention.keep_last_snapshots);
+        }
+      } catch (error) {
+        console.error('Failed to load backup data:', error);
+      } finally {
+        setInitialLoad(false);
+      }
+    };
 
-  const totalStorageFormatted = '51.73 MB';
+    loadData();
+  }, [getInventory, getBackups, getConfig]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -138,30 +125,85 @@ export default function BackupRestore() {
   const handleTriggerBackup = async () => {
     setIsBackingUp(true);
     toast.loading('Creating compressed snapshot archive...', { id: 'backup-toast' });
-    setTimeout(() => {
-      const newSnapshot: BackupSnapshot = {
-        id: `backup-${Date.now()}`,
-        filename: `tnf_backup_${new Date()
-          .toISOString()
-          .replace(/[-:T.]/g, '')
-          .slice(0, 14)}.tar.gz`,
-        path: `${customDestination}/tnf_backup_latest.tar.gz`,
-        created_at: new Date().toISOString(),
-        size_bytes: 54250000,
-        size_formatted: '51.74 MB',
-        status: 'completed',
-      };
-      setSnapshots([newSnapshot, ...snapshots]);
+    try {
+      const result = await createBackup();
+      if (result) {
+        setSnapshots([result, ...snapshots]);
+        toast.success('Backup archive created and verified successfully!', { id: 'backup-toast' });
+      }
+    } catch (error) {
+      toast.error('Backup failed', { id: 'backup-toast' });
+    } finally {
       setIsBackingUp(false);
-      toast.success('Backup archive created and verified successfully!', { id: 'backup-toast' });
-    }, 1500);
+    }
   };
 
-  const handleSaveCronSchedule = () => {
-    toast.success(
-      `Persistent backup cron scheduled: ${cronFrequency.toUpperCase()} at ${cronTime} (${cronEnabled ? 'Active' : 'Disabled'})`
-    );
+  const handleSaveDestination = async () => {
+    try {
+      await updateDestination(customDestination);
+      toast.success('Backup destination updated');
+    } catch (error) {
+      toast.error('Failed to update destination');
+    }
   };
+
+  const handleSaveCronSchedule = async () => {
+    try {
+      // Convert frequency and time to cron expression
+      let cronExpression: string;
+      const [hour, minute] = cronTime.split(':').map(Number);
+
+      switch (cronFrequency) {
+        case 'hourly':
+          cronExpression = `${minute} * * * *`;
+          break;
+        case 'daily':
+          cronExpression = `${minute} ${hour} * * *`;
+          break;
+        case 'weekly':
+          cronExpression = `${minute} ${hour} * * 0`;
+          break;
+      }
+
+      await updateCronExpression(cronExpression);
+
+      if (cronEnabled) {
+        await enableCron();
+        await syncCron();
+      } else {
+        await disableCron();
+      }
+
+      toast.success(
+        `Persistent backup cron scheduled: ${cronFrequency.toUpperCase()} at ${cronTime} (${cronEnabled ? 'Active' : 'Disabled'})`
+      );
+    } catch (error) {
+      toast.error('Failed to save cron schedule');
+    }
+  };
+
+  const handleRetentionChange = async (count: number) => {
+    setRetentionCount(count);
+    await updateRetention(count);
+    toast.success(`Retention updated to ${count} backups`);
+  };
+
+  if (initialLoad) {
+    return (
+      <div className="p-6 max-w-[1600px] mx-auto min-h-screen text-gray-100">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const generatedCronExpression =
+    cronFrequency === 'hourly'
+      ? `0 * * * *`
+      : cronFrequency === 'daily'
+        ? `${cronTime.split(':')[1]} ${cronTime.split(':')[0]} * * *`
+        : `${cronTime.split(':')[1]} ${cronTime.split(':')[0]} * * 0`;
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto min-h-screen text-gray-100">
@@ -188,7 +230,7 @@ export default function BackupRestore() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleTriggerBackup}
-            disabled={isBackingUp}
+            disabled={isBackingUp || loading}
             className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg font-medium text-sm transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
           >
             <Save className={`h-4 w-4 ${isBackingUp ? 'animate-spin' : ''}`} />
@@ -207,7 +249,9 @@ export default function BackupRestore() {
             <Database className="h-4 w-4 text-blue-400" />
           </div>
           <div className="text-2xl font-bold text-white">{totalStorageFormatted}</div>
-          <div className="text-xs text-gray-500 mt-1">Across 5 distinct storage domains</div>
+          <div className="text-xs text-gray-500 mt-1">
+            Across {storageItems.length} distinct storage domains
+          </div>
         </div>
 
         <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-5 backdrop-blur-sm">
@@ -229,7 +273,9 @@ export default function BackupRestore() {
             <Clock className="h-4 w-4 text-indigo-400" />
           </div>
           <div className="text-2xl font-bold text-indigo-400">
-            {cronEnabled ? 'Daily @ 02:00' : 'Inactive'}
+            {cronEnabled
+              ? `${cronFrequency.charAt(0).toUpperCase() + cronFrequency.slice(1)} @ ${cronTime}`
+              : 'Inactive'}
           </div>
           <div className="text-xs text-gray-500 mt-1">OS Persistent crontab sync</div>
         </div>
@@ -386,7 +432,15 @@ export default function BackupRestore() {
               />
             </div>
 
-            <div className="space-y-2">
+            <button
+              onClick={handleSaveDestination}
+              disabled={loading}
+              className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              <Save className="h-4 w-4" /> Save Destination
+            </button>
+
+            <div className="space-y-2 pt-4 border-t border-gray-800">
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-300">
                 Snapshot Retention (Keep Last N Backups)
               </label>
@@ -395,7 +449,7 @@ export default function BackupRestore() {
                 min="1"
                 max="50"
                 value={retentionCount}
-                onChange={(e) => setRetentionCount(parseInt(e.target.value) || 7)}
+                onChange={(e) => handleRetentionChange(parseInt(e.target.value) || 7)}
                 className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono focus:border-blue-500 focus:outline-none"
               />
               <p className="text-xs text-gray-500">
@@ -445,7 +499,9 @@ export default function BackupRestore() {
                 </label>
                 <select
                   value={cronFrequency}
-                  onChange={(e) => setCronFrequency(e.target.value)}
+                  onChange={(e) =>
+                    setCronFrequency(e.target.value as 'hourly' | 'daily' | 'weekly')
+                  }
                   className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                 >
                   <option value="hourly">Hourly</option>
@@ -470,17 +526,13 @@ export default function BackupRestore() {
             <div className="p-3 bg-gray-950 border border-gray-800 rounded-lg font-mono text-xs text-gray-400">
               <span className="text-gray-500 block mb-1">Generated Cron Expression:</span>
               <span className="text-indigo-300">
-                {cronFrequency === 'hourly'
-                  ? '0 * * * *'
-                  : cronFrequency === 'daily'
-                    ? `${cronTime.split(':')[1]} ${cronTime.split(':')[0]} * * *`
-                    : `${cronTime.split(':')[1]} ${cronTime.split(':')[0]} * * 0`}{' '}
-                /usr/bin/env python3 tnf_backup_cron.py --execute-backup
+                {generatedCronExpression} /usr/bin/env python3 tnf_backup_cron.py --execute-backup
               </span>
             </div>
 
             <button
               onClick={handleSaveCronSchedule}
+              disabled={loading}
               className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
             >
               <Save className="h-4 w-4" /> Save & Sync Persistent Cron

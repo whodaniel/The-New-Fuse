@@ -1,33 +1,47 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-17T00:03:20.351Z`  
-Handoff ID: `a0ee822e-5638-417e-a2e5-1cd16e0af2fa`
+Created At: `2026-08-17T03:04:05.461Z`  
+Handoff ID: `06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `4e205676b9ee4e4402975f47b0bc93b46ca16df1`
+- Head SHA: `e35bc028e7425ffdc0958ddeeed17ed875582607`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Dirty-tree cleanup: stop autonomous TUI from persisting raw tool JSON; harden
-  google-ai CLI; boot-tnf PID cleanup; sheets MCP import fix.
+- Ship Nest backup API + frontend BackupRestore/PlatformHub, and tnf
+  halt/stop-tnf for boot-tnf PID cleanup.
 
 ## Changed Paths
 
+- apps/backend/src/modules/admin/admin.module.ts
+- apps/backend/src/modules/admin/controllers/admin-backup.controller.ts
+- apps/backend/src/modules/admin/services/backup.service.ts
+- apps/frontend/.gitignore
+- apps/frontend/public/local-intel/.gitkeep
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/components/Navigation/PremiumHeader.tsx
+- apps/frontend/src/config/routeCatalog.ts
+- apps/frontend/src/config/sidebarNavigation.ts
+- apps/frontend/src/config/sitemap.ts
+- apps/frontend/src/hooks/index.ts
+- apps/frontend/src/hooks/useBackup.ts
+- apps/frontend/src/pages/Admin/BackupRestore.tsx
+- apps/frontend/src/pages/PlatformHub.tsx
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/google-sheets-mcp-server/src/index.ts
+- packages/api-client/src/index.ts
+- packages/api-client/src/services/BackupService.ts
+- packages/api-client/src/services/index.ts
 - packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/commands/google-ai.ts
-- packages/tnf-cli/src/utils/llm-client.ts
-- scripts/boot-tnf.sh
+- packages/tnf-cli/src/commands/halt.ts
+- scripts/stop-tnf.cjs
 
 ## Verification
 
@@ -44,11 +58,9 @@ Handoff ID: `a0ee822e-5638-417e-a2e5-1cd16e0af2fa`
 
 ### Resume Checklist
 
-- boot-tnf bash -n ok
-- staged product+handoff
-- no concurrent git commit
+- handoff covers backup+halt
+- no personal emails in docs
 
 ## Next Actions
 
-- Smoke tnf google-ai status; optionally restart relay for Redis leak fix; keep
-  receipts/codebase_map uncommitted.
+- Keep receipts/codebase_map uncommitted.

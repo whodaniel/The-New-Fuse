@@ -10,6 +10,7 @@ import { AdminDatabaseController } from './controllers/admin-database.controller
 import { AdminMetricsController } from './controllers/admin-metrics.controller';
 import { AdminSettingsController } from './controllers/admin-settings.controller';
 import { AdminUsersController } from './controllers/admin-users.controller';
+import { BackupService } from './services/backup.service';
 
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { ConfigurationModule } from '../configuration/configuration.module';
@@ -28,5 +29,7 @@ import { SystemMetricsModule } from '../system-metrics/system-metrics.module';
     AdminMetricsController,
     AdminDashboardController,
   ],
+  providers: [BackupService],
+  exports: [BackupService],
 })
 export class AdminModule {}

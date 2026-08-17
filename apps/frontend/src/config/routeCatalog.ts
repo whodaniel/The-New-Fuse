@@ -674,9 +674,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     description: 'Public product map surface',
   },
   {
-    name: 'Platform Alias',
+    name: 'Personal Intelligence Hub',
     path: '/platform',
-    description: 'Platform alias redirect to product map',
+    description: 'Google Gemini / Antigravity personal intelligence concordance hub',
   },
   {
     name: 'Resources Skills',
