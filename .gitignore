@@ -544,3 +544,8 @@ apps/gemini-bridge-extension/icons/
 # token fix (PR #74) and the apps/api env leak fix (commit 41f6f4d6a7).
 docs/legal/sale/*.md
 !docs/legal/sale/README.md
+
+# Receipts and codebase maps (auto-generated, keep uncommitted)
+codebase_tracker.json
+codebase_index.html
+docs/operations/tnf-action-receipts.jsonl

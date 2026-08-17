@@ -4,10 +4,26 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Operator: confirm .gitignore receipts ignore. Defer
-google-ai leftover, rclone wiring, dist-v7.
+**Current Directive:** Ship google-ai view/resume next. Defer dist-v7, rclone,
+concordance JSON.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-17 CLI Agent Autopilot Continuity Verification & Onboarder
+  Stabilization (Antigravity/Gemini)**:
+  - **Autopilot Continuity & Stall Defense Verification**: Analyzed and verified
+    the root causes of interactive session pauses in
+    `packages/tnf-cli/src/cli.ts` (`STALL_AUTO_HOLD_AFTER = 5` at line 20508).
+    Confirmed that 5 idle tool/dump loops trigger auto-hold, resumable via
+    `/continue`.
+  - **Super Admin Auth Lifecycle**: Verified `requireSuperAdmin` credential
+    checks (`TNF_SUPER_ADMIN_INPUT_TOKEN` / `TNF_SUPER_ADMIN_TOKEN`) across
+    background full-auto cycles and interactive shell environments.
+  - **Turn Zero Onboarder Bugfix & Verification**: Fixed runtime bugs in
+    `scripts/tnf-onboard.cjs` (removed unimported `chalk` usage, targeted
+    compiled `dist/cli.js`, updated platform to `tnf`, and passed `-d` daemon
+    mode). Verified `node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000`
+    exits with code 0 and 0 boot triage errors.
 
 - [✅] **2026-08-16 Apple Notes Sequential Ingestion, Storage Transparency &
   Persistent Cron Backup Suite (Gemini)**:
@@ -1015,6 +1031,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-17T04:21:18.193Z handoff `b16b8568-acd2-4a1b-9eba-60658ece28cb` head
+  `8f8c5ccbca8b` project `TNF-SESSION` — Ship google-ai view/resume next. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T04:21:16.291Z handoff `9c16b0f8-599d-4b1f-8da8-592f6a31e2e2` head
+  `8f8c5ccbca8b` project `TNF-SESSION` — Ship google-ai view/resume next. Defer
+  dist-v7, rclone, concordance JSON.
 
 - 2026-08-17T03:53:31.029Z handoff `edebdf5e-b735-45d3-9527-f262327c7960` head
   `12f3aaa035b6` project `TNF-SESSION` — Operator: confirm .gitignore receipts

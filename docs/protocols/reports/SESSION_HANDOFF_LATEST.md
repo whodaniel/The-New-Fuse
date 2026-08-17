@@ -1,29 +1,24 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-17T03:53:30.982Z`  
-Handoff ID: `edebdf5e-b735-45d3-9527-f262327c7960`
+Created At: `2026-08-17T04:21:18.135Z`  
+Handoff ID: `b16b8568-acd2-4a1b-9eba-60658ece28cb`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `12f3aaa035b6de873e0bf000fb9a3b86ca40387f`
+- Head SHA: `8f8c5ccbca8b2ef0a591af423ac304ad7cc9580d`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Wire apps/api and api-gateway admin backup to tnf_backup_cron.py. .gitignore
-  authority edit left for operator.
+- Ignore auto-generated receipts and codebase tracker artifacts
+  (operator-confirmed authority edit).
 
 ## Changed Paths
 
-- apps/api-gateway/src/app.module.ts
-- apps/api-gateway/src/gateway/admin-backup-gateway.controller.ts
-- apps/api-gateway/src/gateway/admin-backup-gateway.module.ts
-- apps/api/src/controllers/admin-backup.controller.ts
-- apps/api/src/modules/admin/admin.module.ts
-- apps/api/src/services/backup-cron.service.ts
+- .gitignore
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
@@ -44,13 +39,11 @@ Handoff ID: `edebdf5e-b735-45d3-9527-f262327c7960`
 
 ### Resume Checklist
 
-- tnf halt --help ok
+- gitignore receipts ignored
+- broker up
 - queues 0
-- broker pid
-- apps/api backup wired
-- gitignore authority blocked
+- google-ai view/resume pending
 
 ## Next Actions
 
-- Operator: confirm .gitignore receipts ignore. Defer google-ai leftover, rclone
-  wiring, dist-v7.
+- Ship google-ai view/resume next. Defer dist-v7, rclone, concordance JSON.
