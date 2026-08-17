@@ -1,24 +1,25 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-17T04:21:18.135Z`  
-Handoff ID: `b16b8568-acd2-4a1b-9eba-60658ece28cb`
+Created At: `2026-08-17T04:23:41.874Z`  
+Handoff ID: `bad1d286-e2d9-4354-b3f1-5e53ad6f3632`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `8f8c5ccbca8b2ef0a591af423ac304ad7cc9580d`
+- Head SHA: `a7d9551b63bb895831d958c3f89086e1b5945d13`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Ignore auto-generated receipts and codebase tracker artifacts
-  (operator-confirmed authority edit).
+- Stop tracking receipt and codebase tracker files now covered by .gitignore.
 
 ## Changed Paths
 
-- .gitignore
+- codebase_index.html
+- codebase_tracker.json
+- docs/operations/tnf-action-receipts.jsonl
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
@@ -39,11 +40,10 @@ Handoff ID: `b16b8568-acd2-4a1b-9eba-60658ece28cb`
 
 ### Resume Checklist
 
-- gitignore receipts ignored
-- broker up
-- queues 0
-- google-ai view/resume pending
+- receipts untracked
+- gitignore on main
+- google-ai pending
 
 ## Next Actions
 
-- Ship google-ai view/resume next. Defer dist-v7, rclone, concordance JSON.
+- Ship google-ai view/resume. Defer dist-v7, rclone, concordance JSON.

@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Ship google-ai view/resume next. Defer dist-v7, rclone,
+**Current Directive:** Ship google-ai view/resume. Defer dist-v7, rclone,
 concordance JSON.
 
 <!-- CURRENT_DIRECTIVE:END -->
@@ -1031,6 +1031,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-17T04:23:41.932Z handoff `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` head
+  `a7d9551b63bb` project `TNF-SESSION` — Ship google-ai view/resume. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T04:23:40.524Z handoff `1cdd1c89-346f-4380-8983-2d05c8af421c` head
+  `a7d9551b63bb` project `TNF-SESSION` — Ship google-ai view/resume. Defer
+  dist-v7, rclone, concordance JSON.
 
 - 2026-08-17T04:21:18.193Z handoff `b16b8568-acd2-4a1b-9eba-60658ece28cb` head
   `8f8c5ccbca8b` project `TNF-SESSION` — Ship google-ai view/resume next. Defer
