@@ -1,29 +1,30 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-17T04:23:41.874Z`  
-Handoff ID: `bad1d286-e2d9-4354-b3f1-5e53ad6f3632`
+Created At: `2026-08-17T04:26:34.347Z`  
+Handoff ID: `61f04423-b881-43fc-bfe3-a4ca73ec6099`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `a7d9551b63bb895831d958c3f89086e1b5945d13`
+- Head SHA: `b1eb732489bc4055ce3d7a33ed9be226da541ac8`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Stop tracking receipt and codebase tracker files now covered by .gitignore.
+- Add tnf google-ai view/resume over the Antigravity bridge; drop incomplete
+  cloud-sync stub.
 
 ## Changed Paths
 
-- codebase_index.html
-- codebase_tracker.json
-- docs/operations/tnf-action-receipts.jsonl
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/google-ai.ts
+- scripts/google-ai/tnf_gemini_antigravity_bridge.py
 
 ## Verification
 
@@ -40,10 +41,10 @@ Handoff ID: `bad1d286-e2d9-4354-b3f1-5e53ad6f3632`
 
 ### Resume Checklist
 
-- receipts untracked
-- gitignore on main
-- google-ai pending
+- google-ai view missing-id errors
+- gitignore+untrack on main
+- broker up
 
 ## Next Actions
 
-- Ship google-ai view/resume. Defer dist-v7, rclone, concordance JSON.
+- Defer BackupService path fix, rclone wiring, dist-v7, concordance JSON.

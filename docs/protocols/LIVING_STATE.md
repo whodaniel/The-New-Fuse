@@ -4,7 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Ship google-ai view/resume. Defer dist-v7, rclone,
+**Current Directive:** Defer BackupService path fix, rclone wiring, dist-v7,
 concordance JSON.
 
 <!-- CURRENT_DIRECTIVE:END -->
@@ -1031,6 +1031,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
+  `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone
+  wiring, dist-v7, concordance JSON.
+
+- 2026-08-17T04:26:32.826Z handoff `12b94313-fac9-4b13-89b1-cd55aa1d2338` head
+  `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone
+  wiring, dist-v7, concordance JSON.
 
 - 2026-08-17T04:23:41.932Z handoff `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` head
   `a7d9551b63bb` project `TNF-SESSION` — Ship google-ai view/resume. Defer

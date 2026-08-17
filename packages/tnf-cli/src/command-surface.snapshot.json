@@ -2520,6 +2520,13 @@
           "commands": []
         },
         {
+          "name": "resume",
+          "aliases": [],
+          "description": "Print resumption instructions or trigger agent resumption for a Google AI session",
+          "options": [],
+          "commands": []
+        },
+        {
           "name": "status",
           "aliases": [],
           "description": "Inspect connection to Google Gemini & Antigravity local database, brains, and projects",
@@ -2542,6 +2549,18 @@
             }
           ],
           "commands": []
+        },
+        {
+          "name": "view",
+          "aliases": [],
+          "description": "Inspect detailed transcript, steps, and artifacts for a Google AI session",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output full session metadata as JSON"
+            }
+          ],
+          "commands": []
         }
       ]
     },
@@ -2561,6 +2580,18 @@
         {
           "flags": "--quiet",
           "description": "Suppress human-readable summary"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "halt",
+      "aliases": [],
+      "description": "Gracefully stop TNF background services",
+      "options": [
+        {
+          "flags": "--force",
+          "description": "Force kill stubborn processes (SIGKILL instead of SIGTERM)"
         }
       ],
       "commands": []

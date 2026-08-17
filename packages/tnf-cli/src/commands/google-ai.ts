@@ -138,4 +138,34 @@ export function registerGoogleAiCommand(program: Command, repoRoot: string): voi
         console.error(chalk.red(`Failed to read session index: ${err.message}`));
       }
     });
+
+  googleAi
+    .command('view <sessionId>')
+    .description('Inspect detailed transcript, steps, and artifacts for a Google AI session')
+    .option('--json', 'Output full session metadata as JSON')
+    .action((sessionId: string, options: { json?: boolean }) => {
+      const scriptPath = resolveBridgeScriptPath(repoRoot);
+      const args = [scriptPath, '--view', sessionId];
+      if (options.json) args.push('--json');
+
+      const result = spawnSync('python3', args, { stdio: 'inherit' });
+      if (result.status !== 0) {
+        console.error(chalk.red(`\nFailed to load session details for: ${sessionId}`));
+      }
+    });
+
+  googleAi
+    .command('resume <sessionId>')
+    .description(
+      'Print resumption instructions or trigger agent resumption for a Google AI session'
+    )
+    .action((sessionId: string) => {
+      const scriptPath = resolveBridgeScriptPath(repoRoot);
+      const args = [scriptPath, '--resume', sessionId];
+
+      const result = spawnSync('python3', args, { stdio: 'inherit' });
+      if (result.status !== 0) {
+        console.error(chalk.red(`\nFailed to generate resume command for: ${sessionId}`));
+      }
+    });
 }

@@ -140,6 +140,117 @@ class GoogleAntigravityBridge:
 
         return conversations
 
+    def resolve_conversation_id(self, identifier: str) -> Optional[str]:
+        """Resolves full UUID conversation_id from session ID or partial string."""
+        raw = identifier.strip()
+        if raw.startswith("agy-"):
+            raw = raw[4:]
+        
+        # Exact match in brain dir
+        brain_path = self.brain_dir / raw
+        if brain_path.exists() and brain_path.is_dir():
+            return raw
+
+        # Search in DB
+        if self.db_path.exists():
+            try:
+                conn = sqlite3.connect(str(self.db_path))
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT conversation_id FROM conversation_summaries WHERE conversation_id = ? OR conversation_id LIKE ? LIMIT 1;",
+                    (raw, f"{raw}%")
+                )
+                row = cursor.fetchone()
+                conn.close()
+                if row:
+                    return row[0]
+            except Exception:
+                pass
+
+        # Search prefix in brain dir
+        if self.brain_dir.exists():
+            for d in self.brain_dir.iterdir():
+                if d.is_dir() and d.name.startswith(raw):
+                    return d.name
+
+        return None
+
+    def get_session_details(self, identifier: str, max_transcript_steps: int = 30) -> Dict[str, Any]:
+        """Retrieves full session details, metadata, artifacts, and parsed transcript steps."""
+        cid = self.resolve_conversation_id(identifier)
+        if not cid:
+            return {"error": f"Session '{identifier}' not found in database or brain directory."}
+
+        meta = {}
+        if self.db_path.exists():
+            try:
+                conn = sqlite3.connect(str(self.db_path))
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM conversation_summaries WHERE conversation_id = ?;", (cid,))
+                row = cursor.fetchone()
+                if row:
+                    meta = dict(row)
+                conn.close()
+            except Exception as err:
+                meta["db_error"] = str(err)
+
+        brain_session_dir = self.brain_dir / cid
+        artifacts = []
+        transcript_steps = []
+        total_raw_steps = 0
+
+        if brain_session_dir.exists():
+            for p in brain_session_dir.glob("*"):
+                if p.is_file() and not p.name.startswith("."):
+                    artifacts.append({
+                        "name": p.name,
+                        "path": str(p),
+                        "sizeBytes": p.stat().st_size,
+                    })
+
+            transcript_file = brain_session_dir / ".system_generated" / "logs" / "transcript.jsonl"
+            if transcript_file.exists():
+                try:
+                    with transcript_file.open("r", encoding="utf-8") as f:
+                        lines = f.readlines()
+                        total_raw_steps = len(lines)
+                        sample_lines = lines[:max_transcript_steps] if max_transcript_steps > 0 else lines
+                        for line in sample_lines:
+                            try:
+                                step_obj = json.loads(line.strip())
+                                transcript_steps.append({
+                                    "step_index": step_obj.get("step_index"),
+                                    "type": step_obj.get("type"),
+                                    "source": step_obj.get("source"),
+                                    "content": (step_obj.get("content") or "")[:400],
+                                    "tool_calls": [
+                                        tc.get("name") if isinstance(tc, dict) else str(tc)
+                                        for tc in step_obj.get("tool_calls", [])
+                                    ] if step_obj.get("tool_calls") else [],
+                                })
+                            except Exception:
+                                pass
+                except Exception as err:
+                    transcript_steps.append({"error": f"Failed reading transcript: {err}"})
+
+        return {
+            "conversation_id": cid,
+            "sessionId": f"agy-{cid}",
+            "title": meta.get("title") or f"Session {cid[:8]}",
+            "preview": meta.get("preview") or "",
+            "step_count": meta.get("step_count") or len(transcript_steps),
+            "last_modified": meta.get("last_modified_time") or "",
+            "workspace": meta.get("workspace_uris") or "",
+            "project_id": meta.get("project_id") or "",
+            "agent_name": meta.get("agent_name") or "gemini-personal",
+            "brain_path": str(brain_session_dir) if brain_session_dir.exists() else None,
+            "artifacts": artifacts,
+            "transcript_steps": transcript_steps,
+            "total_transcript_lines": total_raw_steps or len(transcript_steps),
+            "resume_command": f"cd {meta.get('workspace_uris') or os.getcwd()} && agy resume {cid}",
+        }
+
     def sync_to_tnf_sessions(self) -> Tuple[int, int]:
         """Synchronizes Antigravity conversations into TNF session registries."""
         convs = self.fetch_all_conversations()
@@ -283,10 +394,49 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="TNF Google Gemini & Antigravity Personal Intelligence Bridge")
     parser.add_argument("--sync", action="store_true", help="Sync all conversations into TNF session registries")
     parser.add_argument("--status", action="store_true", help="Show Google AI ecosystem connection status")
+    parser.add_argument("--view", type=str, help="View detailed session inspector & transcript by session ID")
+    parser.add_argument("--resume", type=str, help="Print resumption command & launch agent for session ID")
     parser.add_argument("--json", action="store_true", help="Output status or sync result as JSON")
     args = parser.parse_args()
 
     bridge = GoogleAntigravityBridge()
+
+    if args.view:
+        details = bridge.get_session_details(args.view)
+        if args.json:
+            print(json.dumps(details, indent=2))
+        else:
+            if "error" in details:
+                print(f"[ERROR] {details['error']}")
+                return 1
+            print(f"\n=======================================================")
+            print(f"  Session: {details['title']}")
+            print(f"=======================================================\n")
+            print(f"  Session ID:      {details['sessionId']}")
+            print(f"  Conversation ID: {details['conversation_id']}")
+            print(f"  Total Steps:     {details['step_count']}")
+            print(f"  Last Modified:   {details['last_modified']}")
+            print(f"  Workspace:       {details['workspace']}")
+            print(f"  Brain Artifacts: {len(details['artifacts'])} files")
+            for art in details['artifacts']:
+                print(f"    - {art['name']} ({art['sizeBytes']} bytes)")
+            print(f"\n  Resume Command:  {details['resume_command']}\n")
+            if details.get('transcript_steps'):
+                print(f"--- Recent Transcript ({len(details['transcript_steps'])} steps) ---")
+                for s in details['transcript_steps']:
+                    role = "user" if s.get('type') == 'USER_INPUT' else "agent"
+                    print(f"  [{s.get('step_index')}] ({role}/{s.get('type')}): {s.get('content', '')[:120]}...")
+            print("")
+        return 0
+
+    if args.resume:
+        details = bridge.get_session_details(args.resume)
+        if "error" in details:
+            print(f"[ERROR] {details['error']}")
+            return 1
+        print(f"\n[TNF] Resuming Google AI Session: {details['title']}")
+        print(f"Run command:\n  {details['resume_command']}\n")
+        return 0
 
     if args.status or (not args.sync):
         status = bridge.inspect_ecosystem()
