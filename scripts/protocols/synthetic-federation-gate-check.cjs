@@ -11,10 +11,14 @@ function printUsage() {
       '',
       'Options:',
       '  --endpoint <url>      Gate API endpoint base URL',
-      '  --token <token>       Optional x-auth-token (or set TNF_GATE_POLICY_TOKEN)',
+      '  --token <token>       x-auth-token (or set TNF_GATE_POLICY_TOKEN)',
       '  --tenant <id>         Tenant id (default: tnf-local)',
       '  --json                Print JSON summary',
       '  --help, -h            Show help',
+      '',
+      'Env:',
+      '  TNF_GATE_POLICY_TOKEN    Required auth token for remote endpoint',
+      '  TNF_GATE_POLICY_ENDPOINT Remote policy endpoint URL',
     ].join('\n')
   );
 }
@@ -46,6 +50,9 @@ function parseArgs(argv) {
   }
 
   if (!args.endpoint) throw new Error('Missing endpoint URL');
+  if (!args.token) {
+    throw new Error('TNF_GATE_POLICY_TOKEN is required. Set it in .env.local or pass via --token.');
+  }
   return args;
 }
 
@@ -100,22 +107,18 @@ function buildValidRequest(tenant) {
 async function evaluate(endpoint, token, request) {
   const url = `${endpoint.replace(/\/+$/, '')}/gates/federation/evaluate`;
   
-  // FALLBACK: If endpoint is unreachable or returns 500, return mock success for local development
-  // This prevents the cron from failing when the remote service is down
   let response;
   try {
     response = await fetch(url, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        ...(token ? { 'x-auth-token': token } : {}),
+        'x-auth-token': token,
       },
       body: JSON.stringify({ request }),
     });
   } catch (error) {
-    // Network error - use mock response
-    console.error(`[FALLBACK] Federation gate endpoint unreachable (${error.message}), using mock response for local development`);
-    return mockResponse(request);
+    throw new Error(`Federation gate endpoint unreachable: ${error.message}`);
   }
   
   let body = null;
@@ -125,74 +128,31 @@ async function evaluate(endpoint, token, request) {
     body = null;
   }
   
-  // If server returns 500/401/403 without usable policy, use local mock for OSS hosts
-  // that have not configured TNF_GATE_POLICY_TOKEN (auth fault ≠ policy deny).
-  if (response.status === 500 || response.status === 401 || response.status === 403) {
-    const allowLocal =
-      response.status === 500 ||
-      !token ||
-      ['1', 'true', 'yes', 'on'].includes(
-        String(process.env.TNF_GATE_POLICY_LOCAL_FALLBACK || '1')
-          .trim()
-          .toLowerCase()
-      );
-    if (allowLocal) {
-      console.error(
-        `[FALLBACK] Federation gate returned ${response.status} (token=${token ? 'set' : 'missing'}); using mock response for local development`
-      );
-      return mockResponse(request);
-    }
+  if (response.status === 401 || response.status === 403) {
+    throw new Error(`Authentication failed (HTTP ${response.status}): TNF_GATE_POLICY_TOKEN was rejected. Check token validity and tenant configuration.`);
+  }
+  if (response.status === 500) {
+    throw new Error(`Federation gate server error (HTTP 500): ${JSON.stringify(body)}`);
+  }
+  // 422 = policy deny (valid response), 200 = policy allow (valid response)
+  if (response.status !== 200 && response.status !== 422) {
+    throw new Error(`Federation gate returned unexpected HTTP ${response.status}: ${JSON.stringify(body)}`);
   }
   
   return {
     status: response.status,
-    ok: response.ok,
+    ok: response.status === 200 || response.status === 422,
     body,
   };
 }
 
-function mockResponse(request) {
-  // Check if this is a valid or invalid request by looking at gateDecisions
-  // Valid request has all 5 gates, invalid is missing CHANNEL_MEMBERSHIP_GATE
-  const hasAllGates = request.gateDecisions && request.gateDecisions.length === 5;
-  
-  return {
-    status: 200,
-    ok: true,
-    body: {
-      ok: true,
-      decision: hasAllGates ? 'allow' : 'deny',
-      reasons: hasAllGates 
-        ? ['mock-response: all gates passed, using local fallback'] 
-        : ['mock-response: CHANNEL_MEMBERSHIP_GATE missing, using local fallback'],
-      evaluatedAt: new Date().toISOString(),
-    },
-  };
-}
+// Removed mockResponse function - TNF does not use mocks. All evaluations must hit real endpoints.
 
 function assertResult(name, result, expectOk) {
   const body = result.body || {};
   const decision = body.decision;
-  const bodyOk = body.ok === true;
   
   if (expectOk && decision !== 'allow') {
-    // A 401 is a configuration fault, not a policy verdict, and saying
-    // "expected decision='allow'" invites the reader to debug policy logic that
-    // was never consulted. This gate ran every 15 minutes from at least
-    // 2026-08-05 to 2026-08-06 reporting that mismatch, while the real cause
-    // was that TNF_GATE_POLICY_TOKEN is not set anywhere on this host — not in
-    // the shell, not in any .env file, and not documented in .env.example. The
-    // credential was never configured, so the request was never authorized, so
-    // no decision was ever made.
-    if (result.status === 401 || result.status === 403) {
-      const hasToken = Boolean(process.env.TNF_GATE_POLICY_TOKEN);
-      throw new Error(
-        `${name}: policy endpoint rejected the request (HTTP ${result.status}) — ` +
-          `${hasToken ? 'TNF_GATE_POLICY_TOKEN is set but was rejected (expired or wrong tenant?)' : 'TNF_GATE_POLICY_TOKEN is NOT SET'}. ` +
-          `No policy decision was reached; this is an auth/config fault, not a deny. ` +
-          `Endpoint: ${result.endpoint || 'policy endpoint'}. See .env.example.`
-      );
-    }
     throw new Error(
       `${name} expected allow decision='allow' but got status=${result.status} decision=${decision} body=${JSON.stringify(body)}`
     );
