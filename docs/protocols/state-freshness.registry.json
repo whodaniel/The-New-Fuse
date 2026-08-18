@@ -1,81 +1,14 @@
 {
-  "$comment": "Declarative registry of VOLATILE STATE DOMAINS. Authority: docs/protocols/STATE_FRESHNESS_MANDATE.md. This file is tracked on purpose: data/protocols/*.json is gitignored, and a missing registry there would make every consumer silently no-op (see the 0/72 cron incident).",
-  "version": 1,
-  "receiptsPath": "data/protocols/state-freshness.json",
-  "domains": [
-    {
-      "id": "github.public.main",
-      "title": "Public repo main tip",
-      "ttlSeconds": 900,
-      "severity": "high",
-      "probe": "gh api repos/whodaniel/The-New-Fuse/git/ref/heads/main --jq '.object.sha'",
-      "corroborate": "gh api 'repos/whodaniel/The-New-Fuse/commits?sha=main&per_page=1' --jq '.[0].sha'",
-      "claims": [
-        "main is at <sha>",
-        "history was rewritten/replaced",
-        "main has N commits"
-      ],
-      "trap": "gh api repos/<r>/commits/<sha> returns 200 for ANY reachable object, including a dangling commit that is on no branch. It proves the object exists, NOT that it is the branch tip. Only a ref lookup (git/ref/heads/main) proves tip. Before reporting a rewrite, also confirm the suspect sha appears in NO branch: gh api 'repos/<r>/branches?per_page=100'."
-    },
-    {
-      "id": "github.public.history-depth",
-      "title": "Public repo main ancestry depth",
-      "ttlSeconds": 900,
-      "severity": "high",
-      "probe": "gh api 'repos/whodaniel/The-New-Fuse/commits?sha=main&per_page=100' --jq 'length'",
-      "claims": ["history is intact", "history was truncated to N commits"],
-      "trap": "per_page caps the result; 'length' is a floor, not the true count. A value equal to per_page means 'at least N', never 'exactly N'."
-    },
-    {
-      "id": "github.public.pr-queue",
-      "title": "Public repo open PR numbers",
-      "ttlSeconds": 600,
-      "severity": "medium",
-      "probe": "gh pr list --repo whodaniel/The-New-Fuse --state open --limit 100 --json number --jq '[.[].number]|sort|tostring'",
-      "claims": [
-        "N PRs are open",
-        "the queue was wiped",
-        "PR #X is open/closed"
-      ],
-      "trap": "Bots re-file closed PRs under new numbers. A closed PR number does NOT mean the work was abandoned — search for an equivalent re-file before reporting loss."
-    },
-    {
-      "id": "github.public.ruleset",
-      "title": "Public repo main protection rules",
-      "ttlSeconds": 3600,
-      "severity": "high",
-      "probe": "gh api repos/whodaniel/The-New-Fuse/rules/branches/main --jq '[.[].type]|unique|sort|join(\",\")'",
-      "claims": ["main is/is not force-pushable", "required checks are X"],
-      "trap": "A 'non_fast_forward' rule means force-push is REJECTED. Do not conclude a force-push succeeded without checking this rule and confirming the ref actually moved."
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "title": "Control-plane files absent from public repo",
-      "ttlSeconds": 1800,
-      "severity": "critical",
-      "probe": "for f in packages/relay-core/src/master-clock.ts packages/relay-core/src/broker-agent.ts packages/agent-coordination; do gh api \"repos/whodaniel/The-New-Fuse/contents/$f?ref=main\" >/dev/null 2>&1 && echo \"LEAKED:$f\"; done; echo OK",
-      "expect": "^OK$",
-      "claims": ["proprietary source is/is not published"],
-      "trap": "Assert a leak only from a 200 on the public repo at ref=main. Presence in the monorepo or in a sync work-tree is not publication."
-    },
-    {
-      "id": "git.monorepo.head",
-      "title": "Local monorepo HEAD + dirty state",
-      "ttlSeconds": 300,
-      "severity": "medium",
-      "probe": "git -C . rev-parse --short HEAD && git -C . status --porcelain | wc -l | tr -d ' '",
-      "claims": ["local is clean/dirty", "change X is committed"],
-      "trap": "Uncommitted working-tree edits are invisible to anything reading the remote. 'I made the edit' is not 'the edit is committed' is not 'the edit is pushed'."
-    },
-    {
-      "id": "runtime.services",
-      "title": "Redis + relay reachability",
-      "ttlSeconds": 300,
-      "severity": "medium",
-      "probe": "( timeout 5 redis-cli ping 2>/dev/null || echo REDIS_UNREACHABLE ) && ( curl -sf -m 5 http://127.0.0.1:3000/health >/dev/null 2>&1 && echo RELAY_OK || echo RELAY_DOWN )",
-      "expect": "PONG[\\s\\S]*RELAY_OK",
-      "claims": ["redis is up", "the relay is healthy"],
-      "trap": "A LISTENing port is liveness, not reachability. Redis can hold an open port while starved past a 120s ping. Never substitute lsof/pgrep for an actual round-trip."
-    }
+  "$comment":"Declarative registry of volatile state domains. Authority: docs/protocols/STATE_FRESHNESS_MANDATE.md. Private TNF domains degrade gracefully for public OSS consumers that cannot access them.","version":2,"receiptsPath":"data/protocols/state-freshness.json","domains":[
+    {"id":"github.dev.main","title":"Canonical tnf-monorepo main tip (internal when accessible)","ttlSeconds":900,"severity":"high","probe":"gh api repos/whodaniel/tnf-monorepo/git/ref/heads/main --jq '.object.sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE","corroborate":"gh api 'repos/whodaniel/tnf-monorepo/commits?sha=main&per_page=1' --jq '.[0].sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE","expect":"^([0-9a-f]{40}|INTERNAL_UNAVAILABLE)$","claims":["canonical development main is at <sha>","private canonical source is unavailable to this installation"],"trap":"A local HEAD, remembered commit, downstream publication SHA, or public clone is not proof of the private canonical main tip. Public OSS consumers may legitimately receive INTERNAL_UNAVAILABLE."},
+    {"id":"github.public.main","title":"Public open-runtime main tip","ttlSeconds":900,"severity":"high","probe":"gh api repos/whodaniel/The-New-Fuse/git/ref/heads/main --jq '.object.sha'","corroborate":"gh api 'repos/whodaniel/The-New-Fuse/commits?sha=main&per_page=1' --jq '.[0].sha'","claims":["public main is at <sha>","public history was rewritten/replaced"],"trap":"A reachable commit object is not proof that it is the public main tip. Only ref/heads/main establishes position; catastrophic history claims require corroboration."},
+    {"id":"github.control-plane.main","title":"Private control-plane publication tip (internal when accessible)","ttlSeconds":900,"severity":"high","probe":"gh api repos/whodaniel/fuse-control-plane/git/ref/heads/main --jq '.object.sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE","corroborate":"gh api 'repos/whodaniel/fuse-control-plane/commits?sha=main&per_page=1' --jq '.[0].sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE","expect":"^([0-9a-f]{40}|INTERNAL_UNAVAILABLE)$","claims":["control-plane publication main is at <sha>","private publication state is unavailable to this installation"],"trap":"The control-plane repo is a private downstream extract. Public OSS consumers may legitimately receive INTERNAL_UNAVAILABLE; never treat that as a framework failure or infer private publication state."},
+    {"id":"github.public.pr-queue","title":"Public repo open PR numbers","ttlSeconds":600,"severity":"medium","probe":"gh pr list --repo whodaniel/The-New-Fuse --state open --limit 100 --json number --jq '[.[].number]|sort|tostring'","claims":["N public PRs are open","PR #X is open/closed"],"trap":"Closed PR numbers can be replaced by re-filed sync/publication PRs. Search for equivalent work before reporting that a publication change was lost."},
+    {"id":"github.public.ruleset","title":"Public repo main protection rules","ttlSeconds":3600,"severity":"high","probe":"gh api repos/whodaniel/The-New-Fuse/rules/branches/main --jq '[.[].type]|unique|sort|join(\",\")'","claims":["public main is/is not force-pushable","public required checks are X"],"trap":"Repository rules can change independently. A remembered ruleset or a successful object upload does not prove public main protection or that a force-push occurred."},
+    {"id":"github.public.proprietary-leak","title":"Control-plane files absent from public repo","ttlSeconds":1800,"severity":"critical","probe":"for f in packages/relay-core/src/master-clock.ts packages/relay-core/src/broker-agent.ts packages/agent-coordination; do gh api \"repos/whodaniel/The-New-Fuse/contents/$f?ref=main\" >/dev/null 2>&1 && echo \"LEAKED:$f\"; done; echo OK","expect":"^OK$","claims":["proprietary source is/is not published"],"trap":"Presence in tnf-monorepo or an export work tree is not publication. Assert a leak only from public-repo evidence at the published ref and corroborate a critical exposure before escalating."},
+    {"id":"tnf.product-repo-map","title":"Product/repository map revision in this checkout","ttlSeconds":1800,"severity":"medium","probe":"git hash-object data/distribution/product-repo-map.json && node -e \"const x=require('./data/distribution/product-repo-map.json'); console.log(x.updated||'unknown')\"","claims":["this checkout classifies repo X as product Y","a repo is current/archived/publication-only in this map revision"],"trap":"Repository names and roles have changed historically. Use the machine-readable map shipped in the current checkout and distinguish it from inaccessible private source state."},
+    {"id":"tnf.oss-app-boundary","title":"OSS/satellite application boundary revision in this checkout","ttlSeconds":1800,"severity":"medium","probe":"git hash-object data/distribution/oss-app-boundary.json && node -e \"const x=require('./data/distribution/oss-app-boundary.json'); console.log(x.updated||'unknown')\"","claims":["app X ships in the default OSS runtime","app X is a satellite/private surface"],"trap":"Being present under a historical apps/ path does not prove an app ships in the regular runtime. The machine-readable boundary in the current checkout is the packaging receipt."},
+    {"id":"git.repository.identity","title":"Local repository identity + work state","ttlSeconds":300,"severity":"high","probe":"printf 'origin='; git remote get-url origin; printf 'head='; git rev-parse HEAD; printf 'branch='; git branch --show-current; printf 'dirty='; git status --porcelain | wc -l | tr -d ' ' ","claims":["this working tree points at repository X","change X is committed","the tree is clean"],"trap":"A local folder name does not establish repository identity. Internal TNF development, owned publication targets, and external forks must be distinguished using the live remote and git state."},
+    {"id":"runtime.services","title":"Redis + relay reachability","ttlSeconds":300,"severity":"medium","probe":"( timeout 5 redis-cli ping 2>/dev/null || echo REDIS_UNREACHABLE ) && ( curl -sf -m 5 http://127.0.0.1:3000/health >/dev/null 2>&1 && echo RELAY_OK || echo RELAY_DOWN )","expect":"PONG[\\s\\S]*RELAY_OK","claims":["redis is up","the relay is healthy"],"trap":"A listening process or remembered boot message is not a round-trip health check. Probe the service before asserting current reachability."}
   ]
 }

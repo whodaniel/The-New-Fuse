@@ -1,85 +1,77 @@
 `[CLASS:PRIME] [STATUS:ACTIVE]`
 
-# TNF Adaptable Host Verification
+# TNF Adaptable Host Verification — V2
 
 **Protocol ID:** `TNF_ADAPTABLE_HOST_VERIFICATION`  
-**Status:** ACTIVE  
-**Scope:** Autonomy health, sub-director cycle checks, frontload verification,
-and any gate that historically assumed a fixed host pack (especially OpenClaw).
+**Status:** ACTIVE
 
 ## Purpose
 
-TNF is the assimilator and control plane. Host surfaces (OpenClaw, Hermes,
-Cursor, Codex, Claude Code, Pi, …) come and go. Verification must **discover
-what is enlisted right now** and adapt checks to that surface set — not freeze
-stale expectations from a previous operator environment.
+TNF capabilities may be staffed by changing combinations of model providers, CLI harnesses, browser surfaces, local runtimes, agents, services, and humans. Verification must discover what is actually enlisted and relevant rather than enforcing yesterday's host pack.
 
-Stale assumptions (for example “OpenClaw `LATEST.md` must be fresh”) produce
-false **degraded** / **critical** signals and divert agents from real work.
+OpenClaw, Hermes, Claude Code, Codex, Cursor, Gemini, Pi and similar surfaces are providers/adapters. None is the universal identity of TNF.
 
-## Work Plane Separation (OSS vs tenant / personal)
+## Repository identity before host assumptions
 
-Frontload, Turn Zero, and self-prompting must keep these planes distinct:
+Before write-capable code work, establish the working repository identity. Internal TNF development must use `whodaniel/tnf-monorepo`; external forks may be legitimate OSS work surfaces; owned downstream publication targets are not development surfaces.
 
-| Plane                              | Audience                                          | May land on public `main` | Examples                                                                                               |
-| ---------------------------------- | ------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Core OSS / Super Admin harness** | All deployers + TNF core maintainers              | Yes                       | Protocols, CLI surfaces, gated optional adapters (`tnf spark` via `TNF_SPARK_*`), adaptable host rules |
-| **Deployer config**                | Whoever runs this install                         | No (local / private)      | Env keys, MCP URLs, bus endpoints, API tokens                                                          |
-| **Tenant / personal user work**    | One account (e.g. hosted app.thenewfuse.com user) | No                        | Personal Living State mirrors, Gmail/Docs targets, user goals, per-tenant Supabase rows                |
+Use:
 
-Rules:
+```bash
+node scripts/protocols/turn-zero-v2-gate.cjs --require-write-ready
+```
 
-1. **Do not commit personal or tenant-specific state into the OSS tree.**
-2. **Generalized features** (any deployer can enable) belong in OSS; **one
-   user's destinations and data** belong in tenant DB and/or local-only config.
-3. Agents improving the harness work on the **core plane**. Agents helping a
-   human with personal projects keep artifacts off `main` unless they are
-   deliberately generalized and sanitized.
+## Three independent classifications
+
+### Work domain
+- `corporate`
+- `agency`
+- `personal`
+
+### Artifact destination
+- `oss_runtime`
+- `public_contract`
+- `private_control_plane`
+- `satellite`
+- `external`
+
+### Data residency / sensitivity
+Residency: `product_state`, `bounded_working`, `external_durable`, `secret_machine_local`  
+Sensitivity: `public`, `internal`, `private`, `restricted`
+
+A personal workflow may reveal a generalized OSS improvement, but the private source context remains external/private.
+
+## Enlistment before enforcement
+
+A provider-specific check may degrade a task only when that provider or capability is actually required/enlisted. Evidence can include explicit opt-in, harness configuration, active discovery, capability staffing, or task requirements.
+
+Missing artifacts for an inactive provider are advisory, not a TNF-wide failure.
+
+## Capability-first verification
+
+`Task intent → required capabilities → available providers → authority/privacy/context/cost/latency check → staffing → execution → verification`
+
+Do not require a named provider when another enlisted provider satisfies the capability contract.
+
+## Host-specific trajectory / failure sources
+
+ASSIMILATE_CHECK V2 asks each relevant/enlisted provider adapter for its own trajectory/failure source. There is no universal requirement to scan `~/.hermes/cron/output/` or any other one-host path.
 
 ## Rules
 
-1. **Canonical authority is TNF-native.** Live handoff truth is
-   `docs/protocols/reports/SESSION_HANDOFF_LATEST.{json,md}` and
-   `~/.tnf/handoff-current.json`. Host-local pointers are secondary and
-   optional.
-2. **Enlistment before enforcement.** A host-specific freshness or presence
-   check may **degrade** autonomy only when that host is enlisted:
-   - explicit opt-in (`TNF_OPENCLAW_REQUIRED=1`, `TNF_OPENCLAW_ACTIVE=1`, or
-     `FRONTLOAD_REQUIRE_OPENCLAW_LATEST=1`), **or**
-   - live process discovery of an active host runtime.
-3. **Inactive hosts are advisory.** If OpenClaw (or any optional host) is not
-   enlisted, missing/stale host artifacts are notes/actions only — never a
-   standing health degrade.
-4. **Explore then verify.** Prefer
-   `Inspect → discover enlisted surfaces → verify those surfaces` over static
-   checklists that encode yesterday’s stack.
-5. **Do not characterize TNF as an OpenClaw subset.** OpenClaw is an optional
-   interoperability / assimilation host TNF may route through.
-
-## Implementation touchpoints
-
-| Surface                                  | Behavior                                                                                 |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `.skills/.../subdirector-cycle-check.sh` | OpenClaw LATEST age degrades only when enlisted; otherwise require TNF canonical handoff |
-| `scripts/verify_frontload_state.sh`      | OpenClaw LATEST optional by default                                                      |
-| `.skills/tnf-frontload-protocols/`       | Same contract; OpenClaw docs describe optional host, not SoT                             |
-| Autonomy rollup                          | Must not treat optional-host notes as stack-critical                                     |
-
-## Operator overrides
-
-```bash
-export TNF_OPENCLAW_REQUIRED=1   # hard-require OpenClaw LATEST freshness
-export TNF_OPENCLAW_ACTIVE=1     # treat OpenClaw as enlisted without process discovery
-export FRONTLOAD_REQUIRE_OPENCLAW_LATEST=1
-```
+1. Canonical TNF handoff is `docs/protocols/reports/SESSION_HANDOFF_LATEST.{json,md}` plus approved local cache surfaces.
+2. Discover before enforcing host-specific state.
+3. Verify only the surfaces needed by the task or current staffing decision.
+4. A provider being installed does not mean it is enlisted for this task.
+5. A missing optional provider is not a framework outage.
+6. TNF product/repository boundaries remain authoritative regardless of provider.
+7. Private data may not be copied into a public provider/repository merely to improve convenience.
 
 ## Related
 
-- `docs/protocols/TURN_ZERO_MANDATE.md` — System Boundary + Work Plane
-  Separation
-- `docs/protocols/DIRECTIVES.md` — System Boundary / OpenClaw policy / work
-  planes
-- `docs/protocols/GEMINI_SPARK_INTEGRATION_SPEC.md` — optional env-gated adapter
-  pattern
-- `docs/protocols/HARNESS_CONFIG.md` — harness vs host pack distinction
-- `docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md` — TNF handoff authority
+- `docs/protocols/TURN_ZERO_MANDATE.md`
+- `docs/core/FRONTLOAD_MANIFEST.md`
+- `docs/protocols/HARNESS_CONFIG.md`
+- `data/harness/harness-config.json`
+- `docs/product/TNF_PRODUCT_BOUNDARY.md`
+- `docs/REPO_SEPARATION.md`

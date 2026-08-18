@@ -2,96 +2,32 @@
 
 `[CLASS:PRIME] [STATUS:LOCKED] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE]`
 
-**Status:** ACTIVE **Scope:** Departmental Ingestion & Handoffs **Location:**
-/The-New-Fuse/docs/protocols/
+**Status:** ACTIVE
 
-This procedure defines the mandatory gates every unit of information must pass
-through before it is accepted into the TNF codebase or long-term archives. It
-enforces the "Challenging Prior Assumptions" protocol.
+## Gate 1 — Definition & Class Validation
+Validate purpose and current usefulness.
 
----
+## Gate 2 — Library & Namespace Assignment
+Assign the correct architecture/protocol/product namespace and avoid duplicate authority.
 
-## 1. The Gating Sequence (The Five Gates)
+## Gate 3 — Flag Integrity
+Authority documents must carry required metadata.
 
-Every file/doc unit must be vetted by an agent or human operator before
-progressing.
+## Gate 4 — Linkage & Attribution
+Preserve source pointers, timestamps, parent project IDs, or requirement documents.
 
-### GATE 1: Definition & Class Validation
+## Gate 5 — Challenge & Verify
+Any body mutation of a protected/locked governance document requires a fresh verified `challenge_rationale` stating the file, challenged assumption/failure, replacement behavior, retained safety invariants, and authorization.
 
-- **Requirement:** The file must match its defined `Class` in the
-  `TNF_SYSTEM_LEXICON`.
-- **Assumption Check:** Why does this file exist? Is its current structure the
-  most effective, or are we just following an old habit?
-- **Failure Condition:** If the unit does not match a blueprint or lacks a clear
-  purpose, it is rejected for refactoring.
+Historical rationale remains in `docs/protocols/CHALLENGE_RATIONALE_LOG.md`. New rationale should normally be one immutable event under `docs/protocols/challenge-rationales/YYYY-MM-DD-<slug>.md`. Event files are never silently edited/deleted; corrections are new events.
 
-### GATE 2: Library & Namespace Assignment
+Mechanical enforcement: `scripts/protocols/validate-locked-doc-ledger.cjs`.
 
-- **Requirement:** The unit must be assigned to a specific `Library` (e.g.,
-  Architecture, Intelligence).
-- **Assumption Check:** Does this information truly belong in this namespace? Is
-  there an existing unit that already covers this, or does it require a `HYBRID`
-  flag?
+## Regular effectiveness vetting
+Review efficiency, relevance, assumptions, and privacy. Ask whether a generalized improvement can be preserved without carrying private context.
 
-### GATE 3: Flag Integrity (The Coding System)
+## Deprecated facts
+Preserve old states in git history and challenge events. Do not rewrite history to make superseded rules appear never to have existed.
 
-- **Requirement:** The unit must bear the mandatory header:
-  `[CLASS:X] [STATUS:Y]`.
-- **Action:** Assign `PRIME`, `INTEL`, `RAW`, or `SRC` class. Assign `PENDING`,
-  `VETTED`, `LOCKED`, or `PURGE` status.
-
-### GATE 4: Linkage & Attribution
-
-- **Requirement:** Every unit must have a verifiable source pointer (URL,
-  timestamp, or parent project ID).
-- **Requirement:** Procedural disclosure must be complete (e.g., if it's a
-  script, it must link to its requirement doc).
-
-### GATE 5: The Challenge & Verify Step
-
-- **Requirement:** Any mutation or proposed replacement of a `[STATUS:LOCKED]`
-  document requires a verified and logged `challenge_rationale`.
-- **Cutting-Edge Assumption Check:** If the proposed replacement relies on
-  experimental or cutting-edge AI architecture, it MUST log a verifiable
-  baseline performance comparison against the legacy protocol it seeks to
-  replace before the status can be superseded.
-- **Action:** Agents must explicitly verify the provided rationale against
-  established facts before allowing the document drift to be superseded.
-
----
-
-## 2. Regular Effectiveness Vetting
-
-The vetting procedure itself must be vetted monthly.
-
-1. **The Efficiency Audit:** Are these gates slowing down the "Perpetual Motion
-   Machine" without a verifiable increase in integrity?
-2. **The Relevance Check:** Have our `Class` definitions become obsolete due to
-   new industry shifts (e.g., moving from individual files to a vector-palace)?
-3. **The Assumption Challenge:** Every session, agents are encouraged to suggest
-   a "Baby Step" optimization to these gates.
-
----
-
-## 3. The "Assumption Challenge" Protocol
-
-"Steady practice" means never accepting a protocol as perfect.
-
-- **Trigger:** Any time a `[STATUS:PENDING]` unit is processed.
-- **Action:** The processing agent must ask: _"Is there a simpler, zero-cost way
-  to store this information?"_ and _"Does this unit align with the Axiom of
-  Optimal Utility?"_
-- **Outcome:** Log findings to the `Staff Review Agent` for future optimization.
-
----
-
-## 4. Deprecated Fact Archiving Protocol
-
-- **Trigger:** Any time a fact or rule in a `[STATUS:LOCKED]` document (or
-  `MEMORY.md`) is successfully challenged and replaced.
-- **Action:** The agent must physically move the deprecated fact from the active
-  knowledge base into the designated `## History Archive` section of the
-  relevant memory file.
-- **Requirement:** Archiving is **mandatory** for maintaining a verifiable audit
-  trail of system growth. Silent deletions or overwrites without archiving are
-  strictly prohibited and violate the Integrity Protocol.
+## Turn Zero / Turn End special rule
+`TURN_ZERO_MANDATE.md` and `TURN_END_MANDATE.md` are a paired lifecycle contract. Material changes must check onboarding/frontload, handoff schema/generation, freshness, repository/product classification, capability staffing, privacy/data residency, and downstream publication.

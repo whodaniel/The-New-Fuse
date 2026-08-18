@@ -1,59 +1,8 @@
 #!/usr/bin/env node
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
-const { spawnSync } = require('node:child_process');
-
-const HEARTBEAT_PATH = path.join(os.homedir(), '.tnf', 'terminal-heartbeat', 'state', 'terminal-heartbeat-latest.json');
-
-function getTwid() {
-  if (process.env.TNF_TWID) return process.env.TNF_TWID;
-  try {
-    // Try to get the TTY of the parent process (the shell)
-    const result = spawnSync('ps', ['-p', process.ppid, '-o', 'tty='], { encoding: 'utf8' });
-    let tty = result.stdout.trim();
-    if (!tty || tty === '??') {
-       // Fallback to current process
-       const selfResult = spawnSync('ps', ['-p', process.pid, '-o', 'tty='], { encoding: 'utf8' });
-       tty = selfResult.stdout.trim();
-    }
-    const normalized = tty.replace(/^\/dev\//, '').replace(/[^a-zA-Z0-9_-]/g, '-');
-    return normalized ? `tnf-local-terminal-${normalized}` : 'tnf-local-terminal-unknown';
-  } catch (e) {
-    return 'tnf-local-terminal-unknown';
-  }
-}
-
-async function onboard() {
-  const currentTwid = getTwid();
-  console.log(`[TWIP] Current Terminal ID: ${currentTwid}`);
-
-  if (fs.existsSync(HEARTBEAT_PATH)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(HEARTBEAT_PATH, 'utf8'));
-      const activePeers = (data.observed || []).filter(s => s.agentLike && s.agentId !== currentTwid);
-      
-      if (activePeers.length > 0) {
-        console.log(`\n[TWIP] 🚦 Discovery Warning: Found ${activePeers.length} active agent terminals.`);
-        activePeers.forEach(p => {
-          console.log(`- ${p.agentId} [${p.tty}] CWD: ${p.cwd} | Cmd: ${p.foregroundCommand}`);
-        });
-        console.log('\n[TWIP] 🛑 To prevent duplication, ensure you are not running "tnf boot" in an existing agent lane.');
-      } else {
-        console.log('[TWIP] ✅ No other active agent terminals detected. Safe to proceed.');
-      }
-    } catch (e) {
-      console.warn('[TWIP] ⚠️ Heartbeat inspection failed, proceeding with caution.');
-    }
-  }
-
-  // Original onboarding logic bridge
-  console.log('\n[TWIP] Handing off to canonical onboard...\n');
-  spawnSync('node', [path.join(__dirname, 'tnf-onboard.cjs'), ...process.argv.slice(2)], { stdio: 'inherit' });
-
-  // Add Discovery Step
-  console.log('\n[TWIP] Executing Swarm Discovery...\n');
-  spawnSync('node', [path.join(__dirname, 'tnf-discover-active.cjs')], { stdio: 'inherit' });
-}
-
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os');const{spawnSync}=require('node:child_process');const ROOT=process.cwd(),HEARTBEAT_PATH=path.join(os.homedir(),'.tnf','terminal-heartbeat','state','terminal-heartbeat-latest.json');
+function getTwid(){if(process.env.TNF_TWID)return process.env.TNF_TWID;try{const p=spawnSync('ps',['-p',process.ppid,'-o','tty='],{encoding:'utf8'});let tty=String(p.stdout||'').trim();if(!tty||tty==='??')tty=String(spawnSync('ps',['-p',process.pid,'-o','tty='],{encoding:'utf8'}).stdout||'').trim();const n=tty.replace(/^\/dev\//,'').replace(/[^a-zA-Z0-9_-]/g,'-');return n?`tnf-local-terminal-${n}`:'tnf-local-terminal-unknown';}catch{return'tnf-local-terminal-unknown';}}
+function peers(id){if(!fs.existsSync(HEARTBEAT_PATH))return;try{const d=JSON.parse(fs.readFileSync(HEARTBEAT_PATH,'utf8')),a=(d.observed||[]).filter(s=>s.agentLike&&s.agentId!==id);if(!a.length)return console.log('[TWIP] No other active agent terminals detected.');console.log(`[TWIP] ${a.length} other active agent terminal(s):`);a.slice(0,10).forEach(p=>console.log(`- ${p.agentId} [${p.tty}] ${p.cwd} | ${p.foregroundCommand}`));console.log('[TWIP] Treat these as potential capability providers; do not assume they own this task.');}catch{console.log('[TWIP] Terminal heartbeat unavailable; provider discovery remains task-scoped.');}}
+function run(label,cmd,args){console.log(`\n=== ${label} ===`);const r=spawnSync(cmd,args,{cwd:ROOT,stdio:'inherit',env:process.env});if(r.status!==0){console.error(`${label} exited ${r.status}`);return false;}return true;}const has=f=>process.argv.slice(2).includes(f);
+function onboard(){const id=getTwid();console.log('TNF Onboard V2');console.log(`[TWIP] Terminal ID: ${id}`);const ga=[];if(has('--write-ready'))ga.push('--require-write-ready');const ti=process.argv.indexOf('--task');if(ti>=0&&process.argv[ti+1])ga.push('--task',process.argv[ti+1]);if(!run('Turn Zero V2',process.execPath,[path.join(ROOT,'scripts/protocols/turn-zero-v2-gate.cjs'),...ga]))process.exit(1);peers(id);run('Capability / Active Provider Discovery',process.execPath,[path.join(ROOT,'scripts/tnf-discover-active.cjs')]);if(has('--legacy-full')||process.env.TNF_ONBOARD_LEGACY_FULL==='1'){const la=process.argv.slice(2).filter(x=>!['--legacy-full','--write-ready'].includes(x));run('Legacy Full Onboard Diagnostics',process.execPath,[path.join(ROOT,'scripts/tnf-onboard.cjs'),...la]);}else console.log('\n- deep legacy diagnostics deferred (use --legacy-full when needed)');console.log('\nTNF onboard complete.');}
 onboard();

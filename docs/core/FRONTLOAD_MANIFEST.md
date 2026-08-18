@@ -1,83 +1,118 @@
-# FRONTLOAD_MANIFEST.md — Canonical Agent Harness Injection Order
+# FRONTLOAD_MANIFEST.md — TNF Progressive Context Injection
 
-TNF frontload = **OpenClaw-compatible workspace pack** ∩ **TNF protocol
-authority pack**. Mirrors under `~/` or other CLIs are non-authoritative
-(`DIRECTIVES.md`).
+Turn Zero V2 uses **progressive disclosure**: load only the authority and current receipts needed to take the next safe action. File presence is not host injection, and frontload is not permission to mutate.
 
-Use this file as the single ordered checklist for onboarding and for
-`scripts/verify-repo-frontload.cjs`.
+## Stage A — Orientation
 
-## Stage A — Eager (every interactive Turn Zero)
+Use in every TNF coding/operations session as needed:
 
-| #   | Path                                                 | Role                           |
-| --- | ---------------------------------------------------- | ------------------------------ |
-| 1   | `docs/protocols/TURN_ZERO_MANDATE.md`                | Operating loop + startup law   |
-| 2   | `docs/protocols/LIVING_STATE.md`                     | Active directive / sync status |
-| 3   | `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` | Batton / next actions          |
-| 4   | `.agent/SYSTEM_PROMPT.md`                            | Runtime system prompt          |
+| # | Path | Role |
+|---|---|---|
+| 1 | `docs/protocols/TURN_ZERO_MANDATE.md` | Lifecycle + write-readiness law |
+| 2 | `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` | Latest continuation receipt |
+| 3 | `docs/protocols/LIVING_STATE.md` | Durable active state when relevant |
+| 4 | `data/distribution/product-repo-map.json` | Canonical repo lineage/roles |
+| 5 | `.agent/SYSTEM_PROMPT.md` | Runtime prompt surface |
 
-## Stage B — Deferred (after orientation / when task needs it)
+Prefer summaries for large state files.
 
-| #   | Path                                    | Role                                     |
-| --- | --------------------------------------- | ---------------------------------------- |
-| 5   | `docs/protocols/AGENT_STATUS_LEDGER.md` | Fleet / known gaps                       |
-| 6   | `.agent/context/agent-onboarding.md`    | Local onboarding contract                |
-| 7   | `.agent/workflows/frontload.md`         | `/frontload` workflow                    |
-| 8   | `.agent/context/resource-map.md`        | Skills / agents index                    |
-| 9   | `docs/core/SOUL.md`                     | Persona + absolute guardrails            |
-| 10  | `docs/core/IDENTITY.md`                 | Agent identity                           |
-| 11  | `docs/core/USER.md`                     | Operator profile                         |
-| 12  | `docs/core/TOOLS.md`                    | Environment-specific tool notes          |
-| 13  | `docs/core/HEARTBEAT.md`                | Proactive checklist                      |
-| 14  | `docs/core/SECURITY.md`                 | Security constraints                     |
-| 15  | `docs/core/MEMORY.md`                   | Curated long-term facts                  |
-| 16  | `docs/core/ENGINEERING_PRINCIPLES.md`   | Engineering norms                        |
-| 17  | `docs/core/BOOTSTRAP.md`                | First-run ritual (pending/complete)      |
-| 18  | `docs/protocols/HARNESS_CONFIG.md`      | UNU-aligned harness inventory (8 layers) |
-| 19  | `data/harness/harness-config.json`      | Machine-readable harness config          |
-| 20  | `data/mcp_config.json`                  | MCP inventory (metadata)                 |
+## Stage B — Classification / Governance
 
-## Stage C — Task / swarm (optional)
+Load before placement, publication, cross-boundary, or nontrivial implementation decisions:
 
-| Path                                        | Role                                          |
-| ------------------------------------------- | --------------------------------------------- |
-| `~/.tnf/swarm-context.md`                   | Swarm terminal coordination                   |
-| `docs/operations/STALL_DEFENSE.md`          | Stall defense                                 |
-| `docs/protocols/TNF_FRONTEND_IA_CANON.md`   | Frontend IA canon                             |
-| `docs/protocols/TNF_AGENT_SHELL_HYGIENE.md` | Shell hygiene                                 |
-| `.agent/runtime-state/harness-context.md`   | Adaptive models/hosts (`tnf harness context`) |
-| `docs/core/memory/YYYY-MM-DD.md`            | Daily raw notes (optional)                    |
-| `docs/protocols/HARNESS_MEMORY_LAYER.md`    | Dynamic retain/recall (≠ MEMORY.md)           |
-| `docs/protocols/HARNESS_TRAJECTORY.md`      | Trajectory + compaction records               |
-| `docs/protocols/HARNESS_PERMISSION_BERM.md` | Permissions outside the model                 |
+| Path | Role |
+|---|---|
+| `docs/product/TNF_PRODUCT_BOUNDARY.md` | OSS/public-contract/private/satellite/external doctrine |
+| `data/distribution/oss-app-boundary.json` | Machine-readable app/satellite boundary |
+| `docs/REPO_SEPARATION.md` | Canonical development + downstream publication flow |
+| `docs/protocols/STATE_FRESHNESS_MANDATE.md` | Volatile-state evidence rules |
+| `docs/protocols/state-freshness.registry.json` | Current freshness domains |
+| `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md` | Live host/provider discovery |
+| `docs/protocols/TURN_END_MANDATE.md` | Handoff contract |
+| `docs/protocols/HARNESS_CONFIG.md` | Harness inventory/architecture |
+| `data/harness/harness-config.json` | Machine-readable harness config |
+| `docs/core/SECURITY.md` | Security constraints |
+| `docs/core/ENGINEERING_PRINCIPLES.md` | Engineering norms |
 
-## Progressive Disclosure
+## Stage C — Task-Scoped Hydration
 
-- **Interactive / light Turn Zero**: Stage A only (+ `tnf onboard` quick
-  snapshot). Do not dump Stage B into the first reply unless needed.
-- **Swarm / harness onboarding / BOOTSTRAP pending**: Stage A + Stage B.
-- **Token budget**: Prefer summaries of `LIVING_STATE` / large ledgers; open
-  full files when acting.
+Only after the task is known:
 
-## Informal → Canonical Aliases
+- exact package/app/file paths involved;
+- relevant tests and schemas;
+- relevant satellite repository if the task crosses into one;
+- targeted dynamic memory/trajectory records when useful;
+- domain-specific protocols/runbooks;
+- `AGENT_STATUS_LEDGER.md` when fleet/known-gap state is actually relevant.
 
-| Said                    | Means                                                                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `soul.md`               | `docs/core/SOUL.md` (persona pack — OpenClaw-family)                                                                   |
-| `agent.md`              | Prefer industry `AGENTS.md`; also `.agent/agents/<id>.md` + `docs/core/IDENTITY.md`                                    |
-| `brain.md`              | **Disambiguate:** static `docs/core/MEMORY.md` **or** dynamic `scripts/harness/memory-layer.cjs` — never collapse them |
-| OpenClaw workspace pack | SOUL / IDENTITY / USER / TOOLS / HEARTBEAT / MEMORY / AGENTS / BOOTSTRAP                                               |
-| UNU harness             | `docs/protocols/HARNESS_CONFIG.md` + `data/harness/harness-config.json`                                                |
+### Do not use as mandatory startup authority
 
-**Injection ≠ file presence.** Repo docs must also appear on host surfaces
-(`.cursor/rules/tnf-harness.mdc`, root `CLAUDE.md`, OpenClaw workspace
-pointers).
+- `apps/frontend/src/data/codebase_map.json`
+- generated codebase trackers
+- every daily memory file
+- every harness/provider log
+- every extension/satellite repository
 
-## Verify
+Generated maps may be useful artifacts; they are not a substitute for the current product map, git receipts, or exact source files.
+
+## Capability staffing
+
+When specialized or parallel work is useful:
+
+1. identify required capabilities;
+2. discover enlisted providers;
+3. select providers by authority/privacy/context/cost/latency/reliability;
+4. delegate only when it improves the work;
+5. verify results.
+
+A provider can be an agent, model, harness, script, service, or human gate. Do not hard-code one host as protocol infrastructure.
+
+## Privacy
+
+**Universalize the pattern, not the private context.**
+
+Personal/client/tenant source material belongs in its approved private/external location. Only sanitized generalized mechanisms should be promoted into TNF product artifacts.
+
+## Interactive use
 
 ```bash
-tnf onboard
+pnpm run tnf:onboard
+```
+
+This runs compact Turn Zero V2 orientation and active-provider discovery. Deep legacy diagnostics are opt-in:
+
+```bash
+pnpm run tnf:onboard -- --legacy-full
+```
+
+Before mutation, use explicit classification and write readiness, for example:
+
+```bash
+TNF_WORK_DOMAIN=corporate \
+TNF_ARTIFACT_DESTINATION=oss_runtime \
+TNF_DATA_RESIDENCY=product_state \
+TNF_DATA_SENSITIVITY=public \
+pnpm run tnf:onboard -- --write-ready --task "relay-core intent frame change"
+```
+
+## Freshness
+
+```bash
+node scripts/protocols/state-freshness-gate.cjs --frontload
+node scripts/protocols/state-freshness-gate.cjs --refresh
+```
+
+## Turn End
+
+```bash
+node scripts/turn-end-v2.cjs
+```
+
+## Verification
+
+```bash
+node --test scripts/protocols/turn-zero-v2-gate.test.cjs
+node --test scripts/protocols/state-freshness-gate.test.cjs
+node scripts/protocols/validate-locked-doc-ledger.cjs --mode=staged
 node scripts/verify-repo-frontload.cjs
-node scripts/harness/verify-harness-completeness.cjs --provision
-node scripts/install-agent-frontload.cjs --verify
 ```
