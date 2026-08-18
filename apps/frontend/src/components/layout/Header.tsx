@@ -1,10 +1,22 @@
 // @ts-nocheck
-import { Bell, ChevronDown, LogOut, Menu, Moon, Search, Settings, Sun, User } from 'lucide-react';
+import {
+  Bell,
+  ChevronDown,
+  LogOut,
+  Menu,
+  Moon,
+  Search,
+  Settings,
+  Sparkles,
+  Sun,
+  User,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useAuth } from '../../providers/AuthProvider';
 import { useTheme } from '../../providers/ThemeProvider';
+import { openAIAssist } from '../../utils/aiAssistEvents';
 
 export function Header() {
   const { toggleSidebar } = useLayout();
@@ -30,6 +42,14 @@ export function Header() {
     }
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    navigate(`/chat?q=${encodeURIComponent(q)}`);
+    setSearchQuery('');
+  };
+
   return (
     <header className="backdrop-blur-xl bg-transparent/5 border-b border-white/10 shadow-none h-16 flex items-center px-4 sticky top-0 z-50">
       <div className="flex items-center justify-between w-full">
@@ -49,21 +69,30 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Center Section - Premium Search */}
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
+        <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-md mx-8">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder="Search or ask in Chat…"
               className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm"
             />
           </div>
-        </div>
+        </form>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => openAIAssist()}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all duration-200"
+            title="Ask AI for assistance on this page"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span className="hidden sm:inline">Ask AI</span>
+          </button>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

@@ -1,105 +1,126 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 /**
  * Available LLM catalog for agent creation / operator UIs.
- * Source of truth aligned with packages/tnf-cli llm-provider-detector (NVIDIA-first).
+ * Source of truth: data/providers/catalog.json (provider list + per-provider
+ * models) + data/providers/nvidia-models.json (full NVIDIA NIM catalog
+ * with categories and live-status metadata).
+ *
  * Public read endpoint — no JWT — so local desktop can populate Create Agent
  * without an auth session.
+ *
+ * The hardcoded VERIFIED_MODELS / PROVIDER_META constants that used to live
+ * here were the third copy of "which providers exist" — they drifted from
+ * packages/tnf-cli llm-provider-detector.ts and from the catalog file. They
+ * have been removed; this controller now reads the same bytes the CLI does.
  */
 
-const VERIFIED_MODELS: Record<string, string[]> = {
-  nvidia: [
-    'thinkingmachines/inkling',
-    'poolside/laguna-xs-2.1',
-    'z-ai/glm-5.2',
-    'minimaxai/minimax-m3',
-    'openai/gpt-oss-120b',
-    'qwen/qwen3-next-80b-a3b-instruct',
-    'meta/llama-3.3-70b-instruct',
-    'meta/llama-4-maverick-17b-128e-instruct',
-    'meta/llama-guard-4-12b',
-    'meta/llama-3.2-90b-vision-instruct',
-    'google/gemma-3n-e4b-it',
-    'mistralai/ministral-14b-instruct-2512',
-    'mistralai/mistral-small-4-119b-2603',
-    'mistralai/mistral-medium-3.5-128b',
-    'stockmark/stockmark-2-100b-instruct',
-    'deepseek-ai/deepseek-v4-flash',
-    'deepseek-ai/deepseek-v4-pro',
-    'qwen/qwen3.5-397b-a17b',
-    'google/gemma-4-31b-it',
-    'z-ai/glm-5.1',
-    'z-ai/glm5',
-    'z-ai/glm4.7',
-    'qwen/qwen3-coder-480b-a35b-instruct',
-  ],
-  groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'meta-llama/llama-3.1-8b-instruct'],
-  sambanova: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
-  cerebras: ['llama-3.3-70b', 'llama-3.1-8b'],
-  deepseek: ['deepseek-chat', 'deepseek-reasoner'],
-  gemini: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'],
-  openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'],
-  openrouter: [
-    'meta-llama/llama-3.3-70b-instruct',
-    'deepseek/deepseek-chat-v3-0324',
-    'google/gemma-2-9b-it:free',
-  ],
-};
+interface CatalogProvider {
+  id: string;
+  name?: string;
+  envKey?: string | null;
+  baseUrl?: string;
+  tier?: number;
+  enabled?: boolean;
+  defaultModel?: string;
+  models?: string[];
+}
 
-const PROVIDER_META: Record<
-  string,
-  { name: string; priority: number; envKey: string; baseUrl: string }
-> = {
-  nvidia: {
-    name: 'NVIDIA NIM',
-    priority: 12,
-    envKey: 'NVIDIA_API_KEY',
-    baseUrl: 'https://integrate.api.nvidia.com/v1',
-  },
-  groq: {
-    name: 'Groq',
-    priority: 9,
-    envKey: 'GROQ_API_KEY',
-    baseUrl: 'https://api.groq.com/openai/v1',
-  },
-  sambanova: {
-    name: 'SambaNova',
-    priority: 8,
-    envKey: 'SAMBANOVA_API_KEY',
-    baseUrl: 'https://api.sambanova.ai/v1',
-  },
-  cerebras: {
-    name: 'Cerebras',
-    priority: 7,
-    envKey: 'CEREBRAS_API_KEY',
-    baseUrl: 'https://api.cerebras.ai/v1',
-  },
-  deepseek: {
-    name: 'DeepSeek',
-    priority: 6,
-    envKey: 'DEEPSEEK_API_KEY',
-    baseUrl: 'https://api.deepseek.com/v1',
-  },
-  gemini: {
-    name: 'Google Gemini',
-    priority: 4,
-    envKey: 'GEMINI_API_KEY',
-    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-  },
-  openai: {
-    name: 'OpenAI',
-    priority: 3,
-    envKey: 'OPENAI_API_KEY',
-    baseUrl: 'https://api.openai.com/v1',
-  },
-  openrouter: {
-    name: 'OpenRouter',
-    priority: 0,
-    envKey: 'OPENROUTER_API_KEY',
-    baseUrl: 'https://openrouter.ai/api/v1',
-  },
-};
+interface NvModelEntry {
+  id: string;
+  vendor?: string;
+  category?: string;
+  liveStatus?: string;
+  description?: string;
+}
+
+function resolveCatalogPath(): string | null {
+  const override = process.env.TNF_PROVIDER_CATALOG_PATH;
+  const candidates: string[] = [];
+  if (override && override.trim()) candidates.push(override.trim());
+  // apps/api/src/controllers -> repo root
+  candidates.push(path.resolve(process.cwd(), 'data/providers/catalog.json'));
+  candidates.push(path.resolve(__dirname, '../../../../data/providers/catalog.json'));
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+function resolveNvidiaRegistryPath(): string | null {
+  const override = process.env.TNF_NVIDIA_MODELS_PATH;
+  const candidates: string[] = [];
+  if (override && override.trim()) candidates.push(override.trim());
+  candidates.push(path.resolve(process.cwd(), 'data/providers/nvidia-models.json'));
+  candidates.push(path.resolve(__dirname, '../../../../data/providers/nvidia-models.json'));
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+interface CatalogSnapshot {
+  providers: CatalogProvider[];
+  warnings: string[];
+}
+
+let cachedCatalog: CatalogSnapshot | null = null;
+
+function loadCatalog(): CatalogSnapshot {
+  if (cachedCatalog) return cachedCatalog;
+  const catalogPath = resolveCatalogPath();
+  if (!catalogPath) {
+    cachedCatalog = { providers: [], warnings: ['catalog.json not found'] };
+    return cachedCatalog;
+  }
+  try {
+    const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+    const rows = Array.isArray(raw?.providers) ? raw.providers : [];
+    cachedCatalog = {
+      providers: rows.filter((r: CatalogProvider) => r && r.id && r.enabled !== false),
+      warnings: [],
+    };
+  } catch (err) {
+    cachedCatalog = {
+      providers: [],
+      warnings: [`${catalogPath} unreadable: ${(err as Error).message}`],
+    };
+  }
+  return cachedCatalog;
+}
+
+let cachedNvidiaRegistry: { models: NvModelEntry[]; warning?: string } | null = null;
+
+function loadNvidiaRegistry(): { models: NvModelEntry[]; warning?: string } {
+  if (cachedNvidiaRegistry) return cachedNvidiaRegistry;
+  const regPath = resolveNvidiaRegistryPath();
+  if (!regPath) {
+    cachedNvidiaRegistry = { models: [], warning: 'nvidia-models.json not found' };
+    return cachedNvidiaRegistry;
+  }
+  try {
+    const raw = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+    cachedNvidiaRegistry = {
+      models: Array.isArray(raw?.models) ? raw.models : [],
+      warning: undefined,
+    };
+  } catch (err) {
+    cachedNvidiaRegistry = {
+      models: [],
+      warning: `${regPath} unreadable: ${(err as Error).message}`,
+    };
+  }
+  return cachedNvidiaRegistry;
+}
+
+/** Clear in-memory caches (used by tests). */
+export function clearAvailableModelsCache(): void {
+  cachedCatalog = null;
+  cachedNvidiaRegistry = null;
+}
 
 async function fetchLiveModels(
   providerId: string,
@@ -128,6 +149,8 @@ interface ProviderModel {
   id: string;
   name: string;
   provider: string;
+  category?: string;
+  liveStatus?: string;
 }
 
 interface ProviderEntry {
@@ -135,7 +158,10 @@ interface ProviderEntry {
   name: string;
   priority: number;
   configured: boolean;
-  source: 'verified' | 'live';
+  source: 'verified' | 'live' | 'catalog';
+  envKey?: string | null;
+  baseUrl?: string;
+  modelCount: number;
   models: ProviderModel[];
 }
 
@@ -147,43 +173,58 @@ export class AvailableModelsController {
   @ApiResponse({ status: 200, description: 'Provider/model catalog' })
   async listModels(@Query('provider') provider?: string, @Query('refresh') refresh?: string) {
     const wantRefresh = refresh === '1' || refresh === 'true';
-    const providerIds = provider
-      ? [provider]
-      : Object.keys(PROVIDER_META).sort(
-          (a, b) => (PROVIDER_META[b]?.priority || 0) - (PROVIDER_META[a]?.priority || 0)
-        );
+    const cat = loadCatalog();
+    const nvidiaReg = loadNvidiaRegistry();
+    // Build a lookup from nvidia-models.json so each catalog entry can be
+    // annotated with its category and live-status.
+    const nvMeta = new Map<string, NvModelEntry>();
+    for (const m of nvidiaReg.models) nvMeta.set(m.id, m);
+
+    const wantProvider = provider ? [provider] : null;
+    const rows = wantProvider ? cat.providers.filter((p) => p.id === provider) : cat.providers;
 
     const providers: ProviderEntry[] = [];
-    for (const id of providerIds) {
-      const meta = PROVIDER_META[id];
-      if (!meta) continue;
-      const apiKey = process.env[meta.envKey];
+    for (const p of rows) {
+      const apiKey = p.envKey ? process.env[p.envKey] : undefined;
       const configured = Boolean(apiKey && apiKey !== 'missing-key' && apiKey.length > 10);
-      let models = VERIFIED_MODELS[id] || [];
-      let source: 'verified' | 'live' = 'verified';
+      let models = Array.isArray(p.models) ? p.models : [];
+      let source: 'verified' | 'live' | 'catalog' = 'catalog';
       if (configured && wantRefresh) {
-        const live = await fetchLiveModels(id, meta.baseUrl, apiKey!);
+        const live = await fetchLiveModels(p.id, p.baseUrl || '', apiKey!);
         if (live?.length) {
-          // Prefer verified order, then append any live-only ids
           const verifiedSet = new Set(models);
           const extras = live.filter((m) => !verifiedSet.has(m));
           models = [...models.filter((m) => live.includes(m) || verifiedSet.has(m)), ...extras];
           source = 'live';
         }
       }
+      const priority = typeof p.tier === 'number' ? p.tier : 50;
       providers.push({
-        id,
-        name: meta.name,
-        priority: meta.priority,
+        id: p.id,
+        name: p.name || p.id,
+        priority,
         configured,
         source,
-        models: models.map((modelId) => ({ id: modelId, name: modelId, provider: id })),
+        envKey: p.envKey,
+        baseUrl: p.baseUrl,
+        modelCount: models.length,
+        models: models.map((modelId) => {
+          const meta = nvMeta.get(modelId);
+          return {
+            id: modelId,
+            name: modelId,
+            provider: p.id,
+            category: meta?.category,
+            liveStatus: meta?.liveStatus,
+          };
+        }),
       });
     }
 
     return {
       defaultProvider: providers.find((p) => p.configured)?.id || providers[0]?.id || 'nvidia',
       providers,
+      warnings: cat.warnings.concat(nvidiaReg.warning ? [nvidiaReg.warning] : []),
     };
   }
 
@@ -195,8 +236,28 @@ export class AvailableModelsController {
       id: p.id,
       name: p.name,
       configured: p.configured,
-      modelCount: p.models.length,
+      modelCount: p.modelCount,
       priority: p.priority,
     }));
+  }
+
+  /**
+   * Full NVIDIA NIM catalog (chat + vision + embeddings + specialized NIM
+   * microservices). Powers the provider/model picker in agent creation.
+   */
+  @Get('nvidia-catalog')
+  @ApiOperation({ summary: 'Full free NVIDIA NIM catalog with categories & live status' })
+  async nvidiaCatalog(@Query('category') category?: string) {
+    const reg = loadNvidiaRegistry();
+    let models = reg.models;
+    if (category) {
+      models = models.filter((m) => m.category === category);
+    }
+    return {
+      count: models.length,
+      warning: reg.warning,
+      categories: Array.from(new Set(reg.models.map((m) => m.category).filter(Boolean))),
+      models,
+    };
   }
 }

@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { Book, Database, Layers, Search, Settings, Shield, Upload, Zap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MemoryVisualizer } from '../components/memory/visualization/MemoryVisualizer';
@@ -25,8 +26,8 @@ export const KnowledgeHub: React.FC = () => {
     setFetchError(null);
     try {
       const [indicesResponse, clustersResponse] = await Promise.all([
-        fetch('/api/knowledge/indices'),
-        fetch('/api/knowledge/clusters'),
+        authFetch('/api/knowledge/indices'),
+        authFetch('/api/knowledge/clusters'),
       ]);
 
       const nextIndices =
@@ -230,7 +231,7 @@ const SecurityToggle: React.FC<{ label: string; active?: boolean }> = ({ label, 
       className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-transparent/10'}`}
     >
       <div
-        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-transparent0'}`}
+        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-gray-500'}`}
       />
     </div>
   </div>

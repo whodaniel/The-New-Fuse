@@ -8,7 +8,7 @@
     },
     "monorepo_mirror_codebase": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints"
   },
-  "generated_at_utc": "2026-05-06T21:14:10.589768+00:00",
+  "generated_at_utc": "2026-06-26T18:03:55.620490+00:00",
   "process_contract": {
     "authoritative_edit_path": "~/Projects/virtual-library-blueprints",
     "mirror_sync_required": true,
@@ -28,21 +28,8 @@
         "path": "~/.gemini",
         "role": "agent memory/skills/runtime state (not story source of truth)",
         "skills": [
-          "~/.gemini/skills/autonomous-identity-architect/SKILL.md",
-          "~/.gemini/skills/chrome-patient-scan/SKILL.md",
-          "~/.gemini/skills/gcp-enterprise-agent-governance/SKILL.md",
-          "~/.gemini/skills/notebooklm-automation.skill/SKILL.md",
-          "~/.gemini/skills/skill-evolution/SKILL.md",
-          "~/.gemini/skills/skill-synthesizer/SKILL.md",
-          "~/.gemini/skills/sovereign-state-management.skill",
-          "~/.gemini/skills/sspdf/SKILL.md",
-          "~/.gemini/skills/sspdf-theme-generator/SKILL.md",
-          "~/.gemini/skills/sspdf-theme-generator.skill",
-          "~/.gemini/skills/sspdf.skill",
-          "~/.gemini/skills/stitch-direct/SKILL.md",
-          "~/.gemini/skills/tnf-frontend-deploy/SKILL.md",
-          "~/.gemini/skills/tnf-youtube-ingestion/SKILL.md",
-          "~/.gemini/skills/video-intelligence-architect/SKILL.md"
+          "~/.gemini/skills/tnf-full-auto-network-autopilot/SKILL.md",
+          "~/.gemini/skills/tnf-full-auto-network-autopilot.skill"
         ]
       },
       "kilo": {
@@ -66,18 +53,18 @@
     "codebases": {
       "canonical": {
         "branch": "codex/story-privacy-wall",
-        "dirty": true,
+        "dirty": false,
         "exists": true,
-        "head": "2a7a824eedd05a37644747e9bc411b8560d52797",
+        "head": "8d84bd805911a256461d84ed8aac6488b20d4685",
         "is_repo": true,
         "path": "~/Projects/virtual-library-blueprints",
         "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"
       },
       "monorepo_mirror": {
         "branch": "main",
-        "dirty": false,
+        "dirty": true,
         "exists": true,
-        "head": "650d1682d3c9ec50cc7df95e233e3802c6a2ddf5",
+        "head": "994f3d3e013bdf09201b36c3a13b8f339b7a3f79",
         "is_repo": true,
         "path": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints",
         "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"

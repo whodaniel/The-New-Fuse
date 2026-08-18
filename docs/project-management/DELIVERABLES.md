@@ -490,7 +490,7 @@ For questions or issues:
 
 - **Test Suite**: See `test-suite/e2e/README.md`
 - **Production Report**: See `PRODUCTION_READINESS_REPORT.md`
-- **GitHub Issues**: https://github.com/whodaniel/fuse/issues
+- **GitHub Issues**: https://github.com/whodaniel/The-New-Fuse/issues
 
 ---
 

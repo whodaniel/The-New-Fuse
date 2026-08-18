@@ -9,6 +9,6 @@ ROOT_DIR="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 cd $ROOT_DIR
 
 echo "🚀 Triggering FULL Cloud-to-Cloud Rollout..."
-gcloud builds submit --config cloudbuild.yaml . --project=$PROJECT_ID
+gcloud builds submit --config scripts/deployment/cloudbuild.yaml . --project=$PROJECT_ID
 
 echo "✅ Rollout triggered successfully! You can monitor progress in the GCP Console."

@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TWIP Operator Runbook (v0.1)
 
 Status: Draft Audience: TNF operators, platform engineers, and agent-runtime

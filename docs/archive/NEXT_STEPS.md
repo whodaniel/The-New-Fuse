@@ -134,7 +134,7 @@ Most issues are visible in the logs. CloudRuntime's build system is very reliabl
 
 - [DEPLOYMENT_COMPLETE.md](./DEPLOYMENT_COMPLETE.md) - Complete deployment summary
 - [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) - Status and build links
-- [DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md](./DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md) - Comprehensive guide
+- [DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md](../deployment/DEPLOYMENT_GUIDE_CLOUD_RUNTIME.md) - Comprehensive guide
 - [configure-env-vars.sh](./configure-env-vars.sh) - Env var configuration script
 
 ---

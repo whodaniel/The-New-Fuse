@@ -58,3 +58,6 @@ Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_
 - Run through TNF harness: `tnf assimilate run cursor -- agent --help`
 - Full start pipeline: `pnpm run tnf:start:cursor`
 - Protocol health: `tnf protocol gate`
+- Harness master loop: `tnf harness cycle` (see skill:
+  `tnf-harness-master-loop`)
+- Interactive harness: `/harness inspect`, `/harness cycle`, `/autonomous on`

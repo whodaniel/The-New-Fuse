@@ -9,16 +9,15 @@ import 'reflect-metadata';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as express from 'express';
-import { json, urlencoded } from 'express';
-import * as net from 'node:net';
-import * as tls from 'node:tls';
 import type { IncomingMessage, Server } from 'node:http';
+import * as net from 'node:net';
 import type { Duplex } from 'node:stream';
+import * as tls from 'node:tls';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { ensureNextHandler } from './next-handler';
 
 interface WebSocketProxyRoute {
   prefix: string;
@@ -32,7 +31,12 @@ interface HttpRateLimitEntry {
 
 const httpRateLimitStore = new Map<string, HttpRateLimitEntry>();
 
-function parsePositiveInteger(value: string | undefined, fallback: number, min: number, max: number): number {
+function parsePositiveInteger(
+  value: string | undefined,
+  fallback: number,
+  min: number,
+  max: number
+): number {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -54,13 +58,43 @@ function getGatewayClientIp(req: any): string {
   return req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown';
 }
 
+function isLoopbackIp(ip: string | undefined | null): boolean {
+  if (!ip) return false;
+  const normalized = ip
+    .trim()
+    .toLowerCase()
+    .replace(/^::ffff:/, '');
+  return (
+    normalized === '127.0.0.1' ||
+    normalized === '::1' ||
+    normalized === 'localhost' ||
+    normalized === '0:0:0:0:0:0:0:1'
+  );
+}
+
 function shouldSkipHttpRateLimit(req: any): boolean {
   if (req.method === 'OPTIONS') {
     return true;
   }
 
+  // Local operator / full-auto clients share one IP and routinely exceed a
+  // public-facing window; do not starve desktop + daemon on loopback.
+  if (process.env.API_GATEWAY_RATE_LIMIT_LOOPBACK !== 'enforce') {
+    if (isLoopbackIp(getGatewayClientIp(req))) {
+      return true;
+    }
+  }
+
   const path = req.path || req.url || '/';
-  return path === '/' || path === '/health' || path === '/api/health' || path === '/api/v1/health' || path.startsWith('/docs');
+  return (
+    path === '/' ||
+    path === '/health' ||
+    path === '/api/health' ||
+    path === '/api/v1/health' ||
+    path === '/api/system/health' ||
+    path === '/system/health' ||
+    path.startsWith('/docs')
+  );
 }
 
 function pruneHttpRateLimitStore(now: number, maxEntries: number): void {
@@ -80,9 +114,25 @@ function attachHttpRateLimit(app: any): void {
     return;
   }
 
-  const windowMs = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_WINDOW_MS, 60_000, 1_000, 86_400_000);
-  const maxRequests = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_REQUESTS, 600, 1, 1_000_000);
-  const maxEntries = parsePositiveInteger(process.env.API_GATEWAY_RATE_LIMIT_MAX_KEYS, 10_000, 100, 1_000_000);
+  const windowMs = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_WINDOW_MS,
+    60_000,
+    1_000,
+    86_400_000
+  );
+  const maxRequests = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_REQUESTS,
+    // Local full-auto + desktop share one IP; 600/min was starving /api/agents.
+    10_000,
+    1,
+    1_000_000
+  );
+  const maxEntries = parsePositiveInteger(
+    process.env.API_GATEWAY_RATE_LIMIT_MAX_KEYS,
+    10_000,
+    100,
+    1_000_000
+  );
 
   app.use((req: any, res: any, next: any) => {
     if (shouldSkipHttpRateLimit(req)) {
@@ -133,7 +183,7 @@ function buildWebSocketProxyRoutes(): WebSocketProxyRoute[] {
     process.env.TNF_RELAY_URL ||
     process.env.RELAY_WS_URL ||
     process.env.RELAY_URL ||
-    'ws://127.0.0.1:3000/ws';
+    'ws://127.0.0.1:3007/ws';
   const bridgeTarget =
     process.env.API_GATEWAY_REDIS_BRIDGE_WS_TARGET ||
     `ws://127.0.0.1:${process.env.WS_BRIDGE_PORT || '3005'}/redis-bridge`;
@@ -186,7 +236,9 @@ function attachWebSocketUpgradeProxy(server: Server) {
         )
         .join('\r\n');
 
-      outbound.write(`${req.method || 'GET'} ${targetPathForRequest(req, target)} HTTP/${req.httpVersion}\r\n`);
+      outbound.write(
+        `${req.method || 'GET'} ${targetPathForRequest(req, target)} HTTP/${req.httpVersion}\r\n`
+      );
       outbound.write(`${headerLines}\r\n\r\n`);
       if (head.length > 0) {
         outbound.write(head);
@@ -297,8 +349,6 @@ async function bootstrap() {
     }
     next();
   });
-
-
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -468,6 +518,25 @@ async function bootstrap() {
   });
   app.getHttpAdapter().get('/api/v1/health', (req, res) => {
     res.json(healthPayload());
+  });
+
+  // Static-page fallback for non-/api routes.
+  //
+  // MUST be registered last. Express runs middleware in registration order, so
+  // when this sat above the route table it swallowed '/' and '/health' before
+  // their handlers could run — which is why it previously needed a hand-kept
+  // list of routes to exempt. A catch-all that has to enumerate what it must
+  // not catch drifts out of date the moment someone adds a route; one that
+  // runs last cannot.
+  const staticPageHandler = await ensureNextHandler();
+  app.use(async (req: any, res: any, nextMw: any) => {
+    try {
+      if (req.url && req.url.startsWith('/api')) return nextMw();
+      await staticPageHandler(req, res);
+    } catch (err) {
+      console.error('[next-fallback] error:', err);
+      nextMw();
+    }
   });
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by CloudRuntime, fallback to 8080

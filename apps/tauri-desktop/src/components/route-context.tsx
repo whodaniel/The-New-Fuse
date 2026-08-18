@@ -8,7 +8,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { isKnownRoute, persistRoute, resolveBootRoute } from '../config/routes';
+import {
+  isKnownRoute,
+  persistRoute,
+  resolveBootRoute,
+  resolveLegacyRedirect,
+} from '../config/routes';
 
 interface RouteHistoryEntry {
   route: string;
@@ -68,7 +73,11 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
     if (typeof window === 'undefined') return;
 
     const onHashChange = () => {
-      const hashRoute = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
+      const rawHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
+      const hashRoute = rawHash ? resolveLegacyRedirect(rawHash) : '';
+      if (hashRoute && rawHash !== hashRoute && window.history?.replaceState) {
+        window.history.replaceState(null, '', `#${hashRoute}`);
+      }
       // Drive navigation for any non-empty hash, including unknown ones, so the
       // address bar and the rendered view never disagree. Unknown routes render
       // the 404 shell (handled by the router) but remain the current route.
@@ -93,23 +102,24 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
   }, []);
 
   const navigate = useCallback((route: string, newParams: Record<string, string> = {}) => {
-    setCurrentRoute(route);
+    const target = resolveLegacyRedirect(route);
+    setCurrentRoute(target);
     setParams(newParams);
     // Only persist real routes; a 404 target should not be restored on relaunch.
-    if (isKnownRoute(route)) {
-      persistRoute(route);
+    if (isKnownRoute(target)) {
+      persistRoute(target);
     }
     // Always sync the hash so the URL and rendered view stay consistent, even
     // when navigating to an unknown route (which renders the 404 shell).
     if (typeof window !== 'undefined' && window.history?.replaceState) {
-      window.history.replaceState(null, '', `#${route}`);
+      window.history.replaceState(null, '', `#${target}`);
     }
     setHistoryStack((prev) => {
       const last = prev[prev.length - 1];
-      if (last?.route === route) {
-        return [...prev.slice(0, -1), { route, params: newParams }];
+      if (last?.route === target) {
+        return [...prev.slice(0, -1), { route: target, params: newParams }];
       }
-      const next = [...prev, { route, params: newParams }];
+      const next = [...prev, { route: target, params: newParams }];
       return next.length > 50 ? next.slice(-50) : next;
     });
   }, []);

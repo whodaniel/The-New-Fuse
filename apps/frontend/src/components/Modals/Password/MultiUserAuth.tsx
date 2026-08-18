@@ -232,7 +232,7 @@ export default function MultiUserAuth() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-x-2">
                 <span className="text-2xl font-bold text-white">{t('login.multi-user.title')}</span>
-                <span className="text-2xl font-bold bg-linear-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent">
                   {appName}
                 </span>
               </DialogTitle>

@@ -7,7 +7,7 @@ import { CheckCircle, Download, Palette, Rocket, Sparkles, Type } from 'lucide-r
  */
 export const BrandIdentity = () => {
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
       <main className="pt-32 pb-20 px-4 sm:px-3 lg:px-8 max-w-7xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-20">
@@ -17,7 +17,7 @@ export const BrandIdentity = () => {
           </Badge>
           <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
             <span className="block text-white">The New Fuse</span>
-            <span className="block bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Brand Identity
             </span>
           </h1>
@@ -49,7 +49,7 @@ export const BrandIdentity = () => {
                     alt="Neon Monogram Logo"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       size="sm"
                       className="w-full bg-transparent text-black hover:bg-gray-200"
@@ -77,7 +77,7 @@ export const BrandIdentity = () => {
                     alt="Abstract Gradient Logo"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       size="sm"
                       className="w-full bg-transparent text-black hover:bg-gray-200"
@@ -105,7 +105,7 @@ export const BrandIdentity = () => {
                     alt="Circuit Node Logo"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       size="sm"
                       className="w-full bg-transparent text-black hover:bg-gray-200"
@@ -192,16 +192,16 @@ export const BrandIdentity = () => {
             <h3 className="text-xl font-bold mb-6">Gradient Systems</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="h-24 rounded-md bg-linear-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+                <div className="h-24 rounded-md bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
                 <p className="text-sm font-mono text-gray-400">
-                  bg-linear-to-r from-blue-400 via-purple-400 to-pink-400
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400
                 </p>
                 <p className="text-xs text-muted-foreground">Primary Brand Gradient (Text Clips)</p>
               </div>
               <div className="space-y-2">
-                <div className="h-24 rounded-md bg-linear-to-r from-blue-600 to-purple-600"></div>
+                <div className="h-24 rounded-md bg-gradient-to-r from-blue-600 to-purple-600"></div>
                 <p className="text-sm font-mono text-gray-400">
-                  bg-linear-to-r from-blue-600 to-purple-600
+                  bg-gradient-to-r from-blue-600 to-purple-600
                 </p>
                 <p className="text-xs text-muted-foreground">Action Gradient (Buttons)</p>
               </div>

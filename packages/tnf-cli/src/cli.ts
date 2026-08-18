@@ -22,14 +22,17 @@ import {
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
-import { registerAgentsRunCommand } from './commands/agents-run.js';
+import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
+import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
+import { registerGoogleAiCommand } from './commands/google-ai.js';
+import { registerHaltCommand } from './commands/halt.js';
 import { registerDoctorCommand, registerStatusCommand } from './commands/health.js';
 import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.js';
 import { registerLogsCommand } from './commands/logs.js';
@@ -39,6 +42,7 @@ import { registerRefreshContextCommand } from './commands/refresh-context/comman
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
+import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 import { Orchestrator } from './orchestration.js';
@@ -97,6 +101,7 @@ import {
   resolvePostStepTimeoutMs,
   tallyFullAutoRuns,
 } from './utils/full-auto-cycle.js';
+import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -111,10 +116,12 @@ import {
   resolveSlashDropdownInput,
   type SlashDropdownState,
 } from './utils/palette-readline.js';
+import { getPaletteRecents } from './utils/palette-recents.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { renderStatusLine, type StatusSnapshot, type StatusTheme } from './utils/tui-statusline.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
 // CORE TENET — CORRECTED 2026-07-22 — embedded in executable CLI entrypoint.
@@ -147,7 +154,7 @@ const _filename =
 const require = createRequire(_filename);
 const repoRoot = path.resolve(_dirname, '../../..');
 const invocationCwd = process.env.TNF_INVOCATION_CWD || process.cwd();
-const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
+const LOCAL_ENV_FILES = ['.tnf.local.env', '.env.local', '.env'];
 const FALLBACK_ENV_SOURCES = [
   'apps/api/.env',
   'apps/frontend/.env.local',
@@ -1397,7 +1404,7 @@ async function runFastHarnessProtocolGate(label: string): Promise<void> {
     return;
   }
   console.log(chalk.dim(`[TNF Harness] Protocol gate before ${label}`));
-  new ProtocolInterceptor(repoRoot).runPreFlightChecks();
+  await new ProtocolInterceptor(repoRoot).runPreFlightChecks();
   await runCommand('node', ['scripts/protocols/validate-turn-zero-authority.cjs', '--mode=ci']);
 }
 
@@ -3383,6 +3390,7 @@ export const PLATFORM_TAXONOMY: string[] = [
   // Bank-target-only (added in Phase 8 to align with reconcile-agent-banks.cjs)
   'augment',
   'codex',
+  'command-code',
   'cursor',
   'hermes',
   'kilo',
@@ -3393,19 +3401,7 @@ export const PLATFORM_TAXONOMY: string[] = [
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-// 'coordinator' (e.g. Project-Planner) and 'bridge' (e.g. hermes-bridge) were
-// added after being found live in the agent registry but missing from this
-// list — see broker-agent.ts isWorkerAgent(), which excludes both from
-// worker-dispatch eligibility alongside director/orchestrator/broker.
-const AGENT_ROLE_TRAITS = [
-  'director',
-  'orchestrator',
-  'broker',
-  'worker',
-  'participant',
-  'coordinator',
-  'bridge',
-];
+const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -3947,10 +3943,16 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       ],
     },
     {
-      title: 'OpenClaw Ops',
+      title: 'Harness clients',
       entries: [
-        { path: 'tnf openclaw [args...]', description: 'Pass through any OpenClaw CLI command' },
-        { path: 'tnf claw [args...]', description: 'Alias for tnf openclaw' },
+        {
+          path: 'tnf harness clients [--json]',
+          description: 'List interchangeable harness CLIs and which are installed',
+        },
+        {
+          path: 'tnf harness staff [client]',
+          description: 'Staff a TNF capability with any installed harness client',
+        },
         {
           path: 'tnf cursor [args...]',
           description: 'Pass through Cursor CLI with TNF harness MCP routing',
@@ -3959,6 +3961,11 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
           path: 'tnf assimilate link cursor',
           description: 'Onboard Cursor CLI into TNF harness protocol',
         },
+        {
+          path: 'tnf openclaw [args...]',
+          description: 'Optional adapter: pass through OpenClaw if that CLI is installed',
+        },
+        { path: 'tnf claw [args...]', description: 'Alias for tnf openclaw (optional adapter)' },
       ],
     },
     {
@@ -4371,7 +4378,15 @@ function resolveImplicitPassthroughArgs(
 ): { cliName: string; args: string[] } | null {
   const subcommand = argv[2];
   const tnfCommands = getTnfTopLevelCommands();
-  const passthroughTargets = ['openclaw', 'hermes', 'gemini', 'cursor', 'claude', 'pi'];
+  const passthroughTargets = [
+    'openclaw',
+    'hermes',
+    'gemini',
+    'cursor',
+    'claude',
+    'pi',
+    'command-code',
+  ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
   // resolve. Without this guard `tnf --help` fell through to the loop below and
@@ -4546,6 +4561,16 @@ type InteractiveSlashContext = {
   autonomousState?: AutonomousSessionState;
   /** Tool policy the session launched with. Absent means unrestricted. */
   permissions?: PermissionResolution;
+  /* --- status-line inputs ------------------------------------------------ */
+  /** Interaction mode the session launched with: agent / plan / ask. */
+  mode?: string;
+  /** Persisted TUI mode (INTERACTIVE / LONG_RUN / AUTONOMOUS). */
+  tuiMode?: string;
+  /**
+   * Current operator takeover window. Mutated by `/window` mid-session, so the
+   * status line reads it from here rather than re-resolving from disk.
+   */
+  operatorWindowMs?: number;
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4594,8 +4619,10 @@ const PALETTE_THEME: PaletteTheme = {
   dim: (s) => chalk.dim(s),
   accent: (s) => chalk.cyan(s),
   match: (s) => chalk.bold.yellow(s),
-  selected: (s) => chalk.bold.green(s),
+  selected: (s) => chalk.bgCyan.black.bold(s),
   badge: (s) => chalk.dim(s),
+  scrollbar: (s) => chalk.cyan(s),
+  recent: (s) => chalk.yellow(s),
 };
 
 /**
@@ -4666,6 +4693,9 @@ function attachSlashCommandDropdown(
     stdin: process.stdin,
     stdout: process.stdout,
     emitKeypressEvents: readline.emitKeypressEvents,
+    // TNF_PALETTE_RECENTS=0 opts out of the on-disk frecency store entirely,
+    // for shared or ephemeral machines where a usage log is unwelcome.
+    recents: process.env.TNF_PALETTE_RECENTS === '0' ? null : getPaletteRecents(),
   });
 }
 
@@ -4741,6 +4771,145 @@ function printSessionCost(context: InteractiveSlashContext): void {
     console.log(chalk.dim('  Cost:      provider price metadata unavailable'));
   }
   console.log(chalk.dim('  Note: local estimate, not provider billing telemetry.'));
+  console.log('');
+}
+
+/**
+ * Current branch, read straight out of `.git/HEAD`.
+ *
+ * Spawning `git rev-parse` would be a process per prompt in a session that
+ * redraws the status line every turn; the file is one line and the answer only
+ * changes when the operator checks something out, so it is cached briefly.
+ */
+const BRANCH_CACHE_MS = 5000;
+let branchCache: { value: string | null; at: number } | null = null;
+
+function currentGitBranch(): string | null {
+  const now = Date.now();
+  if (branchCache && now - branchCache.at < BRANCH_CACHE_MS) return branchCache.value;
+
+  let value: string | null = null;
+  try {
+    const head = fs.readFileSync(path.join(repoRoot, '.git', 'HEAD'), 'utf8').trim();
+    const match = head.match(/^ref:\s*refs\/heads\/(.+)$/);
+    // Detached HEAD: show the short SHA rather than nothing, so the operator
+    // can still tell that they are not on a branch.
+    value = match ? match[1] : head ? `${head.slice(0, 7)} (detached)` : null;
+  } catch {
+    value = null;
+  }
+
+  branchCache = { value, at: now };
+  return value;
+}
+
+/** `~/Desktop/…/The-New-Fuse` — enough to identify the tree, short enough to fit. */
+function shortDisplayPath(target: string): string {
+  const home = os.homedir();
+  const withTilde = home && target.startsWith(home) ? `~${target.slice(home.length)}` : target;
+  const parts = withTilde.split(path.sep);
+  if (parts.length <= 3) return withTilde;
+  return [parts[0], '…', ...parts.slice(-2)].join(path.sep);
+}
+
+/** Everything the status line and `/status` both want to know. */
+function collectStatusSnapshot(context: InteractiveSlashContext): StatusSnapshot {
+  const tokens = estimateSessionTokens(context.messages);
+  let mcpServers = 0;
+  try {
+    mcpServers = new MCPManagerService().listServers().length;
+  } catch {
+    mcpServers = 0;
+  }
+
+  return {
+    provider: context.client?.providerName,
+    model: context.client?.model,
+    mode: context.mode,
+    tuiMode: context.tuiMode,
+    autonomous: context.autonomousMode,
+    hold: context.autonomousState?.operatorHold,
+    turnsUsed: context.autonomousState?.turnsThisSession,
+    turnsMax: context.autonomousState?.maxTurnsPerSession,
+    tokens: tokens.total,
+    messages: context.messages.length,
+    operatorWindowMs: context.operatorWindowMs,
+    branch: currentGitBranch(),
+    cwd: shortDisplayPath(repoRoot),
+    mcpServers,
+    // Only worth a segment when it actually restricts something.
+    permissions:
+      context.permissions && !context.permissions.mutationsAllowed
+        ? context.permissions.summary || 'restricted'
+        : null,
+    indexedCommands: paletteIndexCache?.length,
+  };
+}
+
+const STATUS_THEME: StatusTheme = {
+  dim: (s) => chalk.dim(s),
+  label: (s) => chalk.dim(s),
+  value: (s) => chalk.white(s),
+  on: (s) => chalk.green.bold(s),
+  off: (s) => chalk.dim(s),
+  warn: (s) => chalk.yellow.bold(s),
+};
+
+/** The status line printed above each prompt. Empty string disables it. */
+function renderTuiStatusLine(context: InteractiveSlashContext): string {
+  if (process.env.TNF_STATUSLINE === '0') return '';
+  return renderStatusLine(
+    collectStatusSnapshot(context),
+    process.stdout.columns || 80,
+    STATUS_THEME
+  );
+}
+
+function printTuiStatus(context: InteractiveSlashContext): void {
+  const tokens = estimateSessionTokens(context.messages);
+  const permissions = context.permissions;
+  let mcpServers: string[] = [];
+  try {
+    mcpServers = new MCPManagerService().listServers().map((server) => server.name);
+  } catch {
+    mcpServers = [];
+  }
+
+  console.log(chalk.bold('\nTUI Status\n'));
+  // Lead with the same line that sits above the prompt, so `/status` reads as
+  // an expansion of what the operator is already looking at rather than as a
+  // second, differently-worded source of truth.
+  const line = renderTuiStatusLine(context);
+  if (line) console.log(`${line}\n`);
+  console.log(`  Provider:       ${context.client?.providerName || 'unknown'}`);
+  console.log(`  Model:          ${context.client?.model || 'unknown'}`);
+  if (context.client?.baseUrl) console.log(`  Base URL:       ${context.client.baseUrl}`);
+  if (context.mode) console.log(`  Mode:           ${context.mode}`);
+  if (context.tuiMode) console.log(`  TUI mode:       ${context.tuiMode}`);
+  console.log(`  Autonomous:     ${context.autonomousMode ? 'on' : 'off'}`);
+  if (context.autonomousState) {
+    console.log(
+      `  Turn budget:    ${context.autonomousState.turnsThisSession}/${context.autonomousState.maxTurnsPerSession} (ceiling ${context.autonomousState.capCeiling})`
+    );
+    console.log(`  Operator hold:  ${context.autonomousState.operatorHold ? 'on' : 'off'}`);
+  }
+  if (typeof context.operatorWindowMs === 'number') {
+    console.log(`  Op. window:     ${Math.round(context.operatorWindowMs / 1000)}s`);
+  }
+  console.log(`  Permissions:    ${permissions?.summary || 'unrestricted'}`);
+  console.log(
+    `  Native tools:   ${
+      permissions ? permissions.allowed.join(', ') || 'none' : KNOWN_TOOLS.join(', ')
+    }`
+  );
+  console.log(`  MCP servers:    ${mcpServers.length ? mcpServers.join(', ') : 'none configured'}`);
+  console.log(`  Workspace:      ${shortDisplayPath(repoRoot)}`);
+  console.log(`  Branch:         ${currentGitBranch() || 'not a git worktree'}`);
+  console.log(`  Messages:       ${context.messages.length}`);
+  console.log(`  Tokens:         ${tokens.total} estimated`);
+  console.log(
+    `  Palette:        ${paletteIndexCache ? `${paletteIndexCache.length} commands indexed` : 'not built yet'}`
+  );
   console.log('');
 }
 
@@ -4973,6 +5142,11 @@ async function handleInteractiveSlashCommand(
 
   if (command.name === 'cost') {
     printSessionCost(context);
+    return { handled: true };
+  }
+
+  if (command.name === 'status') {
+    printTuiStatus(context);
     return { handled: true };
   }
 
@@ -5396,6 +5570,11 @@ program
   )
   .option('--worktree-base <ref>', 'Base ref for a new worktree (default: origin/HEAD, else HEAD)')
   .option('--skip-voice-kws', 'Do not auto-start Voice beam + KWS (default: start them)')
+  .option(
+    '--onboard',
+    'Run the full Turn Zero onboard script (default: skip — main preflight already ran)'
+  )
+  .option('--repair', 'Pass --repair to the onboard script (implies --onboard)')
   .action(
     async (
       promptParts: string[] | undefined,
@@ -5418,6 +5597,8 @@ program
         worktree?: string | true;
         worktreeBase?: string;
         skipVoiceKws?: boolean;
+        onboard?: boolean;
+        repair?: boolean;
       }
     ) => {
       try {
@@ -5490,7 +5671,12 @@ program
 
         console.log(chalk.dim(`  ⚿ Permissions — ${permissions.summary}`));
 
-        await runTurnZeroOnboardSurface();
+        // Main() already ran ProtocolInterceptor (Turn Zero + disclosure) before
+        // this handler. Re-running scripts/tnf-onboard.cjs here duplicated the
+        // entire bootstrap wall on every `tnf tui` — opt-in only.
+        if (options.onboard || options.repair) {
+          await runTurnZeroOnboardSurface({ repair: Boolean(options.repair) });
+        }
         if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
           await ensureVoiceKwsAlwaysOn();
         }
@@ -8315,6 +8501,79 @@ harness
     }
   });
 
+const HARNESS_CLIENTS = [
+  { id: 'claude', binary: 'claude', capability: 'coding-agent' },
+  { id: 'cursor', binary: 'cursor', capability: 'coding-agent' },
+  { id: 'codex', binary: 'codex', capability: 'coding-agent' },
+  { id: 'gemini', binary: 'gemini', capability: 'coding-agent' },
+  { id: 'agy', binary: 'agy', capability: 'coding-agent' },
+  { id: 'hermes', binary: 'hermes', capability: 'coding-agent' },
+  { id: 'pi', binary: 'pi', capability: 'coding-agent' },
+  { id: 'openclaw', binary: 'openclaw', capability: 'coding-agent (optional adapter)' },
+] as const;
+
+harness
+  .command('clients')
+  .description('List interchangeable harness CLIs that can staff TNF coding-agent capabilities')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const rows = HARNESS_CLIENTS.map((client) => {
+      const resolved = findExecutableOnPath(client.binary);
+      return {
+        id: client.id,
+        capability: client.capability,
+        installed: Boolean(resolved),
+        path: resolved,
+      };
+    });
+    if (options.json) {
+      console.log(JSON.stringify({ principle: 'capability-over-agent', clients: rows }, null, 2));
+      return;
+    }
+    console.log(chalk.bold('\nHarness clients (interchangeable staffing)\n'));
+    console.log(
+      chalk.dim('TNF capabilities are staffed by whichever installed client can fulfill them.\n')
+    );
+    for (const row of rows) {
+      const mark = row.installed ? chalk.green('installed') : chalk.dim('absent');
+      console.log(`   ${chalk.bold(row.id.padEnd(12, ' '))} ${mark}  ${row.capability}`);
+    }
+    console.log('');
+  });
+
+harness
+  .command('staff')
+  .description('Staff a TNF harness capability with an installed client (MCP + optional launch)')
+  .argument('[client]', 'claude|cursor|codex|gemini|agy|hermes|pi|openclaw')
+  .option('--no-launch', 'Provision MCP config only; do not start the client')
+  .option('--require-doctor', 'Fail if doctor checks fail')
+  .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
+    try {
+      const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
+      const known = new Set(HARNESS_CLIENTS.map((entry) => entry.id));
+      let chosen = requested;
+      if (chosen && !known.has(chosen)) {
+        throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+      }
+      if (!chosen) {
+        const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
+        const found = preferred.find((entry) => {
+          const resolved = findExecutableOnPath(entry.binary);
+          return Boolean(resolved);
+        });
+        chosen = found?.id || 'claude';
+        console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
+      }
+      const args = ['scripts/tnf-start-ai.cjs', chosen];
+      if (options.noLaunch) args.push('--no-launch');
+      if (options.requireDoctor) args.push('--require-doctor');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 // A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
 {
   const autonomy = program
@@ -8653,6 +8912,23 @@ metaskills
     }
   });
 
+function parseHeaderOptions(entries: string[]): Record<string, string> {
+  const headers: Record<string, string> = {};
+  for (const entry of entries) {
+    const separator = entry.indexOf(':');
+    if (separator <= 0) {
+      throw new Error(`Invalid --header value "${entry}". Use "Name: value".`);
+    }
+    const name = entry.slice(0, separator).trim();
+    const value = entry.slice(separator + 1).trim();
+    if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) {
+      throw new Error(`Invalid header name "${name}"`);
+    }
+    headers[name] = value;
+  }
+  return headers;
+}
+
 const mcp = program.command('mcp').description('MCP utilities');
 
 mcp
@@ -8712,22 +8988,30 @@ mcp
   .command('add')
   .description('Add an MCP server')
   .argument('<name>', 'Server name')
-  .requiredOption('--command <cmd>', 'Command to run')
+  .option('--command <cmd>', 'Command to run for local stdio MCP servers')
   .option('--args <args...>', 'Arguments for the command')
   .option('--env <json>', 'Environment variables as JSON (alias: --environment)')
   .option('--environment <json>', 'Environment variables as JSON (kilo parity)')
   .option('--type <type>', 'Server type (local|remote|sse|ws)', 'local')
+  .option('--transport <transport>', 'Transport (stdio|streamable-http|sse|ws)')
+  .option('--url <url>', 'Remote MCP endpoint URL (http(s) or ws(s))')
+  .option('--header <header...>', 'HTTP/SSE header as "Name: value" (repeatable)')
+  .option('--bearer-token-env <env>', 'Environment variable containing a bearer token')
   .option('--cwd <path>', 'Working directory')
   .option('--enabled <bool>', 'Enable server (true|false)', 'true')
   .action(
     (
       name: string,
       options: {
-        command: string;
+        command?: string;
         args?: string[];
         env?: string;
         environment?: string;
         type?: string;
+        transport?: string;
+        url?: string;
+        header?: string[];
+        bearerTokenEnv?: string;
         cwd?: string;
         enabled?: string;
       }
@@ -8738,6 +9022,12 @@ mcp
         if (envJson) {
           env = JSON.parse(envJson);
         }
+        const headers = parseHeaderOptions(options.header || []);
+        if (!options.command && !options.url) {
+          throw new Error(
+            'Provide --command for local stdio servers or --url for remote MCP servers'
+          );
+        }
         const mcpManager = new MCPManagerService();
         mcpManager.addServer(name, {
           command: options.command,
@@ -8745,6 +9035,10 @@ mcp
           env,
           environment: env,
           type: options.type as 'local' | 'remote' | 'sse' | 'ws',
+          transport: options.transport as 'stdio' | 'streamable-http' | 'sse' | 'ws' | undefined,
+          url: options.url,
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
+          bearerTokenEnv: options.bearerTokenEnv,
           cwd: options.cwd,
           enabled: options.enabled !== 'false',
         });
@@ -8797,6 +9091,84 @@ mcp
   });
 
 mcp
+  .command('tools')
+  .description('List tools advertised by configured local stdio MCP servers')
+  .argument('[server]', 'Optional MCP server name')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--timeout-ms <n>', 'Per-server MCP request timeout in milliseconds', '15000')
+  .action(async (server: string | undefined, options: { json?: boolean; timeoutMs?: string }) => {
+    try {
+      const runtime = new MCPToolRuntimeService(repoRoot);
+      const results = await runtime.listTools(server, Number(options.timeoutMs || 15000));
+      if (options.json) {
+        console.log(JSON.stringify(results, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nMCP Tools\n'));
+      for (const result of results) {
+        if (!result.ok) {
+          console.log(`${chalk.cyan(result.server)}: ${chalk.red(result.error || 'failed')}`);
+          continue;
+        }
+        console.log(`${chalk.cyan(result.server)}: ${result.tools.length} tool(s)`);
+        for (const tool of result.tools) {
+          console.log(
+            `  ${chalk.green(tool.name)}${tool.description ? chalk.dim(` - ${tool.description}`) : ''}`
+          );
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('call')
+  .description('Call a tool on a configured local stdio MCP server')
+  .argument('<server>', 'MCP server name')
+  .argument('<tool>', 'MCP tool name')
+  .argument('[argumentsJson]', 'JSON object for the MCP tool arguments', '{}')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--timeout-ms <n>', 'MCP request timeout in milliseconds', '30000')
+  .action(
+    async (
+      server: string,
+      tool: string,
+      argumentsJson: string,
+      options: { json?: boolean; timeoutMs?: string }
+    ) => {
+      try {
+        const parsedArgs = JSON.parse(argumentsJson || '{}');
+        if (!parsedArgs || typeof parsedArgs !== 'object' || Array.isArray(parsedArgs)) {
+          throw new Error('argumentsJson must be a JSON object');
+        }
+        const runtime = new MCPToolRuntimeService(repoRoot);
+        const result = await runtime.callTool(
+          server,
+          tool,
+          parsedArgs as Record<string, unknown>,
+          Number(options.timeoutMs || 30000)
+        );
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          return;
+        }
+        if (!result.ok) {
+          console.error(chalk.red(`Error: ${result.error}`));
+          process.exit(1);
+        }
+        console.log(JSON.stringify(result.result, null, 2));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+mcp
   .command('auth')
   .description('Authenticate with an OAuth-enabled MCP server')
   .argument('[name]', 'Server name')
@@ -8827,6 +9199,81 @@ mcp
       process.exit(1);
     }
   });
+
+mcp
+  .command('codex-login')
+  .description('Run Codex MCP OAuth login and open the callback URL automatically')
+  .argument('[name]', 'Codex MCP server name', 'supabase')
+  .option('--scopes <list>', 'Comma-separated OAuth scopes to pass through to Codex')
+  .option('--codex-bin <path>', 'Codex executable', 'codex')
+  .option('--browser <command>', 'Browser/open command to prefer')
+  .option('--no-open', 'Print the authorize URL but do not open it')
+  .option('--dry-run', 'Verify Codex/server discovery without starting OAuth')
+  .option('--json', 'Print a final JSON summary')
+  .action(
+    async (
+      name: string,
+      options: {
+        scopes?: string;
+        codexBin?: string;
+        browser?: string;
+        open?: boolean;
+        dryRun?: boolean;
+        json?: boolean;
+      }
+    ) => {
+      try {
+        const args = ['scripts/codex-mcp-oauth-login.cjs', name];
+        if (options.scopes) args.push('--scopes', options.scopes);
+        if (options.codexBin) args.push('--codex-bin', options.codexBin);
+        if (options.browser) args.push('--browser', options.browser);
+        if (options.open === false) args.push('--no-open');
+        if (options.dryRun) args.push('--dry-run');
+        if (options.json) args.push('--json');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+mcp
+  .command('supabase-agent-check')
+  .description('Verify evidence before an agent claims Supabase MCP/data-plane access')
+  .option('--server <name>', 'Codex MCP server name', 'supabase')
+  .option('--codex-bin <path>', 'Codex executable', 'codex')
+  .option('--login', 'Run the Codex MCP OAuth login wrapper if configured')
+  .option('--no-open', 'Pass --no-open to the login wrapper')
+  .option('--write', 'Write SUPABASE_AGENT_CONNECTION_LATEST.json')
+  .option('--strict', 'Exit non-zero unless Codex Supabase MCP is configured and OAuth-capable')
+  .option('--json', 'Print machine-readable JSON')
+  .action(
+    async (options: {
+      server?: string;
+      codexBin?: string;
+      login?: boolean;
+      open?: boolean;
+      write?: boolean;
+      strict?: boolean;
+      json?: boolean;
+    }) => {
+      try {
+        const args = ['scripts/supabase-agent-connection-check.cjs'];
+        if (options.server) args.push('--server', options.server);
+        if (options.codexBin) args.push('--codex-bin', options.codexBin);
+        if (options.login) args.push('--login');
+        if (options.open === false) args.push('--no-open');
+        if (options.write) args.push('--write');
+        if (options.strict) args.push('--strict');
+        if (options.json) args.push('--json');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 mcp
   .command('logout')
@@ -9294,6 +9741,19 @@ ai.command('chat')
       const ask = (prompt: string): Promise<string> =>
         new Promise((resolve) => rl.question(prompt, resolve));
 
+      // Persist this chat session so it can be resumed via tnf session list/export.
+      let chatSessionId: string | undefined;
+      try {
+        const chatSession = sessionManager.create({
+          provider: client.providerName || 'unknown',
+          model: client.model || 'unknown',
+          projectPath: repoRoot,
+        });
+        chatSessionId = chatSession.id;
+      } catch {
+        // Non-fatal: persistence is a convenience, not a requirement.
+      }
+
       while (true) {
         const input = resolveSlashDropdownInput(await ask(chalk.green('\n> ')), slashDropdown);
         const trimmed = input.trim();
@@ -9327,6 +9787,15 @@ ai.command('chat')
           messages.push({ role: 'assistant' as const, content: response });
         } catch (err: any) {
           console.error(chalk.red('Error: ' + err.message));
+        }
+
+        // Persist transcript to disk after each exchange.
+        if (chatSessionId) {
+          try {
+            sessionManager.saveMessages(chatSessionId, messages);
+          } catch {
+            // Non-fatal: persistence failure must not crash the chat loop.
+          }
         }
       }
 
@@ -9386,12 +9855,12 @@ program
 
 program
   .command('openclaw')
-  .description('Pass through any OpenClaw CLI command')
+  .description('Optional adapter: pass through OpenClaw CLI if that harness is installed')
   .argument('[args...]', 'Arguments forwarded to openclaw');
 
 program
   .command('claw')
-  .description('Alias for `tnf openclaw`')
+  .description('Alias for `tnf openclaw` (optional adapter)')
   .argument('[args...]', 'Arguments forwarded to openclaw');
 
 program
@@ -9732,6 +10201,30 @@ function resolveLatestMasterClockLogPath(logDir: string): string | null {
   return path.join(logDir, candidates[candidates.length - 1]);
 }
 
+/**
+ * PIDs of master-clock instances already running on this host.
+ *
+ * Matches the compiled entrypoint, the ts-node entrypoint, and the pnpm wrapper
+ * chain — the same set `scripts/orchestrator/factory-boot.sh` guards on, plus
+ * the pnpm form this CLI itself spawns. Deliberately specific enough not to
+ * match this process's own `tnf master-clock start` argv.
+ */
+function findRunningMasterClockPids(): string[] {
+  const pattern =
+    'dist/master-clock\\.js|ts-node src/master-clock\\.ts|relay-core run master-clock';
+  const result = spawnSync('pgrep', ['-f', pattern], { encoding: 'utf8' });
+
+  // pgrep exits 1 when nothing matches. Any other failure (pgrep missing, or
+  // "Cannot get process list" under heavy load) must not block a legitimate
+  // start, so treat it as "none found" rather than guessing.
+  if (result.error || typeof result.stdout !== 'string') return [];
+
+  return result.stdout
+    .split('\n')
+    .map((pid) => pid.trim())
+    .filter((pid) => /^\d+$/.test(pid) && pid !== String(process.pid));
+}
+
 const masterClock = program
   .command('master-clock')
   .description('Master clock controls (provider-routed; local default)');
@@ -9760,6 +10253,21 @@ masterClock
         await requireSuperAdmin(options, 'master-clock start');
         const provider = resolveControlPlaneProvider(options, [MASTER_CLOCK_PROVIDER_ENV_KEY]);
         if (provider === 'local') {
+          // The master clock is the baton holder — exactly one may run per host.
+          // This path had no guard (factory-boot.sh has always had one), so every
+          // invocation stacked another instance. On 2026-08-16 four were live at
+          // once, each reconnecting to Redis every 5s; their combined leak wedged
+          // the bus and took the whole local fleet's coordination down.
+          const existing = findRunningMasterClockPids();
+          if (existing.length > 0) {
+            console.log(
+              chalk.yellow(
+                `Master clock already running (pid ${existing.join(', ')}); refusing to start a second baton holder.`
+              )
+            );
+            console.log(chalk.dim('   Inspect it with: tnf master-clock status'));
+            return;
+          }
           await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
           return;
         }
@@ -9991,7 +10499,7 @@ superCycle
 const compat = program.command('compat').description('Compatibility and migration utilities');
 const compatOpenClaw = compat
   .command('openclaw')
-  .description('Show TNF to OpenClaw command-surface compatibility')
+  .description('Compatibility adapter: TNF command-surface coverage for an optional OpenClaw CLI')
   .option('--json', 'Output machine-readable JSON')
   .option('--mode <mode>', 'all|implicit|explicit-only', 'all')
   .action((options: { json?: boolean; mode: string }) => {
@@ -14396,6 +14904,12 @@ agentsLive
         const tnfVenv = path.join(tnfHome, 'venv', 'bin', 'python3');
         const pythonBin = process.env.TNF_PYTHON || (fs.existsSync(tnfVenv) ? tnfVenv : 'python3');
         const script = path.join(repoRoot, 'scripts', 'agents', 'tnf-agent-daemon.py');
+        // Redis connection budget gate — refuse start when local bus is saturated.
+        const guardScript = path.join(repoRoot, 'scripts', 'runtime', 'redis-connection-guard.cjs');
+        if (fs.existsSync(guardScript) && process.env.TNF_SKIP_REDIS_GUARD !== '1') {
+          console.log(chalk.dim('[tnf agents live] redis connection guard preflight...'));
+          await runCommand(process.execPath, [guardScript, '--preflight']);
+        }
         const args = [script, 'live'];
         if (options.model) args.push('--model', options.model);
         if (options.interval) args.push('--interval', options.interval);
@@ -15720,8 +16234,9 @@ import {
   ShellType,
 } from './services/CompletionService.js';
 import { DatabaseService } from './services/DatabaseService.js';
-import { DebugService } from './services/DebugService.js';
+import { DebugService, redactSensitiveConfig } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
+import { MCPToolRuntimeService } from './services/MCPToolRuntimeService.js';
 import { ModelsService } from './services/ModelsService.js';
 import { PermissionService } from './services/PermissionService.js';
 import {
@@ -16398,7 +16913,9 @@ debug
   .action((options: { path?: string; json?: boolean }) => {
     try {
       if (options.path) {
-        const value = debugService.getConfigPath(options.path);
+        const value = redactSensitiveConfig(
+          debugService.getConfigPath(options.path, invocationCwd)
+        );
         if (options.json) {
           console.log(JSON.stringify({ path: options.path, value }, null, 2));
         } else {
@@ -16407,7 +16924,7 @@ debug
           );
         }
       } else {
-        const config = debugService.getConfig();
+        const config = redactSensitiveConfig(debugService.getEffectiveConfig(invocationCwd));
         if (options.json) {
           console.log(JSON.stringify(config, null, 2));
         } else {
@@ -16687,7 +17204,7 @@ configCmd
   .description('Get a specific config value (dot notation)')
   .action((key: string) => {
     try {
-      const value = debugService.getConfigPath(key);
+      const value = redactSensitiveConfig(debugService.getConfigPath(key, invocationCwd));
       if (value !== undefined) {
         console.log(typeof value === 'string' ? value : JSON.stringify(value, null, 2));
       } else {
@@ -17021,7 +17538,9 @@ projectCmd
       const agents = projService.getAgents();
 
       if (options.json) {
-        console.log(JSON.stringify({ config, commands, agents }, null, 2));
+        console.log(
+          JSON.stringify({ config: redactSensitiveConfig(config), commands, agents }, null, 2)
+        );
       } else {
         console.log(chalk.bold('\nProject Configuration\n'));
         if (config) {
@@ -18643,6 +19162,7 @@ workspaceCommand
 
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 registerSparkCommand(program);
+registerGoogleAiCommand(program, repoRoot);
 
 async function createNotesService(options: {
   vaultPath?: string;
@@ -18957,6 +19477,12 @@ registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
 registerStaffingCommands(program);
 registerFleetCommands(program);
+// Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
+// data/providers/catalog.json + data/providers/nvidia-models.json (single
+// source of truth, no hardcoded lists).
+registerCatalogCommand(program);
+registerSubdirectorCommand(program, { repoRoot, runCommand });
+registerHaltCommand(program, repoRoot);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
@@ -19382,6 +19908,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
   const prefix = state.contextRefreshPending
     ? '[Autonomous context refresh]'
     : '[Autonomous continue]';
+  const speakRule =
+    'Always end the turn with a short plain-language update for the operator (what changed, blockers, next step). Never reply with only raw tool JSON.';
 
   if (!actions.length) {
     return [
@@ -19389,7 +19917,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
       summary,
       '',
       'No handoff next_actions found — follow LIVING_STATE.md active directive.',
-      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+      `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+      speakRule,
       'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
     ].join('\n');
   }
@@ -19401,7 +19930,8 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
       '',
       `All ${actions.length} handoff actions have been attempted this session.`,
       'Review results, commit or deploy as needed, then summarize blockers.',
-      `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn if verification is still required.`,
+      `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn if verification is still required.`,
+      speakRule,
     ].join('\n');
   }
 
@@ -19411,9 +19941,30 @@ function buildAutonomousContinuePrompt(state: AutonomousSessionState): string {
     summary,
     '',
     `Focus on handoff action ${state.handoffTaskIndex + 1}/${actions.length}: ${current}`,
-    `Emit at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+    `Use tools or at most ${AUTONOMOUS_MAX_SHELL_BLOCKS} fenced bash blocks this turn, then summarize results.`,
+    speakRule,
     'Do not re-explore files already listed in repo layout. Inspect → Act → Verify.',
   ].join('\n');
+}
+
+/** True when model "content" is just a dumped tool result (not operator-facing prose). */
+function looksLikeRawToolResultDump(text: string): boolean {
+  const trimmed = String(text || '').trim();
+  if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) return false;
+  try {
+    const parsed = JSON.parse(trimmed) as Record<string, unknown>;
+    if (typeof parsed !== 'object' || parsed === null) return false;
+    return (
+      'ok' in parsed ||
+      'stdout' in parsed ||
+      'stderr' in parsed ||
+      'exit_code' in parsed ||
+      'tool' in parsed ||
+      ('path' in parsed && 'content' in parsed)
+    );
+  } catch {
+    return false;
+  }
 }
 
 function isExploratoryShellBlock(script: string): boolean {
@@ -19544,51 +20095,104 @@ async function executeCapturedBash(
 type NativeToolTurnResult = {
   content: string;
   toolCallsMade: number;
-  executed: Array<{ command: string; code: number; timedOut: boolean }>;
+  executed: Array<{ tool: string; summary: string; ok: boolean }>;
 };
 
 async function runAutonomousNativeToolTurn(
   client: any,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  permissions?: PermissionResolution
 ): Promise<NativeToolTurnResult> {
   const executed: NativeToolTurnResult['executed'] = [];
+  const enabledTools = permissions ? [...permissions.allowed] : [...KNOWN_TOOLS];
+  const tools = resolveBuiltinToolsAsOpenAI({ builtinTools: enabledTools } as any);
+  if (enabledTools.includes('bash' as any)) {
+    tools.push(TUI_RUN_BASH_TOOL);
+  }
   const result = await client.chatCompleteWithTools(
     messages,
     async (name: string, args: Record<string, unknown>) => {
-      if (name !== 'run_bash') {
-        return { ok: false, error: `Unknown tool: ${name}. Only run_bash is available.` };
+      if (name === 'run_bash') {
+        const command = String(args.command ?? '').trim();
+        if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
+        if (!enabledTools.includes('bash' as any)) {
+          return { ok: false, error: 'run_bash disabled by this session permission mode' };
+        }
+        const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
+        console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
+        const res = await executeCapturedBash(command, timeoutSec * 1000);
+        executed.push({
+          tool: 'run_bash',
+          summary: `(exit ${res.code}${res.timedOut ? ', timed out' : ''}) ${command.slice(0, 200)}`,
+          ok: res.ok,
+        });
+        console.log(
+          res.ok
+            ? chalk.green(`  ✓ exit 0`)
+            : chalk.red(`  ✗ exit ${res.code}${res.timedOut ? ' (timed out)' : ''}`)
+        );
+        const tail =
+          res.output.length > RUN_BASH_OUTPUT_TAIL_CHARS
+            ? `[output truncated to last ${RUN_BASH_OUTPUT_TAIL_CHARS} chars]\n` +
+              res.output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS)
+            : res.output;
+        return { ok: res.ok, exit_code: res.code, timed_out: res.timedOut, output: tail };
       }
-      const command = String(args.command ?? '').trim();
-      if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
-      const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
-      console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
-      const res = await executeCapturedBash(command, timeoutSec * 1000);
-      executed.push({ command, code: res.code, timedOut: res.timedOut });
-      console.log(
-        res.ok
-          ? chalk.green(`  ✓ exit 0`)
-          : chalk.red(`  ✗ exit ${res.code}${res.timedOut ? ' (timed out)' : ''}`)
-      );
-      const tail =
-        res.output.length > RUN_BASH_OUTPUT_TAIL_CHARS
-          ? `[output truncated to last ${RUN_BASH_OUTPUT_TAIL_CHARS} chars]\n` +
-            res.output.slice(-RUN_BASH_OUTPUT_TAIL_CHARS)
-          : res.output;
-      return { ok: res.ok, exit_code: res.code, timed_out: res.timedOut, output: tail };
+      if (!enabledTools.includes(name as any)) {
+        return { ok: false, error: `tool '${name}' disabled by this session permission mode` };
+      }
+      const response = await executeBuiltinTool(name, args, { cwd: repoRoot, quiet: false });
+      const ok = !(response && typeof response === 'object' && (response as any).ok === false);
+      executed.push({ tool: name, summary: summarizeNativeToolCall(name, args, response), ok });
+      return response;
     },
     {
       temperature: 0.7,
-      // Bound one autonomous turn: up to AUTONOMOUS_MAX_SHELL_BLOCKS tool
-      // rounds plus a final answer. The outer turn cap governs the session.
-      maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 1,
-      tools: [TUI_RUN_BASH_TOOL],
+      // Tool rounds + room for a final prose answer. chatCompleteWithTools also
+      // forces a tool-free synthesis if the cap is hit mid-tool-loop.
+      maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 2,
+      maxTokens: 4096,
+      tools,
     }
   );
+  let content = String(result?.content ?? '');
+  // Never persist/display raw tool JSON as the assistant turn — that is what
+  // made the TUI look "broken" (operators only saw dumps, no conversation).
+  if (looksLikeRawToolResultDump(content)) {
+    const summaries = executed.map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`).join('\n');
+    content =
+      executed.length > 0
+        ? `Completed ${executed.length} tool call(s) this turn:\n${summaries}\n\n(Tool output was kept out of the chat transcript; continuing.)`
+        : 'Received a tool-shaped payload with no prose summary. Continuing with the next inspect/act step.';
+  }
   return {
-    content: String(result?.content ?? ''),
-    toolCallsMade: Number(result?.toolCallsMade ?? 0),
+    content,
+    toolCallsMade: Math.max(Number(result?.toolCallsMade ?? 0), executed.length),
     executed,
   };
+}
+
+function summarizeNativeToolCall(
+  name: string,
+  args: Record<string, unknown>,
+  response: string | Record<string, unknown>
+): string {
+  const subject =
+    name === 'bash'
+      ? String(args.command ?? '')
+      : name === 'read_file' || name === 'write_file'
+        ? String(args.path ?? '')
+        : name === 'mcp_call_tool'
+          ? `${String(args.server ?? '')}.${String(args.tool ?? '')}`
+          : (() => {
+              try {
+                return JSON.stringify(args);
+              } catch {
+                return '<args>';
+              }
+            })();
+  const ok = !(response && typeof response === 'object' && (response as any).ok === false);
+  return `${ok ? 'ok' : 'failed'} ${subject.slice(0, 220)}`;
 }
 
 function readAbsoluteTextFileIfPresent(absolutePath: string, maxChars = 1600): string | null {
@@ -19852,6 +20456,31 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     }
   }
 
+  // Persist this session so it can be resumed via --continue / --resume.
+  // If we resumed an existing session, reuse its id; otherwise create a new one.
+  let currentSessionId: string | undefined;
+  if (options?.continueSession) {
+    try {
+      const sessions = sessionManager.list();
+      const resumedId =
+        (options.resumeId && sessionManager.get(options.resumeId)?.id) || sessions[0]?.id;
+      if (resumedId) currentSessionId = resumedId;
+    } catch {}
+  }
+  if (!currentSessionId) {
+    try {
+      const session = sessionManager.create({
+        provider: client.providerName || 'unknown',
+        model: client.model || 'unknown',
+        projectPath: repoRoot,
+      });
+      currentSessionId = session.id;
+    } catch (err: any) {
+      // Non-fatal: session persistence is a convenience, not a requirement.
+      console.log(chalk.dim(`  Session persistence disabled: ${err?.message ?? err}`));
+    }
+  }
+
   console.log('');
   console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
   console.log(chalk.cyan('║') + chalk.bold(' TNF Agent — Interactive Session ') + chalk.cyan(' ║'));
@@ -19876,6 +20505,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   console.log(
     chalk.dim(
       ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
+        ' Press / to search every command — ↑↓ or ^p/^n to move, ⇞⇟/^u^d to page, ⇱⇲ for the ends, ⇥ to complete\n' +
         ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n' +
         ' Prefer this `tnf tui` session for interactive TNF (paste-safe). `tnf hermes` is external passthrough.\n'
     )
@@ -19951,6 +20581,9 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     permissions: options?.permissions,
     autonomousMode,
     autonomousState,
+    mode: options?.mode || 'agent',
+    tuiMode,
+    operatorWindowMs: resolveOperatorWindowMs(),
   };
   // Mutable session window — /window and natural-language directives update this live.
   let operatorWindowMs = resolveOperatorWindowMs();
@@ -20083,12 +20716,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
   while (true) {
     // Pick up /window changes (env + ~/.tnf/tui-mode.json) every turn.
     operatorWindowMs = resolveOperatorWindowMs();
+    slashContext.operatorWindowMs = operatorWindowMs;
 
-    const modelLabel = `${chalk.dim(client.providerName || 'model')}/${chalk.white(client.model.replace(/^.*\//, ''))}`;
-    const promptWithModel =
-      process.env.TNF_SHOW_MODEL_IN_PROMPT !== '0'
-        ? chalk.green('\n') + chalk.dim('[') + modelLabel + chalk.dim(']') + ' '
-        : chalk.green('\n❯ ');
+    // Status goes on its own line ABOVE the prompt, printed as ordinary output
+    // rather than folded into the prompt string. Two reasons: an inline
+    // `[provider/model]` prompt changed width every turn, so the operator's
+    // typing shifted left and right as autonomy or the turn counter moved; and
+    // readline recomputes cursor rows from the prompt on every refresh, so a
+    // taller prompt is exactly the thing the palette's in-place renderer has to
+    // draw underneath. A fixed `❯ ` keeps the input column stable.
+    const statusLine =
+      process.env.TNF_SHOW_MODEL_IN_PROMPT === '0' ? '' : renderTuiStatusLine(slashContext);
+    const promptWithModel = chalk.green('❯ ');
 
     let trimmed: string;
     let fromAutonomousContinue = false;
@@ -20164,6 +20803,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       } else {
         let input: string;
         try {
+          console.log(statusLine ? `\n${statusLine}` : '');
           input = resolveSlashDropdownInput(await ask(promptWithModel), slashDropdown);
         } catch {
           break;
@@ -20261,13 +20901,19 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (useNativeTools) {
         let nativeSucceeded = false;
         try {
-          const native = await runAutonomousNativeToolTurn(client, messages);
+          const native = await runAutonomousNativeToolTurn(client, messages, options?.permissions);
           stopProcessingIndicator(true);
           nativeSucceeded = true;
-          nativeToolCallsMade = native.toolCallsMade;
+          nativeToolCallsMade = Math.max(native.toolCallsMade, native.executed.length);
           turnResponseText = native.content;
           if (native.content) {
             console.log(chalk.cyan('\n  ' + native.content.replace(/\n/g, '\n  ')));
+          } else if (native.executed.length > 0) {
+            console.log(
+              chalk.dim(
+                `\n  ✓ ${native.executed.length} tool call(s) completed (awaiting prose summary next turn)`
+              )
+            );
           }
           messages.push({ role: 'assistant', content: native.content || '' });
           if (native.executed.length > 0) {
@@ -20276,13 +20922,8 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
             messages.push({
               role: 'system',
               content:
-                `[run_bash] ${native.executed.length} command(s) executed this turn:\n` +
-                native.executed
-                  .map(
-                    (e, i) =>
-                      `${i + 1}. (exit ${e.code}${e.timedOut ? ', timed out' : ''}) ${e.command.slice(0, 200)}`
-                  )
-                  .join('\n'),
+                `[native_tools] ${native.executed.length} tool call(s) executed this turn:\n` +
+                native.executed.map((e, i) => `${i + 1}. ${e.tool}: ${e.summary}`).join('\n'),
             });
           }
         } catch (nativeErr: any) {
@@ -20324,10 +20965,42 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
 
       if (slashContext.autonomousMode) {
         const response = turnResponseText;
-        if (nativeToolCallsMade > 0) {
+        // While the operator has the floor (/hold or auto-hold), do not inject
+        // "call tools / do not narrate" prompts — that is what killed reply
+        // persistence when the operator asked questions.
+        if (autonomousState.operatorHold) {
+          autonomousState.consecutiveNoBashTurns = 0;
+        } else if (nativeToolCallsMade > 0) {
           // Native path already executed everything; don't re-run fences the
           // model may have merely quoted in its final answer.
           autonomousState.consecutiveNoBashTurns = 0;
+        } else if (looksLikeRawToolResultDump(response)) {
+          // Model echoed tool JSON as text without calling tools — count as stall
+          // but demand prose + a real tool call, not more JSON dumps.
+          autonomousState.consecutiveNoBashTurns += 1;
+          messages.push({
+            role: 'system',
+            content: [
+              '[Autonomous stall break]',
+              'Your last reply was raw tool JSON, not an operator-facing update.',
+              'Answer in plain language first. Then call a real tool (bash/run_bash/read_file) or emit fenced ```bash if tools are unavailable.',
+              'Inspect → Act → Verify. Prefer handoff next_actions.',
+            ].join('\n'),
+          });
+          console.log(
+            chalk.yellow(
+              `\n  ⚠ Tool-JSON dump with no tool call (${autonomousState.consecutiveNoBashTurns} turn(s)) — stall break injected`
+            )
+          );
+          if (autonomousState.consecutiveNoBashTurns >= STALL_AUTO_HOLD_AFTER) {
+            autonomousState.operatorHold = true;
+            autonomousState.continuePending = false;
+            console.log(
+              chalk.yellow(
+                `\n  ⏸ Auto-held after ${STALL_AUTO_HOLD_AFTER} stall turns — type freely. /continue to resume autonomous loop.`
+              )
+            );
+          }
         } else {
           const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
           if (blocks.length > 0) {
@@ -20338,8 +21011,9 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
             const stallMsg = [
               '[Autonomous stall break]',
               `Zero commands executed in the last ${autonomousState.consecutiveNoBashTurns} autonomous turn(s).`,
-              'Do NOT narrate. Call the run_bash tool with a real command now (or emit 1–5 fenced ```bash blocks if tools are unavailable).',
-              'Inspect → Act → Verify. Prefer handoff next_actions.',
+              'If the operator asked a question, answer it in plain language first.',
+              'Otherwise call bash/run_bash with a real command now (or emit 1–5 fenced ```bash blocks if tools are unavailable).',
+              'Always include a short operator-facing summary. Inspect → Act → Verify.',
             ].join('\n');
             messages.push({ role: 'system', content: stallMsg });
             console.log(
@@ -20442,6 +21116,14 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (queuedPaste) {
         pendingQueuedPrompt = sanitizeUtf8Prompt(queuedPaste);
         console.log(chalk.dim(`\n  Queued paste: ${pendingQueuedPrompt.length} chars (next turn)`));
+      }
+      // Persist transcript to disk so --continue / --resume works across restarts.
+      if (currentSessionId) {
+        try {
+          sessionManager.saveMessages(currentSessionId, messages);
+        } catch {
+          // Non-fatal: persistence failure must not crash the agent loop.
+        }
       }
     }
   }
@@ -20618,8 +21300,11 @@ function loadVoiceGroundSituation(voiceTurn: number | null): string {
 }
 
 async function startTuiAgent(options?: TuiAgentOptions): Promise<void> {
-  console.clear();
-  await renderSplash({ compact: true, animate: false });
+  const silent = wantsSilentPreflight(process.argv);
+  if (!silent && process.stdout.isTTY) {
+    console.clear();
+    await renderSplash({ compact: true, animate: false });
+  }
   console.log('');
   console.log(chalk.bold.cyan('  ⚡ TNF TUI Agent — Always-on LLM session'));
   console.log(chalk.dim('  ─────────────────────────────────────────────'));
@@ -20696,12 +21381,30 @@ async function loadRedisAgentClient(): Promise<
   return redisAgentClientCtor;
 }
 
+/** Interactive session entrypoints that should not dump protocol walls first. */
+const INTERACTIVE_ENTRY_COMMANDS = new Set(['tui']);
+
+/**
+ * True when argv is launching an interactive agent session (bare `tnf`, `tnf
+ * tui`, or root session flags that route to tui). These paths already pay for
+ * preflight in main(); verbose Turn Zero + disclosure output belongs on
+ * `tnf protocol gate`, not between the operator and the prompt.
+ */
+function isInteractiveSessionArgv(argv: string[]): boolean {
+  const sub = (argv[2] ?? '').toLowerCase();
+  if (!sub) return true;
+  if (INTERACTIVE_ENTRY_COMMANDS.has(sub)) return true;
+  if (sub.startsWith('-') && !isRootOnlyFlag(sub)) return true;
+  return false;
+}
+
 /**
  * Decide whether ProtocolInterceptor cosmetic output should be suppressed.
  * Checks still RUN; failures route to stderr via ProtocolInterceptor.
  *
  * Silenced for: non-TTY stdout, --no-splash, help/version, machine-readable
- * flags (--json / --print / --oneshot), and nested runSelfCli (env).
+ * flags (--json / --print / --oneshot), interactive session entry, and nested
+ * runSelfCli (env).
  */
 function wantsSilentPreflight(argv: string[]): boolean {
   if (isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT)) return true;
@@ -20710,6 +21413,7 @@ function wantsSilentPreflight(argv: string[]): boolean {
   if (argv.includes('--json')) return true;
   if (argv.includes('--print') || argv.includes('-p')) return true;
   if (argv.includes('--oneshot') || argv.includes('-z')) return true;
+  if (isInteractiveSessionArgv(argv)) return true;
   const tail = (argv[2] ?? '').toLowerCase();
   if (!tail || HELP_OR_VERSION_ARGS.has(tail)) return true;
   // Subcommand help: `tnf tui --help`
@@ -20813,7 +21517,18 @@ async function main(): Promise<void> {
   }
 
   if (argv.length <= 2) {
-    await ensureTurnZeroForAgentEntrypoint();
+    // Preflight in main() already ran Turn Zero checks. The full onboard script
+    // (scripts/tnf-onboard.cjs) is opt-in — it duplicated the bootstrap wall
+    // on every bare `tnf` and added ~10s before the first prompt.
+    if (isTruthyEnv(process.env.TNF_FORCE_ONBOARD)) {
+      await ensureTurnZeroForAgentEntrypoint();
+    } else if (!isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
+      console.log(
+        chalk.dim(
+          '[TNF] Interactive session — type /help for commands. Full onboard: `tnf tui --onboard` or TNF_FORCE_ONBOARD=1'
+        )
+      );
+    }
     await startInteractiveAgent();
     return;
   }

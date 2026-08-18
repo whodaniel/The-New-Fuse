@@ -2,6 +2,7 @@ import { LLMClient } from "./packages/tnf-cli/src/utils/llm-client.js";
 
 async function main() {
   const client = new LLMClient("orchestrator");
+  await client.resolveProvider();
   
   console.log("=== TNF LLM Client Status ===");
   console.log("Provider:", client.providerName);

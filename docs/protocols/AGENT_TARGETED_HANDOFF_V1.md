@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Agent Targeted Handoff V1
 
 ## Why
@@ -132,7 +135,10 @@ await handoffs.acknowledge({
 2. Write all cloud handoffs as `HandoffPacket`.
 3. Route retrieval by `agentId + tenantId + sessionKey`.
 4. Require `handoff-ack` before re-assigning the same work.
-5. Add periodic cleanup metrics by `expiresAt` and stale ack states.
+5. Add periodic cleanup metrics by `expiresAt` and stale ack states —
+   **implemented** in `HANDOFF_PACKET_LIFECYCLE.md` +
+   `handoff-packet-lifecycle.service.ts` (broker sweep +
+   `pnpm run handoff:lifecycle:*`).
 6. Keep compatibility parser enabled for legacy `version=1.0` packets during
    migration windows.
 
@@ -140,18 +146,26 @@ await handoffs.acknowledge({
 
 - AuthN/AuthZ: only trusted orchestrators can publish handoff packets.
 - Tenant checks: reject publishes and reads missing `scope.tenantId`.
-- Audit logs: persist `publish`, `read`, `ack`, `reassign`.
+- Audit logs: persist `publish`, `read`, `ack`, `reassign`, `verify`, `archive`.
 - PII controls: never store secrets inside `payload.prompt`.
 - SLA: monitor `pending -> claimed` and `claimed -> completed` latency.
+- **Lifecycle:** after work is complete and verified, follow
+  [`HANDOFF_PACKET_LIFECYCLE.md`](./HANDOFF_PACKET_LIFECYCLE.md) — terminal acks
+  → verification receipt → soft-retire → grace archive → purge. Broker sweeps
+  every `BROKER_HANDOFF_LIFECYCLE_MS` (default 15m); operators may run
+  `pnpm run handoff:lifecycle:verify` / `handoff:lifecycle:sweep`.
 
 ---
 
 ## 4. Handoff Communication Protocol (Artifact #208)
 
-To ensure seamless coordination across the Specialist Swarm, all inter-agent messages and handoff notes MUST utilize the **Handoff-Header** standard in their `payload.prompt` or accompanying notes:
+To ensure seamless coordination across the Specialist Swarm, all inter-agent
+messages and handoff notes MUST utilize the **Handoff-Header** standard in their
+`payload.prompt` or accompanying notes:
 
 ```markdown
 ### 📤 HANDOFF-HEADER
+
 - **Project ID:** [e.g., INFRA-002]
 - **Current Task:** [Specific implementation goal]
 - **Status:** [ACTIVE | BLOCKED | COMPLETE]
@@ -160,7 +174,9 @@ To ensure seamless coordination across the Specialist Swarm, all inter-agent mes
 ```
 
 ### Verification Rule
-Every receiving agent MUST verify the Merkle Hash before accepting the handoff to ensure they are working on the synchronized state.
+
+Every receiving agent MUST verify the Merkle Hash before accepting the handoff
+to ensure they are working on the synchronized state.
 
 ---
 
@@ -168,4 +184,5 @@ Every receiving agent MUST verify the Merkle Hash before accepting the handoff t
 
 - **ID Number:** `ID#:PROT-HANDOFF-V1-2026`
 - **Revision:** 1.1.0
-- **Attribution:** Distilled from 647 YouTube Intelligence Resources (Traversal: INFRA-002).
+- **Attribution:** Distilled from 647 YouTube Intelligence Resources (Traversal:
+  INFRA-002).

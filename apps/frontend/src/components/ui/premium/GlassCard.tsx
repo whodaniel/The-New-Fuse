@@ -55,7 +55,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
           {Icon && (
             <div
-              className={`w-10 h-10 rounded-md bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center`}
+              className={`w-10 h-10 rounded-md bg-gradient-to-br ${gradientClasses[gradient]} flex items-center justify-center`}
             >
               <Icon className="w-5 h-5 text-white" />
             </div>
@@ -83,7 +83,32 @@ interface StatsCardProps {
   changeType?: 'positive' | 'negative' | 'neutral';
   icon?: LucideIcon;
   gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
+  trendPct?: number;
+  sparkline?: number[];
 }
+
+const Sparkline: React.FC<{ values: number[]; positive?: boolean }> = ({ values, positive }) => {
+  if (!values.length) return null;
+  const max = Math.max(...values, 1);
+  const points = values
+    .map((value, index) => {
+      const x = (index / Math.max(values.length - 1, 1)) * 100;
+      const y = 100 - (value / max) * 100;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <svg viewBox="0 0 100 24" className="w-20 h-6" aria-hidden>
+      <polyline
+        fill="none"
+        stroke={positive === false ? '#f87171' : '#34d399'}
+        strokeWidth="2"
+        points={points}
+      />
+    </svg>
+  );
+};
 
 export const StatsCard: React.FC<StatsCardProps> = ({
   label,
@@ -92,6 +117,8 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   changeType = 'neutral',
   icon: Icon,
   gradient = 'blue',
+  trendPct,
+  sparkline,
 }) => {
   const changeColorClass = {
     positive: 'text-green-400',
@@ -103,7 +130,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
     <GlassCard gradient={gradient} className="relative overflow-hidden p-4">
       {/* Gradient overlay */}
       <div
-        className={`absolute top-0 right-0 w-24 h-24 bg-linear-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl pointer-events-none`}
+        className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl pointer-events-none`}
       />
 
       <div className="relative z-10">
@@ -111,13 +138,30 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           <p className="text-sm font-medium text-gray-400">{label}</p>
           {Icon && (
             <div
-              className={`w-10 h-10 rounded-md bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
+              className={`w-10 h-10 rounded-md bg-gradient-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
             >
               <Icon className="w-5 h-5 text-white" />
             </div>
           )}
         </div>
-        <p className="text-2xl sm:text-4xl font-bold text-white mb-2">{value}</p>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="text-2xl sm:text-4xl font-bold text-white">{value}</p>
+          {typeof trendPct === 'number' ? (
+            <span
+              className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                trendPct >= 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300'
+              }`}
+            >
+              {trendPct >= 0 ? '+' : ''}
+              {trendPct.toFixed(1)}%
+            </span>
+          ) : null}
+        </div>
+        {sparkline && sparkline.length > 1 ? (
+          <div className="mb-2">
+            <Sparkline values={sparkline} positive={(trendPct ?? 0) >= 0} />
+          </div>
+        ) : null}
         {change && <p className={`text-sm ${changeColorClass}`}>{change}</p>}
       </div>
     </GlassCard>
@@ -160,7 +204,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       <div className="flex items-center gap-3 mb-4">
         {(IconComponent || iconElement) && (
           <div
-            className={`w-10 h-10 rounded-md bg-linear-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
+            className={`w-10 h-10 rounded-md bg-gradient-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
           >
             {IconComponent ? <IconComponent className="w-5 h-5 text-white" /> : iconElement}
           </div>

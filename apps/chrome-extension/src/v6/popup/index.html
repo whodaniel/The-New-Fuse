@@ -4,10 +4,84 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fuse Connect</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <style>
+      html,
+      body {
+        width: 380px;
+        min-height: 500px;
+        max-height: 600px;
+        margin: 0;
+        background: #0a0a0f;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      .popup {
+        display: flex;
+        flex-direction: column;
+        min-height: 500px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .logo-title {
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        font-size: 13px;
+      }
+      .logo-version {
+        opacity: 0.55;
+        font-size: 11px;
+        margin-left: 6px;
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .tab {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        color: rgba(255, 255, 255, 0.65);
+        padding: 8px 4px;
+        cursor: pointer;
+      }
+      .tab.active {
+        color: #fff;
+        border-bottom: 2px solid #00d9ff;
+      }
+      .tab-content {
+        display: none;
+        padding: 12px 14px;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .btn-primary,
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: #00d9ff;
+        color: #041018;
+        font-weight: 600;
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+    </style>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
@@ -18,7 +92,7 @@
           <div class="logo-icon">⚡</div>
           <div class="logo-text">
             <span class="logo-title">FUSE CONNECT</span>
-            <span class="logo-version">v7.0</span>
+            <span class="logo-version">v7.0.6</span>
           </div>
         </div>
         <div class="header-actions">
@@ -639,6 +713,11 @@
       </footer>
     </div>
 
-    <script src="popup.js"></script>
+    <!--
+      Static defer only — MV3 extension CSP rejects dynamically injected <script>
+      ("An unknown error occurred when fetching the script").
+      defer still lets the shell HTML paint before popup.js runs.
+    -->
+    <script src="popup.js" defer></script>
   </body>
 </html>

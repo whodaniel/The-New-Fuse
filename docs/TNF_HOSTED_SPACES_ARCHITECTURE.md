@@ -8,9 +8,9 @@
 > **Scope note:** "not started" below refers **only** to the per-user
 > multi-tenant **web-hosting** runtime (serving user React pages / API routes,
 > the zo.space equivalent). It does **not** describe TNF's agent-execution
-> runtimes — `apps/cloud-sandbox`, `packages/workflow-engine`, the job queue,
-> and the task/agent executors already exist and run agents. Do not read this
-> checklist as "TNF has no runtime."
+> runtimes — `apps/cloud-sandbox` (extension satellite), `packages/workflow-engine`,
+> the job queue, and the task/agent executors already exist and run agents. Do
+> not read this checklist as "TNF has no runtime."
 
 **GAP IDENTIFIED** by CTO Agent (Alternative AI Computer + MiniMax 2.7)
 **Date:** 2026-03-23 **Priority:** P0 — Platform Parity with Alternative AI
@@ -291,24 +291,10 @@ tnf spaces domain add mysite.com
 
 ### Phase 1 — Core Runtime (Week 1)
 
-- [x] `SpaceService` in API — CRUD for spaces + routes (2026-08-12) —
-      `packages/database/src/drizzle/schema/spaces.ts` (spaces, space_routes,
-      space_assets tables + migration `0013_add_spaces.sql`),
-      `apps/api/src/modules/spaces/{spaces.service,spaces.controller,spaces.module}.ts`,
-      registered in `app.module.ts`. Route upsert is full-replace-at-a-path
-      (create-or-overwrite, not merge); API routes are always public, page
-      routes default private — same visibility model as the rest of this doc.
-      Not yet compiler-verified in this repo (fresh clone, no `node_modules`
-      installed this session) — verified instead by an identical port passing
-      typecheck in a structurally-equivalent sibling checkout; re-run
-      `pnpm --filter @the-new-fuse/database build && pnpm --filter api exec tsc -p . --noEmit`
-      before merging to confirm.
-- [ ] Runtime process per user (supervisor-managed) — **not started**; routes
-      are stored and queryable but nothing serves them over HTTP yet
-- [ ] Route compilation pipeline (JSX → JS → handler) — **not started**
-- [ ] Asset storage (S3 or Cloudflare R2) — **not started**; the service only
-      tracks asset metadata (`storageKey` is caller-supplied), no binary
-      storage backend is wired up
+- [ ] `SpaceService` in API — CRUD for spaces + routes
+- [ ] Bun/Hono runtime process per user (supervisor-managed)
+- [ ] Route compilation pipeline (JSX → JS → handler)
+- [ ] Asset storage (S3 or Cloudflare R2)
 
 ### Phase 2 — Networking (Week 2)
 

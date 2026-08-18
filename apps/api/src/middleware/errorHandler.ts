@@ -1,35 +1,34 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { Logger } from 'winston';
 
 export class ApiError extends Error {
-  statusCode: number;
-  data: any;
-
-  constructor(statusCode: number, message: string, data: any = {}) {
+  constructor(
+    public statusCode: number,
+    message: string,
+    public details?: Record<string, any>
+  ) {
     super(message);
-    this.statusCode = statusCode;
-    this.data = data;
-    this.name = 'ApiError';
   }
 }
 
-export const errorHandler = (
-  err: Error | ApiError,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
-  console.error(err);
+export const errorHandler = (logger: Logger): any => {
+  return (error: Error, req: Request, res: Response, next: NextFunction) => {
+    if (error instanceof ApiError) {
+      logger.warn(`API Error: ${error.message}`, {
+        statusCode: error.statusCode,
+        details: error.details,
+        path: req.path,
+      });
 
-  if (err instanceof ApiError) {
-    return res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-      ...err.data
+      return res.status(error.statusCode).json({
+        error: error.message,
+        details: error.details,
+      });
+    }
+
+    logger.error('Unhandled Error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
     });
-  }
-
-  return res.status(500).json({
-    success: false,
-    message: err.message || 'Internal server error'
-  });
+  };
 };

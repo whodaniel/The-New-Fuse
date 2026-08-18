@@ -1,0 +1,23 @@
+{
+  "$schema": "https://cursor.com/schemas/cursor-plugin/marketplace.json",
+  "name": "the-new-fuse",
+  "owner": {
+    "name": "The New Fuse",
+    "email": "hello@thenewfuse.com"
+  },
+  "metadata": {
+    "description": "The New Fuse (TNF) plugins for Cursor — protocol harness, agent continuity, and multi-agent orchestration for serious teams."
+  },
+  "plugins": [
+    {
+      "name": "tnf-harness",
+      "source": "plugins/tnf-harness",
+      "description": "Governance + continuity harness for Cursor agents: Turn Zero orientation, Inspect-Act-Verify, session handoff, safety gates, and the TNF skills MCP server."
+    },
+    {
+      "name": "tnf-orchestration",
+      "source": "plugins/tnf-orchestration",
+      "description": "Multi-agent orchestration pack: the TNF Orchestrator agent plus a curated roster of specialist subagents routed through the TNF control plane."
+    }
+  ]
+}

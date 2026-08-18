@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { config } from '../config';
 import type { ApiError, ApiResponse } from '../types/api-response';
 
@@ -93,13 +94,8 @@ export class WorkflowApiService {
 
   async getWorkflows(): Promise<ApiResponse<{ workflows: Workflow[]; total: number }>> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
+      const response = await authFetch(`${this.baseUrl}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<{ workflows: Workflow[]; total: number }>(response);
     } catch (error) {
@@ -113,13 +109,8 @@ export class WorkflowApiService {
 
   async getWorkflow(id: string): Promise<ApiResponse<Workflow>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
+      const response = await authFetch(`${this.baseUrl}/${id}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
@@ -138,13 +129,8 @@ export class WorkflowApiService {
     edges: any[];
   }): Promise<ApiResponse<Workflow>> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
+      const response = await authFetch(`${this.baseUrl}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
@@ -167,13 +153,8 @@ export class WorkflowApiService {
     }
   ): Promise<ApiResponse<Workflow>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
+      const response = await authFetch(`${this.baseUrl}/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
@@ -188,13 +169,8 @@ export class WorkflowApiService {
 
   async executeWorkflow(workflowId: string, input?: any): Promise<ApiResponse<WorkflowExecution>> {
     try {
-      const response = await fetch(`${this.baseUrl}/execute`, {
+      const response = await authFetch(`${this.baseUrl}/execute`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify({
           workflowId,
           input: input || {},
@@ -212,13 +188,8 @@ export class WorkflowApiService {
 
   async getExecutionStatus(executionId: string): Promise<ApiResponse<WorkflowExecution>> {
     try {
-      const response = await fetch(`${this.baseUrl}/executions/${executionId}`, {
+      const response = await authFetch(`${this.baseUrl}/executions/${executionId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<WorkflowExecution>(response);
     } catch (error) {
@@ -241,13 +212,8 @@ export class WorkflowApiService {
       const method = workflowData.id ? 'PATCH' : 'POST';
       const url = workflowData.id ? `${this.baseUrl}/${workflowData.id}` : `${this.baseUrl}`;
 
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
@@ -262,13 +228,8 @@ export class WorkflowApiService {
 
   async publishWorkflow(id: string): Promise<ApiResponse<Workflow>> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}/publish`, {
+      const response = await authFetch(`${this.baseUrl}/${id}/publish`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
@@ -285,13 +246,8 @@ export class WorkflowApiService {
       const url = category
         ? `${config.apiUrl}/workflow-templates?category=${category}`
         : `${config.apiUrl}/workflow-templates`;
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<WorkflowTemplate[]>(response);
     } catch (error) {
@@ -305,13 +261,8 @@ export class WorkflowApiService {
 
   async getWorkflowTemplate(id: string): Promise<ApiResponse<WorkflowTemplate>> {
     try {
-      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+      const response = await authFetch(`${config.apiUrl}/workflow-templates/${id}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
       return this.handleResponse<WorkflowTemplate>(response);
     } catch (error) {
@@ -327,13 +278,8 @@ export class WorkflowApiService {
     data: Partial<WorkflowTemplate>
   ): Promise<ApiResponse<WorkflowTemplate>> {
     try {
-      const response = await fetch(`${config.apiUrl}/workflow-templates`, {
+      const response = await authFetch(`${config.apiUrl}/workflow-templates`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(data),
       });
       return this.handleResponse<WorkflowTemplate>(response);
@@ -351,13 +297,8 @@ export class WorkflowApiService {
     data: Partial<WorkflowTemplate>
   ): Promise<ApiResponse<WorkflowTemplate>> {
     try {
-      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+      const response = await authFetch(`${config.apiUrl}/workflow-templates/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(data),
       });
       return this.handleResponse<WorkflowTemplate>(response);
@@ -372,13 +313,8 @@ export class WorkflowApiService {
 
   async deleteWorkflowTemplate(id: string): Promise<ApiResponse<boolean>> {
     try {
-      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+      const response = await authFetch(`${config.apiUrl}/workflow-templates/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        credentials: 'include',
       });
 
       const result = await this.handleResponse<any>(response);

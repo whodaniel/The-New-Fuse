@@ -198,5 +198,5 @@ MIT License - See LICENSE file for details.
 
 ---
 
-**Part of [The New Fuse](https://github.com/whodaniel/fuse) Multi-Agent
+**Part of [The New Fuse](https://github.com/whodaniel/The-New-Fuse) Multi-Agent
 Orchestration Platform**

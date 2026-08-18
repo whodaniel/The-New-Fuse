@@ -57,10 +57,19 @@ class NativeMessaging {
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
           if (chrome.runtime.lastError) {
-            console.error('[NativeMessaging] Error:', chrome.runtime.lastError);
+            const errMsg = chrome.runtime.lastError.message || 'Native messaging failed';
+            const softFail =
+              /native host has exited/i.test(errMsg) ||
+              /host not found/i.test(errMsg) ||
+              /No such native application/i.test(errMsg);
+            if (softFail) {
+              console.warn('[NativeMessaging]', errMsg);
+            } else {
+              console.error('[NativeMessaging] Error:', errMsg);
+            }
             resolve({
               action: 'error',
-              message: chrome.runtime.lastError.message || 'Native messaging failed',
+              message: errMsg,
             });
           } else {
             resolve(response);

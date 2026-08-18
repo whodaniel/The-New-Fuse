@@ -93,7 +93,8 @@ Run:
 python3 scripts/check_clawhub_api.py
 python3 scripts/list_skills.py --sort downloads --non-suspicious true --limit 5
 python3 scripts/install_shortlist.py --limit 3
-railway run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --limit 3
+# ⚠️ DEPRECATED — Railway no longer used; run in-cluster via Cloud Run instead:
+#   railway run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --limit 3
 python3 scripts/install_shortlist.py --installer clawhub-pnpm --limit 2
 ```
 

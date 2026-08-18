@@ -23,7 +23,7 @@
 - ✅ **All files production-ready** with proper error handling
 
 ### **2. Pull Request Ready**
-🔗 **URL**: https://github.com/whodaniel/fuse/pull/new/feature/safe-changes-extraction
+🔗 **URL**: https://github.com/whodaniel/The-New-Fuse/pull/new/feature/safe-changes-extraction
 
 **Contains:**
 - Zero-risk documentation improvements

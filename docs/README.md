@@ -17,14 +17,14 @@ cloud services.
 ### Install TNF CLI (Direct Command Line)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse/main/scripts/install-tnf-cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash
 tnf
 ```
 
 ### Setup
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
+git clone https://github.com/whodaniel/The-New-Fuse.git
 cd fuse
 pnpm install
 pnpm run docker:start    # PostgreSQL (5433) + Redis (6380)
@@ -451,35 +451,35 @@ pnpm run deploy:gcp
 
 ## Documentation
 
-- **[DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)** — Navigational index
+- **[DOCUMENTATION_INDEX.md](./core/DOCUMENTATION_INDEX.md)** — Navigational index
   with guided paths
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
-- **[CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)** —
+- **[CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)** —
   Infrastructure reference (GCP + Cloudflare)
 - **[RELEASE_GATE.md](./RELEASE_GATE.md)** — Merge-blocking release gate
-- **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)**
+- **[PRODUCTION_READINESS.md](./project-management/PRODUCTION_READINESS.md)**
   — Production status
 
 ### By Topic
 
 | Topic               | Primary Doc                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------- |
-| Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./docs/architecture/ARCHITECTURE_STANDARDS.md) |
-| Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./docs/agents/COMPLETE-AGENT-GUIDE.md)                 |
-| Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./docs/AGENT_COMMUNICATION_PROTOCOL.md)               |
-| API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                           |
+| Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./architecture/ARCHITECTURE_STANDARDS.md) |
+| Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./agents/COMPLETE-AGENT-GUIDE.md)                 |
+| Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./AGENT_COMMUNICATION_PROTOCOL.md)               |
+| API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./api/COMPLETE-API-GUIDE.md)                           |
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
-| Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
-| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)                               |
-| Security            | [docs/security/audit-findings.md](./docs/security/audit-findings.md)                         |
-| Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |
-| Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./docs/PREMIUM_THEME_MANIFEST.md)                           |
+| Deployment          | [docs/guides/deployment-guide.md](./guides/deployment-guide.md)                         |
+| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)                                |
+| Security            | [docs/security/audit-findings.md](./security/audit-findings.md)                         |
+| Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./testing/TESTING_SETUP_COMPLETE.md)           |
+| Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./PREMIUM_THEME_MANIFEST.md)                           |
 | Chrome Extension    | [apps/chrome-extension/README.md](./apps/chrome-extension/README.md)                         |
 | VS Code Extension   | [apps/vscode-extension/README.md](./apps/vscode-extension/README.md)                         |
-| Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./docs/workflows/WORKFLOW_QUICKSTART.md)             |
-| CLI Commands        | [docs/reference/command-map.md](./docs/reference/command-map.md)                             |
-| Cloud QA            | [docs/qa/cloud-qa-guide.md](./docs/qa/cloud-qa-guide.md)                                     |
+| Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./workflows/WORKFLOW_QUICKSTART.md)             |
+| CLI Commands        | [docs/reference/command-map.md](./reference/command-map.md)                             |
+| Cloud QA            | [docs/qa/cloud-qa-guide.md](./qa/cloud-qa-guide.md)                                     |
 
 ## Package Manager
 
@@ -491,6 +491,6 @@ This project uses **pnpm** exclusively. Do not use npm or yarn.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/whodaniel/fuse/issues)
+- **Issues**: [GitHub Issues](https://github.com/whodaniel/The-New-Fuse/issues)
 - **Discussions**:
-  [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
+  [GitHub Discussions](https://github.com/whodaniel/The-New-Fuse/discussions)

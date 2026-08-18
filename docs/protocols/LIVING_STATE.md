@@ -2,13 +2,556 @@
 
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
-**Current Directive:** Phase 7: Directive Conversion Loop. **Project ID:** `FORGE-003` **Session Key:** `agent:local-subdirector:session:2026-06-16T02:44:24.498679Z`
+<!-- CURRENT_DIRECTIVE:START -->
+
+**Current Directive:** Defer BackupService path fix, rclone wiring, dist-v7,
+concordance JSON.
+
+<!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-17 CLI Agent Autopilot Continuity Verification & Onboarder
+  Stabilization (Antigravity/Gemini)**:
+  - **Autopilot Continuity & Stall Defense Verification**: Analyzed and verified
+    the root causes of interactive session pauses in
+    `packages/tnf-cli/src/cli.ts` (`STALL_AUTO_HOLD_AFTER = 5` at line 20508).
+    Confirmed that 5 idle tool/dump loops trigger auto-hold, resumable via
+    `/continue`.
+  - **Super Admin Auth Lifecycle**: Verified `requireSuperAdmin` credential
+    checks (`TNF_SUPER_ADMIN_INPUT_TOKEN` / `TNF_SUPER_ADMIN_TOKEN`) across
+    background full-auto cycles and interactive shell environments.
+  - **Turn Zero Onboarder Bugfix & Verification**: Fixed runtime bugs in
+    `scripts/tnf-onboard.cjs` (removed unimported `chalk` usage, targeted
+    compiled `dist/cli.js`, updated platform to `tnf`, and passed `-d` daemon
+    mode). Verified `node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000`
+    exits with code 0 and 0 boot triage errors.
+
+- [✅] **2026-08-16 Apple Notes Sequential Ingestion, Storage Transparency &
+  Persistent Cron Backup Suite (Gemini)**:
+  - **Sequential Chronological Ingestion**: Processed all 267 entries from Apple
+    Notes `NEW- May-2026` strictly from oldest to newest
+    (`May 4 → May 17, 2026`), registering them into
+    `data/ingestion-runs/ai6-new-may-2026-manifest.json` (384 total active EIA
+    artifacts).
+  - **Privacy & Personal Storage Isolation**: Secured raw developer thought
+    streams into gitignored operator-local storage (`docs/personal/` and
+    `~/.tnf/personal-intelligence/`).
+  - **Durable Intake Forwarder & Gauntlet Gatekeeper**: Deployed
+    `scripts/autonomy/tnf_intake_forwarder.py` and
+    `data/harness/intake-forwarder-config.json` to evaluate intakes against the
+    4-gate Gauntlet, graduating sanitized intelligence into
+    `docs/distilled-intel/`.
+  - **Storage Transparency & Persistent Cron Backup Engine**: Implemented
+    `scripts/autonomy/tnf_backup_cron.py` providing real-time storage inventory
+    across 5 domains (652.75 MB total footprint), custom destination path
+    configuration, retention pruning, and persistent OS `crontab` sync.
+  - **Frontend UI/UX Exposure**: Modernized
+    `apps/frontend/src/pages/Admin/BackupRestore.tsx` with live storage topology
+    visualizers, custom destination picker, cron schedule controls, and archive
+    tables; wired directly into `apps/frontend/src/pages/Settings.tsx`
+    (`data_storage` tab).
+  - **Unified Semantic Knowledge Graph**: Recompiled
+    `concordance_results/unified_graph.json.gz` (31,477 nodes, 76,338 edges) and
+    regenerated all HTML graph visualizers and wordcount reports.
+
+- [✅] **2026-08-13 Grok Bot / Grok 4.6 response package (Cursor)** — Logged
+  market read; published positioning
+  (`docs/marketing/VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md`); blog +
+  marketing competitive frame; External Teammate Runtime Interop protocol +
+  bridge + demo (`demo-external-teammate-handoff.cjs` PASS); seeded Grok 4.6
+  fleet lane in `~/.tnf/model-providers.json`, `llm-config.json`,
+  `~/.config/tnf/providers.json`, and `provider-config.ts` (`xai`). Connective
+  journal + PROTOCOL_MAP indexed.
+
+- [✅] **2026-08-13 Extension DOM Injection Parity Check (Cursor)** — Verified
+  and integrated Phase 9 DACC formatting + UFTE identity fulfillment into the
+  Chrome extension's DOM chat injection step (`index.ts`). Extracted canonical
+  handles and ID# strings natively using `buildPageAgentIdentity()` rather than
+  raw text prefixes, satisfying `resolveMessageTarget` downstream parsing regex
+  (`/@(ID#:[...])/`). Resolved routing drops for federated injection. Build
+  pipeline `webpack.config.cjs` restoration queued next.
+
+- [✅] **2026-08-12 Federated transport + harness closure (Cursor)** — Closed
+  three-lane transport gaps and hardened completion procedures. (1)
+  `check-federated-ws-channels.cjs`: `discoverRelayUrl()` prefers `:3007`,
+  minimum 8s delivery wait (fixes false fail when `--keep-alive` zeroed holdMs),
+  stronger `ID#` metadata checks — **FEDERATED_WS_CHANNEL_CHECK: pass**. (2)
+  `tnf send` LPUSHes `WorkerEnvelope` task envelopes to
+  `tnf:direct:sub-director:<workerId>` while retaining PUBLISH for live
+  subscribers (`WorkerEnvelope.ts`, `RedisAgentClient.enqueueWorkerTask`). (3)
+  `docs/protocols/TNF_TRANSPORT_LANE_SPEC.md` documents WS / pub/sub / LIST
+  lanes; `PROTOCOL_MAP` indexed. (4) `HARNESS_CONFIG.md` §7 +
+  `SESSION_HANDOFF_ENFORCEMENT` completion closure — verify → logs → handoff →
+  scoped commit. (5) `tnf-cli` test suite runs `WorkerEnvelope.test.ts`; full
+  `pnpm test` passes including command-surface snapshot. `live-agent-work-check`
+  WS probe timeout aligned.
+
+- [✅] **2026-08-12 Silent-gate remediation (Claude Code, Turn Zero)** — Four
+  health gates were reporting the opposite of the truth; all four fixed with
+  regression tests. (1) `full-auto` evaluated its quarantine gate only in
+  preflight, never inside the cycle loop — the daemon rode a **212-cycle
+  unbroken failure streak** (224/274 logged cycles failed) while `mode` stayed
+  `running`; now self-quarantines per cycle. (2)
+  `validate-substrate-attestation.cjs` gated on the cumulative `failedCycles`
+  counter plus a `!lastRun.ok` escape hatch, so it could latch permanently or
+  never fire; now counts trailing failures. (3) `probe-a2a-bridge.cjs` defaulted
+  to relay `:3000` while its own client library defaults to `:3007` — the
+  `CRITICAL a2a-bridge-unresponsive` was **false**; the bridge answers `ok:true`
+  from `BROKER-Fuse-activity-log`. (4) The same probe wrote
+  `console.log("Connected!")` onto its JSON stdout, so
+  `JSON.parse(probe.stdout)` in `live-agent-work-check.cjs` threw on every run —
+  an independent defect that would have survived the port fix. Also corrected
+  the ASSIMILATE_CHECK scan path (`~/.hermes/cron/output/*.jsonl` matched
+  nothing; runs live at `<job-hash>/<timestamp>.md`). **Live agent work check:
+  BLOCK → CAUTION.** Detail: `AGENT_STATUS_LEDGER.md` §Protocol Gaps,
+  `DIRECTIVE_CONVERSION_LEDGER.md` Batch 012. **`tnf-cli` test suite:** whatsapp
+  chain removed; `WorkerEnvelope.test.ts` added — full suite passes (resolved
+  2026-08-12 transport closure).
+
+- [✅] **2026-08-12 Boot triage autonomous remediation (Cursor)** — Restored
+  missing harness protocols `HARNESS_AGENT_MODES.md` +
+  `USER_CONFIRMATION_PROTOCOL.md` (Living State claimed them; files were absent
+  — completeness FAIL). Restored `scripts/tnf-generate-mcp-clients.cjs` (deleted
+  Aug 10) and wired `pnpm tnf:mcp:generate` to sync **and** generate
+  `data/mcp.clients/*` including `openclaw.mcp.json` + `agy.mcp.json` with
+  absolute `cwd`. Rebuilt `@the-new-fuse/database` declarations; cleaned
+  relay-core src emit pollution; `dist/standalone-relay.js` builds again.
+  Stopped forcing unavailable `firebase/*` into tauri-desktop
+  `optimizeDeps.include` (Vite boot blocker).
+
+- [✅] **2026-08-13 Full Vocabulary Alignment Audit** — Swept all 11 canonical
+  surfaces (post-Phase-9). Found 7 inconsistencies across three layers: INC-1
+  (HIGH): CLI role traits (7) extend beyond DACC-v1 hierarchy (5); INC-2
+  (MEDIUM): AGENT_STATUS_LEDGER missing 5/6 seeded agents; INC-3 (HIGH):
+  ROLE_DEFINITIONS.md defines canonicalEntityId incorrectly; INC-4 (MEDIUM):
+  ROLE_DEFINITIONS.md missing idNumber band allocation; INC-5 (MEDIUM):
+  FEDERATED_BASE58_ALPHABET duplicated in 5 files; INC-6 (LOW): qualities
+  deprecated alias used in registry stats; INC-7 (LOW): vector_id namespace
+  undocumented. All verification gates PASS. Report:
+  `docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.{md,json}`.
+  **Phase 10 Alignment Pass completed** — All 7 INC issues resolved: added jules
+  agent to ledger, fixed getStats() to use traits, clarified vector_id docs, CI
+  check script for Base58 sync. Handoff emitted: 2026-08-13T13:19:42.233Z
+
+**Cleared / no longer P0:**
+
+- **2026-08-10 Operator clearance — disk / autonomy-health noise is NOT a
+  task.** Data-volume utilization and rollup reasons `disk_capacity_*`,
+  `autopilot_or_subdirector_critical`, and `handoff_tip_drift` must not be
+  queued as agent work or listed as outstanding session blockers. Operator
+  confirmed adequate disk headroom; treat as accepted operating background.
+- PR #70 authority layer — **MERGED**
+  (https://github.com/whodaniel/tnf-monorepo/pull/70). Residual authority ops
+  remain operator-gated.
+- PR #77 Hermes/CLI noun parity — **MERGED**
+- **2026-08-07 Autonomous commit authorization granted (operator-confirmed).**
+  `TNF_AGENT_ID=tnf-cli-agent` authorized for autonomous commits/pushes per
+  `docs/core/AGENTS.md` (§Autonomous Commits and Pushes — 6 constraints). Commit
+  `1032bba9db` (`feat(protocols): authorize TNF CLI agent...`). Audit trail:
+  `.tnf/audit/commit-attempts.jsonl`. Authority surfaces remain gated
+  (`.husky/tnf-authority.sh` line 85+ exemption only for agent-auto). Registry
+  reconciliation remains operator-gated.
+  (https://github.com/whodaniel/tnf-monorepo/pull/77). Surface coverage 62/62;
+  product-level Slack/WhatsApp/etc. is optional follow-on, not a standing
+  blocker.
+- Living State Active Steps cron spam peeled (steady-state crontab must not be
+  re-logged each turn).
+
+**Session note:** Prior Cursor notes on role⊥platform corrections,
+orphaned-inbox migration, graph regen/publish harden, and
+`HANDOFF_PACKET_LIFECYCLE` remain historical context. Live baton inbox residue
+must not be mass-deleted without verification evidence. See
+`SESSION_HANDOFF_LATEST.json`.
+
+**Prior notes:** Authority coherence audit mixed —
+`docs/protocols/reports/AUTHORITY_COHERENCE_AUDIT_2026-07-24.md`.
+
+---
+
+- [✅] 2026-08-10T18:25:00Z New protocol:
+  `docs/protocols/HARNESS_AGENT_MODES.md` — Formal PLAN/EXECUTE/VERIFY mode
+  transitions with guardrails, timeouts, and audit trails
+
+- [✅] 2026-08-10T18:26:00Z New protocol:
+  `docs/protocols/USER_CONFIRMATION_PROTOCOL.md` — Three-level user confirmation
+  workflow (inform/user/operator) for safeguarding sensitive operations
+
+- [✅] 2026-08-10T18:27:00Z New protocol:
+  `docs/protocols/FEEDBACK_LOOP_PROTOCOL.md` — Bounded loop evaluation with
+  bailout conditions, error recovery, and collapse prevention
+
+- [✅] 2026-08-10T18:28:00Z New skill: `.agent/skills/tnf-todo-providers/` —
+  Full todo tracking with priority, dependencies, complexity estimation, and CLI
+  interface
+
+- [✅] 2026-08-10T18:29:00Z New scripts:
+  - `scripts/todo-provider.cjs` — Todo management CLI
+  - `scripts/agent-registry/discover-by-scope.cjs` — Scope-based API discovery
+  - `scripts/progressive-disclosure-loader.cjs` — Context-aware tool loading
+    optimization
+  - `scripts/bounded-loop-evaluator.cjs` — Execution loop control with budgets
+
+- [✅] 2026-08-10T18:30:00Z Schema extension:
+  `data/agent-registry/agent-card.extensions.schema.json` — JSON Schema for
+  dynamic capabilities, modes, confirmation requirements, and loop configuration
 
 ---
 
 ## ⚡ Active Steps
 
-1. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+- [✅] **2026-08-08 Live agent work cohesion guard** — Added
+- [✅] 2026-08-10T17:45:54.079Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-10T20:01:39.066Z New script(s) created: validate-agents-json.cjs,
+- [✅] 2026-08-11T00:20:03.043Z New script(s) created: discover-by-scope.cjs,
+- [✅] 2026-08-13T18:20:07.698Z New script(s) created:
+- [✅] 2026-08-13T22:43:46.297Z New script(s) created:
+- [✅] 2026-08-14T21:51:09.127Z New script(s) created:
+- [✅] 2026-08-16T05:00:07.885Z New script(s) created:
+- [✅] 2026-08-16T20:31:26.857Z New agent(s) created: command-code
+- [✅] 2026-08-16T20:31:26.857Z New script(s) created: tnf-authority-keys.cjs,
+- [✅] 2026-08-16T22:49:31.303Z New agent(s) created: command-code
+- [✅] 2026-08-16T22:49:31.303Z New script(s) created:
+  memory-freshness-sweep.cjs, tnf-authority-keys.cjs,
+  tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
+  command-surface-gate.cjs, redis-connection-guard-cron.sh,
+  redis-connection-guard.cjs, tnf-agent-daemon-launch.sh,
+  tnf-agent-daemon-launchd.sh, universal-skill-disclosure-guard.cjs
+- [✅] 2026-08-16T22:49:31.303Z Agent definition change: 1 added, 0 removed
+
+  tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
+- [✅] 2026-08-16T20:31:26.857Z Agent definition change: 1 added, 0 removed
+
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
+- [✅] 2026-08-16T05:03:07.479Z New script(s) created:
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+- [✅] 2026-08-16T05:21:17.411Z New script(s) created:
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
+  redis-connection-guard-cron.sh, redis-connection-guard.cjs,
+  tnf-agent-daemon-launch.sh, tnf-agent-daemon-launchd.sh
+
+  check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
+  demo-external-teammate-handoff.cjs, codex-skill-disclosure-guard.cjs,
+  supabase-agent-connection-check.cjs
+
+  check-federated-alphabet.sh, codex-mcp-oauth-login.cjs,
+  codex-skill-disclosure-guard.cjs, supabase-agent-connection-check.cjs
+
+  bounded-loop-evaluator.cjs, progressive-disclosure-loader.cjs,
+  todo-provider.cjs
+
+  generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs
+
+  generate-crontab-from-catalog.cjs, relay-service.sh
+
+- [✅] 2026-08-10T18:00:51.130Z New script(s) created: validate-agents-json.cjs,
+  generate-crontab-from-catalog.cjs, probe-a2a-bridge.cjs, relay-service.sh,
+  searxng-service.sh
+
+  `scripts/protocols/live-agent-work-check.cjs` and `pnpm run tnf:live:agents:*`
+  scripts so Cursor, Agy, Kilo, Codex, and TNF CLI agents can verify the same
+  live state before claiming fleet success or handing off. Latest report:
+  `docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.md`. Current verdict is
+  `CAUTION`: Redis returns `PONG`, Local Subdirector and master-heartbeat are
+  loaded/fresh, and remaining warnings are active git work plus protected
+  full-auto gates (`TNF_SUPER_ADMIN_INPUT_TOKEN`, `TNF_GATE_POLICY_TOKEN`).
+
+- [✅] **2026-08-08 Local Subdirector live fleet cohesion skill** — Captured the
+  Redis wedge recovery, agent polling, and live verification pattern as
+  `.agent/skills/tnf-live-fleet-cohesion/SKILL.md`. The live checker now detects
+  `redis-wedged` separately from ordinary `redis-unavailable`, records bounded
+  recovery guidance, detects launchd/config drift, and redacts sensitive state
+  payload fields before reports are written. Local Redis was reattached to
+  `com.thenewfuse.redis-tnf-bus`, configured with `save ""` and
+  `shutdown-on-sigterm nosave`, and its legacy `dump.rdb` was quarantined under
+  `~/.tnf/redis/quarantine/` to avoid future boot-time RDB load stalls.
+
+- [✅] **2026-08-08 Local runtime stability and audit documentation** —
+  Documented the slow-boot investigation in
+  `docs/protocols/reports/TNF_LOCAL_RUNTIME_STABILITY_LOG_2026-08-08.md`, added
+  reusable skill `.agent/skills/tnf-local-runtime-stability/`, and opened
+  consistency/app-split/full-auto reports under `docs/protocols/reports/`.
+  Verified RAM OK; remaining full-auto work is gated by stale daemon state,
+  lockfile seal drift, and missing input/policy tokens.
+
+- [✅] **2026-08-03 Living State / handoff noise peel on main** `turn-end.cjs`
+  no longer logs crontab presence as completed work. PR #77 noted MERGED;
+  directive points at actionable queue not commit-gate notices.
+
+- [✅] **Steady-state infra (do not re-log):** system cron hosts
+  `tnf-frontend-tester` (5m) and `tnf-fleet-health-probe` (15m). Presence is not
+  a per-turn completed step.
+
+- [✅] **2026-08-03 Turn Zero reconcile — commit-gate starvation fixed** —
+
+  `turn-end.cjs` + `sync-handoff-cache.cjs` demote operator commit notices out
+  of `IMMEDIATE_TASKS`. PR #70 marked merged/cleared above.
+
+- [✅] **2026-07-25 Cursor session — role⊥platform + handoff lifecycle** —
+- [✅] 2026-07-26T16:49:21.106Z New script(s) created: tnf-voice-kws-boot.sh,
+
+  voice-beam-watchdog.sh
+
+  Corrected baton vs `daccRole` vs platform axes; orphaned `ORCHESTRATOR-*`
+  inbox migration; dual inbox keys; graph regen + safe publish; protocol
+  `docs/protocols/HANDOFF_PACKET_LIFECYCLE.md` + broker 15m sweep +
+  `pnpm run handoff:lifecycle:*`; tests 11/11. Handoff
+  `4d393466-34a4-4dc3-bbaa-af1680956fa1`. No commit (operator-gated).
+
+- [✅] 2026-07-24T21:17:42.244Z New agent(s) created: qodercli
+
+- [✅] 2026-07-24 **Qoder CLI agent assimilation complete (P9)** — Agent
+  registry class fixed: `agent-registry-bridge.ts` now propagates
+  `fulfillment` + `traits` upstream; `CLI_QODER` enum added;
+  `.agent/agents/qodercli.md` + `qoder-agent-onboarding` skill created;
+  `.tnf/agent-registry-snapshot.json` verified (327 agents, 0 errors). Broker
+  fulfillment-aware selection (`broker-agent.ts:980-1089`) now has data to route
+  on. Next: confirm broker dispatch with `--require-model qoder` and await
+  operator handshake for master-clock cull.
+
+- [✅] **2026-07-24 RESOLVED: leaked credentials rotated (operator-reported).**
+  `apps/api/.env` + `.bak` copies + `CLOUD_MIGRATION_BLUEPRINT.md` history had
+  live Supabase/Upstash/JWT/encryption/sharedstate values. All rotated per
+  operator on 2026-07-24 (including Supabase DB password, reconfirmed 2026-07-24
+  afternoon), so the copies remaining in git history are now worthless — the
+  leak is closed whether or not history is ever rewritten. Follow-through still
+  useful: `ENCRYPTION_KEY` change reconciled with any data encrypted under the
+  old key via `tnf authority encrypt-rotate`; `JWT_SECRET` change invalidated
+  live sessions (re-login); `SHAREDSTATE_AUTH_TOKEN` change propagated to the
+  federation gate.
+- [✅] 2026-07-23 **Agent identity layer built (D23).** A2A signing was
+  decorative — an HMAC was attached and never verified, role was read off the
+  wire, `A2A_SECRET_KEY` was unset so `'default-secret'` was live, and the bus
+  was unauthenticated. Any local process could claim `local-director`. Fixed
+  across `14e59ae213` (verification + `patch.js` removal), Phase 1 identity /
+  operator-owned role registry, and `e09161b9e2` (per-agent Ed25519 binding —
+  symmetric keys were rejected as insufficient, since any peer able to verify an
+  agent could also forge as it). 51 tests / 4 suites; impersonation verified
+  closed end-to-end. Branch `fix/a2a-signature-verification`.
+- [✅] 2026-07-23 **Phase 2 built: capability grants + environment-adaptive
+  trust roots.** `tnf-capability-grant.cjs` — UCAN-shaped, 15m default / 60m
+  ceiling, task-bound, single-use, **attenuating** (a chain can only narrow,
+  enforced at issue AND verify, because issue-time checks are bypassable by
+  crafting a grant directly). `tnf-trust-root.cjs` — probes
+  `fido2 | secure-enclave | tpm2 | pkcs11 | remote-attestation | separate-uid | os-keystore | file`
+  and picks the strongest that genuinely works, so one build adapts to any
+  environment. Contracts published to
+  `packages/control-plane-contracts/src/authority.ts` (public API boundary) so
+  the proprietary hosted root implements the same interface. 27 tests.
+- [✅] 2026-07-24 **`tnf-agent` OS account created (uid 442).** Operator ran
+  `scripts/setup/tnf-agent-account.sh`; operator key is 0600. Account alone is
+  not a boundary — see turn-up status below.
+- [⚠️] 2026-07-24 **Trust root NOT yet load-bearing despite isolation marker.**
+  A `launch-isolation-confirmed` marker was written under
+  `sudo tnf authority confirm-isolation`, but that was a **false pass**: under
+  sudo, `getuid()` is 0 so the straggler scan looked for root-owned workers and
+  missed jules/antigravity/pi still on uid 501. Marker is root-owned. Probe now
+  re-checks live workers and correctly reports weak guarantee when stragglers
+  exist. **Do not run `sudo tnf authority …`** — run as the normal user; sudo is
+  only for nested `sudo -u tnf-agent` drops.
+- [✅] 2026-07-24 **Authority consumer gate + TNF CLI surface.** Consumer gate
+  centralized at `RedisAgentClient.handleIncomingMessage` (`e01f85cc17`),
+  default-off via `TNF_AUTHORITY_CONSUMER`. `tnf authority` wired in
+  `packages/tnf-cli`
+  (`review|status|list|show|approve|deny|confirm-isolation| account|encrypt-rotate|workers|relaunch-workers`).
+  TNF launcher (`scripts/runtime/launch-agent-wrapper.sh`) drops to `tnf-agent`
+  when the account exists. Shared helpers in
+  `scripts/lib/tnf-authority-workers.cjs` (SUDO_UID-aware). Operator turn-up
+  runbook: `docs/protocols/AUTHORITY_TURNUP_RUNBOOK.md`.
+- [🔑] 2026-07-24 **OPERATOR ACTION (turn-up remaining, gated):** as normal user
+  (not `sudo tnf`): `tnf authority relaunch-workers` → `tnf authority workers`
+  (clean) → `tnf authority confirm-isolation` → `tnf authority status` (want
+  strong `separate-uid`). Then flip `TNF_AUTHORITY_CONSUMER=1` on one pilot. PR
+  #70 is **MERGED** — this residual turn-up is optional operator work, not a
+  standing autonomous P0. See runbook.
+- [✅] 2026-07-23 **Phase 3 built: elevation approval channel.**
+  `tnf-elevation-broker.cjs` + `scripts/tnf-authority.cjs`
+  (`status|list|show|approve|deny`). Agents may `submit()` (grants nothing);
+  `decide()` refuses from agent context — `TNF_AGENT_ID`/`AGENT_ID`, `CI`,
+  non-TTY stdin, or running as the agent account — and audits every refusal.
+  Approvals may narrow, never widen; the requester's role always comes from the
+  registry and a self-asserted role is recorded as a claim and ignored. 15
+  tests. Verified live: an agent with `TNF_AGENT_ID` set is refused.
+- [✅] 2026-07-23 **Interactive review console.** `tnf authority review` /
+  `node scripts/tnf-authority.cjs review` — requires a TTY, **no default
+  action** (bare Enter re-prompts, never approves), double confirmation
+  restating exactly what will be granted, warnings rendered above the decision
+  line, and the agent-written `justification` truncated + fenced as untrusted (a
+  prompt-injection attempt is in the fixtures). 14 tests.
+- [✅] 2026-07-24 **Phase 4a built: credential broker (read-only).**
+  `tnf-cred-broker.cjs` — an agent invokes a named operator-declared action; the
+  broker pulls the secret from the OS keystore, runs the action with it injected
+  out of band, scrubs the output, returns only the result. Four gates fail
+  closed (undeclared action / invalid grant / mutating / trust-root policy). A
+  degraded `file` root makes the broker MORE restrictive: read-only
+  non-sensitive only, mutating and `sensitive` refused. Output scrubbing covers
+  the error path. 16 tests. Verified live: balance returned with API key
+  scrubbed, payout refused. **Account mutation through TNF is not possible
+  today** — deferred until the trust root is a real boundary.
+- [⚠️] 2026-07-23 **Do not flip `TNF_MESSAGE_AUTH_MODE=enforce` yet.** Requires
+  every agent to hold an Ed25519 keypair and every node to have imported its
+  peers' public keys; flipping early silently drops traffic. See `.env.example`.
+
+1. [✅] 2026-07-17 Autonomous Continuity Protocol authored; self-healing bound
+
+- [✅] 2026-07-22T13:09:55.447Z New script(s) created: quick-start-mcp.sh
+- [✅] 2026-07-22T17:29:55.147Z New script(s) created: quick-start-mcp.sh
+
+- [✅] 2026-07-22T12:21:40.795Z New script(s) created: quick-start-mcp.sh
+- [✅] 2026-07-22T12:26:15.345Z New script(s) created: quick-start-mcp.sh
+
+- [✅] 2026-07-21T09:43:25.102Z New script(s) created:
+  tnf-interactive-safe-mode.cjs, tnf-terminal-attention.cjs,
+  validate-locked-doc-ledger.cjs, quick-start-mcp.sh
+
+- [✅] 2026-07-21T00:56:58.911Z Agent registration gate created: auto-verify all
+  agents registered in AGENT_STATUS_LEDGER
+
+  to
+
+  continuity stack; boot pipeline gains `--require-core` + `--autonomous`.
+
+2. [✅] 2026-07-17 Anti-stall armed: full-auto daemon running, factory core
+   healthy, `scripts/runtime/tnf-anti-stall.sh` + agent loop every 15m.
+3. [✅] 2026-07-17 Local-runtime-boundary: HARDCODED_AGENT_BOOT_PROMPT personal
+   paths removed; validator OK; 33/33 protocol tests pass.
+4. [✅] 2026-07-17 Relaunched pi + antigravity via `launch-agent-wrapper.sh`
+   (nvidia/minimax); gemini wrapper left down (`GEMINI_DISABLED=1`).
+5. [⏳] Commit harness/spam-loop family when operator requests (see
+   `DOC_AUDIT_DIRTY_TREE_CLASSIFY.json`).
+6. [⏳] Master-clock herd: 6 `dist/master-clock` processes — await operator
+   handshake before any kill.
+7. [✅] Reconcile `AGENT_STATUS_LEDGER.md`.
+
+- [✅] 2026-07-15 Frontend IA: always-open AI Assist → summon dialog; ChatHub;
+- [✅] 2026-07-17T19:34:23.381Z New script(s) created:
+  validate-local-runtime-boundary.test.cjs, validate-sgp-schemas.test.cjs,
+  verify-terminal-visualizer-readiness.test.cjs
+
+- [✅] 2026-07-07T22:27:24.425Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-08T16:20:29.989Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-08T16:34:56.748Z New script(s) created:
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T02:21:39.936Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T02:21:58.625Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T02:55:00.000Z Curator question filed: Rate Limit Gateway has
+  no source counterpart in TNF_GOVERNANCE_TENETS.md §2-6 (verified via delegated
+  validator subagent deleg_138473bd, 5-pass Prometheus scan Pass 2). File:
+  docs/protocols/reports/CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md
+- [✅] 2026-07-09T02:55:00.000Z Self-heal gap surfaced by validator:
+  tnf-agent-daemon.py is NOT running (pgrep rc=1). Heartbeat OK (PIDs
+  37860/37861); Redis OK (PONG rc=0); cron-output jsonl directory empty despite
+  25 subdir shards. Follow-up: restart daemon via `tnf alive up` or operator
+  decision; investigate missing cron jsonl output.
+- [✅] 2026-07-09T02:55:00.000Z Directive-package test complete: 3 delegated
+  subagents audited the canonical docs/protocols/DIRECTIVES.md +
+  .agent/skills/tnf-directives/SKILL.md ecosystem. Drafts TNF_DIRECTIVES.md +
+  redundant cli.ts `directives` subcommand both rolled back; canonicity
+  preserved. cli.ts restored to HEAD+growth-audit at L5417 (single-copy,
+  type-check passes).
+- [✅] 2026-07-09T03:22:22.903Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:30:00.000Z Rate Limit Gateway drift resolved: anchored in
+  TNF_GOVERNANCE_TENETS.md §3.B; curator question
+  CURATOR_QUESTION_RATE_LIMIT_GATEWAY_2026-07-08.md marked RESOLVED (option a).
+- [✅] 2026-07-09T04:30:00.000Z tnf-agent-daemon restarted via `tnf alive up`
+  (PID detached, Redis status posted). Pass 5 self-heal: daemon UP, Redis PONG,
+  384 cron .md outputs present.
+- [✅] 2026-07-09T04:30:00.000Z Hermes cron path bug remediated: symlink at
+  ~/.hermes/scripts/scripts/agents/tnf-heartbeat-selfwake.py → repo
+  scripts/agents/tnf-heartbeat-selfwake.py (doubled-prefix fix; validator
+  false-positive on empty jsonl — outputs are .md not .jsonl).
+- [✅] 2026-07-09T04:23:46.260Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:35:00.000Z Hermes web UI build fixed
+  (`npm install --workspace web` + build); dist at hermes_cli/web_dist/.
+- [✅] 2026-07-09T04:35:00.000Z Heartbeat cron class-fix: jobs.json script →
+  `agents/tnf-heartbeat-selfwake.py`; copy at ~/.hermes/scripts/agents/
+  (replaces broken symlink/doubled-prefix).
+- [✅] 2026-07-09T04:35:00.000Z DIRECTIVES.md D10 + LIVING_DIRECTIVES_CARD
+  synced with Rate Limit Gateway (post governance tenets anchor).
+- [✅] 2026-07-09T04:35:00.000Z Ops notes:
+  docs/protocols/reports/HERMES_OPS_NOTES_2026-07-09.md (web build,
+  matrix/cmake, cron, daemon).
+- [✅] 2026-07-09T04:36:00.000Z Daemon re-started via `tnf alive up` after
+  session gap (PID detached).
+- [✅] 2026-07-09T04:27:54.588Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+- [✅] 2026-07-09T04:42:19.276Z New script(s) created: tnf-growth-audit.cjs,
+  federation-sequence-checker.cjs
+
+- [✅] 2026-07-01T18:45:09.017Z New script(s) created:
+  cost-simulation-corrected.cjs, cost-simulation.cjs
+- [✅] 2026-07-04T04:24:29.000Z TNF Framework Evolution Protocol implemented:
+- [✅] 2026-07-04T10:14:47.010Z New script(s) created:
+  cost-simulation-corrected.cjs, cost-simulation.cjs
+  - Created TNF_FLEET_HEALTH_PROBE_PROTOCOL.md (v2.0 - adds NODE_PATH awareness)
+  - Created TNF_SELF_HEALING_PROTOCOL.md (v2.0 - module dependency awareness)
+  - Created TNF_MODULE_DEPENDENCY_AWARENESS.md (ioredis module resolution fix)
+  - Created TNF_AGENT_ROSTER_CLEANUP.md (stale agent archival protocol)
+
+- [✅] 2026-07-04T04:24:29.000Z Critical fix applied:
+  terminal-heartbeat-pulse.cjs now starts with correct NODE_PATH to resolve
+  ioredis module dependency
+- [✅] 2026-07-04T04:24:29.000Z TNF Agent Daemon started successfully (was not
+  running - caused 410 errors)
+
+- [✅] 2026-06-23T23:43:27.174Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T23:43:27.174Z Agent definition change: 0 added, 5 removed
+- [✅] 2026-06-24T00:59:44.014Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-24T00:59:44.014Z Agent(s) archived: picoclaw-perplexity,
+  picoclaw-subject, picoclaw-tester-benchmark, picoclaw-tester-viability,
+  picoclaw-tester
+- [✅] 2026-06-24T00:59:44.014Z New script(s) created:
+  live-installed-app-audit.sh, release.sh, update-changelog.sh,
+  tnf-fleet-health-probe-cycle.sh, tnf-frontend-tester-cycle.sh,
+  archive-lineage-repo.sh, audit-repo-parity.sh, voice-drift-audit.sh,
+  check-proprietary-leakage.sh, backup-home-candidates.sh,
+  personal-runtime-cleanup.sh, create-lineage-bundle.sh, federation-agent.cjs,
+  install-voice-bridge-symlinks.sh, federation-protocol.cjs,
+  federation-relay-client.cjs, session-handoff-mcid.cjs,
+  add-neuralwatt-provider.sh, sync-hermes-llm-from-tnf.cjs, enable-hsts.sh,
+  ensure-factory-supervisor.sh, fleet-role-map-reconcile.cjs,
+  swarm-ram-profile.sh, autonomous-dev-production-pipeline.sh,
+  dual-mode-parity-qa.sh, start-local-api-3001.sh, start-local-relay.sh,
+  federation-channel-broker-service.sh, federation-channel-broker.cjs,
+  green-channel-coordinator-service.sh, green-channel-coordinator.cjs,
+  redis-local-bootstrap.sh, tnf-master-heartbeat-loop.cjs,
+  tnf-boot-environment.sh, tnf-environment.sh, tnf-redis-audit.cjs,
+  tnf-self-sufficiency-gate.sh, verify-open-runtime-export.sh
+- [✅] 2026-06-24T00:59:44.014Z Agent definition change: 2 added, 0 removed
+- [✅] 2026-06-24T00:59:44.014Z OpenClaw migration: 7 launchd agents replaced by
+  3 native system-cron entries
+
+- [✅] 2026-06-23T22:51:24.112Z New agent registered:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:52:26.867Z New agent registered:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:56:05.654Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T22:56:05.654Z Agent definition change: 0 added, 5 removed
+- [✅] 2026-06-23T23:23:57.161Z New agent(s) created:
+  thenewfuse-frontend-tester, tnf-fleet-health-probe
+- [✅] 2026-06-23T23:23:57.161Z New script(s) created:
+  check-agent-registration.cjs, turn-end.cjs
+- [✅] 2026-06-23T23:23:57.161Z Agent definition change: 0 added, 5 removed
+- [✅] 2026-06-23T23:23:57.161Z Turn End protocol implemented: auto-update
+  LIVING_STATE + SESSION_HANDOFF at session close
+- [✅] 2026-06-23T23:23:57.161Z Agent registration gate created: auto-verify all
+  agents registered in AGENT_STATUS_LEDGER
+
 2. [✅] Initialize `LIVING_STATE.md`.
 3. [✅] Integrate Rust-based Envelope validator into active Relay bridge via
    FFI.
@@ -136,8 +679,230 @@
     `tnf-start-ai.cjs` provisions MCP configs with local-tolerant doctor checks
     so OpenClaw boot survives missing local DATABASE_URL without losing client
     wiring.
-42. [✅] Orchestration CLI Landing: `DirectiveConversionService`, `protocol health/directives/sync/gate` commands, and slash commands (`/protocol`, `/directives`, `/living`) integrated into `packages/tnf-cli`.
-43. [✅] Phase 7 Batch 001 Claimed: 10 high-priority directives claimed via retriage v2 promotion + conversion loop; Deep Sec scan config hardened with monorepo exclusions.
+42. [✅] Orchestration CLI Landing: `DirectiveConversionService`,
+    `protocol health/directives/sync/gate` commands, and slash commands
+    (`/protocol`, `/directives`, `/living`) integrated into `packages/tnf-cli`.
+43. [✅] Phase 7 Batch 001 Claimed: 10 high-priority directives claimed via
+    retriage v2 promotion + conversion loop; Deep Sec scan config hardened with
+    monorepo exclusions.
+
+---
+
+43. [✅] Local Sub-Director Fleet Spawn (2026-06-25): Authorized two runtime
+    workers (hermes-codegen-worker, hermes-infra-worker) under sessionKey
+    `0aac60f7-7be6-45b0-a06d-8101d5f3f9d6`:
+
+- `agent_hermes-codegen-worker_1782364000001` — role=worker, platform=claude,
+  capabilities
+  `code_generation,typescript_strict,monorepo_pnpm,pnpm_filter_invocation,drizzle_migration_apply,zod_schema_generation,subagent_dispatch_handoff`,
+  callableWorker=true. Direct command queue at
+  `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` holds 5
+  task envelopes (cg-001..cg-005) + 1 priming context packet.
+- `agent_hermes-infra-worker_1782364000002` — role=worker, platform=claude,
+  capabilities
+  `infra_audit,cloud_run_manifest_validate,image_tag_resolve,build_config_render,rollout_health_probe,iam_scope_audit`,
+  callableWorker=true. Direct command queue holds 1 prepare-only envelope
+  (infra-001, GCP auth-429 build packet) + 1 priming context packet.
+  **Deliberately excludes `gcp-build-submit` capability** — submission remains a
+  dual-key sub-director action. Initial TTL broadcast for each agent returned
+  subscriber*count=6 (directors + brokers + super-director). 3 polluted CLI test
+  rows
+  (`agent*--name*\*`, `agent*--help\__`) cleaned from registry. Registry total dropped 369 -> 366 then 366+2 = 368 net. Attempts to push to `tnf:master:tasks:realtime`confirmed the master-clock broker arbitrates that queue chronologically; arbitrary entries are drained-but-arbitrated by`packages/relay-core/src/broker-agent.ts`rather than routed to my workers by id. **Operative dispatch is the direct command path above**, not the realtime queue. Verification:`redis-cli
+  HGET tnf:agent-registry
+  agent_hermes-_-<ts>`returns the persisted records;`redis-cli LLEN
+  tnf:direct:sub-director:<id>` returns 6 and 2 respectively; sample envelope
+  decodes with type=task, version=1.0, correct to-agentId, lane, priority, and
+  approval_token.
+
+---
+
+44. [✅] Sub-Director Worker Cron Wiring (2026-06-25 04:59): Bound the two
+    workers from step 43 to system cron:
+
+- `tnf-subdirector-codegen-worker` — `*/5 * * * *` runs
+  `scripts/agents/subdirector-codegen-worker-cycle.sh` (refreshes registry HSET
+  row, heartbeat, drains
+  `tnf:direct:sub-director:agent_hermes-codegen-worker_1782364000001` for 250s
+  window, exits).
+- `tnf-subdirector-infra-worker` — `*/15 * * * *` runs
+  `scripts/agents/subdirector-infra-worker-cycle.sh` (same shape, 850s dwell —
+  gcp-build-submit intentionally absent from capabilities). Both added to
+  `data/protocols/chronological-process-catalog.json` (entries 17-18 of 18) and
+  `data/protocols/cron-jobs.registry.json` (jobs 17-18 of 18). Crontab lines
+  match the established `tnf-chronological:<id>` tag convention. Smoke test
+  confirmed both wrappers exit 0 and successfully drain the 5 code-gen + 1 infra
+  envelopes from prior step. Logs at
+  `~/.tnf/poll-jobs/tnf-subdirector-*-worker/cron.log`.
+
+---
+
+45. [✅] Sub-Director Multi-LLM Orchestration (2026-06-25 05:36): Resolved the
+    user's brief: 'fully invoke true multi-LLM orchestration, local-first, cloud
+    only on opt-in during prelaunch.'
+
+- **Resolver**: `~/.tnf/sub-director/model_resolver.py` (Python). Selects
+  `local`/`cloud`/`none` per tier policy. Tier matrix: `local-only` (default
+  prelaunch; refuses to escalate), `local-prefer` (local; cloud fallback),
+  `cloud-ok` (local first, cloud fallback allow), `cloud-primary` (cloud first,
+  local last). Allow-clouds gate:
+  `~/.tnf/sub-director/model-policy.yaml:{allow_cloud:false}`
+  (operator-controlled). Envelope-level override via `{cloud_ok:true}` or
+  `{preferred_tier:...}`.
+
+  **Models are NOT hard-coded in canonical documents.** The active fleet is
+  sourced from `~/.tnf/sub-director/model-policy.yaml` (`models:` section) and
+  the live provider roster emitted by `tnf fleet probe --json`. Treat any
+  concrete model name visible in this document as **historical context**, not
+  authoritative. To change the active fleet, edit `model-policy.yaml` and run
+  `tnf fleet probe` to refresh; do NOT edit LIVING_STATE.md to add or remove
+  models.
+
+  Authoritative fleet state shape:
+
+  | Field              | Source                                                  | Notes                                                                        |
+  | ------------------ | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+  | local model + port | `model-policy.yaml:models.local`                        | llama.cpp server, default port 8081 (overridable via `models.local.port`)    |
+  | cloud providers    | `model-policy.yaml:models.cloud`                        | list of provider/model id pairs, e.g. `nvidia/meta/llama-3.3-70b-instruct`   |
+  | active override    | `models.preferred` (single `{provider}/{model}` string) | takes precedence over tier matrix                                            |
+  | live probe status  | `tnf fleet probe --json` output                         | refreshed each sub-director cycle; fail-closed if `preferred` is unreachable |
+
+  Past state (kept for archaeology only): local was
+  `qwen2.5-coder-1.5b/3b-instruct` on llama.cpp; cloud was
+  `nvidia/meta/llama-3.3-70b-instruct` and `openrouter/deepseek-chat-v3-0324`
+  (OpenRouter credits exhausted as of 2026-05-17). These are NOT live.
+
+- **Drainer**: `~/.tnf/sub-director/run_one_envelope.py`. Pulls ONE envelope per
+  cron window via `BRPOPLPUSH`, builds prompt, resolves+invokes, writes
+  run-artifact under `~/.tnf/sub-director/run-artifacts/<envelope_id>.json`.
+  Idempotent (skips already-drained envelope IDs).
+- **Wrappers**: `scripts/agents/subdirector-{codegen,infra}-worker-cycle.sh`
+  (5min / 15min cadence). Refresh registry row, emit heartbeat, call drainer.
+- **Bootstrap**: `~/.tnf/sub-director/local-bootstrap.sh [--dry]`
+  (operator-gated). Installs llama.cpp via brew + downloads
+  qwen2.5-coder-1.5b-instruct-q4_k_m.gguf from HF, starts llama-server at
+  127.0.0.1:8081. Pre-flight aborts if disk <5GB free.
+- **State proof**: `smoke-cg-001` and `smoke-infra-001` test envelope runs
+  return `outcome=no-backend` artifact + `rc=2` exit. Once local LLM is
+  installed, the next cron tick switches resolver to tier=local and emits real
+  model responses.
+- **Cost discipline during prelaunch**: default policy keeps cloud LLM vendors
+  disabled. Operators wanting paid inference flip a single flag
+  (`allow_cloud: true`) or attach `cloud_ok:true` to one envelope at a time.
+
+---
+
+46. [✅] Execute Consensus round for refactoring (Iteration 26): ran the
+    consensus round script to evaluate the decomposition of master-clock.ts into
+    7 specialized services under 10dc42ec-e74a-4640-8b3c-6e350cf4dde6, validated
+    build success and type-safety.
+
+---
+
+47. [✅] Execute Consensus round for refactoring (Iteration 27): ran the
+    consensus round script under a608b6d2-8616-4d48-b39b-b30058345dd4, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+48. [✅] Execute Consensus round for refactoring (Iteration 28): ran the
+    consensus round script under f46736ef-25aa-4096-a0e0-be3f05afdc29, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+49. [✅] Execute Consensus round for refactoring (Iteration 29): ran the
+    consensus round script under fc56cb47-84be-499c-b845-7ba1e448f9f2, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+50. [✅] Execute Consensus round for refactoring (Iteration 30): ran the
+    consensus round script under a8ed26fe-eaa7-43b8-9654-93dd91cda89d, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+51. [✅] Execute Consensus round for refactoring (Iteration 31): ran the
+    consensus round script under 58b65629-0068-4293-a130-1bde6551b39d, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+52. [✅] Execute Consensus round for refactoring (Iteration 32): ran the
+    consensus round script under 9adcffde-9d29-4a36-838a-2082f2afae15, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+53. [✅] Execute Consensus round for refactoring (Iteration 33): ran the
+    consensus round script under 55072091-cf08-4cac-aa57-13e87766a3f5, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+54. [✅] Execute Consensus round for refactoring (Iteration 34): ran the
+    consensus round script under 81fca458-863f-4c3f-9663-0e369d9a0083, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+55. [✅] Execute Consensus round for refactoring (Iteration 35): ran the
+    consensus round script under c7206a58-19b1-4fb5-bc5f-24b3044c828c, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+56. [✅] Execute Consensus round for refactoring (Iteration 36): ran the
+    consensus round script under bb6abc92-f73e-493b-ac2e-ac8ee66e79f6, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+57. [✅] Execute Consensus round for refactoring (Iteration 37): ran the
+    consensus round script under 44eb049f-6595-45bf-9b0f-85d74e5cf390, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+58. [✅] Execute Consensus round for refactoring (Iteration 38): ran the
+    consensus round script under 5264c935-7012-43ca-9c55-5faa2bdebd42, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+59. [✅] Execute Consensus round for refactoring (Iteration 39): ran the
+    consensus round script under 0d87fae8-0338-42cb-8efc-e7bd9b974a5d, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+60. [✅] Execute Consensus round for refactoring (Iteration 40): ran the
+    consensus round script under bd13a051-56b3-4666-8d18-298a8d790450, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+
+---
+
+61. [✅] Execute Consensus round for refactoring (Iteration 41): ran the
+    consensus round script under f5e8647b-1f4f-4348-942b-6659f5182a33, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+62. [✅] Execute Consensus round for refactoring (Iteration 42): ran the
+    consensus round script under c0260c70-2b24-4d4b-9023-f9d8903d7368, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+63. [✅] Execute Consensus round for refactoring (Iteration 43): ran the
+    consensus round script under b83b746a-30da-4ae6-afe7-2572e8e6b84f, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+64. [✅] Execute Consensus round for refactoring (Iteration 44): ran the
+    consensus round script under 71d37811-8091-4ddf-880f-aa8edb19122a, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+65. [✅] Execute Consensus round for refactoring (Iteration 45): ran the
+    consensus round script under b2394424-1c2a-40a2-b649-15f3a97c4c88, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+66. [✅] Execute Consensus round for refactoring (Iteration 46): ran the
+    consensus round script under d6735afe-367a-4686-a95a-72df0c07f6fc, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
+67. [✅] Execute Consensus round for refactoring (Iteration 47): ran the
+    consensus round script under 2ea3a046-94ad-4029-9d37-9fea11a640f4, generated
+    refactoring_consensus_report.md, and validated monorepo type safety.
 
 ---
 
@@ -157,7 +922,10 @@
 
 ## 🕒 Last Update
 
-2026-06-16T02:43:00Z - Composer landed orchestration CLI services, claimed Phase 7 batch 001 (10 directives), hardened Deep Sec scan config, and fixed retriage v2 to sync action queue + evidence artifacts.
+2026-07-07T23:41:30Z - Antigravity executed refactoring consensus round
+(Iteration 47) to decompose monolithic MasterClock under session
+2ea3a046-94ad-4029-9d37-9fea11a640f4, verified type safety and build success,
+and generated refactoring_consensus_report.md.
 
 ## 🛡️ Contract Migration Status
 
@@ -184,3 +952,1019 @@
 - **Next Goal:** [✅] Monitor auto-dispatch of the 651 directives and track
   conversion KPIs. 600 eligible tasks have been successfully pushed to the
   `tnf:master:tasks:realtime` Redis queue for swarm consumption.
+
+- [✅] 2026-06-25T20:49:14.234Z Orchestrator: Completed: Goal: Deploy the API
+  auth fix to GCP
+
+- [✅] 2026-06-25T20:49:27.825Z Orchestrator: Completed: Goal: Find and clean up
+  dead code
+
+- [✅] 2026-06-29T17:51:00Z Swarm Context Bridge: Implemented continuous
+  heartbeat-to-AI context pipeline (`tnf-swarm-context-bridge.cjs`). Bridges
+  terminal-heartbeat state and LIVING_STATE.md directives to
+  `~/.tnf/swarm-context.md` for AI consumption. Integrated into
+  master-heartbeat-loop.cjs. Updated heartbeat prompt template to reference
+  swarm-context.md. Added swarm-context.md to TURN_ZERO_MANDATE.md and AGENTS.md
+  mandatory files. Fixed permission issues on cron scripts
+  (terminal-heartbeat-cron.sh, tnf-director-cron.sh).
+- [✅] 2026-07-09T04:55:00.000Z Class-fix applied:
+  `scripts/agents/tnf-agent-daemon.py::_tool_redis_operation` now accepts
+  `**kwargs` and warns (does not crash) on LLM-side unknown args. Pre-patch
+  evidence: daemon.log showed recurring
+  `Tool redis_operation failed: LLMClient._tool_redis_operation() got an unexpected keyword argument 'end'/'start'`.
+  Post-patch evidence: 0 occurrences in same daemon.log after a fresh 60s watch;
+  warning line
+  `[TNF] redis_operation received unknown kwargs ['end', 'start'] — ignored`
+  fires as designed. Verifier: pgrep + tail of ~/.tnf/logs/daemon.log.
+- [✅] 2026-07-09T04:55:00.000Z Open item: persistent daemon boot. Daemon
+  started from foreground agent sessions does not survive agent chunk; launches
+  then exits cleanly when the wrapping agent's session ends. Class-fix path:
+  launchd plist under TNF or system-cron pattern with detach; both require
+  Anti-Lobotomy-class operator authorization. Self-wake cron (8aa92239ce2c) was
+  canonicalised earlier this turn and will recover on its own 5-min cadence.
+- [⏳] 2026-07-09T04:55:00.000Z Surface for operator decision: (a) install
+  cmake + libolm for platform.matrix (was blocked this session), (b) commit ~100
+  uncommitted files (cli.ts + tnf-agent-daemon.py + ops notes + directives-sync
+  changes), (c) accept the smaller \*\*kwargs class-fix as one focused commit
+  vs. the full working tree.
+- [✅] 2026-07-09T06:21:00.000Z Critical fixes applied: Local-Director
+  resonancePool task spam resolved by persisting state to
+  ~/.tnf/director/state/resonancePool.json. terminal-heartbeat-pulse.cjs regex
+  hardened with \b boundaries to prevent false agent triggerings, and `pi` agent
+  officially added to AGENT_COMMAND_HINTS. pi model settings updated to match
+  hermes provider (nvidia) and model (minimaxai/minimax-m3) to resolve 410
+  errors. [CLASS:PRIME] [STATUS:RESOLVED] Handoff
+  1d37a0e4-6cb8-43c8-9f2d-216b4243689a (turn 11, 2026-07-24): commit executed
+  (HEAD b68d36d) with live Daniel Goldberg confirmation ("commit these 4
+  files"); AGENTS.md gate satisfied; SESSION_HANDOFF_LATEST.json updated;
+  next_actions cleared.
+- [✅] 2026-07-24T21:55:00.000Z Bulk-fix session initiated by Daniel Goldberg
+  ("fix all errors, bugs, omissions, and commit all"). Eight themed commits
+  produced, each cluster verified by tsc --noEmit and/or bash -n before commit:
+  (A) frontend link/landing dead-URL sweep, (B) audit-live-links allowlist +
+  crawler refresh, (C) CLI_QODER identity propagation across db schema,
+  classifier, snapshot, persona; fixed the agents-classify.ts unchanged-count
+  arithmetic which had produced stale unchanged=-114, (D) cron.ts rewritten
+  against the real relay-core redis keys (tnf:master:agents,
+  tnf:master:heartbeats) with fail-safe on no-redis, (E) relay-core bridge
+  preserves persona fulfillment+traits on AGENT_REGISTER; audio-trigger-ingest
+  tightens its missing-ingestApiKey fast-path and accepts x-edge-api-key, (F)
+  helper-script cleanups (build-doctor duplicate TS_RC=\$? artefact removed;
+  living-state-prober marker regex loosened so it captures the in-list "5. [⏳]"
+  form, not just the canonical "- [⏳]" checkbox)
+  - adds a token.json .gitignore rule to prevent future amplification of the
+    bearer credential, (G) marketplace SQL repointed at the live URLs
+    (servers-archived branches, multilingual-e5-large), (H) codebase_map.json +
+    tauri VirtualLibraryHub :not(style) selector fix + rolling-summary refresh,
+    (I) this session's docs / handoff / codepath graph artifacts committed. Each
+    commit cites the operator-confirmation lines explicitly. .gitignore
+    tightened to ignore packages/tnf-browser/extension/token.json going forward.
+    [CLASS:PRIME] [STATUS:RESOLVED]
+
+- [✅] 2026-08-05T03:31:15.226Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T01:20:04.048Z Orchestrator: Completed: Goal: FULL ENCHILADA
+  multi-expert audit of TNF harness and platfor...
+
+- [✅] 2026-08-10T02:08:12.190Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+## History
+
+- 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
+  `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone
+  wiring, dist-v7, concordance JSON.
+
+- 2026-08-17T04:26:32.826Z handoff `12b94313-fac9-4b13-89b1-cd55aa1d2338` head
+  `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone
+  wiring, dist-v7, concordance JSON.
+
+- 2026-08-17T04:23:41.932Z handoff `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` head
+  `a7d9551b63bb` project `TNF-SESSION` — Ship google-ai view/resume. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T04:23:40.524Z handoff `1cdd1c89-346f-4380-8983-2d05c8af421c` head
+  `a7d9551b63bb` project `TNF-SESSION` — Ship google-ai view/resume. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T04:21:18.193Z handoff `b16b8568-acd2-4a1b-9eba-60658ece28cb` head
+  `8f8c5ccbca8b` project `TNF-SESSION` — Ship google-ai view/resume next. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T04:21:16.291Z handoff `9c16b0f8-599d-4b1f-8da8-592f6a31e2e2` head
+  `8f8c5ccbca8b` project `TNF-SESSION` — Ship google-ai view/resume next. Defer
+  dist-v7, rclone, concordance JSON.
+
+- 2026-08-17T03:53:31.029Z handoff `edebdf5e-b735-45d3-9527-f262327c7960` head
+  `12f3aaa035b6` project `TNF-SESSION` — Operator: confirm .gitignore receipts
+  ignore. Defer google-ai leftover, rclone wiring, dist-v7.
+
+- 2026-08-17T03:53:29.749Z handoff `5126d38b-4110-40ac-b6e0-95737ade1ccd` head
+  `12f3aaa035b6` project `TNF-SESSION` — Operator: confirm .gitignore receipts
+  ignore. Defer google-ai leftover, rclone wiring, dist-v7.
+
+- 2026-08-17T03:50:50.118Z handoff `6f799a00-00d6-4b1c-a4ed-376bb9955f6e` head
+  `daaa73d3d421` project `TNF-SESSION` — Operator must confirm .gitignore
+  authority edit (receipts/trackers). Defer google-ai leftover + dist-v7.
+
+- 2026-08-17T03:50:49.240Z handoff `07dde259-510f-46e1-89eb-5dc02d5c7408` head
+  `daaa73d3d421` project `TNF-SESSION` — Operator must confirm .gitignore
+  authority edit (receipts/trackers). Defer google-ai leftover + dist-v7.
+
+- 2026-08-17T03:49:57.623Z handoff `419721f7-b800-42f0-b6f7-78532a3d4ffd` head
+  `daaa73d3d421` project `TNF-SESSION` — Defer google-ai leftover + dist-v7;
+  keep receipts uncommitted. Broker restarted.
+
+- 2026-08-17T03:49:55.992Z handoff `d207b5ab-8690-4190-aa2f-8699d533c066` head
+  `daaa73d3d421` project `TNF-SESSION` — Defer google-ai leftover + dist-v7;
+  keep receipts uncommitted. Broker restarted.
+
+- 2026-08-17T03:39:13.155Z handoff `4d08b15e-c3a0-472b-a4c9-5c61b4b9da5b` head
+  `fea3c89faed7` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T03:39:11.254Z handoff `4504c107-bcff-4bbc-855a-408a0746a09d` head
+  `fea3c89faed7` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T03:04:05.681Z handoff `06cf67ff-0f1a-47cc-8d01-5a3f87f1b41a` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T03:04:00.901Z handoff `02a4b7bf-b797-42b0-a5ca-4e578140961f` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:54:40.864Z handoff `8a5ff1b7-aa47-4271-b7e8-90dd112bdfa3` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:54:35.893Z handoff `73cecccb-5921-438f-b475-ba78fcf70578` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:53:59.132Z handoff `c403aac3-cf5e-4e94-8211-8547183349fb` head
+  `e35bc028e742` project `TNF-SESSION` — Smoke /platform and
+  /admin/backup-restore; chrome-extension v7 is webpack packaging of src/v6 (no
+  separate src/v7); optional install-v7 rebuild.
+
+- 2026-08-17T02:53:22.315Z handoff `c37359bf-7f5a-4188-9692-400529c12931` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T02:53:16.443Z handoff `9dd8d64d-36cd-411c-8fea-a5cd0b63c892` head
+  `e35bc028e742` project `TNF-SESSION` — Keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T00:03:20.416Z handoff `a0ee822e-5638-417e-a2e5-1cd16e0af2fa` head
+  `4e205676b9ee` project `TNF-SESSION` — Smoke tnf google-ai status; optionally
+  restart relay for Redis leak fix; keep receipts/codebase_map uncommitted.
+
+- 2026-08-17T00:03:18.924Z handoff `67a78554-ac80-4c69-9a2e-8c69601209a8` head
+  `4e205676b9ee` project `TNF-SESSION` — Smoke tnf google-ai status; optionally
+  restart relay for Redis leak fix; keep receipts/codebase_map uncommitted.
+
+- 2026-08-16T23:51:24.210Z handoff `d2b506ee-2124-4f7e-b0b7-1de4fc75396f` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  next optional: browser-control-surfaces + api harness/browser modules.
+
+- 2026-08-16T23:51:22.727Z handoff `423fa937-710e-4e11-8693-5ffbd88e0c74` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  next optional: browser-control-surfaces + api harness/browser modules.
+
+- 2026-08-16T23:49:48.372Z handoff `af8c0004-e64a-418a-84b4-4e57f562ceae` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:45.042Z handoff `947a718f-c650-4e97-ba26-5bfb38b6afd7` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:07.703Z handoff `8d233dd6-69e1-4276-826f-168f9b5fc8b3` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:49:04.215Z handoff `13b94a78-8998-470f-9a92-8c54ed4c28c1` head
+  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
+  optionally batch browser-control-surfaces + api harness/browser modules next.
+
+- 2026-08-16T23:36:20.806Z handoff `1132dbda-3c8d-4afe-91d2-9234155f969e` head
+  `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
+  backup/settings UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:36:19.670Z handoff `9973e7a5-182f-4f46-87f5-2ded03cc1428` head
+  `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
+  backup/settings UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:28:27.123Z handoff `7d20be19-7db2-4a02-806d-6746e20636df` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:28:26.076Z handoff `348a52bb-a18e-4dde-a414-592ccc832a89` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:24:04.855Z handoff `2f9b9d3d-bc8e-4dab-bb1b-811fd1e0a664` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T23:24:01.985Z handoff `bc8e9967-f74d-4a39-8df0-c9aa57c14942` head
+  `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
+  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+
+- 2026-08-16T22:57:55.146Z handoff `54428d94-2559-482f-8753-4fc7c57ed068` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
+
+- 2026-08-16T22:57:50.541Z handoff `166e64da-d6c3-4d3e-af26-32e915cc1f8e` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
+
+- 2026-08-16T22:51:46.946Z handoff `1f8cb103-f122-44f3-93fc-008ff1a0b1cc` head
+  `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
+  redis leak tests; chrome-extension; frontend backup UI; defer bulk
+  data/intelligence-artifacts.
+
+- 2026-08-16T22:39:24.222Z handoff `a99de94e-7865-4263-9cc4-b146e1da10ac` head
+  `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated
+  dirty tree in a separate pass.
+
+- 2026-08-16T22:31:10.658Z handoff `8c89abfc-113a-431a-a203-b4162f19b37a` head
+  `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated
+  dirty tree in a separate pass.
+
+- 2026-08-16T22:24:29.027Z handoff `524c8381-cf6a-43e5-8262-872f19b52e2c` head
+  `35792eb67aad` project `TNF-SESSION` — Optional alias-ack dedupe + tnf
+  subdirector drain CLI.
+
+- 2026-08-16T22:19:28.764Z handoff `7161308e-c0f4-461c-9362-f27455bada4c` head
+  `9638ca199fca` project `TNF-SESSION` — Optional: git push origin HEAD when
+  operator wants remote durable.
+
+- 2026-08-16T22:07:40.066Z handoff `5f7bdf54-232d-4c66-913a-ad1920e9f4a7` head
+  `8628c62b096c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T22:02:09.357Z handoff `efe13fe5-9a92-4015-8217-461a624b3e65` head
+  `8628c62b096c` project `TNF-SESSION` — Optional: dedupe alias fan-out so one
+  report does not ack three identical direct envelopes.
+
+- 2026-08-16T21:37:29.545Z handoff `3cd24a79-0443-4758-9ffa-be8fa81e09c5` head
+  `8628c62b096c` project `TNF-SESSION` — Satisfy or relax local federation gates
+  so critical watchdogs execute instead of only escalating to Director.
+
+- 2026-08-16T21:18:52.520Z handoff `6e8c1168-8265-4098-920c-29b2b6cc6914` head
+  `58714c3e5843` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T21:00:44.855Z handoff `c9e8906d-b301-4f89-a593-9fdb61775593` head
+  `b4e3627c19de` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T18:01:25.501Z handoff `f202ac36-a0eb-427d-84eb-d19a1826ed62` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-16T05:51:55.749Z handoff `95e3ef41-8297-4ccb-908b-a28fa8be67a2` head
+  `84d0c9d15899` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
+- 2026-08-16T05:43:41.606Z handoff `2003b3ba-a8e4-4508-81ec-3ab19f56e160` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-15T00:49:46.390Z handoff `49214223-37de-444a-92f5-4b40c6d6d66a` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-15T00:13:47.853Z handoff `34832506-cd3e-447e-b649-47643444be12` head
+  `84d0c9d15899` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T22:11:52.174Z handoff `ba82f383-10ed-40c4-a2c4-ebd44589954a` head
+  `84d0c9d15899` project `TNF-SESSION` — Operator to commit staged patch:
+  scripts/lib/sync-handoff-cache.cjs
+
+- 2026-08-14T22:02:35.009Z handoff `a072fe48-d84e-48de-be6a-3eab0d041838` head
+  `84d0c9d15899` project `TNF-SESSION` — Surface 132 uncommitted files for
+  operator commit decision
+
+- 2026-08-14T22:01:58.477Z handoff `cf265d52-7a4c-4923-a4b8-08259db01bf8` head
+  `84d0c9d15899` project `TNF-SESSION` — Surface 132 uncommitted files for
+  operator commit decision
+
+- 2026-08-14T21:32:59.195Z handoff `dfcf8ccb-17a0-46b8-ab02-8ff6a3a7b1ca` head
+  `c2ef2a75ae2e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T21:16:23.766Z handoff `6b3cd7e5-349a-4098-a51b-86d3418af9ff` head
+  `7425a9344a7b` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T19:13:08.120Z handoff `8adcfe34-ff3a-4a45-aeb8-5d2b3240b82f` head
+  `51dc0376cc7e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-14T16:57:32.420Z handoff `ba6ba151-9ddf-40c6-9fe9-56b174be19f5` head
+  `51dc0376cc7e` project `TNF-SESSION` — Continue monitoring federation
+  transport lanes for regression
+
+- 2026-08-14T16:44:38.148Z handoff `e557dc46-8b39-4b51-93ce-4c62379b0c37` head
+  `6a3fcf89dab4` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T20:42:17.355Z handoff `57b97048-5bea-496f-a548-d6ffbec12a81` head
+  `83c2cf1d6e5c` project `TNF-SESSION` — Develop only in tnf-monorepo.
+
+- 2026-08-13T20:30:38.924Z handoff `89115730-2fb6-4f5c-a112-e91f967071b6` head
+  `800bb2a94df7` project `TNF-SESSION` — Do not delete the three fuse\* GitHub
+  archives unless the operator says delete.
+
+- 2026-08-13T20:21:30.716Z handoff `d2f04a2b-74d6-4444-82fa-82f7790b89cc` head
+  `aaca77ef0700` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled
+  until a dry-run of sync/open-runtime against restored public main is proven.
+
+- 2026-08-13T19:50:34.349Z handoff `1b577255-a6dc-4860-86f3-48dcd07d76df` head
+  `944c848dc71f` project `TNF-SESSION` — Keep TNF Repo Separation Sync disabled
+  until a dry-run of the new sync/open-runtime PR path is proven.
+
+- 2026-08-13T19:33:36.953Z handoff `227120de-b92d-4aaf-aa27-0d57295f43b4` head
+  `88a570307ddc` project `TNF-SYNC` — Leave generated intel/catalog/artifact
+  churn uncommitted. Land user_data_locations product cluster when that
+  workstream is next.
+
+- 2026-08-13T19:13:02.129Z handoff `f992d3cd-3db9-43b0-b01f-5c7923f2b16a` head
+  `0fd96c848c9b` project `TNF-PRODUCT` — Implement SaaS API/UI flows that create
+  and manage user_data_locations when members connect Google Drive or another
+  storage provider.
+
+- 2026-08-13T19:09:59.519Z handoff `e481a67e-e9a4-4a97-8fe6-60782aa048af` head
+  `0fd96c848c9b` project `TNF-SYNC` — Confirm TNF Repo Separation Sync succeeds
+  on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
+
+- 2026-08-13T19:08:22.087Z handoff `51091426-cadb-419a-9d29-4760ec7d0bb5` head
+  `0fd96c848c9b` project `TNF-SYNC` — Confirm TNF Repo Separation Sync succeeds
+  on tnf-monorepo; swap TNF_SYNC_PAT to a dedicated PAT when oauth expires.
+
+- 2026-08-13T18:02:10.519Z handoff `5c0459eb-5c0b-4cc8-b9ce-ce30a8eb3056` head
+  `5935e4705cd0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T14:35:57.002Z handoff `4b9ef86b-190e-4041-8bac-b60c83abeaf2` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T14:34:57.560Z handoff `1b345534-9a1f-458a-ac6f-61f016ee6773` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T13:19:42.280Z handoff `05138f65-28aa-400a-8cfd-ea24a55ae8ee` head
+  `0a811ca5e0f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:43:01.063Z handoff `677835ef-4b17-4c99-a238-95d906d07d17` head
+  `b5a7afdf2d1f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:34:17.676Z handoff `a456d278-b2cf-42eb-bed2-36f2524a48f3` head
+  `b5a7afdf2d1f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:22:25.762Z handoff `82b69a99-97ff-47cf-99ed-13ac9be0508b` head
+  `b5a7afdf2d1f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:18:03.873Z handoff `c547269d-3e8c-4489-be4b-b8a22c722c87` head
+  `875857824f97` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-13T12:10:11.225Z handoff `1502fd6c-4d2c-4ce6-8984-25c8432514d3` head
+  `875857824f97` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T21:25:44.040Z handoff `8a9ab4a4-f7bb-4bb4-a243-6806caa79534` head
+  `a6e17e5d6213` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T21:18:40.613Z handoff `5e0e4ed7-0da3-4846-bade-a3bdc898dbc6` head
+  `bc060fd7b3d2` project `TNF-SESSION` — Cloud Build and deploy api-server with
+  Dockerfile fix.
+
+- 2026-08-12T20:38:47.945Z handoff `63153892-7c46-4b8c-9324-6b8f4121ae52` head
+  `fa1f95f22f36` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T20:06:32.907Z handoff `5a950341-0034-4834-9650-71560edae39d` head
+  `1ab45d5c7320` project `TNF-SESSION` — Deploy API image with decrypt
+  fallbacks.
+
+- 2026-08-12T19:57:31.527Z handoff `3e6984f5-5641-4fcf-aa21-db57cfe6fd52` head
+  `64469c375664` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T19:02:21.623Z handoff `ce954181-8577-47d1-a434-d2e83f5d8025` head
+  `7a60d8502b06` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T18:15:00.911Z handoff `b4a3f0f9-75a3-4e03-813b-85ffd664497c` head
+  `65a2f2eb28fd` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:58:55.989Z handoff `6e893a91-538b-4cab-b87e-5b03f87f53c5` head
+  `5be6b8be6603` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:49:35.813Z handoff `21a8888a-69ea-4401-a617-a016c2e637b3` head
+  `680fcdecafca` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:37:47.341Z handoff `a4de1606-c202-4076-955c-13125b1209c2` head
+  `fcc2c032c86c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:26:23.779Z handoff `3c71e0ef-d9a0-4529-9ede-df58875e1cda` head
+  `bb98b9eaf2d1` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:11:11.456Z handoff `618cb66d-403a-47c4-a0a6-313b9c864884` head
+  `cd0fd275078e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:10:33.865Z handoff `f36920be-b715-4d8e-a342-f80344f37682` head
+  `cd0fd275078e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T17:10:16.712Z handoff `b6710fd9-1751-495a-8300-68031726e9eb` head
+  `cd0fd275078e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:45:29.725Z handoff `66331bb5-402f-47b0-b561-76ba65af2706` head
+  `093d36133ddb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:43:50.576Z handoff `6d3c174a-343e-4776-bb94-5110b1ae1293` head
+  `093d36133ddb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:33:57.158Z handoff `8ec7b630-7df6-4c0a-80bb-faf6b9293167` head
+  `67f7f0228534` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:32:21.954Z handoff `eb275445-7063-48a6-9ea8-f5c2ec917d1d` head
+  `67f7f0228534` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T10:18:11.091Z handoff `77589e6a-d5d6-483f-acdc-87c76e3f4910` head
+  `5aedc487702a` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T09:39:21.557Z handoff `d1bf96aa-8cdb-4785-9787-29b1103dad22` head
+  `01c26a485aa0` project `TNF-SESSION` — Operator: model-policy.yaml for cron
+  workers (local llama or allow_cloud)
+
+- 2026-08-12T08:24:19.024Z handoff `50860ddc-0dce-4459-8625-af397976d037` head
+  `cda5a0b8a358` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T08:08:06.723Z handoff `72de409e-c8eb-4652-84f8-ee6703850238` head
+  `9efe371f6f8c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T07:48:09.139Z handoff `5d8acc7d-13a8-4a0a-be32-5a6e43ca2a30` head
+  `d2054883ddde` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:50:16.510Z handoff `dd2ae2b0-d863-4b83-b1ec-38d81570bfc7` head
+  `7aaacc7c287b` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:48:12.500Z handoff `f4cc46ed-d809-423d-8b22-f488f0cc69dc` head
+  `99188f2a7638` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:47:24.811Z handoff `2f34d14b-783b-4ab2-a471-1684233fa6a5` head
+  `9d1a51a1c2e0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:46:24.298Z handoff `c0ebd07f-a136-472b-b06a-71b4fdf1d470` head
+  `de5fee7b81d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:46:03.691Z handoff `793ed8a2-1f70-465e-be73-b7e0d5e40365` head
+  `de5fee7b81d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:39:15.897Z handoff `fd075003-b6b8-4e5c-8db4-ee92ab394962` head
+  `3ce882df1096` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T06:24:49.580Z handoff `96be2b5a-33ed-4c46-b5ca-5886ae9fdf14` head
+  `bb1ae588a172` project `TNF-SESSION` — Optional: sandbox_isolation remains
+  partial by design
+
+- 2026-08-12T06:12:36.161Z handoff `480ceb93-cd53-4ca3-84ea-59b95d89d937` head
+  `09b3f5475ee4` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-12T05:49:27.110Z handoff `37816a6d-f24c-4ad5-95d0-75f33f224694` head
+  `5a5e78ab191e` project `TNF-SESSION` — Optional: add SKILL.md.sig for
+  high-value third-party skills
+
+- 2026-08-12T05:30:07.101Z handoff `cd4f3527-9d3b-43ab-9eba-a0248d986fad` head
+  `6cff2cc8e860` project `TNF-SESSION` — Push this commit
+
+- 2026-08-12T05:29:17.312Z handoff `c8911029-d187-40a8-9544-55a0cae17c2c` head
+  `6cff2cc8e860` project `TNF-SESSION` — Operator: approve the held-back
+  TURN_ZERO_MANDATE.md ASSIMILATE_CHECK scan-path fix (authority surface, agents
+  may not self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is
+  referenced but never existed, so command-surface.test.ts has never run (20
+  missing / 1 changed vs snapshot)|Disk hit 100% full mid-session (79MiB free);
+  /Users/Shared holds 174G|Hermes cron output tree holds only 1 fi
+
+- 2026-08-12T05:24:11.194Z handoff `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` head
+  `6cff2cc8e860` project `TNF-SESSION` — Optional: wire provider-failover into
+  model-watchdog boot
+
+- 2026-08-12T04:48:17.461Z handoff `e8cdd9d6-2b96-4e55-a6b2-ef5ed75833ae` head
+  `d9404e41cc1f` project `TNF-SESSION` — Push commits when operator requests
+
+- 2026-08-12T04:01:26.795Z handoff `0151b397-7eb3-40a1-ba8d-a24e2cb70290` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI :1420 and relay :3000
+
+- 2026-08-12T04:01:02.125Z handoff `dbaf4c88-3329-4e4f-99e3-4f860944ab82` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI :1420 and relay :3000
+
+- 2026-08-12T04:00:13.713Z handoff `ecffa078-9ccd-4c9a-ac04-7702ff1b2ce2` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI http://127.0.0.1:1420
+  and relay :3000 after factory-boot
+
+- 2026-08-12T03:58:47.117Z handoff `24f19a1f-62b0-483c-8491-813e90610d7e` head
+  `318ded426b36` project `TNF-SESSION` — Verify local UI http://127.0.0.1:1420
+  and relay :3000 after factory-boot
+
+- 2026-08-12T03:56:21.245Z handoff `8eb1cbeb-4b54-4770-804d-5707bcc67e39` head
+  `318ded426b36` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T19:22:31.433Z handoff `6f250b5a-e984-4f07-a339-5e69f17e1dfb` head
+  `80ae0ce4ff1d` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T19:16:06.995Z handoff `afebe93a-4f9e-4463-b67a-c98f64b9f215` head
+  `dd1b2ecd8cef` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T19:13:30.001Z handoff `ea0635b2-1cc7-4210-a5e9-3fefcb0928fa` head
+  `72f38dad3559` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T17:40:43.280Z handoff `a1e8cac3-dcdf-49e9-9825-cca03d5afb7f` head
+  `7c67c6fc0218` project `TNF-SESSION` — Push branch and open PR against
+  origin/main
+
+- 2026-08-11T16:50:20.205Z handoff `dd662756-3e00-4152-bfd0-2f17b16f148c` head
+  `694dc7e37641` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T16:35:45.619Z handoff `3048df3e-eb22-4d2e-8ed0-d1c467a5c741` head
+  `5160774677c2` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T16:27:32.455Z handoff `651ce983-ec53-4b33-869a-610df8fdc03e` head
+  `c951082620e9` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T15:58:41.308Z handoff `df66e627-b3e7-45d0-8877-56ae752d6629` head
+  `e7f1c80cae43` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T15:51:25.054Z handoff `3adb5cf8-ac43-4b84-9825-ecfa3ce62e57` head
+  `7c3f1e893ee8` project `TNF-SESSION` — Use: tnf full-auto start
+  --interval-minutes 15 --max-cycles 0 (no --no-broadcast). Verify: tnf models.
+
+- 2026-08-11T15:48:47.813Z handoff `9b46e0f6-2a3b-41ad-b4d0-ad74907bb7d3` head
+  `7c3f1e893ee8` project `TNF-SESSION` — Use: tnf full-auto start
+  --interval-minutes 15 --max-cycles 0 (no --no-broadcast). Verify: tnf models.
+  If supabase breaks again, reinstall @supabase/\* 2.105.4 packages into
+  packages/tnf-cli/node_modules (do not commit node_modules).
+
+- 2026-08-11T15:43:18.622Z handoff `f554300d-e0e1-4206-ab0c-9e72ce60bd0c` head
+  `713e4f21f9e9` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T15:42:08.579Z handoff `d08d4521-7085-4652-928b-9d572106cdea` head
+  `713e4f21f9e9` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T15:22:42.911Z handoff `f67ef4bf-0d0c-4f7d-bb5d-10a241afd88e` head
+  `9a05179b9278` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T15:21:13.958Z handoff `9c11d5d8-77df-4f40-aa85-19c46a3fd085` head
+  `9a05179b9278` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T14:58:30.027Z handoff `1db5d1f0-7728-43a6-b842-0bce7684fdd2` head
+  `5553aa66b8c3` project `TNF-AUTONOMY` — Push rollup free-MB fix.
+
+- 2026-08-11T14:57:31.656Z handoff `5c6eed3d-551f-4cc7-80ea-cd2e67b6ec87` head
+  `5553aa66b8c3` project `TNF-AUTONOMY` — Commit/push rollup fix.
+
+- 2026-08-11T14:50:54.144Z handoff `39f5c7ad-8b4e-4a97-a9b2-2d3a12becee7` head
+  `f5ea4b1484e2` project `L4-INTEROP` — Push/open PR for
+  fix/opencode-kilo-parity.
+
+- 2026-08-11T14:31:23.327Z handoff `54ca99ac-1a8b-4df4-94d2-09aa0f011a76` head
+  `bd961dd5b301` project `TNF-REG` — Push fix/jules-cursor-parity.
+
+- 2026-08-11T14:31:12.095Z handoff `894977a7-6956-45d6-8e65-b9d46385f2ee` head
+  `bd961dd5b301` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
+- 2026-08-11T14:29:39.656Z handoff `9ec86f22-697b-4119-a7ac-7b5bf0f99e8c` head
+  `8c497d41d255` project `TNF-REG` — Push fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:51.239Z handoff `4243d4f1-547b-4809-87fd-91ad76e22d16` head
+  `8c497d41d255` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:17.143Z handoff `6afd5ec7-3029-410d-b5e6-f8d24b7016a1` head
+  `8c497d41d255` project `L4-INTEROP` — Push/open PR for
+  fix/jules-cursor-parity.
+
+- 2026-08-11T14:28:01.180Z handoff `c751fba1-6379-4f2e-b6cd-1794a2a96062` head
+  `8c497d41d255` project `TNF-REG` — Push/merge registration-gate fix.
+
+- 2026-08-11T14:12:40.143Z handoff `3fa6d984-16cd-403d-8a99-2cd685687d42` head
+  `f8a9bcbe9273` project `TNF-TAURI` — Merge PR #88.
+
+- 2026-08-11T14:07:58.288Z handoff `5ae2b902-59e0-41bc-bc61-c210851490fb` head
+  `e25a8a71b4f8` project `L4-INTEROP` — Merge PR #87 after conflict resolution.
+
+- 2026-08-11T14:06:32.752Z handoff `fe878158-2847-48f1-86e6-1731c8c0bdcc` head
+  `e25a8a71b4f8` project `L4-INTEROP` — Merge PR #87 after conflict resolution.
+
+- 2026-08-11T13:53:48.505Z handoff `210e5ab1-ea04-47df-8fdd-89b21e22ccdd` head
+  `0f5970ea1002` project `L4-INTEROP` — Merge PR #87 after checks.
+
+- 2026-08-11T13:48:56.789Z handoff `bb2f8da0-7e85-4cc9-969d-46c67f9887e8` head
+  `e31dafec20b2` project `L4-INTEROP` — Push/open PR for
+  fix/validators-peer-parity.
+
+- 2026-08-11T13:15:51.280Z handoff `183f346b-f693-4546-a878-3959e5556506` head
+  `e31dafec20b2` project `L4-INTEROP` — Select next P0: restore missing
+  validator scripts and/or raise Claude/Pi/Codex parity.
+
+- 2026-08-11T13:12:42.332Z handoff `a535d786-f022-44ba-85d8-2e28923cc16d` head
+  `2d75390d0df3` project `L4-INTEROP` — Push fix/l4l5-swarm-parity and open PR.
+
+- 2026-08-11T13:11:21.869Z handoff `c2f134d5-56eb-4bfd-83fe-b2c32d22a8c1` head
+  `2d75390d0df3` project `L4-INTEROP` — Commit/push fix/l4l5-swarm-parity and
+  open PR.
+
+- 2026-08-11T08:20:09.292Z handoff `bcec1d1a-0c9f-4647-85f0-f01d69962fe1` head
+  `2d75390d0df3` project `TNF-TAURI` — Select next P0 from Living State /
+  backlog after PR #81 merge.
+
+- 2026-08-11T08:18:55.010Z handoff `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge PR #81 after pushing smoke/unblock
+  commit.
+
+- 2026-08-11T08:15:05.350Z handoff `b1e88931-7ddf-492d-a097-36efb9bd4628` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T08:09:30.087Z handoff `e741e4bc-030b-41fe-8200-e53a3050c429` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T08:09:08.697Z handoff `cc831890-dbe3-43f5-8b2b-4cca74e675a7` head
+  `585f72e35f5e` project `TNF-TAURI` — Merge readiness on PR #81: keep unrelated
+  dirty tree churn out of the PR; commit smoke/unblock deltas on
+  fix/honest-failure-reporting if desired; merge when checks clear.
+
+- 2026-08-11T04:54:39.052Z handoff `cb337d2e-f305-4f05-a986-e72e996b3b3b` head
+  `585f72e35f5e` project `TNF-TAURI` — Interactive desktop smoke or merge
+  readiness on PR #81: click external link, Chrome bootstrap launch, OAGI
+  arm/disarm toggle.
+
+- 2026-08-11T04:46:21.470Z handoff `69e31d65-04bc-4986-a074-c4491cd43390` head
+  `585f72e35f5e` project `TNF-TAURI` — Interactive desktop smoke or merge
+  readiness on PR #81: click external link, Chrome bootstrap launch, OAGI
+  arm/disarm toggle.
+
+- 2026-08-11T04:44:40.141Z handoff `b836d7c3-6b45-444b-b50e-7fe083270b41` head
+  `585f72e35f5e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-11T03:15:02.752Z handoff `61f20f66-53f7-4794-b7d1-a8ca1e5782aa` head
+  `f779288314e9` project `TNF-TAURI` — Push fix/honest-failure-reporting with
+  Tauri hardening commits.
+
+- 2026-08-11T02:13:01.638Z handoff `97bc9dce-a547-45b8-a741-84df4ceda6c1` head
+  `530e80682feb` project `TNF-TAURI` — Smoke-test TNF desktop on a quieter
+  machine (cargo test --lib, Chrome bootstrap, bridge connect, Start Runtime).
+
+- 2026-08-10T23:28:49.056Z handoff `a899d31a-ace5-48db-8e32-18b69a89f165` head
+  `530e80682feb` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
+
+- 2026-08-10T23:08:27.357Z handoff `d834cd6e-7e99-4bf5-bb8e-324e82cac7dd` head
+  `e1b4cb08ccb8` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
+
+- 2026-08-10T23:08:01.146Z handoff `388ea49f-b91d-4889-86d3-2bbb43976e0a` head
+  `e1b4cb08ccb8` project `TNF-SESSION` — Optional: update
+  tnf-harness-master-loop skill with one-line completeness pointer
+
+- 2026-08-10T22:59:49.998Z handoff `d2cd71ba-93e9-42cf-88e0-946428d7f89b` head
+  `319fd7b59f4b` project `TNF-SESSION` — Optional: wire Cursor MCP client to
+  data/harness/mcp.memory.server.json
+
+- 2026-08-10T22:59:49.200Z handoff `c9f2d3b6-0902-4495-8253-874c0ff55da3` head
+  `319fd7b59f4b` project `TNF-SESSION` — Optional: point Cursor MCP client at
+  data/harness/mcp.memory.server.json
+
+- 2026-08-10T22:57:34.435Z handoff `856efb1e-2ef7-400c-a706-ffbe250fffd7` head
+  `319fd7b59f4b` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T22:44:47.407Z handoff `f0328147-662d-4a50-8427-bc94c797a4d0` head
+  `2770f1a135d4` project `TNF-SESSION` — Use verify-harness-completeness in Turn
+  Zero
+
+- 2026-08-10T22:44:35.730Z handoff `b2a90849-e5ef-4637-9bd8-25c72cd5c66a` head
+  `2770f1a135d4` project `TNF-SESSION` — Use verify-harness-completeness in Turn
+  Zero
+
+- 2026-08-10T22:39:44.957Z handoff `fc8fff90-4ec8-4cac-9b6c-07f36ec4faad` head
+  `2770f1a135d4` project `TNF-SESSION` — Continue using node
+  scripts/harness/verify-harness-completeness.cjs in Turn Zero
+
+- 2026-08-10T22:31:23.454Z handoff `e29ba73f-e334-4805-a502-817b2dd722a8` head
+  `2770f1a135d4` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T22:21:59.709Z handoff `2cc8c274-46a6-4fb2-8fd0-bdcf90b47588` head
+  `2770f1a135d4` project `TNF-SESSION` — Optional: promote daily notes into
+  MEMORY.md on heartbeats
+
+- 2026-08-10T21:20:01.230Z handoff `b0fbd2f3-2517-4bc1-8ca6-f060b3a6f863` head
+  `f3eb9042fe26` project `TNF-SESSION` — Free more disk on Data volume (outside
+  TNF logs) — **CLEARED 2026-08-10 by operator (adequate disk; do not requeue)**
+
+- 2026-08-10T21:10:46.868Z handoff `4051ab6a-9617-48fc-b4b0-930f31a5cb4f` head
+  `f3eb9042fe26` project `TNF-SESSION` — Reattach Redis under launchd without
+  thrash
+
+- 2026-08-10T21:07:52.200Z handoff `81a3fe7e-a881-49bf-9fa7-b8c216e0bdf3` head
+  `0fc4222745f6` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T21:07:35.859Z handoff `3f572a34-336c-442e-aa1e-2a0f30798f42` head
+  `0fc4222745f6` project `TNF-SESSION` — Confirm redis-cli PONG stays green
+  after reboot via redis-service.sh start
+
+- 2026-08-10T21:03:58.885Z handoff `3a0b827b-9f85-4209-86ef-e9aa71672e51` head
+  `150b7689d699` project `TNF-SESSION` — Keep factory:supercycle:loop and
+  qa-swarm service healthy
+
+- 2026-08-10T20:52:20.637Z handoff `54a20982-af9e-488b-baea-42ca7750ee76` head
+  `d7534a29fb32` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:50:32.231Z handoff `596e6df4-c70c-4912-9c02-3c4cc3e9a808` head
+  `ff305ac4139e` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:50:15.043Z handoff `282f06a9-f4a6-4028-a73a-4deaad1e66c7` head
+  `73d653091e75` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:44:07.601Z handoff `05697d16-0f12-4299-b792-a95a6e03702c` head
+  `511254383b6f` project `TNF-SESSION` — Operator may paste EXA_API_KEY /
+  TAVILY_API_KEY into ~/.tnf.local.env when ready
+
+- 2026-08-10T20:39:31.513Z handoff `fbaa2c41-b9f2-4c9f-ac9e-ddf414c65141` head
+  `656a04f4e251` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:38:06.619Z handoff `3f60ab82-a680-4451-8d50-ce2b2f62b4df` head
+  `5a4b687e9ac5` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T20:36:41.392Z handoff `096d6795-30a3-4fdf-b89d-9ee70a2c8411` head
+  `dff09cd93e5f` project `TNF-SESSION` — Monitor full-auto daemon status
+
+- 2026-08-10T20:30:42.722Z handoff `c5a69078-fc51-475f-9678-d1a45ca41e1d` head
+  `b3973402df64` project `TNF-SESSION` — Watch full-auto for ok=true instead of
+  TIMED OUT on hung broadcast
+
+- 2026-08-10T19:05:03.371Z handoff `8066f785-ec83-43da-8c0e-ab9eec2ad5d4` head
+  `0f34cf4157a0` project `TNF-SESSION` — Repair apps/api node_modules so
+  api-local :3002 stays healthy
+
+- 2026-08-10T18:37:34.552Z handoff `427721a0-205f-4646-b433-ea0d22d210c4` head
+  `04b0ed53f05c` project `TNF-SESSION` — Optionally set
+  API_GATEWAY_RELAY_WS_TARGET=ws://127.0.0.1:3007/ws
+
+- 2026-08-10T18:25:02.851Z handoff `633c2f63-a243-47e3-8206-9237771e7ee8` head
+  `04b0ed53f05c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T17:24:02.287Z handoff `c76a2c04-548d-4b51-8633-a9a478e53791` head
+  `04b0ed53f05c` project `TNF-SESSION` — Keep SearXNG container healthy /
+  recreate docker-compose.dev-simple.yml
+
+- 2026-08-10T17:21:59.942Z handoff `f6284814-df93-4209-a40e-542ad3a672d0` head
+  `04b0ed53f05c` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T17:21:19.744Z handoff `a6045093-12eb-4520-8e12-11873203d0e1` head
+  `04b0ed53f05c` project `TNF-SESSION` — Keep SearXNG container healthy /
+  recreate docker-compose.dev-simple.yml
+
+- 2026-08-10T17:02:11.896Z handoff `7e36d088-db3c-4e26-bd7c-2606d7854878` head
+  `c1ef9ca8d576` project `TNF-SESSION` — Persist relay :3007 via launchd
+  (current session-backed process)
+
+- 2026-08-10T10:30:00Z handoff `a7f3c2e1-9b4d-4a8e-8c3f-1a2b3c4d5e6f` head
+  `67d2d37cd850` project `TNF-SESSION` — Turn Zero completed: schema validation,
+  Tauri workflow builder verification, database rebuild, relay status check.
+
+- 2026-08-10T04:37:09.788Z handoff `ce8362a2-024a-4925-975d-ca4a72d2819b` head
+  `67d2d37cd850` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T04:37:08.548Z handoff `69d483c0-ce7a-46cc-9a6c-e6404b6c1b56` head
+  `67d2d37cd850` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T04:14:42.912Z handoff `07fc8a0e-f443-4459-9629-c17eec75345a` head
+  `7f2a12a7785f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T04:10:14.199Z handoff `48478ace-f5aa-43c3-aed1-ae42646e1988` head
+  `7f2a12a7785f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T03:27:04.431Z handoff `efa2b35a-939c-4801-a59c-5d4a26476e5a` head
+  `7f2a12a7785f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T03:24:18.446Z handoff `0b5d0ab1-2a86-476a-9e12-4a604c433a3e` head
+  `cf9762b08ccb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T03:16:16.246Z handoff `7dc05862-df71-43a8-9e46-36681761c8ab` head
+  `cf9762b08ccb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10T03:02:10.738Z handoff `b3be439b-3f54-4ffc-923b-8ee32b2dd996` head
+  `8a762b98d001` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-10 A5 tip-align: archived pre-fence Current Directive sludge
+  (tipAligned=True, HEAD=8a762b98d001, handoff=8a762b98d001)
+
+```
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`a9924b4e-c0b2-4f09-8f8c-8c9b87a98ce9` **Head:** `1703dea33849`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`d9e5c9ce-3291-449d-8e15-90fa5ffe4f8b` **Head:** `99e5152edc43`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`e9278705-53bf-4b19-9c44-e7e5ed9d1f7c` **Head:** `da185b398393` paths. **Project
+ID:** `TNF-SESSION` **Handoff:** `8e151e22-837c-43e2-a067-dafc97a21a71`
+**Head:** `b4eb8329aee7` continuation.resume_checklist. **Project ID:**
+`TNF-SESSION` **Handoff:** `190b8780-0596-40da-ab6b-df0a68708f8e` **Head:**
+`c5d7aacc4a9d` continuation.resume_checklist. **Project ID:** `TNF-SESSION`
+**Handoff:** `aa668d6a-3194-4053-a6ca-a84571cdf5a6` **Head:** `8f1628a8872c`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`69b39874-bd24-4448-acb4-f444bb6f7598` **Head:** `099b002f03bd`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`8f003f7f-1dbe-4227-9958-285e1bf904c5` **Head:** `909f3246f429`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`e45d389f-0458-49ca-b42d-d3bbb0647b58` **Head:** `b538c2484db1`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`319a7926-483b-4082-a468-8fbb3805df8e` **Head:** `6a7b9c45eee0`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`45be6e85-e91d-4821-a61b-3534ced0d808` **Head:** `56c29b595556`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`1185e130-3a3b-433d-a6ef-cad2b6608c86` **Head:** `d7190c18191b`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`78f48e0c-3969-45c8-9e1a-0cf69a9b45f1` **Head:** `516285d9dc19`
+continuation.resume_checklist. **Project ID:** `TNF-SESSION` **Handoff:**
+`bceed412-7b76-456b-8c25-5c1d43522817` **Head:** `cfb41eadb12b`
+continuation
+...truncated...
+
+```
+
+- [✅] 2026-08-10T03:28:33.481Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T05:20:40.265Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T16:19:45.853Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:06:13.993Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:38:31.273Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:41:22.185Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T17:54:47.024Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T18:37:23.797Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T20:27:43.815Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:23:02.556Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:34:08.019Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T21:35:37.322Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T22:15:54.611Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-10T23:26:51.026Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T00:06:52.469Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T00:47:39.151Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T01:27:40.937Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T03:30:55.698Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T04:11:01.621Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T04:51:12.495Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T05:31:16.809Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T06:11:22.696Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T06:51:27.963Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T07:31:34.137Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T08:26:41.690Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T09:06:48.428Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T09:46:54.233Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T10:26:59.813Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T11:07:06.678Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T11:47:12.416Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T12:27:18.129Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T13:08:11.806Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T13:49:29.574Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-11T13:53:29.635Z Orchestrator: Completed: Goal: Run full system
+  verification and write docs/reports/system_h...
+
+- [✅] 2026-08-11T15:41:46.174Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-12T01:30:49.744Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-12T02:11:02.011Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings

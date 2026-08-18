@@ -647,6 +647,9 @@ process.on('SIGINT', async () => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   logTest('Unhandled Rejection', 'FAIL', reason.toString());
+  // Logging a FAIL is not the same as failing. Without this the suite exits 0
+  // and CI reads a rejected test run as green.
+  process.exit(1);
 });
 
 // Start the integration tests

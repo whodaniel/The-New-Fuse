@@ -29,7 +29,20 @@ export interface ChatBridgeCallbacks {
   }) => void;
 }
 
+export interface ChatSendResult {
+  success: boolean;
+  injected: boolean;
+  submitted: boolean;
+  method?: string;
+  error?: string;
+}
+
+export interface ChatSendOptions {
+  preserveUserFocus?: boolean;
+}
+
 import { DEFAULT_NODES } from '../../shared/constants';
+import { isControlPlaneRelayMessage } from '../../shared/utils';
 import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
@@ -51,6 +64,12 @@ class SimpleChatBridge {
   private cacheValidUntil: number = 0;
   private readonly CACHE_DURATION = 10000; // 10 seconds
   private lastSentText = '';
+  private lastSendResult: ChatSendResult = {
+    success: false,
+    injected: false,
+    submitted: false,
+    error: 'No send attempted yet',
+  };
 
   // Supported AI chat platforms for element detection logging
   // NOTE: Only include actual AI chat interfaces - thenewfuse.com is NOT a chat interface
@@ -60,11 +79,16 @@ class SimpleChatBridge {
     'chatgpt.com',
     'chat.openai.com',
     'claude.ai',
+    'cursor.com',
+    'cursor.sh',
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
     'chat.qwen.ai',
     'qwen.ai',
+    'kimi.com',
+    'kimi.moonshot.cn',
+    'moonshot.cn',
     'openclaw-gateway.workers.dev',
     'localhost:3000',
     'localhost:3001',
@@ -89,6 +113,45 @@ class SimpleChatBridge {
         '.fcp6-input-row',
       ].join(', ')
     );
+  }
+
+  private isTextControl(el: Element | null): el is HTMLInputElement | HTMLTextAreaElement {
+    return el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement;
+  }
+
+  private isEditableElement(el: Element | null): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    return (
+      this.isTextControl(el) ||
+      el.isContentEditable ||
+      el.getAttribute('contenteditable') === 'true'
+    );
+  }
+
+  /**
+   * Some AI UIs expose placeholder children inside a real editor, e.g.
+   * Gemini `rich-textarea p[data-placeholder]`. Mutating that child can create
+   * a fake `.value` without touching the page composer. Resolve those matches
+   * back to the actual editable control before injection.
+   */
+  private resolveEditableTarget(candidate: HTMLElement): HTMLElement | null {
+    if (this.isEditableElement(candidate)) return candidate;
+
+    const descendant = candidate.querySelector(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"]'
+    );
+    if (this.isEditableElement(descendant)) return descendant as HTMLElement;
+
+    const ancestor = candidate.closest(
+      'textarea, input[type="text"], input:not([type]), [contenteditable="true"], .ql-editor[contenteditable="true"], .ProseMirror[contenteditable="true"]'
+    );
+    if (this.isEditableElement(ancestor)) return ancestor as HTMLElement;
+
+    const richTextarea = candidate.closest('rich-textarea');
+    const richEditable = richTextarea?.querySelector('[contenteditable="true"]');
+    if (this.isEditableElement(richEditable)) return richEditable as HTMLElement;
+
+    return null;
   }
 
   /**
@@ -119,8 +182,8 @@ class SimpleChatBridge {
     // Load custom sites from storage
     this.loadCustomSites();
 
-    // Always enable transcript polling on OpenClaw cloud UI (DOM rendering is currently unreliable there).
-    // This will power the TNF injectable modal with canonical state from Cloudflare.
+    // Always enable transcript polling on cloud chat UIs where DOM scraping is unreliable.
+    // workers.dev (and similar) host whichever agent currently staffs the chat surface.
     try {
       const host = window.location.hostname.toLowerCase();
       if (host.includes('openclaw') || host.endsWith('workers.dev')) {
@@ -151,13 +214,13 @@ class SimpleChatBridge {
 
   /**
    * Derive a stable sessionKey for Cloudflare transcript storage.
-   * Best effort: host + OpenClaw session query param (if present).
+   * Best effort: host + session query param (if present).
    */
   private deriveSessionKey(): string {
     const host = window.location.hostname.toLowerCase();
     const url = new URL(window.location.href);
     const session = url.searchParams.get('session') || 'main';
-    return `openclaw-ui:${host}:session:${session}`;
+    return `harness-ui:${host}:session:${session}`;
   }
 
   private enableTranscriptPolling(workerUrl: string, sessionKey: string): void {
@@ -235,6 +298,18 @@ class SimpleChatBridge {
 
     const hostname = window.location.hostname.toLowerCase();
     const isQwenHost = hostname === 'chat.qwen.ai' || hostname.endsWith('.qwen.ai');
+    const isKimiHost =
+      hostname === 'kimi.com' ||
+      hostname.endsWith('.kimi.com') ||
+      hostname === 'kimi.moonshot.cn' ||
+      hostname.endsWith('.kimi.moonshot.cn') ||
+      hostname === 'moonshot.cn' ||
+      hostname.endsWith('.moonshot.cn');
+    const isCursorHost =
+      hostname === 'cursor.com' ||
+      hostname.endsWith('.cursor.com') ||
+      hostname === 'cursor.sh' ||
+      hostname.endsWith('.cursor.sh');
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
@@ -296,9 +371,37 @@ class SimpleChatBridge {
       '#prompt-textarea',
       'textarea[data-id="root"]',
       'textarea[placeholder*="Message" i]',
+      // Kimi / Moonshot
+      ...(isKimiHost
+        ? [
+            '.ProseMirror[contenteditable="true"]',
+            'div[class*="ProseMirror"][contenteditable="true"]',
+            'div[class*="chat-input" i][contenteditable="true"]',
+            'div[class*="input" i] [contenteditable="true"]',
+            'main [contenteditable="true"][role="textbox"]',
+            'main [contenteditable="true"]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Send" i]',
+          ]
+        : []),
+      'textarea[placeholder*="Kimi" i]',
+      'textarea[aria-label*="Kimi" i]',
+      'div[contenteditable="true"][aria-label*="Kimi" i]',
+      ...(isCursorHost
+        ? [
+            'div.ProseMirror[contenteditable="true"]',
+            'div[contenteditable="true"][role="textbox"]',
+            'textarea[placeholder*="Agent" i]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Plan" i]',
+            'main [contenteditable="true"][role="textbox"]',
+          ]
+        : []),
       // Claude-specific
       'div[contenteditable="true"][aria-label*="Message" i]',
       // Generic fallbacks
+      '.ProseMirror[contenteditable="true"]',
+      'div[class*="ProseMirror"][contenteditable="true"]',
       'div[contenteditable="true"][role="textbox"]',
       'p[contenteditable="true"]',
       'div[contenteditable="true"][data-placeholder]',
@@ -349,6 +452,13 @@ class SimpleChatBridge {
       'button:has(path[d*="M2.01"])', // Common send icon path
       // ChatGPT-specific
       'button[data-testid="send-button"]',
+      ...(isCursorHost
+        ? [
+            'button[aria-label*="Send" i]',
+            'button[title*="Submit" i]',
+            'form button[type="submit"]',
+          ]
+        : []),
       // Generic
       'button.send-button',
       'button[type="submit"]',
@@ -396,8 +506,10 @@ class SimpleChatBridge {
         const candidates = this.queryAllIncludingShadow(selector);
         for (const el of candidates) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el)) {
-            input = el;
+          const target = this.resolveEditableTarget(el);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target)) {
+            input = target;
             break;
           }
         }
@@ -414,7 +526,9 @@ class SimpleChatBridge {
           const candidates = this.queryAllIncludingShadow(selector);
           for (const el of candidates) {
             if (this.isExtensionUiElement(el)) continue;
-            input = el;
+            const target = this.resolveEditableTarget(el);
+            if (!target || this.isExtensionUiElement(target)) continue;
+            input = target;
             if (DEBUG) {
               console.log(
                 '[SimpleChatBridge] Using fallback input (no visibility check):',
@@ -477,8 +591,10 @@ class SimpleChatBridge {
       const allTextareas = this.queryAllIncludingShadow('textarea');
       for (const el of allTextareas) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el) && !(el as HTMLTextAreaElement).disabled) {
-          input = el;
+        const target = this.resolveEditableTarget(el);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+          input = target;
           break;
         }
       }
@@ -491,12 +607,14 @@ class SimpleChatBridge {
       const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
       for (const el of allEditable) {
         if (this.isExtensionUiElement(el)) continue;
-        if (this.isVisible(el as HTMLElement)) {
-          input = el as HTMLElement;
+        const target = this.resolveEditableTarget(el as HTMLElement);
+        if (!target || this.isExtensionUiElement(target)) continue;
+        if (this.isVisible(target)) {
+          input = target;
           console.warn('[SimpleChatBridge] Ultra fallback input found:', {
-            tag: el.tagName,
-            classes: el.className,
-            parent: el.parentElement?.tagName,
+            tag: target.tagName,
+            classes: target.className,
+            parent: target.parentElement?.tagName,
           });
           break;
         }
@@ -507,8 +625,10 @@ class SimpleChatBridge {
         const allTextareas = Array.from(document.querySelectorAll('textarea'));
         for (const el of allTextareas) {
           if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el as HTMLElement) && !(el as HTMLTextAreaElement).disabled) {
-            input = el as HTMLElement;
+          const target = this.resolveEditableTarget(el as HTMLElement);
+          if (!target || this.isExtensionUiElement(target)) continue;
+          if (this.isVisible(target) && !(target as HTMLTextAreaElement).disabled) {
+            input = target;
             console.warn('[SimpleChatBridge] Ultra fallback textarea found');
             break;
           }
@@ -750,10 +870,10 @@ class SimpleChatBridge {
       if (relaxed) return relaxed;
     }
 
-    // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
-    const openClawThread = document.querySelector('.chat-thread');
-    if (openClawThread) {
-      const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+    // Generic chat-thread fallback: inspect thread-scoped entries
+    const chatThread = document.querySelector('.chat-thread');
+    if (chatThread) {
+      const candidates = Array.from(chatThread.querySelectorAll(':scope > *'));
       for (let i = candidates.length - 1; i >= 0; i--) {
         const text = this.extractCleanText(candidates[i]);
         if (!text) continue;
@@ -761,7 +881,6 @@ class SimpleChatBridge {
         const low = text.toLowerCase();
         if (low.includes('disconnected from gateway')) continue;
         if (low === 'openclaw' || low === '🦞') continue;
-        // CRITICAL: Block user message scrapes to prevent doubling in OpenClaw
         if (
           low.startsWith('u ') ||
           low.startsWith('you ') ||
@@ -791,7 +910,15 @@ class SimpleChatBridge {
     for (let i = generic.length - 1; i >= 0; i--) {
       const text = this.extractCleanText(generic[i]);
       if (!text) continue;
-      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      // extractCleanText() collapses whitespace but lastSentText keeps the
+      // header newline, so a raw compare never matched and the message we just
+      // injected could be returned as though it were the assistant's reply.
+      if (
+        this.lastSentText &&
+        this.normalizeForComparison(text) === this.normalizeForComparison(this.lastSentText)
+      ) {
+        continue;
+      }
       return text;
     }
 
@@ -803,7 +930,10 @@ class SimpleChatBridge {
    */
   isStreaming(): boolean {
     if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
+    return this.isPageStreaming();
+  }
 
+  private isPageStreaming(): boolean {
     // Qwen can keep generic "loading/thinking" classes mounted even after completion.
     // Use stricter indicators there to avoid permanent streaming=true.
     if (this.isQwenHost()) {
@@ -846,10 +976,174 @@ class SimpleChatBridge {
     return false;
   }
 
+  getLastSendResult(): ChatSendResult {
+    return { ...this.lastSendResult };
+  }
+
+  private setLastSendResult(result: ChatSendResult): boolean {
+    this.lastSendResult = result;
+    return result.success;
+  }
+
+  private getInputText(input: HTMLElement): string {
+    if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+      return (input.textContent || '').trim();
+    }
+    const value = (input as HTMLInputElement | HTMLTextAreaElement).value;
+    return typeof value === 'string' ? value.trim() : (input.textContent || '').trim();
+  }
+
+  /**
+   * Strip whitespace entirely for comparison purposes.
+   *
+   * Injected messages carry a `[Sender: ...][Channel: ...]\n` header, and rich
+   * editors do not round-trip that newline: ProseMirror (claude.ai, kimi,
+   * cursor) splits it into sibling block nodes whose textContent concatenates
+   * with NO separator, while Quill (gemini) can substitute a space or a
+   * non-breaking space. Collapsing runs to a single space is not enough —
+   * "A\nB" becomes "A B" but the DOM reads "AB" — so whitespace is dropped on
+   * both sides. Comparing raw strings reported "chat input did not accept
+   * injected text" for text that was sitting in the composer, and aborted the
+   * send.
+   */
+  private normalizeForComparison(text: string): string {
+    return String(text || '').replace(/\s+/g, '');
+  }
+
+  private inputContainsText(input: HTMLElement, text: string): boolean {
+    const expected = this.normalizeForComparison(text);
+    if (!expected) return false;
+    return this.normalizeForComparison(this.getInputText(input)).includes(expected);
+  }
+
+  private dispatchInputEvents(input: HTMLElement, text: string): void {
+    const inputInit = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      inputType: 'insertText',
+      data: text,
+    } as InputEventInit;
+
+    try {
+      input.dispatchEvent(new InputEvent('beforeinput', inputInit));
+    } catch {
+      input.dispatchEvent(
+        new Event('beforeinput', { bubbles: true, cancelable: true, composed: true })
+      );
+    }
+
+    try {
+      input.dispatchEvent(new InputEvent('input', inputInit));
+    } catch {
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    }
+
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  }
+
+  private setNativeTextValue(input: HTMLElement, text: string): void {
+    const prototype = Object.getPrototypeOf(input);
+    const ownValueSetter = Object.getOwnPropertyDescriptor(input, 'value')?.set;
+    const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+
+    if (prototypeValueSetter && ownValueSetter !== prototypeValueSetter) {
+      prototypeValueSetter.call(input, text);
+    } else if (ownValueSetter) {
+      ownValueSetter.call(input, text);
+    } else {
+      (input as HTMLInputElement | HTMLTextAreaElement).value = text;
+    }
+
+    this.dispatchInputEvents(input, text);
+  }
+
+  private setContentEditableText(
+    input: HTMLElement,
+    text: string,
+    options?: { skipFocus?: boolean }
+  ): void {
+    if (!options?.skipFocus) {
+      input.focus();
+    }
+
+    // execCommand requires the target to be focused; if we must not steal
+    // the injectable composer, write textContent instead.
+    if (options?.skipFocus && document.activeElement !== input) {
+      input.textContent = text;
+      this.dispatchInputEvents(input, text);
+      return;
+    }
+
+    try {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(input);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      document.execCommand('delete', false);
+      const inserted = document.execCommand('insertText', false, text);
+      if (inserted && this.inputContainsText(input, text)) {
+        this.dispatchInputEvents(input, text);
+        return;
+      }
+    } catch {
+      // Fall through to direct DOM update below.
+    }
+
+    input.textContent = text;
+    this.dispatchInputEvents(input, text);
+  }
+
+  private async verifyInjectedText(input: HTMLElement, text: string): Promise<boolean> {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      if (this.inputContainsText(input, text)) return true;
+      await this.delay(100);
+    }
+    return false;
+  }
+
   /**
    * Send a message to the AI - Enhanced with button re-fetch and robust clicking
    */
-  async sendMessage(text: string): Promise<boolean> {
+  async sendMessage(text: string, options?: ChatSendOptions): Promise<boolean> {
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousSelection =
+      previousFocus && this.isTextControl(previousFocus)
+        ? {
+            start: previousFocus.selectionStart ?? 0,
+            end: previousFocus.selectionEnd ?? 0,
+            value: previousFocus.value,
+          }
+        : null;
+    const preserveUserFocus =
+      options?.preserveUserFocus === true ||
+      this.isExtensionUiElement(previousFocus) ||
+      isControlPlaneRelayMessage({ content: text });
+
+    const restoreUserFocus = () => {
+      if (!preserveUserFocus || !previousFocus || !previousFocus.isConnected) return;
+      const stolen = document.activeElement !== previousFocus;
+      if (stolen) {
+        previousFocus.focus({ preventScroll: true });
+      }
+      // Never yank the caret while the user is still typing in the injectable composer.
+      if (!stolen || !this.isTextControl(previousFocus) || !previousSelection) return;
+      if (previousFocus.value !== previousSelection.value) return;
+      try {
+        previousFocus.setSelectionRange(previousSelection.start, previousSelection.end);
+      } catch {
+        // Some inputs (number/email) do not support setSelectionRange.
+      }
+    };
+
+    this.lastSendResult = {
+      success: false,
+      injected: false,
+      submitted: false,
+      error: 'Send in progress',
+    };
     this.lastSentText = text.trim();
     let initialElements = this.findElements();
 
@@ -866,7 +1160,12 @@ class SimpleChatBridge {
     if (!initialElements.input) {
       console.error('[SimpleChatBridge] Chat elements not ready');
       this.callbacks.onError?.('Chat elements not found');
-      return false;
+      return this.setLastSendResult({
+        success: false,
+        injected: false,
+        submitted: false,
+        error: 'Chat input not found',
+      });
     }
 
     // Activate Sending Guard (reduced from 10s to 3s for faster federation)
@@ -878,79 +1177,45 @@ class SimpleChatBridge {
 
     const input = initialElements.input;
 
-    // React Scheduler Hack: Get the native setter to bypass React's virtual DOM blocking
-    // This is required for Perplexity, ChatGPT, and other React-heavy apps
-    const setNativeValue = (element: HTMLElement, value: string) => {
-      const { set: valueSetter } =
-        Object.getOwnPropertyDescriptor(element, 'value') ||
-        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'value') ||
-        {};
-      const prototype = Object.getPrototypeOf(element);
-      const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
-
-      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
-        prototypeValueSetter.call(element, value);
-      } else if (valueSetter) {
-        valueSetter.call(element, value);
-      } else {
-        (element as any).value = value;
-      }
-
-      element.dispatchEvent(new Event('input', { bubbles: true }));
-    };
-
     try {
-      // Focus and clear the input
-      input.focus();
-      await this.delay(100);
+      if (!preserveUserFocus) {
+        input.focus();
+        await this.delay(100);
+      }
+      restoreUserFocus();
 
       const isContentEditable =
         input.isContentEditable || input.getAttribute('contenteditable') === 'true';
 
       // Input simulation
       if (isContentEditable) {
-        // Use document.execCommand for reliable Rich Text Editor interaction
-        // This simulates actual user typing events better than setting textContent
-
-        // 1. Clear existing content
-        // Try native clear first if safe, otherwise select-all-delete
-        if (input.textContent && input.textContent.length > 0) {
-          document.execCommand('selectAll', false);
-          document.execCommand('delete', false);
-        }
-
-        // 2. Insert new text
-        const success = document.execCommand('insertText', false, text);
-
-        // Fallback if execCommand failed (or was blocked)
-        if (!success || (input.textContent || '').trim() !== text.trim()) {
-          console.warn(
-            '[SimpleChatBridge] execCommand insertText failed, falling back to direct manipulation'
-          );
-          input.textContent = text;
-          input.dispatchEvent(
-            new InputEvent('input', {
-              bubbles: true,
-              cancelable: true,
-              inputType: 'insertText',
-              data: text,
-            })
-          );
-        }
+        this.setContentEditableText(input, text, { skipFocus: preserveUserFocus });
       } else {
-        // Textarea/Input handling
-        // Use native setter for React-controlled inputs (ChatGPT, Perplexity, etc.)
-        setNativeValue(input, text);
-        input.dispatchEvent(
-          new InputEvent('input', {
-            bubbles: true,
-            cancelable: true,
-            inputType: 'insertText',
-            data: text,
-          })
-        );
-        // Also dispatch change for form listeners
-        input.dispatchEvent(new Event('change', { bubbles: true }));
+        this.setNativeTextValue(input, text);
+      }
+      restoreUserFocus();
+
+      if (!(await this.verifyInjectedText(input, text))) {
+        console.warn('[SimpleChatBridge] Text injection verification failed; retrying once');
+        if (isContentEditable) {
+          this.setContentEditableText(input, text, { skipFocus: preserveUserFocus });
+        } else {
+          this.setNativeTextValue(input, text);
+        }
+        restoreUserFocus();
+      }
+
+      if (!(await this.verifyInjectedText(input, text))) {
+        const observed = this.getInputText(input).slice(0, 120);
+        const error = `Chat input did not accept injected text; observed="${observed}"`;
+        console.error('[SimpleChatBridge]', error);
+        this.callbacks.onError?.(error);
+        return this.setLastSendResult({
+          success: false,
+          injected: false,
+          submitted: false,
+          error,
+        });
       }
 
       // Wait for UI to react to the text input
@@ -1007,6 +1272,7 @@ class SimpleChatBridge {
         which: 13,
         bubbles: true,
         cancelable: true,
+        composed: true,
       };
 
       input.dispatchEvent(new KeyboardEvent('keydown', enterKeyInit));
@@ -1014,6 +1280,7 @@ class SimpleChatBridge {
       input.dispatchEvent(new KeyboardEvent('keypress', enterKeyInit));
       await this.delay(50);
       input.dispatchEvent(new KeyboardEvent('keyup', enterKeyInit));
+      restoreUserFocus();
       console.log('[SimpleChatBridge] Dispatched Enter key sequence on input');
 
       // Some textarea-based UIs submit only on form submit handlers.
@@ -1029,7 +1296,7 @@ class SimpleChatBridge {
       await this.delay(1000);
 
       let wasCleared = inputWasCleared();
-      let isNowStreaming = this.isStreaming();
+      let isNowStreaming = this.isPageStreaming();
 
       if (wasCleared || isNowStreaming) {
         console.log('[SimpleChatBridge] Message sent via Enter key', {
@@ -1037,26 +1304,38 @@ class SimpleChatBridge {
           isNowStreaming,
         });
         this.startWatchingForResponse(responsesBefore);
-        return true;
+        return this.setLastSendResult({
+          success: true,
+          injected: true,
+          submitted: true,
+          method: 'enter',
+        });
       }
 
       // Method 2: Direct button click (if Enter didn't work)
       if (sendButton) {
-        // Focus button first to simulate real click
-        sendButton.focus();
-        await this.delay(100);
+        if (!preserveUserFocus) {
+          sendButton.focus();
+          await this.delay(100);
+        }
         sendButton.click();
+        restoreUserFocus();
         console.log('[SimpleChatBridge] Clicked send button directly');
         // Check again with increased delay
         await this.delay(1000);
 
         wasCleared = inputWasCleared();
-        isNowStreaming = this.isStreaming();
+        isNowStreaming = this.isPageStreaming();
 
         if (wasCleared || isNowStreaming) {
           console.log('[SimpleChatBridge] Message sent via button click');
           this.startWatchingForResponse(responsesBefore);
-          return true;
+          return this.setLastSendResult({
+            success: true,
+            injected: true,
+            submitted: true,
+            method: 'button-click',
+          });
         }
       }
 
@@ -1075,33 +1354,50 @@ class SimpleChatBridge {
 
         console.log('[SimpleChatBridge] Dispatched MouseEvent click sequence on button');
         await this.delay(500);
-        if (inputWasCleared() || this.isStreaming()) {
+        if (inputWasCleared() || this.isPageStreaming()) {
           console.log('[SimpleChatBridge] Message sent via MouseEvent');
           this.startWatchingForResponse(responsesBefore);
-          return true;
+          return this.setLastSendResult({
+            success: true,
+            injected: true,
+            submitted: true,
+            method: 'mouse-event',
+          });
         }
       }
 
-      // If we get here, none of the methods worked but we'll start watching anyway
-      console.warn('[SimpleChatBridge] All send methods attempted, input may not have cleared');
-      console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
-
-      // Start watching for response
+      console.warn('[SimpleChatBridge] Submission not confirmed after Enter/button fallbacks');
       this.startWatchingForResponse(responsesBefore);
-
-      return true;
+      return this.setLastSendResult({
+        success: false,
+        injected: true,
+        submitted: false,
+        method: 'unconfirmed-submit',
+        error: 'Injected text was verified, but submit was not confirmed',
+      });
     } catch (error) {
       console.error('[SimpleChatBridge] Error sending message:', error);
       this.callbacks.onError?.(`Send failed: ${error}`);
-      return false;
+      return this.setLastSendResult({
+        success: false,
+        injected: false,
+        submitted: false,
+        error: `Send failed: ${error}`,
+      });
+    } finally {
+      restoreUserFocus();
+      if (preserveUserFocus) {
+        setTimeout(restoreUserFocus, 0);
+        setTimeout(restoreUserFocus, 50);
+      }
     }
   }
 
   /**
    * Inject message (alias for sendMessage)
    */
-  async injectMessage(text: string): Promise<boolean> {
-    return this.sendMessage(text);
+  async injectMessage(text: string, options?: ChatSendOptions): Promise<boolean> {
+    return this.sendMessage(text, options);
   }
 
   /**
@@ -1270,6 +1566,15 @@ class SimpleChatBridge {
    */
   destroy(): void {
     this.stopWatching();
+    this.cachedElements = null;
+    this.cacheValidUntil = 0;
+    this.lastSentText = '';
+    this.lastSendResult = {
+      success: false,
+      injected: false,
+      submitted: false,
+      error: 'No send attempted yet',
+    };
     if (this.responseObserver) {
       this.responseObserver.disconnect();
       this.responseObserver = null;
@@ -1415,7 +1720,15 @@ class SimpleChatBridge {
     for (let i = nodes.length - 1; i >= 0; i--) {
       const text = this.extractCleanText(nodes[i]);
       if (!text) continue;
-      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      // extractCleanText() collapses whitespace but lastSentText keeps the
+      // header newline, so a raw compare never matched and the message we just
+      // injected could be returned as though it were the assistant's reply.
+      if (
+        this.lastSentText &&
+        this.normalizeForComparison(text) === this.normalizeForComparison(this.lastSentText)
+      ) {
+        continue;
+      }
       return text;
     }
     return null;

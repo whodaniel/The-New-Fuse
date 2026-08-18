@@ -1,4 +1,4 @@
 interface:
-  display_name: "Value Ladder Architect Agent"
-  short_description: "Help with Value Ladder Architect Agent tasks"
-  default_prompt: "Run the Value Ladder Architect Agent workflow using SKILL.md instructions."
+  display_name: "Value Ladder Architect"
+  short_description: "Design a full value ladder and linked funnel ecosystem."
+  default_prompt: "Create a strict JSON ValueLadderReport from the product/service catalog using the SKILL.md workflow."

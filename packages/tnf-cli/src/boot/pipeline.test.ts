@@ -21,8 +21,8 @@ describe('boot pipeline plan', () => {
 
     assert.equal(
       plan.length,
-      19,
-      'expected 19 boot steps including harness-context + voice-kws + continuity + attach'
+      21,
+      'expected 21 boot steps including harness-context + voice-kws + continuity + attach'
     );
     assert.ok(byId['harness-context'], 'harness-context step required');
     assert.ok(byId['voice-kws-always-on'], 'voice-kws-always-on step required');
@@ -45,6 +45,13 @@ describe('boot pipeline plan', () => {
       byId['factory-boot'].launches.includes('scripts/orchestrator/impetus-loop.cjs loop'),
       'factory plan should include impetus-loop'
     );
+    assert.deepEqual(
+      byId['openclaw'].launches,
+      ['pnpm run tnf:mcp:generate'],
+      'openclaw step id is historical; the capability is MCP provisioning for any harness'
+    );
+    assert.equal(byId['openclaw'].label, 'Harness MCP provisioning');
+    assert.equal(byId['zeroclaw'].label, 'On-demand execution sandbox wake');
   });
 
   it('lists claude wrapper only when --with-claude', () => {

@@ -71,6 +71,7 @@ body {
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
+    system-ui,
     sans-serif;
   font-size: 13px;
   line-height: 1.5;
@@ -257,10 +258,13 @@ body {
 
 .tab-content {
   display: none;
+  content-visibility: hidden;
+  contain: layout style paint;
 }
 
 .tab-content.active {
   display: block;
+  content-visibility: visible;
   animation: fadeIn var(--transition-base);
 }
 

@@ -1,16 +1,30 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: PerfAgent
-type: agent
-description:
-  Agent focused on performance optimization, profiling, and efficiency
+description: Agent focused on performance optimization, profiling, and efficiency
   improvements for TNF
 version: 1.0.0
-author: The New Fuse
 tags:
-  - performance
-  - optimization
-  - worker
+- performance
+- optimization
+- worker
+author: The New Fuse
 platform: darwin
+type: agent
 ---
 
 # PerfAgent

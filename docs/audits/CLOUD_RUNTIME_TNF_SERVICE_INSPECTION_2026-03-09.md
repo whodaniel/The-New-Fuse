@@ -15,19 +15,19 @@ Source snapshot commands:
 
 | Service | Status | Source Repo | Source Image | Config File | Builder | Dockerfile Path |
 |---|---|---|---|---|---|---|
-| Frontend Application | FAILED | whodaniel/fuse | - | /cloud_runtime.toml | DOCKERFILE | /Dockerfile.cloud_runtime |
+| Frontend Application | FAILED | whodaniel/The-New-Fuse | - | /cloud_runtime.toml | DOCKERFILE | /Dockerfile.cloud_runtime |
 | Postgres | FAILED | - | ghcr.io/cloud_runtimeapp-templates/postgres-ssl:17 | - | RAILPACK | - |
 | Redis | FAILED | - | redis:8.2.1 | - | RAILPACK | - |
-| TheNewFuse | FAILED | whodaniel/fuse | - | /cloud_runtime.toml | DOCKERFILE | /apps/frontend/Dockerfile |
-| ai-arcade | SUCCESS | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | /apps/ai-arcade/Dockerfile |
-| api | FAILED | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
-| api-gateway | SUCCESS | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
-| api-gateway-CtDk | SUCCESS | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
-| backend | SUCCESS | whodaniel/fuse | - | /cloud_runtime.toml | DOCKERFILE | /Dockerfile.cloud_runtime |
-| backend-jfal | DEPLOYING | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
+| TheNewFuse | FAILED | whodaniel/The-New-Fuse | - | /cloud_runtime.toml | DOCKERFILE | /apps/frontend/Dockerfile |
+| ai-arcade | SUCCESS | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | /apps/ai-arcade/Dockerfile |
+| api | FAILED | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
+| api-gateway | SUCCESS | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
+| api-gateway-CtDk | SUCCESS | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
+| backend | SUCCESS | whodaniel/The-New-Fuse | - | /cloud_runtime.toml | DOCKERFILE | /Dockerfile.cloud_runtime |
+| backend-jfal | DEPLOYING | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
 | casin8-games | SUCCESS | - | - | - | DOCKERFILE | Dockerfile |
 | clawdbot-cloud_runtime-template | FAILED | vignesh07/clawdbot-cloud_runtime-template | - | cloud_runtime.toml | DOCKERFILE | Dockerfile |
-| core-vector-db | DEPLOYING | whodaniel/fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
+| core-vector-db | DEPLOYING | whodaniel/The-New-Fuse | - | cloud_runtime.toml | DOCKERFILE | Dockerfile.cloud_runtime |
 | fuse-theia-ide | FAILED | whodaniel/SkIDEancer | - | /cloud_runtime.toml | DOCKERFILE | Dockerfile |
 | open-audio-deck | SUCCESS | - | - | - | RAILPACK | - |
 | openclaw-cloud | FAILED | - | - | cloud_runtime.json | DOCKERFILE | Dockerfile |

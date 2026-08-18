@@ -1,28 +1,43 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/**
+ * Jest config for the Fuse Connect extension.
+ *
+ * Without this file `npx jest` ran with stock defaults: no TypeScript transform,
+ * so every suite died on `Cannot use import statement outside a module`.
+ */
 module.exports = {
-  preset: 'ts-jest',
+  rootDir: __dirname,
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  // `src/__tests__/setup.ts` is a setup file, not a suite — keep it out of testMatch.
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/src/_legacy/'],
+  setupFiles: ['<rootDir>/src/__tests__/setup.ts'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          module: 'CommonJS',
+          moduleResolution: 'node',
+          target: 'ES2020',
+          lib: ['ES2020', 'DOM'],
+          esModuleInterop: true,
+          allowJs: true,
+          strict: false,
+          noImplicitAny: false,
+          types: ['jest', 'node', 'chrome'],
+          isolatedModules: true,
+        },
+        diagnostics: false,
+      },
+    ],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
-  coverageProvider: 'v8',
-  collectCoverage: false,
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/__tests__/**',
-    '!src/_legacy/**',
-    '!src/**/_archive/**',
-  ],
-  coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@the-new-fuse/workflow-engine/sequencer$':
-      '<rootDir>/../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts',
+    '\\.(css|less|scss)$': 'identity-obj-proxy',
+    // Source uses extensionless-friendly `./foo.js` specifiers that resolve to .ts.
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  clearMocks: true,
+  // SimpleChatBridge send paths can exceed Jest's 5s default under load.
+  testTimeout: 15000,
 };

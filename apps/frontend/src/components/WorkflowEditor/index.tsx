@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import '@reactflow/node-resizer/dist/style.css';
 import { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
@@ -110,7 +111,7 @@ export function WorkflowEditor() {
       return;
     }
     try {
-      const response = await fetch('/api/n8n/workflow', {
+      const response = await authFetch('/api/n8n/workflow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(

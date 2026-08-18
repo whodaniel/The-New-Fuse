@@ -1,7 +1,9 @@
 // chrome-extension/webpack.config.cjs
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
@@ -10,30 +12,28 @@ module.exports = (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
     entry: {
-      'background/index': './src/v6/background/index.ts',
-      'content/index': './src/v6/content/index.ts',
-      'popup/popup': './src/v6/popup/popup.js',
-      'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
-      'content/youtube-integration': './src/v6/content/ai-studio/youtube.js',
-      'content/notebooklm-integration': './src/v6/content/ai-studio/notebooklm.js',
-      'content/iframe-bridge': './src/v6/content/ai-studio/iframe-bridge.js',
+      popup: './src/popup/popup-fallback.js',
+      background: './src/background.ts',
+      content: './src/v5/content/index.ts',
+      options: './src/options/index.ts',
+      floatingPanel: './src/floatingPanel/EnhancedFloatingPanel.tsx',
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
       clean: true,
-      pathinfo: false,
     },
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      alias: {
-        '@the-new-fuse/workflow-engine/sequencer': path.resolve(
-          __dirname,
-          '../../packages/workflow-engine/src/sequencer/ProgressiveDisclosureSequencer.ts'
-        ),
-      },
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
+      mainFields: ['browser', 'module', 'main'],
       extensionAlias: {
         '.js': ['.ts', '.js'],
+        '.mjs': ['.mts', '.mjs'],
+      },
+      alias: {
+        '@utils': path.resolve(__dirname, 'src/utils'),
+        '@styles': path.resolve(__dirname, 'src/styles'),
+        '@components': path.resolve(__dirname, 'src/components'),
       },
     },
     module: {
@@ -43,7 +43,7 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true,
+              transpileOnly: true, // Skip type checking for faster builds
               compilerOptions: {
                 module: 'ESNext',
                 moduleResolution: 'bundler',
@@ -70,20 +70,65 @@ module.exports = (env, argv) => {
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/v6/manifest.json', to: 'manifest.json' },
-          { from: './src/v6/popup/index.html', to: 'popup/index.html' },
-          { from: './src/v6/popup/popup.css', to: 'popup/popup.css' },
-          { from: './assets/icons', to: 'icons', noErrorOnMissing: true },
-          { from: './src/v6/native-host', to: 'native-host', noErrorOnMissing: true },
+          {
+            from: './src/manifest.json',
+            to: 'manifest.json',
+            transform(content) {
+              const manifest = JSON.parse(content.toString());
+              // Adjust paths to be relative to the dist directory
+              if (
+                manifest.action &&
+                manifest.action.default_popup &&
+                manifest.action.default_popup.startsWith('dist/')
+              ) {
+                manifest.action.default_popup = manifest.action.default_popup.replace(
+                  /^dist\//,
+                  ''
+                );
+              }
+              return JSON.stringify(manifest, null, 2);
+            },
+          },
+          { from: './src/options/options.html', to: 'options.html' },
+          { from: './src/styles/content.css', to: 'content.css' },
+          { from: './src/styles/element-selection.css', to: 'element-selection.css' },
+          { from: './src/floatingPanel/floatingPanel.html', to: 'floatingPanel.html' },
+          { from: './src/popup/popup.html', to: 'popup.html' },
+          { from: './src/icons', to: 'icons', noErrorOnMissing: true },
         ],
-      }),
-      new (require('webpack').ProvidePlugin)({
-        Buffer: ['buffer', 'Buffer'],
-        process: 'process/browser',
       }),
     ],
     optimization: {
-      minimize: isProduction,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: isProduction,
+              pure_funcs: isProduction ? ['console.log', 'console.debug'] : [],
+            },
+          },
+        }),
+        new CssMinimizerPlugin(),
+      ],
+      splitChunks: {
+        chunks: 'all',
+        maxInitialRequests: 3,
+        cacheGroups: {
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+            priority: -10,
+            reuseExistingChunk: true,
+          },
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+            enforce: true,
+          },
+        },
+      },
     },
   };
 };

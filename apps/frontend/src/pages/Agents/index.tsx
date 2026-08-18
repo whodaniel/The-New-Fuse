@@ -119,7 +119,7 @@ const Agents: React.FC = () => {
         );
       case 'Inactive':
         return (
-          <Badge className="bg-transparent0/10 text-gray-400 border-gray-500/20 hover:bg-muted/200/20">
+          <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/20 hover:bg-muted/200/20">
             <Clock className="w-3 h-3 mr-1" />
             {status}
           </Badge>

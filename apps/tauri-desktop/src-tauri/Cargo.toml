@@ -1,6 +1,6 @@
 [package]
 name = "tnf-desktop"
-version = "4.0.0"
+version = "4.1.0"
 description = "TNF (The New Fuse) Desktop App — local operator hub"
 authors = ["Daniel Goldberg"]
 edition = "2021"
@@ -16,9 +16,6 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2.11", features = [] }
 tauri-plugin-opener = "2"
-tauri-plugin-shell = "2"
-tauri-plugin-fs = "2"
-tauri-plugin-http = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
@@ -27,6 +24,9 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"
 tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
 futures-util = "0.3"
 uuid = { version = "1", features = ["v4"] }
+url = "2"
+dirs = "5"
+libc = "0.2"
 
 # HTTP client for Antigravity integration
 reqwest = { version = "0.12", features = ["json", "multipart", "rustls-tls"], default-features = false }

@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthorization } from '../../hooks/useAuthorization';
@@ -16,7 +17,7 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
   children,
   fallback = '/membership',
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, logout } = useAuth();
   const { isSuperAdmin } = useAuthorization();
   const [membership, setMembership] = useState<MembershipState | null>(null);
   const [isChecking, setIsChecking] = useState(true);
@@ -52,20 +53,26 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
 
     const checkMembership = async () => {
       try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch('/api/billing/membership/me', {
+        const response = await authFetch('/api/billing/membership/me', {
           credentials: 'include',
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         });
 
         if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
+          if (response.status === 401) {
             if (!canceled) {
               setMembership(null);
-              setRedirectTo('/auth/login');
+              if (logout) {
+                console.warn('[RequireMembership] 401 received, logging out to prevent loop');
+                logout();
+              }
+              setRedirectTo('/auth/login?error=auth_failed');
+            }
+            return;
+          }
+          if (response.status === 403) {
+            if (!canceled) {
+              setMembership({ active: false, tier: 'STARTER' });
+              setRedirectTo(fallback);
             }
             return;
           }

@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import {
   Check,
   Edit,
@@ -65,12 +66,7 @@ export default function UserManagementFull() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/users?page=${page}&limit=${limit}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch(`/api/admin/users?page=${page}&limit=${limit}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch users: ${response.statusText}`);
@@ -175,13 +171,7 @@ export default function UserManagementFull() {
   const handleDeleteUser = async (userId: string) => {
     if (confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`/api/admin/users/${userId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const response = await authFetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
 
         if (!response.ok) {
           throw new Error(`Failed to delete user: ${response.statusText}`);
@@ -205,22 +195,14 @@ export default function UserManagementFull() {
 
       if (action === 'delete') {
         if (!confirm(`Are you sure you want to delete ${ids.length} users?`)) return;
-        response = await fetch('/api/admin/users/bulk-delete', {
+        response = await authFetch('/api/admin/users/bulk-delete', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
           body: JSON.stringify({ ids }),
         });
       } else if (action === 'activate' || action === 'suspend') {
         const isActive = action === 'activate';
-        response = await fetch('/api/admin/users/bulk-status', {
+        response = await authFetch('/api/admin/users/bulk-status', {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
           body: JSON.stringify({ ids, isActive }),
         });
       }
@@ -242,12 +224,8 @@ export default function UserManagementFull() {
   const handleCreateUser = async (userData: any) => {
     setIsProcessing(true);
     try {
-      const response = await fetch('/api/admin/users', {
+      const response = await authFetch('/api/admin/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify(userData),
       });
 
@@ -266,12 +244,8 @@ export default function UserManagementFull() {
   const handleUpdateUser = async (userId: string, userData: any) => {
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await authFetch(`/api/admin/users/${userId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify(userData),
       });
 

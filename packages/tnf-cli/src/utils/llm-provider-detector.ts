@@ -5,7 +5,18 @@
  * and selects the best available provider with working models.
  *
  * Protocol: Inspect → Verify → Select
+ *
+ * Single source of truth: data/providers/catalog.json (catalog) +
+ * data/providers/nvidia-models.json (full NVIDIA NIM catalog). Hardcoded
+ * provider/model lists used to live here; they drifted from the same lists
+ * in available-models.controller.ts and llm-client.ts. Now both consumers
+ * read the shared catalog at module load and merge a small built-in
+ * fallback so the CLI still works when the file is missing.
  */
+
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export interface ProviderInfo {
   name: string;
@@ -24,16 +35,51 @@ export interface DetectionResult {
   errors: string[];
 }
 
+interface CatalogProvider {
+  id: string;
+  name?: string;
+  envKey?: string | null;
+  baseUrl?: string;
+  tier?: number;
+  enabled?: boolean;
+  defaultModel?: string;
+  models?: string[];
+}
+
 /**
- * Provider priority order (higher = more preferred)
- * Based on cost, speed, and capability
- * Updated 2026-06-29 from active session intel.
- *
- * Note: OpenRouter credits exhausted 2026-05-17 (HTTP 402) — kept in catalog
- * but demoted to priority 0 so it never auto-selects first. NVIDIA is the
- * only provider currently returning 200s with a stable key.
+ * Locate the shared provider catalog. Mirrors the resolution logic in
+ * provider-config.ts so this detector and the resolver always read the
+ * same bytes.
  */
-const PROVIDER_PRIORITY: Record<string, number> = {
+function resolveCatalogPath(): string | null {
+  const candidates: string[] = [];
+  const override = process.env.TNF_PROVIDER_CATALOG_PATH;
+  if (override && override.trim()) candidates.push(override.trim());
+  try {
+    const here = path.dirname(fileURLToPath(import.meta.url));
+    // packages/tnf-cli/src/utils -> repo root
+    candidates.push(path.resolve(here, '../../../..', 'data', 'providers', 'catalog.json'));
+  } catch {
+    // import.meta.url unavailable in CJS fallback
+  }
+  candidates.push(path.resolve(process.cwd(), 'data/providers/catalog.json'));
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+/**
+ * Provider priority order (higher = more preferred).
+ * Built-in fallback used ONLY when the catalog is unreadable. The catalog
+ * itself orders providers by `tier`; the priority field here lets a
+ * resolver bias specific providers (e.g. nvidia=12 because it's the only
+ * provider currently returning 200s with a stable key).
+ *
+ * OpenRouter kept at priority 0 — credits exhausted 2026-05-17 (HTTP 402),
+ * still in catalog but never auto-selects first.
+ */
+const BUILTIN_PRIORITY: Record<string, number> = {
   nvidia: 12,
   groq: 9,
   sambanova: 8,
@@ -45,65 +91,25 @@ const PROVIDER_PRIORITY: Record<string, number> = {
 };
 
 /**
- * Known working models per provider (updated 2026-07-17).
- *
- * Order within each array = fallback preference (index 0 first).
- * Models pulled from:
- *   - Top of catalog (build.nvidia.com, 2026-07-17):
- *     thinkingmachines/inkling, poolside/laguna-xs-2.1, z-ai/glm-5.2
- *   - Proven fallback: minimaxai/minimax-m3 (NVIDIA).
- *   - data/llm-intel/ranking-report-latest.md (2026-05-12 intel snapshot)
- *     for NVIDIA-tier fallbacks ranked by latency.
- *   - Knowingly stale entries that were returning 429/timeout removed.
- *
- * Models NOT in NVIDIA live list (per ranking) were dropped:
- *   - minimaxai/minimax-m2.7  (timeout)
- *   - minimaxai/minimax-m2.5  (eol / HTTP 410)
- *   - nvidia/meta/llama-3.3-70b-instruct (wrong double-prefix; real path
- *     on NVIDIA is just meta/llama-3.3-70b-instruct — kept below without
- *     the redundant nvidia/ prefix)
- *   - nvidia/nemotron-3-ultra-550b-a55b, nvidia/z-ai/glm-5 (incorrect
- *     names; not in the NVIDIA live catalog)
- *
- * OpenRouter branch kept minimal because credits are exhausted (HTTP 402
- * returned on every probe since 2026-05-17); these will fail until
- * credits are refilled.
+ * Built-in fallback model lists. Used only when the catalog has no `models`
+ * array for a provider — keeps the detector working in air-gapped or
+ * first-boot scenarios.
  */
-const VERIFIED_MODELS: Record<string, string[]> = {
+const BUILTIN_MODELS: Record<string, string[]> = {
   nvidia: [
-    // ACTIVE tier — build.nvidia.com flagships (2026-07-17)
+    'nvidia/nemotron-3-ultra-550b-a55b',
     'thinkingmachines/inkling',
     'poolside/laguna-xs-2.1',
     'z-ai/glm-5.2',
-    // Proven agentic fallback
     'minimaxai/minimax-m3',
-    // Fastest healthy NVIDIA fallbacks (sub-500ms in ranking)
-    'openai/gpt-oss-120b', // 104ms
-    'qwen/qwen3-next-80b-a3b-instruct', // 288ms (thinking variant also available)
-    'meta/llama-3.3-70b-instruct', // 307ms — note: rate-limited 429 at peak
-    'meta/llama-4-maverick-17b-128e-instruct', // 481ms
-    'meta/llama-guard-4-12b', // 495ms — guardrail/classification
-    'meta/llama-3.2-90b-vision-instruct', // 3661ms — multimodal
-    'google/gemma-3n-e4b-it', // 728ms
-    'mistralai/ministral-14b-instruct-2512', // 291ms
-    'mistralai/mistral-small-4-119b-2603', // 442ms
-    'mistralai/mistral-medium-3.5-128b', // 664ms
-    'stockmark/stockmark-2-100b-instruct', // 385ms
-    // Larger / slower reasoning models
-    'deepseek-ai/deepseek-v4-flash', // 1657ms — fast DeepSeek
-    'deepseek-ai/deepseek-v4-pro', // 4216ms
-    'qwen/qwen3.5-397b-a17b', // 1479ms
-    'google/gemma-4-31b-it', // 1779ms
-    'z-ai/glm-5.1', // 3912ms (top arena score in ranking)
-    'z-ai/glm5', // 3766ms
-    'z-ai/glm4.7', // 15052ms — slow, only as last resort
-    'qwen/qwen3-coder-480b-a35b-instruct', // 3323ms — code specialist
+    'openai/gpt-oss-120b',
+    'meta/llama-3.3-70b-instruct',
+    'meta/llama-guard-4-12b',
   ],
   groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'meta-llama/llama-3.1-8b-instruct'],
   sambanova: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
   cerebras: ['llama-3.3-70b', 'llama-3.1-8b'],
   deepseek: ['deepseek-chat', 'deepseek-reasoner'],
-  // OpenRouter dead since 2026-05-17 — kept for when credits return
   openrouter: [
     'meta-llama/llama-3.3-70b-instruct',
     'deepseek/deepseek-chat-v3-0324',
@@ -113,6 +119,149 @@ const VERIFIED_MODELS: Record<string, string[]> = {
   openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'],
 };
 
+/** Provider endpoint catalog (built-in fallback). */
+const BUILTIN_PROVIDERS: Array<{
+  name: string;
+  envKey: string;
+  baseUrl: string;
+}> = [
+  { name: 'nvidia', envKey: 'NVIDIA_API_KEY', baseUrl: 'https://integrate.api.nvidia.com/v1' },
+  { name: 'groq', envKey: 'GROQ_API_KEY', baseUrl: 'https://api.groq.com/openai/v1' },
+  { name: 'sambanova', envKey: 'SAMBANOVA_API_KEY', baseUrl: 'https://api.sambanova.ai/v1' },
+  { name: 'cerebras', envKey: 'CEREBRAS_API_KEY', baseUrl: 'https://api.cerebras.ai/v1' },
+  { name: 'deepseek', envKey: 'DEEPSEEK_API_KEY', baseUrl: 'https://api.deepseek.com/v1' },
+  { name: 'openrouter', envKey: 'OPENROUTER_API_KEY', baseUrl: 'https://openrouter.ai/api/v1' },
+  {
+    name: 'gemini',
+    envKey: 'GEMINI_API_KEY',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+  },
+  { name: 'openai', envKey: 'OPENAI_API_KEY', baseUrl: 'https://api.openai.com/v1' },
+];
+
+interface LoadedRegistry {
+  providers: CatalogProvider[];
+  warnings: string[];
+}
+
+let cachedRegistry: LoadedRegistry | null = null;
+
+/**
+ * Load provider metadata + model lists from the shared catalog. Cached
+ * after the first call so we don't re-read the JSON on every probe.
+ */
+function loadRegistry(): LoadedRegistry {
+  if (cachedRegistry) return cachedRegistry;
+  const warnings: string[] = [];
+  const catalogPath = resolveCatalogPath();
+  if (!catalogPath) {
+    warnings.push('data/providers/catalog.json not found — using built-in defaults');
+    cachedRegistry = {
+      providers: BUILTIN_PROVIDERS.map((p) => ({
+        id: p.name,
+        name: p.name,
+        envKey: p.envKey,
+        baseUrl: p.baseUrl,
+        tier: 50,
+        enabled: true,
+        models: BUILTIN_MODELS[p.name] || [],
+      })),
+      warnings,
+    };
+    return cachedRegistry;
+  }
+  try {
+    const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+    const rows = Array.isArray(raw?.providers) ? raw.providers : [];
+    const providers: CatalogProvider[] = rows
+      .filter((r: CatalogProvider) => r && r.id && r.enabled !== false && r.envKey)
+      .map((r: CatalogProvider) => ({
+        id: r.id,
+        name: r.name || r.id,
+        envKey: r.envKey,
+        baseUrl: r.baseUrl,
+        tier: typeof r.tier === 'number' ? r.tier : 50,
+        enabled: r.enabled !== false,
+        defaultModel: r.defaultModel,
+        models: Array.isArray(r.models) ? r.models : BUILTIN_MODELS[r.id] || [],
+      }));
+    if (providers.length === 0) {
+      warnings.push(`${catalogPath} contained no usable providers — using built-in defaults`);
+      cachedRegistry = { providers: [], warnings };
+    } else {
+      cachedRegistry = { providers, warnings };
+    }
+  } catch (err) {
+    warnings.push(
+      `${catalogPath} unreadable (${(err as Error).message}) — using built-in defaults`
+    );
+    cachedRegistry = { providers: [], warnings };
+  }
+  return cachedRegistry;
+}
+
+/**
+ * Provider model list, merged: catalog.models wins, built-in fallback
+ * supplies missing entries so the CLI keeps working if the catalog is
+ * stale.
+ */
+function resolveModelsForProvider(providerId: string): string[] {
+  const reg = loadRegistry();
+  const fromCatalog = reg.providers.find((p) => p.id === providerId)?.models || [];
+  const builtin = BUILTIN_MODELS[providerId] || [];
+  // Verified/live entries from the catalog come first; everything else after.
+  // Dedup preserving order.
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const m of fromCatalog) {
+    if (!seen.has(m)) {
+      seen.add(m);
+      out.push(m);
+    }
+  }
+  for (const m of builtin) {
+    if (!seen.has(m)) {
+      seen.add(m);
+      out.push(m);
+    }
+  }
+  return out;
+}
+
+/**
+ * Public accessor — exposed so other modules (CLI list command, API
+ * controllers) can share the resolved list without re-implementing the
+ * catalog lookup.
+ */
+export function getProviderModels(providerId: string): string[] {
+  return resolveModelsForProvider(providerId);
+}
+
+export function getProviderPriority(providerId: string): number {
+  return BUILTIN_PRIORITY[providerId] ?? 50;
+}
+
+export function listConfiguredProviders(): Array<{
+  name: string;
+  envKey: string;
+  baseUrl: string;
+}> {
+  const reg = loadRegistry();
+  if (reg.providers.length > 0) {
+    return reg.providers.map((p) => ({
+      name: p.id,
+      envKey: p.envKey as string,
+      baseUrl: p.baseUrl as string,
+    }));
+  }
+  return BUILTIN_PROVIDERS;
+}
+
+/** Clear the in-memory registry cache — used by tests and live-refresh tooling. */
+export function clearRegistryCache(): void {
+  cachedRegistry = null;
+}
+
 /**
  * Detect available providers from environment
  */
@@ -120,23 +269,19 @@ export async function detectProviders(): Promise<DetectionResult> {
   const providers: ProviderInfo[] = [];
   const errors: string[] = [];
 
-  // Provider catalog to inspect
-  const catalog = [
-    { name: 'nvidia', envKey: 'NVIDIA_API_KEY', baseUrl: 'https://integrate.api.nvidia.com/v1' },
-    { name: 'groq', envKey: 'GROQ_API_KEY', baseUrl: 'https://api.groq.com/openai/v1' },
-    { name: 'sambanova', envKey: 'SAMBANOVA_API_KEY', baseUrl: 'https://api.sambanova.ai/v1' },
-    { name: 'cerebras', envKey: 'CEREBRAS_API_KEY', baseUrl: 'https://api.cerebras.ai/v1' },
-    { name: 'deepseek', envKey: 'DEEPSEEK_API_KEY', baseUrl: 'https://api.deepseek.com/v1' },
-    { name: 'openrouter', envKey: 'OPENROUTER_API_KEY', baseUrl: 'https://openrouter.ai/api/v1' },
-    {
-      name: 'gemini',
-      envKey: 'GEMINI_API_KEY',
-      baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    },
-    { name: 'openai', envKey: 'OPENAI_API_KEY', baseUrl: 'https://api.openai.com/v1' },
-  ];
+  // INSPECT: surface any registry load warnings before listing providers
+  const reg = loadRegistry();
+  errors.push(...reg.warnings);
 
-  // INSPECT: Check which keys are available
+  // Pull the catalog provider list (envKey + baseUrl); fall back to the
+  // built-in endpoint table when the catalog is missing.
+  const catalog = listConfiguredProviders();
+
+  // Pre-resolve model lists once (the catalog has 90+ NVIDIA models now).
+  const modelsByName = new Map<string, string[]>(
+    catalog.map((p) => [p.name, resolveModelsForProvider(p.name)])
+  );
+
   for (const provider of catalog) {
     const apiKey = process.env[provider.envKey];
     const hasKey = !!apiKey && apiKey !== 'missing-key' && apiKey.length > 10;
@@ -147,8 +292,8 @@ export async function detectProviders(): Promise<DetectionResult> {
       baseUrl: provider.baseUrl,
       hasKey,
       reachable: false,
-      models: VERIFIED_MODELS[provider.name] || [],
-      priority: PROVIDER_PRIORITY[provider.name] || 0,
+      models: modelsByName.get(provider.name) || [],
+      priority: BUILTIN_PRIORITY[provider.name] || 50,
     };
 
     if (hasKey) {
@@ -207,7 +352,7 @@ export async function detectProviders(): Promise<DetectionResult> {
  * Get best model for a provider
  */
 export function getBestModel(providerName: string): string {
-  const models = VERIFIED_MODELS[providerName];
+  const models = resolveModelsForProvider(providerName);
   if (!models || models.length === 0) {
     return 'model-auto';
   }

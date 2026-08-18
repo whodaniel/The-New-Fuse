@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T13:44:10.104Z",
+  "generatedAt": "2026-07-25T19:28:39.566Z",
   "source": "scripts/visualizations/publish-graph-artifacts.cjs",
   "datasets": [
     {
@@ -13,8 +13,8 @@
       },
       "graph": {
         "file": "/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.json",
-        "nodes": 120,
-        "edges": 437
+        "nodes": 122,
+        "edges": 440
       },
       "subgraphs": [
         {
@@ -105,8 +105,8 @@
           "readme": "/visualizations/graphs/agent-relationship-graph/neo4j-package/README.md"
         },
         "rows": {
-          "nodes": 120,
-          "edges": 437,
+          "nodes": 122,
+          "edges": 440,
           "domainMembership": 125
         }
       },
@@ -176,8 +176,8 @@
   "missingImplementations": [],
   "totals": {
     "datasets": 2,
-    "graphNodes": 589,
-    "graphEdges": 1703,
+    "graphNodes": 591,
+    "graphEdges": 1706,
     "subgraphs": 7,
     "missingImplementations": 0
   }

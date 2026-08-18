@@ -161,7 +161,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, cursor, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, hermes, kilo, opencode, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -315,7 +315,7 @@
         {
           "name": "run",
           "aliases": [],
-          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall.",
+          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.",
           "options": [
             {
               "flags": "--cwd <path>",
@@ -950,6 +950,75 @@
       "commands": []
     },
     {
+      "name": "catalog",
+      "aliases": [],
+      "description": "Inspect the free NVIDIA / LLM catalog and switch the active model",
+      "options": [],
+      "commands": [
+        {
+          "name": "categories",
+          "aliases": [],
+          "description": "List distinct model categories with counts",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": ["ls"],
+          "description": "List free models from the canonical catalog",
+          "options": [
+            {
+              "flags": "--category <cat>",
+              "description": "Filter by category (chat|reasoning|vision|...)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--provider <id>",
+              "description": "Limit to one provider"
+            },
+            {
+              "flags": "--search <query>",
+              "description": "Substring filter on id/family/vendor/category"
+            },
+            {
+              "flags": "--verified-only",
+              "description": "Hide listed/microservice entries"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "refresh",
+          "aliases": [],
+          "description": "Re-fetch /v1/models live from a provider",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "set",
+          "aliases": [],
+          "description": "Make this the active model (writes .env.models)",
+          "options": [
+            {
+              "flags": "--provider <id>",
+              "description": "Provider id (default: nvidia)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Show full metadata for one model id",
+          "options": [],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "channels",
       "aliases": [],
       "description": "Inspect messaging-channel configuration (Slack, WhatsApp)",
@@ -1002,7 +1071,7 @@
     {
       "name": "claw",
       "aliases": [],
-      "description": "Alias for `tnf openclaw`",
+      "description": "Alias for `tnf openclaw` (optional adapter)",
       "options": [],
       "commands": []
     },
@@ -1059,7 +1128,7 @@
         {
           "name": "openclaw",
           "aliases": [],
-          "description": "Show TNF to OpenClaw command-surface compatibility",
+          "description": "Compatibility adapter: TNF command-surface coverage for an optional OpenClaw CLI",
           "options": [
             {
               "flags": "--json",
@@ -2433,6 +2502,69 @@
       ]
     },
     {
+      "name": "google-ai",
+      "aliases": [],
+      "description": "Google Gemini & Antigravity Personal Intelligence integration commands",
+      "options": [],
+      "commands": [
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List recent Google Gemini & Antigravity sessions registered in TNF",
+          "options": [
+            {
+              "flags": "-n, --limit <count>",
+              "description": "Number of sessions to show"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "resume",
+          "aliases": [],
+          "description": "Print resumption instructions or trigger agent resumption for a Google AI session",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Inspect connection to Google Gemini & Antigravity local database, brains, and projects",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output ecosystem state as JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "sync",
+          "aliases": [],
+          "description": "Synchronize all Google Gemini / Antigravity conversations & brains into TNF session stores",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output sync receipt as JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "view",
+          "aliases": [],
+          "description": "Inspect detailed transcript, steps, and artifacts for a Google AI session",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output full session metadata as JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "growth-audit",
       "aliases": [],
       "description": "Inventory AI/runtime data growth paths (Hermes, TNF, Cursor, caches); diff vs last snapshot",
@@ -2448,6 +2580,18 @@
         {
           "flags": "--quiet",
           "description": "Suppress human-readable summary"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "halt",
+      "aliases": [],
+      "description": "Gracefully stop TNF background services",
+      "options": [
+        {
+          "flags": "--force",
+          "description": "Force kill stubborn processes (SIGKILL instead of SIGTERM)"
         }
       ],
       "commands": []
@@ -2558,6 +2702,18 @@
           "aliases": [],
           "description": "Boot relay monitor, terminal heartbeat, and director harness processes",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "clients",
+          "aliases": [],
+          "description": "List interchangeable harness CLIs that can staff TNF coding-agent capabilities",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            }
+          ],
           "commands": []
         },
         {
@@ -2725,6 +2881,22 @@
             {
               "flags": "--out <path>",
               "description": "Output .sb path"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "staff",
+          "aliases": [],
+          "description": "Staff a TNF harness capability with an installed client (MCP + optional launch)",
+          "options": [
+            {
+              "flags": "--no-launch",
+              "description": "Provision MCP config only; do not start the client"
+            },
+            {
+              "flags": "--require-doctor",
+              "description": "Fail if doctor checks fail"
             }
           ],
           "commands": []
@@ -3387,8 +3559,12 @@
               "description": "Arguments for the command"
             },
             {
+              "flags": "--bearer-token-env <env>",
+              "description": "Environment variable containing a bearer token"
+            },
+            {
               "flags": "--command <cmd>",
-              "description": "Command to run"
+              "description": "Command to run for local stdio MCP servers"
             },
             {
               "flags": "--cwd <path>",
@@ -3407,8 +3583,20 @@
               "description": "Environment variables as JSON (kilo parity)"
             },
             {
+              "flags": "--header <header...>",
+              "description": "HTTP/SSE header as \"Name: value\" (repeatable)"
+            },
+            {
+              "flags": "--transport <transport>",
+              "description": "Transport (stdio|streamable-http|sse|ws)"
+            },
+            {
               "flags": "--type <type>",
               "description": "Server type (local|remote|sse|ws)"
+            },
+            {
+              "flags": "--url <url>",
+              "description": "Remote MCP endpoint URL (http(s) or ws(s))"
             }
           ],
           "commands": []
@@ -3418,6 +3606,54 @@
           "aliases": [],
           "description": "Authenticate with an OAuth-enabled MCP server",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "call",
+          "aliases": [],
+          "description": "Call a tool on a configured local stdio MCP server",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            },
+            {
+              "flags": "--timeout-ms <n>",
+              "description": "MCP request timeout in milliseconds"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "codex-login",
+          "aliases": [],
+          "description": "Run Codex MCP OAuth login and open the callback URL automatically",
+          "options": [
+            {
+              "flags": "--browser <command>",
+              "description": "Browser/open command to prefer"
+            },
+            {
+              "flags": "--codex-bin <path>",
+              "description": "Codex executable"
+            },
+            {
+              "flags": "--dry-run",
+              "description": "Verify Codex/server discovery without starting OAuth"
+            },
+            {
+              "flags": "--json",
+              "description": "Print a final JSON summary"
+            },
+            {
+              "flags": "--no-open",
+              "description": "Print the authorize URL but do not open it"
+            },
+            {
+              "flags": "--scopes <list>",
+              "description": "Comma-separated OAuth scopes to pass through to Codex"
+            }
+          ],
           "commands": []
         },
         {
@@ -3480,6 +3716,42 @@
           "commands": []
         },
         {
+          "name": "supabase-agent-check",
+          "aliases": [],
+          "description": "Verify evidence before an agent claims Supabase MCP/data-plane access",
+          "options": [
+            {
+              "flags": "--codex-bin <path>",
+              "description": "Codex executable"
+            },
+            {
+              "flags": "--json",
+              "description": "Print machine-readable JSON"
+            },
+            {
+              "flags": "--login",
+              "description": "Run the Codex MCP OAuth login wrapper if configured"
+            },
+            {
+              "flags": "--no-open",
+              "description": "Pass --no-open to the login wrapper"
+            },
+            {
+              "flags": "--server <name>",
+              "description": "Codex MCP server name"
+            },
+            {
+              "flags": "--strict",
+              "description": "Exit non-zero unless Codex Supabase MCP is configured and OAuth-capable"
+            },
+            {
+              "flags": "--write",
+              "description": "Write SUPABASE_AGENT_CONNECTION_LATEST.json"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "sync",
           "aliases": [],
           "description": "Sync MCP config between the repo source of truth and the user-local CLI config",
@@ -3491,6 +3763,22 @@
             {
               "flags": "--json",
               "description": "Output machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "tools",
+          "aliases": [],
+          "description": "List tools advertised by configured local stdio MCP servers",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            },
+            {
+              "flags": "--timeout-ms <n>",
+              "description": "Per-server MCP request timeout in milliseconds"
             }
           ],
           "commands": []
@@ -3793,7 +4081,7 @@
     {
       "name": "openclaw",
       "aliases": [],
-      "description": "Pass through any OpenClaw CLI command",
+      "description": "Optional adapter: pass through OpenClaw CLI if that harness is installed",
       "options": [],
       "commands": []
     },
@@ -4357,7 +4645,7 @@
       "options": [
         {
           "flags": "--dacc-role <role>",
-          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant, coordinator, bridge)"
+          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant)"
         },
         {
           "flags": "--dacc-role-from-config",
@@ -4782,6 +5070,22 @@
         {
           "flags": "--port <number>",
           "description": "Port to listen on"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "services",
+      "aliases": ["svc"],
+      "description": "Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "Machine-readable JSON"
+        },
+        {
+          "flags": "--strict",
+          "description": "Exit non-zero when any service needs attention (for cron/CI)"
         }
       ],
       "commands": []
@@ -5325,6 +5629,41 @@
       ]
     },
     {
+      "name": "subdirector",
+      "aliases": [],
+      "description": "Local Subdirector (tnf-cli-agent) control-plane utilities",
+      "options": [],
+      "commands": [
+        {
+          "name": "cycle",
+          "aliases": [],
+          "description": "Run the Local Subdirector cron cycle wrapper (sync + drain + log)",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "drain",
+          "aliases": [],
+          "description": "Drain Local Subdirector review/direct/specialty queues (acks watchdog + analytics/maintenance reports)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit full JSON drain report"
+            },
+            {
+              "flags": "--max-per-queue <n>",
+              "description": "Max items per queue"
+            },
+            {
+              "flags": "--skip-register",
+              "description": "Skip registry heartbeat refresh"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "super-cycle",
       "aliases": [],
       "description": "Super-cycle controls (provider-routed; local default)",
@@ -5570,7 +5909,7 @@
       "options": [
         {
           "flags": "--allowed-tools <list>",
-          "description": "Comma-separated tool allowlist (bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall)"
+          "description": "Comma-separated tool allowlist (bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool)"
         },
         {
           "flags": "--autonomous",
@@ -5585,12 +5924,20 @@
           "description": "Execution mode: agent (default) | plan | ask (plan/ask disable shell auto-exec)"
         },
         {
+          "flags": "--onboard",
+          "description": "Run the full Turn Zero onboard script (default: skip — main preflight already ran)"
+        },
+        {
           "flags": "--output-format <format>",
           "description": "Oneshot/print output format: text | json (default: text)"
         },
         {
           "flags": "--permission-mode <mode>",
           "description": "Tool permission mode: default | plan | acceptEdits | bypassPermissions | readOnly"
+        },
+        {
+          "flags": "--repair",
+          "description": "Pass --repair to the onboard script (implies --onboard)"
         },
         {
           "flags": "--resume [id]",

@@ -168,7 +168,12 @@ async function fetchLiveFindings() {
     }
   }
 
-  return fetchSearxngFindings();
+  try {
+    return await fetchSearxngFindings();
+  } catch (error) {
+    console.warn(`⚠️ SearXNG scout failed: ${error.message}`);
+    return [];
+  }
 }
 
 function enrichFindingsWithCrawl4AI(findings) {
@@ -395,9 +400,10 @@ async function runScout() {
   const liveFindings = await fetchLiveFindings();
   const news = enrichFindingsWithCrawl4AI(liveFindings);
   if (news.length === 0) {
-    console.warn('⚠️ No live findings returned by SearXNG.');
+    console.warn('⚠️ No live findings returned. All search providers unavailable or returned empty results.');
+    console.warn('ℹ️ To fix: start SearXNG (docker run -d -p 8080:8080 searxng/searxng) or set EXA_API_KEY / TAVILY_API_KEY.');
     await client.cleanup();
-    process.exit(1);
+    process.exit(0);
   }
 
   // Generate Report

@@ -1,0 +1,12 @@
+# Build / package artifacts — never commit
+out/
+out_vsix/
+dist/
+*.vsix
+.\!*
+package.json.bak
+*.bak
+node_modules/
+
+# Local editor
+.vscode/*.log

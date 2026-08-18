@@ -246,7 +246,7 @@ async function cmdStatus(ids) {
 
 async function cmdTriggerPr(ids) {
   const triggerPrompt =
-    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/fuse. Include a clear title, summary of changes, and verification notes.';
+    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/The-New-Fuse. Include a clear title, summary of changes, and verification notes.';
   const before = await fetchAll(ids);
   const target = before.filter((s) => s.state === 'COMPLETED' && s.prUrls.length === 0);
 
@@ -266,7 +266,7 @@ async function cmdTriggerPr(ids) {
 async function cmdTrigger(ids, promptOverride) {
   const triggerPrompt =
     promptOverride ||
-    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/fuse. Include a clear title, summary of changes, and verification notes.';
+    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/The-New-Fuse. Include a clear title, summary of changes, and verification notes.';
   const before = await fetchAll(ids);
   const target = before.filter((s) => s.state === 'COMPLETED' && s.prUrls.length === 0);
 
@@ -321,7 +321,7 @@ async function cmdAdvance(ids, promptOverride) {
   const noPr = sessions.filter((s) => s.prUrls.length === 0);
   const prompt =
     promptOverride ||
-    "Required follow-up: use 'Publish Branch' now, then open a GitHub PR to whodaniel/fuse main. Reply with BRANCH and PR_URL.";
+    "Required follow-up: use 'Publish Branch' now, then open a GitHub PR to whodaniel/The-New-Fuse main. Reply with BRANCH and PR_URL.";
 
   const approved = [];
   const triggered = [];
@@ -358,7 +358,7 @@ async function cmdWatch(ids, intervalMs, timeoutMs) {
   const start = Date.now();
   const seenTriggered = new Set();
   const triggerPrompt =
-    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/fuse. Include a clear title, summary of changes, and verification notes.';
+    'Please create a GitHub pull request for this completed changeset against the main branch of whodaniel/The-New-Fuse. Include a clear title, summary of changes, and verification notes.';
 
   while (Date.now() - start < timeoutMs) {
     const sessions = await fetchAll(ids);

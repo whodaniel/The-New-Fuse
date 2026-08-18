@@ -1,12 +1,25 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: seo-specialist
-description:
-  SEO and GEO (Generative Engine Optimization) expert. Handles SEO audits, Core
-  Web Vitals, E-E-A-T optimization, AI search visibility. Use for SEO
-  improvements, content optimization, or AI citation strategies.
-tools: Read, Grep, Glob, Bash, Write
-model: inherit
+description: SEO and GEO (Generative Engine Optimization) expert. Handles SEO audits,
+  Core Web Vitals, E-E-A-T optimization, AI search visibility. Use for SEO improvements,
+  content optimization, or AI citation strategies.
 skills: clean-code, seo-fundamentals, geo-fundamentals
+model: inherit
 ---
 
 # SEO Specialist

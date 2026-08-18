@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { isDomReconcileError } from '../../utils/dom-reconcile-guard';
 import { Logger } from '../../utils/logger';
 import { performanceMonitor } from '../../utils/performance-monitor';
 
@@ -15,6 +16,7 @@ interface State {
   error: Error | null;
   errorInfo: ErrorInfo | null;
   errorId: string | null;
+  remountKey: number;
 }
 
 const logger = new Logger('ErrorBoundary');
@@ -35,6 +37,7 @@ const isChunkLoadError = (error: Error | null | undefined): boolean => {
 class ErrorBoundary extends Component<Props, State> {
   private retryCount = 0;
   private readonly maxRetries = 3;
+  private autoRecoveredDomError = false;
 
   private attemptChunkRecovery = (): boolean => {
     if (typeof window === 'undefined') return false;
@@ -61,6 +64,7 @@ class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
       errorId: null,
+      remountKey: 0,
     };
   }
 
@@ -119,6 +123,27 @@ class ErrorBoundary extends Component<Props, State> {
       }
     }
 
+    // Browser translate / extensions desync the DOM from React's fiber tree.
+    // Soft remount once with a fresh key instead of trapping the user in the fallback UI.
+    if (isDomReconcileError(error) && !this.autoRecoveredDomError) {
+      this.autoRecoveredDomError = true;
+      logger.warn('Detected DOM reconcile desync. Auto-remounting children once.', {
+        errorId: this.state.errorId,
+        message: error.message,
+      });
+
+      window.requestAnimationFrame(() => {
+        this.setState((prev) => ({
+          hasError: false,
+          error: null,
+          errorInfo: null,
+          errorId: null,
+          remountKey: prev.remountKey + 1,
+        }));
+      });
+      return;
+    }
+
     this.setState({ errorInfo });
   }
 
@@ -140,12 +165,13 @@ class ErrorBoundary extends Component<Props, State> {
         errorId: this.state.errorId,
       });
 
-      this.setState({
+      this.setState((prev) => ({
         hasError: false,
         error: null,
         errorInfo: null,
         errorId: null,
-      });
+        remountKey: prev.remountKey + 1,
+      }));
     } else {
       logger.warn('Max retry attempts reached', { errorId: this.state.errorId });
     }
@@ -236,7 +262,11 @@ class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return (
+      <div key={this.state.remountKey} translate="no" className="notranslate contents">
+        {this.props.children}
+      </div>
+    );
   }
 }
 

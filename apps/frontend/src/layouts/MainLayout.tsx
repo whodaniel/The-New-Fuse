@@ -2,8 +2,10 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
+import { openAIAssist } from '../utils/aiAssistEvents';
 
-const TNF_LOGO_URL = 'https://thenewfuse.com/assets/brand/tnf-logo.png';
+import { TNF_LOGO_SRC } from '../components/brand/TnfLogo';
+const TNF_LOGO_URL = TNF_LOGO_SRC;
 
 const MainLayout: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -29,11 +31,8 @@ const MainLayout: React.FC = () => {
                   <Link to="/dashboard" className="hover:text-primary transition-colors">
                     Dashboard
                   </Link>
-                  <Link
-                    to="/dashboard/command-center"
-                    className="hover:text-primary transition-colors"
-                  >
-                    Command Center
+                  <Link to="/command-center" className="hover:text-primary transition-colors">
+                    Command Core
                   </Link>
                   <Link to="/marketplace" className="hover:text-primary transition-colors">
                     Marketplace
@@ -48,6 +47,13 @@ const MainLayout: React.FC = () => {
             <div className="flex items-center gap-4">
               {isAuthenticated ? (
                 <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => openAIAssist()}
+                    className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 rounded text-[10px] font-black uppercase tracking-widest transition-all"
+                  >
+                    Ask AI
+                  </button>
                   <div className="flex flex-col items-end hidden sm:flex">
                     <span className="text-[10px] font-black uppercase tracking-wider text-primary">
                       {user?.username || 'Pilot'}

@@ -67,23 +67,19 @@ echo "   📍 Using pnpm: ${PNPM_PATH:-not found in PATH (falling back to $PNPM_
 NATIVE_HOST_JS_PATH="$DIST_DIR/native-host/tnf-native-host.cjs"
 NATIVE_HOST_SH_PATH="$DIST_DIR/native-host/tnf-native-host.sh"
 
-# Create a shell wrapper that ensures Node is found with absolute path
-cat > "$NATIVE_HOST_SH_PATH" << EOF
+# Prefer the shipped launcher (resolves Node under Chrome's sparse PATH).
+# Fall back to generating one with absolute Node baked in.
+if [ ! -f "$NATIVE_HOST_SH_PATH" ]; then
+  cat > "$NATIVE_HOST_SH_PATH" << EOF
 #!/bin/bash
-# TNF Native Messaging Host Launcher
-# Ensures the correct Node environment is used
-
-# Set path to include common Node locations just in case
-export PATH="$NODE_DIR:$PNPM_DIR:\$PATH:/usr/local/bin:/usr/bin:/bin"
+export PATH="$NODE_DIR:$PNPM_DIR:\$PATH:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
 export PNPM_BIN="${PNPM_PATH:-$PNPM_DIR/pnpm}"
-
-# Run the host script using the absolute Node path detected during installation
-"$NODE_PATH" "$NATIVE_HOST_JS_PATH" "\$@"
+exec "$NODE_PATH" "$NATIVE_HOST_JS_PATH" "\$@"
 EOF
+fi
 
 # Make both executable
-chmod +x "$NATIVE_HOST_JS_PATH"
-chmod +x "$NATIVE_HOST_SH_PATH"
+chmod +x "$NATIVE_HOST_JS_PATH" "$NATIVE_HOST_SH_PATH"
 
 # Create the native messaging host manifest pointing to the SHELL WRAPPER
 cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
@@ -97,6 +93,12 @@ cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
   ]
 }
 EOF
+
+# Also register for Chromium if present
+CHROMIUM_NMH="$HOME/Library/Application Support/Chromium/NativeMessagingHosts"
+if [ -d "$(dirname "$CHROMIUM_NMH")" ] || mkdir -p "$CHROMIUM_NMH" 2>/dev/null; then
+  cp "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" "$CHROMIUM_NMH/$HOST_NAME.json" 2>/dev/null || true
+fi
 
 echo -e "${GREEN}✅ Native messaging host installed via launcher script!${NC}"
 echo ""

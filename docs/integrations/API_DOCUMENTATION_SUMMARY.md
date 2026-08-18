@@ -527,7 +527,7 @@ For questions or issues:
 - **Swagger UI**: http://localhost:3001/api-docs
 - **Usage Guide**: `<repo-root>/docs/API_USAGE_GUIDE.md`
 - **OpenAPI Spec**: `<repo-root>/openapi.yaml`
-- **GitHub Issues**: https://github.com/whodaniel/fuse/issues
+- **GitHub Issues**: https://github.com/whodaniel/The-New-Fuse/issues
 
 ---
 

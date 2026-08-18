@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertCircle,
@@ -84,12 +85,9 @@ export default function AgentManagementFull() {
     setLoading(true);
     setLoadError(null);
     try {
-      const token = localStorage.getItem('token');
-      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
       const [agentsRes, statsRes] = await Promise.all([
-        fetch('/api/admin/agents?limit=100', { headers }),
-        fetch('/api/admin/agents/stats', { headers }),
+        authFetch('/api/admin/agents?limit=100'),
+        authFetch('/api/admin/agents/stats'),
       ]);
 
       if (!agentsRes.ok || !statsRes.ok) throw new Error('Failed to fetch data');

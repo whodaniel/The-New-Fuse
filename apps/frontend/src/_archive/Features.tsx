@@ -30,7 +30,7 @@ const FeatureCard = ({
 }) => (
   <GlassCard className="group hover:shadow-lg transition-all duration-300 p-6">
     <div
-      className={`w-12 h-12 rounded-lg bg-linear-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+      className={`w-12 h-12 rounded-lg bg-gradient-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
       aria-hidden="true"
     >
       <Icon className="h-6 w-6 text-white" />
@@ -42,15 +42,15 @@ const FeatureCard = ({
 
 export const Features = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
       <main className="grow" role="main">
         {/* Hero Section */}
         <section
-          className="relative py-20 lg:py-32 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white overflow-hidden"
+          className="relative py-20 lg:py-32 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white overflow-hidden"
           aria-labelledby="features-hero-heading"
         >
           <div className="absolute inset-0 bg-black/20"></div>
-          <div className="absolute inset-0 bg-linear-to-r from-blue-600/30 to-purple-600/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30"></div>
 
           <div className="relative container mx-auto px-4 text-center">
             <div className="max-w-5xl mx-auto">
@@ -67,7 +67,7 @@ export const Features = () => {
                 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight"
               >
                 Powerful Features for
-                <span className="block bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                   AI Orchestration
                 </span>
               </h1>
@@ -273,7 +273,7 @@ export const Features = () => {
 
         {/* CTA Section */}
         <section
-          className="py-20 bg-linear-to-r from-blue-600 to-purple-700 text-white"
+          className="py-20 bg-gradient-to-r from-blue-600 to-purple-700 text-white"
           aria-labelledby="features-cta-heading"
         >
           <div className="container mx-auto px-4 text-center">
@@ -324,7 +324,7 @@ export const Features = () => {
             to="/"
             className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <Rocket className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold">The New Fuse</span>

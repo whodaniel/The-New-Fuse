@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { GlassCard } from '@/components/ui';
 import { AgentFilters } from '@/components/agents/AgentFilters';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { AgentMetricsDisplay } from '@/components/agents/AgentMetrics';
 import { BaseLayout } from '@/components/layout/BaseLayout';
+import { GlassCard } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 export default function AgentsPage() {
@@ -13,9 +14,8 @@ export default function AgentsPage() {
   });
   const handleAgentSubmit = async (data) => {
     try {
-      const response = await fetch('/api/agents', {
+      const response = await authFetch('/api/agents', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Failed to create agent');

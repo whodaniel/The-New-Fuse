@@ -52,6 +52,7 @@ server.tool(
 );
 
 // Tool: create_channel
+// @ts-expect-error TS2589: MCP SDK type depth limit
 server.tool(
   'create_channel',
   'Create a new communication channel for agents.',

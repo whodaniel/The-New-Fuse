@@ -85,9 +85,22 @@ def hash_text(text: str) -> str:
     return hashlib.sha1(text.lower().encode("utf-8")).hexdigest()
 
 
+def voice_system_path(name: str) -> str:
+    root = os.environ.get("TNF_VOICE_SYSTEM_DIR", "").strip()
+    if not root:
+        project = os.environ.get("VOICEBRIDGE_PROJECT_ROOT", "").strip()
+        if project:
+            candidate = os.path.join(project, "scripts", "system")
+            if os.path.isfile(os.path.join(candidate, name)):
+                root = candidate
+    if not root:
+        root = os.path.expanduser("~/bin")
+    return os.path.join(root, name)
+
+
 def send_a2a(from_profile: str, to_profile: str, text: str) -> tuple[bool, str]:
     cmd = [
-        os.path.expanduser("~/bin/voice-agent-send"),
+        voice_system_path("voice-agent-send"),
         "--from",
         from_profile,
         "--to",

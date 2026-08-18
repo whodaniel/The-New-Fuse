@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Orchestration Demo - Orchestrator + Broker + Workers
+ * Orchestration Demo - Coordinator + Broker + Workers
  *
- * Demonstrates the multi-agent orchestration pattern:
- * 1. Antigravity (Orchestrator) - assigns tasks
- * 2. Claude (Broker) - manages timing and turn-taking
- * 3. Gemini (Worker) - executes analysis tasks
- * 4. Jules (Worker) - executes implementation tasks
+ * Demonstrates multi-agent coordination with orthogonal role/platform axes:
+ * 1. Antigravity (platform=antigravity, role=worker) - coordination capabilities
+ * 2. Claude (platform=claude, role=broker) - timing / turn-taking
+ * 3. Gemini (platform=gemini, role=worker) - analysis
+ * 4. Jules (platform=jules, role=worker) - implementation
+ *
+ * The DACC baton (ORCHESTRATOR-{ts}) is held by master-clock, not by any
+ * demo agent below.
  *
  * Usage:
  *   node orchestration-demo.cjs
@@ -20,9 +23,9 @@ const { RedisAgentClient } = require('./tnf-agent-cli.cjs');
 // ============================================================================
 
 const AGENTS = {
-  orchestrator: {
+  coordinator: {
     name: 'antigravity',
-    role: 'orchestrator',
+    role: 'worker',
     platform: 'antigravity',
     capabilities: ['orchestration', 'planning', 'delegation', 'coordination'],
   },
@@ -110,11 +113,11 @@ class MultiAgentOrchestrator {
 ╔═══════════════════════════════════════════════════════════════════╗
 ║        TNF Multi-Agent Orchestration Demo                         ║
 ║                                                                   ║
-║  Roles:                                                           ║
-║  👑 Antigravity - Orchestrator (assigns tasks)                    ║
-║  🎯 Claude - Broker (manages timing)                              ║
-║  ⚙️  Gemini - Worker (analysis)                                    ║
-║  ⚙️  Jules - Worker (implementation)                               ║
+║  Roles (role ⊥ platform; baton = master-clock):                   ║
+║  👑 Antigravity - worker + coordination caps (assigns tasks)      ║
+║  🎯 Claude - broker seat (manages timing)                         ║
+║  ⚙️  Gemini - worker (analysis)                                    ║
+║  ⚙️  Jules - worker (implementation)                               ║
 ╚═══════════════════════════════════════════════════════════════════╝
 `);
 
@@ -196,17 +199,17 @@ class MultiAgentOrchestrator {
    */
   async runWorkflow(workflow) {
     this.workflow = workflow;
-    const orchestrator = this.agents.get('orchestrator');
+    const coordinator = this.agents.get('coordinator');
     const broker = this.agents.get('broker');
 
     console.log(`\n🚀 Starting Workflow: "${workflow.name}"\n`);
     console.log('─'.repeat(60));
 
     // Start a conversation
-    await orchestrator.client.startConversation(`workflow-${Date.now()}`);
+    await coordinator.client.startConversation(`workflow-${Date.now()}`);
 
-    // Orchestrator announces the workflow
-    await orchestrator.client.send(
+    // Coordinator announces the workflow
+    await coordinator.client.send(
       `Starting workflow: ${workflow.name}. ${workflow.description}. Total steps: ${workflow.steps.length}`,
       { type: 'message' }
     );
@@ -225,8 +228,8 @@ class MultiAgentOrchestrator {
         { type: 'message' }
       );
 
-      // Orchestrator assigns task
-      await orchestrator.client.command(step.assignee, step.instruction, {
+      // Coordinator assigns task
+      await coordinator.client.command(step.assignee, step.instruction, {
         stepId: step.id,
         stepType: step.type,
       });
@@ -253,8 +256,8 @@ class MultiAgentOrchestrator {
     console.log('🎉 WORKFLOW COMPLETE!');
     console.log('═'.repeat(60));
 
-    // Orchestrator announces completion
-    await orchestrator.client.send(
+    // Coordinator announces completion
+    await coordinator.client.send(
       `✨ Workflow "${workflow.name}" completed successfully! All ${workflow.steps.length} steps finished.`,
       { type: 'message' }
     );

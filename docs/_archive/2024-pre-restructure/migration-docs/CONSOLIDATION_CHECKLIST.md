@@ -2,7 +2,7 @@
 
 This is a practical, step-by-step checklist for implementing the consolidation plan.
 
-**Before you start:** Read [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) completely.
+**Before you start:** Read [CONSOLIDATION_PLAN.md](../../2024-consolidation-phase/CONSOLIDATION_PLAN.md) completely.
 
 ---
 
@@ -983,6 +983,6 @@ Check these when done:
 
 **You've got this!** Take it one week at a time, commit frequently, and don't hesitate to ask for help.
 
-**Full Plan:** [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
-**Summary:** [CONSOLIDATION_SUMMARY.md](./CONSOLIDATION_SUMMARY.md)
-**Comparison:** [BEFORE_AFTER_COMPARISON.md](./BEFORE_AFTER_COMPARISON.md)
+**Full Plan:** [CONSOLIDATION_PLAN.md](../../2024-consolidation-phase/CONSOLIDATION_PLAN.md)
+**Summary:** [CONSOLIDATION_SUMMARY.md](../../../_archives/2024-migration/CONSOLIDATION_SUMMARY.md)
+**Comparison:** [BEFORE_AFTER_COMPARISON.md](../../2024-consolidation-phase/BEFORE_AFTER_COMPARISON.md)

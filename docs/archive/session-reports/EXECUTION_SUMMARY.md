@@ -144,7 +144,7 @@ c1c9e48c5 feat: Remove all mock data - real API integration
 503be89e9 feat(frontend): Agent validation errors display
 ```
 
-All commits pushed to `main` branch on `whodaniel/fuse`
+All commits pushed to `main` branch on `whodaniel/The-New-Fuse`
 
 ---
 
@@ -201,7 +201,7 @@ GitHub detected **23 vulnerabilities** in dependencies:
 - 6 moderate
 - 7 low
 
-**Action**: Review at https://github.com/whodaniel/fuse/security/dependabot
+**Action**: Review at https://github.com/whodaniel/The-New-Fuse/security/dependabot
 
 ### Pre-existing TypeScript Errors:
 

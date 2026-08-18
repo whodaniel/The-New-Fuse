@@ -202,15 +202,23 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       >
         <Background color="#334155" gap={18} size={1.1} />
         <Controls
+          showZoom={true}
+          showFitView={true}
+          showInteractive={false}
           position="top-right"
-          className="bg-slate-900/90! border-white/10! rounded-xl! shadow-[0_10px_24px_rgba(2,6,23,0.5)]! [&>button]:bg-slate-800! [&>button]:border-slate-600! [&>button]:fill-slate-100! [&>button:hover]:bg-slate-700!"
+          className="!bg-slate-900/90 !border !border-white/10 !rounded-xl !shadow-[0_10px_24px_rgba(2,6,23,0.5)] [&>button]:!bg-slate-800 [&>button]:!border-slate-600 [&>button:hover]:!bg-slate-700"
         />
-        <MiniMap
-          className="bg-slate-900/90! border-white/10! rounded-xl!"
-          nodeColor="#1e40af"
-          maskColor="rgba(15, 23, 42, 0.7)"
-          nodeBorderRadius={4}
-        />
+        {nodes.length > 0 && (
+          <MiniMap
+            position="bottom-right"
+            className="!bg-slate-900/95 !border !border-white/10 !rounded-xl !overflow-hidden"
+            nodeColor="#3b82f6"
+            maskColor="rgba(15, 23, 42, 0.8)"
+            nodeBorderRadius={4}
+            pannable={true}
+            zoomable={true}
+          />
+        )}
       </ReactFlow>
     </div>
   );

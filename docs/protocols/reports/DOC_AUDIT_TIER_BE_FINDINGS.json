@@ -1,0 +1,654 @@
+{
+  "protocols": {
+    "scanned": 135,
+    "missing_files": 0,
+    "missing_class_status_header": 95,
+    "by_class": {
+      "NONE": 96,
+      "INTEL": 9,
+      "PRIME": 30
+    },
+    "by_status": {
+      "NONE": 99,
+      "VETTED": 5,
+      "PENDING": 1,
+      "LOCKED": 24,
+      "ARCHIVED": 2,
+      "SYNCHRONIZED": 2,
+      "RESOLVED": 1,
+      "APPLIED_OUT_OF_BAND": 1
+    },
+    "missing_header_sample": [
+      "docs/protocols/AGENT_STATUS_LEDGER.md",
+      "docs/protocols/AGENT_TARGETED_HANDOFF_V1.md",
+      "docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md",
+      "docs/protocols/HANDOFF_VALIDATION_PIPELINE.md",
+      "docs/protocols/MCP-COMPLETE-GUIDE.md",
+      "docs/protocols/MEMPALACE_META_CHART.md",
+      "docs/protocols/MULTI_AGENT_INTEGRATION_PROTOCOL.md",
+      "docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md",
+      "docs/protocols/SESSION_HANDOFF_TEMPLATE.md",
+      "docs/protocols/THE_VELOCITY_INTEGRITY_BALANCE.md",
+      "docs/protocols/TNF_AGENT_ROSTER_CLEANUP.md",
+      "docs/protocols/TNF_BOOK_OF_AXIOMS.md",
+      "docs/protocols/TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md",
+      "docs/protocols/TNF_ENVIRONMENT_ADAPTER.md",
+      "docs/protocols/TNF_FLEET_HEALTH_PROBE_PROTOCOL.md",
+      "docs/protocols/TNF_GOVERNANCE_SYNTHESIS_v2.0.md",
+      "docs/protocols/TNF_MODULE_DEPENDENCY_AWARENESS.md",
+      "docs/protocols/TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL.md",
+      "docs/protocols/TNF_SELF_HEALING_PROTOCOL.md",
+      "docs/protocols/TNF_SELF_SUFFICIENCY.md",
+      "docs/protocols/TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL.md",
+      "docs/protocols/TS_FIRST_CONTRACT_MIGRATION_PLAN_2026-05-17.md",
+      "docs/protocols/TURN_END_MANDATE.md",
+      "docs/protocols/TURN_ZERO_MANDATE.md",
+      "docs/protocols/UTP_SPEC_v1.0.md",
+      "docs/protocols/_archive/MCP-ARCHITECTURE-GUIDE.md",
+      "docs/protocols/_archive/MCP-CONFIG-MANAGER-GUIDE.md",
+      "docs/protocols/_archive/MCP-GUIDE.md",
+      "docs/protocols/_archive/MCP-UI-GUIDE.md",
+      "docs/protocols/aca-usage.md"
+    ]
+  },
+  "packages": {
+    "missing_readme": 32,
+    "name_mismatch_or_absent": 8,
+    "ok": 35,
+    "details": [
+      {
+        "dir": "a2a-core",
+        "name": "@the-new-fuse/a2a-core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "a2a-protocol",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "a2a-react",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "ag-ui-core",
+        "name": "@the-new-fuse/ag-ui-core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "agent",
+        "name": "@the-new-fuse/agent",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "agent-coordination",
+        "name": "@the-new-fuse/agent-coordination",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "agent-evaluation-framework",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "agentic-rag-search",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "ai-security-bridge",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "ap2-protocol",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "api",
+        "name": "@the-new-fuse/api",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "api-client",
+        "name": "@the-new-fuse/api-client",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "api-optimization",
+        "name": "@the-new-fuse/api-optimization",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "api-types",
+        "name": "@the-new-fuse/api-types",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "auth",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "backend",
+        "name": "@the-new-fuse/backend",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "build-optimization",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "claude-skills",
+        "name": "@the-new-fuse/claude-skills",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "client",
+        "name": "@the-new-fuse/client",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "common",
+        "name": "@the-new-fuse/common",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "contracts",
+        "name": "@the-new-fuse/contracts",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "core",
+        "name": "@the-new-fuse/core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "core-error-handling",
+        "name": "@the-new-fuse/core-error-handling",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "core-monitoring",
+        "name": "@the-new-fuse/core-monitoring",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "core-vector-db",
+        "name": "@the-new-fuse/core-vector-db",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "data",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "database",
+        "name": "@the-new-fuse/database",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "deployment-core",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "eslint-config-custom",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "extension-core",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "extension-system",
+        "name": "@the-new-fuse/extension-system",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "fairtable-adapters",
+        "name": "@the-new-fuse/fairtable-adapters",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "fairtable-components",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "fairtable-core",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "fairtable-utils",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "feature-suggestions",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "feature-tracker",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "features",
+        "name": "@the-new-fuse/features",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "gemini-browser-skill",
+        "name": "@the-new-fuse/gemini-browser-skill",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "google-sheets-mcp-server",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "governance-gate",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "hooks",
+        "name": "@the-new-fuse/hooks",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "infrastructure",
+        "name": "@the-new-fuse/infrastructure",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "integration-tests",
+        "name": "@the-new-fuse/integration-tests",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "jules-integration",
+        "name": "@the-new-fuse/jules-integration",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "jules-skill",
+        "name": "@the-new-fuse/jules-skill",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "logger",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "mcp-cloud-redis-bridge",
+        "name": "@the-new-fuse/mcp-cloud-redis-bridge",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "mcp-concordance-server",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "mcp-core",
+        "name": "@the-new-fuse/mcp-core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "mcp-skills-server",
+        "name": "@the-new-fuse/mcp-skills-server",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "mcp-tar-bridge",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "messaging-bridge",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "n8n-workflows",
+        "name": "@the-new-fuse/n8n-workflows",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "port-management",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "prompt-templating",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "proto-definitions",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "protocol-contracts",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "relay-core",
+        "name": "@the-new-fuse/relay-core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "resource-registry",
+        "name": "@the-new-fuse/resource-registry",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "security",
+        "name": "@the-new-fuse/security",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "shared",
+        "name": "@the-new-fuse/shared",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "sync-core",
+        "name": "@the-new-fuse/sync-core",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "telegram-bot-service",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "test-utils",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "testing",
+        "name": "@the-new-fuse/testing",
+        "name_in_readme": false,
+        "severity": "WARN",
+        "issue": "package_name_not_in_readme"
+      },
+      {
+        "dir": "tnf-cli",
+        "name": "@the-new-fuse/tnf-cli",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "tnf-core",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "tnf-note-taking",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "types",
+        "name": "@the-new-fuse/types",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "ui-consolidated",
+        "name": "@the-new-fuse/ui-consolidated",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "utils",
+        "name": "@the-new-fuse/utils",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "web-scraping",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "websocket-infrastructure",
+        "name": "@the-new-fuse/websocket-infrastructure",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      },
+      {
+        "dir": "workflow-engine",
+        "name": "@the-new-fuse/workflow-engine",
+        "name_in_readme": true,
+        "severity": "OK",
+        "issue": null
+      }
+    ]
+  },
+  "apps": {
+    "missing_readme": 7,
+    "name_mismatch_or_absent": 11,
+    "ok": 4,
+    "details": [
+      {
+        "dir": "ai-arcade",
+        "name": "ai-arcade",
+        "name_in_readme": true,
+        "severity": "OK"
+      },
+      {
+        "dir": "api",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "api-gateway",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "audio-trigger-kws-mvp",
+        "name": "@the-new-fuse/audio-trigger-kws-mvp",
+        "name_in_readme": true,
+        "severity": "OK"
+      },
+      {
+        "dir": "backend",
+        "name": "@the-new-fuse/backend-app",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "casin8-games",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "chrome-extension",
+        "name": "the-new-fuse-chrome-extension",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "cloud-sandbox",
+        "name": "tnf-cloud-sandbox",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "demo-agent-extension",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "frontend",
+        "name": "@the-new-fuse/frontend-app",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "gemini-bridge-extension",
+        "name": "tnf-gemini-bridge-extension",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "myphoneremote-api",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "nexus-orchestrator",
+        "name": "@the-new-fuse/nexus-orchestrator",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "poker-room",
+        "name": "@the-new-fuse/poker-room",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "relay-server",
+        "name": "tnf-relay-complete",
+        "name_in_readme": true,
+        "severity": "OK"
+      },
+      {
+        "dir": "skideancer-ide",
+        "name": "@the-new-fuse/theia-ide",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "stripe-provider-bridge",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "tauri-desktop",
+        "name": "@the-new-fuse/tauri-desktop",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "telegram-mcp",
+        "name": "@tnf/telegram-mcp",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "virtual-library-blueprints",
+        "name": "virtual-library-blueprints",
+        "name_in_readme": false,
+        "severity": "WARN"
+      },
+      {
+        "dir": "visualization-hub",
+        "issue": "missing_readme",
+        "severity": "WARN"
+      },
+      {
+        "dir": "vscode-extension",
+        "name": "the-new-fuse",
+        "name_in_readme": true,
+        "severity": "OK"
+      }
+    ]
+  }
+}

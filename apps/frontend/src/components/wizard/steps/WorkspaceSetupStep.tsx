@@ -247,7 +247,7 @@ export const WorkspaceSetupStep: React.FC = () => {
                     key={type}
                     value={type}
                     checked={formData.authType === type}
-                    onCheckedChange={(value) => handleRadioChange('authType', value)}
+                    onCheckedChange={(value) => handleRadioChange('authType', String(value))}
                     className="mr-2"
                   >
                     {type === 'api_key'
@@ -350,7 +350,7 @@ export const WorkspaceSetupStep: React.FC = () => {
                     key={option.value}
                     value={option.value}
                     checked={formData.visibility === option.value}
-                    onCheckedChange={(value) => handleRadioChange('visibility', value)}
+                    onCheckedChange={(value) => handleRadioChange('visibility', String(value))}
                     className="mr-2"
                   >
                     {option.label}

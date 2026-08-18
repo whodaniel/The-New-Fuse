@@ -7,7 +7,11 @@ if [ "$redis_running" = "yes" ]; then
   echo "Redis server is already running..."
 else
   echo "Starting Redis server..."
-  redis-server --daemonize yes
+  if [ -x "$(dirname "$0")/runtime/redis-local-bootstrap.sh" ]; then
+    bash "$(dirname "$0")/runtime/redis-local-bootstrap.sh" start
+  else
+    redis-server --daemonize yes
+  fi
 fi
 
 # Start backend

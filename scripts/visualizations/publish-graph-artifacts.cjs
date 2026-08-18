@@ -128,6 +128,25 @@ function discoverToolGraphRoots(repoRoot) {
 function publishAgentRelationship(repoRoot, publicFsRoot, publicUrlRoot) {
   const sourceRoot = path.join(repoRoot, 'tools', 'agent-relationship-graph');
   const targetRoot = path.join(publicFsRoot, 'agent-relationship-graph');
+  if (!exists(sourceRoot)) {
+    console.warn(
+      `[publish] skip agent-relationship-graph: missing source ${path.relative(repoRoot, sourceRoot)}`
+    );
+    return {
+      id: 'agent-relationship-graph',
+      title: 'Agent Relationship Graph',
+      sourceRoot: path.relative(repoRoot, sourceRoot),
+      publicRoot: toPublicPath(targetRoot, publicUrlRoot),
+      copied: { files: 0, directories: 0 },
+      graph: { file: null, nodes: 0, edges: 0 },
+      subgraphs: [],
+      neo4j: { files: {}, rows: {} },
+      reports: {},
+      temporal: {},
+      missingRequirements: ['source-root'],
+      skipped: true,
+    };
+  }
   resetDir(targetRoot);
 
   const copied = {
@@ -250,6 +269,25 @@ function publishAgentRelationship(repoRoot, publicFsRoot, publicUrlRoot) {
 function publishFrameworkMaster(repoRoot, publicFsRoot, publicUrlRoot) {
   const sourceRoot = path.join(repoRoot, 'tools', 'framework-master-graph');
   const targetRoot = path.join(publicFsRoot, 'framework-master-graph');
+  if (!exists(sourceRoot)) {
+    console.warn(
+      `[publish] skip framework-master-graph: missing source ${path.relative(repoRoot, sourceRoot)}`
+    );
+    return {
+      id: 'framework-master-graph',
+      title: 'Framework Master Graph',
+      sourceRoot: path.relative(repoRoot, sourceRoot),
+      publicRoot: toPublicPath(targetRoot, publicUrlRoot),
+      copied: { files: 0, directories: 0 },
+      graph: { file: null, nodes: 0, edges: 0 },
+      subgraphs: [],
+      neo4j: { files: {}, rows: {} },
+      reports: {},
+      temporal: {},
+      missingRequirements: ['source-root'],
+      skipped: true,
+    };
+  }
   resetDir(targetRoot);
 
   const copied = {

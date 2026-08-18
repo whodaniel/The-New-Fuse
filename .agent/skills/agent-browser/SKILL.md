@@ -1,16 +1,44 @@
 ---
-name: Agent Browser
-description: A fast Rust-based headless browser automation CLI with Node.js fallback that enables AI agents to navigate, click, type, and snapshot pages via structured commands.
+name: agent-browser
+description:
+  A fast Rust-based headless browser automation CLI with Node.js fallback that
+  enables AI agents to navigate, click, type, and snapshot pages via structured
+  commands.
 read_when:
   - Automating web interactions
   - Extracting structured data from pages
   - Filling forms programmatically
   - Testing web UIs
-metadata: {"clawdbot":{"emoji":"🌐","requires":{"bins":["node","npm"]}}}
+metadata:
+  { 'clawdbot': { 'emoji': '🌐', 'requires': { 'bins': ['node', 'npm'] } } }
 allowed-tools: Bash(agent-browser:*)
 ---
 
 # Browser Automation with agent-browser
+
+## TNF routing (read this first)
+
+In The New Fuse:
+
+- Use **this skill** for interactive / authenticated browser work.
+- Use **crawl4ai** for read-only public URL → Fit Markdown.
+- Use **browser-session-auth-bridge** to export signed-in cookies into a
+  storageState file, then:
+
+```bash
+./scripts/auth/browser_session_to_playwright_state.sh --url "https://app.example.com" --skip-playwright
+tnf browser start --state /tmp/playwright_state_app.example.com.json --url https://app.example.com
+# or:
+agent-browser --state /tmp/playwright_state_app.example.com.json open https://app.example.com --headed
+```
+
+Prefer a dedicated agent profile (`--profile ~/.tnf/agent-chrome-profile`) or a
+Chrome profile _snapshot_ (`--profile Default`) over the deprecated
+`h17-webpilot` / `tnf browser legacy-*` extension path.
+
+CLI wrapper: `tnf browser start|exec|stop|profiles`.
+
+---
 
 ## Installation
 
@@ -45,7 +73,8 @@ agent-browser close             # Close browser
 ## Core workflow
 
 1. Navigate: `agent-browser open <url>`
-2. Snapshot: `agent-browser snapshot -i` (returns elements with refs like `@e1`, `@e2`)
+2. Snapshot: `agent-browser snapshot -i` (returns elements with refs like `@e1`,
+   `@e2`)
 3. Interact using refs from the snapshot
 4. Re-snapshot after navigation or significant DOM changes
 
@@ -132,7 +161,9 @@ agent-browser record stop                 # Stop and save video
 agent-browser record restart ./take2.webm # Stop current + start new recording
 ```
 
-Recording creates a fresh context but preserves cookies/storage from your session. If no URL is provided, it automatically returns to your current page. For smooth demos, explore first, then start recording.
+Recording creates a fresh context but preserves cookies/storage from your
+session. If no URL is provided, it automatically returns to your current page.
+For smooth demos, explore first, then start recording.
 
 ### Wait
 
@@ -302,7 +333,8 @@ agent-browser --cdp 9222 snapshot                    # Connect via CDP
 
 ## Troubleshooting
 
-- If the command is not found on Linux ARM64, use the full path in the bin folder.
+- If the command is not found on Linux ARM64, use the full path in the bin
+  folder.
 - If an element is not found, use snapshot to find the correct ref.
 - If the page is not loaded, add a wait command after navigation.
 - Use --headed to see the browser window for debugging.
@@ -324,5 +356,7 @@ agent-browser --cdp 9222 snapshot                    # Connect via CDP
 
 ## Reporting Issues
 
-- Skill issues: Open an issue at https://github.com/TheSethRose/Agent-Browser-CLI
-- agent-browser CLI issues: Open an issue at https://github.com/vercel-labs/agent-browser
+- Skill issues: Open an issue at
+  https://github.com/TheSethRose/Agent-Browser-CLI
+- agent-browser CLI issues: Open an issue at
+  https://github.com/vercel-labs/agent-browser

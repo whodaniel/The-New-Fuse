@@ -452,7 +452,7 @@ implemented before handling production traffic at scale.
 ## 🚀 Next Steps
 
 1. **Review Report**: Read the complete
-   [PRODUCTION_READINESS_REPORT.md](<repo-root>/PRODUCTION_READINESS_REPORT.md)
+   [PRODUCTION_READINESS_REPORT.md](../project-management/PRODUCTION_READINESS_REPORT.md)
 
 2. **Run Tests**: Execute the test suite to validate your environment
 

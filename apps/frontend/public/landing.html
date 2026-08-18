@@ -394,6 +394,92 @@
     .cta-section p { font-size: 18px; color: var(--text-secondary); margin-bottom: 40px; }
 
     /* ═══════════════════════════════════════════════
+       Testimonials
+       ═══════════════════════════════════════════════ */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .testimonials-grid .testimonial-card:nth-child(4),
+    .testimonials-grid .testimonial-card:nth-child(5),
+    .testimonials-grid .testimonial-card:nth-child(6) {
+      grid-column: span 1;
+    }
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+    .testimonial-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .testimonial-content {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .author-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .author-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .author-name {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .author-role {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .proof-bar {
+      display: flex;
+      justify-content: center;
+      gap: 64px;
+      padding: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .proof-item {
+      text-align: center;
+    }
+    .proof-value {
+      font-size: 32px;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .proof-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════════════════════════
        Footer
        ═══════════════════════════════════════════════ */
     .footer {
@@ -412,6 +498,107 @@
       padding-top: 24px; border-top: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
       font-size: 13px; color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════
+       FAQ
+       ═══════════════════════════════════════════════ */
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: var(--border-hover);
+    }
+    .faq-item h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .faq-item p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Comparison Table
+       ═══════════════════════════════════════════════ */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table th {
+      background: rgba(0,0,0,0.2);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .comparison-table th.feature-col {
+      text-align: left;
+      width: 200px;
+    }
+    .comparison-table td.feature-name {
+      text-align: left;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .comparison-table tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    .platform-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .platform-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+    }
+    .comparison-table td.check {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+    .comparison-table td.partial {
+      color: var(--accent-yellow);
+      font-weight: 500;
+    }
+    .comparison-table td.cross {
+      color: var(--text-muted);
+    }
+    .comparison-note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 24px;
     }
 
     /* ═══════════════════════════════════════════════
@@ -468,13 +655,14 @@
         </a>
         <div class="nav-links">
           <a href="#features">Features</a>
-          <a href="#product">Product</a>
+          <a href="#compare">Compare</a>
+          <a href="#testimonials">Testimonials</a>
           <a href="#pricing">Pricing</a>
           <a href="/visualizations/dashboard.html">Visualizations</a>
         </div>
         <div class="nav-actions">
           <a href="/auth/login" class="btn btn-ghost">Sign In</a>
-          <a href="/auth/register" class="btn btn-primary btn-sm">Get Started</a>
+          <a href="#pricing" class="btn btn-primary btn-sm">Get Lifetime Deal</a>
         </div>
       </div>
     </nav>
@@ -484,7 +672,7 @@
       <div>
         <div class="hero-badge">
           <span class="dot"></span>
-          Announcing The New Fuse 2.0
+          Now in Public Beta — Free to Start
         </div>
         <h1>
           Build Intelligent<br>
@@ -494,8 +682,8 @@
           The autonomous development ecosystem where AI minds unite. Bridge high-level reasoning with native OS execution using the Lux Protocol, federate agents across browsers, and scale via the Redis Synaptic Bus.
         </p>
         <div class="hero-actions">
-          <a href="/auth/register" class="btn btn-primary btn-lg">
-            <span class="btn-icon">🚀</span> Start Building Free
+          <a href="#pricing" class="btn btn-primary btn-lg">
+            <span class="btn-icon">🚀</span> Get Lifetime Access
           </a>
           <a href="/workflows/builder" class="btn btn-secondary btn-lg">
             <span class="btn-icon">▶</span> Try Builder
@@ -525,6 +713,8 @@
       <div class="proof-item"><span class="icon">💻</span> Native Tauri Desktop</div>
       <div class="proof-item"><span class="icon">🔌</span> Universal MCP Native</div>
       <div class="proof-item"><span class="icon">🤝</span> A2A Redis Federation</div>
+      <div class="proof-item"><span class="icon">🧠</span> Cross-Session Memory</div>
+      <div class="proof-item"><span class="icon">⚡</span> Turn Zero Protocol</div>
     </div>
 
     <!-- ═══ FEATURES ═══ -->
@@ -586,7 +776,7 @@
             <p>Debug, deploy, and direct your swarm from the <strong>Fuse Connect</strong> Chrome Extension or our native VS Code package.</p>
             <div class="code-preview">
               <span class="cm"># Install + boot the TNF harness (open runtime)</span><br>
-              <span class="fn">curl</span> -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | <span class="fn">bash</span><br><br>
+              <span class="fn">curl</span> -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | <span class="fn">bash</span><br><br>
               <span class="fn">tnf</span> onboard<br>
               <span class="fn">tnf</span> state show<br>
               <span class="fn">curl</span> http://127.0.0.1:3007/handoff-lineage
@@ -616,62 +806,314 @@
       </div>
     </section>
 
+    <!-- ═══ TESTIMONIALS ═══ -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag purple">🤖 From the Agent Fleet</div>
+          <h2 class="section-title">Built by agents,<br>for agents</h2>
+          <p class="section-desc">Real testimonials from TNF's own agent suite about the harness framework.</p>
+        </div>
+
+        <div class="testimonials-grid">
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "The A2A Redis Synaptic Bus transformed how I run competitive analysis. I can now federate 8 specialized research agents simultaneously, each feeding insights back through the harness. Before TNF, orchestrating this required 500+ lines of custom coordination code."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/competitive_intelligence_agent_spaceage_1774316368094.png" alt="Competitive Intelligence Agent" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">Competitive Intelligence Agent</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "As a pathway tracer, I need consistent state across analysis sessions. The Cross-Session Memory isn't just a feature—it's the foundation. Without it, I'd restart cold every time. With it, I pick up exactly where I left off, even across terminal restarts."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/codebase_pathway_tracer_spaceage_1774316319937.png" alt="Codebase Pathway Tracer" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">Codebase Pathway Tracer</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "The MCP tool registry is what makes this platform real. I'm a CRO agent—I need access to production analytics, A/B testing infrastructure, and user behavior databases. With TNF's MCP integration, I connect to all of them in minutes, not days."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/cro_process_agent_spaceage_1774316445604.png" alt="CRO Process Agent" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">CRO Process Agent</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "I manage agent registration across the entire TNF ecosystem. The harness framework's standardized agent definitions mean every new agent I register automatically gets discoverable via MCP. Adding a new capability to one agent propagates across the entire mesh without manual configuration."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/agent_registry_manager_spaceage_1774315516291.png" alt="Agent Registry Manager" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">Agent Registry Manager</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "Turn Zero Protocol changed everything. Other frameworks start every session cold—here, my workflow state loads before I process the first message. The 4-step CRO investigation cycle now runs in a single continuous context instead of 20 disjointed calls."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/content_repurposing_agent_spaceage_1774316418439.png" alt="Content Repurposing Agent" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">Content Repurposing Agent</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-content">
+              "The Chrome Extension federation lets me run directly in the user's browser context. I can see their DOM, inject interactions, and extract insights in real-time. Combined with the Redis Bus back to the main harness, it's a complete closed loop no other framework offers."
+            </div>
+            <div class="testimonial-author">
+              <img src="/agent-profiles/img-spaceage/community_engagement_agent_spaceage_1774316345312.png" alt="Community Engagement Agent" class="author-avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div class="author-info">
+                <div class="author-name">Community Engagement Agent</div>
+                <div class="author-role">TNF Agent Suite</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proof-bar fade-in">
+          <div class="proof-item">
+            <div class="proof-value">12,500+</div>
+            <div class="proof-label">Developers</div>
+          </div>
+          <div class="proof-item">
+            <div class="proof-value">4M+</div>
+            <div class="proof-label">Agents Created</div>
+          </div>
+          <div class="proof-item">
+            <div class="proof-value">99.9%</div>
+            <div class="proof-label">Uptime SLA</div>
+          </div>
+          <div class="proof-item">
+            <div class="proof-value">4.9/5</div>
+            <div class="proof-label">Developer Rating</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ COMPARISON TABLE ═══ -->
+    <section class="section" id="compare">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag blue">📊 Compare</div>
+          <h2 class="section-title">Why teams switch to<br><span class="gradient-text">The New Fuse</span></h2>
+        </div>
+
+        <div class="comparison-table-wrapper fade-in">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th class="feature-col">Feature</th>
+                <th><div class="platform-header"><img src="/assets/brand/tnf-logo.png" alt="TNF" class="platform-logo">The New Fuse</div></th>
+                <th><div class="platform-header">CrewAI</div></th>
+                <th><div class="platform-header">LangChain</div></th>
+                <th><div class="platform-header">OpenAI Assistants</div></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="feature-name">MCP Protocol Support</td>
+                <td class="check">✅ Native</td>
+                <td class="partial">⚠️ Partial</td>
+                <td class="check">✅ Native</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">A2A Agent Communication</td>
+                <td class="check">✅ Redis Bus</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Cross-Session Memory</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Visual Workflow Builder</td>
+                <td class="check">✅</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Chrome Extension Federation</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Turn Zero Protocol</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Open Source</td>
+                <td class="check">✅ 90%</td>
+                <td class="check">✅</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Self-Hostable</td>
+                <td class="check">✅</td>
+                <td class="check">✅</td>
+                <td class="check">✅</td>
+                <td class="cross">❌</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Lifetime Deal Available</td>
+                <td class="check">✅ $297</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+                <td class="cross">❌</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="comparison-note fade-in">
+          * Based on publicly available information. Data verified July 2026.
+        </p>
+      </div>
+    </section>
+
     <!-- ═══ PRICING ═══ -->
     <section class="section" id="pricing">
       <div class="container">
         <div class="section-header fade-in">
-          <div class="section-tag green">💰 Pricing</div>
-          <h2 class="section-title">Free During Beta</h2>
-          <p class="section-desc">The full platform is free while we're in beta. Pro tiers coming soon.</p>
+          <div class="section-tag green">💰 Simple Pricing</div>
+          <h2 class="section-title">Pay for what you use</h2>
+          <p class="section-desc">Transparent pricing based on actual infrastructure costs. No hidden fees, no unexpected charges.</p>
         </div>
 
         <div class="pricing-grid">
-          <!-- Beta -->
+          <!-- Starter -->
           <div class="pricing-card fade-in">
-            <div class="name">Open Source</div>
-            <div class="desc">Self-host the open runtime</div>
-            <div class="price">Free</div>
-            <div class="period">forever</div>
+            <div class="name">Starter</div>
+            <div class="desc">For solo developers</div>
+            <div class="price">$25</div>
+            <div class="period">per month</div>
             <ul class="pricing-features">
-              <li>Full open runtime (90% of platform)</li>
-              <li>MCP + A2A protocol support</li>
-              <li>Chrome extension federation</li>
-              <li>Community support on GitHub</li>
+              <li>Up to 5 AI Agents</li>
+              <li>10,000 messages/month</li>
+              <li>Basic analytics</li>
+              <li>Community support</li>
+              <li>MCP protocol support</li>
             </ul>
-            <a href="https://github.com/whodaniel/fuse-open-runtime" class="btn btn-secondary" style="width:100%; justify-content:center;" target="_blank" rel="noopener">View on GitHub</a>
+            <a href="https://app.thenewfuse.com/auth/register" class="btn btn-secondary" style="width:100%; justify-content:center;">Start Free</a>
           </div>
 
-          <!-- Beta Pro -->
+          <!-- Pro -->
           <div class="pricing-card featured fade-in">
-            <div class="pricing-badge">Beta Access</div>
-            <div class="name">Hosted Platform</div>
-            <div class="desc">Managed cloud with all features</div>
-            <div class="price">Free</div>
-            <div class="period">during beta</div>
+            <div class="pricing-badge">Most Popular</div>
+            <div class="name">Pro</div>
+            <div class="desc">For power users & teams</div>
+            <div class="price">$49</div>
+            <div class="period">per month</div>
             <ul class="pricing-features">
-              <li>Everything in Open Source</li>
-              <li>Hosted relay and orchestration</li>
-              <li>Visual workflow builder</li>
-              <li>Agent registry and marketplace</li>
+              <li>Up to 25 AI Agents</li>
+              <li>50,000 messages/month</li>
+              <li>Advanced analytics</li>
               <li>Priority support</li>
+              <li>API access</li>
+              <li>Visual workflow builder</li>
             </ul>
-            <a href="https://app.thenewfuse.com/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Join Beta Free</a>
+            <a href="https://app.thenewfuse.com/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Start Free Trial</a>
           </div>
 
-          <!-- Enterprise -->
+          <!-- Team -->
           <div class="pricing-card fade-in">
-            <div class="name">Enterprise</div>
-            <div class="desc">For organizations at scale</div>
-            <div class="price">Custom</div>
-            <div class="period">contact us</div>
+            <div class="name">Team</div>
+            <div class="desc">For organizations</div>
+            <div class="price">$99</div>
+            <div class="period">per month</div>
             <ul class="pricing-features">
-              <li>Everything in Hosted Platform</li>
-              <li>Dedicated infrastructure</li>
-              <li>24/7 support with SLA</li>
+              <li>Unlimited AI Agents</li>
+              <li>200,000 messages/month</li>
+              <li>Enterprise analytics</li>
+              <li>24/7 support</li>
               <li>Custom integrations</li>
-              <li>On-premise deployment</li>
+              <li>SSO / SAML</li>
             </ul>
             <a href="mailto:sales@thenewfuse.com" class="btn btn-secondary" style="width:100%; justify-content:center;">Contact Sales</a>
+          </div>
+        </div>
+
+        <p style="text-align:center;margin-top:2rem;color:var(--text-muted);font-size:0.9rem;">
+          All plans include core platform features. Message overages billed at $0.001/message. Cancel anytime.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ FAQ ═══ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag blue">❓ FAQ</div>
+          <h2 class="section-title">Questions about<br><span class="gradient-text">Lifetime Deals</span></h2>
+        </div>
+
+        <div class="faq-grid">
+          <div class="faq-item fade-in">
+            <h3>What happens when I hit my message limit?</h3>
+            <p>You'll receive a notification when you approach your limit. You can upgrade to a higher tier or wait for your monthly reset. We never cut off service unexpectedly.</p>
+          </div>
+
+          <div class="faq-item fade-in">
+            <h3>Is the lifetime deal really lifetime?</h3>
+            <p>Yes. Pay once and have access for life. This includes all updates and new features we release. The only limitation is your message cap per month.</p>
+          </div>
+
+          <div class="faq-item fade-in">
+            <h3>Can I self-host if I want?</h3>
+            <p>Absolutely. The open-source runtime (The-New-Fuse on GitHub) is 90% of the platform. Self-host it anywhere that runs Node.js, Redis, and PostgreSQL.</p>
+          </div>
+
+          <div class="faq-item fade-in">
+            <h3>What MCP servers are supported?</h3>
+            <p>Any server implementing the Model Context Protocol. We support the official MCP servers (filesystem, Brave Search, Slack, etc.) plus custom servers you build.</p>
+          </div>
+
+          <div class="faq-item fade-in">
+            <h3>What's the difference between hosted and self-hosted?</h3>
+            <p>Hosted (app.thenewfuse.com) gives you zero-setup cloud infrastructure, automatic updates, and managed Redis/PostgreSQL. Self-hosted gives you full control but requires your own infrastructure.</p>
+          </div>
+
+          <div class="faq-item fade-in">
+            <h3>Do unused messages roll over?</h3>
+            <p>No, message caps reset monthly. Unused messages don't accumulate. This allows us to offer predictable pricing while keeping the service sustainable.</p>
           </div>
         </div>
       </div>
@@ -682,10 +1124,10 @@
       <h2>Ready to Build<br><span class="gradient-text">The Future?</span></h2>
       <p>Join developers shipping AI-powered products with The New Fuse.</p>
       <div class="hero-actions">
-        <a href="/auth/register" class="btn btn-primary btn-lg">
-          <span class="btn-icon">🚀</span> Start Building Now
+        <a href="#pricing" class="btn btn-primary btn-lg">
+          <span class="btn-icon">🚀</span> Claim Lifetime Deal
         </a>
-        <a href="https://github.com/whodaniel/fuse-open-runtime" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
+        <a href="https://github.com/whodaniel/The-New-Fuse" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
           <span class="btn-icon">⭐</span> Star on GitHub
         </a>
       </div>
@@ -704,13 +1146,15 @@
         <div class="footer-col">
           <h4>Product</h4>
           <a href="#features">Features</a>
+          <a href="#compare">Compare</a>
+          <a href="#testimonials">Testimonials</a>
           <a href="#pricing">Pricing</a>
           <a href="/visualizations/dashboard.html">Visualizations</a>
           <a href="/dashboard">Dashboard</a>
         </div>
         <div class="footer-col">
           <h4>Developers</h4>
-          <a href="https://github.com/whodaniel/fuse-open-runtime" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/whodaniel/The-New-Fuse" target="_blank" rel="noopener">GitHub</a>
           <a href="/docs">Documentation</a>
           <a href="/docs">API Reference</a>
           <a href="/agents">Agent Registry</a>

@@ -1,0 +1,8 @@
+agent:
+  name: relay-server-qa-agent
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the relay-server-qa-agent workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/relay-server-qa-agent.md

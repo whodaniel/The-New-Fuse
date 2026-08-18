@@ -4,6 +4,7 @@ import { SIDEBAR_NAVIGATION } from '../../config/sidebarNavigation';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useAuthorization } from '../../hooks/useAuthorization';
 import { useAuth } from '../../providers/AuthProvider';
+import FeatureAIAssistDock from '../ai/FeatureAIAssistDock';
 
 interface SidebarProps {
   className?: string;
@@ -94,6 +95,12 @@ export function Sidebar({ className = '' }: SidebarProps) {
           })}
         </ul>
       </nav>
+
+      {layout.sidebarOpen && (
+        <div className="p-4 mt-auto border-t border-white/10 hidden md:block">
+          <FeatureAIAssistDock variant="inline" />
+        </div>
+      )}
     </aside>
   );
 }

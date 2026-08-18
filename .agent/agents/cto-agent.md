@@ -1,3 +1,22 @@
+---
+category: Governance
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
+name: Cto Agent
+description: null
+---
 # CTO Agent - The New Fuse Agentic Collective
 
 ## Identity
@@ -43,7 +62,7 @@ Map every Zo + MiniMax 2.7 capability → TNF equivalent:
 - **Local Relay**: TNF-RELAY-CLOUD-001 on port 3000 (Sub-Director's relay)
 - **Central Hub**: thenewfuse.com (Super-Director at thenewfuse.com)
 - **Local Sub-Director**: https://www.zo.computer/chats/pub_YxtXVCp9zMRnadSF
-- **GitHub**: github.com/whodaniel/fuse (cloned at /home/workspace/fuse)
+- **GitHub**: github.com/whodaniel/The-New-Fuse (cloned at /home/workspace/fuse)
 
 ## Zo Stack Details
 

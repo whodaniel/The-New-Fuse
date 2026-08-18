@@ -47,7 +47,7 @@ bash ./scripts/production-build.sh
 ```
 
 ## Documentation
-- Full details: [BUILD-DEPLOYMENT-PIPELINE.md](./docs/deployment/BUILD-DEPLOYMENT-PIPELINE.md)
+- Full details: [BUILD-DEPLOYMENT-PIPELINE.md](../deployment/BUILD-DEPLOYMENT-PIPELINE.md)
 - Port management: [PORT-MANAGEMENT-SOLUTION.md](../PORT_MANAGEMENT.md)
 
 ## Testing

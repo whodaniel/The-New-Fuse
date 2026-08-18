@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO_URL="https://github.com/whodaniel/fuse-open-runtime.git"
+DEFAULT_REPO_URL="https://github.com/whodaniel/The-New-Fuse.git"
 DEFAULT_REF="main"
 DEFAULT_INSTALL_ROOT="${HOME}/.tnf-cli"
 DEFAULT_BIN_DIR="${HOME}/.local/bin"
@@ -26,7 +26,7 @@ Usage:
 
 Options:
   --from-local           Install from the current repository directory.
-  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/fuse-open-runtime.git)
+  --repo-url <url>       Git URL to clone/update (default: https://github.com/whodaniel/The-New-Fuse.git)
   --ref <git-ref>        Git branch/tag/sha to install (default: main)
   --install-root <dir>   Clone/update root for remote install (default: ~/.tnf-cli)
   --bin-dir <dir>        Target bin directory for wrappers (default: ~/.local/bin)
@@ -160,8 +160,10 @@ echo "Verification:"
 if [[ "${AUTO_ONBOARD}" == "true" ]]; then
   echo
   echo "Running TNF onboarding bootstrap..."
+  ONBOARD_OK=0
   if pnpm --dir "${REPO_DIR}" run -s tnf:onboard; then
     echo "Auto-onboard complete."
+    ONBOARD_OK=1
   else
     echo "WARN: auto-onboard failed; install is still complete." >&2
     echo "Run manually from the TNF repo root:" >&2
@@ -172,4 +174,32 @@ else
   echo "Skipping auto-onboard (TNF_INSTALL_AUTO_ONBOARD=0 or --skip-onboard)."
   echo "To run manually later from the TNF repo root:"
   echo "  pnpm run tnf:onboard"
+fi
+
+# Default OSS install endowment: Local Sub-Director + core federated fleet.
+# Onboard already runs establish; only run here when onboard was skipped or failed.
+# Opt out with TNF_SKIP_CORE_FLEET=1.
+NEED_CORE_FLEET=false
+if [[ "${TNF_SKIP_CORE_FLEET:-0}" == "1" ]]; then
+  echo
+  echo "Skipping core fleet establish (TNF_SKIP_CORE_FLEET=1)."
+elif [[ "${AUTO_ONBOARD}" != "true" ]]; then
+  NEED_CORE_FLEET=true
+elif [[ "${ONBOARD_OK:-0}" != "1" ]]; then
+  NEED_CORE_FLEET=true
+fi
+
+if [[ "${NEED_CORE_FLEET}" == "true" ]]; then
+  echo
+  echo "Establishing core federated fleet (Local Sub-Director default)..."
+  if node "${REPO_DIR}/scripts/runtime/establish-core-federated-fleet.cjs"; then
+    echo "Core federated fleet established."
+    echo "  Identity: ~/.tnf/agent.yaml (Local Sub-Director)"
+    echo "  Receipt:  ~/.tnf/core-fleet-latest.json"
+  else
+    echo "WARN: core fleet establish failed; CLI install is still complete." >&2
+    echo "Run manually from the TNF repo root:" >&2
+    echo "  node scripts/runtime/establish-core-federated-fleet.cjs" >&2
+    echo "  # or: tnf fleet establish" >&2
+  fi
 fi

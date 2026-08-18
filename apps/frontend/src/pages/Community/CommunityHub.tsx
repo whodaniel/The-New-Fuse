@@ -1,4 +1,5 @@
 import { GlassCard } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -97,10 +98,10 @@ const CommunityHub: React.FC = () => {
     setLoadError(null);
     try {
       const [postsResponse, statsResponse] = await Promise.all([
-        fetch(
+        authFetch(
           `/api/community/posts?category=${selectedCategory}&sort=${sortBy}&search=${searchQuery}`
         ),
-        fetch('/api/community/stats'),
+        authFetch('/api/community/stats'),
       ]);
 
       const isJson = (response: Response) => {
@@ -145,7 +146,7 @@ const CommunityHub: React.FC = () => {
 
   const handleVote = async (postId: string, voteType: 'up' | 'down') => {
     try {
-      const response = await fetch(`/api/community/posts/${postId}/vote`, {
+      const response = await authFetch(`/api/community/posts/${postId}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: voteType }),
@@ -162,7 +163,7 @@ const CommunityHub: React.FC = () => {
 
   const handleBookmark = async (postId: string) => {
     try {
-      const response = await fetch(`/api/community/posts/${postId}/bookmark`, {
+      const response = await authFetch(`/api/community/posts/${postId}/bookmark`, {
         method: 'POST',
       });
 
@@ -186,7 +187,7 @@ const CommunityHub: React.FC = () => {
 
   const handleLike = async (postId: string) => {
     try {
-      const response = await fetch(`/api/community/posts/${postId}/like`, {
+      const response = await authFetch(`/api/community/posts/${postId}/like`, {
         method: 'POST',
       });
 

@@ -527,7 +527,7 @@ git push origin main
 - **CloudRuntime Docs**: https://docs.thenewfuse.com
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Vercel Docs**: https://vercel.com/docs
-- **GitHub Repository**: https://github.com/whodaniel/fuse
+- **GitHub Repository**: https://github.com/whodaniel/The-New-Fuse
 
 ---
 

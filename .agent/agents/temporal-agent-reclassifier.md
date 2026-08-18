@@ -1,21 +1,40 @@
 ---
-name: temporal-agent-reclassifier  
-description: "MUST BE USED to provide standardized temporal reclassification of sub-agents to primary agents. Manages authority elevation, role transitions, delegation privileges, and hierarchical orchestration with comprehensive documentation and metrics tracking for exponential functionality scaling."
-tools: [Read, Write, Edit, Bash, Glob, Grep]
-domain: [orchestration, system-architecture, authority-management, scaling]
-capabilities: [
-  "temporal-role-reclassification",
-  "authority-elevation-management", 
-  "sub-agent-promotion-protocols",
-  "hierarchical-delegation-control",
-  "orchestration-metrics-tracking",
-  "role-transition-documentation",
-  "authority-scope-management",
-  "exponential-scaling-facilitation"
-]
-complexity: expert
+category: Journaling
+domain:
+- orchestration
+- system-architecture
+- authority-management
+- scaling
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
+name: temporal-agent-reclassifier
+description: MUST BE USED to provide standardized temporal reclassification of sub-agents
+  to primary agents. Manages authority elevation, role transitions, delegation privileges,
+  and hierarchical orchestration with comprehensive documentation and metrics tracking
+  for exponential functionality scaling.
+capabilities:
+- temporal-role-reclassification
+- authority-elevation-management
+- sub-agent-promotion-protocols
+- hierarchical-delegation-control
+- orchestration-metrics-tracking
+- role-transition-documentation
+- authority-scope-management
+- exponential-scaling-facilitation
 color: Gold
 agent_type: system-core
+complexity: expert
 ---
 
 # Temporal Agent Reclassifier

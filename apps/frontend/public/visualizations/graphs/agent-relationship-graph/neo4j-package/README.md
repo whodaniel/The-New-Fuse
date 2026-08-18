@@ -1,26 +1,22 @@
 # Agent Relationship Neo4j Package
 
-Generated: 2026-04-07T13:44:08Z
+Regenerated: 2026-07-25T19:27:36.317Z
+
+## Axis contract
+
+Nodes now include:
+
+- `daccRole` — hierarchy seat (director/orchestrator/broker/worker/…)
+- `platform` — fulfillment surface (antigravity/claude/pi/master-clock/…)
+- `workerAction` — work type (may be `orchestrator` without holding the baton)
+- `batonHolder` / `batonIdentity` — only `master-clock-baton` is the protocol baton
+
+`cluster: orchestration` is a **work-domain affinity label**, not baton ownership.
+Canonical taxonomy viz: `/visualizations/graphs/dacc-role-platform-axes.html`
 
 ## Files
-- `nodes.csv`: agent nodes with base metadata
-- `edges.csv`: directed relationships with type and strength
-- `domain_membership.csv`: many-to-many domain assignments
-- `load.noapoc.cypher`: import script using fixed `:RELATED` + `relationType` property
-- `load.apoc.cypher`: import script with dynamic relationship types via APOC
 
-## Import Steps
-1. Copy CSV files into Neo4j import directory.
-2. Run one script:
-   - No APOC: `:source load.noapoc.cypher`
-   - APOC: `:source load.apoc.cypher`
-
-## Quick Validation Queries
-```cypher
-MATCH (a:Agent) RETURN count(a) AS agents;
-MATCH ()-[r]->() RETURN count(r) AS relationships;
-MATCH (d:Domain)<-[:IN_DOMAIN]-(:Agent) RETURN d.name, count(*) AS n ORDER BY n DESC;
-MATCH (a:Agent)-[r:RELATED]->(b:Agent)
-RETURN a.id, r.relationType, b.id, r.strength
-ORDER BY r.strength DESC LIMIT 20;
-```
+- `nodes.csv`: agent nodes with axis metadata
+- `edges.csv`: typed relationships
+- `domain_membership.csv`: agent → domain membership
+- `load.noapoc.cypher` / `load.apoc.cypher`: import scripts

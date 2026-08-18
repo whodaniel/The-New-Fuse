@@ -1,25 +1,22 @@
 # OpenClaw OAuth Rotation
 
-> **⚠️ Railway references below are DEPRECATED.** TNF has migrated from Railway
-> to **GCP (Cloud Run) + Cloudflare + Supabase + Upstash**. Replace `railway`
-> CLI commands with GCP/Cloudflare equivalents. See
-> `CLOUD_MIGRATION_BLUEPRINT.md`.
+> **⚠️ Railway is retired.** TNF runs on **GCP (Cloud Run) + Cloudflare +
+> Supabase + Upstash**. Any `railway` or `cloud_runtime` CLI command in this
+> file is dead — use `gcloud` equivalents. (`CLOUD_MIGRATION_BLUEPRINT.md` is
+> referenced throughout the repo but does not exist.)
 
 ## Purpose
 
-Safely rotate OAuth credentials and active model routing for any OpenClaw
-Railway service, with encrypted credential storage, RBAC, audit logging,
-deployment validation, and health checks. ⚠️ **Railway service references are
-historical — update to GCP Cloud Run.**
+Safely rotate OAuth credentials and active model routing for any OpenClaw Cloud
+Run service, with encrypted credential storage, RBAC, audit logging, deployment
+validation, and health checks.
 
 ## Pre-Flight Checklist
 
 1. Confirm operator role is `SUPER_ADMIN` for API-driven execution.
 2. Confirm `ENCRYPTION_KEY` is set for encrypted binding storage.
-3. Confirm Railway CLI auth is healthy (`railway whoami`). ⚠️ **DEPRECATED — use
-   `gcloud` CLI instead**
-4. Confirm target service exists (`railway status --json`). ⚠️ **DEPRECATED —
-   use `gcloud run services list` instead**
+3. Confirm CLI auth is healthy (`gcloud auth list`).
+4. Confirm target service exists (`gcloud run services list`).
 5. Confirm provider model mapping is valid (`openai-codex`, `anthropic`,
    `google-antigravity`, `kilo`).
 
@@ -30,8 +27,9 @@ historical — update to GCP Cloud Run.**
   - `GET /api/admin/openclaw/oauth/bindings`
   - `POST /api/admin/openclaw/oauth/execute/:tenantId/:service/:provider`
 - CLI scripts:
-  - `scripts/railway/sync-openclaw-oauth-instance.sh`
-  - `scripts/railway/sync-openclaw-oauth-instances.sh`
+  - `scripts/cloud_runtime/sync-openclaw-oauth-instance.sh`
+  - `scripts/cloud_runtime/sync-openclaw-oauth-instances.sh`
+  - Shared helper: `scripts/lib/tnf-cloud-run.sh` (gcloud Cloud Run env ops)
 - Super Admin UI:
   - `apps/frontend/src/pages/Admin/components/OAuthInstanceRotationControl.tsx`
 
@@ -41,7 +39,7 @@ historical — update to GCP Cloud Run.**
 Collect Tokens -> Encrypt + Store Binding -> Execute Rotation -> Wait Deploy
       |                   |                      |                |
       v                   v                      v                v
-   Validate DTO      RBAC + Audit Log      Railway Vars Set   /overview 200
+   Validate DTO      RBAC + Audit Log      Cloud Run Env Set  /overview 200
 ```
 
 ## Standard Workflow
@@ -63,19 +61,28 @@ Collect Tokens -> Encrypt + Store Binding -> Execute Rotation -> Wait Deploy
 - Reusing one token set across tenants accidentally.
 - Rotating tokens without checking account ID alignment.
 
+## Known Breakage (resolved 2026-07-23 / 2026-07-24)
+
+When Railway was retired, `railway` was string-replaced with `cloud_runtime`
+repo-wide. `cloud_runtime` is **not a real binary**. The OAuth sync scripts
+under `scripts/cloud_runtime/` now call `gcloud` via
+`scripts/lib/tnf-cloud-run.sh` (env update / verify / wait-ready). Prefer
+`--no-wait` only when you intentionally skip the Cloud Run ready poll.
+
 ## Testing
 
 Run:
 
 ```bash
-bash scripts/railway/sync-openclaw-oauth-instances.sh --config scripts/railway/openclaw-oauth-instances.json
+bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh \
+  --config scripts/cloud_runtime/openclaw-oauth-instances.json --no-wait
 ```
 
-Then verify:
+Then verify (Cloud Run):
 
 ```bash
-railway variable list --service openclaw-cloud --json | jq -r '.OPENAI_CODEX_ACCOUNT_ID,.OPENCLAW_MODEL_PRIMARY,.OPENCLAW_USE_CODEX_OAUTH'
-railway variable list --service openclaw-primary --json | jq -r '.OPENAI_CODEX_ACCOUNT_ID,.OPENCLAW_MODEL_PRIMARY,.OPENCLAW_USE_CODEX_OAUTH'
+gcloud run services describe openclaw-cloud --format=json \
+  | jq -r '.spec.template.spec.containers[0].env[] | select(.name|test("OPENAI_CODEX_ACCOUNT_ID|OPENCLAW_MODEL_PRIMARY|OPENCLAW_USE_CODEX_OAUTH")) | "\(.name)=\(.value)"'
 ```
 
 ## Integration with TNF

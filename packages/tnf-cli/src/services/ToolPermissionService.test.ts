@@ -55,6 +55,8 @@ check('plan removes write_file', !plan.allowed.includes('write_file'));
 check('plan removes browser_interact', !plan.allowed.includes('browser_interact'));
 check('plan keeps read_file', plan.allowed.includes('read_file'));
 check('plan keeps search_files', plan.allowed.includes('search_files'));
+check('plan keeps mcp_list_tools', plan.allowed.includes('mcp_list_tools'));
+check('plan removes mcp_call_tool', !plan.allowed.includes('mcp_call_tool'));
 check('plan reports no mutation', plan.mutationsAllowed === false);
 check(
   'plan is strictly smaller than default (the whole point)',
@@ -73,7 +75,12 @@ check('allowlist keeps mutation when bash is in it', allowOnly.mutationsAllowed 
 
 const denied = resolvePermissions({ disallowedTools: 'bash,write_file,browser_interact' });
 check('denylist removes named tools', !denied.allowed.some((t) => t === 'bash'));
-check('denylist alone can drop mutation entirely', denied.mutationsAllowed === false);
+check('denylist alone still treats MCP calls as mutating', denied.mutationsAllowed === true);
+
+const deniedAllMutating = resolvePermissions({
+  disallowedTools: 'bash,write_file,browser_interact,mcp_call_tool',
+});
+check('denylist can drop mutation entirely', deniedAllMutating.mutationsAllowed === false);
 
 const denyWins = resolvePermissions({ allowedTools: 'bash,read_file', disallowedTools: 'bash' });
 check(

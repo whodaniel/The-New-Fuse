@@ -16,6 +16,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { registerOrNest } from './_registry.js';
+import { redactSensitiveConfig } from '../services/DebugService.js';
 
 function resolveConfigPath(repoRoot: string): string {
   const candidates = [
@@ -60,7 +61,7 @@ export function registerConfigCommand(program: Command, repoRoot: string): void 
         repoRoot,
         configPath,
         configExists: fs.existsSync(configPath),
-        config: parsed,
+        config: parsed ? redactSensitiveConfig(parsed) : null,
         env: {
           TNF_CONFIG: process.env.TNF_CONFIG ?? '',
           HOME: os.homedir(),
@@ -73,8 +74,8 @@ export function registerConfigCommand(program: Command, repoRoot: string): void 
       } else {
         console.log(`config path : ${configPath}`);
         console.log(`exists      : ${view.configExists}`);
-        if (parsed) {
-          for (const [k, v] of Object.entries(parsed)) {
+        if (view.config) {
+          for (const [k, v] of Object.entries(view.config)) {
             console.log(`  ${k.padEnd(20)} = ${JSON.stringify(v)}`);
           }
         } else {

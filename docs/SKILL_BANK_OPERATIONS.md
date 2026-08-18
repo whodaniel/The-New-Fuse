@@ -22,6 +22,7 @@ pnpm run skills:bank:query -- jules
 pnpm run skills:bank:status
 pnpm run skills:bank:ingest
 pnpm run skills:bank:retry-pending
+pnpm run skills:codex:guard
 ```
 
 Equivalent TNF CLI commands:
@@ -32,6 +33,31 @@ Equivalent TNF CLI commands:
 ./tnf skills bank ingest --dry-run
 ./tnf skills bank retry-pending
 ```
+
+## Codex progressive disclosure guard
+
+Codex loads global skills from `~/.codex/skills` before TNF can route through
+the project skill manifest. Keep that active directory limited to core routing,
+governance, and meta-skills; specialized skills belong in
+`~/.codex/skills_inactive` and remain discoverable through the skill bank.
+
+Audit the active Codex skill surface:
+
+```bash
+pnpm run skills:codex:guard
+```
+
+Apply reversible containment for known overflow candidates:
+
+```bash
+pnpm run skills:codex:guard:apply
+```
+
+The apply path moves active imported skill packs into `~/.codex/skills_inactive`
+instead of deleting them. For task-specific traversal, load
+`.agent/SKILL_MANIFEST.md`, query candidates with
+`node scripts/skills/skill-bank-query.cjs <term>`, then read one `SKILL.md` body
+only when invoking that skill.
 
 ## Supervisor mode
 
@@ -64,6 +90,7 @@ Equivalent TNF CLI:
 - `pending-import.ndjson`: failed ingests queued for retry.
 - `ingest-report.json`: latest ingest run summary.
 - `retry-report.json`: latest retry run summary.
+- `codex-skill-disclosure-report.json`: latest Codex active-skill audit.
 - `snapshots/`: portable copies of skill resources by source and hash.
 
 All are written under `.agent/skill-bank/`.

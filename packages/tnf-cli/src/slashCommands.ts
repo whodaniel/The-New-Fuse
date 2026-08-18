@@ -214,6 +214,48 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     cliCommand: ['session', 'list'],
   },
   {
+    name: 'halt',
+    summary: 'Halt the TNF agent daemon gracefully.',
+    usage: '/halt',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['halt'],
+  },
+  {
+    name: 'heartbeat',
+    summary: 'Show or control the TNF agent heartbeat subsystem.',
+    usage: '/heartbeat [status|start|stop|interval <ms>]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['heartbeat'],
+  },
+  {
+    name: 'ledger',
+    summary: 'Show the TNF agent entity ledger (UFTE federatedId tracking).',
+    usage: '/ledger [--agent <id>] [--limit <n>] [--json]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['ledger'],
+  },
+  {
+    name: 'orient',
+    summary: 'Show or set the TNF living state orientation (who/what/why/when/where/how).',
+    usage:
+      '/orient [show|set] [--who <text>] [--what <text>] [--why <text>] [--when <text>] [--where <text>] [--how <text>]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['orient'],
+  },
+  {
+    name: 'start',
+    summary: 'Start the TNF agent daemon in background mode.',
+    usage:
+      '/start [--profile <name>] [--interval <seconds>] [--agent-id <id>] [--agent-name <name>]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['start'],
+  },
+  {
     name: 'models',
     summary: 'List available model/provider information.',
     usage: '/models',

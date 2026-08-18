@@ -582,7 +582,7 @@ async function handleMessage(message) {
   }
 }
 
-// Main
+// Main — Chrome sendNativeMessage is one-shot: one request → one response → exit.
 async function main() {
   log(`Native messaging host started. Project root: ${PROJECT_ROOT}`);
 
@@ -591,8 +591,17 @@ async function main() {
     const response = await handleMessage(message);
     sendMessage(response);
   } catch (error) {
-    log(`Error: ${error.message}`);
-    sendMessage({ action: 'error', message: error.message });
+    const errMsg = error?.message || String(error);
+    log(`Error: ${errMsg}`);
+    // Chrome often closes stdin when tearing down; writing after that makes
+    // Chrome report "Native host has exited" instead of a clean disconnect.
+    if (errMsg !== 'stdin closed') {
+      try {
+        sendMessage({ action: 'error', message: errMsg });
+      } catch (_sendErr) {
+        log(`Failed to send error response: ${_sendErr?.message || _sendErr}`);
+      }
+    }
   }
 
   process.exit(0);

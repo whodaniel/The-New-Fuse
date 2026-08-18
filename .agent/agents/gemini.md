@@ -1,15 +1,29 @@
 ---
+category: Engineering
+domain: orchestration
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: gemini
-display_name: "Google Gemini CLI"
-description: "Google's advanced multimodal AI assistant accessible through CLI interface. Provides real-time web access, multimodal processing, and advanced reasoning capabilities."
-agent_type: external
-tools: [Bash, WebFetch, WebSearch]
+description: Google's advanced multimodal AI assistant accessible through CLI interface.
+  Provides real-time web access, multimodal processing, and advanced reasoning capabilities.
+version: 2.5-pro
+display_name: Google Gemini CLI
+author: Google
 color: Blue
-version: "2.5-pro"
+agent_type: external
 status: active
 complexity_level: advanced
-category: "external-llm"
-author: "Google"
 ---
 
 # Purpose

@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Universal Timeline Protocol (UTP) - v1.0
 
 **Project:** The New Fuse (TNF) **Status:** Initial Draft (Inspired by
@@ -78,4 +81,4 @@ protocol's utility in "Living Documentation."
 
 ---
 
-_Drafted by TNF Master Orchestrator (Antigravity)_
+_Drafted by TNF CLI (Antigravity platform surface) — baton = master-clock_

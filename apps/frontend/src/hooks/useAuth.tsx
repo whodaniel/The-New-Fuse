@@ -1,22 +1,40 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
-import { API_ENDPOINTS } from '../config/api';
+import { API_BASE, API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
+import {
+  clearTokens,
+  getAccessToken,
+  persistAuthPayload,
+  persistTokens,
+  stashDeepLinkNext,
+  validateAuthSession,
+} from '../services/authSession';
+import { bootstrapUserSessionFactors } from '../services/userSessionFactors';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const AUTH_TOKEN_KEY = 'auth_token';
 const REQUEST_TIMEOUT_MS = 15_000;
+
+export class AuthTransientError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'AuthTransientError';
+    this.status = status;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Token helpers
 // ---------------------------------------------------------------------------
 
-const getAuthToken = (): string | null => localStorage.getItem(AUTH_TOKEN_KEY);
-const setAuthToken = (token: string) => localStorage.setItem(AUTH_TOKEN_KEY, token);
-const clearAuthToken = () => localStorage.removeItem(AUTH_TOKEN_KEY);
+const getAuthToken = (): string | null => getAccessToken();
+const setAuthToken = (token: string) => persistTokens({ accessToken: token });
+const clearAuthToken = () => clearTokens();
 
 // ---------------------------------------------------------------------------
 // Fetch with timeout – never waits longer than REQUEST_TIMEOUT_MS
@@ -95,6 +113,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isSlowLoading, setIsSlowLoading] = useState(false);
 
+  // Spine personalization factors as soon as identity is known (AI Assist / flywheels).
+  useEffect(() => {
+    if (user?.id) bootstrapUserSessionFactors(user);
+  }, [user]);
+
   // -----------------------------------------------------------------------
   // Core API helpers
   // -----------------------------------------------------------------------
@@ -110,6 +133,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
       if (!res.ok) {
+        if (res.status === 429) {
+          throw new AuthTransientError(
+            'Too many authentication requests. Please wait a moment and try again.',
+            429
+          );
+        }
         console.warn(`[Auth] fetchMe returned ${res.status}`);
         return null;
       }
@@ -142,6 +171,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const payload = unwrap(rawPayload);
 
         if (!res.ok) {
+          if (res.status === 429) {
+            throw new AuthTransientError(
+              'Too many authentication requests. Please wait a moment and try again.',
+              429
+            );
+          }
           const msg =
             extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
           console.warn('[Auth] exchangeSupabaseToken failed:', msg);
@@ -155,6 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         setAuthToken(appToken);
+        persistAuthPayload(payload as Record<string, unknown>);
 
         if (payload.user) {
           const u = toUser(payload.user);
@@ -215,6 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Server did not return an access token');
       }
 
+      persistAuthPayload(payload as Record<string, unknown>);
       setAuthToken(appToken);
 
       const rawUser = payload.user;
@@ -383,16 +420,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (!hasSupabaseConfig || !supabase) {
-        throw new Error('Supabase OAuth is not configured');
+        // Fall back to backend passport Google route when Supabase OAuth is unavailable.
+        const next = encodeURIComponent(
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/callback`
+            : '/auth/callback'
+        );
+        window.location.href = `${API_ENDPOINTS.AUTH.GOOGLE}?redirect=${next}`;
+        return { method: 'google_redirect' as const };
       }
 
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo:
-            window.location.hostname === 'localhost'
-              ? `${window.location.origin}/auth/callback`
-              : `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -405,7 +446,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const signInWithMagicLink = useCallback(async (email: string) => {
+  const signInWithGitHub = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      if (!hasSupabaseConfig || !supabase) {
+        // Fall back to backend passport GitHub route when Supabase OAuth is unavailable.
+        const next = encodeURIComponent(
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/callback`
+            : '/auth/callback'
+        );
+        window.location.href = `${API_BASE}/auth/github?redirect=${next}`;
+        return { method: 'github_redirect' as const };
+      }
+
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: 'read:user user:email',
+        },
+      });
+
+      if (oauthError) throw new Error(oauthError.message || 'GitHub sign-in failed');
+      return { method: 'github_redirect' as const };
+    } catch (err: any) {
+      setError(err?.message ?? 'GitHub sign-in failed');
+      setIsLoading(false);
+      throw err;
+    }
+  }, []);
+
+  const signInWithMagicLink = useCallback(async (email: string, nextPath?: string) => {
     setError(null);
     setIsLoading(true);
 
@@ -414,9 +488,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Supabase is not configured');
       }
 
+      if (nextPath) stashDeepLinkNext(nextPath);
+      const redirectTo = new URL(`${window.location.origin}/auth/callback`);
+      if (nextPath?.startsWith('/')) redirectTo.searchParams.set('next', nextPath);
+
       const { error: otpErr } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: { emailRedirectTo: redirectTo.toString() },
       });
 
       if (otpErr) throw new Error(otpErr.message || 'Failed to send magic link');
@@ -427,7 +505,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const forgotPassword = useCallback(async (email: string) => {
-    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+    if (!hasSupabaseConfig || !supabase) throw new Error('Password reset is unavailable');
 
     const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
@@ -437,7 +515,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetPassword = useCallback(async (_token: string, password: string) => {
-    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+    if (!hasSupabaseConfig || !supabase) throw new Error('Password reset is unavailable');
 
     const { error: updateErr } = await supabase.auth.updateUser({ password });
     if (updateErr) throw new Error(updateErr.message || 'Failed to reset password');
@@ -446,24 +524,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSSOCallback = useCallback(
     async (_provider: string, _code: string, _state?: string | null) => {
-      if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+      if (!hasSupabaseConfig || !supabase) {
+        throw new Error('SSO authentication callback requires configured Supabase client');
+      }
 
       const url = typeof window !== 'undefined' ? new URL(window.location.href) : null;
       const code = url?.searchParams.get('code') ?? _code ?? '';
       let accessToken = '';
 
-      if (code) {
+      // detectSessionInUrl may already have exchanged the PKCE code during
+      // client init. Prefer an existing session before attempting a second exchange.
+      {
+        const { data: existing } = await supabase.auth.getSession();
+        accessToken = existing?.session?.access_token ?? '';
+      }
+
+      if (!accessToken && code) {
         const { data, error: codeErr } = await supabase.auth.exchangeCodeForSession(code);
-        if (codeErr) throw new Error(codeErr.message || 'Failed to exchange OAuth code');
-        accessToken = data?.session?.access_token ?? '';
-      } else if (url) {
+        if (codeErr) {
+          // Code may already have been consumed by detectSessionInUrl — re-check session.
+          const { data: afterErr } = await supabase.auth.getSession();
+          accessToken = afterErr?.session?.access_token ?? '';
+          if (!accessToken) {
+            throw new Error(codeErr.message || 'Failed to exchange OAuth code');
+          }
+        } else {
+          accessToken = data?.session?.access_token ?? '';
+        }
+      } else if (!accessToken && url) {
         const hashParams = new URLSearchParams(
           url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
         );
         accessToken = hashParams.get('access_token') ?? '';
       }
 
-      // Poll for session if not yet available
+      // Poll for session if not yet available (race with detectSessionInUrl)
       if (!accessToken) {
         for (let i = 0; i < 10; i++) {
           const { data } = await supabase.auth.getSession();
@@ -530,16 +625,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const storedToken = getAuthToken();
         if (storedToken) {
           console.log('[Auth] Found stored token, validating…');
-          const u = await fetchMe(storedToken);
-          if (cancelled) return;
-          if (u?.id) {
-            console.log('[Auth] ✓ Stored token is valid');
-            setUser(u);
-            setIsLoading(false);
-            return;
+          try {
+            const u = await fetchMe(storedToken);
+            if (cancelled) return;
+            if (u?.id) {
+              console.log('[Auth] ✓ Stored token is valid');
+              setUser(u);
+              setIsLoading(false);
+              return;
+            }
+            console.log('[Auth] ✗ Stored token is invalid, clearing');
+            clearAuthToken();
+          } catch (err) {
+            if (cancelled) return;
+            if (err instanceof AuthTransientError) {
+              console.warn('[Auth] Token validation rate-limited — keeping stored session');
+              setError(err.message);
+              setIsLoading(false);
+              return;
+            }
+            throw err;
           }
-          console.log('[Auth] ✗ Stored token is invalid, clearing');
-          clearAuthToken();
         }
 
         // 2. Check for a Supabase session
@@ -570,6 +676,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               console.log('[Auth] No active Supabase session');
             }
           } catch (err: any) {
+            if (err instanceof AuthTransientError) {
+              console.warn('[Auth] Supabase exchange rate-limited — keeping session for retry');
+              setError(err.message);
+              if (!cancelled) setIsLoading(false);
+              return;
+            }
             console.warn('[Auth] Supabase session check failed:', err.message);
           }
         }
@@ -578,6 +690,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!cancelled) {
           console.log('[Auth] ✓ Bootstrap complete – no active session');
           setUser(null);
+          void validateAuthSession();
         }
       } catch (err) {
         console.error('[Auth] Bootstrap error:', err);
@@ -586,6 +699,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setIsLoading(false);
           clearTimeout(slowLoadingTimer);
           clearTimeout(forceStopLoadingTimer);
+          void validateAuthSession();
         }
       }
     };
@@ -611,6 +725,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       register,
       signInWithGoogle,
+      signInWithGitHub,
       signInWithMagicLink,
       forgotPassword,
       resetPassword,
@@ -621,9 +736,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [
       user,
       isLoading,
+      isSlowLoading,
       login,
       register,
       signInWithGoogle,
+      signInWithGitHub,
       signInWithMagicLink,
       forgotPassword,
       resetPassword,

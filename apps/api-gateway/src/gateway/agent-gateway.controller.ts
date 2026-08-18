@@ -85,7 +85,7 @@ export class AgentGatewayController {
     @Res() res: Response
   ) {
     try {
-      // Route to agents service (port 3001) - Needs /api prefix as defined in its main.ts
+      // Upstream Nest API (apps/api on :3002 locally) — never the gateway itself.
       const primaryResponse = await this.proxyService.proxyRequest(
         'agents',
         '/api/agents',

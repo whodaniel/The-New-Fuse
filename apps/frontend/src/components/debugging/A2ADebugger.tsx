@@ -1,19 +1,19 @@
 // A2A Debugger Component - Real-time debugging interface for multi-agent communication
 // Provides comprehensive debugging tools with message tracing, conversation analysis, and real-time monitoring
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-
+import { authFetch } from '@/utils/authToken';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 // Interfaces matching backend
@@ -103,7 +103,6 @@ interface DebugFilter {
   enabled: boolean;
 }
 
-
 // ⚡ Bolt: Wrapped MessageTraceRow in React.memo to prevent O(n) re-renders
 // of the entire message list on every new message in the event stream.
 const MessageTraceRow = React.memo<{
@@ -114,70 +113,84 @@ const MessageTraceRow = React.memo<{
   formatLatency: (latency?: number) => string;
   analyzeMessage: (messageId: string) => void;
   setSelectedMessage: (message: A2ADebugMessage) => void;
-}>(({ message, getStatusIcon, getStatusColor, formatTimestamp, formatLatency, analyzeMessage, setSelectedMessage }) => {
-  return (
-    <Tr hover>
-      <Td>
-        <Tag
-          icon={getStatusIcon(message.status)}
-          label={message.status}
-          color={getStatusColor(message.status) as any}
-          size="small"
-        />
-      </Td>
-      <Td>{formatTimestamp(message.timestamp)}</Td>
-      <Td>{message.fromAgent}</Td>
-      <Td>{message.toAgent}</Td>
-      <Td>{message.messageType}</Td>
-      <Td>{formatLatency(message.performanceMetrics.totalLatency)}</Td>
-      <Td>
-        <Tag
-          label={message.priority}
-          color={message.priority <= 2 ? 'error' : message.priority <= 3 ? 'warning' : 'default'}
-          size="small"
-        />
-      </Td>
-      <Td>
-        <Tooltip title="Analyze Message">
-          <IconButton
+}>(
+  ({
+    message,
+    getStatusIcon,
+    getStatusColor,
+    formatTimestamp,
+    formatLatency,
+    analyzeMessage,
+    setSelectedMessage,
+  }) => {
+    return (
+      <Tr hover>
+        <Td>
+          <Tag
+            icon={getStatusIcon(message.status)}
+            label={message.status}
+            color={getStatusColor(message.status) as any}
             size="small"
-            onClick={() => analyzeMessage(message.messageId)}
-          >
-            <BugReportIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="View Details">
-          <IconButton
+          />
+        </Td>
+        <Td>{formatTimestamp(message.timestamp)}</Td>
+        <Td>{message.fromAgent}</Td>
+        <Td>{message.toAgent}</Td>
+        <Td>{message.messageType}</Td>
+        <Td>{formatLatency(message.performanceMetrics.totalLatency)}</Td>
+        <Td>
+          <Tag
+            label={message.priority}
+            color={message.priority <= 2 ? 'error' : message.priority <= 3 ? 'warning' : 'default'}
             size="small"
-            onClick={() => setSelectedMessage(message)}
-          >
-            <InfoIcon />
-          </IconButton>
-        </Tooltip>
-      </Td>
-    </Tr>
-  );
-});
+          />
+        </Td>
+        <Td>
+          <Tooltip title="Analyze Message">
+            <IconButton size="small" onClick={() => analyzeMessage(message.messageId)}>
+              <BugReportIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="View Details">
+            <IconButton size="small" onClick={() => setSelectedMessage(message)}>
+              <InfoIcon />
+            </IconButton>
+          </Tooltip>
+        </Td>
+      </Tr>
+    );
+  }
+);
 MessageTraceRow.displayName = 'MessageTraceRow';
 
 // Utility functions hoisted out of component to maintain stable references for React.memo
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case 'processed': return <CheckCircleIcon color="success" />;
-    case 'failed': return <ErrorIcon color="error" />;
-    case 'timeout': return <WarningIcon color="warning" />;
-    case 'sent': return <MessageIcon color="info" />;
-    default: return <InfoIcon />;
+    case 'processed':
+      return <CheckCircleIcon color="success" />;
+    case 'failed':
+      return <ErrorIcon color="error" />;
+    case 'timeout':
+      return <WarningIcon color="warning" />;
+    case 'sent':
+      return <MessageIcon color="info" />;
+    default:
+      return <InfoIcon />;
   }
 };
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'processed': return 'success';
-    case 'failed': return 'error';
-    case 'timeout': return 'warning';
-    case 'sent': return 'info';
-    default: return 'default';
+    case 'processed':
+      return 'success';
+    case 'failed':
+      return 'error';
+    case 'timeout':
+      return 'warning';
+    case 'sent':
+      return 'info';
+    default:
+      return 'default';
   }
 };
 
@@ -225,7 +238,7 @@ const A2ADebugger: React.FC = () => {
     if (activeSession && realTimeUpdates) {
       connectToRealTimeUpdates(activeSession.id);
     }
-    
+
     return () => {
       disconnectRealTimeUpdates();
     };
@@ -233,12 +246,12 @@ const A2ADebugger: React.FC = () => {
 
   const connectToRealTimeUpdates = (sessionId: string) => {
     disconnectRealTimeUpdates();
-    
+
     eventSourceRef.current = new EventSource(`/api/debugging/sessions/${sessionId}/stream`);
-    
+
     eventSourceRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
+
       switch (data.type) {
         case 'messageCapture':
           handleNewMessage(data.message);
@@ -251,7 +264,7 @@ const A2ADebugger: React.FC = () => {
           break;
       }
     };
-    
+
     eventSourceRef.current.onerror = () => {
       console.error('Real-time connection error');
       setTimeout(() => connectToRealTimeUpdates(sessionId), 5000); // Retry after 5 seconds
@@ -266,12 +279,12 @@ const A2ADebugger: React.FC = () => {
   };
 
   const handleNewMessage = (message: A2ADebugMessage) => {
-    setCapturedMessages(prev => [...prev, message].slice(-1000)); // Keep last 1000 messages
+    setCapturedMessages((prev) => [...prev, message].slice(-1000)); // Keep last 1000 messages
   };
 
   const handleConversationUpdate = (conversation: ConversationTrace) => {
-    setConversations(prev => {
-      const index = prev.findIndex(c => c.id === conversation.id);
+    setConversations((prev) => {
+      const index = prev.findIndex((c) => c.id === conversation.id);
       if (index >= 0) {
         const newConversations = [...prev];
         newConversations[index] = conversation;
@@ -282,8 +295,8 @@ const A2ADebugger: React.FC = () => {
   };
 
   const handleAgentUpdate = (agent: AgentDebugInfo) => {
-    setAgents(prev => {
-      const index = prev.findIndex(a => a.id === agent.id);
+    setAgents((prev) => {
+      const index = prev.findIndex((a) => a.id === agent.id);
       if (index >= 0) {
         const newAgents = [...prev];
         newAgents[index] = agent;
@@ -296,7 +309,7 @@ const A2ADebugger: React.FC = () => {
   // API calls
   const loadDebugSessions = async () => {
     try {
-      const response = await fetch('/api/debugging/sessions');
+      const response = await authFetch('/api/debugging/sessions');
       const sessions = await response.json();
       setDebugSessions(sessions);
     } catch (error) {
@@ -306,7 +319,7 @@ const A2ADebugger: React.FC = () => {
 
   const loadAgents = async () => {
     try {
-      const response = await fetch('/api/debugging/agents');
+      const response = await authFetch('/api/debugging/agents');
       const agentList = await response.json();
       setAgents(agentList);
     } catch (error) {
@@ -316,7 +329,7 @@ const A2ADebugger: React.FC = () => {
 
   const createDebugSession = async () => {
     try {
-      const response = await fetch('/api/debugging/sessions', {
+      const response = await authFetch('/api/debugging/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -329,7 +342,7 @@ const A2ADebugger: React.FC = () => {
           },
         }),
       });
-      
+
       const result = await response.json();
       if (result.sessionId) {
         await loadDebugSessions();
@@ -344,11 +357,11 @@ const A2ADebugger: React.FC = () => {
 
   const startCapturing = async (sessionId: string) => {
     try {
-      await fetch(`/api/debugging/sessions/${sessionId}/active`, { method: 'PUT' });
+      await authFetch(`/api/debugging/sessions/${sessionId}/active`, { method: 'PUT' });
       setIsCapturing(true);
-      
+
       // Load session details
-      const session = debugSessions.find(s => s.id === sessionId);
+      const session = debugSessions.find((s) => s.id === sessionId);
       if (session) {
         setActiveSession(session);
         loadSessionMessages(sessionId);
@@ -360,9 +373,9 @@ const A2ADebugger: React.FC = () => {
 
   const stopCapturing = async () => {
     if (!activeSession) return;
-    
+
     try {
-      await fetch(`/api/debugging/sessions/${activeSession.id}/stop`, { method: 'PUT' });
+      await authFetch(`/api/debugging/sessions/${activeSession.id}/stop`, { method: 'PUT' });
       setIsCapturing(false);
       setActiveSession(null);
       disconnectRealTimeUpdates();
@@ -373,7 +386,7 @@ const A2ADebugger: React.FC = () => {
 
   const loadSessionMessages = async (sessionId: string) => {
     try {
-      const response = await fetch(`/api/debugging/sessions/${sessionId}/messages`);
+      const response = await authFetch(`/api/debugging/sessions/${sessionId}/messages`);
       const data = await response.json();
       setCapturedMessages(data.messages);
     } catch (error) {
@@ -383,9 +396,9 @@ const A2ADebugger: React.FC = () => {
 
   const exportSession = async (sessionId: string) => {
     try {
-      const response = await fetch(`/api/debugging/sessions/${sessionId}/export`);
+      const response = await authFetch(`/api/debugging/sessions/${sessionId}/export`);
       const data = await response.json();
-      
+
       // Download as JSON file
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -401,12 +414,12 @@ const A2ADebugger: React.FC = () => {
 
   const analyzeMessage = useCallback(async (messageId: string) => {
     try {
-      const response = await fetch(`/api/debugging/messages/${messageId}/analyze`, {
+      const response = await authFetch(`/api/debugging/messages/${messageId}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ includeRecommendations: true }),
       });
-      
+
       const analysis = await response.json();
       console.log('Message analysis:', analysis);
       // Could show analysis in a dialog or update UI
@@ -415,12 +428,10 @@ const A2ADebugger: React.FC = () => {
     }
   }, []);
 
-
-
   // Chart data preparation
   const prepareLatencyChart = () => {
     return capturedMessages
-      .filter(msg => msg.performanceMetrics.totalLatency)
+      .filter((msg) => msg.performanceMetrics.totalLatency)
       .slice(-50) // Last 50 messages
       .map((msg, index) => ({
         index,
@@ -430,10 +441,13 @@ const A2ADebugger: React.FC = () => {
   };
 
   const prepareMessageTypeChart = () => {
-    const typeCounts = capturedMessages.reduce((acc, msg) => {
-      acc[msg.messageType] = (acc[msg.messageType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const typeCounts = capturedMessages.reduce(
+      (acc, msg) => {
+        acc[msg.messageType] = (acc[msg.messageType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return Object.entries(typeCounts).map(([type, count]) => ({
       messageType: type,
@@ -477,9 +491,7 @@ const A2ADebugger: React.FC = () => {
                 <Text variant="h6" color="textSecondary">
                   Active Session
                 </Text>
-                <Text variant="h5">
-                  {activeSession ? activeSession.name : 'None'}
-                </Text>
+                <Text variant="h5">{activeSession ? activeSession.name : 'None'}</Text>
               </Box>
             </SimpleGrid>
             <SimpleGrid item xs={12} sm={3}>
@@ -499,9 +511,7 @@ const A2ADebugger: React.FC = () => {
                 <Text variant="h6" color="textSecondary">
                   Messages Captured
                 </Text>
-                <Text variant="h5">
-                  {capturedMessages.length}
-                </Text>
+                <Text variant="h5">{capturedMessages.length}</Text>
               </Box>
             </SimpleGrid>
             <SimpleGrid item xs={12} sm={3}>
@@ -509,9 +519,7 @@ const A2ADebugger: React.FC = () => {
                 <Text variant="h6" color="textSecondary">
                   Active Agents
                 </Text>
-                <Text variant="h5">
-                  {agents.filter(a => a.status === 'online').length}
-                </Text>
+                <Text variant="h5">{agents.filter((a) => a.status === 'online').length}</Text>
               </Box>
             </SimpleGrid>
           </SimpleGrid>
@@ -528,7 +536,7 @@ const A2ADebugger: React.FC = () => {
                 <Select
                   value={activeSession?.id || ''}
                   onChange={(e) => {
-                    const session = debugSessions.find(s => s.id === e.target.value);
+                    const session = debugSessions.find((s) => s.id === e.target.value);
                     setActiveSession(session || null);
                   }}
                 >
@@ -575,11 +583,7 @@ const A2ADebugger: React.FC = () => {
                 >
                   Export
                 </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<RefreshIcon />}
-                  onClick={loadDebugSessions}
-                >
+                <Button variant="outlined" startIcon={<RefreshIcon />} onClick={loadDebugSessions}>
                   Refresh
                 </Button>
               </Box>
@@ -649,9 +653,7 @@ const A2ADebugger: React.FC = () => {
                         color={conversation.status === 'active' ? 'success' : 'default'}
                         size="small"
                       />
-                      <Text variant="body1">
-                        {conversation.participants.join(' ↔ ')}
-                      </Text>
+                      <Text variant="body1">{conversation.participants.join(' ↔ ')}</Text>
                       <Text variant="body2" color="textSecondary" sx={{ ml: 'auto' }}>
                         {conversation.summary.totalMessages} messages
                       </Text>
@@ -720,30 +722,22 @@ const A2ADebugger: React.FC = () => {
                         <Text variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                           Type: {agent.type}
                         </Text>
-                        
+
                         <Text variant="subtitle2" sx={{ mb: 1 }}>
                           Message Statistics
                         </Text>
                         <SimpleGrid container columns={1} sx={{ mb: 2 }}>
                           <SimpleGrid item xs={6}>
-                            <Text variant="body2">
-                              Sent: {agent.messageStats.sent}
-                            </Text>
+                            <Text variant="body2">Sent: {agent.messageStats.sent}</Text>
                           </SimpleGrid>
                           <SimpleGrid item xs={6}>
-                            <Text variant="body2">
-                              Received: {agent.messageStats.received}
-                            </Text>
+                            <Text variant="body2">Received: {agent.messageStats.received}</Text>
                           </SimpleGrid>
                           <SimpleGrid item xs={6}>
-                            <Text variant="body2">
-                              Processed: {agent.messageStats.processed}
-                            </Text>
+                            <Text variant="body2">Processed: {agent.messageStats.processed}</Text>
                           </SimpleGrid>
                           <SimpleGrid item xs={6}>
-                            <Text variant="body2">
-                              Failed: {agent.messageStats.failed}
-                            </Text>
+                            <Text variant="body2">Failed: {agent.messageStats.failed}</Text>
                           </SimpleGrid>
                         </SimpleGrid>
 
@@ -852,7 +846,12 @@ const A2ADebugger: React.FC = () => {
       </Card>
 
       {/* Create Session Dialog */}
-      <Modal open={createSessionDialog} onClose={() => setCreateSessionDialog(false)} maxWidth="sm" fullWidth>
+      <Modal
+        open={createSessionDialog}
+        onClose={() => setCreateSessionDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <ModalHeader>Create New Debug Session</ModalHeader>
         <ModalBody>
           <Input
@@ -901,7 +900,7 @@ const A2ADebugger: React.FC = () => {
             <Text variant="subtitle1" sx={{ mb: 2 }}>
               Message ID: {selectedMessage.messageId}
             </Text>
-            
+
             <SimpleGrid container columns={2}>
               <SimpleGrid item xs={12} sm={6}>
                 <Text variant="subtitle2">Basic Information</Text>
@@ -911,7 +910,7 @@ const A2ADebugger: React.FC = () => {
                 <Text variant="body2">Priority: {selectedMessage.priority}</Text>
                 <Text variant="body2">Status: {selectedMessage.status}</Text>
               </SimpleGrid>
-              
+
               <SimpleGrid item xs={12} sm={6}>
                 <Text variant="subtitle2">Performance Metrics</Text>
                 <Text variant="body2">
@@ -927,7 +926,7 @@ const A2ADebugger: React.FC = () => {
                   Bandwidth: {selectedMessage.performanceMetrics.bandwidth} bytes
                 </Text>
               </SimpleGrid>
-              
+
               <SimpleGrid item xs={12}>
                 <Text variant="subtitle2">Payload</Text>
                 <Box sx={{ p: 2, bgcolor: 'grey.50', maxHeight: 200, overflow: 'auto' }}>
@@ -936,7 +935,7 @@ const A2ADebugger: React.FC = () => {
                   </pre>
                 </Box>
               </SimpleGrid>
-              
+
               {selectedMessage.metadata.errors.length > 0 && (
                 <SimpleGrid item xs={12}>
                   <Text variant="subtitle2">Errors</Text>

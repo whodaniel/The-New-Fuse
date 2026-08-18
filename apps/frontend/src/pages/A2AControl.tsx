@@ -71,7 +71,7 @@ const MessageListItem = React.memo<{ msg: A2AMessage }>(({ msg }) => (
           ? 'bg-emerald-500/10 text-emerald-400'
           : msg.status === 'failed'
             ? 'bg-red-500/10 text-red-400'
-            : 'bg-transparent0/10 text-gray-400'
+            : 'bg-gray-500/10 text-gray-400'
       }`}
     >
       {msg.status}
@@ -282,7 +282,7 @@ export const A2AControl: React.FC = () => {
                           ? 'bg-emerald-500/10 text-emerald-400'
                           : msg.status === 'failed'
                             ? 'bg-red-500/10 text-red-400'
-                            : 'bg-transparent0/10 text-gray-400'
+                            : 'bg-gray-500/10 text-gray-400'
                       }`}
                     >
                       {msg.status}
@@ -380,7 +380,7 @@ const ControlToggle: React.FC<{ label: string; active?: boolean }> = ({ label, a
       className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-transparent/10'}`}
     >
       <div
-        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-transparent0'}`}
+        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-gray-500'}`}
       />
     </div>
   </div>

@@ -14,7 +14,11 @@ export {
 
 // Services and adapters
 export { A2AService } from './a2a.service.js';
-export { FederatedIdentityService } from './federated-identity.service.js';
+export {
+  FEDERATED_BASE58_ALPHABET,
+  FederatedIdentityService,
+  encodeFederatedBase58,
+} from './federated-identity.service.js';
 export { PointerResolverService } from './pointer-resolver.service.js';
 export { A2ARedisAdapter } from './redis-adapter.js';
 export {

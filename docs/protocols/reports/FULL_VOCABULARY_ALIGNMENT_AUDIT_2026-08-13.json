@@ -1,0 +1,126 @@
+{
+  "audit_id": "FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13",
+  "timestamp": "2026-08-13T06:29:48.796Z",
+  "operator_session": "agent:local-subdirector:session:2026-08-13T06:29:48.796Z",
+  "scope": "Full codebase vocabulary sweep across all 11 canonical surfaces (post-Phase-9)",
+  "verdict": "FULLY_CONSISTENT",
+  "reverified_timestamp": "2026-08-13T14:30:00Z",
+  "resolution_commit": "0a811ca5e0",
+  "inconsistencies_found": 7,
+  "inconsistencies_resolved": 7,
+  "inconsistencies": [
+    {
+      "id": "INC-1",
+      "title": "CLI Role Vocabulary Extends Beyond DACC-v1 Hierarchy",
+      "severity": "HIGH",
+      "layer": "static_vocabulary",
+      "details": "AGENT_ROLE_TRAITS in cli.ts:3400-3407 defines 7 roles (director, orchestrator, broker, worker, participant, coordinator, bridge). DACC-v1 hierarchy (ROLE_DEFINITIONS.md:6-23) defines only 5. Broker's isWorkerAgent() only recognizes 5 canonical roles.",
+      "impact": "Agents registered with coordinator/bridge daccRole have no authority mapping; treated as generic workers.",
+      "remediation": "Either add coordinator/bridge to DACC-v1 with authority definitions, or remove from CLI traits.",
+      "evidence": [
+        "cli.ts:3400-3407",
+        "ROLE_DEFINITIONS.md:6-23",
+        "broker-agent.ts:1031-1055"
+      ]
+    },
+    {
+      "id": "INC-2",
+      "title": "AGENT_STATUS_LEDGER Missing 5 of 6 Phase-8 Seeded Agents",
+      "severity": "MEDIUM",
+      "layer": "documentation_contract",
+      "details": "Phase 8 added STANDING-BY rows for 6 seeded agents. Only opencode-cli-agent appears in ledger (line 298). Missing: kilo-cli, pi-coding-agent, claude-code, tnf-hermes, jules.",
+      "impact": "Human-visible standing-by record incomplete; operators cannot see full seeded fleet.",
+      "remediation": "Append 5 missing STANDING-BY entries with canonicalEntityId, registration timestamp, status.",
+      "evidence": ["AGENT_STATUS_LEDGER.md grep results"]
+    },
+    {
+      "id": "INC-3",
+      "title": "ROLE_DEFINITIONS.md Defines canonicalEntityId Incorrectly",
+      "severity": "HIGH",
+      "layer": "documentation_contract",
+      "details": "Line 40: 'canonicalEntityId: Registry row identifier (integer PK)'. Actual format is hierarchical string TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE.",
+      "impact": "Developers confuse hierarchical federated ID with internal DB primary key.",
+      "remediation": "Correct line 40 to describe hierarchical TNF identity format with example.",
+      "evidence": [
+        "ROLE_DEFINITIONS.md:40",
+        "identity.ts:38",
+        "identity.ts:52",
+        "agent-registry-bridge.ts:174-179"
+      ]
+    },
+    {
+      "id": "INC-4",
+      "title": "ROLE_DEFINITIONS.md Missing idNumber Band Allocation Section",
+      "severity": "MEDIUM",
+      "layer": "documentation_contract",
+      "details": "seed-agent-registry.ts:54-58 documents band allocation table referencing 'See ROLE_DEFINITIONS.md'. ROLE_DEFINITIONS.md has no such section. Also missing vector_id disambiguation.",
+      "impact": "Single source of truth for ID bands is seeder code, not canonical definitions doc. 2026-08-09 collision fix not reflected in docs.",
+      "remediation": "Add 'Provisional edge IDs → idNumber band allocation' section with three-band table and vector_id note.",
+      "evidence": [
+        "seed-agent-registry.ts:54-58",
+        "federated-id-band-collision-fix-2026-08-09.md"
+      ]
+    },
+    {
+      "id": "INC-5",
+      "title": "FEDERATED_BASE58_ALPHABET Duplicated Across 5 Files",
+      "severity": "MEDIUM",
+      "layer": "emit_point",
+      "details": "Canonical Base58 alphabet defined identically in 5 files: a2a-core (canonical), TranscriptProcessorV2, seed-agent-registry, federation-identity.ts, federation-protocol.cjs. No single import; drift risk.",
+      "impact": "If alphabet changes, 5 files must update in lock-step. Current comments acknowledge but no enforcement.",
+      "remediation": "Export from a2a-core as single source; update 4 consumers to import; add CI check.",
+      "evidence": ["grep FEDERATED_BASE58_ALPHABET across 5 locations"]
+    },
+    {
+      "id": "INC-6",
+      "title": "qualities Deprecated Alias Still Used in Registry Stats",
+      "severity": "LOW",
+      "layer": "schema",
+      "details": "agent-registry.service.ts:337 uses a.qualities for getStats().withQualities. DB column renamed to traits in migration 0009. In-memory Agent keeps qualities as deprecated back-compat.",
+      "impact": "Stats may be inaccurate if qualities not populated on in-memory agents.",
+      "remediation": "Update getStats() to check canonical traits field with fallback to qualities, or remove qualities entirely.",
+      "evidence": [
+        "agents.ts:216",
+        "agent-registry.service.ts:61",
+        "agent-registry.service.ts:250-252",
+        "agent-registry.service.ts:337"
+      ]
+    },
+    {
+      "id": "INC-7",
+      "title": "vector_id Namespace Not Documented in ROLE_DEFINITIONS.md",
+      "severity": "LOW",
+      "layer": "documentation_contract",
+      "details": "Phase 9 FOLLOWUP-1: vector_id (ID#:Base58(hash[:8])) shares ID#: prefix with idNumber but encodes hash bytes. KNOWLEDGE_TREE.json uses vector_id. ROLE_DEFINITIONS.md has no mention.",
+      "impact": "Consumers seeing ID#: cannot distinguish sequential idNumber from hash-derived vector_id.",
+      "remediation": "Add vector_id disambiguation to ROLE_DEFINITIONS.md Federated ID section. Consider migrating to VEC#: prefix.",
+      "evidence": [
+        "seed-agent-registry.ts:347-349",
+        "FEDERATED_ID_ENCODING_AUDIT_2026-06-14.md"
+      ]
+    }
+  ],
+  "consistent_areas": [
+    "PLATFORM_TAXONOMY unification (14 platforms)",
+    "Drizzle schema: daccRoleEnum (5), workerAction, traits, federation",
+    "relay-core in-memory registry: daccRole, workerAction, traits, federation",
+    "Bridge emits canonicalEntityId via buildCanonicalEntityId",
+    "Validator round-trip PASS",
+    "TranscriptProcessorV2/V3/V4 share generateFederatedIdNumber",
+    "Provisional ID band widened to 1e9 (collision-free)",
+    "Seeder uses disjoint 2e9-3e9 band",
+    "All type-check / drizzle:check / Turn Zero gates PASS"
+  ],
+  "verification_gates": {
+    "turn_zero_authority": "PASS",
+    "local_runtime_boundary": "PASS",
+    "database_type_check": "PASS",
+    "database_drizzle_check": "PASS",
+    "relay_core_type_check": "PASS",
+    "tnf_cli_type_check": "PASS",
+    "gemini_browser_skill_type_check": "PASS",
+    "validator_round_trip": "PASS"
+  },
+  "recommended_next_move": "Phase 10 Alignment Pass COMPLETED. All 7 INCs resolved in commit 0a811ca5e0. 8 gap areas remain for future sweeps.",
+  "companion_markdown": "docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md"
+}

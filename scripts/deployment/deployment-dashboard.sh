@@ -39,7 +39,8 @@ show_system_info() {
   echo -e "  Node Version: ${CYAN}$(node --version)${NC}"
   echo -e "  pnpm Version: ${CYAN}$(pnpm --version)${NC}"
 
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     echo -e "  CloudRuntime CLI:  ${GREEN}✓ Installed${NC}"
   else
     echo -e "  CloudRuntime CLI:  ${RED}✗ Not installed${NC}"
@@ -100,35 +101,30 @@ show_deployment_history() {
 }
 
 show_cloud_runtime_status() {
-  echo -e "${BOLD}${BLUE}CloudRuntime Services Status${NC}"
+  echo -e "${BOLD}${BLUE}Cloud Run Services Status${NC}"
   echo -e "${BLUE}$(printf '─%.0s' {1..80})${NC}"
 
-  if ! command -v cloud_runtime &>/dev/null; then
-    echo -e "  ${YELLOW}CloudRuntime CLI not installed${NC}"
+  if ! command -v gcloud &>/dev/null; then
+    echo -e "  ${YELLOW}gcloud CLI not installed (legacy cloud_runtime CLI is retired)${NC}"
     echo ""
     return
   fi
 
-  if ! cloud_runtime whoami &>/dev/null; then
-    echo -e "  ${YELLOW}Not authenticated with CloudRuntime${NC}"
+  if ! gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | head -n1 | grep -q '.'; then
+    echo -e "  ${YELLOW}gcloud not authenticated${NC}"
     echo ""
     return
   fi
 
-  if ! cloud_runtime status &>/dev/null; then
-    echo -e "  ${YELLOW}Not linked to a CloudRuntime project${NC}"
-    echo ""
-    return
-  fi
-
-  # Get CloudRuntime status
   local services=("api-gateway" "backend" "frontend" "api")
+  local project="${TNF_GCP_PROJECT_ID:-the-new-fuse-2025}"
+  local region="${TNF_GCP_REGION:-us-central1}"
 
   for service in "${services[@]}"; do
-    if cloud_runtime status --service "$service" &>/dev/null; then
-      echo -e "  ${GREEN}✓${NC} $service: ${GREEN}Running${NC}"
+    if gcloud run services describe "$service" --project="$project" --region="$region" &>/dev/null; then
+      echo -e "  ${GREEN}✓${NC} $service: ${GREEN}Found${NC}"
     else
-      echo -e "  ${RED}✗${NC} $service: ${RED}Not running${NC}"
+      echo -e "  ${RED}✗${NC} $service: ${RED}Not found${NC}"
     fi
   done
 
@@ -206,7 +202,7 @@ show_quick_actions() {
   echo -e "  ${BOLD}Deployment Commands:${NC}"
   echo -e "    ${CYAN}./scripts/deployment/deploy-automated.sh${NC}     - Full automated deployment"
   echo -e "    ${CYAN}./scripts/deployment/validate-deployment.sh${NC}  - Pre-deployment validation"
-  echo -e "    ${CYAN}./scripts/deployment/cloud_runtime-deploy.sh all${NC}   - Deploy all services to CloudRuntime"
+  echo -e "    ${CYAN}./scripts/deployment/gcp-deploy.sh${NC}   - Deploy all services to CloudRuntime"
   echo ""
   echo -e "  ${BOLD}Utility Commands:${NC}"
   echo -e "    ${CYAN}./scripts/deployment/smoke-tests.sh${NC}          - Run smoke tests"
@@ -214,9 +210,9 @@ show_quick_actions() {
   echo -e "    ${CYAN}./scripts/deployment/rollback.sh <id>${NC}        - Rollback deployment"
   echo ""
   echo -e "  ${BOLD}CloudRuntime Commands:${NC}"
-  echo -e "    ${CYAN}cloud_runtime status${NC}                                - Show CloudRuntime status"
-  echo -e "    ${CYAN}cloud_runtime logs --service <name>${NC}                 - View service logs"
-  echo -e "    ${CYAN}cloud_runtime open${NC}                                  - Open CloudRuntime dashboard"
+  echo -e "    ${CYAN}gcloud run services list${NC}                                - Show CloudRuntime status"
+  echo -e "    ${CYAN}gcloud run services logs read <name>${NC}                 - View service logs"
+  echo -e "    ${CYAN}open https://console.cloud.google.com/run${NC}                                  - Open CloudRuntime dashboard"
   echo ""
 }
 

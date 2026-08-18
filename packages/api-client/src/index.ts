@@ -10,57 +10,50 @@
 export {
   ApiClient,
   type ApiClientOptions,
+  type ApiError,
   type ApiResponse,
-  type ApiError
 } from './client/ApiClient.js';
 
 // Token storage exports
-export {
-  TokenStorage,
-  type TokenStorage as TokenStorageInterface
-} from './auth/TokenStorage.js';
+export { TokenStorage, type TokenStorage as TokenStorageInterface } from './auth/TokenStorage.js';
 
 // Base service exports
-export {
-  BaseService
-} from './services/BaseService.js';
+export { BaseService } from './services/BaseService.js';
 
 // Configuration exports
-export {
-  type ApiConfig
-} from './config/ApiConfig.js';
+export { type ApiConfig } from './config/ApiConfig.js';
 
 // Authentication service exports
 export {
   AuthService,
   createAuthService,
   type AuthResponse,
-  type UserData
+  type UserData,
 } from './services/auth.service.js';
 
 // Workflow service exports
 export {
+  WorkflowExecutionStatus,
   WorkflowService,
   createWorkflowService,
   type Workflow,
-  type WorkflowStep,
-  type WorkflowExecution,
-  type WorkflowStepExecution,
   type WorkflowCreateData,
+  type WorkflowExecution,
+  type WorkflowStep,
+  type WorkflowStepExecution,
   type WorkflowUpdateData,
-  WorkflowExecutionStatus
 } from './services/workflow.service.js';
 
 // Agent service exports
 export {
   AgentService,
+  AgentStatus,
   createAgentService,
   type Agent,
   type AgentCapability,
   type AgentCreateData,
-  type AgentUpdateData,
   type AgentExecutionResult,
-  AgentStatus
+  type AgentUpdateData,
 } from './services/agent.service.js';
 
 // User service exports
@@ -69,8 +62,19 @@ export {
   createUserService,
   type User,
   type UserProfile,
-  type UserUpdateData
+  type UserUpdateData,
 } from './services/user.service.js';
+
+// Backup service exports
+export {
+  BackupService,
+  createBackupService,
+  type BackupConfig,
+  type BackupResult,
+  type BackupSnapshot,
+  type StorageInventory,
+  type StorageItem,
+} from './services/BackupService.js';
 
 /**
  * Create a new API client with the given configuration
@@ -101,6 +105,6 @@ export async function createApiClient(config: {
     timeout,
     headers,
     tokenStorage,
-    ...options
+    ...options,
   });
 }

@@ -1,5 +1,7 @@
-# Dependencies
-node_modules/
+# Lineage audit workdirs and cold bundles (local only)
+docs/lineage/.audit-work/
+docs/lineage/bundles/*.bundle
+
 .pnpm-store/
 **/client_secret.json
 .pnp
@@ -27,6 +29,12 @@ out/
 **/*.d.ts
 **/*.d.ts.map
 !apps/poker-room/global.d.ts
+# Hand-written ambient declarations are source, not build output. The blanket
+# rule above hid them from every commit, so they never reached the split repo
+# (git archive HEAD skips them, so sync-repos.sh missed them too) and the build
+# failed there with TS2882/TS2305 while passing in every working copy.
+!**/css.d.ts
+!packages/contracts/scripts/hardhat-env.d.ts
 # **/*.js # Commented out: unsafe for mixed TS/JS projects
 # **/*.js.map # Commented out: unsafe for mixed TS/JS projects
 !**/*.config.js
@@ -37,6 +45,11 @@ out/
 
 # Environment variables
 .env
+.env.*
+!.env.example
+!**/.env.example
+!.env*.example
+.env*.bak
 .env.full-auto
 .env.local
 .env.openai
@@ -104,10 +117,22 @@ docs/project-management/*analysis*.md
 # Additional Private Data
 # Ignore private/runtime state but keep definition banks and pathway matrix.
 .agent/*
-!.agent/SYSTEM_PROMPT.md
 !.agent/agents/
 !.agent/agents/**
 !.agent/skills/
+# Tier-0 skill map. Generated, but tracked: agents load it at session start in a
+# fresh clone, before any build step can run.
+!.agent/SKILL_MANIFEST.md
+# Already tracked in HEAD and read as P1 by the context-frontloader skill, but
+# `.agent/*` shadowed it, so every edit needed `git add -f`. Allowlisted so the
+# rule matches what is actually versioned.
+# Git cannot re-include a file whose parent directory is excluded, so the
+# directory is un-ignored for traversal and its contents re-ignored immediately.
+# Without the middle line, allowlisting the directory would expose every other
+# runtime file in it (boot prompts, recovery axioms) to the next `git add -A`.
+!.agent/context/
+.agent/context/*
+!.agent/context/resource-map.md
 !.agent/skills/skill-management/
 !.agent/skills/skill-management/**
 !.agent/fleet/
@@ -121,6 +146,34 @@ apps/api/data/unified-task-ledger.json
 data/protocols/*.json
 data/protocols/*.jsonl
 data/protocols/*.md
+# Harness runtime artefacts (config/policy JSON + README stay tracked)
+data/harness/memory/entries.jsonl
+data/harness/trajectories/
+data/harness/compaction/
+data/harness/receipts/
+data/harness/host-compaction/
+# Exception: this one is POLICY, not runtime state. It is the authorization
+# registry for scripts/protocols/agent-self-edit-gate.cjs, and the gate cannot
+# run without it — which is exactly why that gate sat at zero call sites. The
+# chronological control plane vanished the same way (gitignored, unrecoverable
+# from git, every cron job exiting 0 for ~11 weeks). Policy that gates authority
+# must be reviewable in history. See
+# docs/protocols/reports/silent-failure-audit-2026-08-05.md.
+!data/protocols/agent-owned-docs.registry.json
+# Exception: the SYSTEM half of the process schedule. scope=system_framework
+# only — the platform's own cron, SUPER_ADMIN-owned, containing no operator
+# data (verified: no emails, home paths, credentials or names). It ships with
+# TNF and must be recoverable by any clone; when the merged registry was
+# gitignored and vanished, every job threw "not registered" and exited 0 for
+# ~11 weeks with nothing to restore from.
+#
+# The TENANT half deliberately lives OUTSIDE this repo, at
+# ~/.config/tnf/processes.json, so an operator's private automation is never
+# published. cron-jobs.registry.json and chronological-process-catalog.json
+# remain ignored: they are GENERATED from both stores by
+# scripts/protocols/build-process-registry.cjs and are reconstructible, not
+# authoritative.
+!data/protocols/system-processes.json
 docs/library/README.md
 docs/library/REGISTRY.md
 data/wiki-inbox/
@@ -140,6 +193,11 @@ cloudflare-sharedstate/accelerator/target/
 apps/external/cursor-watch-learn/output/
 scripts/cloud_runtime/openclaw-codex-tenants.json
 archive/junk/
+
+# Semantic pipeline: personal-data overlay + local build cache (system
+# artifacts in concordance_results/ stay tracked)
+concordance_results/user/
+concordance_results/.tnf-logo-96.png
 
 
 # OS
@@ -259,6 +317,14 @@ scripts/personal-archaeology/archaeology.sqlite*
 # Google MCP Server Credentials
 packages/google-docs-mcp-server/credentials.json
 packages/google-docs-mcp-server/token.json
+
+# tnf-browser extension bearer token.
+# Regenerated with crypto.randomBytes(32) on every server start
+# (packages/tnf-browser/index.js), so it must never be tracked — it churned a
+# fresh live secret into git on each automated commit. The source comment there
+# already assumed this file was ignored; it was not, because .gitignore has no
+# effect on files git is already tracking.
+packages/tnf-browser/extension/token.json
 packages/google-drive-mcp-server/credentials/
 packages/google-sheets-mcp-server/credentials.json
 
@@ -340,4 +406,146 @@ dump.rdb
 
 # Telegram bot credentials
 .env.tnf-telegram
-data/
+
+# Build artifacts
+node_modules/
+dist/
+build/
+*.br
+*.gz
+*.map
+# `!packages/*/dist/*.map` was removed 2026-08-05. It re-included sourcemaps that
+# `dist/` above already ignores, so those files stayed tracked while the hourly
+# `pnpm run clean` deleted them — producing a permanently dirty tree and 17,862
+# tracked build artifacts that git kept resurrecting. Build output is generated;
+# it is not source. Rebuild with `pnpm run build`.
+
+# Bundler cache
+.apps/
+.pnp/
+.pnp.js
+
+# TNF operational (auto-generated, should not be committed)
+.agent/runtime-logs/
+data/protocols/CHANGE_OWNERSHIP.jsonl
+data/protocols/chronological-process-catalog.json
+data/protocols/cron-jobs.*
+data/telegram/
+
+# External research repos (temporary clones, not part of main repo)
+apps/external/
+apps/virtual-library-blueprints/
+data/llm-provider-status.json
+.agent/runtime-logs/**/*.json
+# Build artifacts and caches
+packages/.turbo/
+packages/ap2-protocol/.turbo/
+packages/client/.turbo/
+packages/contracts/.turbo/
+
+# Dogfood test outputs
+dogfood-output/
+
+# TNF harness temp outputs
+tnf_out.txt
+tnf_verify_output.txt
+
+.agent/runtime-logs/qa-swarm-service/heartbeat.json
+.agent/test-reports/_rolling-summary.json
+.agent/testing-status.json
+apps/external/ai_instruction_research/tmp_prompt_repos/Prompt-Engineering-Guide
+apps/external/ai_instruction_research/tmp_skill_repos/1mcp-app__agent
+apps/external/gemini-cli-source
+apps/frontend/docs/audits/live-link-crawl.json
+apps/frontend/docs/audits/live-link-crawl.md
+docs/operations/tnf-full-auto-runs.jsonl
+docs/operations/tnf-full-auto-state.json
+
+# Never ignore this file. A bare `.gitignore` rule here made `git add -A` in the
+# open-runtime export skip the file, so public The-New-Fuse shipped with no
+# ignore rules at all (contents API 404). Ambient-decl exceptions above only
+# help if the published clone actually has this file.
+
+# Stale compiled output previously committed directly into src/ (see
+# packages/ui-consolidated cleanup) -- outputs belong in dist/, not src/.
+packages/ui-consolidated/src/**/*.js
+packages/ui-consolidated/src/**/*.js.map
+!packages/ui-consolidated/src/**/*.config.js
+# Nest tsc emit next to TypeScript sources. 245 untracked .js files here were
+# being counted as "operator confirmation" work; every one has a .ts sibling.
+apps/api/src/**/*.js
+apps/api/src/**/*.js.map
+apps/api/tsc_*.txt
+
+# Redis RDB snapshots and other runtime dumps
+temp-*.rdb
+*.rdb
+
+# Bearer token file for tnf-browser extension (rotate; pre-existing in history)
+packages/tnf-browser/extension/token.json
+
+
+# Build artifact exclusions (fix: dist/ negation pattern re-includes these)
+packages/contracts/cache/
+packages/mcp-concordance-server/dist/
+packages/types/.turbo/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/
+
+# Frontend Vite/Vitest cache (runtime artifacts)
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/*.json
+# Vite cache
+apps/frontend/node_modules/.vite/
+
+# API audit logs (runtime artifacts)
+apps/api/logs/*.json
+
+# Vite cache
+apps/frontend/node_modules/.vite/
+
+# Playwright / agent-browser auth state exports (secrets)
+**/playwright_state_*.json
+.tnf/agent-chrome-profile/
+
+# ── Process atlas: generated runtime snapshots ───────────────────────────────
+# These are regenerated locally by .verifier/generate-process-atlas.py and
+# capture live `pgrep -fl` command lines. The generator redacts credentials,
+# but a process snapshot of the operator's machine is runtime state, not
+# source — it does not belong in the tree. (.verifier is already in
+# ALWAYS_EXCLUDE in scripts/sync-repos.sh; this closes the private-repo side.)
+.verifier/process-atlas.payload.json
+.verifier/process-atlas.digest.md
+.verifier/process-atlas.verify.json
+.verifier/tnf-process-atlas.html
+
+# Cross-agent parity ledger — regenerated by `tnf parity audit` and by every
+# `tnf self-improvement run` cycle. Output, not source: tracking it would dirty
+# the working tree on every hourly full-auto cycle.
+docs/operations/parity/
+
+# Generated extension icons. Both extensions build these in `prebuild` via
+# generate-icons.cjs + scripts/generate-notification-icons.cjs, and their
+# `clean` scripts delete them by design. They were committed anyway, so the
+# hourly `pnpm run clean` cron destroyed 36 tracked files every hour and git
+# reported them as deletions — noise that twice made a genuine asset question
+# indistinguishable from routine churn. Verified 2026-08-05: deleting icons/
+# and running both generators reproduces every file byte-identical to HEAD.
+apps/chrome-extension/icons/
+apps/gemini-bridge-extension/icons/
+
+# M&A paperwork — sensitive business material with operator's real name.
+# Authoritative copies live at ~/.tnf/legal/sale/ (operator-local).
+# Public repo keeps only an index; full paperwork requires counsel review
+# and a non-public exchange. Same untrack pattern as the tnf-browser bearer
+# token fix (PR #74) and the apps/api env leak fix (commit 41f6f4d6a7).
+docs/legal/sale/*.md
+!docs/legal/sale/README.md
+
+# Receipts and codebase maps (auto-generated, keep uncommitted)
+codebase_tracker.json
+codebase_index.html
+docs/operations/tnf-action-receipts.jsonl

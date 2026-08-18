@@ -37,3 +37,49 @@ if (fs.existsSync(canvasModulePath)) {
 } else {
   log('Canvas module not found in node_modules. Skipping rebuild.');
 }
+
+/**
+ * Turn Zero frontload wiring.
+ *
+ * Until 2026-08-05 a local install left every agent runtime to discover Turn
+ * Zero on its own, which mostly meant not discovering it: of eight runtime
+ * context surfaces on a typical TNF machine, one carried the mandate. Per the
+ * Non-Temporal Proliferation Mandate this belongs in the installer.
+ *
+ * Default is REPORT-ONLY. This is a public repo, and `pnpm install` must never
+ * silently write to a stranger's ~/GEMINI.md or ~/.codex/AGENTS.md. Operators
+ * who want it wired automatically set TNF_AUTO_FRONTLOAD=1 (e.g. in
+ * .tnf.local.env, the documented home for machine-specific settings).
+ *
+ * Never fails the install: onboarding wiring is not a build dependency.
+ */
+function checkAgentFrontload() {
+  const script = path.join(__dirname, 'install-agent-frontload.cjs');
+  if (!fs.existsSync(script)) return;
+
+  const autoInstall = process.env.TNF_AUTO_FRONTLOAD === '1';
+  const args = autoInstall ? '' : ' --verify';
+  try {
+    const out = execSync(`node "${script}"${args}`, { encoding: 'utf8', stdio: 'pipe' });
+    const summary = out.split('\n').filter((l) => /file\(s\) changed|Claude Code /.test(l));
+    if (autoInstall) {
+      log('Agent frontload wiring installed.');
+      summary.forEach((l) => log(l.trim()));
+    } else {
+      log('Agent frontload audit (report-only):');
+      summary.forEach((l) => log(l.trim()));
+      log('To wire every runtime: node scripts/install-agent-frontload.cjs');
+      log('To do it automatically on install: set TNF_AUTO_FRONTLOAD=1 in .tnf.local.env');
+    }
+  } catch (error) {
+    // Exit 1 from the installer means "surfaces are unwired" — informational
+    // here, not a build failure. Surface it rather than swallowing it.
+    const out = `${error.stdout || ''}${error.stderr || ''}`;
+    const summary = out.split('\n').filter((l) => /file\(s\) changed|Claude Code |FAILED/.test(l));
+    log('Agent frontload: some runtimes are not wired for Turn Zero.');
+    summary.forEach((l) => log(l.trim()));
+    log('Fix with: node scripts/install-agent-frontload.cjs');
+  }
+}
+
+checkAgentFrontload();

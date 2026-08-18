@@ -23,9 +23,14 @@ export function useOperatorSynergy() {
     OperatorSynergyService.syncFromServices();
   }, []);
 
+  const rediscover = useCallback(async () => {
+    await OperatorSynergyService.rediscoverLocal();
+  }, []);
+
   return {
     state,
     refresh,
+    rediscover,
     unifiedAgents: state.unifiedAgents,
     topology: state.topology,
     activityLog: state.activityLog,

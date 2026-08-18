@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { AgentTemplate } from '@/types/resources';
@@ -303,9 +303,9 @@ export default function AgentTemplatesBrowser() {
                       <span>
                         by <span className="text-white">{selectedTemplate.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
+                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
                       <span>v{selectedTemplate.version}</span>
-                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
+                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
                       <span
                         className={`px-2 py-0.5 rounded-full border ${getTypeColor(selectedTemplate.templateType)} text-xs`}
                       >

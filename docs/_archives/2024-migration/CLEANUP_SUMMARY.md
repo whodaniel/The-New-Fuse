@@ -122,7 +122,7 @@ docs/
 - [ ] Verify build: `pnpm run build`
 
 ### Short-term (This Week)
-See [CODEBASE_CONSOLIDATION_ANALYSIS.md](CODEBASE_CONSOLIDATION_ANALYSIS.md) for:
+See [CODEBASE_CONSOLIDATION_ANALYSIS.md](../../status-reports/CODEBASE_CONSOLIDATION_ANALYSIS.md) for:
 - Consolidate utility packages (common → shared)
 - Merge feature packages into single `features/`
 - Audit `tnf-core` package
@@ -134,8 +134,8 @@ See [CODEBASE_CONSOLIDATION_ANALYSIS.md](CODEBASE_CONSOLIDATION_ANALYSIS.md) for
 
 ## 📖 References
 
-- **Migration History:** [docs/project-management/migration-history.md](docs/project-management/migration-history.md)
-- **Analysis Report:** [CODEBASE_CONSOLIDATION_ANALYSIS.md](CODEBASE_CONSOLIDATION_ANALYSIS.md)
+- **Migration History:** [docs/project-management/migration-history.md](../../project-management/migration-history.md)
+- **Analysis Report:** [CODEBASE_CONSOLIDATION_ANALYSIS.md](../../status-reports/CODEBASE_CONSOLIDATION_ANALYSIS.md)
 - **Archive Docs:** [docs/_archive/2024-pre-restructure/migration-docs/README.md](docs/_archive/2024-pre-restructure/migration-docs/README.md)
 
 ---

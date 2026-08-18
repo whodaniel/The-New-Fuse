@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! command -v cloud_runtime >/dev/null 2>&1; then
-  echo "cloud_runtime CLI not found. Install: npm i -g @cloud_runtime/cli" >&2
-  exit 1
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
 
 SERVICE="${1:-}"
 DISCORD_TOKEN="${2:-}"
@@ -12,33 +11,34 @@ DISCORD_ALLOW_FROM="${3:-}"
 DISCORD_ENABLED="${4:-true}"
 
 if [ -z "${SERVICE}" ] || [ -z "${DISCORD_TOKEN}" ]; then
-  echo "Usage: $0 <cloud_runtime-service> <discord-bot-token> [allow_from_csv] [enabled=true|false]" >&2
+  echo "Usage: $0 <cloud-run-service> <discord-bot-token> [allow_from_csv] [enabled=true|false]" >&2
   echo "Example: $0 zeroclaw-sandbox ABC123.XXX 123456789012345678,987654321098765432 true" >&2
   exit 2
 fi
 
+tnf_require_gcloud
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-echo "Setting Discord vars on service: ${SERVICE}"
-cloud_runtime service "${SERVICE}" >/dev/null
+echo "Setting Discord vars on Cloud Run service: ${SERVICE}"
+echo "Project/region: $(tnf_gcp_project) / $(tnf_gcp_region)"
 
-cloud_runtime variables --set \
-  "ZEROCLAW_CHANNELS_DISCORD_ENABLED=${DISCORD_ENABLED}" \
-  "PICOCLAW_CHANNELS_DISCORD_ENABLED=${DISCORD_ENABLED}" \
-  "ZEROCLAW_CHANNELS_DISCORD_TOKEN=${DISCORD_TOKEN}" \
-  "PICOCLAW_CHANNELS_DISCORD_TOKEN=${DISCORD_TOKEN}" >/dev/null
-
+ENV_PAIRS=(
+  "ZEROCLAW_CHANNELS_DISCORD_ENABLED=${DISCORD_ENABLED}"
+  "PICOCLAW_CHANNELS_DISCORD_ENABLED=${DISCORD_ENABLED}"
+  "ZEROCLAW_CHANNELS_DISCORD_TOKEN=${DISCORD_TOKEN}"
+  "PICOCLAW_CHANNELS_DISCORD_TOKEN=${DISCORD_TOKEN}"
+)
 if [ -n "${DISCORD_ALLOW_FROM}" ]; then
-  cloud_runtime variables --set \
-    "ZEROCLAW_CHANNELS_DISCORD_ALLOW_FROM=${DISCORD_ALLOW_FROM}" \
-    "PICOCLAW_CHANNELS_DISCORD_ALLOW_FROM=${DISCORD_ALLOW_FROM}" >/dev/null
+  ENV_PAIRS+=(
+    "ZEROCLAW_CHANNELS_DISCORD_ALLOW_FROM=${DISCORD_ALLOW_FROM}"
+    "PICOCLAW_CHANNELS_DISCORD_ALLOW_FROM=${DISCORD_ALLOW_FROM}"
+  )
 fi
 
-echo "Deploying ${SERVICE} from apps/zeroclaw-sandbox"
-(
-  cd "${ROOT_DIR}"
-  cloud_runtime up apps/zeroclaw-sandbox --path-as-root --ci --service "${SERVICE}"
-)
+tnf_cloud_run_update_env "${SERVICE}" "${ENV_PAIRS[@]}"
 
-echo "Done. Validate with:"
-echo "curl -sS https://${SERVICE}-production.thenewfuse.com/api/status | jq '.channels'"
+echo "Env updated. Redeploy via scripts/deployment/gcp-deploy.sh (or gcloud run deploy) if needed."
+echo "Validate with:"
+echo "  gcloud run services describe ${SERVICE} --region=$(tnf_gcp_region) --format='value(status.url)'"
+echo "  curl -sS \"\$(gcloud run services describe ${SERVICE} --region=$(tnf_gcp_region) --format='value(status.url)')/api/status\" | jq '.channels'"

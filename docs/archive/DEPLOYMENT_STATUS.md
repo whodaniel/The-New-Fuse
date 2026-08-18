@@ -37,7 +37,7 @@
 
 ### Step 1: Add Dockerfile via GitHub Web UI
 
-1. Go to: **https://github.com/whodaniel/fuse**
+1. Go to: **https://github.com/whodaniel/The-New-Fuse**
 2. Click "Add file" → "Create new file"
 3. Name the file: `Dockerfile`
 4. Paste this content:
@@ -70,7 +70,7 @@ CMD ["serve", "-s", "dist", "-l", "3000"]
 
 ### Step 2: Update cloud_runtime.toml via GitHub Web UI
 
-1. Go to: **https://github.com/whodaniel/fuse/blob/main/cloud_runtime.toml**
+1. Go to: **https://github.com/whodaniel/The-New-Fuse/blob/main/cloud_runtime.toml**
 2. Click the pencil icon (Edit this file)
 3. Find line 42 where it says: `dockerfilePath = "apps/frontend/Dockerfile"`
 4. Change it to: `dockerfilePath = "Dockerfile"`
@@ -161,7 +161,7 @@ This will delete all 88+ stale branches and leave only `main`.
 
 **Project ID**: `041cee9d-8648-4074-b5a6-0eae436de1d1`
 **Environment ID**: `f706eaae-de9e-4a9b-a970-944dd4a6be41`
-**GitHub Repo**: whodaniel/fuse
+**GitHub Repo**: whodaniel/The-New-Fuse
 **Branch to Deploy**: main (after PR merge)
 
 **Expected URL**: `https://[service-name].thenewfuse.com`

@@ -1,7 +1,23 @@
 ---
+category: Scouting
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: agent-search-engine
-description: "MUST BE USED to provide advanced search and discovery capabilities for agents based on keywords, capabilities, tools, domain expertise, and complex criteria. Enables powerful agent filtering and recommendation systems."
-tools: [Read, Glob, Grep]
+description: MUST BE USED to provide advanced search and discovery capabilities for
+  agents based on keywords, capabilities, tools, domain expertise, and complex criteria.
+  Enables powerful agent filtering and recommendation systems.
 color: Blue
 ---
 

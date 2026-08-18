@@ -109,7 +109,7 @@ const tasks = [
 ];
 
 for (const task of tasks) {
-  await submitTask('whodaniel/fuse', task);
+  await submitTask('whodaniel/The-New-Fuse', task);
   await new Promise((r) => setTimeout(r, 2000)); // Rate limiting
 }
 ```
@@ -340,7 +340,7 @@ const message = {
     type: 'JULES_SKILL_DELEGATION',
     action: 'new_session',
     data: {
-      repo: 'whodaniel/fuse',
+      repo: 'whodaniel/The-New-Fuse',
       task: 'Add comprehensive error handling to SecurityService',
       priority: 'high',
     },

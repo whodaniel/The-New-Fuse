@@ -1,11 +1,15 @@
-# The New Fuse
+# <img src="https://thenewfuse.com/assets/brand/tnf-logo.png" alt="TNF Logo" width="32" height="32" align="center"> The New Fuse
 
-The New Fuse is an AI agent orchestration platform for building, coordinating,
-and operating multi-agent workflows.
+**The New Fuse (TNF)** is the definitive next-generation AI agent orchestration
+platform. Built for performance, security, and true autonomy, TNF empowers you
+to build, coordinate, and operate complex multi-agent workflows across desktop,
+web, and cloud.
 
-- Public site: https://thenewfuse.com
-- Hosted app: https://app.thenewfuse.com
-- Public docs: https://thenewfuse.com/docs
+- **Public Site:** [thenewfuse.com](https://thenewfuse.com)
+- **Hosted App:** [app.thenewfuse.com](https://app.thenewfuse.com)
+- **Documentation:** [thenewfuse.com/docs](https://thenewfuse.com/docs)
+- **GitHub Repository:**
+  [whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)
 
 ## Local Development
 
@@ -17,17 +21,44 @@ Prerequisites:
 - PostgreSQL 17+ for full API/database flows
 
 ```bash
-git clone https://github.com/whodaniel/fuse-open-runtime.git
-cd fuse-open-runtime
+git clone https://github.com/whodaniel/The-New-Fuse.git
+cd The-New-Fuse
 pnpm install
 cp .env.example .env
 touch .tnf.local.env
 pnpm run dev
 ```
 
+### TNF CLI as Local Sub-Director (default)
+
+After OSS install / onboard / boot, TNF endows the local CLI as **Local
+Sub-Director** and establishes the core federated fleet (Redis, harness
+heartbeats, Subdirector workers, launchd agents). Cloud Super Director sync
+stays optional until a cloud Redis URL is configured.
+
+```bash
+# Recommended install path
+bash scripts/install-tnf-cli.sh --from-local
+
+# Or explicitly
+pnpm run tnf:onboard
+# / node scripts/runtime/establish-core-federated-fleet.cjs
+# / tnf fleet establish
+
+# Verify
+tnf fleet core-status
+bash scripts/runtime/local-subdirector-service.sh status
+```
+
+Skip with `TNF_SKIP_CORE_FLEET=1`. Identity lands in `~/.tnf/agent.yaml` and
+`~/.tnf/local-subdirector/identity.env`.
+
 Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.
+
+For using the **local open-source install** together with a **thenewfuse.com
+account**, see `docs/reference/local-oss-with-hosted-account.md`.
 
 Before booting local services, inspect the active port surface:
 
@@ -45,18 +76,34 @@ pnpm run release:gate:strict
 
 ## Public Release Flow
 
-TNF is developed in this combined monorepo and published into downstream
-distribution repositories:
+TNF is developed in the private combined monorepo `whodaniel/tnf-monorepo` and
+published to two downstream repos. Do not commit directly to the publication
+targets.
 
-- `whodaniel/fuse-open-runtime`: open-source runtime distribution
-- `whodaniel/fuse-control-plane`: proprietary hosted SaaS control plane
+- `whodaniel/tnf-monorepo` — private development (all source)
+- `whodaniel/The-New-Fuse` — public open-runtime publication (~90%)
+- `whodaniel/fuse-control-plane` — private control-plane extract (~10%)
 
-See `docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run
-sync before publishing downstream repositories:
+This public clone is the open runtime. If you have monorepo access, develop
+there. Scaffolding map: `docs/lineage/PRODUCT_REPO_MAP.md`. See
+`docs/REPO_SEPARATION.md` for the public/private boundary. Use the dry-run sync
+before publishing downstream repositories:
 
 ```bash
 pnpm run sync:repos:dry-run
 ```
+
+Product doctrine for future work lives in
+`docs/product/TNF_PRODUCT_BOUNDARY.md`: classify each new artifact as public OSS
+runtime, public contract, private SaaS control plane, separate satellite, or
+personal/client business material before it lands.
+
+Member storage doctrine lives in
+`docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md` and
+`docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`: TNF stores bounded
+working artifacts, indexes, and consented external-location references. Durable
+member docs and media should stay in Google Drive, another connected storage
+provider, customer object storage, or a private repository.
 
 ## Primary Workspaces
 
@@ -74,6 +121,8 @@ plane details in public issues.
 
 ## License
 
-The open runtime license is declared in the downstream public distribution. Do
-not assume the combined monorepo is the final open-source artifact; verify
-`docs/REPO_SEPARATION.md` and the downstream repository before public release.
+This repository is licensed under the **MIT License** — see [LICENSE](LICENSE).
+
+Proprietary control-plane paths are filtered when publishing
+[`The-New-Fuse`](https://github.com/whodaniel/The-New-Fuse); see
+`docs/REPO_SEPARATION.md`.

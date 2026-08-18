@@ -25,7 +25,5 @@
 
 ## Failure Policy
 
-- Partial target provisioning does not block loop start if at least one primary
-  runtime (`codex`, `claude`, `tnf`) succeeded.
-- Any `full-auto once` failure blocks `start` until status is inspected and
-  issue remediated.
+- Partial target provisioning does not block loop start if at least one primary runtime (`codex`, `claude`, `tnf`) succeeded.
+- Any `full-auto once` failure blocks `start` until status is inspected and issue remediated.

@@ -1,4 +1,8 @@
 # Paths tracked as gitlinks (mode 160000) that are currently allowed.
 # Keep this list explicit; CI will fail on any gitlink not listed here.
 #
-# No gitlinks are currently tracked.
+# Satellite / vendored trees under apps/extensions → TNF-Extensions are outside
+# this monorepo (2026-08-09). Do not list apps/external or TNF-Extensions paths.
+.fuse/external/courseforge
+packages/ap2-protocol/ap2
+archive/drafts/tmp-poker-room-old

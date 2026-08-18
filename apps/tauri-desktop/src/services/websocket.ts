@@ -11,6 +11,9 @@ class WebSocketService {
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  /** When false, onclose must not schedule reconnect (intentional disconnect / URL swap). */
+  private shouldReconnect = false;
   private messageHandlers: Map<string, Set<MessageHandler>> = new Map();
   private connectionHandlers: Set<ConnectionHandler> = new Set();
 
@@ -31,6 +34,9 @@ class WebSocketService {
       return;
     }
 
+    this.clearReconnectTimer();
+    this.shouldReconnect = true;
+
     try {
       this.ws = new WebSocket(this.url);
 
@@ -43,7 +49,10 @@ class WebSocketService {
       this.ws.onclose = () => {
         console.log('🔌 WebSocket disconnected');
         this.notifyConnectionHandlers(false);
-        this.attemptReconnect();
+        this.ws = null;
+        if (this.shouldReconnect) {
+          this.attemptReconnect();
+        }
       };
 
       this.ws.onerror = (error) => {
@@ -60,17 +69,34 @@ class WebSocketService {
       };
     } catch (error) {
       console.error('Failed to create WebSocket:', error);
+      if (this.shouldReconnect) {
+        this.attemptReconnect();
+      }
     }
   }
 
   disconnect(): void {
+    this.shouldReconnect = false;
+    this.clearReconnectTimer();
     if (this.ws) {
+      this.ws.onclose = null;
       this.ws.close();
       this.ws = null;
+      this.notifyConnectionHandlers(false);
+    }
+  }
+
+  private clearReconnectTimer(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
     }
   }
 
   private attemptReconnect(): void {
+    if (!this.shouldReconnect) {
+      return;
+    }
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('Max reconnection attempts reached');
       return;
@@ -80,7 +106,13 @@ class WebSocketService {
     const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
     console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
-    setTimeout(() => this.connect(), delay);
+    this.clearReconnectTimer();
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      if (this.shouldReconnect) {
+        this.connect();
+      }
+    }, delay);
   }
 
   private handleMessage(message: { type: string; data: any }): void {
@@ -131,11 +163,23 @@ class WebSocketService {
   }
 
   // Convenience methods for common message types
-  sendChatMessage(sessionId: string, content: string, targets?: string[]): void {
+  sendChatMessage(
+    sessionId: string,
+    content: string,
+    targets?: string[],
+    options?: {
+      temperature?: number;
+      systemPrompt?: string;
+      mode?: string;
+    }
+  ): void {
     this.send('chat:message', {
       sessionId,
       content,
       ...(targets && targets.length ? { targets } : {}),
+      ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
+      ...(options?.systemPrompt ? { systemPrompt: options.systemPrompt } : {}),
+      ...(options?.mode ? { mode: options.mode } : {}),
     });
   }
 

@@ -1,0 +1,42 @@
+---
+description: TNF operator safety gates — commits, pushes, and destructive/process actions require a real operator confirmation
+alwaysApply: false
+---
+
+# TNF Safety Gates
+
+These gates protect a TNF-governed environment from unauthorized or fabricated
+actions. They apply whenever an action is irreversible, state-changing, or
+affects running processes.
+
+## Operator-gated actions
+
+Do NOT perform the following without an explicit, real operator confirmation in
+the current session:
+
+- `git commit`, `git push` (especially force push to `main`/`master`).
+- Killing, restarting, or culling running processes (daemons, master-clock,
+  relays, agent fleets).
+- Deleting files, dropping data, or running destructive migrations.
+- Rotating credentials or editing git config.
+
+## No fabricated handshakes
+
+Never invent, assume, or paraphrase an operator approval that did not happen. A
+handshake is only valid if the operator gave it explicitly this session. If you
+are unsure whether you have approval, you do not — ask.
+
+## Per-action confirmation
+
+Approval for one action is not blanket approval. Each commit, push, or kill
+needs its own confirmation unless the operator has clearly authorized a batch.
+
+## Secrets
+
+Do not stage or commit files that likely contain secrets (`.env`,
+`credentials.json`, key material). Warn the operator if they ask you to.
+
+## When blocked
+
+If a task requires a gated action and no confirmation exists, stop at the gate,
+state exactly what you want to do and why, and wait.

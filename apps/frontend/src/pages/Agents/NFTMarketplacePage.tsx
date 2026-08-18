@@ -1,6 +1,7 @@
 import { AgentNFTMarketplace } from '@/components/nft/AgentNFTMarketplace';
 import { Button, Card, CardContent } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
+import { authFetch } from '@/utils/authToken';
 import { Activity, Coins, DollarSign, Plus, TrendingUp, Wallet } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -73,7 +74,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
   const loadMarketplaceStats = async () => {
     try {
       setStatsError(null);
-      const listingsResponse = await fetch('/api/agents/nft/marketplace');
+      const listingsResponse = await authFetch('/api/agents/nft/marketplace');
       if (!listingsResponse.ok) {
         throw new Error(`Marketplace stats unavailable (${listingsResponse.status})`);
       }
@@ -102,7 +103,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
       let pendingRevenue = 0;
 
       if (userAddress) {
-        const sharesResponse = await fetch(
+        const sharesResponse = await authFetch(
           `/api/agents/nft/shares?ownerAddress=${encodeURIComponent(userAddress)}`
         );
         if (sharesResponse.ok) {
@@ -146,11 +147,8 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     setIsLoading(true);
     try {
       // Call API to mint NFT
-      const response = await fetch(`/api/agents/${agentId}/nft/mint`, {
+      const response = await authFetch(`/api/agents/${agentId}/nft/mint`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           ownerAddress: userAddress,
           metadataUri: `https://metadata.thenewfuse.com/agents/${agentId}`,
@@ -185,7 +183,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
   const handleFractionalize = async (agentNftId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/agents/nft/${agentNftId}/fractionalize`, {
+      const response = await authFetch(`/api/agents/nft/${agentNftId}/fractionalize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -230,7 +228,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/marketplace/listings/${listingId}/buy`, {
+      const response = await authFetch(`/api/marketplace/listings/${listingId}/buy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +272,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/marketplace/listings/${listingId}/offer`, {
+      const response = await authFetch(`/api/marketplace/listings/${listingId}/offer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -323,7 +321,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/marketplace/listings`, {
+      const response = await authFetch(`/api/marketplace/listings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -402,7 +400,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate('/agents/create')}
+            onClick={() => navigate('/agents/new')}
             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-2 px-3 rounded-md flex items-center gap-3 transition-all mt-6 sm:mt-0 shadow-none hover:shadow-none hover:scale-105"
           >
             <Plus className="w-5 h-5" />

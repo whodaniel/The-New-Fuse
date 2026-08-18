@@ -1,0 +1,13 @@
+=== TNF PUBLIC LAUNCH READINESS CHECKLIST ===
+- [ ] 1. Security Vulnerabilities Check
+- [ ] 2. Performance Baseline
+- [ ] 3. Test Coverage Analysis
+- [ ] 4. Type Safety Review
+- [ ] 5. CSP/Headers Validation
+- [ ] 6. Local Runtime Boundary
+- [ ] 7. Clean Room Boundary
+- [ ] 8. Bundle Size Analysis
+- [ ] 9. Documentation Completeness
+- [ ] 10. Release Gate Verification
+- [ ] 11. Privacy/Sweepl Audit
+- [ ] 12. Tauri Build Verification

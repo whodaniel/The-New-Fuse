@@ -193,7 +193,7 @@ const AgentDetail: React.FC = () => {
         );
       case 'Inactive':
         return (
-          <Badge className="bg-transparent0/20 text-gray-400 border-gray-500/30">
+          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">
             <Clock className="w-3 h-3 mr-1" />
             {status}
           </Badge>
@@ -222,9 +222,7 @@ const AgentDetail: React.FC = () => {
       case 'In Progress':
         return <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">{status}</Badge>;
       default:
-        return (
-          <Badge className="bg-transparent0/20 text-gray-400 border-gray-500/30">{status}</Badge>
-        );
+        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">{status}</Badge>;
     }
   };
 

@@ -1,3 +1,5 @@
+import { ZoneBadge } from '@/components/control-surface';
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Button, Card, Input, Textarea } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import {
@@ -98,7 +100,10 @@ export default function GoalsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Goals</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">Goals</h1>
+            <ZoneBadge zone="personal" detail="your workspace" />
+          </div>
           <p className="text-muted-foreground">
             Primary planning goals connected to task/suggestion records.
           </p>
@@ -114,6 +119,20 @@ export default function GoalsPage() {
       </div>
 
       <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">New Goal</h2>
+          <TalkToAIFormAssist
+            formTitle="Create Goal"
+            fields={[
+              { key: 'title', label: 'Goal title' },
+              { key: 'description', label: 'Goal description' },
+            ]}
+            onApply={(values) => {
+              if (values.title) setTitle(String(values.title));
+              if (values.description) setDescription(String(values.description));
+            }}
+          />
+        </div>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Goal title" />
         <Textarea
           value={description}

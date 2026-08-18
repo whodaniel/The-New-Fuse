@@ -179,7 +179,7 @@ git grep -i "BEGIN PRIVATE KEY" || echo "✅ No private keys found"
 
 **Enable GitHub Secret Scanning Alerts:**
 
-1. Go to https://github.com/whodaniel/fuse/settings/security_analysis
+1. Go to https://github.com/whodaniel/The-New-Fuse/settings/security_analysis
 2. Enable "Dependency graph"
 3. Enable "Dependabot alerts"
 4. Enable "Dependabot security updates"

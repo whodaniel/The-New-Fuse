@@ -7,17 +7,80 @@ import {
 import { Button } from '@/shared/ui/core/Button';
 import { Card } from '@/shared/ui/core/Card';
 import { Input } from '@/shared/ui/core/Input';
+import { loadCatalog, type CatalogProvider } from '@the-new-fuse/llm-catalog';
 import React from 'react';
+
+/**
+ * LLM Provider Configuration panel.
+ *
+ * Provider dropdown — sourced from @the-new-fuse/llm-catalog so the web
+ * control panel at app.thenewfuse.com shows the same free NVIDIA NIM +
+ * non-NVIDIA provider list as every other TNF surface.
+ *
+ * Model field — sourced from the selected provider's catalog.models[].
+ * When the catalog entry has no models, we fall back to the provider's
+ * defaultModel so the field still has a sensible starting value.
+ */
 export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
   const [config, setConfig] = React.useState(currentConfig);
   const [isValidating, setIsValidating] = React.useState(false);
   const [validationError, setValidationError] = React.useState(null);
-  const handleProviderChange = React.useCallback((provider) => {
-    const defaults = PROVIDER_DEFAULTS[provider];
-    setConfig((prev: any) =>
-      Object.assign(Object.assign(Object.assign({}, prev), defaults), { apiKey: prev.apiKey })
-    );
+  const [providers, setProviders] = React.useState<CatalogProvider[]>([]);
+  const [modelOptions, setModelOptions] = React.useState<string[]>([]);
+
+  // Load the canonical catalog once on mount.
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cat = await loadCatalog();
+        if (!cancelled) setProviders(cat.providers);
+      } catch {
+        if (!cancelled) setProviders([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  // Resolve the catalog provider for the currently selected provider name.
+  // Frontend provider names come from SUPPORTED_PROVIDERS — keep that as
+  // the canonical id, but augment with additional catalog rows that the
+  // user can switch to.
+  const handleProviderChange = React.useCallback(
+    (provider) => {
+      const defaults = PROVIDER_DEFAULTS[provider];
+      const catalogRow = providers.find((p) => p.id === provider);
+      const newModel = catalogRow?.models?.[0] || defaults?.model || catalogRow?.defaultModel || '';
+      setConfig((prev: any) =>
+        Object.assign(Object.assign(Object.assign({}, prev), defaults), {
+          apiKey: prev.apiKey,
+          model: newModel,
+        })
+      );
+      setModelOptions(
+        catalogRow?.models && catalogRow.models.length > 0
+          ? catalogRow.models
+          : defaults?.model
+            ? [defaults.model]
+            : []
+      );
+    },
+    [providers]
+  );
+
+  // Keep modelOptions in sync when providers finish loading.
+  React.useEffect(() => {
+    if (providers.length === 0) return;
+    const row = providers.find((p) => p.id === config.name);
+    if (row?.models && row.models.length > 0) {
+      setModelOptions(row.models);
+    } else if (PROVIDER_DEFAULTS[config.name]?.model) {
+      setModelOptions([PROVIDER_DEFAULTS[config.name].model]);
+    }
+  }, [providers, config.name]);
+
   const handleParameterChange = React.useCallback((param, value) => {
     setConfig((prev: any) =>
       Object.assign(Object.assign({}, prev), {
@@ -53,11 +116,21 @@ export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
               <Select.Value placeholder="Select Provider" />
             </Select.Trigger>
             <Select.Content>
+              {/* Show providers the panel knows how to validate first. */}
               {Object.values(SUPPORTED_PROVIDERS).map((provider) => (
                 <Select.Item key={provider} value={provider}>
-                  {PROVIDER_DEFAULTS[provider].name}
+                  {PROVIDER_DEFAULTS[provider].label}
                 </Select.Item>
               ))}
+              {/* Append additional catalog providers (NVIDIA NIM, Groq, etc.)
+                  so users can route to them once they paste an API key. */}
+              {providers
+                .filter((p) => !Object.values(SUPPORTED_PROVIDERS).includes(p.id as any))
+                .map((p) => (
+                  <Select.Item key={p.id} value={p.id}>
+                    {p.name || p.id} {p.models?.length ? `(${p.models.length} models)` : ''}
+                  </Select.Item>
+                ))}
             </Select.Content>
           </Select>
         </div>
@@ -78,15 +151,25 @@ export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
 
         <div className="space-y-2">
           <label className="font-medium">Model</label>
-          <Input
+          <Select
             value={config.model}
-            onChange={(e: any) =>
-              setConfig((prev: any) =>
-                Object.assign(Object.assign({}, prev), { model: e.target.value })
-              )
+            onChange={(value: string) =>
+              setConfig((prev: any) => Object.assign(Object.assign({}, prev), { model: value }))
             }
-            placeholder="Model name"
-          />
+          >
+            <Select.Trigger className="w-full">
+              <Select.Value placeholder={modelOptions[0] || 'Select model'} />
+            </Select.Trigger>
+            <Select.Content>
+              {(modelOptions.length > 0 ? modelOptions : [config.model].filter(Boolean)).map(
+                (m: string) => (
+                  <Select.Item key={m} value={m}>
+                    {m}
+                  </Select.Item>
+                )
+              )}
+            </Select.Content>
+          </Select>
         </div>
 
         <div className="space-y-4">

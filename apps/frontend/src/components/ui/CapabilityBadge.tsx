@@ -8,7 +8,7 @@ interface CapabilityBadgeProps {
 export const CapabilityBadge: React.FC<CapabilityBadgeProps> = ({ label, enabled }) => {
   const tone =
     enabled == null
-      ? 'border-gray-500/40 bg-transparent0/10 text-gray-300'
+      ? 'border-gray-500/40 bg-gray-500/10 text-gray-300'
       : enabled
         ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
         : 'border-amber-500/40 bg-amber-500/10 text-amber-300';

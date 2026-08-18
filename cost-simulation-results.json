@@ -1,0 +1,174 @@
+[
+  {
+    "scenario": "light (1 agent)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 8640,
+      "agentsActive": 1,
+      "redisCommands": 69120,
+      "redisStorageMb": 0.5,
+      "cpuSeconds": 698.4000000000001,
+      "memoryMbSeconds": 142560000,
+      "apiRequests": 1440,
+      "databaseQueries": 720,
+      "bandwidthMb": 4.32
+    },
+    "costs": {
+      "compute": 178.21725048000002,
+      "redis": 0,
+      "database": 25,
+      "bandwidth": 0.38880000000000003,
+      "totalMonthly": 203.60605048000002,
+      "totalPerMessage": 0.023565515101851855,
+      "totalPerAgent": 203.60605048000002
+    },
+    "timestamp": "2026-07-01T17:20:08.252Z"
+  },
+  {
+    "scenario": "medium (1 agent)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 43200,
+      "agentsActive": 1,
+      "redisCommands": 518400,
+      "redisStorageMb": 2,
+      "cpuSeconds": 5238,
+      "memoryMbSeconds": 142560000,
+      "apiRequests": 10800,
+      "databaseQueries": 5760,
+      "bandwidthMb": 21.6
+    },
+    "costs": {
+      "compute": 178.3293786,
+      "redis": 0.0368,
+      "database": 25,
+      "bandwidth": 1.944,
+      "totalMonthly": 205.3101786,
+      "totalPerMessage": 0.004752550430555556,
+      "totalPerAgent": 205.3101786
+    },
+    "timestamp": "2026-07-01T17:20:08.340Z"
+  },
+  {
+    "scenario": "heavy (1 agent)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 216000,
+      "agentsActive": 1,
+      "redisCommands": 4320000,
+      "redisStorageMb": 10,
+      "cpuSeconds": 43416,
+      "memoryMbSeconds": 142560000,
+      "apiRequests": 43200,
+      "databaseQueries": 21600,
+      "bandwidthMb": 108
+    },
+    "costs": {
+      "compute": 179.27237520000003,
+      "redis": 7.640000000000001,
+      "database": 25,
+      "bandwidth": 9.719999999999999,
+      "totalMonthly": 221.63237520000004,
+      "totalPerMessage": 0.0010260758111111112,
+      "totalPerAgent": 221.63237520000004
+    },
+    "timestamp": "2026-07-01T17:20:08.340Z"
+  },
+  {
+    "scenario": "enterprise (1 agent)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 864000,
+      "agentsActive": 1,
+      "redisCommands": 30240000,
+      "redisStorageMb": 50,
+      "cpuSeconds": 303480,
+      "memoryMbSeconds": 142560000,
+      "apiRequests": 216000,
+      "databaseQueries": 108000,
+      "bandwidthMb": 432
+    },
+    "costs": {
+      "compute": 185.69595600000002,
+      "redis": 59.48,
+      "database": 25,
+      "bandwidth": 38.879999999999995,
+      "totalMonthly": 309.05595600000004,
+      "totalPerMessage": 0.0003577036527777778,
+      "totalPerAgent": 309.05595600000004
+    },
+    "timestamp": "2026-07-01T17:20:08.340Z"
+  },
+  {
+    "scenario": "Team (5 light, 2 medium, 0 heavy, 11 total agents)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 129600,
+      "agentsActive": 11,
+      "redisCommands": 1382400,
+      "redisStorageMb": 6.5,
+      "cpuSeconds": 13823.999999999998,
+      "memoryMbSeconds": 146448000,
+      "apiRequests": 28800,
+      "databaseQueries": 15120,
+      "bandwidthMb": 64.8
+    },
+    "costs": {
+      "compute": 732.9229056,
+      "redis": 1.7648000000000001,
+      "bandwidth": 5.832,
+      "totalMonthly": 765.5197056000001,
+      "totalPerMessage": 0.005906787851851852,
+      "totalPerAgent": 69.59270050909092
+    },
+    "timestamp": "2026-07-01T17:20:08.341Z"
+  },
+  {
+    "scenario": "Team (20 light, 10 medium, 2 heavy, 70 total agents)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 1036800,
+      "agentsActive": 70,
+      "redisCommands": 15206400,
+      "redisStorageMb": 50,
+      "cpuSeconds": 152064,
+      "memoryMbSeconds": 259200000,
+      "apiRequests": 223200,
+      "databaseQueries": 115200,
+      "bandwidthMb": 518.4
+    },
+    "costs": {
+      "compute": 1303.5119616,
+      "redis": 29.4128,
+      "bandwidth": 46.656,
+      "totalMonthly": 1404.5807616,
+      "totalPerMessage": 0.0013547268148148147,
+      "totalPerAgent": 20.06543945142857
+    },
+    "timestamp": "2026-07-01T17:20:08.341Z"
+  },
+  {
+    "scenario": "Team (100 light, 50 medium, 10 heavy, 350 total agents)",
+    "duration": 2592000,
+    "metrics": {
+      "messagesProcessed": 5184000,
+      "agentsActive": 350,
+      "redisCommands": 76032000,
+      "redisStorageMb": 250,
+      "cpuSeconds": 760320,
+      "memoryMbSeconds": 777600000,
+      "apiRequests": 1116000,
+      "databaseQueries": 576000,
+      "bandwidthMb": 2592
+    },
+    "costs": {
+      "compute": 3925.5598080000004,
+      "redis": 151.06400000000002,
+      "bandwidth": 233.28,
+      "totalMonthly": 4334.903808,
+      "totalPerMessage": 0.0008362082962962963,
+      "totalPerAgent": 12.38543945142857
+    },
+    "timestamp": "2026-07-01T17:20:08.341Z"
+  }
+]

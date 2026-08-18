@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
 const fs = require('node:fs');
+const net = require('node:net');
+const os = require('node:os');
 const path = require('node:path');
 const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
 const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
+const { isFleetPaused, readFleetMode } = require('../lib/tnf-fleet-mode.cjs');
 
 const execFileAsync = promisify(execFile);
 
@@ -83,6 +86,97 @@ function createRunId() {
   return `run_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function envFlag(name, defaultValue = true) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '') return defaultValue;
+  return !['0', 'false', 'no', 'off'].includes(String(raw).trim().toLowerCase());
+}
+
+function loadGuardSnapshot() {
+  if (!envFlag('TNF_CRON_LOAD_GUARD', true)) {
+    return { enabled: false, overloaded: false };
+  }
+  const cpus = Math.max(os.cpus().length, 1);
+  const oneMinute = os.loadavg()[0] || 0;
+  const threshold = Number(process.env.TNF_CRON_MAX_LOAD_AVG || Math.max(8, cpus * 4));
+  return {
+    enabled: true,
+    overloaded: oneMinute >= threshold,
+    oneMinute,
+    threshold,
+    cpus,
+  };
+}
+
+function runNowNeedsRedis(processCatalog) {
+  if (processCatalog.requiresRedis === true) return true;
+  const commandText = [
+    processCatalog.runNow?.command || '',
+    ...(Array.isArray(processCatalog.runNow?.args) ? processCatalog.runNow.args : []),
+  ].join(' ');
+  return commandText.includes('chronological-dispatch.cjs') || commandText.includes('redis-cli');
+}
+
+function canConnect(host, port, timeoutMs = 500) {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host, port });
+    let settled = false;
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      resolve(ok);
+    };
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => finish(true));
+    socket.once('timeout', () => finish(false));
+    socket.once('error', () => finish(false));
+  });
+}
+
+function recordSkippedRun({ options, statePath, state, reason, detail, startedAt = new Date().toISOString() }) {
+  const finishedAt = new Date().toISOString();
+  const runRecord = {
+    runId: createRunId(),
+    processId: options.processId,
+    actorId: options.actorId,
+    startedAt,
+    finishedAt,
+    durationMs: Date.parse(finishedAt) - Date.parse(startedAt),
+    status: 'deferred',
+    exitCode: 0,
+    error: null,
+    outputPreview: detail,
+  };
+  state.runtime[options.processId] = {
+    ...(state.runtime[options.processId] || {}),
+    status: 'deferred',
+    lastRunAt: finishedAt,
+    lastDurationMs: runRecord.durationMs,
+    lastExitCode: 0,
+    lastError: null,
+    lastOutputPreview: detail,
+  };
+  const existingHistory = Array.isArray(state.history[options.processId])
+    ? state.history[options.processId]
+    : [];
+  state.history[options.processId] = [runRecord, ...existingHistory].slice(0, 25);
+  state.updated_at = finishedAt;
+  writeJson(statePath, state);
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        skipped: reason,
+        processId: options.processId,
+        run: runRecord,
+      },
+      null,
+      2
+    )
+  );
+}
+
 function slugify(value) {
   return String(value || '')
     .toLowerCase()
@@ -142,6 +236,36 @@ function acquireLock(lockPath, staleAfterMs, payload) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+
+  // Fleet-wide pause gate — gates all 7 live cron entries in one place.
+  // Checked BEFORE the single-instance guard (and well before any
+  // catalog/registry/state I/O) so a paused fleet doesn't even acquire a
+  // process lock for work it isn't going to do, and skips cleanly with
+  // exit 0 (the cron harness treats exit 0 OK).
+  const fleetState = readFleetMode();
+  if (fleetState.mode === 'paused') {
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          skipped: 'fleet-paused',
+          reason: fleetState.reason || 'fleet-paused',
+          processId: options.processId,
+          fleetMode: fleetState.mode,
+          fleetUpdatedAt: fleetState.updatedAt,
+          fleetUpdatedBy: fleetState.updatedBy,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  // Note: 'injection-paused' does NOT gate cron via this path —
+  // cron-driven cron work (writing logs, gating other processes)
+  // should continue. Injection-only scripts must check
+  // isInjectionPaused() themselves.
+
   const processGuard = singleInstanceGuard({
     lockName: `run-chrono-${slugify(options.processId)}`,
     staleMs: 30000,
@@ -193,6 +317,32 @@ async function main() {
   }
   if (!processCatalog.runNow) {
     throw new Error(`Chronological process ${options.processId} does not expose a run-now command`);
+  }
+
+  const loadGuard = loadGuardSnapshot();
+  if (loadGuard.overloaded) {
+    recordSkippedRun({
+      options,
+      statePath,
+      state,
+      reason: 'load-guard',
+      detail: `load guard deferred run: load1=${loadGuard.oneMinute.toFixed(2)} threshold=${loadGuard.threshold}`,
+    });
+    return;
+  }
+
+  if (envFlag('TNF_CRON_DEFER_WHEN_REDIS_DOWN', true) && runNowNeedsRedis(processCatalog)) {
+    const redisUp = await canConnect('127.0.0.1', Number(process.env.TNF_LOCAL_REDIS_PORT || 6379));
+    if (!redisUp) {
+      recordSkippedRun({
+        options,
+        statePath,
+        state,
+        reason: 'redis-unavailable',
+        detail: 'redis guard deferred run: 127.0.0.1:6379 unavailable',
+      });
+      return;
+    }
   }
 
   const timeoutMs = Number(processCatalog.runNow.timeoutMs || 30000);

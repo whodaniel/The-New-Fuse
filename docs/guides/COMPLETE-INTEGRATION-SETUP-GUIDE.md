@@ -33,7 +33,7 @@ Before starting with The New Fuse, ensure you have:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-org/the-new-fuse.git
+   git clone https://github.com/whodaniel/The-New-Fuse.git
    cd the-new-fuse
    ```
 

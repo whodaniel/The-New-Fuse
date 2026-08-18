@@ -7,6 +7,7 @@ import {
 } from '@/components/ui';
 import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
@@ -84,7 +85,7 @@ const AgentDashboard: React.FC = () => {
 
   const fetchAgents = async () => {
     try {
-      const response = await fetch('/api/dashboard/agents');
+      const response = await authFetch('/api/dashboard/agents');
       if (response.ok) {
         const data = await response.json();
         setAgents(data);
@@ -190,7 +191,7 @@ const AgentDashboard: React.FC = () => {
 
   const handleAgentAction = async (agentId: string, action: string) => {
     try {
-      const response = await fetch(`/api/dashboard/agents/${agentId}/${action}`, {
+      const response = await authFetch(`/api/dashboard/agents/${agentId}/${action}`, {
         method: 'POST',
       });
 

@@ -17,7 +17,7 @@ Ensure your system meets these requirements:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/whodaniel/fuse.git
+git clone https://github.com/whodaniel/The-New-Fuse.git
 cd fuse
 ```
 
@@ -45,6 +45,30 @@ root. Exported shell variables win over file values. See
 # Install all dependencies
 pnpm install
 ```
+
+`pnpm install` also audits Turn Zero frontload wiring. To auto-wire agent
+runtimes on install, set `TNF_AUTO_FRONTLOAD=1` in `.tnf.local.env`.
+
+### 3b. Install TNF CLI + Local Sub-Director fleet (default)
+
+```bash
+bash scripts/install-tnf-cli.sh --from-local
+# or after clone+install:
+pnpm run tnf:onboard
+```
+
+This endows the machine as **Local Sub-Director** and establishes the core OSS
+federated fleet (Redis, master heartbeat, local-subdirector LaunchAgent, codegen
+/ infra workers, MCP config). Opt out with `TNF_SKIP_CORE_FLEET=1`.
+
+```bash
+tnf fleet establish          # re-run / repair
+tnf fleet core-status        # receipt at ~/.tnf/core-fleet-latest.json
+```
+
+Cloud Super Director binding remains credential-gated (`TNF_CLOUD_REDIS_URL` /
+hosted account). Local NFT identity is generated under
+`~/.tnf/local-subdirector/identity.env` so the bridge can attach later.
 
 ### 4. Database Setup
 
@@ -125,6 +149,7 @@ pnpm run release:gate:strict
 ### Common Issues
 
 1. Database Connection
+
 ```bash
 # Check database logs
 docker compose -f packages/sync-core/docker-compose.yml logs postgres
@@ -134,6 +159,7 @@ psql -h localhost -U postgres -d fuse
 ```
 
 2. Redis Connection
+
 ```bash
 # Check Redis logs
 docker compose -f packages/sync-core/docker-compose.yml logs redis
@@ -143,6 +169,7 @@ redis-cli ping
 ```
 
 3. Build Issues
+
 ```bash
 # Clean and rebuild
 pnpm run build:cleanup
@@ -151,6 +178,7 @@ pnpm run build
 ```
 
 4. Port Conflicts
+
 ```bash
 # Inspect active listeners
 ./tnf ports status

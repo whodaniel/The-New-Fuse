@@ -9,10 +9,23 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
-import SubdomainRouter from './routers/SubdomainRouter';
 import { AuthProvider } from './hooks/useAuth';
+import SubdomainRouter from './routers/SubdomainRouter';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: (failureCount, error) => {
+        const message = String((error as Error)?.message || '');
+        if (message.includes('429') || message.toLowerCase().includes('rate limit')) {
+          return false;
+        }
+        return failureCount < 1;
+      },
+    },
+  },
+});
 
 const AppContent: React.FC = () => {
   const { showMonitor } = usePerformanceMonitor();

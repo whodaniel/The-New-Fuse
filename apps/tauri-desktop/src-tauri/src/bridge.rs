@@ -1,11 +1,14 @@
 // The New Fuse - WebSocket Bridge
 // Handles secure tunnel to CloudRuntime cloud sandbox
 
-use std::sync::Arc;
-use tokio::sync::{mpsc, Mutex};
-use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+use std::time::Duration;
+use tokio::sync::{mpsc, Mutex};
+use tokio::task::JoinHandle;
+use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
 // ============================================================================
 // TYPES
@@ -54,7 +57,11 @@ impl BridgeConnection {
 
 pub struct BridgeManager {
     connection: Arc<Mutex<BridgeConnection>>,
-    response_handlers: Arc<Mutex<std::collections::HashMap<String, tokio::sync::oneshot::Sender<MCPMessage>>>>,
+    response_handlers:
+        Arc<Mutex<std::collections::HashMap<String, tokio::sync::oneshot::Sender<MCPMessage>>>>,
+    /// Operator wants the tunnel up (drives reconnect). Cleared by disconnect().
+    want_connected: Arc<AtomicBool>,
+    supervisor: Arc<Mutex<Option<JoinHandle<()>>>>,
 }
 
 impl BridgeManager {
@@ -62,13 +69,100 @@ impl BridgeManager {
         Self {
             connection: Arc::new(Mutex::new(BridgeConnection::new(sandbox_url))),
             response_handlers: Arc::new(Mutex::new(std::collections::HashMap::new())),
+            want_connected: Arc::new(AtomicBool::new(false)),
+            supervisor: Arc::new(Mutex::new(None)),
         }
     }
 
     pub async fn connect(&self) -> Result<(), String> {
+        // Tear down any prior supervisor so we don't double-connect.
+        self.disconnect().await?;
+
+        self.want_connected.store(true, Ordering::SeqCst);
+
+        // First establishment must succeed synchronously so invoke('connect_bridge') fails closed.
+        self.open_socket_once().await?;
+
+        self.spawn_supervisor().await;
+        Ok(())
+    }
+
+    async fn spawn_supervisor(&self) {
         let connection = self.connection.clone();
         let response_handlers = self.response_handlers.clone();
+        let want_connected = self.want_connected.clone();
 
+        let handle = tokio::spawn(async move {
+            let mut backoff_secs: u64 = 1;
+            loop {
+                // Wait until the current session drops, or exit if operator disconnected.
+                loop {
+                    if !want_connected.load(Ordering::SeqCst) {
+                        return;
+                    }
+                    let still_up = {
+                        let conn = connection.lock().await;
+                        conn.connected
+                    };
+                    if !still_up {
+                        break;
+                    }
+                    tokio::time::sleep(Duration::from_millis(500)).await;
+                }
+
+                if !want_connected.load(Ordering::SeqCst) {
+                    return;
+                }
+
+                println!(
+                    "🔁 Bridge reconnect in {}s…",
+                    backoff_secs
+                );
+                tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
+
+                if !want_connected.load(Ordering::SeqCst) {
+                    return;
+                }
+
+                match Self::establish(
+                    connection.clone(),
+                    response_handlers.clone(),
+                    want_connected.clone(),
+                )
+                .await
+                {
+                    Ok(()) => {
+                        backoff_secs = 1;
+                        println!("✅ Bridge reconnected");
+                    }
+                    Err(e) => {
+                        println!("⚠️ Bridge reconnect failed: {}", e);
+                        backoff_secs = (backoff_secs.saturating_mul(2)).min(30);
+                    }
+                }
+            }
+        });
+
+        let mut slot = self.supervisor.lock().await;
+        *slot = Some(handle);
+    }
+
+    async fn open_socket_once(&self) -> Result<(), String> {
+        Self::establish(
+            self.connection.clone(),
+            self.response_handlers.clone(),
+            self.want_connected.clone(),
+        )
+        .await
+    }
+
+    async fn establish(
+        connection: Arc<Mutex<BridgeConnection>>,
+        response_handlers: Arc<
+            Mutex<std::collections::HashMap<String, tokio::sync::oneshot::Sender<MCPMessage>>>,
+        >,
+        want_connected: Arc<AtomicBool>,
+    ) -> Result<(), String> {
         let url = {
             let conn = connection.lock().await;
             conn.url.clone()
@@ -76,17 +170,13 @@ impl BridgeManager {
 
         println!("🔌 Connecting to cloud sandbox: {}", url);
 
-        // Connect to WebSocket
         let (ws_stream, _) = connect_async(&url)
             .await
             .map_err(|e| format!("WebSocket connection failed: {}", e))?;
 
         let (mut write, mut read) = ws_stream.split();
-
-        // Create channel for sending messages
         let (tx, mut rx) = mpsc::channel::<String>(32);
 
-        // Store the sender
         {
             let mut conn = connection.lock().await;
             conn.tx = Some(tx);
@@ -95,20 +185,45 @@ impl BridgeManager {
 
         println!("✅ Connected to cloud sandbox");
 
-        // Spawn write task
+        // Write + ping task
+        let write_want = want_connected.clone();
         let _write_handle = tokio::spawn(async move {
-            while let Some(msg) = rx.recv().await {
-                if write.send(Message::Text(msg)).await.is_err() {
+            let mut ping = tokio::time::interval(Duration::from_secs(25));
+            ping.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+            loop {
+                if !write_want.load(Ordering::SeqCst) {
+                    let _ = write.close().await;
                     break;
+                }
+                tokio::select! {
+                    msg = rx.recv() => {
+                        match msg {
+                            Some(text) => {
+                                if write.send(Message::Text(text)).await.is_err() {
+                                    break;
+                                }
+                            }
+                            None => break,
+                        }
+                    }
+                    _ = ping.tick() => {
+                        if write.send(Message::Ping(Vec::new())).await.is_err() {
+                            break;
+                        }
+                    }
                 }
             }
         });
 
-        // Spawn read task
+        // Read task
         let handlers = response_handlers.clone();
         let conn_ref = connection.clone();
+        let read_want = want_connected.clone();
         let _read_handle = tokio::spawn(async move {
             while let Some(msg) = read.next().await {
+                if !read_want.load(Ordering::SeqCst) {
+                    break;
+                }
                 match msg {
                     Ok(Message::Text(text)) => {
                         if let Ok(mcp_msg) = serde_json::from_str::<MCPMessage>(&text) {
@@ -120,6 +235,11 @@ impl BridgeManager {
                             }
                         }
                     }
+                    Ok(Message::Ping(payload)) => {
+                        // Library usually auto-pongs; ignore payload.
+                        let _ = payload;
+                    }
+                    Ok(Message::Pong(_)) => {}
                     Ok(Message::Close(_)) => {
                         println!("❌ Cloud sandbox connection closed");
                         break;
@@ -132,7 +252,6 @@ impl BridgeManager {
                 }
             }
 
-            // Mark as disconnected
             let mut conn = conn_ref.lock().await;
             conn.connected = false;
             conn.tx = None;
@@ -142,9 +261,25 @@ impl BridgeManager {
     }
 
     pub async fn disconnect(&self) -> Result<(), String> {
-        let mut conn = self.connection.lock().await;
-        conn.connected = false;
-        conn.tx = None;
+        self.want_connected.store(false, Ordering::SeqCst);
+
+        if let Some(handle) = self.supervisor.lock().await.take() {
+            handle.abort();
+        }
+
+        {
+            let mut conn = self.connection.lock().await;
+            conn.connected = false;
+            // Dropping tx closes the write loop; read loop exits on next message/error.
+            conn.tx = None;
+        }
+
+        // Fail pending RPC waiters so callers don't hang for 30s.
+        {
+            let mut handlers = self.response_handlers.lock().await;
+            handlers.clear();
+        }
+
         Ok(())
     }
 
@@ -153,7 +288,11 @@ impl BridgeManager {
         conn.connected
     }
 
-    pub async fn send_request(&self, method: &str, params: Option<serde_json::Value>) -> Result<MCPMessage, String> {
+    pub async fn send_request(
+        &self,
+        method: &str,
+        params: Option<serde_json::Value>,
+    ) -> Result<MCPMessage, String> {
         let conn = self.connection.lock().await;
 
         if !conn.connected {
@@ -161,12 +300,10 @@ impl BridgeManager {
         }
 
         let tx = conn.tx.clone().ok_or("No sender available")?;
-        drop(conn); // Release lock before sending
+        drop(conn);
 
-        // Generate request ID
         let id = uuid::Uuid::new_v4().to_string();
 
-        // Create request
         let request = MCPMessage {
             jsonrpc: "2.0".to_string(),
             id: Some(id.clone()),
@@ -176,29 +313,24 @@ impl BridgeManager {
             error: None,
         };
 
-        // Create response channel
         let (response_tx, response_rx) = tokio::sync::oneshot::channel();
 
-        // Register handler
         {
             let mut handlers = self.response_handlers.lock().await;
             handlers.insert(id.clone(), response_tx);
         }
 
-        // Send request
-        let request_json = serde_json::to_string(&request)
-            .map_err(|e| format!("Serialization error: {}", e))?;
+        let request_json =
+            serde_json::to_string(&request).map_err(|e| format!("Serialization error: {}", e))?;
 
         tx.send(request_json)
             .await
             .map_err(|e| format!("Send error: {}", e))?;
 
-        // Wait for response with timeout
-        match tokio::time::timeout(std::time::Duration::from_secs(30), response_rx).await {
+        match tokio::time::timeout(Duration::from_secs(30), response_rx).await {
             Ok(Ok(response)) => Ok(response),
             Ok(Err(_)) => Err("Response channel closed".to_string()),
             Err(_) => {
-                // Remove handler on timeout
                 let mut handlers = self.response_handlers.lock().await;
                 handlers.remove(&id);
                 Err("Request timeout".to_string())
@@ -206,7 +338,11 @@ impl BridgeManager {
         }
     }
 
-    pub async fn call_tool(&self, tool_name: &str, arguments: serde_json::Value) -> Result<serde_json::Value, String> {
+    pub async fn call_tool(
+        &self,
+        tool_name: &str,
+        arguments: serde_json::Value,
+    ) -> Result<serde_json::Value, String> {
         let params = serde_json::json!({
             "name": tool_name,
             "arguments": arguments
@@ -239,10 +375,6 @@ impl BridgeManager {
         Ok(vec![])
     }
 }
-
-// ============================================================================
-// TESTS
-// ============================================================================
 
 #[cfg(test)]
 mod tests {

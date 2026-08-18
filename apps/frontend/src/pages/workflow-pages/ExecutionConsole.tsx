@@ -162,7 +162,7 @@ export const ExecutionConsole: React.FC = () => {
                               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
                               : exec.status === 'failed'
                                 ? 'bg-rose-500/10 border-rose-500/50 text-rose-400'
-                                : 'bg-transparent0/10 border-gray-500/50 text-gray-400'
+                                : 'bg-gray-500/10 border-gray-500/50 text-gray-400'
                         }`}
                       >
                         {exec.status === 'running' && (

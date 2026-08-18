@@ -54,15 +54,15 @@ ensure 100% cohesion and a top-notch user experience.
 
 ### 3. Workspace Management (7)
 
-| Page Name            | Path                   | Status           | Description                 |
-| -------------------- | ---------------------- | ---------------- | --------------------------- |
-| Workspace Overview   | `/workspace/overview`  | 🔀 Nested route  | Main Workspace View         |
-| Workspace Analytics  | `/workspace/analytics` | 🔀 Nested route  | Workspace Metrics           |
-| Workspace Members    | `/workspace/members`   | 🔀 Nested route  | Team Management             |
-| Workspace Settings   | `/workspace/settings`  | 🔀 Nested route  | Workspace Configuration     |
-| Workspace Chat       | `/workspace-chat`      | ⚠️ Not in routes | Team Chat                   |
-| Workspace Chat Index | `/workspace/chat`      | 🔀 Nested route  | Workspace Chat Index        |
-| Workspace Layout     | `/workspace/layout`    | 🔀 Nested route  | Workspace Layout Management |
+| Page Name            | Path                   | Status          | Description                         |
+| -------------------- | ---------------------- | --------------- | ----------------------------------- |
+| Workspace Overview   | `/workspace/overview`  | 🔀 Nested route | Main Workspace View                 |
+| Workspace Analytics  | `/workspace/analytics` | 🔀 Nested route | Workspace Metrics                   |
+| Workspace Members    | `/workspace/members`   | 🔀 Nested route | Team Management                     |
+| Workspace Settings   | `/workspace/settings`  | 🔀 Nested route | Workspace Configuration             |
+| Workspace Chat       | `/workspace-chat`      | 🔀 Redirects    | Redirects to `/chat?mode=workspace` |
+| Workspace Chat Index | `/workspace/chat`      | 🔀 Redirects    | Redirects to `/chat?mode=workspace` |
+| Workspace Layout     | `/workspace/layout`    | 🔀 Nested route | Workspace Layout Management         |
 
 ### 4. Tasks & Workflows (12)
 

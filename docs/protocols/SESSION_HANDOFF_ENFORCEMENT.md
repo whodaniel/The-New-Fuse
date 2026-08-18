@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Session Handoff Enforcement (TNF)
 
 This protocol is mandatory for critical-path changes.
@@ -53,5 +56,24 @@ If the change set touches Supabase-sensitive paths (`supabase/**`,
 
 ## Operator Intent
 
-This eliminates silent continuity failures by making handoff artifacts a hard
-gate, not a best-effort guideline.
+Handoff artifacts must be emitted automatically upon completion of the next
+critical work unit (audit, mutation, verification). The emission is NOT gated by
+operator confirmation; confirmation is only required for destructive operations,
+secrets, or mutation-cycle start — not for artifact creation. This eliminates
+silent continuity failures without blocking progress.
+
+## Completion Closure (hardened 2026-08-12)
+
+Before `git commit` on any critical-path change set, agents MUST complete the
+**Work Completion Closure** sequence in `HARNESS_CONFIG.md` §7:
+
+1. Verify (tests + domain probes)
+2. Update `LIVING_STATE.md` and `AGENT_STATUS_LEDGER.md`
+3. Emit `SESSION_HANDOFF_LATEST.{json,md}` via `pnpm run handoff:emit:verified`
+   or `node scripts/turn-end.cjs`
+4. Ensure `continuation.resume_checklist` names actionable next steps
+5. Commit only intentional paths (exclude daemon logs, vitest caches, unrelated
+   auto-generated macro boards)
+
+A commit without fresh handoff + ledger sync on critical paths is treated as an
+incomplete harness turn.

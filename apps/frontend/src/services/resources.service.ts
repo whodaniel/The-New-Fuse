@@ -1,3 +1,4 @@
+import { authFetch, buildAuthHeaders } from '@/utils/authToken';
 import axios from 'axios';
 import { API_BASE } from '../config/api-base';
 import {
@@ -59,21 +60,12 @@ export class ResourcesService {
   }
 
   private createMessageId(): string {
-    if (typeof globalThis.crypto?.randomUUID === 'function') {
-      return globalThis.crypto.randomUUID();
-    }
-
-    return `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    return globalThis.crypto?.randomUUID?.() ?? `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  private getAuthHeaders(): Record<string, string> {
+  private async getAuthHeaders(): Promise<Record<string, string>> {
     if (typeof window === 'undefined') return {};
-    const token =
-      window.localStorage.getItem('auth_token') ||
-      window.localStorage.getItem('authToken') ||
-      window.localStorage.getItem('token');
-
-    return token ? { Authorization: `Bearer ${token}` } : {};
+    return buildAuthHeaders();
   }
 
   private mapCategory(category: string): Resource['category'] {
@@ -415,18 +407,25 @@ export class ResourcesService {
 
   // Fetch authenticated user's private skills
   async getPersonalSkills(): Promise<PersonalSkill[]> {
-    const response = await axios.get(`${API_BASE}/resources/personal-skills`, {
-      headers: this.getAuthHeaders(),
+    const response = await authFetch(`${API_BASE}/resources/personal-skills`, {
+      headers: await this.getAuthHeaders(),
     });
-    return Array.isArray(response.data) ? (response.data as PersonalSkill[]) : [];
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data) ? (data as PersonalSkill[]) : [];
   }
 
   // Create authenticated user's private skill
   async createPersonalSkill(input: PersonalSkillInput): Promise<PersonalSkill> {
-    const response = await axios.post(`${API_BASE}/resources/personal-skills`, input, {
-      headers: this.getAuthHeaders(),
+    const response = await authFetch(`${API_BASE}/resources/personal-skills`, {
+      method: 'POST',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify(input),
     });
-    return response.data as PersonalSkill;
+    if (!response.ok) {
+      throw new Error(`Failed to create personal skill: HTTP ${response.status}`);
+    }
+    return (await response.json()) as PersonalSkill;
   }
 
   // Update authenticated user's private skill
@@ -434,18 +433,27 @@ export class ResourcesService {
     id: string,
     input: Partial<PersonalSkillInput>
   ): Promise<PersonalSkill> {
-    const response = await axios.put(`${API_BASE}/resources/personal-skills/${id}`, input, {
-      headers: this.getAuthHeaders(),
+    const response = await authFetch(`${API_BASE}/resources/personal-skills/${id}`, {
+      method: 'PUT',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify(input),
     });
-    return response.data as PersonalSkill;
+    if (!response.ok) {
+      throw new Error(`Failed to update personal skill: HTTP ${response.status}`);
+    }
+    return (await response.json()) as PersonalSkill;
   }
 
   // Delete authenticated user's private skill
   async deletePersonalSkill(id: string): Promise<{ success: boolean; id: string }> {
-    const response = await axios.delete(`${API_BASE}/resources/personal-skills/${id}`, {
-      headers: this.getAuthHeaders(),
+    const response = await authFetch(`${API_BASE}/resources/personal-skills/${id}`, {
+      method: 'DELETE',
+      headers: await this.getAuthHeaders(),
     });
-    return response.data as { success: boolean; id: string };
+    if (!response.ok) {
+      throw new Error(`Failed to delete personal skill: HTTP ${response.status}`);
+    }
+    return (await response.json()) as { success: boolean; id: string };
   }
 
   // Fetch workflows
@@ -569,14 +577,15 @@ export class ResourcesService {
     resourceId: string,
     userId?: string
   ): Promise<{ success: boolean; resourceId: string; userId: string; favorite: boolean }> {
-    const response = await axios.post(
-      `${API_BASE}/resources/${resourceId}/favorite`,
-      userId ? { userId } : {},
-      {
-        headers: this.getAuthHeaders(),
-      }
-    );
-    return response.data as {
+    const response = await authFetch(`${API_BASE}/resources/${resourceId}/favorite`, {
+      method: 'POST',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify(userId ? { userId } : {}),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to toggle favorite: HTTP ${response.status}`);
+    }
+    return (await response.json()) as {
       success: boolean;
       resourceId: string;
       userId: string;
@@ -588,10 +597,15 @@ export class ResourcesService {
   async shareResource(
     share: Omit<ResourceShare, 'sharedAt'>
   ): Promise<{ success: boolean; share: ResourceShare & { id: string } }> {
-    const response = await axios.post(`${API_BASE}/resources/share`, share, {
-      headers: this.getAuthHeaders(),
+    const response = await authFetch(`${API_BASE}/resources/share`, {
+      method: 'POST',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify(share),
     });
-    return response.data as { success: boolean; share: ResourceShare & { id: string } };
+    if (!response.ok) {
+      throw new Error(`Failed to share resource: HTTP ${response.status}`);
+    }
+    return (await response.json()) as { success: boolean; share: ResourceShare & { id: string } };
   }
 
   // Execute/Install skill

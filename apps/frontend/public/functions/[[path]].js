@@ -22,7 +22,10 @@ export async function onRequest(context) {
   // Legacy API docs alias should resolve to static docs, not the API gateway.
   if (path === '/api/docs' || path.startsWith('/api/docs/')) {
     const docsSuffix = path.slice('/api/docs'.length);
-    return Response.redirect(new URL(`/docs${docsSuffix}${url.search}${url.hash}`, url.origin), 301);
+    return Response.redirect(
+      new URL(`/docs${docsSuffix}${url.search}${url.hash}`, url.origin),
+      301
+    );
   }
 
   // 1. API & WebSocket Routes - Proxy to backend services
@@ -30,7 +33,13 @@ export async function onRequest(context) {
   const RELAY_SERVER = 'https://relay.thenewfuse.com';
 
   if (path.startsWith('/api/') || path.startsWith('/v1/') || path === '/api' || path === '/v1') {
-    return fetch(new Request(new URL(path + url.search, API_GATEWAY), context.request));
+    let apiPath = path;
+    if (apiPath.startsWith('/api/v1/')) {
+      apiPath = apiPath.replace('/api/v1/', '/api/');
+    } else if (apiPath.startsWith('/v1/') || apiPath === '/v1') {
+      apiPath = `/api${apiPath}`;
+    }
+    return fetch(new Request(new URL(apiPath + url.search, API_GATEWAY), context.request));
   }
 
   if (path.startsWith('/ws/') || path === '/ws') {
@@ -52,9 +61,7 @@ export async function onRequest(context) {
     // Marketing SPA routes on landing domain -> serve app.html (not static index.html)
     const landingSpaRoutes = ['/about', '/blog', '/brand', '/contact'];
     const isLandingSpaRoute =
-      landingSpaRoutes.includes(path) ||
-      path === '/legal/privacy' ||
-      path === '/legal/terms';
+      landingSpaRoutes.includes(path) || path === '/legal/privacy' || path === '/legal/terms';
 
     if (isLandingSpaRoute) {
       const appResponse = await context.env.ASSETS.fetch(
@@ -71,6 +78,9 @@ export async function onRequest(context) {
 
     // Functional routes on landing domain -> redirect to app subdomain
     const functionalPrefixes = [
+      '/auth',
+      '/login',
+      '/register',
       '/dashboard',
       '/agents',
       '/workflows',
@@ -123,8 +133,7 @@ export async function onRequest(context) {
     }
 
     const isStaticAsset = path.includes('.') && !path.endsWith('.html');
-    const isVisualizationHtmlAsset =
-      path.startsWith('/visualizations/') && path.endsWith('.html');
+    const isVisualizationHtmlAsset = path.startsWith('/visualizations/') && path.endsWith('.html');
 
     // Static assets (CSS, JS, images) and explicit visualization HTML -> let Cloudflare serve them
     if (isStaticAsset || isVisualizationHtmlAsset) {
@@ -132,29 +141,17 @@ export async function onRequest(context) {
     }
 
     // All non-asset routes on app domains should resolve through the SPA shell.
-    // This avoids brittle allowlists that miss newly added experience routes.
-    // Fetch the app shell. We use the /app path which is the "Clean URL" target for app.html.
-    let appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app', url.origin)));
-
-    // If /app returns 404 (e.g. Clean URLs disabled), try /app.html
-    if (appResponse.status === 404 || appResponse.status === 308) {
-      appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app.html', url.origin)));
-    }
-
-    // If we got a redirect (308/301), follow it once internally.
-    if (appResponse.status === 308 || appResponse.status === 301) {
-      const loc = appResponse.headers.get('location');
-      appResponse = await context.env.ASSETS.fetch(new Request(new URL(loc, url.origin)));
-    }
+    // Always fetch app.html directly to avoid Clean URL 308 redirect loops.
+    let appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app.html', url.origin)));
 
     // Return the app shell content with a 200 status.
+    const newHeaders = new Headers(appResponse.headers);
+    newHeaders.set('Content-Type', 'text/html; charset=utf-8');
+    newHeaders.set('X-TNF-Routing', 'SPA-App');
+
     return new Response(appResponse.body, {
       status: 200,
-      headers: {
-        ...Object.fromEntries(appResponse.headers),
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-TNF-Routing': 'SPA-App',
-      },
+      headers: newHeaders,
     });
   }
 
@@ -163,7 +160,7 @@ export async function onRequest(context) {
 
   // If still 404, serve the appropriate SPA root
   if (response.status === 404) {
-    const rootPath = isLandingDomain ? '/' : '/app';
+    const rootPath = isLandingDomain ? '/' : '/app.html';
     return context.env.ASSETS.fetch(new Request(new URL(rootPath, url.origin)));
   }
 

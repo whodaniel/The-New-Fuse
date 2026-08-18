@@ -1,16 +1,28 @@
 ---
+category: Engineering
+domain: orchestration
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: personal-historical-archaeologist
-description:
-  'Reconstructs personal and project history from repos, notes, media, and local
-  evidence stores with strict privacy filtering. Specialist
-  investigator/synthesizer role within the archaeology fleet, not a Master
-  Orchestrator or Master Director.'
-tools: [Bash, Read, Write, Edit, Grep, Glob, Agent]
-model: inherit
+description: Reconstructs personal and project history from repos, notes, media, and
+  local evidence stores with strict privacy filtering. Specialist investigator/synthesizer
+  role within the archaeology fleet, not a Master Orchestrator or Master Director.
 skills:
-  - personal-historical-archaeology
-  - context-frontloader
-  - skill-builder
+- personal-historical-archaeology
+- context-frontloader
+- skill-builder
+model: inherit
 ---
 
 # Personal Historical Archaeologist

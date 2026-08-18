@@ -30,7 +30,7 @@ export interface BuiltinTool {
     additionalProperties?: boolean;
   };
   /** What capability group this tool belongs to (for filtering). */
-  category: 'filesystem' | 'shell' | 'search' | 'web' | 'agent' | 'observability';
+  category: 'filesystem' | 'shell' | 'search' | 'web' | 'agent' | 'observability' | 'mcp';
   /**
    * Whether the tool is considered safe by default for fully autonomous
    * loops. False here means callers must opt-in via LLMOptions.toolFilter.
@@ -246,7 +246,7 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
   },
   {
     name: 'memory_recall',
-    category: 'observer-builtin',
+    category: 'observability',
     defaultEnabled: true,
     description:
       'Read durable notes saved to the agent memory provider (Hermes / Redis / holistic) that match a query. Use this to remember decisions made in earlier sessions.',
@@ -257,6 +257,128 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
         limit: { type: 'integer', description: 'Default 10.' },
       },
       required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'mcp_list_tools',
+    category: 'mcp',
+    defaultEnabled: true,
+    description:
+      'Start a configured local stdio MCP server, initialize the MCP session, and return the tools it advertises. Optionally filter to one server by name.',
+    parameters: {
+      type: 'object',
+      properties: {
+        server: {
+          type: 'string',
+          description:
+            'Optional configured MCP server name. Omit to list tools from every enabled server.',
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'mcp_call_tool',
+    category: 'mcp',
+    defaultEnabled: true,
+    description:
+      'Call a tool exposed by a configured local stdio MCP server. MCP tools may mutate external systems, so only use this when the permission mode allows mutating tools.',
+    parameters: {
+      type: 'object',
+      properties: {
+        server: { type: 'string', description: 'Configured MCP server name.' },
+        tool: { type: 'string', description: 'MCP tool name advertised by the server.' },
+        arguments: {
+          type: 'object',
+          description: 'JSON object passed as the MCP tools/call arguments payload.',
+        },
+      },
+      required: ['server', 'tool'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todo_add',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Add a task to the durable kanban-backed todo board (~/.tnf/kanban). Use for multi-step work so progress survives restarts and other agents can see it. Columns: todo, doing, done.',
+    parameters: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Short imperative task title.' },
+        description: { type: 'string', description: 'Optional context or acceptance detail.' },
+        column: { type: 'string', enum: ['todo', 'doing', 'done'], description: 'Default todo.' },
+        priority: {
+          type: 'string',
+          enum: ['low', 'medium', 'high'],
+          description: 'Default medium.',
+        },
+      },
+      required: ['title'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todo_list',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'List tasks from the durable todo board, optionally filtered by column. Use at the start of a work unit to see what is pending, in progress, and done.',
+    parameters: {
+      type: 'object',
+      properties: {
+        column: {
+          type: 'string',
+          enum: ['todo', 'doing', 'done'],
+          description: 'Optional filter. Omit to return all columns.',
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todo_update',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Update a task on the durable todo board: move it to another column or change its title/priority. A task only moves to done when the work truly succeeded.',
+    parameters: {
+      type: 'object',
+      properties: {
+        taskId: {
+          type: 'string',
+          description: 'Task id as returned by todo_list (e.g. KAN-XXXX).',
+        },
+        column: {
+          type: 'string',
+          enum: ['todo', 'doing', 'done'],
+          description: 'Optional new column.',
+        },
+        title: { type: 'string', description: 'Optional new title.' },
+        priority: {
+          type: 'string',
+          enum: ['low', 'medium', 'high'],
+          description: 'Optional new priority.',
+        },
+      },
+      required: ['taskId'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todo_done',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Mark a task complete on the durable todo board (moves it to the done column). Use only when the work is verified.',
+    parameters: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Task id as returned by todo_list.' },
+      },
+      required: ['taskId'],
       additionalProperties: false,
     },
   },

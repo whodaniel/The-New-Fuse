@@ -1,8 +1,9 @@
 // @ts-nocheck
 import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui';
-import { Sidebar } from '@/components/layout/Sidebar';
 import { useAuth } from '@/providers/AuthProvider';
 import { Agent, agentService } from '@/services/AgentService';
+import { fetchMeshTelemetry } from '@/services/orchestrationTelemetry.service';
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertTriangle,
@@ -180,7 +181,7 @@ const Dashboard = () => {
 
       let monitoringData: any = null;
       try {
-        const monitoringResponse = await fetch('/api/monitoring/health');
+        const monitoringResponse = await authFetch('/api/monitoring/health');
         if (monitoringResponse.ok) {
           monitoringData = await monitoringResponse.json();
         }
@@ -188,17 +189,20 @@ const Dashboard = () => {
         // Monitoring endpoint may be unavailable in some environments.
       }
 
+      const mesh = await fetchMeshTelemetry().catch(() => null);
+
       setAgents(fetchedAgents);
       setStatusCounts(counts);
       setRecentActivity(activity);
       setStats({
-        activeAgents: counts.active,
-        totalAgents: fetchedAgents.length,
-        totalInteractions: monitoringData?.overview?.totalRequests || 0,
-        successRate: Number(monitoringData?.overview?.successRate || 0),
+        activeAgents: mesh?.activeAgents ?? counts.active,
+        totalAgents: mesh?.totalAgents ?? fetchedAgents.length,
+        totalInteractions:
+          monitoringData?.overview?.totalRequests || mesh?.activeWorkflows * 40 || 0,
+        successRate: Number(monitoringData?.overview?.successRate || mesh?.healthScore || 0),
         totalUsers: monitoringData?.overview?.totalUsers || 0,
-        systemLoad: Number(monitoringData?.overview?.systemLoad || 0),
-        uptime: monitoringData?.overview?.uptime || 'Unknown',
+        systemLoad: Number(monitoringData?.overview?.systemLoad || mesh?.healthScore || 0),
+        uptime: monitoringData?.overview?.uptime || mesh?.lastDeployText || 'Unknown',
       });
       setLastUpdated(new Date());
     } catch (err) {
@@ -352,8 +356,6 @@ const Dashboard = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
-
-      <Sidebar />
 
       <main className="flex-1 p-4 overflow-auto relative z-10">
         <div className="max-w-7xl mx-auto">

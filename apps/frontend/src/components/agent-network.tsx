@@ -25,12 +25,26 @@ export const AgentNetwork = ({ agents, tasks, onNodeClick }) => {
     onNodeClick(node);
   };
   const nodeCanvasObject = (node, ctx) => {
-    const label = node.name;
-    const fontSize = 12;
+    const role = node.daccRole || node.role || '';
+    const platform = node.platform || '';
+    const baton = node.batonHolder ? ' · BATON' : '';
+    const label = [node.name || node.id, role && `role=${role}`, platform && `plat=${platform}`]
+      .filter(Boolean)
+      .join(' · ');
+    const sub = baton ? `${label}${baton}` : label;
+    const fontSize = 11;
     ctx.font = `${fontSize}px Sans-Serif`;
-    const textWidth = ctx.measureText(label).width;
-    const bckgDimensions = [textWidth + 8, fontSize + 8];
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    const textWidth = ctx.measureText(sub).width;
+    const bckgDimensions = [textWidth + 10, fontSize + 10];
+    // Color by platform when present; otherwise by daccRole seat.
+    const seatColors = {
+      director: '#f43f5e',
+      orchestrator: '#3b82f6',
+      broker: '#8b5cf6',
+      worker: '#10b981',
+      participant: '#64748b',
+    };
+    ctx.fillStyle = node.batonHolder ? 'rgba(59, 130, 246, 0.35)' : 'rgba(255, 255, 255, 0.85)';
     if (typeof node.x === 'number' && typeof node.y === 'number') {
       ctx.fillRect(
         node.x - bckgDimensions[0] / 2,
@@ -40,8 +54,8 @@ export const AgentNetwork = ({ agents, tasks, onNodeClick }) => {
       );
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#000';
-      ctx.fillText(label, node.x, node.y);
+      ctx.fillStyle = seatColors[String(role).toLowerCase()] || '#000';
+      ctx.fillText(sub, node.x, node.y);
       node.__bckgDimensions = bckgDimensions;
     }
   };
@@ -62,7 +76,16 @@ export const AgentNetwork = ({ agents, tasks, onNodeClick }) => {
       <ForceGraph2D
         ref={fgRef}
         graphData={{ nodes: agents, links: [] }}
-        nodeLabel="name"
+        nodeLabel={(node) => {
+          const parts = [
+            node.name || node.id,
+            node.daccRole && `daccRole=${node.daccRole}`,
+            node.platform && `platform=${node.platform}`,
+            node.batonHolder && 'BATON',
+            node.canonicalEntityId,
+          ].filter(Boolean);
+          return parts.join(' · ');
+        }}
         nodeCanvasObject={nodeCanvasObject}
         nodePointerAreaPaint={nodePointerAreaPaint}
         onNodeClick={handleNodeClick}

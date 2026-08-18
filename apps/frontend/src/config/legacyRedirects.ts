@@ -11,7 +11,7 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   // OpenClaw-style operational aliases
   { from: '/overview', to: '/dashboard' },
   { from: '/instances', to: '/workflows/nexus?layer=topology&from=observatory' },
-  { from: '/sessions', to: '/multi-agent-chat' },
+  { from: '/sessions', to: '/chat?mode=multi' },
   { from: '/usage', to: '/analytics' },
   { from: '/cron-jobs', to: '/tasks' },
   { from: '/nodes', to: '/workflows/nexus?layer=topology&from=observatory' },
@@ -23,8 +23,8 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   { from: '/admin/panel', to: '/admin' },
   { from: '/team', to: '/workspace/members' },
   { from: '/workspace', to: '/workspace/overview' },
-  { from: '/agents/unified-creator', to: '/agents/new' },
-  { from: '/workspace/chat', to: '/workspace-chat' },
+  // Agent/chat aliases that are NOT also declared as Routes in ComprehensiveRouter
+  { from: '/workspace/chat', to: '/chat?mode=workspace' },
   { from: '/workspace/layout', to: '/workspace/overview' },
   { from: '/integrations', to: '/connect' },
   { from: '/ide', to: '/command-center' },

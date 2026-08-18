@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
+
 LABEL="com.tnf.voice-bridge-server"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LAUNCH_DOMAIN="gui/$(id -u)"
 PYTHON_BIN="${TNF_VOICE_BRIDGE_PYTHON_BIN:-$(command -v python3)}"
-SCRIPT_PATH="${TNF_VOICE_BRIDGE_SCRIPT_PATH:-$HOME/bin/voice_server.py}"
+SCRIPT_PATH="${TNF_VOICE_BRIDGE_SCRIPT_PATH:-${TNF_VOICE_SYSTEM_DIR:-$HOME/bin}/voice_server.py}"
 WORK_DIR="${TNF_VOICE_BRIDGE_WORK_DIR:-$HOME}"
 LOG_PATH="${TNF_VOICE_BRIDGE_LOG_PATH:-/tmp/voice_server.log}"
 
@@ -43,8 +51,8 @@ create_plist() {
   </dict>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
+  <key>StartInterval</key>
+  <integer>60</integer>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -70,7 +78,7 @@ start() {
   fi
   launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
-  launchctl kickstart -k "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 

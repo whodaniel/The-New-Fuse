@@ -1,3 +1,4 @@
+import { aiSourceService } from '@/services/aiSource.service';
 import { Bot, Loader2, Plus, Search, Send, Settings, Sparkles, Users, Zap } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useApi } from '../hooks/useApi';
@@ -92,28 +93,6 @@ const MessageItem = React.memo<{ msg: Message }>(({ msg }) => {
 });
 MessageItem.displayName = 'MessageItem';
 
-const extractAssistantText = (
-  payload: any
-): { sender: string; text: string; agentId?: string } | null => {
-  const responseBody = payload?.data ?? payload;
-  const text =
-    responseBody?.message ??
-    responseBody?.response ??
-    responseBody?.reply ??
-    responseBody?.text ??
-    responseBody?.output?.text;
-
-  if (typeof text !== 'string' || text.trim().length === 0) return null;
-
-  return {
-    sender: String(responseBody?.agentName ?? responseBody?.agent?.name ?? 'Orchestrator'),
-    text,
-    agentId: responseBody?.agentId ?? responseBody?.agent?.id,
-  };
-};
-
-// ⚡ Bolt: Extracted AgentItem and wrapped in React.memo to prevent O(n) re-renders
-// of the agent list during typing in the main chat input.
 const AgentItem = React.memo<{ agent: ChatAgent }>(({ agent }) => (
   <div className="flex items-center gap-3 p-3 rounded-md bg-transparent/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group">
     <div className="relative">
@@ -126,7 +105,7 @@ const AgentItem = React.memo<{ agent: ChatAgent }>(({ agent }) => (
             ? 'bg-emerald-500'
             : agent.status === 'busy'
               ? 'bg-amber-500'
-              : 'bg-transparent0'
+              : 'bg-gray-500'
         }`}
       />
     </div>
@@ -141,7 +120,7 @@ const AgentItem = React.memo<{ agent: ChatAgent }>(({ agent }) => (
 AgentItem.displayName = 'AgentItem';
 
 export const MultiAgentChat: React.FC = () => {
-  const { api, agentService } = useApi();
+  const { agentService } = useApi();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeAgents, setActiveAgents] = useState<ChatAgent[]>([]);
@@ -183,12 +162,6 @@ export const MultiAgentChat: React.FC = () => {
     }
   };
 
-  // ⚡ Bolt: Memoized the rendered message list to prevent O(n) re-evaluations
-  // of the entire message array on every keystroke in the chat input.
-  const renderedMessages = React.useMemo(() => {
-    return messages.map((msg) => <MessageItem key={msg.id} msg={msg} />);
-  }, [messages]);
-
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -207,15 +180,12 @@ export const MultiAgentChat: React.FC = () => {
     setSendError(null);
 
     try {
-      const response = await api.post('/orchestration/chat', {
-        message: userInput,
-        swarmId: 'default-swarm',
-      });
-
-      const assistant = extractAssistantText(response);
-      if (!assistant) {
-        throw new Error('Orchestration endpoint returned no assistant response content.');
-      }
+      const result = await aiSourceService.chat({ message: userInput });
+      const assistant = {
+        sender: result.source.label,
+        text: result.text,
+        agentId: result.source.id,
+      };
 
       const agentMsg: Message = {
         id: `${Date.now()}-agent`,
@@ -333,7 +303,9 @@ export const MultiAgentChat: React.FC = () => {
               </div>
             )}
 
-            {renderedMessages}
+            {messages.map((msg) => (
+              <MessageItem key={msg.id} msg={msg} />
+            ))}
 
             {isTyping && (
               <div className="flex justify-start animate-in fade-in duration-300">
@@ -389,7 +361,6 @@ export const MultiAgentChat: React.FC = () => {
   );
 };
 
-// ⚡ Bolt: Wrapped ParamSlider in React.memo to prevent unnecessary re-renders
 const ParamSlider = React.memo<{ label: string; value: number }>(({ label, value }) => (
   <div className="space-y-2">
     <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">

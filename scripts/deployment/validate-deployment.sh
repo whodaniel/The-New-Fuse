@@ -382,38 +382,32 @@ validate_docker_available() {
 }
 
 validate_cloud_runtime_cli() {
-  print_section "CloudRuntime CLI Validation"
+  print_section "Cloud deploy CLI validation (GCP)"
 
-  if command -v cloud_runtime &>/dev/null; then
-    log_success "CloudRuntime CLI is installed"
+  if command -v gcloud &>/dev/null; then
+    log_success "gcloud CLI is installed"
+    local gcloud_version
+    gcloud_version=$(gcloud --version 2>&1 | head -n1 || echo "unknown")
+    log_info "gcloud: $gcloud_version"
 
-    local cloud_runtime_version=$(cloud_runtime --version 2>&1 || echo "unknown")
-    log_info "CloudRuntime CLI version: $cloud_runtime_version"
-
-    # Check if authenticated
-    if cloud_runtime whoami &>/dev/null; then
-      log_success "CloudRuntime CLI is authenticated"
-
-      local user=$(cloud_runtime whoami 2>&1)
-      log_info "Logged in as: $user"
+    if gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | head -n1 | grep -q '.'; then
+      log_success "gcloud is authenticated"
+      log_info "Account: $(gcloud auth list --filter=status:ACTIVE --format='value(account)' | head -n1)"
     else
-      log_error "CloudRuntime CLI is not authenticated"
-      log_info "Run 'cloud_runtime login' to authenticate"
+      log_error "gcloud is not authenticated"
+      log_info "Run 'gcloud auth login' to authenticate"
     fi
 
-    # Check if linked to a project
-    if cloud_runtime status &>/dev/null; then
-      log_success "CloudRuntime project is linked"
-
-      log_info "Project info:"
-      cloud_runtime status 2>&1 | head -5
+    if gcloud run services list --project="${TNF_GCP_PROJECT_ID:-the-new-fuse-2025}" --region="${TNF_GCP_REGION:-us-central1}" &>/dev/null; then
+      log_success "Cloud Run services listable"
+      gcloud run services list --project="${TNF_GCP_PROJECT_ID:-the-new-fuse-2025}" --region="${TNF_GCP_REGION:-us-central1}" 2>&1 | head -5
     else
-      log_warning "Not linked to a CloudRuntime project"
-      log_info "Run 'cloud_runtime link' to link to a project"
+      log_warning "Could not list Cloud Run services (check project/region permissions)"
     fi
   else
-    log_error "CloudRuntime CLI is not installed"
-    log_info "Install with: npm install -g @cloud_runtime/cli"
+    log_error "gcloud CLI is not installed"
+    log_info "Install Google Cloud SDK. Legacy cloud_runtime CLI does not exist."
+    log_info "Deploy via: bash scripts/deployment/gcp-deploy.sh"
   fi
 }
 

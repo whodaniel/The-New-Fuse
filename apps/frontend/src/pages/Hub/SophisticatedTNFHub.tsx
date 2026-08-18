@@ -338,7 +338,7 @@ export const SophisticatedTNFHub: React.FC = () => {
       case 'error':
         return 'bg-red-500';
       default:
-        return 'bg-transparent0';
+        return 'bg-gray-500';
     }
   };
 
@@ -598,7 +598,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                               ? 'bg-yellow-500'
                               : status === 'error'
                                 ? 'bg-red-500'
-                                : 'bg-transparent0';
+                                : 'bg-gray-500';
                         return (
                           <div key={execution.id} className="flex items-center space-x-3">
                             <div className={`w-2 h-2 rounded-full ${dotClass}`}></div>
@@ -768,7 +768,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                         ? 'bg-yellow-500/20 text-yellow-400'
                         : normalized === 'error'
                           ? 'bg-red-500/20 text-red-400'
-                          : 'bg-transparent0/20 text-gray-300';
+                          : 'bg-gray-500/20 text-gray-300';
                   return (
                     <Card
                       key={agent.id}

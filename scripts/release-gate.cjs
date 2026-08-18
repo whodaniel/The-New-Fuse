@@ -126,6 +126,12 @@ const checkLocalRuntimeBoundary = () => {
   run('node', ['scripts/protocols/validate-cleanroom-boundary.cjs']);
 };
 
+const checkProductBoundaries = () => {
+  section('Product Boundary Gates');
+  run('node', ['scripts/product/check-member-storage-policy.cjs']);
+  run('node', ['scripts/product/check-personal-data-location-policy.cjs']);
+};
+
 const checkCommandGates = () => {
   section('Build + Type Gates');
 
@@ -168,6 +174,7 @@ const main = () => {
 
   checkRequiredEnvExamples();
   checkLocalRuntimeBoundary();
+  checkProductBoundaries();
   checkCriticalNoMockFallbacks();
   checkCommandGates();
 

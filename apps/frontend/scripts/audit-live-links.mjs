@@ -26,6 +26,26 @@ const MAX_EXTERNAL_CHECKS_PER_DOMAIN = Number.parseInt(
 const NAV_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_NAV_TIMEOUT_MS || '35000', 10);
 const FETCH_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_FETCH_TIMEOUT_MS || '20000', 10);
 const FAIL_ON_BROKEN = String(process.env.FAIL_ON_BROKEN || '1') !== '0';
+// Hosts that block anonymous/headless requests (401/403/404 bot walls) and
+// would otherwise fail the audit despite working in real browsers.
+const ALLOWLISTED_EXTERNAL_HOSTS = new Set(
+  (process.env.LIVE_AUDIT_ALLOW_HOSTS || 'platform.openai.com,x.com,twitter.com')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+const isAllowlistedHost = (value) => {
+  try {
+    const host = new URL(value).hostname.toLowerCase();
+    return (
+      ALLOWLISTED_EXTERNAL_HOSTS.has(host) ||
+      [...ALLOWLISTED_EXTERNAL_HOSTS].some((allowed) => host.endsWith(`.${allowed}`))
+    );
+  } catch {
+    return false;
+  }
+};
 const CHROMIUM_EXECUTABLE_CANDIDATES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
   process.env.CHROME_EXECUTABLE_PATH,
@@ -318,7 +338,9 @@ const crawlDomain = async (browser, seed) => {
       pageStatus: null,
       pageError: null,
       ...http,
-      broken: !http.ok || (typeof http.status === 'number' && http.status >= 400),
+      broken:
+        !isAllowlistedHost(external.url) &&
+        (!http.ok || (typeof http.status === 'number' && http.status >= 400)),
     });
   }
 

@@ -1,7 +1,7 @@
 # First-Run Install Test — 2026-06-22
 
-**Target:** `fuse-open-runtime@v2.0.0-rc.1`  
-**Script:** `curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh | bash -s -- --skip-onboard`  
+**Target:** `The-New-Fuse@v2.0.0-rc.1`  
+**Script:** `curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh | bash -s -- --skip-onboard`  
 **Environment:**
 macOS darwin 21.6, Node 20.20.2, pnpm 10.22.0, ~2.8 GB free disk after cleanup
 
@@ -11,7 +11,7 @@ macOS darwin 21.6, Node 20.20.2, pnpm 10.22.0, ~2.8 GB free disk after cleanup
 
 | Step                                             | Result         | Notes                                                                                                    |
 | ------------------------------------------------ | -------------- | -------------------------------------------------------------------------------------------------------- |
-| Fetch install script                             | ✅ Pass        | Points to `fuse-open-runtime.git`                                                                        |
+| Fetch install script                             | ✅ Pass        | Points to `The-New-Fuse.git`                                                                        |
 | `git clone --depth=1` @ `v2.0.0-rc.1`            | ✅ Pass        | ~23,843 files                                                                                            |
 | `pnpm install --filter @the-new-fuse/tnf-cli...` | ⚠ Partial      | Frozen lockfile fails (`apps/tauri-desktop` drift); fallback `--no-frozen-lockfile` succeeds in ~12m 37s |
 | Root `postinstall` (canvas rebuild)              | ✅ Pass        | node-gyp rebuild OK                                                                                      |
@@ -67,7 +67,7 @@ on install after freeing ~2.8 GB, then failed at build.
 
 ## Launch Actions Required
 
-1. **Re-sync** `fuse-open-runtime` with monorepo fixes + commit
+1. **Re-sync** `The-New-Fuse` with monorepo fixes + commit
    `refresh-context`
 2. **Retag** `v2.0.0-rc.2` (or move `v2.0.0-rc.1`)
 3. **Regenerate lockfile** so frozen install works for strangers
@@ -81,7 +81,7 @@ on install after freeing ~2.8 GB, then failed at build.
 ```bash
 rm -rf /tmp/tnf-clean-install-test
 export TNF_INSTALL_AUTO_ONBOARD=0
-curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse-open-runtime/main/scripts/install-tnf-cli.sh \
+curl -fsSL https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/scripts/install-tnf-cli.sh \
   | bash -s -- --ref v2.0.0-rc.3 --skip-onboard
 ~/.tnf-cli/fuse/packages/tnf-cli/dist/cli.js --version
 ```

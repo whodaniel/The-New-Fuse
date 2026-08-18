@@ -89,7 +89,7 @@ def write_outputs(concordance, file_count, total_size):
     generated = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
     meta = {
-        "root": str(ROOT),
+        "root": ROOT.name,
         "generated": generated,
         "files_indexed": file_count,
         "total_size_bytes": total_size,
@@ -168,9 +168,9 @@ def write_outputs(concordance, file_count, total_size):
     stats = {
         **meta,
         "output_files": {
-            "concordance_tsv_gz": str(gz_path),
-            "per_file_index_tsv_gz": str(idx_path),
-            "summary": str(summary),
+            "concordance_tsv_gz": gz_path.name,
+            "per_file_index_tsv_gz": idx_path.name,
+            "summary": summary.name,
         }
     }
     with open(OUTPUT / "stats.json", 'w') as f:

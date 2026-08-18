@@ -10,13 +10,14 @@ const repoRoot = path.resolve(__dirname, '..');
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
 
 const DEFAULT_PORTS = [
-  { port: 3000, service: 'relay-core/frontend', protected: false },
+  { port: 3000, service: 'relay-core', protected: false },
   { port: 3001, service: 'api/backend', protected: false },
   { port: 3004, service: 'backend', protected: false },
   { port: 3005, service: 'api-gateway/ws-bridge', protected: false },
   { port: 3006, service: 'skideancer/ws', protected: false },
   { port: 3007, service: 'skideancer/ide', protected: false },
   { port: 3008, service: 'skideancer websocket', protected: true },
+  { port: 1420, service: 'tauri-desktop', protected: false },
   { port: 5173, service: 'vite', protected: false },
   { port: 5174, service: 'vite-alt', protected: false },
   { port: 5555, service: 'drizzle-studio', protected: true },
@@ -107,6 +108,12 @@ function loadLocalEnv(rootDir) {
 
 loadLocalEnv(repoRoot);
 
+function debugLog(...args) {
+  if (process.env.TNF_PORTS_DEBUG === '1') {
+    console.log(...args);
+  }
+}
+
 function parsePortEnv() {
   const raw = process.env.TNF_PORTS || '';
   if (!raw.trim()) return [];
@@ -153,7 +160,7 @@ async function discoverWorkspacePorts() {
           for (const scriptName of ['dev', 'start', 'serve']) {
             const script = packageJson.scripts[scriptName];
             if (script) {
-              console.log(`Checking script: ${packageName}:${scriptName} -> ${script}`); // Debug log
+              debugLog(`Checking script: ${packageName}:${scriptName} -> ${script}`);
               let portsFound = [];
 
               // 1. Regex to find explicit port definitions
@@ -183,7 +190,7 @@ async function discoverWorkspacePorts() {
                 discoveredPorts.push({ port, service: `${packageName}/${scriptName}`, protected: false });
               }
               if (portsFound.length > 0) {
-                console.log(`Discovered ports for ${packageName}:${scriptName}:`, portsFound); // Debug log
+                debugLog(`Discovered ports for ${packageName}:${scriptName}:`, portsFound);
               }
             }
           }
@@ -202,7 +209,7 @@ function getWorkspacePaths() {
   if (fs.existsSync(pnpmWorkspacePath)) {
     const workspaceConfig = yaml.load(fs.readFileSync(pnpmWorkspacePath, 'utf8'));
     const patterns = workspaceConfig.packages || [];
-    console.log('Workspace patterns:', patterns); // Debug log
+    debugLog('Workspace patterns:', patterns);
     let workspacePaths = [];
 
     for (const pattern of patterns) {
@@ -214,13 +221,13 @@ function getWorkspacePaths() {
       } else {
         // Include pattern
         const matchedPaths = glob.sync(pattern, { cwd: repoRoot, absolute: false });
-        console.log(`Glob pattern: ${pattern}, matched: ${matchedPaths.length} paths`); // Debug log
+        debugLog(`Glob pattern: ${pattern}, matched: ${matchedPaths.length} paths`);
         workspacePaths.push(...matchedPaths);
       }
     }
     // Filter out duplicate paths and return unique ones
     const uniqueWorkspacePaths = Array.from(new Set(workspacePaths));
-    console.log('Discovered unique workspace paths:', uniqueWorkspacePaths); // Debug log
+    debugLog('Discovered unique workspace paths:', uniqueWorkspacePaths);
     return uniqueWorkspacePaths;
   }
 
@@ -277,12 +284,38 @@ function getRuntimeHealth(entry) {
   // Only attempt health checks for HTTP-based services
   // Ports like Redis (6379) or Postgres (5432) do not expose HTTP health endpoints
   if (
-    ![3000, 3001, 3004, 3005, 3006, 3007, 5173, 5174].includes(entry.port)
+    ![1420, 3000, 3001, 3004, 3005, 3006, 3007, 43110, 43120, 5173, 5174].includes(entry.port)
   ) {
     return null;
   }
 
-  const raw = run('curl', ['-fsS', '--max-time', '1', `http://127.0.0.1:${entry.port}/health`]);
+  // Vite / SPA surfaces (tauri-desktop :1420, library UI) often lack /health —
+  // treat an HTTP 200 on / as healthy intentional listeners.
+  if ([1420, 5173, 5174].includes(entry.port)) {
+    const root = run('curl', [
+      '-fsS',
+      '-o',
+      '/dev/null',
+      '-w',
+      '%{http_code}',
+      '--max-time',
+      '1',
+      `http://127.0.0.1:${entry.port}/`,
+    ]);
+    if (String(root).trim() === '200') {
+      return { ok: true, service: entry.service, status: 'ok' };
+    }
+    return null;
+  }
+
+  const healthPath =
+    entry.port === 43120 ? '/v1/health' : entry.port === 43110 ? '/healthz' : '/health';
+  const raw = run('curl', [
+    '-fsS',
+    '--max-time',
+    '1',
+    `http://127.0.0.1:${entry.port}${healthPath}`,
+  ]);
   if (!raw.trim()) return null;
 
   try {
@@ -300,9 +333,16 @@ function getRuntimeHealth(entry) {
     if (entry.port === 3005 && body.status === 'ok') {
       return { ok: true, service: 'api-gateway/ws-bridge', status: body.status };
     }
+    if (entry.port === 3001 && String(body.status || '').toLowerCase() === 'healthy') {
+      return { ok: true, service: body.service || entry.service, status: body.status };
+    }
 
     // Generic health check for services returning { status: "ok" } or similar
-    if (body.status === 'ok' || body.health === 'ok' || body.healthy === true) {
+    if (
+      ['ok', 'healthy', 'running'].includes(String(body.status || '').toLowerCase()) ||
+      body.health === 'ok' ||
+      body.healthy === true
+    ) {
       return { ok: true, service: entry.service, status: body.status || 'ok' };
     }
   } catch {

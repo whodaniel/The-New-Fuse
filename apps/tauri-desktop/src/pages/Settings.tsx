@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import { Bell, Bot, Copy, Eye, EyeOff, Info, Palette, ShieldCheck, Wifi } from 'lucide-react';
+import React, { useState, type ComponentType } from 'react';
+import TnfLogo from '../components/brand/TnfLogo';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useTheme } from '../providers/ThemeProvider';
 
+import { probeRestApiUrl } from '../config/endpointDiscovery';
+import { getVoicePort } from '../config/voiceBridge';
 import { resolveWebAppBaseUrl } from '../config/webSurfaces';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
 import { useSettingsStore } from '../stores/settingsStore';
+
+type SettingsSection = {
+  id: string;
+  title: string;
+  Icon: ComponentType<{ size?: number; strokeWidth?: number }>;
+};
 
 /**
  * Settings Page - The New Fuse Desktop
@@ -13,18 +23,71 @@ import { useSettingsStore } from '../stores/settingsStore';
 const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { environment, setEnvironment, customApiUrl, setCustomApiUrl, apiUrl } = useSettingsStore();
+  const { state: synergy, rediscover } = useOperatorSynergy();
   const webAppUrl = resolveWebAppBaseUrl(environment);
   const [apiKey, setApiKey] = useState('');
+  const voicePort = getVoicePort();
 
-  const settingsSections = [
-    { id: 'connection', title: 'Connection', icon: '🌐' },
-    { id: 'appearance', title: 'Appearance', icon: '🎨' },
-    { id: 'ai', title: 'AI Configuration', icon: '🤖' },
-    { id: 'notifications', title: 'Notifications', icon: '🔔' },
-    { id: 'about', title: 'About', icon: 'ℹ️' },
+  const settingsSections: SettingsSection[] = [
+    { id: 'connection', title: 'Connection', Icon: Wifi },
+    { id: 'appearance', title: 'Appearance', Icon: Palette },
+    { id: 'ai', title: 'AI Configuration', Icon: Bot },
+    { id: 'notifications', title: 'Notifications', Icon: Bell },
+    { id: 'about', title: 'About', Icon: Info },
   ];
 
   const [activeSection, setActiveSection] = useState('connection');
+  const [isPolling, setIsPolling] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [fallbackProvider, setFallbackProvider] = useState('NVIDIA NIM');
+  const [defaultProvider, setDefaultProvider] = useState('NVIDIA NIM');
+  const [showAdvancedTui, setShowAdvancedTui] = useState(false);
+  const [integrityStatus, setIntegrityStatus] = useState<string | null>(null);
+
+  const handleRediscover = async () => {
+    setIsPolling(true);
+    await rediscover();
+    setTimeout(() => setIsPolling(false), 800);
+  };
+
+  const runIntegrityCheck = async () => {
+    setIntegrityStatus('Checking local runtime...');
+    await rediscover();
+
+    const probeHttp = async (url: string): Promise<boolean> => {
+      try {
+        const response = await fetch(url, {
+          cache: 'no-store',
+          signal: AbortSignal.timeout(2500),
+        });
+        return response.ok;
+      } catch {
+        return false;
+      }
+    };
+
+    const normalizedApiUrl = synergy.apiUrl.replace(/\/$/, '');
+    const [apiOk, voiceOk] = await Promise.all([
+      normalizedApiUrl ? probeRestApiUrl(normalizedApiUrl, 2500) : Promise.resolve(false),
+      probeHttp(`http://127.0.0.1:${voicePort}/mic_state`),
+    ]);
+    const relayOk = synergy.relayConnected;
+    const passed = [apiOk, relayOk, voiceOk].filter(Boolean).length;
+
+    setIntegrityStatus(
+      `${passed}/3 local checks healthy: API ${apiOk ? 'online' : 'offline'}, Relay ${
+        relayOk ? 'connected' : 'offline'
+      }, Voice ${voiceOk ? 'online' : 'offline'}.`
+    );
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  };
 
   const scrollToSection = (id: string) => {
     setActiveSection(id);
@@ -33,26 +96,28 @@ const Settings: React.FC = () => {
 
   return (
     <PageShell title="Settings" subtitle="Configure your workspace and connection preferences">
-      <SynergyStatusBar />
       <div className="settings-layout">
         <nav className="settings-nav">
-          {settingsSections.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              className={`nav-link ${activeSection === section.id ? 'active' : ''}`}
-              onClick={() => scrollToSection(section.id)}
-            >
-              <span>{section.icon}</span>
-              <span>{section.title}</span>
-            </button>
-          ))}
+          {settingsSections.map((section) => {
+            const Icon = section.Icon;
+            return (
+              <button
+                key={section.id}
+                type="button"
+                className={`nav-link ${activeSection === section.id ? 'active' : ''}`}
+                onClick={() => scrollToSection(section.id)}
+              >
+                <Icon size={16} strokeWidth={2} />
+                <span>{section.title}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="settings-content">
           {/* Connection Section */}
           <section id="connection" className="settings-section">
-            <h2 className="section-title">🌐 Connection & Environment</h2>
+            <h2 className="section-title">Connection & Environment</h2>
 
             <div className="setting-item">
               <div className="setting-info">
@@ -101,11 +166,76 @@ const Settings: React.FC = () => {
 
             <div className="setting-item">
               <div className="setting-info">
+                <label>Discovered local endpoints</label>
+                <div className="endpoint-row">
+                  <p>
+                    API: <code className="url-code">{synergy.apiUrl}</code>
+                    {' · '}
+                    {synergy.apiOnline ? 'online' : 'offline'}
+                  </p>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(synergy.apiUrl)}
+                    title="Copy API URL"
+                  >
+                    <Copy size={14} />
+                  </button>
+                </div>
+                <div className="endpoint-row">
+                  <p>
+                    Relay: <code className="url-code">{synergy.relayUrl}</code>
+                    {' · '}
+                    {synergy.relayConnected ? 'connected' : 'offline'}
+                  </p>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(synergy.relayUrl)}
+                    title="Copy Relay URL"
+                  >
+                    <Copy size={14} />
+                  </button>
+                </div>
+                <div className="endpoint-row">
+                  <p>
+                    Voice: <code className="url-code">http://127.0.0.1:{voicePort}</code>
+                  </p>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => copyToClipboard(`http://127.0.0.1:${voicePort}`)}
+                    title="Copy Voice URL"
+                  >
+                    <Copy size={14} />
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => void handleRediscover()}
+                disabled={isPolling}
+              >
+                {isPolling ? 'Polling...' : 'Rediscover'}
+              </button>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
                 <label>Web App (thenewfuse.com parity)</label>
                 <p>Full web surfaces open at this URL from Web Parity Hub</p>
               </div>
               <div className="web-app-row">
                 <code className="url-code">{webAppUrl}</code>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => copyToClipboard(webAppUrl)}
+                  title="Copy Web App URL"
+                >
+                  <Copy size={14} />
+                </button>
                 <button
                   type="button"
                   className="secondary-button"
@@ -119,19 +249,24 @@ const Settings: React.FC = () => {
 
           {/* Appearance Section */}
           <section id="appearance" className="settings-section">
-            <h2 className="section-title">🎨 Appearance</h2>
+            <h2 className="section-title">Appearance</h2>
 
             <div className="setting-item">
               <div className="setting-info">
                 <label>Theme</label>
-                <p>Choose your preferred color scheme</p>
+                <p>
+                  Choose light, dark, or follow the OS. You can also toggle from the sidebar footer
+                  or ⌘K → &quot;light/dark mode&quot;.
+                </p>
               </div>
-              <div className="theme-selector">
+              <div className="theme-selector" role="group" aria-label="Theme">
                 {(['light', 'dark', 'system'] as const).map((t) => (
                   <button
                     key={t}
+                    type="button"
                     className={`theme-btn ${theme === t ? 'active' : ''}`}
                     onClick={() => setTheme(t)}
+                    aria-pressed={theme === t}
                   >
                     {t === 'light' ? '☀️' : t === 'dark' ? '🌙' : '💻'}
                     <span>{t.charAt(0).toUpperCase() + t.slice(1)}</span>
@@ -150,48 +285,131 @@ const Settings: React.FC = () => {
                 <span className="slider"></span>
               </label>
             </div>
+
+            <div className="advanced-tui-controls">
+              <button
+                type="button"
+                className="advanced-tui-btn"
+                onClick={() => setShowAdvancedTui(!showAdvancedTui)}
+              >
+                {showAdvancedTui ? '▼' : '▶'} Advanced TUI Precision Controls
+              </button>
+              {showAdvancedTui && (
+                <div className="advanced-tui-panel">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <label>Terminal Mirror Contrast</label>
+                      <p>Adjust the contrast of the live terminal mirror</p>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      defaultValue="50"
+                      className="range-input"
+                    />
+                  </div>
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <label>Syntax Highlighting Intensity</label>
+                      <p>Enhance the vibrancy of terminal output</p>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      defaultValue="75"
+                      className="range-input"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </section>
 
           {/* AI Configuration Section */}
           <section id="ai" className="settings-section">
-            <h2 className="section-title">🤖 AI Configuration</h2>
+            <h2 className="section-title">AI Configuration</h2>
 
             <div className="setting-item">
               <div className="setting-info">
                 <label>Default Provider</label>
                 <p>Primary AI service for new conversations</p>
               </div>
-              <select className="select-input">
-                <option>Claude (Anthropic)</option>
-                <option>GPT-4 (OpenAI)</option>
-                <option>Gemini (Google)</option>
-                <option>Perplexity</option>
+              <select
+                className="select-input"
+                value={defaultProvider}
+                onChange={(e) => setDefaultProvider(e.target.value)}
+              >
+                <option>NVIDIA NIM</option>
+                <option>Groq</option>
+                <option>SambaNova</option>
+                <option>Cerebras</option>
+                <option>DeepSeek</option>
+                <option>Google Gemini</option>
+                <option>OpenAI</option>
+                <option>OpenRouter</option>
+              </select>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Fallback Provider</label>
+                <p>Secondary provider used if the primary is unavailable</p>
+              </div>
+              <select
+                className="select-input"
+                value={fallbackProvider}
+                onChange={(e) => setFallbackProvider(e.target.value)}
+              >
+                <option>NVIDIA NIM</option>
+                <option>Groq</option>
+                <option>SambaNova</option>
+                <option>Cerebras</option>
+                <option>DeepSeek</option>
+                <option>Google Gemini</option>
+                <option>OpenAI</option>
+                <option>OpenRouter</option>
+                <option>None</option>
               </select>
             </div>
 
             <div className="setting-item">
               <div className="setting-info">
                 <label>API Key</label>
-                <p>Your provider API key (stored securely)</p>
+                <p>
+                  Provider API key (e.g. NVIDIA_API_KEY, GROQ_API_KEY, OPENAI_API_KEY,
+                  GEMINI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY) — stored securely
+                </p>
               </div>
-              <input
-                type="password"
-                className="text-input"
-                placeholder="sk-..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showApiKey ? 'text' : 'password'}
+                  className="text-input"
+                  placeholder="NVIDIA_API_KEY / GROQ_API_KEY / OPENAI_API_KEY ..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="visibility-toggle"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  title={showApiKey ? 'Hide API Key' : 'Show API Key'}
+                >
+                  {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           </section>
 
           {/* Notifications Section */}
           <section id="notifications" className="settings-section">
-            <h2 className="section-title">🔔 Notifications</h2>
+            <h2 className="section-title">Notifications</h2>
 
             <div className="setting-item">
               <div className="setting-info">
-                <label>Task Completion</label>
-                <p>Get notified when tasks finish</p>
+                <label>Routine Loop Completions</label>
+                <p>Get notified when standard tasks finish</p>
               </div>
               <label className="toggle">
                 <input type="checkbox" defaultChecked />
@@ -201,11 +419,22 @@ const Settings: React.FC = () => {
 
             <div className="setting-item">
               <div className="setting-info">
-                <label>Agent Errors</label>
-                <p>Get notified about agent failures</p>
+                <label>Critical Node Failures</label>
+                <p>Get notified about severe agent or system failures</p>
               </div>
               <label className="toggle">
                 <input type="checkbox" defaultChecked />
+                <span className="slider"></span>
+              </label>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Agent Lifecycle Events</label>
+                <p>Get notified about agent spawning and termination</p>
+              </div>
+              <label className="toggle">
+                <input type="checkbox" />
                 <span className="slider"></span>
               </label>
             </div>
@@ -213,26 +442,52 @@ const Settings: React.FC = () => {
 
           {/* About Section */}
           <section id="about" className="settings-section">
-            <h2 className="section-title">ℹ️ About</h2>
+            <h2 className="section-title">About</h2>
             <div className="about-info">
               <div className="app-info">
-                <span className="app-icon">🔥</span>
+                <TnfLogo size={56} />
                 <div>
-                  <h3>TNF (The New Fuse) Desktop App</h3>
+                  <h3>The New Fuse Desktop</h3>
                   <p>Version 4.1.0</p>
                 </div>
               </div>
               <p className="tagline">"World Class or Nothing"</p>
               <div className="links">
-                <a href="https://thenewfuse.com" target="_blank" rel="noopener">
+                <a href="https://thenewfuse.com" target="_blank" rel="noopener noreferrer">
                   Website
                 </a>
-                <a href="https://docs.thenewfuse.com" target="_blank" rel="noopener">
+                <a href="https://docs.thenewfuse.com" target="_blank" rel="noopener noreferrer">
                   Documentation
                 </a>
-                <a href="https://github.com/whodaniel/fuse" target="_blank" rel="noopener">
+                <a
+                  href="https://github.com/whodaniel/The-New-Fuse"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   GitHub
                 </a>
+              </div>
+              <div className="integrity-check-wrapper" style={{ marginTop: '24px' }}>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => runIntegrityCheck()}
+                >
+                  <ShieldCheck size={14} style={{ marginRight: '6px' }} />
+                  Run System Integrity Check
+                </button>
+                {integrityStatus && (
+                  <p
+                    className="integrity-status"
+                    style={{
+                      marginTop: '12px',
+                      fontSize: '13px',
+                      color: 'var(--tnf-success, #10b981)',
+                    }}
+                  >
+                    {integrityStatus}
+                  </p>
+                )}
               </div>
             </div>
           </section>
@@ -493,8 +748,12 @@ const Settings: React.FC = () => {
           margin-bottom: 16px;
         }
 
-        .app-icon {
-          font-size: 48px;
+        .brand-logo {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          object-fit: cover;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .app-info h3 {
@@ -529,6 +788,96 @@ const Settings: React.FC = () => {
 
         .links a:hover {
           color: var(--tnf-primary-light);
+        }
+
+        .icon-btn {
+          background: transparent;
+          border: none;
+          color: var(--tnf-text-muted);
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 4px;
+          transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--tnf-text-primary);
+        }
+
+        .endpoint-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 4px;
+        }
+
+        .endpoint-row p {
+          margin-bottom: 0 !important;
+        }
+        
+        .password-input-wrapper {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .visibility-toggle {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          color: var(--tnf-text-muted);
+          cursor: pointer;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .visibility-toggle:hover {
+          color: var(--tnf-text-primary);
+        }
+
+        .advanced-tui-controls {
+          margin-top: 16px;
+          border-top: 1px dashed var(--tnf-border);
+          padding-top: 16px;
+        }
+
+        .advanced-tui-btn {
+          background: transparent;
+          border: none;
+          color: var(--tnf-text-muted);
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 0;
+          transition: color 0.2s;
+        }
+
+        .advanced-tui-btn:hover {
+          color: var(--tnf-primary-light);
+        }
+
+        .advanced-tui-panel {
+          margin-top: 16px;
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+          padding: 0 16px;
+          border: 1px solid var(--tnf-border);
+        }
+        
+        .range-input {
+          width: 200px;
+          accent-color: var(--tnf-primary);
         }
       `}</style>
     </PageShell>

@@ -13,18 +13,41 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Activity, Bot, MessageSquare, Zap } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 // Lazy load the sub-pages to keep the bundle lean
 import AIAgentPortal from './AIAgentDashboard';
 import AICommandCenter from './AICommandCenter';
 import TNFCommandCenter from './TNFCommandCenter';
 
-const CommandCore: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
+const TAB_IDS = ['mesh', 'fleet', 'streams'] as const;
+type TabId = (typeof TAB_IDS)[number];
 
-  const bgGradient = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)';
-  const activeTabColor = 'cyan.400';
+const tabIndexFromId = (id: string | null): number => {
+  const idx = TAB_IDS.indexOf((id || 'mesh') as TabId);
+  return idx >= 0 ? idx : 0;
+};
+
+const CommandCore: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => tabIndexFromId(searchParams.get('tab')));
+
+  useEffect(() => {
+    setActiveTab(tabIndexFromId(searchParams.get('tab')));
+  }, [searchParams]);
+
+  const handleTabChange = (index: number) => {
+    setActiveTab(index);
+    const params = new URLSearchParams(searchParams);
+    const tabId = TAB_IDS[index] || 'mesh';
+    if (tabId === 'mesh') {
+      params.delete('tab');
+    } else {
+      params.set('tab', tabId);
+    }
+    setSearchParams(params, { replace: true });
+  };
 
   return (
     <Box minH="100vh" bg="gray.900" color="white" position="relative" overflow="hidden">
@@ -97,7 +120,7 @@ const CommandCore: React.FC = () => {
         </Flex>
 
         {/* Unified Tab Navigation */}
-        <Tabs variant="unstyled" index={activeTab} onChange={(index) => setActiveTab(index)} isLazy>
+        <Tabs variant="unstyled" index={activeTab} onChange={handleTabChange} isLazy>
           <TabList
             bg="whiteAlpha.50"
             p={1}

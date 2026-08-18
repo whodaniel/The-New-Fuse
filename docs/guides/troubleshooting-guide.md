@@ -377,6 +377,6 @@ pnpm run dev
 
 ## 📚 **Additional Resources**
 
-- **[Native Modules Guide](docs/NATIVE_MODULES_GUIDE.md)** - Comprehensive guide for handling native module compatibility issues with Bun
-- **[Build Optimization](docs/BUILD_OPTIMIZATION.md)** - Memory-efficient build strategies and troubleshooting
+- **[Native Modules Guide](../NATIVE_MODULES_GUIDE.md)** - Comprehensive guide for handling native module compatibility issues with Bun
+- **[Build Optimization](../BUILD_OPTIMIZATION.md)** - Memory-efficient build strategies and troubleshooting
 - **[Development Setup](../GETTING_STARTED.md)** - Complete development environment setup guide

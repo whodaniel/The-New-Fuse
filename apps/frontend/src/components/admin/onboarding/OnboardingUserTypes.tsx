@@ -473,7 +473,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-transparent0 opacity-75"></div>
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
 
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
