@@ -136,7 +136,7 @@ const APIAnalyticsFull = lazy(() => import('./pages/Admin/APIAnalyticsFull'));
 const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationManagement'));
 const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
-const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
+const HarnessCredentials = lazy(() => import('./pages/Admin/HarnessCredentials'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 
@@ -1232,10 +1232,18 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
+                path="/admin/harness-credentials"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <HarnessCredentials />
+                  </RequirePermission>
+                }
+              />
+              <Route
                 path="/admin/openclaw-security"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <OpenClawSecurity />
+                    <HarnessCredentials />
                   </RequirePermission>
                 }
               />

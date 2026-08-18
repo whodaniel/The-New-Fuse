@@ -798,10 +798,10 @@ export default function ComprehensiveAdminDashboard() {
           color: 'bg-gray-500',
         },
         {
-          title: 'OpenClaw Security',
-          description: 'Secure API key rotation',
+          title: 'Harness credentials',
+          description: 'Rotate provider keys for whichever harness staffs the runtime',
           icon: <Shield className="h-6 w-6" />,
-          link: '/admin/openclaw-security',
+          link: '/admin/harness-credentials',
           color: 'bg-emerald-600',
         },
       ],

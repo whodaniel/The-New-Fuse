@@ -338,9 +338,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Admin Database', path: '/admin/database', description: 'Admin database panel' },
   {
-    name: 'Admin OpenClaw Security',
-    path: '/admin/openclaw-security',
-    description: 'OpenClaw security controls',
+    name: 'Admin harness credentials',
+    path: '/admin/harness-credentials',
+    description: 'Rotate provider keys for whichever harness staffs the runtime',
   },
   {
     name: 'Admin System Metrics',

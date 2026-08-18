@@ -49,8 +49,8 @@ back under `tnf-monorepo/apps/` except as the `extensions` symlink.
 
 | Class                            | Examples                                                                                                                                                           |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Optional OSS-shaped satellites   | `tnf-ai-arcade`, `tnf-poker-room`, `tnf-casin8-games`, `tnf-telegram-mcp`, `tnf-visualization-hub`, `tnf-adk-gateway`, `tnf-openclaw`, `tnf-audio-trigger-kws-mvp` |
-| Private / proprietary satellites | `tnf-nexus-orchestrator`, `tnf-picoclaw-overseer`, `tnf-cloud-sandbox`, `tnf-myphoneremote-api`                                                                    |
+| Optional OSS-shaped satellites   | `tnf-ai-arcade`, `tnf-poker-room`, `tnf-casin8-games`, `tnf-telegram-mcp`, `tnf-visualization-hub`, `tnf-adk-gateway`, `tnf-openclaw` (optional adapter, not required to staff TNF), `tnf-audio-trigger-kws-mvp` |
+| Private / proprietary satellites | `tnf-nexus-orchestrator`, `tnf-picoclaw-overseer` (optional adapter), `tnf-cloud-sandbox`, `tnf-myphoneremote-api`                                                                    |
 | Operator workstream              | `virtual-library-blueprints`                                                                                                                                       |
 
 Current Nexus source is `tnf-nexus-orchestrator`. `NexusOrchestrator` is an

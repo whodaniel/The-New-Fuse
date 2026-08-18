@@ -3,7 +3,7 @@ import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import { AlertTriangle, Copy, RefreshCcw, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export default function OpenClawSecurity() {
+export default function HarnessCredentials() {
   const [provider, setProvider] = useState('openrouter');
   const [profiles, setProfiles] = useState<string[]>([
     '$HOME/.openclaw/openclaw.json',
@@ -76,7 +76,7 @@ unset ${p.env}`;
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-white mb-2 flex items-center">
           <Shield className="h-10 w-10 mr-3 text-emerald-500" />
-          OpenClaw Secure Key Setup
+          Harness credential rotation
         </h1>
         <p className="text-gray-400">
           Securely rotate and configure API keys without storing them in history.
@@ -87,7 +87,7 @@ unset ${p.env}`;
         <div className="mb-6">
           <p className="text-gray-300 mb-4">
             This page does not save keys. It generates commands that prompt for a key at runtime and
-            write it into selected OpenClaw profile configs.
+            write it into the selected harness profile configs (OpenClaw paths remain as one optional adapter).
           </p>
         </div>
 
@@ -174,11 +174,11 @@ unset ${p.env}`;
 
         <div className="mt-8 pt-6 border-t border-slate-700/50">
           <p className="text-sm text-gray-400 mb-2">
-            After running, verify with:{' '}
+            After running, verify with the staffed harness client (for example{' '}
             <code className="bg-slate-900 px-2 py-1 rounded border border-slate-700">
-              openclaw models status --json
+              tnf harness clients
             </code>
-            . Then rotate any key that was previously exposed.
+            ). Then rotate any key that was previously exposed.
           </p>
           <p className="text-sm text-amber-500 font-semibold flex items-center">
             <AlertTriangle className="w-4 h-4 mr-2" />

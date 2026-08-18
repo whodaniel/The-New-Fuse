@@ -1,3 +1,10 @@
+/**
+ * Harness runtime adapter.
+ *
+ * Instance inventory, config, cron, and control-plane sync are TNF capabilities.
+ * The current fulfillment talks to an optional OpenClaw state dir when present.
+ * Other harness clients can staff the same methods without changing callers.
+ */
 import { Injectable } from '@nestjs/common';
 import { execFile } from 'node:child_process';
 import * as fs from 'node:fs';
@@ -7,7 +14,7 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 
 type JsonRecord = Record<string, unknown>;
-type OpenClawRuntimeTargetOptions = {
+type HarnessRuntimeTargetOptions = {
   installationId?: string;
   instanceId?: string;
   stateDir?: string;
@@ -15,7 +22,7 @@ type OpenClawRuntimeTargetOptions = {
 };
 
 @Injectable()
-export class OpenClawRuntimeService {
+export class HarnessRuntimeService {
   private readonly repoRoot = this.resolveRepoRoot();
   private readonly scriptPath = path.join(
     this.repoRoot,
@@ -28,11 +35,11 @@ export class OpenClawRuntimeService {
     return this.runScript(['instances', '--json']);
   }
 
-  async getInventory(target: OpenClawRuntimeTargetOptions = {}) {
+  async getInventory(target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript(['overview', '--json', ...this.buildTargetArgs(target)]);
   }
 
-  async getConfig(pathExpression?: string, target: OpenClawRuntimeTargetOptions = {}) {
+  async getConfig(pathExpression?: string, target: HarnessRuntimeTargetOptions = {}) {
     const args = ['config-show', '--json'];
     if (pathExpression) args.push('--path', pathExpression);
     args.push(...this.buildTargetArgs(target));
@@ -43,7 +50,7 @@ export class OpenClawRuntimeService {
     pathExpression: string,
     value: string,
     valueType = 'string',
-    target: OpenClawRuntimeTargetOptions = {}
+    target: HarnessRuntimeTargetOptions = {}
   ) {
     return this.runScript([
       'config-set',
@@ -56,7 +63,7 @@ export class OpenClawRuntimeService {
     ]);
   }
 
-  async unsetConfig(pathExpression: string, target: OpenClawRuntimeTargetOptions = {}) {
+  async unsetConfig(pathExpression: string, target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript([
       'config-unset',
       pathExpression,
@@ -65,15 +72,15 @@ export class OpenClawRuntimeService {
     ]);
   }
 
-  async listCronJobs(target: OpenClawRuntimeTargetOptions = {}) {
+  async listCronJobs(target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript(['cron-list', '--json', ...this.buildTargetArgs(target)]);
   }
 
-  async enableCronJob(jobReference: string, target: OpenClawRuntimeTargetOptions = {}) {
+  async enableCronJob(jobReference: string, target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript(['cron-enable', jobReference, '--json', ...this.buildTargetArgs(target)]);
   }
 
-  async disableCronJob(jobReference: string, target: OpenClawRuntimeTargetOptions = {}) {
+  async disableCronJob(jobReference: string, target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript([
       'cron-disable',
       jobReference,
@@ -92,7 +99,7 @@ export class OpenClawRuntimeService {
       anchorMs?: string | number;
       at?: string;
     },
-    target: OpenClawRuntimeTargetOptions = {}
+    target: HarnessRuntimeTargetOptions = {}
   ) {
     const args = ['cron-schedule', jobReference, '--json'];
     if (options.cron) args.push('--cron', String(options.cron));
@@ -105,7 +112,7 @@ export class OpenClawRuntimeService {
     return this.runScript(args);
   }
 
-  async syncControlPlane(actorId: string, target: OpenClawRuntimeTargetOptions = {}) {
+  async syncControlPlane(actorId: string, target: HarnessRuntimeTargetOptions = {}) {
     return this.runScript([
       'sync-control-plane',
       '--json',
@@ -121,7 +128,7 @@ export class OpenClawRuntimeService {
       dryRun?: boolean;
       disableFailing?: boolean;
       keepLaunchValidationDuplicates?: boolean;
-    } & OpenClawRuntimeTargetOptions = {}
+    } & HarnessRuntimeTargetOptions = {}
   ) {
     const args = ['cleanup-cron', '--json', '--actor', actorId || 'system'];
     if (options.dryRun) args.push('--dry-run');
@@ -131,7 +138,7 @@ export class OpenClawRuntimeService {
     return this.runScript(args);
   }
 
-  private buildTargetArgs(target: OpenClawRuntimeTargetOptions): string[] {
+  private buildTargetArgs(target: HarnessRuntimeTargetOptions): string[] {
     const args: string[] = [];
     if (target.allInstances) args.push('--all-instances');
     if (target.installationId) args.push('--installation', String(target.installationId));
@@ -167,7 +174,7 @@ export class OpenClawRuntimeService {
           }
         })
         .find(Boolean);
-      throw new Error(errorPayload || execError.message || 'OpenClaw runtime command failed');
+      throw new Error(errorPayload || execError.message || 'Harness runtime command failed');
     }
   }
 

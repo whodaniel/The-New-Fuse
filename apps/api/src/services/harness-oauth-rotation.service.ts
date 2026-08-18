@@ -5,46 +5,47 @@ import * as crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import {
-  OpenClawOAuthAccessScope,
-  OpenClawProvider,
-  UpsertOpenClawOAuthBindingDto,
-} from '../dto/openclaw-oauth-rotation.dto';
+  HarnessOAuthAccessScope,
+  HarnessOAuthProvider,
+  UpsertHarnessOAuthBindingDto,
+} from '../dto/harness-oauth-rotation.dto';
 
 const execFileAsync = promisify(execFile);
 
+// Stable on-disk identifiers. Do not rename — existing encrypted bindings use these.
 const OAUTH_BINDING_PREFIX = 'OPENCLAW_OAUTH_BINDING_V1';
 const ENCRYPTION_SALT = 'openclaw-oauth-binding-v1';
 const ALGORITHM = 'aes-256-gcm';
 
-interface OpenClawOAuthSecretPayload {
+interface HarnessOAuthSecretPayload {
   deleted?: boolean;
   tenantId: string;
   service: string;
-  provider: OpenClawProvider;
+  provider: HarnessOAuthProvider;
   accessToken: string;
   refreshToken: string;
   accountId?: string;
   googleEmail?: string;
   googleProjectId?: string;
-  accessScope?: OpenClawOAuthAccessScope;
+  accessScope?: HarnessOAuthAccessScope;
   primaryModel: string;
   fallbackModels: string;
 }
 
-export interface OpenClawOAuthBindingSummary {
+export interface HarnessOAuthBindingSummary {
   key: string;
   tenantId: string;
   service: string;
-  provider: OpenClawProvider;
-  accessScope: OpenClawOAuthAccessScope;
+  provider: HarnessOAuthProvider;
+  accessScope: HarnessOAuthAccessScope;
   hasAccountId: boolean;
   updatedAt: Date;
   updatedBy: string | null;
 }
 
-export interface OpenClawOAuthExecutionResult {
+export interface HarnessOAuthExecutionResult {
   service: string;
-  provider: OpenClawProvider;
+  provider: HarnessOAuthProvider;
   deployStatus: string | null;
   deployId: string | null;
   deployCreatedAt: string | null;
@@ -58,7 +59,7 @@ export interface OpenClawOAuthExecutionResult {
 }
 
 @Injectable()
-export class OpenClawOAuthRotationService {
+export class HarnessOAuthRotationService {
   private getEncryptionKey(): Buffer {
     const secret = process.env.ENCRYPTION_KEY;
     if (!secret) throw new Error('ENCRYPTION_KEY is required');
@@ -93,7 +94,7 @@ export class OpenClawOAuthRotationService {
     return `${OAUTH_BINDING_PREFIX}:${tenantId.trim()}:${service.trim()}:${provider.trim()}`;
   }
 
-  private parseKey(key: string): { tenantId: string; service: string; provider: OpenClawProvider } {
+  private parseKey(key: string): { tenantId: string; service: string; provider: HarnessOAuthProvider } {
     const parts = key.split(':');
     if (parts.length < 4) {
       throw new Error(`Invalid binding key format: ${key}`);
@@ -101,21 +102,21 @@ export class OpenClawOAuthRotationService {
     return {
       tenantId: parts[1],
       service: parts[2],
-      provider: parts[3] as OpenClawProvider,
+      provider: parts[3] as HarnessOAuthProvider,
     };
   }
 
-  async listBindings(): Promise<OpenClawOAuthBindingSummary[]> {
+  async listBindings(): Promise<HarnessOAuthBindingSummary[]> {
     const rows = await drizzleConfigurationRepository.findAllConfigs();
     return rows
       .filter((row: any) => row.key.startsWith(`${OAUTH_BINDING_PREFIX}:`))
       .flatMap((row: any) => {
         const parsed = this.parseKey(row.key);
         let hasAccountId = false;
-        let accessScope: OpenClawOAuthAccessScope = 'personal';
+        let accessScope: HarnessOAuthAccessScope = 'personal';
         let deleted = false;
         try {
-          const payload = JSON.parse(this.decrypt(row.value)) as OpenClawOAuthSecretPayload;
+          const payload = JSON.parse(this.decrypt(row.value)) as HarnessOAuthSecretPayload;
           deleted = Boolean(payload.deleted);
           hasAccountId = Boolean(payload.accountId);
           accessScope = payload.accessScope || 'personal';
@@ -141,15 +142,15 @@ export class OpenClawOAuthRotationService {
 
   async upsertBinding(
     userId: string,
-    dto: UpsertOpenClawOAuthBindingDto
-  ): Promise<OpenClawOAuthBindingSummary> {
+    dto: UpsertHarnessOAuthBindingDto
+  ): Promise<HarnessOAuthBindingSummary> {
     const accessScope = dto.accessScope || 'personal';
     if (accessScope === 'service' && dto.teamWideApproved !== true) {
       throw new Error('teamWideApproved=true is required for service-scoped OAuth bindings');
     }
 
     const key = this.makeKey(dto.tenantId, dto.service, dto.provider);
-    const payload: OpenClawOAuthSecretPayload = {
+    const payload: HarnessOAuthSecretPayload = {
       tenantId: dto.tenantId.trim(),
       service: dto.service.trim(),
       provider: dto.provider,
@@ -179,7 +180,7 @@ export class OpenClawOAuthRotationService {
   async deleteBinding(
     tenantId: string,
     service: string,
-    provider: OpenClawProvider
+    provider: HarnessOAuthProvider
   ): Promise<void> {
     const key = this.makeKey(tenantId, service, provider);
     await drizzleConfigurationRepository.updateConfig(
@@ -276,14 +277,14 @@ export class OpenClawOAuthRotationService {
   async executeBinding(
     tenantId: string,
     service: string,
-    provider: OpenClawProvider,
+    provider: HarnessOAuthProvider,
     opts: { waitForSuccess?: boolean; timeoutSeconds?: number } = {}
-  ): Promise<OpenClawOAuthExecutionResult> {
+  ): Promise<HarnessOAuthExecutionResult> {
     const key = this.makeKey(tenantId, service, provider);
     const row = await drizzleConfigurationRepository.findConfigByKey(key);
     if (!row) throw new Error(`Binding not found: ${key}`);
 
-    const payload = JSON.parse(this.decrypt(row.value)) as OpenClawOAuthSecretPayload;
+    const payload = JSON.parse(this.decrypt(row.value)) as HarnessOAuthSecretPayload;
     if (payload.deleted) {
       throw new Error(`Binding is deleted: ${key}`);
     }
@@ -335,7 +336,7 @@ export class OpenClawOAuthRotationService {
     await this.runCloudRuntime(setArgs, 180000);
 
     const vars = await this.getVars(payload.service);
-    const verified: OpenClawOAuthExecutionResult['verified'] = {
+    const verified: HarnessOAuthExecutionResult['verified'] = {
       primaryModel: vars.OPENCLAW_MODEL_PRIMARY || '',
       fallbackModels: vars.OPENCLAW_MODEL_FALLBACKS || '',
     };

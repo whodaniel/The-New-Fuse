@@ -17,7 +17,7 @@ import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
-import { AdminOpenClawOAuthController } from './controllers/admin-openclaw-oauth.controller';
+import { AdminHarnessOAuthController } from './controllers/admin-harness-oauth.controller';
 import { AgentGrantsController } from './controllers/agent-grants.controller';
 import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
@@ -72,7 +72,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
 import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
-import { OpenClawOAuthRotationService } from './services/openclaw-oauth-rotation.service';
+import { HarnessOAuthRotationService } from './services/harness-oauth-rotation.service';
 import { ProviderCatalogService } from './services/provider-catalog.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
@@ -194,7 +194,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     WorkspaceController, // Multi-workspace support
     ProviderKeysController, // Per-user provider API key management
     OrchestrationController, // Tenant-aware orchestration chat endpoint
-    AdminOpenClawOAuthController,
+    AdminHarnessOAuthController,
     N8nWorkflowsController,
     OnboardingController,
     PublicInfoController, // M02: /docs, /pricing, /features as JSON
@@ -213,7 +213,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     AgentPfpOverridesService,
     ProviderKeysService,
     ProviderCatalogService, // Shared provider naming/catalog for the picker and the chat executor
-    OpenClawOAuthRotationService,
+    HarnessOAuthRotationService,
     AgentApiGrantsService,
     AgentHandoffService,
     WorkflowExecutionService,

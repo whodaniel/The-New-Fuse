@@ -134,7 +134,7 @@
       "path": "openclaw",
       "root": "TNF-Extensions",
       "github": "https://github.com/whodaniel/tnf-openclaw",
-      "reason": "OpenClaw overlay; own repo, not a packaged TNF offering"
+      "reason": "optional harness adapter; own repo, not required to staff TNF capabilities"
     },
     {
       "path": "poker-room",

@@ -4,14 +4,14 @@ import { CacheService } from '../../cache/cache.service';
 import { AdminBackupController } from '../../controllers/admin-backup.controller';
 import { AdminConfigController } from '../../controllers/admin-config.controller';
 import { AdminMetricsController } from '../../controllers/admin-metrics.controller';
-import { AdminOpenClawRuntimeController } from '../../controllers/admin-openclaw-runtime.controller';
+import { AdminHarnessRuntimeController } from '../../controllers/admin-harness-runtime.controller';
 import { AdminUsersController } from '../../controllers/admin-users.controller';
 import { AdminController } from '../../controllers/admin.controller';
 import { SecurityLoggingService } from '../../security/security-logging.service';
 import { AuditService } from '../../services/audit.service';
 import { BackupCronService } from '../../services/backup-cron.service';
 import { MetricsService } from '../../services/metrics.service';
-import { OpenClawRuntimeService } from '../../services/openclaw-runtime.service';
+import { HarnessRuntimeService } from '../../services/harness-runtime.service';
 import { RoleService } from '../../services/role.service';
 import { AuthModule } from '../auth/auth.module';
 import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
@@ -40,7 +40,7 @@ import { ChronologicalProcessesService } from './chronological-processes.service
     AdminUsersController,
     AdminMetricsController,
     AdminConfigController,
-    AdminOpenClawRuntimeController,
+    AdminHarnessRuntimeController,
   ],
   providers: [
     BackupCronService,
@@ -49,7 +49,7 @@ import { ChronologicalProcessesService } from './chronological-processes.service
     MetricsService,
     SecurityLoggingService,
     CacheService,
-    OpenClawRuntimeService,
+    HarnessRuntimeService,
     ChronologicalProcessesService,
   ],
   exports: [RoleService, AuditService, MetricsService],

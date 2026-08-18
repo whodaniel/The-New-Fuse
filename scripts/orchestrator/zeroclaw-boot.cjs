@@ -18,11 +18,11 @@ function commandExists(command) {
  */
 
 async function bootSandbox() {
-  console.log('🛡️ [ZeroClaw] No active sandboxes detected in swarm. Initiating on-demand boot...');
+  console.log('🛡️ [sandbox-wake] No active sandboxes detected in swarm. Initiating on-demand boot...');
 
   try {
     if (!commandExists('gcloud')) {
-      console.warn('⚠️ [ZeroClaw] gcloud CLI not installed; skipping optional sandbox wake-up.');
+      console.warn('⚠️ [sandbox-wake] gcloud CLI not installed; skipping optional sandbox wake-up.');
       console.warn('   Use local sandbox routing or install Google Cloud SDK when sandbox execution is required.');
       return;
     }
@@ -31,7 +31,7 @@ async function bootSandbox() {
     const region = process.env.TNF_GCP_REGION || process.env.GCP_REGION || 'us-central1';
     const service = process.env.ZEROCLAW_CLOUD_RUN_SERVICE || 'zeroclaw-sandbox';
 
-    console.log(`📡 [ZeroClaw] Checking Cloud Run service ${service} (${project}/${region})...`);
+    console.log(`📡 [sandbox-wake] Checking Cloud Run service ${service} (${project}/${region})...`);
 
     let desc;
     try {
@@ -40,17 +40,17 @@ async function bootSandbox() {
         { encoding: 'utf8' }
       );
     } catch {
-      console.warn(`⚠️ [ZeroClaw] Service ${service} not found on Cloud Run. Falling back to local Docker if available.`);
+      console.warn(`⚠️ [sandbox-wake] Service ${service} not found on Cloud Run. Falling back to local Docker if available.`);
       return;
     }
 
     const parsed = JSON.parse(desc);
     const ready = parsed?.status?.latestReadyRevisionName;
     const url = parsed?.status?.url;
-    console.log(`🚀 [ZeroClaw] Found sandbox service. ready=${ready || 'n/a'} url=${url || 'n/a'}`);
-    console.log('✅ [ZeroClaw] Service is reachable via Cloud Run (no railway/cloud_runtime wake-up needed).');
+    console.log(`🚀 [sandbox-wake] Found sandbox service. ready=${ready || 'n/a'} url=${url || 'n/a'}`);
+    console.log('✅ [sandbox-wake] Service is reachable via Cloud Run (no extra wake-up needed).');
   } catch (error) {
-    console.error('❌ [ZeroClaw] Boot failed:', error.message);
+    console.error('❌ [sandbox-wake] Boot failed:', error.message);
   }
 }
 

@@ -1071,7 +1071,7 @@
     {
       "name": "claw",
       "aliases": [],
-      "description": "Alias for `tnf openclaw`",
+      "description": "Alias for `tnf openclaw` (optional adapter)",
       "options": [],
       "commands": []
     },
@@ -1128,7 +1128,7 @@
         {
           "name": "openclaw",
           "aliases": [],
-          "description": "Show TNF to OpenClaw command-surface compatibility",
+          "description": "Compatibility adapter: TNF command-surface coverage for an optional OpenClaw CLI",
           "options": [
             {
               "flags": "--json",
@@ -2705,6 +2705,18 @@
           "commands": []
         },
         {
+          "name": "clients",
+          "aliases": [],
+          "description": "List interchangeable harness CLIs that can staff TNF coding-agent capabilities",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Output machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "completeness",
           "aliases": [],
           "description": "Verify UNU-aligned harness completeness (layers + injection + berm/memory)",
@@ -2869,6 +2881,22 @@
             {
               "flags": "--out <path>",
               "description": "Output .sb path"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "staff",
+          "aliases": [],
+          "description": "Staff a TNF harness capability with an installed client (MCP + optional launch)",
+          "options": [
+            {
+              "flags": "--no-launch",
+              "description": "Provision MCP config only; do not start the client"
+            },
+            {
+              "flags": "--require-doctor",
+              "description": "Fail if doctor checks fail"
             }
           ],
           "commands": []
@@ -4053,7 +4081,7 @@
     {
       "name": "openclaw",
       "aliases": [],
-      "description": "Pass through any OpenClaw CLI command",
+      "description": "Optional adapter: pass through OpenClaw CLI if that harness is installed",
       "options": [],
       "commands": []
     },

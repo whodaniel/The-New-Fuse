@@ -14,14 +14,14 @@ import { CurrentUser } from '../decorators/current-user.decorator';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';
-import { OpenClawRuntimeService } from '../services/openclaw-runtime.service';
+import { HarnessRuntimeService } from '../services/harness-runtime.service';
 
-@ApiTags('admin-openclaw-runtime')
-@Controller('admin/openclaw/runtime')
+@ApiTags('admin-harness-runtime')
+@Controller(['admin/harness/runtime', 'admin/openclaw/runtime'])
 @UseGuards(SecureAuthGuard, AdminGuard)
-export class AdminOpenClawRuntimeController {
+export class AdminHarnessRuntimeController {
   constructor(
-    private readonly openClawRuntimeService: OpenClawRuntimeService,
+    private readonly harnessRuntimeService: HarnessRuntimeService,
     private readonly auditService: AuditService
   ) {}
 
@@ -55,15 +55,15 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Get('instances')
-  @ApiOperation({ summary: 'List OpenClaw installations and instances known to TNF' })
-  @ApiResponse({ status: 200, description: 'OpenClaw installation and instance inventory' })
+  @ApiOperation({ summary: 'List harness runtime installations and instances known to TNF' })
+  @ApiResponse({ status: 200, description: 'Harness installation and instance inventory' })
   async listInstances(@CurrentUser() _user: any) {
-    return this.openClawRuntimeService.listInstances();
+    return this.harnessRuntimeService.listInstances();
   }
 
   @Get('inventory')
-  @ApiOperation({ summary: 'Get redacted OpenClaw runtime inventory and TNF schedule mapping' })
-  @ApiResponse({ status: 200, description: 'OpenClaw runtime inventory' })
+  @ApiOperation({ summary: 'Get redacted harness runtime inventory and TNF schedule mapping' })
+  @ApiResponse({ status: 200, description: 'harness runtime inventory' })
   async getInventory(
     @CurrentUser() _user: any,
     @Query('installationId') installationId?: string,
@@ -71,14 +71,14 @@ export class AdminOpenClawRuntimeController {
     @Query('stateDir') stateDir?: string,
     @Query('allInstances') allInstances?: string
   ) {
-    return this.openClawRuntimeService.getInventory(
+    return this.harnessRuntimeService.getInventory(
       this.toTargetOptions({ installationId, instanceId, stateDir, allInstances })
     );
   }
 
   @Get('config')
-  @ApiOperation({ summary: 'Get redacted OpenClaw config or a subtree' })
-  @ApiResponse({ status: 200, description: 'OpenClaw config snapshot' })
+  @ApiOperation({ summary: 'Get redacted harness config or a subtree' })
+  @ApiResponse({ status: 200, description: 'harness config snapshot' })
   async getConfig(
     @CurrentUser() _user: any,
     @Query('path') path?: string,
@@ -87,15 +87,15 @@ export class AdminOpenClawRuntimeController {
     @Query('stateDir') stateDir?: string,
     @Query('allInstances') allInstances?: string
   ) {
-    return this.openClawRuntimeService.getConfig(
+    return this.harnessRuntimeService.getConfig(
       path,
       this.toTargetOptions({ installationId, instanceId, stateDir, allInstances })
     );
   }
 
   @Put('config')
-  @ApiOperation({ summary: 'Set an OpenClaw config value through TNF' })
-  @ApiResponse({ status: 200, description: 'Updated OpenClaw config path' })
+  @ApiOperation({ summary: 'Set an harness config value through TNF' })
+  @ApiResponse({ status: 200, description: 'Updated harness config path' })
   async setConfig(
     @CurrentUser() user: any,
     @Body()
@@ -109,7 +109,7 @@ export class AdminOpenClawRuntimeController {
     }
   ) {
     this.assertSuperAdmin(user);
-    const result = await this.openClawRuntimeService.setConfig(
+    const result = await this.harnessRuntimeService.setConfig(
       body.path,
       body.value,
       body.valueType || 'string',
@@ -129,14 +129,14 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Delete('config')
-  @ApiOperation({ summary: 'Unset an OpenClaw config path through TNF' })
-  @ApiResponse({ status: 200, description: 'Removed OpenClaw config path' })
+  @ApiOperation({ summary: 'Unset an harness config path through TNF' })
+  @ApiResponse({ status: 200, description: 'Removed harness config path' })
   async unsetConfig(
     @CurrentUser() user: any,
     @Body() body: { path: string; installationId?: string; instanceId?: string; stateDir?: string }
   ) {
     this.assertSuperAdmin(user);
-    const result = await this.openClawRuntimeService.unsetConfig(
+    const result = await this.harnessRuntimeService.unsetConfig(
       body.path,
       this.toTargetOptions(body)
     );
@@ -153,8 +153,8 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Get('cron')
-  @ApiOperation({ summary: 'List OpenClaw cron jobs with TNF schedule mapping' })
-  @ApiResponse({ status: 200, description: 'OpenClaw cron list' })
+  @ApiOperation({ summary: 'List harness cron jobs with TNF schedule mapping' })
+  @ApiResponse({ status: 200, description: 'harness cron list' })
   async listCron(
     @CurrentUser() _user: any,
     @Query('installationId') installationId?: string,
@@ -162,20 +162,20 @@ export class AdminOpenClawRuntimeController {
     @Query('stateDir') stateDir?: string,
     @Query('allInstances') allInstances?: string
   ) {
-    return this.openClawRuntimeService.listCronJobs(
+    return this.harnessRuntimeService.listCronJobs(
       this.toTargetOptions({ installationId, instanceId, stateDir, allInstances })
     );
   }
 
   @Post('cron/enable')
-  @ApiOperation({ summary: 'Enable an OpenClaw cron job through TNF' })
-  @ApiResponse({ status: 200, description: 'Enabled OpenClaw cron job' })
+  @ApiOperation({ summary: 'Enable an harness cron job through TNF' })
+  @ApiResponse({ status: 200, description: 'Enabled harness cron job' })
   async enableCron(
     @CurrentUser() user: any,
     @Body() body: { job: string; installationId?: string; instanceId?: string; stateDir?: string }
   ) {
     this.assertSuperAdmin(user);
-    const result = await this.openClawRuntimeService.enableCronJob(
+    const result = await this.harnessRuntimeService.enableCronJob(
       body.job,
       this.toTargetOptions(body)
     );
@@ -192,14 +192,14 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Post('cron/disable')
-  @ApiOperation({ summary: 'Disable an OpenClaw cron job through TNF' })
-  @ApiResponse({ status: 200, description: 'Disabled OpenClaw cron job' })
+  @ApiOperation({ summary: 'Disable an harness cron job through TNF' })
+  @ApiResponse({ status: 200, description: 'Disabled harness cron job' })
   async disableCron(
     @CurrentUser() user: any,
     @Body() body: { job: string; installationId?: string; instanceId?: string; stateDir?: string }
   ) {
     this.assertSuperAdmin(user);
-    const result = await this.openClawRuntimeService.disableCronJob(
+    const result = await this.harnessRuntimeService.disableCronJob(
       body.job,
       this.toTargetOptions(body)
     );
@@ -216,8 +216,8 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Post('cron/schedule')
-  @ApiOperation({ summary: 'Change an OpenClaw cron job schedule through TNF' })
-  @ApiResponse({ status: 200, description: 'Updated OpenClaw cron schedule' })
+  @ApiOperation({ summary: 'Change an harness cron job schedule through TNF' })
+  @ApiResponse({ status: 200, description: 'Updated harness cron schedule' })
   async scheduleCron(
     @CurrentUser() user: any,
     @Body()
@@ -235,7 +235,7 @@ export class AdminOpenClawRuntimeController {
     }
   ) {
     this.assertSuperAdmin(user);
-    const result = await this.openClawRuntimeService.scheduleCronJob(
+    const result = await this.harnessRuntimeService.scheduleCronJob(
       body.job,
       body,
       this.toTargetOptions(body)
@@ -258,8 +258,8 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Post('sync')
-  @ApiOperation({ summary: 'Sync live OpenClaw runtime state into TNF control-plane records' })
-  @ApiResponse({ status: 200, description: 'OpenClaw control-plane sync result' })
+  @ApiOperation({ summary: 'Sync live harness runtime state into TNF control-plane records' })
+  @ApiResponse({ status: 200, description: 'harness control-plane sync result' })
   async syncControlPlane(
     @CurrentUser() user: any,
     @Body()
@@ -272,7 +272,7 @@ export class AdminOpenClawRuntimeController {
   ) {
     this.assertSuperAdmin(user);
     const actorId = this.getActorId(user);
-    const result = await this.openClawRuntimeService.syncControlPlane(
+    const result = await this.harnessRuntimeService.syncControlPlane(
       actorId,
       this.toTargetOptions(body)
     );
@@ -290,8 +290,8 @@ export class AdminOpenClawRuntimeController {
   }
 
   @Post('cleanup')
-  @ApiOperation({ summary: 'Clean up duplicate/failing TNF-managed OpenClaw cron jobs' })
-  @ApiResponse({ status: 200, description: 'OpenClaw cleanup result' })
+  @ApiOperation({ summary: 'Clean up duplicate/failing TNF-managed harness cron jobs' })
+  @ApiResponse({ status: 200, description: 'harness cleanup result' })
   async cleanupCron(
     @CurrentUser() user: any,
     @Body()
@@ -307,7 +307,7 @@ export class AdminOpenClawRuntimeController {
   ) {
     this.assertSuperAdmin(user);
     const actorId = this.getActorId(user);
-    const result = await this.openClawRuntimeService.cleanupCron(actorId, {
+    const result = await this.harnessRuntimeService.cleanupCron(actorId, {
       dryRun: body?.dryRun,
       disableFailing: body?.disableFailing,
       keepLaunchValidationDuplicates: body?.keepLaunchValidationDuplicates,

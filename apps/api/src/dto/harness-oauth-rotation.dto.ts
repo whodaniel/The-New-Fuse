@@ -1,17 +1,17 @@
 import { IsBoolean, IsIn, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
-export const OPENCLAW_PROVIDERS = [
+export const HARNESS_OAUTH_PROVIDERS = [
   'openai-codex',
   'anthropic',
   'google-antigravity',
   'kilo',
 ] as const;
-export type OpenClawProvider = (typeof OPENCLAW_PROVIDERS)[number];
+export type HarnessOAuthProvider = (typeof HARNESS_OAUTH_PROVIDERS)[number];
 
-export const OPENCLAW_OAUTH_ACCESS_SCOPES = ['personal', 'service'] as const;
-export type OpenClawOAuthAccessScope = (typeof OPENCLAW_OAUTH_ACCESS_SCOPES)[number];
+export const HARNESS_OAUTH_ACCESS_SCOPES = ['personal', 'service'] as const;
+export type HarnessOAuthAccessScope = (typeof HARNESS_OAUTH_ACCESS_SCOPES)[number];
 
-export class UpsertOpenClawOAuthBindingDto {
+export class UpsertHarnessOAuthBindingDto {
   @IsString()
   @MinLength(1)
   @MaxLength(128)
@@ -23,8 +23,8 @@ export class UpsertOpenClawOAuthBindingDto {
   service!: string;
 
   @IsString()
-  @IsIn(OPENCLAW_PROVIDERS)
-  provider!: OpenClawProvider;
+  @IsIn(HARNESS_OAUTH_PROVIDERS)
+  provider!: HarnessOAuthProvider;
 
   @IsString()
   @MinLength(8)
@@ -53,8 +53,8 @@ export class UpsertOpenClawOAuthBindingDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(OPENCLAW_OAUTH_ACCESS_SCOPES)
-  accessScope?: OpenClawOAuthAccessScope;
+  @IsIn(HARNESS_OAUTH_ACCESS_SCOPES)
+  accessScope?: HarnessOAuthAccessScope;
 
   @IsOptional()
   @IsBoolean()
@@ -71,7 +71,7 @@ export class UpsertOpenClawOAuthBindingDto {
   fallbackModels!: string;
 }
 
-export class ExecuteOpenClawOAuthBindingDto {
+export class ExecuteHarnessOAuthBindingDto {
   @IsOptional()
   @IsBoolean()
   waitForSuccess?: boolean;

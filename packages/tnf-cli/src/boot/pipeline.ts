@@ -284,12 +284,20 @@ export function createBootPipeline(
     },
     {
       id: 'zeroclaw',
-      label: 'Model fallback / ZeroClaw sandbox wake',
+      label: 'On-demand execution sandbox wake',
       critical: false,
       launches: ['node scripts/orchestrator/zeroclaw-boot.cjs'],
-      notes: ['CloudRuntime wake-up is optional when cloud_runtime CLI is absent.'],
+      notes: [
+        'Capability: wake a cloud sandbox when no local execution bidder exists.',
+        'Optional; skipped when the adapter script or gcloud is absent. The step id is historical.',
+      ],
       action: async () => {
-        await runCommand('node', ['scripts/orchestrator/zeroclaw-boot.cjs']);
+        const script = path.join(repoRoot, 'scripts/orchestrator/zeroclaw-boot.cjs');
+        if (!fs.existsSync(script)) {
+          console.log(chalk.dim('   Sandbox-wake adapter not present; skipping.'));
+          return;
+        }
+        await runCommand('node', [script]);
       },
     },
     {
@@ -399,25 +407,15 @@ export function createBootPipeline(
     },
     {
       id: 'openclaw',
-      label: 'OpenClaw MCP/client surface',
+      label: 'Harness MCP provisioning',
       critical: false,
-      launches: ['node scripts/tnf-start-ai.cjs openclaw'],
-      notes: ['If openclaw CLI is absent, boot provisions MCP config with --no-launch.'],
+      launches: ['pnpm run tnf:mcp:generate'],
+      notes: [
+        'Capability: generate MCP client configs for whatever harnesses are installed.',
+        'Does not require a particular vendor CLI. OpenClaw remains one optional adapter.',
+      ],
       action: async () => {
-        const args = ['scripts/tnf-start-ai.cjs', 'openclaw'];
-        if (strictGates) args.push('--require-doctor');
-        const openclawPath = findExecutableOnPath('openclaw');
-        if (nonInteractive || !openclawPath) {
-          args.push('--no-launch');
-          if (!openclawPath) {
-            console.log(
-              chalk.dim(
-                '   OpenClaw CLI not found; provisioning MCP config without launching client'
-              )
-            );
-          }
-        }
-        await runCommand('node', args);
+        await runCommand('pnpm', ['run', '-s', 'tnf:mcp:generate']);
       },
     },
     {

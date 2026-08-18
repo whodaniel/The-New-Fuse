@@ -3943,10 +3943,16 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       ],
     },
     {
-      title: 'OpenClaw Ops',
+      title: 'Harness clients',
       entries: [
-        { path: 'tnf openclaw [args...]', description: 'Pass through any OpenClaw CLI command' },
-        { path: 'tnf claw [args...]', description: 'Alias for tnf openclaw' },
+        {
+          path: 'tnf harness clients [--json]',
+          description: 'List interchangeable harness CLIs and which are installed',
+        },
+        {
+          path: 'tnf harness staff [client]',
+          description: 'Staff a TNF capability with any installed harness client',
+        },
         {
           path: 'tnf cursor [args...]',
           description: 'Pass through Cursor CLI with TNF harness MCP routing',
@@ -3955,6 +3961,11 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
           path: 'tnf assimilate link cursor',
           description: 'Onboard Cursor CLI into TNF harness protocol',
         },
+        {
+          path: 'tnf openclaw [args...]',
+          description: 'Optional adapter: pass through OpenClaw if that CLI is installed',
+        },
+        { path: 'tnf claw [args...]', description: 'Alias for tnf openclaw (optional adapter)' },
       ],
     },
     {
@@ -8490,6 +8501,79 @@ harness
     }
   });
 
+const HARNESS_CLIENTS = [
+  { id: 'claude', binary: 'claude', capability: 'coding-agent' },
+  { id: 'cursor', binary: 'cursor', capability: 'coding-agent' },
+  { id: 'codex', binary: 'codex', capability: 'coding-agent' },
+  { id: 'gemini', binary: 'gemini', capability: 'coding-agent' },
+  { id: 'agy', binary: 'agy', capability: 'coding-agent' },
+  { id: 'hermes', binary: 'hermes', capability: 'coding-agent' },
+  { id: 'pi', binary: 'pi', capability: 'coding-agent' },
+  { id: 'openclaw', binary: 'openclaw', capability: 'coding-agent (optional adapter)' },
+] as const;
+
+harness
+  .command('clients')
+  .description('List interchangeable harness CLIs that can staff TNF coding-agent capabilities')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    const rows = HARNESS_CLIENTS.map((client) => {
+      const resolved = findExecutableOnPath(client.binary);
+      return {
+        id: client.id,
+        capability: client.capability,
+        installed: Boolean(resolved),
+        path: resolved,
+      };
+    });
+    if (options.json) {
+      console.log(JSON.stringify({ principle: 'capability-over-agent', clients: rows }, null, 2));
+      return;
+    }
+    console.log(chalk.bold('\nHarness clients (interchangeable staffing)\n'));
+    console.log(
+      chalk.dim('TNF capabilities are staffed by whichever installed client can fulfill them.\n')
+    );
+    for (const row of rows) {
+      const mark = row.installed ? chalk.green('installed') : chalk.dim('absent');
+      console.log(`   ${chalk.bold(row.id.padEnd(12, ' '))} ${mark}  ${row.capability}`);
+    }
+    console.log('');
+  });
+
+harness
+  .command('staff')
+  .description('Staff a TNF harness capability with an installed client (MCP + optional launch)')
+  .argument('[client]', 'claude|cursor|codex|gemini|agy|hermes|pi|openclaw')
+  .option('--no-launch', 'Provision MCP config only; do not start the client')
+  .option('--require-doctor', 'Fail if doctor checks fail')
+  .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
+    try {
+      const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
+      const known = new Set(HARNESS_CLIENTS.map((entry) => entry.id));
+      let chosen = requested;
+      if (chosen && !known.has(chosen)) {
+        throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+      }
+      if (!chosen) {
+        const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
+        const found = preferred.find((entry) => {
+          const resolved = findExecutableOnPath(entry.binary);
+          return Boolean(resolved);
+        });
+        chosen = found?.id || 'claude';
+        console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
+      }
+      const args = ['scripts/tnf-start-ai.cjs', chosen];
+      if (options.noLaunch) args.push('--no-launch');
+      if (options.requireDoctor) args.push('--require-doctor');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 // A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
 {
   const autonomy = program
@@ -9771,12 +9855,12 @@ program
 
 program
   .command('openclaw')
-  .description('Pass through any OpenClaw CLI command')
+  .description('Optional adapter: pass through OpenClaw CLI if that harness is installed')
   .argument('[args...]', 'Arguments forwarded to openclaw');
 
 program
   .command('claw')
-  .description('Alias for `tnf openclaw`')
+  .description('Alias for `tnf openclaw` (optional adapter)')
   .argument('[args...]', 'Arguments forwarded to openclaw');
 
 program
@@ -10415,7 +10499,7 @@ superCycle
 const compat = program.command('compat').description('Compatibility and migration utilities');
 const compatOpenClaw = compat
   .command('openclaw')
-  .description('Show TNF to OpenClaw command-surface compatibility')
+  .description('Compatibility adapter: TNF command-surface coverage for an optional OpenClaw CLI')
   .option('--json', 'Output machine-readable JSON')
   .option('--mode <mode>', 'all|implicit|explicit-only', 'all')
   .action((options: { json?: boolean; mode: string }) => {

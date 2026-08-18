@@ -25,7 +25,10 @@ function commandExists(cmd) {
 
 function usage() {
   console.log(
-    "Usage: pnpm run tnf:start -- <codex|claude|gemini|cursor|openclaw|hermes|pi> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
+    "Usage: pnpm run tnf:start -- <harness-client> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
+  );
+  console.log(
+    "Harness clients (interchangeable): codex | claude | gemini | cursor | hermes | pi | openclaw"
   );
 }
 

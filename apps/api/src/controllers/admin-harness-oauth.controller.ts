@@ -15,26 +15,26 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import {
-  ExecuteOpenClawOAuthBindingDto,
-  OPENCLAW_PROVIDERS,
-  OpenClawProvider,
-  UpsertOpenClawOAuthBindingDto,
-} from '../dto/openclaw-oauth-rotation.dto';
+  ExecuteHarnessOAuthBindingDto,
+  HARNESS_OAUTH_PROVIDERS,
+  HarnessOAuthProvider,
+  UpsertHarnessOAuthBindingDto,
+} from '../dto/harness-oauth-rotation.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';
 import {
-  OpenClawOAuthBindingSummary,
-  OpenClawOAuthExecutionResult,
-  OpenClawOAuthRotationService,
-} from '../services/openclaw-oauth-rotation.service';
+  HarnessOAuthBindingSummary,
+  HarnessOAuthExecutionResult,
+  HarnessOAuthRotationService,
+} from '../services/harness-oauth-rotation.service';
 
-@ApiTags('admin-openclaw-oauth')
-@Controller('admin/openclaw/oauth')
+@ApiTags('admin-harness-oauth')
+@Controller(['admin/harness/oauth', 'admin/openclaw/oauth'])
 @UseGuards(SecureAuthGuard, AdminGuard)
-export class AdminOpenClawOAuthController {
+export class AdminHarnessOAuthController {
   constructor(
-    private readonly rotationService: OpenClawOAuthRotationService,
+    private readonly rotationService: HarnessOAuthRotationService,
     private readonly auditService: AuditService
   ) {}
 
@@ -46,12 +46,12 @@ export class AdminOpenClawOAuthController {
     if (!isSuper) throw new ForbiddenException('SUPER_ADMIN required');
   }
 
-  private normalizeProvider(provider: string): OpenClawProvider {
+  private normalizeProvider(provider: string): HarnessOAuthProvider {
     const normalized = provider.trim().toLowerCase();
-    if (!OPENCLAW_PROVIDERS.includes(normalized as OpenClawProvider)) {
+    if (!HARNESS_OAUTH_PROVIDERS.includes(normalized as HarnessOAuthProvider)) {
       throw new ForbiddenException(`Unsupported provider '${provider}'`);
     }
-    return normalized as OpenClawProvider;
+    return normalized as HarnessOAuthProvider;
   }
 
   private async getRotationAuditSnapshot(limit = 100): Promise<{
@@ -91,6 +91,7 @@ export class AdminOpenClawOAuthController {
     };
   }> {
     const boundedLimit = Number.isFinite(limit) ? Math.min(Math.max(limit, 10), 300) : 100;
+    // Persisted audit identifiers. Do not rename — existing log rows use these.
     const logs = await this.auditService.getLogs({
       resourceType: 'openclaw_oauth_binding',
       limit: boundedLimit,
@@ -199,20 +200,20 @@ export class AdminOpenClawOAuthController {
   }
 
   @Get('bindings')
-  @ApiOperation({ summary: 'List encrypted OpenClaw OAuth bindings metadata' })
+  @ApiOperation({ summary: 'List encrypted harness OAuth bindings metadata' })
   @ApiResponse({ status: 200, description: 'Binding metadata list' })
-  async listBindings(@CurrentUser() user: any): Promise<OpenClawOAuthBindingSummary[]> {
+  async listBindings(@CurrentUser() user: any): Promise<HarnessOAuthBindingSummary[]> {
     this.assertSuperAdmin(user);
     return this.rotationService.listBindings();
   }
 
   @Put('bindings')
-  @ApiOperation({ summary: 'Upsert encrypted OpenClaw OAuth binding' })
+  @ApiOperation({ summary: 'Upsert encrypted harness OAuth binding' })
   @ApiResponse({ status: 200, description: 'Binding metadata' })
   async upsertBinding(
     @CurrentUser() user: any,
-    @Body() dto: UpsertOpenClawOAuthBindingDto
-  ): Promise<OpenClawOAuthBindingSummary> {
+    @Body() dto: UpsertHarnessOAuthBindingDto
+  ): Promise<HarnessOAuthBindingSummary> {
     this.assertSuperAdmin(user);
     const binding = await this.rotationService.upsertBinding(user.id, dto);
     await this.auditService.log('openclaw.oauth.binding.upserted', {
@@ -231,7 +232,7 @@ export class AdminOpenClawOAuthController {
   }
 
   @Delete('bindings/:tenantId/:service/:provider')
-  @ApiOperation({ summary: 'Soft-delete an OpenClaw OAuth binding' })
+  @ApiOperation({ summary: 'Soft-delete an harness OAuth binding' })
   @ApiResponse({ status: 200, description: 'Deleted' })
   async deleteBinding(
     @CurrentUser() user: any,
@@ -260,8 +261,8 @@ export class AdminOpenClawOAuthController {
     @Param('tenantId') tenantId: string,
     @Param('service') service: string,
     @Param('provider') provider: string,
-    @Body() dto: ExecuteOpenClawOAuthBindingDto
-  ): Promise<OpenClawOAuthExecutionResult> {
+    @Body() dto: ExecuteHarnessOAuthBindingDto
+  ): Promise<HarnessOAuthExecutionResult> {
     this.assertSuperAdmin(user);
     const normalizedProvider = this.normalizeProvider(provider);
     const result = await this.rotationService.executeBinding(
@@ -292,7 +293,7 @@ export class AdminOpenClawOAuthController {
   @Get('activity')
   @ApiOperation({
     summary:
-      'Get OpenClaw OAuth rotation activity stream snapshot with run-status and findings rollups',
+      'Get harness OAuth rotation activity stream snapshot with run-status and findings rollups',
   })
   @ApiResponse({ status: 200, description: 'Activity + rollup' })
   async getActivity(@CurrentUser() user: any, @Query('limit') limit?: string) {

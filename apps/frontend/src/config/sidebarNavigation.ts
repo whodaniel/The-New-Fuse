@@ -361,8 +361,8 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
         requiredRoles: ['SUPER_ADMIN', 'ADMIN'],
       },
       {
-        name: 'OpenClaw Security',
-        href: '/admin/openclaw-security',
+        name: 'Harness credentials',
+        href: '/admin/harness-credentials',
         icon: Shield,
         access: 'authenticated',
         requiredRoles: ['SUPER_ADMIN', 'ADMIN'],

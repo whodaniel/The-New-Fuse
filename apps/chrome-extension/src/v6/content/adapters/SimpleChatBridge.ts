@@ -182,8 +182,8 @@ class SimpleChatBridge {
     // Load custom sites from storage
     this.loadCustomSites();
 
-    // Always enable transcript polling on OpenClaw cloud UI (DOM rendering is currently unreliable there).
-    // This will power the TNF injectable modal with canonical state from Cloudflare.
+    // Always enable transcript polling on cloud chat UIs where DOM scraping is unreliable.
+    // workers.dev (and similar) host whichever agent currently staffs the chat surface.
     try {
       const host = window.location.hostname.toLowerCase();
       if (host.includes('openclaw') || host.endsWith('workers.dev')) {
@@ -214,13 +214,13 @@ class SimpleChatBridge {
 
   /**
    * Derive a stable sessionKey for Cloudflare transcript storage.
-   * Best effort: host + OpenClaw session query param (if present).
+   * Best effort: host + session query param (if present).
    */
   private deriveSessionKey(): string {
     const host = window.location.hostname.toLowerCase();
     const url = new URL(window.location.href);
     const session = url.searchParams.get('session') || 'main';
-    return `openclaw-ui:${host}:session:${session}`;
+    return `harness-ui:${host}:session:${session}`;
   }
 
   private enableTranscriptPolling(workerUrl: string, sessionKey: string): void {
@@ -870,10 +870,10 @@ class SimpleChatBridge {
       if (relaxed) return relaxed;
     }
 
-    // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
-    const openClawThread = document.querySelector('.chat-thread');
-    if (openClawThread) {
-      const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+    // Generic chat-thread fallback: inspect thread-scoped entries
+    const chatThread = document.querySelector('.chat-thread');
+    if (chatThread) {
+      const candidates = Array.from(chatThread.querySelectorAll(':scope > *'));
       for (let i = candidates.length - 1; i >= 0; i--) {
         const text = this.extractCleanText(candidates[i]);
         if (!text) continue;
@@ -881,7 +881,6 @@ class SimpleChatBridge {
         const low = text.toLowerCase();
         if (low.includes('disconnected from gateway')) continue;
         if (low === 'openclaw' || low === '🦞') continue;
-        // CRITICAL: Block user message scrapes to prevent doubling in OpenClaw
         if (
           low.startsWith('u ') ||
           low.startsWith('you ') ||
