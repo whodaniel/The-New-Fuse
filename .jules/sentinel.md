@@ -41,3 +41,8 @@
 **Vulnerability:** Raw SQL queries executed using Drizzle's `db.execute(sql.raw(query))` in this codebase were bypassing parameterization, leading to developers manually escaping variables (e.g., using `replace(/'/g, "''")`), which introduces high SQL injection risk.
 **Learning:** Drizzle's `sql.raw()` function intentionally does not support query parameters. To securely execute raw queries with parameter bindings (`$1`, `$2`), the code must bypass the Drizzle abstraction and use the underlying database driver (e.g., postgres.js).
 **Prevention:** We updated `DatabaseService.executeRaw` to detect parameters. If parameters are provided, it securely routes the query via the driver `queryClient.unsafe(query, params)`. Ensure `queryClient` is properly imported in `database.service.ts` to avoid runtime reference errors. All future raw queries should use standard `$1`, `$2` parameterization and pass the array to `executeRaw`.
+
+## 2024-05-18 - Parameterized Queries Required in DB ExecuteRaw
+**Vulnerability:** SQL Injection in raw database queries via string concatenation and manual escaping.
+**Learning:** The `this.db.executeRaw` wrapper around Drizzle doesn't automatically parameterize strings when passed as a single string literal. Manual string escaping (e.g. replacing `'` with `''`) is brittle and prone to bypasses, especially when dealing with complex or unexpected inputs.
+**Prevention:** Always use the two-argument form of `executeRaw` where the first argument is a query string with `$1, $2, ...` placeholders and the second argument is an array of bind values. Ensure `executeRaw` internally routes this array to a safe underlying client like postgres.js `queryClient.unsafe()`.
