@@ -1,17 +1,18 @@
 {
-  "$comment": "Declarative registry of volatile state domains. Authority: docs/protocols/STATE_FRESHNESS_MANDATE.md. V2 tracks canonical development identity and product boundaries in addition to downstream publication state.",
+  "$comment": "Declarative registry of volatile state domains. Authority: docs/protocols/STATE_FRESHNESS_MANDATE.md. Private TNF domains degrade gracefully for public OSS consumers that cannot access them.",
   "version": 2,
   "receiptsPath": "data/protocols/state-freshness.json",
   "domains": [
     {
       "id": "github.dev.main",
-      "title": "Canonical tnf-monorepo main tip",
+      "title": "Canonical tnf-monorepo main tip (internal when accessible)",
       "ttlSeconds": 900,
       "severity": "high",
-      "probe": "gh api repos/whodaniel/tnf-monorepo/git/ref/heads/main --jq '.object.sha'",
-      "corroborate": "gh api 'repos/whodaniel/tnf-monorepo/commits?sha=main&per_page=1' --jq '.[0].sha'",
-      "claims": ["canonical development main is at <sha>", "local work is based on current canonical main"],
-      "trap": "A local HEAD, remembered commit, or downstream publication SHA is not proof of the canonical private development main tip. Derive it from the tnf-monorepo main ref."
+      "probe": "gh api repos/whodaniel/tnf-monorepo/git/ref/heads/main --jq '.object.sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE",
+      "corroborate": "gh api 'repos/whodaniel/tnf-monorepo/commits?sha=main&per_page=1' --jq '.[0].sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE",
+      "expect": "^([0-9a-f]{40}|INTERNAL_UNAVAILABLE)$",
+      "claims": ["canonical development main is at <sha>", "private canonical source is unavailable to this installation"],
+      "trap": "A local HEAD, remembered commit, downstream publication SHA, or public clone is not proof of the private canonical main tip. Public OSS consumers may legitimately receive INTERNAL_UNAVAILABLE."
     },
     {
       "id": "github.public.main",
@@ -25,13 +26,14 @@
     },
     {
       "id": "github.control-plane.main",
-      "title": "Private control-plane publication tip",
+      "title": "Private control-plane publication tip (internal when accessible)",
       "ttlSeconds": 900,
       "severity": "high",
-      "probe": "gh api repos/whodaniel/fuse-control-plane/git/ref/heads/main --jq '.object.sha'",
-      "corroborate": "gh api 'repos/whodaniel/fuse-control-plane/commits?sha=main&per_page=1' --jq '.[0].sha'",
-      "claims": ["control-plane publication main is at <sha>", "the private extract is current"],
-      "trap": "The control-plane repo is a downstream extract, not the development source. Its tip proves publication state only and must not be substituted for tnf-monorepo source state."
+      "probe": "gh api repos/whodaniel/fuse-control-plane/git/ref/heads/main --jq '.object.sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE",
+      "corroborate": "gh api 'repos/whodaniel/fuse-control-plane/commits?sha=main&per_page=1' --jq '.[0].sha' 2>/dev/null || echo INTERNAL_UNAVAILABLE",
+      "expect": "^([0-9a-f]{40}|INTERNAL_UNAVAILABLE)$",
+      "claims": ["control-plane publication main is at <sha>", "private publication state is unavailable to this installation"],
+      "trap": "The control-plane repo is a private downstream extract. Public OSS consumers may legitimately receive INTERNAL_UNAVAILABLE; never treat that as a framework failure or infer private publication state."
     },
     {
       "id": "github.public.pr-queue",
@@ -63,30 +65,30 @@
     },
     {
       "id": "tnf.product-repo-map",
-      "title": "Canonical product/repository map revision",
+      "title": "Product/repository map revision in this checkout",
       "ttlSeconds": 1800,
       "severity": "medium",
       "probe": "git hash-object data/distribution/product-repo-map.json && node -e \"const x=require('./data/distribution/product-repo-map.json'); console.log(x.updated||'unknown')\"",
-      "claims": ["repo X is canonical for product Y", "a repo is current/archived/publication-only"],
-      "trap": "Repository names and roles have changed historically. Folder names, memory, and old links do not prove current product lineage; use the tracked map revision."
+      "claims": ["this checkout classifies repo X as product Y", "a repo is current/archived/publication-only in this map revision"],
+      "trap": "Repository names and roles have changed historically. Use the machine-readable map shipped in the current checkout and distinguish it from inaccessible private source state."
     },
     {
       "id": "tnf.oss-app-boundary",
-      "title": "OSS/satellite application boundary revision",
+      "title": "OSS/satellite application boundary revision in this checkout",
       "ttlSeconds": 1800,
       "severity": "medium",
       "probe": "git hash-object data/distribution/oss-app-boundary.json && node -e \"const x=require('./data/distribution/oss-app-boundary.json'); console.log(x.updated||'unknown')\"",
       "claims": ["app X ships in the default OSS runtime", "app X is a satellite/private surface"],
-      "trap": "Being present under a historical apps/ path does not prove an app ships in the regular runtime. The machine-readable boundary is authoritative for packaging classification."
+      "trap": "Being present under a historical apps/ path does not prove an app ships in the regular runtime. The machine-readable boundary in the current checkout is the packaging receipt."
     },
     {
-      "id": "git.monorepo.identity",
-      "title": "Local canonical repo identity + work state",
+      "id": "git.repository.identity",
+      "title": "Local repository identity + work state",
       "ttlSeconds": 300,
       "severity": "high",
       "probe": "printf 'origin='; git remote get-url origin; printf 'head='; git rev-parse HEAD; printf 'branch='; git branch --show-current; printf 'dirty='; git status --porcelain | wc -l | tr -d ' ' ",
-      "claims": ["this working tree is canonical tnf-monorepo", "change X is committed", "the tree is clean"],
-      "trap": "The local directory may still be named The-New-Fuse while its remote is tnf-monorepo. Conversely a same-looking folder can point at the public repo. Repository identity comes from the remote plus live git state."
+      "claims": ["this working tree points at repository X", "change X is committed", "the tree is clean"],
+      "trap": "A local folder name does not establish repository identity. Internal TNF development, owned publication targets, and external forks must be distinguished using the live remote and git state."
     },
     {
       "id": "runtime.services",

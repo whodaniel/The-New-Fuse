@@ -5,6 +5,7 @@ const assert = require('node:assert');
 const test = require('node:test');
 const {
   normalizeOrigin,
+  repositoryMode,
   validateClassification,
   hydrationReceipt,
 } = require('./turn-zero-v2-gate.cjs');
@@ -12,6 +13,13 @@ const {
 test('normalizes canonical GitHub HTTPS and SSH origins', () => {
   assert.strictEqual(normalizeOrigin('https://github.com/whodaniel/tnf-monorepo.git'), 'whodaniel/tnf-monorepo');
   assert.strictEqual(normalizeOrigin('git@github.com:whodaniel/tnf-monorepo.git'), 'whodaniel/tnf-monorepo');
+});
+
+test('classifies canonical, owned publication, and external fork origins', () => {
+  assert.strictEqual(repositoryMode('whodaniel/tnf-monorepo'), 'canonical-development');
+  assert.strictEqual(repositoryMode('whodaniel/The-New-Fuse'), 'downstream-publication-target');
+  assert.strictEqual(repositoryMode('whodaniel/fuse-control-plane'), 'downstream-publication-target');
+  assert.strictEqual(repositoryMode('someone/The-New-Fuse'), 'external-or-fork');
 });
 
 test('blocks restricted personal content from public OSS destination', () => {

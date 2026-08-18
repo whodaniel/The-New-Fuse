@@ -7,6 +7,7 @@ const { execFileSync, spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CANONICAL = 'whodaniel/tnf-monorepo';
+const PUBLICATION_TARGETS = new Set(['whodaniel/the-new-fuse', 'whodaniel/fuse-control-plane']);
 const PRODUCT_MAP = 'data/distribution/product-repo-map.json';
 const OSS_BOUNDARY = 'data/distribution/oss-app-boundary.json';
 const PRODUCT_BOUNDARY = 'docs/product/TNF_PRODUCT_BOUNDARY.md';
@@ -31,18 +32,19 @@ function normalizeOrigin(input) {
   return raw;
 }
 
+function repositoryMode(normalizedOrigin) {
+  const key = String(normalizedOrigin || '').toLowerCase();
+  if (key === CANONICAL.toLowerCase()) return 'canonical-development';
+  if (PUBLICATION_TARGETS.has(key)) return 'downstream-publication-target';
+  if (key) return 'external-or-fork';
+  return 'unknown';
+}
+
 function inProgressOperation() {
   const gitDir = git(['rev-parse', '--git-dir']);
   if (!gitDir) return null;
   const abs = path.resolve(ROOT, gitDir);
-  const probes = [
-    ['merge', 'MERGE_HEAD'],
-    ['cherry-pick', 'CHERRY_PICK_HEAD'],
-    ['revert', 'REVERT_HEAD'],
-    ['rebase', 'rebase-merge'],
-    ['rebase', 'rebase-apply'],
-  ];
-  for (const [name, rel] of probes) {
+  for (const [name, rel] of [['merge','MERGE_HEAD'],['cherry-pick','CHERRY_PICK_HEAD'],['revert','REVERT_HEAD'],['rebase','rebase-merge'],['rebase','rebase-apply']]) {
     if (fs.existsSync(path.join(abs, rel))) return name;
   }
   return null;
@@ -52,11 +54,14 @@ function repoReceipt() {
   const origin = git(['remote', 'get-url', 'origin']);
   const normalizedOrigin = normalizeOrigin(origin);
   const dirtyLines = git(['status', '--porcelain']);
+  const mode = repositoryMode(normalizedOrigin);
   return {
     root: git(['rev-parse', '--show-toplevel']),
     origin,
     normalizedOrigin,
-    canonical: normalizedOrigin.toLowerCase() === CANONICAL.toLowerCase(),
+    mode,
+    canonical: mode === 'canonical-development',
+    publicationTarget: mode === 'downstream-publication-target',
     branch: git(['branch', '--show-current']) || 'detached',
     head: git(['rev-parse', 'HEAD']),
     dirty: Boolean(dirtyLines),
@@ -71,10 +76,7 @@ const VALID = {
   sensitivity: new Set(['public', 'internal', 'private', 'restricted', 'unknown']),
 };
 
-function envOrUnknown(name) {
-  return String(process.env[name] || 'unknown').trim().toLowerCase();
-}
-
+function envOrUnknown(name) { return String(process.env[name] || 'unknown').trim().toLowerCase(); }
 function classificationReceipt() {
   return {
     workDomain: envOrUnknown('TNF_WORK_DOMAIN'),
@@ -90,43 +92,16 @@ function validateClassification(c) {
   if (!VALID.destination.has(c.artifactDestination)) errors.push(`invalid artifact destination: ${c.artifactDestination}`);
   if (!VALID.residency.has(c.dataResidency)) errors.push(`invalid data residency: ${c.dataResidency}`);
   if (!VALID.sensitivity.has(c.sensitivity)) errors.push(`invalid sensitivity: ${c.sensitivity}`);
-
-  const publicDest = c.artifactDestination === 'oss_runtime' || c.artifactDestination === 'public_contract';
-  if (publicDest && (c.sensitivity === 'private' || c.sensitivity === 'restricted')) {
-    errors.push(`${c.sensitivity} content cannot target ${c.artifactDestination}`);
-  }
-  if (c.dataResidency === 'secret_machine_local' && c.artifactDestination !== 'external') {
-    errors.push('secret_machine_local data must remain external to repository source');
-  }
-  if ((c.workDomain === 'personal' || c.workDomain === 'agency') && publicDest && c.sensitivity !== 'public') {
-    errors.push('personal/agency material must be sanitized to public product-neutral form before public destination');
-  }
-
+  const publicDest = ['oss_runtime', 'public_contract'].includes(c.artifactDestination);
+  if (publicDest && ['private', 'restricted'].includes(c.sensitivity)) errors.push(`${c.sensitivity} content cannot target ${c.artifactDestination}`);
+  if (c.dataResidency === 'secret_machine_local' && c.artifactDestination !== 'external') errors.push('secret_machine_local data must remain external to repository source');
+  if (['personal', 'agency'].includes(c.workDomain) && publicDest && c.sensitivity !== 'public') errors.push('personal/agency material must be sanitized to public product-neutral form before public destination');
   const unresolved = Object.values(c).some((value) => value === 'unknown');
   return { ok: errors.length === 0 && !unresolved, unresolved, errors };
 }
 
-function csv(name) {
-  return String(process.env[name] || '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function capabilityReceipt() {
-  const required = csv('TNF_REQUIRED_CAPABILITIES');
-  const staffedBy = csv('TNF_STAFFED_BY');
-  const configPath = path.join(ROOT, 'data/harness/harness-config.json');
-  let harnessCount = null;
-  try {
-    const cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const candidates = cfg.harnesses || cfg.providers || cfg.layers || [];
-    harnessCount = Array.isArray(candidates) ? candidates.length : Object.keys(candidates || {}).length;
-  } catch {
-    harnessCount = null;
-  }
-  return { required, staffedBy, configuredHarnesses: harnessCount };
-}
+function csv(name) { return String(process.env[name] || '').split(',').map((s) => s.trim()).filter(Boolean); }
+function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES'), staffedBy: csv('TNF_STAFFED_BY') }; }
 
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
@@ -148,14 +123,8 @@ function printFreshness() {
 }
 
 function parseArgs(argv) {
-  return {
-    json: argv.includes('--json'),
-    requireWriteReady: argv.includes('--require-write-ready'),
-    task: (() => {
-      const idx = argv.indexOf('--task');
-      return idx >= 0 ? argv[idx + 1] || '' : '';
-    })(),
-  };
+  const idx = argv.indexOf('--task');
+  return { json: argv.includes('--json'), requireWriteReady: argv.includes('--require-write-ready'), task: idx >= 0 ? argv[idx + 1] || '' : '' };
 }
 
 function main() {
@@ -165,9 +134,15 @@ function main() {
   const classificationValidation = validateClassification(classification);
   const capabilities = capabilityReceipt();
   const hydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
-
   const blockers = [];
-  if (!repository.canonical) blockers.push(`origin is ${repository.normalizedOrigin || 'unknown'}, expected ${CANONICAL}`);
+  const warnings = [];
+
+  // Internal TNF development must never accidentally occur in the two owned
+  // downstream publication targets. External forks are legitimate OSS work
+  // surfaces and are not forced to masquerade as the private monorepo.
+  if (repository.publicationTarget) blockers.push(`origin ${repository.normalizedOrigin} is a downstream publication target; develop internally in ${CANONICAL} or work from an external fork`);
+  if (repository.mode === 'external-or-fork') warnings.push(`external/fork mode: upstream placement must follow public contribution and product-boundary rules; private TNF source is not assumed available`);
+  if (repository.mode === 'unknown') warnings.push('repository origin could not be classified');
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
@@ -176,41 +151,27 @@ function main() {
 
   const payload = {
     protocol: 'TNF_TURN_ZERO_V2',
-    lifecycle: ['RESPOND', 'ORIENT', 'CLASSIFY', 'HYDRATE', 'STAFF', 'ACT', 'VERIFY', 'PROPAGATE', 'HANDOFF'],
-    repository,
-    classification,
-    classificationValidation,
-    capabilities,
-    hydration,
-    writeReady: blockers.length === 0,
-    blockers,
+    canonicalSource: CANONICAL,
+    lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
+    repository, classification, classificationValidation, capabilities, hydration,
+    writeReady: blockers.length === 0, blockers, warnings,
   };
 
-  if (args.json) {
-    console.log(JSON.stringify(payload, null, 2));
-  } else {
+  if (args.json) console.log(JSON.stringify(payload, null, 2));
+  else {
     console.log('=== Turn Zero V2 ===');
-    console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0, 12) || 'unknown'}`);
-    console.log(`- canonical development source: ${repository.canonical ? 'YES' : 'NO'}`);
-    console.log(`- dirty: ${repository.dirty ? 'yes' : 'no'}${repository.operationInProgress ? `; operation=${repository.operationInProgress}` : ''}`);
+    console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
+    console.log(`- repository mode: ${repository.mode}`);
+    console.log(`- canonical TNF source: ${CANONICAL}`);
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
-    console.log(`- capabilities required: ${capabilities.required.length ? capabilities.required.join(', ') : '(task-dependent)'}`);
-    console.log(`- staffed by: ${capabilities.staffedBy.length ? capabilities.staffedBy.join(', ') : '(discover when needed)'}`);
-    console.log('- task-scoped hydration:');
-    hydration.forEach((p) => console.log(`  - ${p}`));
-    console.log('\n=== State Freshness ===');
-    console.log(printFreshness());
-    if (blockers.length) {
-      console.log('\n=== Write Readiness ===');
-      blockers.forEach((b) => console.log(`! ${b}`));
-    } else {
-      console.log('\n- write readiness: PASS');
-    }
+    warnings.forEach((w) => console.log(`▲ ${w}`));
+    console.log('- task-scoped hydration:'); hydration.forEach((p) => console.log(`  - ${p}`));
+    console.log('\n=== State Freshness ==='); console.log(printFreshness());
+    if (blockers.length) { console.log('\n=== Write Readiness ==='); blockers.forEach((b) => console.log(`! ${b}`)); }
+    else console.log('\n- write readiness: PASS');
   }
-
   if (args.requireWriteReady && blockers.length) process.exit(1);
 }
 
 if (require.main === module) main();
-
-module.exports = { normalizeOrigin, validateClassification, hydrationReceipt, repoReceipt, classificationReceipt };
+module.exports = { normalizeOrigin, repositoryMode, validateClassification, hydrationReceipt, repoReceipt, classificationReceipt };
