@@ -5,6 +5,13 @@
 
 ## Status
 
+> **Scope note:** "not started" below refers **only** to the per-user
+> multi-tenant **web-hosting** runtime (serving user React pages / API routes,
+> the zo.space equivalent). It does **not** describe TNF's agent-execution
+> runtimes — `apps/cloud-sandbox`, `packages/workflow-engine`, the job queue,
+> and the task/agent executors already exist and run agents. Do not read this
+> checklist as "TNF has no runtime."
+
 **GAP IDENTIFIED** by CTO Agent (Alternative AI Computer + MiniMax 2.7)
 **Date:** 2026-03-23 **Priority:** P0 — Platform Parity with Alternative AI
 Computer

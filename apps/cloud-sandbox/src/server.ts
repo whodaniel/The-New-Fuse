@@ -36,7 +36,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { WebSocket } from 'ws';
 import { WebSocketServer } from 'ws';
 
-import type { Browser, Page } from 'playwright';
+import type { Browser, BrowserContext, Page } from 'playwright';
 
 const execAsync = promisify(exec);
 
@@ -72,6 +72,7 @@ interface ToolHandler {
 // ============================================================================
 
 let browser: Browser | null = null;
+let browserContext: BrowserContext | null = null;
 let activePage: Page | null = null;
 
 const BROWSER_ENABLED = (process.env.CLOUD_SANDBOX_BROWSER_ENABLED || 'true') === 'true';
@@ -82,6 +83,39 @@ const BROWSER_ACTION_TIMEOUT_MS = Number(
 );
 const BROWSER_ALLOW_PRIVATE_NETWORK =
   (process.env.CLOUD_SANDBOX_BROWSER_ALLOW_PRIVATE_NETWORK || 'false') === 'true';
+
+// --- Authenticated-session support ------------------------------------------
+// Historically the sandbox launched a fresh, anonymous, ephemeral Chromium on
+// every run, so it could never reach the user's signed-in accounts. There are
+// two supported ways to carry a real session in:
+//
+//   1. PERSISTENT PROFILE (default): launchPersistentContext against a profile
+//      dir. The user logs in once (via the live screencast), and the cookies /
+//      localStorage in that dir are reused on every subsequent launch.
+//   2. storageState INJECTION: a pre-captured Playwright storageState JSON is
+//      loaded into an ephemeral context (pre-authenticated, nothing persisted).
+//      Takes precedence when CLOUD_SANDBOX_BROWSER_STORAGE_STATE is set.
+//
+// `channel` lets the sandbox drive real Chrome/Edge when installed; it defaults
+// to bundled Chromium because the container image may not ship a real Chrome.
+const BROWSER_PERSISTENT = (process.env.CLOUD_SANDBOX_BROWSER_PERSISTENT || 'true') === 'true';
+const BROWSER_CHANNEL = process.env.CLOUD_SANDBOX_BROWSER_CHANNEL || ''; // '', 'chrome', 'msedge'
+const BROWSER_PROFILE_DIR =
+  process.env.CLOUD_SANDBOX_BROWSER_PROFILE_DIR ||
+  join(process.env.HOME || '/tmp', '.tnf-cloud-sandbox', 'chrome-profile');
+const BROWSER_STORAGE_STATE = process.env.CLOUD_SANDBOX_BROWSER_STORAGE_STATE || '';
+
+// Shared launch flags. Automation is not advertised to sites, and the default
+// --enable-automation flag is stripped, so logins behave like a real browser.
+const BROWSER_LAUNCH_ARGS = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+  '--disable-gpu',
+  '--disable-background-networking',
+  '--disable-blink-features=AutomationControlled',
+  '--remote-debugging-port=9222', // Expose Chrome DevTools Protocol for Antigravity
+];
 
 function assertBrowserEnabled(): void {
   if (!BROWSER_ENABLED) {
@@ -125,26 +159,45 @@ function assertSafeNavigationTarget(rawUrl: string): URL {
   return parsed;
 }
 
-async function getBrowser(): Promise<Browser> {
+async function getContext(): Promise<BrowserContext> {
   assertBrowserEnabled();
 
-  if (!browser) {
-    console.log('🌐 Launching headless Chromium...');
-    // console.log('PLAYWRIGHT_BROWSERS_PATH:', process.env.PLAYWRIGHT_BROWSERS_PATH);
+  if (browserContext) return browserContext;
 
-    browser = await chromium.launch({
-      headless: BROWSER_HEADLESS,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-background-networking',
-        '--remote-debugging-port=9222', // Expose Chrome DevTools Protocol for Antigravity
-      ],
-      // executablePath: execPath, // Use bundled playwright
-    });
+  const launchOptions = {
+    headless: BROWSER_HEADLESS,
+    args: BROWSER_LAUNCH_ARGS,
+    ignoreDefaultArgs: ['--enable-automation'],
+    ...(BROWSER_CHANNEL ? { channel: BROWSER_CHANNEL } : {}),
+  };
+
+  if (BROWSER_STORAGE_STATE) {
+    // Mode 2: ephemeral context pre-loaded with a captured auth state.
+    console.log(`🌐 Launching Chromium with injected storageState: ${BROWSER_STORAGE_STATE}`);
+    browser = await chromium.launch(launchOptions);
+    browserContext = await browser.newContext({ storageState: BROWSER_STORAGE_STATE });
+  } else if (BROWSER_PERSISTENT) {
+    // Mode 1 (default): persistent profile — a signed-in session survives runs.
+    await fs.mkdir(BROWSER_PROFILE_DIR, { recursive: true });
+    console.log(`🌐 Launching persistent browser profile at: ${BROWSER_PROFILE_DIR}`);
+    browserContext = await chromium.launchPersistentContext(BROWSER_PROFILE_DIR, launchOptions);
+    // Persistent contexts do not expose the underlying Browser handle.
+    browser = browserContext.browser();
+  } else {
+    // Legacy: anonymous ephemeral browser (no persistence, no auth).
+    console.log('🌐 Launching anonymous Chromium (no persistent profile)...');
+    browser = await chromium.launch(launchOptions);
+    browserContext = await browser.newContext();
   }
+
+  return browserContext;
+}
+
+// Back-compat accessor. Returns the Browser handle where available; in
+// persistent-profile mode Playwright does not expose it, so this is null and
+// callers must tolerate that (browser-level metadata is unavailable there).
+async function getBrowser(): Promise<Browser | null> {
+  await getContext();
   return browser;
 }
 
@@ -152,8 +205,9 @@ async function getPage(): Promise<Page> {
   assertBrowserEnabled();
 
   if (!activePage) {
-    const b = await getBrowser();
-    activePage = await b.newPage();
+    const context = await getContext();
+    // A persistent context opens with one page already; reuse it.
+    activePage = context.pages()[0] ?? (await context.newPage());
     activePage.setDefaultTimeout(BROWSER_ACTION_TIMEOUT_MS);
     activePage.setDefaultNavigationTimeout(BROWSER_NAV_TIMEOUT_MS);
 
@@ -913,9 +967,9 @@ app.get('/api/browser/devtools', async (_req, res) => {
       publicEndpoint: `wss://${process.env.CLOUD_RUNTIME_PUBLIC_DOMAIN || _req.get('host')}/devtools`,
       localEndpoint: 'ws://localhost:9222',
       browserInfo: {
-        type: 'Chromium',
-        headless: true,
-        version: await b.version(),
+        type: BROWSER_CHANNEL || 'Chromium',
+        headless: BROWSER_HEADLESS,
+        version: b ? await b.version() : 'persistent-context (browser handle not exposed)',
       },
       instructions: [
         'The browser is running with --remote-debugging-port=9222',
