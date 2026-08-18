@@ -2,7 +2,7 @@
 # Install / start / stop macOS LaunchAgent for TNF agent daemon.
 set -euo pipefail
 
-ROOT="${TNF_REPO_ROOT:-/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse}"
+ROOT="${TNF_REPO_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}"
 TNF_HOME="${TNF_HOME:-$HOME/.tnf}"
 PYTHON="${TNF_PYTHON:-$TNF_HOME/venv/bin/python3}"
 SCRIPT="$ROOT/scripts/agents/tnf-agent-daemon.py"

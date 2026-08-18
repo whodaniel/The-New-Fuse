@@ -33,13 +33,11 @@ export async function stubTauriNative(page: Page): Promise<void> {
       execute_hotkey: () => requireArmed(),
       wait_duration: () => requireArmed(),
       find_chrome_executable: () => '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-      resolve_chrome_extension_path: () =>
-        '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7',
+      resolve_chrome_extension_path: () => '/tmp/tnf-chrome-extension-dist-v7',
       launch_chrome_with_extension: () => ({
         launched: true,
         chrome_path: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-        extension_path:
-          '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7',
+        extension_path: '/tmp/tnf-chrome-extension-dist-v7',
         profile_dir: '/tmp/tnf-chrome-profile-smoke',
         pid: 424242,
         message: 'Chrome launched with TNF extension (stub)',
