@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-// Enforces Gate 5 of docs/protocols/TNF_DOCUMENT_VETTING_PROCEDURE.md
-// ("The Challenge & Verify Step"): any body change to a [STATUS:LOCKED]-class
-// governance doc must be accompanied by a matching, freshly-added entry in
-// docs/protocols/CHALLENGE_RATIONALE_LOG.md. Sibling to
-// scripts/protocols/validate-doc-tagging.cjs (which only checks header-tag
-// shape, never body content) — kept separate so that script stays
-// single-purpose.
+// Enforces Gate 5 of docs/protocols/TNF_DOCUMENT_VETTING_PROCEDURE.md.
+// A body change to a protected governance document must be accompanied by a
+// newly-added challenge rationale. Historical rationale remains in the original
+// monolithic CHALLENGE_RATIONALE_LOG.md; new changes may use immutable event
+// files under docs/protocols/challenge-rationales/ so the audit trail scales
+// without rewriting an ever-growing ledger on every governance change.
 //
 // Usage:
 //   node scripts/protocols/validate-locked-doc-ledger.cjs --mode=staged
 //   node scripts/protocols/validate-locked-doc-ledger.cjs --mode=ci [--base=<ref>]
+
+'use strict';
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -24,11 +25,13 @@ const baseArg = args.find((arg) => arg.startsWith('--base='));
 const baseRef = baseArg ? baseArg.split('=')[1] : process.env.TNF_LOCKED_DOC_LEDGER_BASE_REF || 'origin/main';
 
 const repoRoot = process.cwd();
-const LEDGER_REL = 'docs/protocols/CHALLENGE_RATIONALE_LOG.md';
+const LEGACY_LEDGER_REL = 'docs/protocols/CHALLENGE_RATIONALE_LOG.md';
+const EVENT_DIR_REL = 'docs/protocols/challenge-rationales';
 
 const LEDGER_PROTECTED_FILES = [
   'docs/protocols/DIRECTIVES.md',
   'docs/protocols/TURN_ZERO_MANDATE.md',
+  'docs/protocols/TURN_END_MANDATE.md',
 ];
 
 function fail(message) {
@@ -40,60 +43,40 @@ function ok(message) {
   console.log(`[locked-doc-ledger] OK (${mode}): ${message}`);
 }
 
-function gitShow(ref, relPath) {
+function git(args, options = {}) {
   try {
-    // stdio pipes stderr too, so a missing-path "fatal:" from git (expected
-    // and harmless for newly-added files) doesn't leak into script output.
-    return execFileSync('git', ['show', `${ref}:${relPath}`], {
+    return execFileSync('git', args, {
       cwd: repoRoot,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
+      ...options,
     });
-  } catch (_error) {
-    return null; // file doesn't exist at that ref (e.g. newly added)
+  } catch {
+    return null;
   }
 }
 
+function gitShow(ref, relPath) {
+  return git(['show', `${ref}:${relPath}`]);
+}
+
 function gitShowStaged(relPath) {
-  try {
-    return execFileSync('git', ['show', `:${relPath}`], {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-  } catch (_error) {
-    return null; // not staged (e.g. untracked, or unchanged since HEAD)
-  }
+  return git(['show', `:${relPath}`]);
 }
 
 function readWorkingTree(relPath) {
   const absPath = path.join(repoRoot, relPath);
-  if (!fs.existsSync(absPath)) return null;
-  return fs.readFileSync(absPath, 'utf8');
+  return fs.existsSync(absPath) ? fs.readFileSync(absPath, 'utf8') : null;
 }
 
-// "base" = last-committed version to diff against.
-// "current" = the version about to land (staged index in staged mode,
-// working tree in ci mode, since a CI checkout of a PR/push IS the
-// candidate state).
 function getCurrent(relPath) {
-  if (mode === 'staged') {
-    return gitShowStaged(relPath) || readWorkingTree(relPath);
-  }
-  return readWorkingTree(relPath);
+  return mode === 'staged' ? gitShowStaged(relPath) || readWorkingTree(relPath) : readWorkingTree(relPath);
 }
 
 function getBase(relPath) {
-  if (mode === 'staged') {
-    return gitShow('HEAD', relPath);
-  }
-  return gitShow(baseRef, relPath);
+  return mode === 'staged' ? gitShow('HEAD', relPath) : gitShow(baseRef, relPath);
 }
 
-// Strip any line containing a `[KEY:VALUE]`-style header tag (same shape
-// validate-doc-tagging.cjs parses) — header-tag transitions (e.g. STATUS
-// flips) are a separate governance concern (Gate 3), not gated here. Only
-// the document body is gated by Gate 5.
 function stripHeaderTags(text) {
   if (text == null) return null;
   return text
@@ -103,55 +86,74 @@ function stripHeaderTags(text) {
     .trim();
 }
 
+function changedEventFiles() {
+  const diffArgs = mode === 'staged'
+    ? ['diff', '--cached', '--name-status', '--', EVENT_DIR_REL]
+    : ['diff', '--name-status', baseRef, '--', EVENT_DIR_REL];
+  const output = git(diffArgs) || '';
+  return output
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const [status, ...parts] = line.split(/\s+/);
+      return { status, relPath: parts.pop() };
+    })
+    .filter((entry) => entry.relPath && entry.relPath.startsWith(`${EVENT_DIR_REL}/`) && entry.status.startsWith('A'));
+}
+
+function freshChallengeTexts() {
+  const texts = [];
+
+  // Legacy append-only ledger remains accepted for compatibility.
+  const currentLegacy = getCurrent(LEGACY_LEDGER_REL) || '';
+  const baseLegacy = getBase(LEGACY_LEDGER_REL) || '';
+  if (currentLegacy !== baseLegacy) {
+    texts.push({ source: LEGACY_LEDGER_REL, text: currentLegacy });
+  }
+
+  // Preferred V2 path: one immutable event file per governance challenge.
+  for (const event of changedEventFiles()) {
+    const text = getCurrent(event.relPath);
+    if (text) texts.push({ source: event.relPath, text });
+  }
+
+  return texts;
+}
+
 function main() {
   if (mode === 'ci') {
-    // Best-effort: make sure the base ref is fetched (shallow CI checkouts
-    // need fetch-depth:0 for this to succeed — see protocol-schema-gate.yml).
-    try {
-      execFileSync('git', ['rev-parse', '--verify', baseRef], { cwd: repoRoot, stdio: 'ignore' });
-    } catch (_error) {
-      fail(`base ref "${baseRef}" not available locally — checkout needs fetch-depth:0 (or pass --base=<ref>)`);
-      process.exit(1);
+    const verified = git(['rev-parse', '--verify', baseRef]);
+    if (!verified) {
+      fail(`base ref "${baseRef}" unavailable — CI checkout needs fetch-depth:0 or --base=<ref>`);
+      return;
     }
   }
 
-  const currentLedger = getCurrent(LEDGER_REL) || '';
-  const baseLedger = getBase(LEDGER_REL) || '';
-
+  const challengeTexts = freshChallengeTexts();
   let blocked = 0;
-  let checked = 0;
 
   for (const relPath of LEDGER_PROTECTED_FILES) {
     const current = stripHeaderTags(getCurrent(relPath));
     const base = stripHeaderTags(getBase(relPath));
-    checked += 1;
 
-    if (current === base) {
-      continue; // no body change — nothing to gate
-    }
+    if (current === base) continue;
 
     const marker = `- file: ${relPath}`;
-    const hasFreshEntry = currentLedger.includes(marker) && !baseLedger.includes(marker);
-    // Also accept a fresh entry that already existed in base but whose
-    // surrounding ledger content changed alongside this file's body change
-    // in the exact same proposed commit/PR (covers amending an existing
-    // entry rather than always appending a brand-new one).
-    const ledgerChangedThisRound = currentLedger !== baseLedger;
-    const stillHasMarker = currentLedger.includes(marker);
-
-    if (hasFreshEntry || (ledgerChangedThisRound && stillHasMarker)) {
-      ok(`${relPath} changed with a matching ${LEDGER_REL} entry`);
+    const source = challengeTexts.find((entry) => entry.text.includes(marker));
+    if (source) {
+      ok(`${relPath} changed with rationale in ${source.source}`);
       continue;
     }
 
     fail(
-      `${relPath} changed with no matching ${LEDGER_REL} entry (expected a line "${marker}" added/updated alongside this change — see Gate 5 in docs/protocols/TNF_DOCUMENT_VETTING_PROCEDURE.md)`
+      `${relPath} changed with no fresh rationale. Add an immutable event under ${EVENT_DIR_REL}/ containing "${marker}" (or append a fresh entry to ${LEGACY_LEDGER_REL}).`
     );
     blocked += 1;
   }
 
   if (blocked === 0) {
-    ok(`${checked} protected file(s) checked, no unlogged changes`);
+    ok(`${LEDGER_PROTECTED_FILES.length} protected file(s) checked; all changed bodies have fresh rationale events`);
   }
 }
 

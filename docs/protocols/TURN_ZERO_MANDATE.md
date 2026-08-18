@@ -1,208 +1,435 @@
-`[CLASS:PRIME] [STATUS:ACTIVE]`
-`[DOC_AUDIT_BACKFILL:2026-07-14-RESOLVED-2026-07-21]` — header restored;
-autonomous continuous execution for long-running TNF tasks authorized by
-operator Daniel Goldberg, confirmed in chat with Claude Code 2026-07-21 (see
-DIRECTIVES.md D1). Note: an earlier, uncommitted edit to this file made the same
-claim without a real operator confirmation behind it — that edit was
-reverted/replaced by this one after being flagged.
+`[CLASS:PRIME] [STATUS:LOCKED] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE]`
 
-# TNF Turn Zero Mandate
+# TNF Turn Zero Mandate — V2
 
-Status: ACTIVE Protocol ID: TNF_TURN_ZERO_CANONICAL
+**Status:** ACTIVE  
+**Protocol ID:** `TNF_TURN_ZERO_CANONICAL`  
+**Canonical development repository:** `whodaniel/tnf-monorepo`
+
+## Purpose
+
+Turn Zero establishes the minimum verified authority, repository identity, classification, current context, and capability staffing required to take the **next safe action**.
+
+It is not a ritual to load the entire framework before responding. In interactive work, responsiveness comes first; mutation readiness is gated separately.
 
 ## Authority
 
-- Canonical source of truth: `docs/protocols/TURN_ZERO_MANDATE.md` in the TNF
-  repository.
-- External mirrors (for example `~/GEMINI.md`) are convenience copies only.
-- If any mirror conflicts with this file, this file wins.
+- Canonical source: `docs/protocols/TURN_ZERO_MANDATE.md` in `whodaniel/tnf-monorepo`.
+- `whodaniel/The-New-Fuse` is the public open-runtime publication target.
+- `whodaniel/fuse-control-plane` is the private proprietary control-plane publication target.
+- Do not develop directly in either downstream publication target.
+- External host mirrors are convenience surfaces only. If a mirror conflicts with this file, this file wins.
+- Repository/product placement is governed jointly by:
+  - `docs/REPO_SEPARATION.md`
+  - `docs/product/TNF_PRODUCT_BOUNDARY.md`
+  - `data/distribution/product-repo-map.json`
+  - `data/distribution/oss-app-boundary.json`
 
 ## System Boundary
 
-- TNF is the primary autonomous system and control plane.
-- OpenClaw is an optional interoperability surface TNF can route through.
-- Do not characterize TNF as a subset of OpenClaw.
-- Verification must follow live host discovery, not stale stack assumptions. See
-  `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md`.
+TNF is the orchestration framework/control plane. Harnesses and model hosts such as Claude Code, Codex, Cursor, Gemini, OpenClaw, Pi, local models, browser harnesses, or later providers are **capability providers**, not foundational protocol identities.
 
-## Work Plane Separation (required orientation)
+OpenClaw remains an optional adapter. Verification follows live enlistment and capability discovery rather than stale host assumptions.
 
-Before coding or committing, classify the task:
+## Core Lifecycle
 
-1. **Core / Super Admin plane** — shared OSS harness, protocols, generalized
-   CLI. Safe for public `main` after review when the change is
-   deployer-agnostic.
-2. **Deployer config plane** — env, keys, MCP endpoints. Never commit secrets or
-   machine-local paths into the OSS tree.
-3. **Tenant / personal plane** — one user's goals, Workspace targets, DB rows,
-   private mirrors of Living State. Stay in tenant Supabase (or equivalent) and
-   local-only stores — **not** open-source `main`.
+Use the following lifecycle:
 
-If a feature is only useful as one operator's personal scaffold, **do not** land
-it on OSS `main`. Sanitize it into an optional, env-gated adapter first (see
-`GEMINI_SPARK_INTEGRATION_SPEC.md` as the pattern).
+`RESPOND → ORIENT → CLASSIFY → HYDRATE → STAFF → ACT → VERIFY → PROPAGATE → HANDOFF`
 
-## Operating Loop
+### RESPOND
 
-Always execute in this order: Inspect -> Act -> Verify.
+In interactive sessions, understand and answer the operator promptly. Do not block ordinary conversation on repository probes, full frontload, fleet discovery, or assimilation scans.
 
-**Adaptable verification:** During Inspect, discover which hosts and handoff
-surfaces are actually enlisted. Verify only those surfaces. Do not fail health
-or autonomy gates on optional hosts that are inactive (for example OpenClaw
-`LATEST.md` when OpenClaw is not in use).
+### ORIENT
 
-**Work-plane check (Inspect):** Ask whether the pending change is core OSS,
-deployer config, or tenant/personal. Route commits accordingly.
+Before a state-changing action, obtain the minimum current receipts required by the task.
 
-**Velocity-Integrity Mandate:** When utilizing experimental or cutting-edge
-logic, the `Verify` step MUST rely on a proven, legacy testing pathway to
-protect against unverified assumptions.
+### CLASSIFY
 
-**Non-Temporal Proliferation Mandate:** Improvements in understanding,
-configuration, or processes must not remain disjointed or temporary. All agents
-are required to extract their self-improvements and local optimizations and
-permanently codify them into the global TNF framework. Evolution must
-proliferate universally.
+Before creating, moving, committing, publishing, or persisting an artifact, classify it on the three independent axes below.
 
-**Best-Known Assimilation & Actualization Mandate:** TNF itself is the ultimate
-beneficiary of all known best practices, proven agent behaviors, reliable
-command patterns, failure remediations, and protocol lessons. Crucially, this
-assimilation is an **everpresent process**. During any information assessment,
-news gathering, or capability usage, agents MUST inherently run an
-`ASSIMILATE_CHECK` to identify how TNF can natively emulate new strengths.
-Furthermore, any assimilated substantive knowledge, facts, or scientific claims
-must be strictly attributed to its human or scientific provenance per the
-**Attribution Cornerstone** _(excluding standard software patterns or API
-utilization to prevent friction)_. Any agent that discovers a better way to
-inspect, act, verify, recover, route, or self-improve must convert that learning
-into durable TNF code, docs, skills, prompts, tests, or runbooks before treating
-the improvement as complete.
+### HYDRATE
 
-**Fleet Delegation Mandate (Cornerstone Tenet):** Agents MUST NOT attempt heavy
-multi-stage work strictly in single-threaded isolation when capable peer agents
-or subagent runtimes are available. "Act" includes dispatching sub-tasks to
-specialized fleet peers (`tnf agents who`, `tnf send`, `tnf handoff emit`, or
-subagents). Agents MUST evaluate available fleet targets during Turn Zero and
-delegate parallelizable or specialized domain work to maximize total compute
-efficiency.
+Retrieve only task-relevant current context. Do not ingest a whole codebase map merely because the session began.
 
-**Tri-Fold Domain Protocol Awareness:** Agents must implicitly determine and
-acknowledge the current execution domain:
+### STAFF
 
-1. **Corporate Dev Work**: Strict adherence to framework architecture and
-   canonical protocols.
-2. **Agency Dev Work**: Client-focused, balancing speed and robustness.
-3. **Personal Dev Work**: Proactive execution. The agent must proactively guide
-   the user, ask for context, and break vague goals into threads/execution
-   plans.
+Resolve required capabilities to currently available providers. A capability may be staffed by an agent, harness, model, script, service, or human gate.
 
-## Startup Sequence
+### ACT
 
-At the start of each session:
+Perform the scoped action.
 
-### Interactive Mode (Default for CLI)
+### VERIFY
 
-When `TNF_SESSION_MODE=interactive` (default for CLI terminals) or unset,
-execute **LIGHTWEIGHT startup**:
+Empirically verify the result using a pathway appropriate to the action. Never infer success from intent or tool invocation alone.
 
-1. **Quick State Check** (non-blocking):
-   - Read `~/.tnf/swarm-context.md` if present (don't block if missing)
-   - Note any P0 alerts from `~/.tnf/alerts.json`
+### PROPAGATE
 
-2. **Skip These Heavy Steps** (deferred to background/idle):
-   - Full ASSIMILATE_CHECK
-   - Git pull
-   - Merkle root verification
-   - Full codebase_map.json ingestion
+Generalize reusable learning without leaking private context.
 
-3. **Respond to user immediately** - don't let protocol overhead block user
-   engagement
+### HANDOFF
 
-### Full Startup Mode (For Swarm Coordination)
+Write enough current state, receipts, classification, and continuation information for another provider/session to resume safely.
 
-When `TNF_SESSION_MODE=swarm`, execute the full 7-step sequence below.
+---
 
-### Full Startup Sequence (SWARM MODE ONLY)
+## Gate 0 — Canonical Repository Identity
 
-1. Read state files:
-   - `docs/protocols/LIVING_STATE.md`
-   - `AGENT_STATUS_LEDGER.md` (if present)
-   - `~/.tnf/swarm-context.md` (swarm terminal state, coordination issues,
-     active directives - updated every heartbeat cycle)
-2. Read frontload policy files:
-   - `.agent/SYSTEM_PROMPT.md`
-   - `.agent/context/resource-map.md`
-   - `.agent/context/agent-onboarding.md`
-   - `.agent/workflows/frontload.md`
-   - `docs/core/FRONTLOAD_MANIFEST.md` (ordered injection Stages A–C)
-   - `docs/protocols/HARNESS_CONFIG.md` (harness inventory; file presence ≠ host
-     injection — verify surfaces)
-   - `docs/core/MEMORY.md` (curated long-term facts; skip in shared/group
-     contexts)
-   - `docs/core/BOOTSTRAP.md` when status is `PENDING` (complete + stamp)
-   - Optional dynamic recall:
-     `node scripts/harness/memory-layer.cjs recall --query "<task>"`
-3. Read the canonical session handoff:
-   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred)
-   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)
-   - `.agent/handoff_notes.txt` (legacy fallback) 3b. **Session freshness
-     check**: If `SESSION_HANDOFF_LATEST.json` `created_at` is more than 24
-     hours older than current time, emit a `session-stale` flag to
-     `tnf:master:tasks:planning` and log the discrepancy. A stale session does
-     not block execution but must be acknowledged in the operator briefing.
-4. Ingest codebase structure:
-   - `apps/frontend/src/data/codebase_map.json`
-5. Verify integrity:
-   - parse `KNOWLEDGE_TREE.json` and confirm it carries a Merkle/root hash.
-     Absent artifact reports `skipped` (with reason); unparseable artifact
-     reports `failed`. It must never report success without having parsed.
-6. Synchronize repo:
-   - **Measure by default; do not mutate.** Report branch, upstream, and
-     ahead/behind counts, and raise a warning when an in-progress
-     merge/rebase/cherry-pick is detected (an interrupted merge sat unnoticed in
-     this repo for three days; Turn Zero must surface it at session start).
-   - Set `TNF_TURN_ZERO_AUTOPULL=1` to opt into `git pull --rebase --autostash`.
-     Pulling unconditionally at session start is unsafe: rebasing into a
-     half-resolved merge compounds the damage rather than reporting it.
-7. **ASSIMILATE_CHECK**: Scan session handoff work summary, recent git diff, and
-   any failure patterns from `~/.hermes/cron/output/` for:
-   - Systemic issues (bugs, broken tools, missing capabilities) → create
-     directive entry in `DIRECTIVE_CONVERSION_LEDGER.md`
-   - Successful patterns (workable command sequences, confirmed workarounds) →
-     codify in `.agent/skills/` or relevant protocol doc
-   - Failure archaeology (same error appearing multiple times) → create a
-     `known-failure` entry in `AGENT_STATUS_LEDGER.md` Protocol Gaps section
-     Every substantive learning from the session must leave a durable artifact.
-8. Confirm active directive before implementation.
+Before **write-capable TNF code/protocol work**, derive a live repository receipt:
 
-### ASSIMILATE_CHECK Execution Details
+```bash
+git rev-parse --show-toplevel
+git remote get-url origin
+git branch --show-current
+git rev-parse HEAD
+git status --porcelain
+```
 
-The ASSIMILATE_CHECK is not advisory — it is mandatory and must produce output.
-Use this procedure:
+Also detect in-progress merge/rebase/cherry-pick/revert state.
 
-1. **Scan failure log**: read `~/.hermes/cron/output/*.jsonl` last lines for
-   `status: error` or `RuntimeError`. Classify each as `new` or `known`. If new
-   and recurring (≥3 occurrences), create a directive.
-2. **Scan handoff work_summary**: every `work_summary` item that describes a
-   system-level change (new agent, new script, config file, deprecation) should
-   be verified as having a corresponding LIVING_STATE entry. If missing, flag as
-   `drift-detected`.
-3. **Scan recent git commits**: look for patterns in commit messages that
-   indicate systemic improvement (e.g., "workaround", "fix", "replaced by") →
-   these may indicate gaps the TNF framework should close natively.
-4. **Scan SESSION_HANDOFF.next_actions**: any item not yet actioned in this
-   session must carry forward to the new handoff.
-5. If any of the above produces a finding, write it to
-   `tnf:master:tasks:planning` via `redis-cli LPUSH` and append a `[ASSIMILATE]`
-   tag to the finding type so downstream consumers know the origin.
+The canonical development origin must normalize to:
+
+```text
+whodaniel/tnf-monorepo
+```
+
+A historical local folder name such as `The-New-Fuse` does not establish repository identity. The remote does.
+
+If the active repository is `The-New-Fuse` or `fuse-control-plane`, stop write-capable development and return to `tnf-monorepo`. Downstream repos are publication surfaces.
+
+The machine gate is:
+
+```bash
+node scripts/protocols/turn-zero-v2-gate.cjs --require-write-ready
+```
+
+Read-only orientation may continue when repository identity cannot yet be proven; mutation may not.
+
+---
+
+## Three-Axis Classification
+
+The old single “work plane” model is superseded by three orthogonal axes.
+
+### Axis 1 — Work Domain
+
+- `corporate` — TNF/product/framework work.
+- `agency` — client-specific work.
+- `personal` — one person's private life/work context.
+
+Domain describes **whose problem** is being solved. It does not by itself determine where code belongs.
+
+### Axis 2 — Artifact Destination
+
+Every persisted artifact must be placed in one of the current product-boundary destinations:
+
+- `oss_runtime`
+- `public_contract`
+- `private_control_plane`
+- `satellite`
+- `external`
+
+Definitions follow `TNF_PRODUCT_BOUNDARY.md`.
+
+Examples:
+
+- a generalized relay primitive → `oss_runtime`
+- an interface/schema exposing private capability safely → `public_contract`
+- tenant authority/billing/hosted orchestration implementation → `private_control_plane`
+- an optional game/integration/product → `satellite`
+- personal strategy, client brief, private benefits/medical/legal material → `external`
+
+### Axis 3 — Data Residency / Sensitivity
+
+Residency:
+
+- `product_state`
+- `bounded_working`
+- `external_durable`
+- `secret_machine_local`
+
+Sensitivity:
+
+- `public`
+- `internal`
+- `private`
+- `restricted`
+
+A useful product pattern discovered during personal/client work does **not** authorize carrying the underlying private facts into product source.
+
+### Classification safety rules
+
+1. `private` or `restricted` context must not be committed to public product source.
+2. `secret_machine_local` material remains outside repository source control.
+3. Personal/client artifacts default to `external` unless deliberately rewritten as sanitized, product-neutral implementation.
+4. When classification is unclear, prefer the smallest public contract plus private implementation, or keep the artifact external until resolved.
+5. Classification is recorded in handoff state.
+
+Environment hints accepted by V2 tooling:
+
+```text
+TNF_WORK_DOMAIN
+TNF_ARTIFACT_DESTINATION
+TNF_DATA_RESIDENCY
+TNF_DATA_SENSITIVITY
+```
+
+---
+
+## State Freshness
+
+Volatile facts are not asserted from memory.
+
+Use `STATE_FRESHNESS_MANDATE.md` and:
+
+```bash
+node scripts/protocols/state-freshness-gate.cjs --frontload
+node scripts/protocols/state-freshness-gate.cjs --refresh
+```
+
+Turn Zero freshness includes, where relevant:
+
+- canonical `tnf-monorepo` main;
+- public open-runtime main;
+- private control-plane main;
+- public PR/rules/leakage state;
+- product-repository map;
+- OSS/satellite boundary map;
+- local repository identity/dirty state;
+- live runtime services.
+
+A stale or missing receipt means **unknown**, not broken.
+
+Catastrophic claims require corroboration from an independent probe.
+
+After context compaction, re-probe any volatile fact on which the next action depends.
+
+---
+
+## Task-Scoped Context Hydration
+
+Do not use `apps/frontend/src/data/codebase_map.json` as mandatory Turn Zero authority.
+
+For TNF development, hydrate in this order:
+
+1. `data/distribution/product-repo-map.json`
+2. `data/distribution/oss-app-boundary.json`
+3. `docs/product/TNF_PRODUCT_BOUNDARY.md`
+4. `docs/REPO_SEPARATION.md`
+5. current freshness/repository receipts
+6. exact packages/files involved in the task
+7. relevant satellite repository only when the task crosses that boundary
+
+Large ledgers, generated trackers, historical maps, and daily memories are retrieved only when task-relevant.
+
+Dynamic recall may be used as a clue source, never as a substitute for current code/authority.
+
+---
+
+## Capability Staffing Mandate
+
+Turn Zero staffs **capabilities**, not brands or hard-coded agent identities.
+
+For a nontrivial task:
+
+1. identify required capabilities;
+2. discover currently enlisted providers;
+3. evaluate authority, privacy, cost, latency, context, and reliability;
+4. staff each capability with the best available provider;
+5. execute;
+6. verify outputs independently when consequence warrants it.
+
+Discovery may use:
+
+- harness configuration/runtime state;
+- `tnf agents who --json`;
+- capability registry/matcher;
+- installed skills/scripts;
+- live provider probes;
+- human/operator approval surfaces.
+
+Named providers remain valid implementation details. They are not mandatory protocol dependencies.
+
+Parallelize when it reduces time/risk and the providers can work independently. Do not delegate merely to satisfy a ritual.
+
+---
+
+## Inspect → Act → Verify
+
+This invariant remains mandatory.
+
+- **Inspect** current authority, state, and relevant context.
+- **Act** with explicit scope.
+- **Verify** empirically.
+
+Experimental/cutting-edge implementation should be verified through a stable or independently understandable path where practical.
+
+A tool call returning success is a receipt for the call, not necessarily proof that the intended system outcome exists.
+
+---
+
+## Privacy-Preserving Assimilation
+
+### Universalize the pattern, not the private context.
+
+TNF should benefit from reusable lessons, but assimilation is a transformation, not copying.
+
+When a personal, tenant, client, medical, legal, financial, or other sensitive workflow reveals a generally useful improvement:
+
+1. extract the generalized mechanism;
+2. strip identities, private facts, destinations, secrets, and case-specific data;
+3. classify the generalized artifact through the product boundary;
+4. test it independently of the private source context;
+5. only then assimilate it into TNF.
+
+Do not put private source material into TNF merely because the workflow produced a useful idea.
+
+Attribution remains required for substantive human/scientific claims where provenance matters.
+
+---
+
+## ASSIMILATE_CHECK V2
+
+ASSIMILATE_CHECK is a structured review, not a mandatory full-host scan on every interactive turn.
+
+### Inputs
+
+Inspect only enlisted/relevant sources:
+
+- current session/handoff;
+- recent task-relevant diff/commits;
+- known failure/trajectory sources exposed by enlisted harness adapters;
+- next actions;
+- recurring failures observed with sufficient evidence.
+
+No host-specific path such as `~/.hermes/...` is universally mandatory.
+
+### Outputs
+
+A material reusable finding becomes one of:
+
+- code/test fix;
+- protocol/runbook change;
+- skill;
+- issue/directive;
+- known-failure entry;
+- intentionally external/private note.
+
+Not every observation deserves a permanent TNF artifact. The test is reusable system value.
+
+---
+
+## Interactive Mode
+
+Interactive is the default.
+
+At session start:
+
+1. respond to the user;
+2. read Stage A from `FRONTLOAD_MANIFEST.md` as needed;
+3. show/derive a compact repository + freshness orientation before mutation;
+4. classify when persistence/mutation becomes relevant;
+5. hydrate only the current task;
+6. staff capabilities only when useful.
+
+Do **not** automatically:
+
+- git pull;
+- ingest full codebase maps;
+- run all host scans;
+- load all memory/ledgers;
+- execute a full assimilation sweep.
+
+Heavy work can run when requested, in swarm mode, or at the point it becomes a dependency.
+
+---
+
+## Swarm / Autonomous Mode
+
+For coordinated or long-running work:
+
+1. run Gate 0;
+2. load Stage A and task-relevant Stage B/C frontload;
+3. validate handoff freshness;
+4. classify planned artifacts;
+5. hydrate current repository/product boundaries;
+6. discover/staff required capabilities;
+7. execute work packages;
+8. verify;
+9. perform ASSIMILATE_CHECK V2;
+10. write Turn End V2.
+
+Autonomous execution does not override existing destructive-operation, credential, elevation, publication, or operator-approval boundaries.
+
+---
+
+## Repository Publication
+
+All TNF development lands in `whodaniel/tnf-monorepo`.
+
+After canonical development is merged:
+
+```bash
+pnpm run sync:repos:dry-run
+```
+
+Then use the repository's controlled publication workflow:
+
+- public open runtime → generated `sync/open-runtime` PR into `The-New-Fuse`
+- proprietary control-plane extract → generated update to `fuse-control-plane`
+
+Never “keep repos in sync” by manually repeating feature commits in downstream targets.
+
+---
+
+## Turn End Contract
+
+Use:
+
+```bash
+node scripts/turn-end-v2.cjs
+```
+
+Turn End records:
+
+- canonical repository identity;
+- branch/head;
+- three-axis classification;
+- capabilities required/staffed;
+- publication impact;
+- freshness receipts;
+- changed paths;
+- verification;
+- continuation/next actions.
+
+Schema:
+
+`docs/protocols/schemas/tnf-session-handoff.schema.json`
+
+Current spec:
+
+`tnf/session-handoff/0.2`
+
+---
 
 ## Enforcement Targets
 
-The following must reference this canonical file:
+These surfaces must remain aligned with Turn Zero:
 
-- `docs/core/AGENTS.md`
-- `docs/TNF_SESSION_ONBOARDING.md`
-- `scripts/tnf-onboard.cjs`
-- `scripts/turn-end.cjs` (must be called at every session close)
-- `scripts/check-agent-registration.cjs` (must be run when new operational
-  agents are created)
+- `docs/protocols/TURN_END_MANDATE.md`
+- `docs/protocols/STATE_FRESHNESS_MANDATE.md`
+- `docs/protocols/state-freshness.registry.json`
+- `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md`
+- `docs/core/FRONTLOAD_MANIFEST.md`
+- `docs/product/TNF_PRODUCT_BOUNDARY.md`
+- `docs/REPO_SEPARATION.md`
+- `scripts/protocols/turn-zero-v2-gate.cjs`
+- `scripts/tnf-onboard-twip.cjs`
+- `scripts/turn-end-v2.cjs`
+- `docs/protocols/schemas/tnf-session-handoff.schema.json`
+
+## Operator-facing principle
+
+**Establish just enough verified authority, context, classification, and capability to safely take the next action.**

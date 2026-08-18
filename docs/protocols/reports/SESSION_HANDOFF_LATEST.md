@@ -1,50 +1,52 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-17T04:26:34.347Z`  
-Handoff ID: `61f04423-b881-43fc-bfe3-a4ca73ec6099`
+Spec: `tnf/session-handoff/0.2`  
+Created At: `2026-08-18T18:18:00.000Z`  
+Handoff ID: `2d0eca7d-09e2-4c3d-bda6-10bb79f0a6cb`
 
-## Scope
+## Repository
 
-- Repository: `The-New-Fuse`
-- Branch: `main`
-- Head SHA: `b1eb732489bc4055ce3d7a33ed9be226da541ac8`
-- Sensitive Scope: `internal`
+- Canonical: `whodaniel/tnf-monorepo`
+- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
+- Branch: `protocol/turn-zero-v2-context-capability`
+- Head SHA: `643f65b80c6539448251882b178d9f15b8a4ccd4`
+- Publication targets: `whodaniel/The-New-Fuse`, `whodaniel/fuse-control-plane`
+
+## Classification
+
+- Work domain: `corporate`
+- Artifact destination: `oss_runtime`
+- Data residency: `product_state`
+- Sensitivity: `public`
+
+## Capabilities
+
+- Required: protocol-architecture, repository-governance, context-hydration, capability-staffing, handoff-continuity
+- Staffed by: operator-authorized-ai-development-session
+
+## Publication Impact
+
+- Public runtime affected: `true`
+- Control plane affected: `false`
+- Satellites: none
 
 ## Work Summary
 
-- Add tnf google-ai view/resume over the Antigravity bridge; drop incomplete
-  cloud-sync stub.
-
-## Changed Paths
-
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/commands/google-ai.ts
-- scripts/google-ai/tnf_gemini_antigravity_bridge.py
+- Implement Turn Zero V2 as a repository-aware, capability-first, privacy-preserving progressive lifecycle.
+- Add V2 write-readiness gate, handoff 0.2 wrapper/schema, expanded freshness registry, progressive frontload, and immutable governance challenge events.
+- Document cross-codebase implications and preserve controlled monorepo-to-publication flow.
 
 ## Verification
 
 - privacy_guard: `pass`
-- secret_sweep: `pass`
+- secret_sweep: `na`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
-
-## Continuation
-
-- Owner: `tnf-cli-agent`
-- Targets: `sub-director`, `story-architect`, `librarian`
-- Priority: `high`
-
-### Resume Checklist
-
-- google-ai view missing-id errors
-- gitignore+untrack on main
-- broker up
+- PR CI and downstream sync dry-run remain required before publication.
 
 ## Next Actions
 
-- Defer BackupService path fix, rclone wiring, dist-v7, concordance JSON.
+1. Validate PR checks and strict schema consumers.
+2. Merge Turn Zero V2 into canonical monorepo when verification passes.
+3. Run controlled repository separation publication flow.
