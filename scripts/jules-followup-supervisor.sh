@@ -38,7 +38,7 @@ load_runtime_config() {
   INTERVAL_SEC="${JULES_SUPERVISOR_INTERVAL_SEC:-180}"
   ADVANCE_EVERY="${JULES_SUPERVISOR_ADVANCE_EVERY:-3}"
   MAX_CONSECUTIVE_ERRORS="${JULES_SUPERVISOR_MAX_ERRORS:-10}"
-  ADVANCE_PROMPT="${JULES_SUPERVISOR_ADVANCE_PROMPT:-Required follow-up: publish your branch and open a GitHub PR against whodaniel/The-New-Fuse main. Use automated checks only; do not request manual frontend/browser viewing. Reply with BRANCH and PR_URL.}"
+  ADVANCE_PROMPT="${JULES_SUPERVISOR_ADVANCE_PROMPT:-Required follow-up: publish your branch and open a GitHub PR against whodaniel/tnf-monorepo main. Use automated checks only; do not request manual frontend/browser viewing. Reply with BRANCH and PR_URL.}"
   ALERT_WEBHOOK_URL="${JULES_ALERT_WEBHOOK_URL:-}"
   ALERT_COOLDOWN_SEC="${JULES_ALERT_COOLDOWN_SEC:-1800}"
   ALERT_STALLED_CYCLES="${JULES_ALERT_STALLED_CYCLES:-3}"
@@ -342,7 +342,7 @@ while true; do
   fi
 
   if [[ -s "$PUBLISH_TMP" ]]; then
-    if ! run_step "Publishing completed/review sessions" node scripts/jules-publish-prs.cjs --sessions-file "$PUBLISH_TMP" --mode publish --limit "$publish_count" --repo whodaniel/The-New-Fuse --base main; then
+    if ! run_step "Publishing completed/review sessions" node scripts/jules-publish-prs.cjs --sessions-file "$PUBLISH_TMP" --mode publish --limit "$publish_count" --repo whodaniel/tnf-monorepo --base main; then
       cycle_failed=1
     fi
   else
