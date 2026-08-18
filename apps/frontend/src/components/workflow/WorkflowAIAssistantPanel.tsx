@@ -1,13 +1,15 @@
-import { apiService } from '@/services/api';
-import { agentService } from '@/services/AgentService';
-import { resourcesService } from '@/services/resources.service';
+import AISourceSelector from '@/components/ai/AISourceSelector';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';
+import { agentService } from '@/services/AgentService';
+import { aiSourceService } from '@/services/aiSource.service';
+import { resourcesService } from '@/services/resources.service';
 import { filterByTenancyContext } from '@/utils/tenancy';
 import { Bot, Sparkles } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -21,10 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { toast } from 'sonner';
 
 interface WorkflowAIAssistantPanelProps {
   onApplyMeta?: (name?: string, description?: string) => void;
+  initialPrompt?: string;
 }
 
 type AiWorkflowSpec = {
@@ -100,23 +102,43 @@ User request: ${prompt}`;
 
 export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> = ({
   onApplyMeta,
+  initialPrompt,
 }) => {
   const { nodes, edges, actions } = useWorkflow();
   const { user } = useAuth();
   const { workspace } = useWorkspace();
   const { isSuperAdmin, isAnyAgencyAdmin } = useAuthorization();
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState(initialPrompt || '');
   const [mode, setMode] = useState<'replace' | 'append'>('replace');
   const [selectedAgent, setSelectedAgent] = useState('');
   const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
   const [agents, setAgents] = useState<{ id: string; name: string }[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [liveAgentsNeedSignIn, setLiveAgentsNeedSignIn] = useState(false);
 
   const nodeTypeCatalog = useMemo(
-    () => ['input', 'agent', 'mcpTool', 'prompt', 'condition', 'transform', 'loop', 'subworkflow', 'output', 'notification', 'a2a'],
+    () => [
+      'input',
+      'agent',
+      'mcpTool',
+      'prompt',
+      'condition',
+      'transform',
+      'loop',
+      'subworkflow',
+      'output',
+      'notification',
+      'a2a',
+    ],
     []
   );
+
+  useEffect(() => {
+    if (initialPrompt?.trim()) {
+      setPrompt(initialPrompt.trim());
+    }
+  }, [initialPrompt]);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -139,14 +161,18 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
         });
 
         setAgents(filteredAgents.map((agent) => ({ id: agent.id, name: agent.name })));
-        setTemplates(filteredTemplates.map((template) => ({ id: template.id, name: template.name })));
+        setTemplates(
+          filteredTemplates.map((template) => ({ id: template.id, name: template.name }))
+        );
+        setLiveAgentsNeedSignIn(!user?.id && filteredAgents.length === 0);
       } catch (error) {
         console.error('Failed to load AI options', error);
+        setLiveAgentsNeedSignIn(!user?.id);
       }
     };
 
     loadOptions();
-  }, []);
+  }, [user, workspace?.id, isSuperAdmin, isAnyAgencyAdmin]);
 
   const applyWorkflowSpec = (spec: AiWorkflowSpec) => {
     if (mode === 'replace') {
@@ -219,9 +245,8 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
           },
         });
       } else {
-        responsePayload = await apiService.post('/orchestration/chat', {
+        const result = await aiSourceService.chat({
           message,
-          swarmId: 'default-swarm',
           context: {
             intent: 'workflow_generation',
             workspaceId: workspace?.id,
@@ -231,6 +256,7 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
             userId: user?.id,
           },
         });
+        responsePayload = { response: result.text };
       }
 
       const text = extractText(responsePayload);
@@ -248,8 +274,19 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
       applyWorkflowSpec(spec);
       toast.success('Workflow draft added to the canvas.');
     } catch (error: any) {
-      console.error('AI workflow generation failed', error);
-      toast.error(error?.message || 'AI workflow generation failed.');
+      const status = error?.response?.status || error?.status;
+      const detail =
+        error?.response?.data?.message || error?.message || 'AI workflow generation failed.';
+      console.error('AI workflow generation failed', detail);
+      if (status === 401 || status === 403) {
+        toast.error('Session expired. Please sign in again to generate workflows.');
+      } else if (status === 404) {
+        toast.error(
+          'Orchestration chat endpoint not found. Check API routing (/api/orchestration/chat).'
+        );
+      } else {
+        toast.error(typeof detail === 'string' ? detail : 'AI workflow generation failed.');
+      }
     } finally {
       setLoading(false);
     }
@@ -272,6 +309,13 @@ export const WorkflowAIAssistantPanel: React.FC<WorkflowAIAssistantPanelProps> =
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {liveAgentsNeedSignIn ? (
+          <p className="text-xs text-amber-300/90 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2">
+            Sign in to load live fleet agents. Packaged templates and TNF Auto (Orchestrator) still
+            work without a session.
+          </p>
+        ) : null}
+        {!selectedAgent ? <AISourceSelector compact label="AI Source" /> : null}
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">Prompt</Label>
           <Input

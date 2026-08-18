@@ -27,6 +27,8 @@ function generateIcons() {
 
         if (fs.existsSync(defaultPath)) {
           fs.copyFileSync(defaultPath, targetPath);
+        } else if (fs.existsSync(targetPath) && fs.statSync(targetPath).size > 100) {
+          // Keep existing real icons; do not overwrite with a 1x1 placeholder.
         } else {
           // If no default icon exists, create a minimal placeholder
           const minimalIcon = Buffer.from([

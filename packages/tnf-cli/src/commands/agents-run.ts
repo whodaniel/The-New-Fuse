@@ -38,6 +38,7 @@ import {
   runAgentBrowser,
 } from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
+import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -89,7 +90,7 @@ interface JsonResult {
  * structured string so the LLM can self-correct on the next iteration
  * instead of crashing the loop.
  */
-async function defaultExecutor(
+export async function executeBuiltinTool(
   name: string,
   args: Record<string, unknown>,
   ctx: { cwd: string; quiet: boolean }
@@ -245,6 +246,30 @@ async function defaultExecutor(
         const limit = Math.min(Math.max(Number(args.limit ?? 10) || 10, 1), 100);
         if (!ctx.quiet) console.error(`[agents-run] memory_recall: "${query}" limit=${limit}`);
         result = await recallMemory(query, limit);
+        break;
+      }
+      case 'mcp_list_tools': {
+        const server = args.server ? String(args.server) : undefined;
+        if (!ctx.quiet) console.error(`[agents-run] mcp_list_tools: ${server ?? '<all>'}`);
+        const runtime = new MCPToolRuntimeService(ctx.cwd);
+        result = {
+          ok: true,
+          servers: await runtime.listTools(server),
+        };
+        break;
+      }
+      case 'mcp_call_tool': {
+        const server = String(args.server ?? '');
+        const tool = String(args.tool ?? '');
+        const toolArgs =
+          args.arguments && typeof args.arguments === 'object'
+            ? (args.arguments as Record<string, unknown>)
+            : {};
+        if (!server) return { ok: false, error: 'mcp_call_tool: empty server' };
+        if (!tool) return { ok: false, error: 'mcp_call_tool: empty tool' };
+        if (!ctx.quiet) console.error(`[agents-run] mcp_call_tool: ${server}.${tool}`);
+        const runtime = new MCPToolRuntimeService(ctx.cwd);
+        result = { ...(await runtime.callTool(server, tool, toolArgs)) };
         break;
       }
       default:
@@ -630,7 +655,7 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         if (Array.isArray(enabledTools) && enabledTools.length === 0) {
           response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
         } else {
-          response = await defaultExecutor(name, args, { cwd, quiet: !!opts.quiet });
+          response = await executeBuiltinTool(name, args, { cwd, quiet: !!opts.quiet });
         }
       } catch (err: any) {
         response = { ok: false, error: err?.message ?? String(err), tool: name };
@@ -715,7 +740,7 @@ export function registerAgentsRunCommand(program: Command): void {
     .description(
       'Run an autonomous agent loop with the canonical TNF built-in toolset. ' +
         'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
-        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall.'
+        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.'
     )
     .argument(
       '[task...]',

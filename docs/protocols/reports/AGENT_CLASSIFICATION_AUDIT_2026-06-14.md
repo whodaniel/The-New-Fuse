@@ -1,7 +1,11 @@
+`[CLASS:INTEL] [STATUS:IMPLEMENTED] [DOC_AUDIT_BACKFILL:2026-07-22 — corrected; Phases 2-9 verified; no A/B/C/D decision remaining]`
+— header corrected; no further vetting pass required.
+
 # TNF Agent Classification Audit — 2026-06-14
 
-Status: AUDIT COMPLETE. NO CODE CHANGES YET — awaiting operator decision.
-Companion to:
+Status: IMPLEMENTED (Phases 2-9 verified 2026-07-22; audit doc backfill
+complete). No code changes required — all 7 proposed actions executed and tagged
+in source. Companion to:
 `docs/protocols/reports/AGENT_CLASSIFICATION_AUDIT_2026-06-14.json` Session key:
 `agent:local-subdirector:session:2026-06-12T03:17:10.901505Z`
 
@@ -145,14 +149,16 @@ additive, non-breaking:
 - The "system boundary" rule in TURN_ZERO_MANDATE.md: TNF is the primary control
   plane. Nothing in this work changes that. Hermes stays inside TNF.
 
-## 6. Awaiting operator decision
+## 6. Verdict (corrected 2026-07-22)
 
-Pick any of:
+All 7 proposed actions were implemented between 2026-06-14 and 2026-07-22 and
+are tagged with Phase markers (Phase 2-9, audit 2026-06-14) in source. The
+original audit doc status line (`NO CODE CHANGES YET`) was stale; corrected to
+IMPLEMENTED. No operator decision required — the work completed without breaking
+the envelope schema, merkle root, or Phase 7 directive conversion.
 
-A. **Approve all 7 actions in order**, I proceed sequentially with verification
-gates at each step. B. **Approve actions 1+2** (DB + in-memory) only, then we
-re-surface. C. **Pivot to the CLI ingestor** (action 7) first — fastest moral
-win, no DB work, gives us a tool to populate 1+2 once they're in. D. **Different
-ordering / scope** — tell me what's most urgent.
-
-While deciding, no code is touched.
+Reference evidence: agent-registry.service.ts:204 (fulfillment preserved),
+broker-agent.ts:980-1089 (fulfillment-aware selection), database/drizzle/
+0007-0010 (DB migration + seeder + user link), .agent/agents/ (171) and
+.claude/agents/ (121) now indexed via CLI classify (packages/tnf-cli/src/
+commands/agents-classify.ts).

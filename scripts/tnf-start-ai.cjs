@@ -25,7 +25,10 @@ function commandExists(cmd) {
 
 function usage() {
   console.log(
-    "Usage: pnpm run tnf:start -- <codex|claude|gemini|cursor|openclaw|hermes|pi> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
+    "Usage: pnpm run tnf:start -- <harness-client> [--skip-doctor] [--require-doctor] [--no-launch] [-- ...client args]"
+  );
+  console.log(
+    "Harness clients (interchangeable): codex | claude | gemini | cursor | hermes | pi | openclaw"
   );
 }
 
@@ -61,7 +64,6 @@ const clientCommandMap = {
   openclaw: "openclaw",
   hermes: "hermes",
   pi: "pi",
-  zo: "zo",
 };
 
 const cmd = clientCommandMap[client];
@@ -84,6 +86,18 @@ if (step.code !== 0) console.warn("⚠️ Terminal harness boot partial failure.
 
 step = run("pnpm", ["run", "-s", "tnf:mcp:generate"]);
 if (step.code !== 0) process.exit(step.code);
+
+if (client === "codex" && process.env.TNF_CODEX_MCP_AUTO_LOGIN) {
+  const requested = process.env.TNF_CODEX_MCP_AUTO_LOGIN === "1"
+    ? (process.env.TNF_CODEX_MCP_SERVER || "supabase")
+    : process.env.TNF_CODEX_MCP_AUTO_LOGIN;
+  const servers = requested.split(",").map((entry) => entry.trim()).filter(Boolean);
+  for (const server of servers) {
+    console.log(`Codex MCP OAuth auto-login: ${server}`);
+    step = run("node", ["scripts/codex-mcp-oauth-login.cjs", server]);
+    if (step.code !== 0) process.exit(step.code);
+  }
+}
 
 if (!skipDoctor) {
   const doctorArgs = requireDoctor

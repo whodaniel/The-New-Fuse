@@ -334,8 +334,7 @@ export class AgentRegistryService {
       withRole: agents.filter((a) => typeof a.role === 'string' && a.role.length > 0).length,
       withFulfillment: agents.filter((a) => a.fulfillment && Object.keys(a.fulfillment).length > 0)
         .length,
-      withQualities: agents.filter((a) => a.qualities && Object.keys(a.qualities).length > 0)
-        .length,
+      withTraits: agents.filter((a) => a.traits && Object.keys(a.traits).length > 0).length,
       // Phase 9 federated ID coverage (FOLLOWUP-2/3): ensures the registry
       // is reporting the percentage of agents that have a populated ID# and
       // mcid envelope. Operators can spot gaps that indicate the bridge

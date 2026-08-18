@@ -4,7 +4,7 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-GITHUB_REPO="${GITHUB_REPO:-whodaniel/fuse}"
+GITHUB_REPO="${GITHUB_REPO:-whodaniel/The-New-Fuse}"
 MAX_WAVES="${MAX_WAVES:-6}"
 MERGE_DRAFTS="${MERGE_DRAFTS:-true}"
 LOG_DIR=".agent/jules-logs"

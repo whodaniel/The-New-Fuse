@@ -337,7 +337,7 @@ cd apps/api
 pnpm dev
 ```
 
-**See Also:** [Backend README](./apps/backend/README.md) | [API Examples](./apps/backend/API_EXAMPLES.md)
+**See Also:** [Backend README](./apps/backend/README.md) | [API Examples](../../../../apps/backend/API_EXAMPLES.md)
 
 ### 3. Start Frontend
 
@@ -361,44 +361,44 @@ pnpm dev
 ### Essential Documentation
 - [README.md](./README.md) - Project overview and installation
 - [QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md) - 7-day path to launch
-- [DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md) - Complete documentation map
-- [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) - Organized index
+- [DOCUMENTATION_MAP.md](../../../archive/planning/DOCUMENTATION_MAP.md) - Complete documentation map
+- [DOCUMENTATION_INDEX.md](../../../core/DOCUMENTATION_INDEX.md) - Organized index
 
 ### Development Guides
 - [Getting Started](./docs/development/GETTING_STARTED.md)
-- [Build Guide](./docs/development/BUILD_GUIDE.md)
-- [Build System](./docs/development/BUILD_SYSTEM.md)
-- [Architecture Standards](./docs/architecture/ARCHITECTURE_STANDARDS.md)
+- [Build Guide](../../../development/BUILD_GUIDE.md)
+- [Build System](../../../development/BUILD_SYSTEM.md)
+- [Architecture Standards](../../../architecture/ARCHITECTURE_STANDARDS.md)
 
 ### Backend & API
 - [Backend Development](./apps/backend/README.md)
 - [API Usage Guide](./docs/API_USAGE_GUIDE.md)
 - [GraphQL Guide](./apps/api/src/graphql/README.md)
-- [WebSocket Integration](./apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md)
-- [Agent Registry API](./apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md)
+- [WebSocket Integration](../../../../apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md)
+- [Agent Registry API](../../../../apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md)
 
 ### Frontend & UI
 - [Frontend Development](./apps/frontend/README.md)
-- [Design System](./docs/DESIGN_SYSTEM_DOCUMENTATION.md)
-- [UX Audit](./docs/ui-ux/UX_AUDIT_SUMMARY.md)
+- [Design System](../../../DESIGN_SYSTEM_DOCUMENTATION.md)
+- [UX Audit](../../../ui-ux/UX_AUDIT_SUMMARY.md)
 - [Performance Optimization](./apps/frontend/PERFORMANCE_OPTIMIZATION.md)
 
 ### Deployment
 - [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
-- [CloudRuntime Deployment](./docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md)
-- [Docker Setup](./docs/guides/docker-setup.md)
+- [CloudRuntime Deployment](../../../deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md)
+- [Docker Setup](../../../guides/docker-setup.md)
 - [CI/CD Strategy](./docs/CICD_STRATEGY.md)
-- [Monitoring](./docs/deployment/MONITORING.md)
+- [Monitoring](../../../deployment/MONITORING.md)
 
 ### Testing & Quality
-- [Testing Setup](./docs/testing/TESTING_SETUP_COMPLETE.md)
-- [E2E Testing](./docs/testing/E2E_TEST_SUMMARY.md)
-- [Code Quality](./docs/CODE_QUALITY.md)
+- [Testing Setup](../../../testing/TESTING_SETUP_COMPLETE.md)
+- [E2E Testing](../../../testing/E2E_TEST_SUMMARY.md)
+- [Code Quality](../../../CODE_QUALITY.md)
 
 ### Security
-- [Security Best Practices](./docs/security/SECURITY_BEST_PRACTICES.md)
-- [Security Audit](./docs/security/SECURITY_AUDIT_REPORT.md)
-- [Developer Security Checklist](./docs/security/DEVELOPER_SECURITY_CHECKLIST.md)
+- [Security Best Practices](../../../security/SECURITY_BEST_PRACTICES.md)
+- [Security Audit](../../../security/SECURITY_AUDIT_REPORT.md)
+- [Developer Security Checklist](../../../security/DEVELOPER_SECURITY_CHECKLIST.md)
 
 ---
 

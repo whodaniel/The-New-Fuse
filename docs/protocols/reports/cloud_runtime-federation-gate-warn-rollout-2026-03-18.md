@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # CloudRuntime Federation Gate Warn Rollout Report
 
 Date: 2026-03-18  
@@ -5,7 +8,8 @@ Status: Completed (superseded by enforce rollout later same day)
 
 ## Scope
 
-Promote production CloudRuntime runtime to external federation gate `warn` mode for:
+Promote production CloudRuntime runtime to external federation gate `warn` mode
+for:
 
 1. `api` service (handoff publish policy checks)
 2. `relay-server` service (broker dispatch policy checks)
@@ -35,7 +39,8 @@ Endpoint target:
 
 ## Post-Rollout Checks
 
-1. CloudRuntime variable verification for both services confirmed expected values.
+1. CloudRuntime variable verification for both services confirmed expected
+   values.
 2. API health endpoint:
    - `https://api-production-48f1.thenewfuse.com/api/health` -> `200`
 3. Relay domain response:

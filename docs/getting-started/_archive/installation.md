@@ -20,7 +20,7 @@ Before installing Fuse, ensure you have the following prerequisites:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/whodaniel/fuse.git
+   git clone https://github.com/whodaniel/The-New-Fuse.git
    cd fuse
    ```
 
@@ -80,7 +80,7 @@ Before installing Fuse, ensure you have the following prerequisites:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/whodaniel/fuse.git
+   git clone https://github.com/whodaniel/The-New-Fuse.git
    cd fuse
    ```
 

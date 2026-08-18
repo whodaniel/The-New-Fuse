@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'; // Added Toaster import
 import { Outlet, useLocation } from 'react-router-dom';
 import { PremiumHeader } from '../components/Navigation/PremiumHeader';
 import { PremiumSidebar } from '../components/Sidebar/PremiumSidebar';
+import { SiteFooter } from '../components/SiteFooter';
 import FeatureAIAssistDock from '../components/ai/FeatureAIAssistDock';
 import { PremiumBackground } from '../components/ui/premium/PremiumBackground';
 
@@ -84,9 +85,14 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
           </div>
         </main>
 
-        <div className="fixed right-6 bottom-6 z-40 hidden xl:block">
+        <div className="fixed right-6 bottom-6 z-40">
           <FeatureAIAssistDock variant="dock" />
         </div>
+
+        {/* Authenticated pages previously had no footer at all, so the footer
+            navigation existed only on public routes. Same SiteFooter as
+            PublicLayout, so the links are common across every page. */}
+        <SiteFooter />
       </div>
     </div>
   );

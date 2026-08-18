@@ -1,5 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { useRoute } from '../route-context';
+import SynergyStatusBar from './SynergyStatusBar';
 
 interface PageShellProps {
   title: string;
@@ -21,9 +22,13 @@ export const PageShell: React.FC<PageShellProps> = ({
   banner,
   children,
   className = '',
-  showBack = true,
+  showBack = false,
 }) => {
   const { goBack, history } = useRoute();
+  // Every sidebar destination is top-level, so "Back" defaulting to on put a
+  // control on pages with no meaningful parent — it just replayed history and
+  // contradicted the sidebar as the navigation model. Pages that are genuinely
+  // nested (a detail view opened from a list) opt in with showBack.
   const canGoBack = showBack && history.length > 1;
 
   return (
@@ -41,6 +46,10 @@ export const PageShell: React.FC<PageShellProps> = ({
         {actions ? <div className="header-actions">{actions}</div> : null}
       </header>
       {banner}
+      {/* Global synergy state belongs to the chrome, not to each page. Every page
+          used to render this itself, below its own title — 18 copies that each
+          re-derived the same counts and drifted apart. */}
+      <SynergyStatusBar />
       {children}
     </div>
   );

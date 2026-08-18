@@ -1,8 +1,7 @@
 ## P0 - The New Fuse (TNF)
 
 - **Goal:** Ship TNF publicly and stabilize operations.
-- **Primary Path:**
-  `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
+- **Primary Path:** `$TNF_ROOT`
 - **Status:** active
 - **Visibility:** public
 - **External Sharing:** allowed for public materials only; ask before sharing
@@ -16,7 +15,7 @@
 ## P1 - AI Studio Automator
 
 - **Goal:** Build and maintain automation workflows for AI studio operations.
-- **Primary Path:** `/Users/danielgoldberg/Projects/ai-studio-automator`
+- **Primary Path:** `$HOME/Projects/ai-studio-automator`
 - **Status:** active
 - **Visibility:** private
 - **External Sharing:** blocked-by-default
@@ -28,7 +27,7 @@
 ## P2 - MCP-DRS
 
 - **Goal:** Advance MCP-DRS project stability and deployment readiness.
-- **Primary Path:** `/Users/danielgoldberg/Desktop/MCP-DRS`
+- **Primary Path:** `$HOME/Desktop/MCP-DRS`
 - **Status:** active
 - **Visibility:** private
 - **External Sharing:** blocked-by-default
@@ -40,7 +39,7 @@
 ## P3 - TNF VS Code Extensions
 
 - **Goal:** Consolidate and ship TNF-related VS Code extension work.
-- **Primary Path:** `/Users/danielgoldberg/Desktop/The New Fuse VS Code Final`
+- **Primary Path:** `$HOME/Desktop/The New Fuse VS Code Final`
 - **Status:** active
 - **Visibility:** private
 - **External Sharing:** blocked-by-default

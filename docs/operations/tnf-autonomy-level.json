@@ -1,0 +1,6 @@
+{
+  "schema": "tnf/autonomy-level/0.1",
+  "level": 0,
+  "updatedAt": "2026-08-07T20:50:00.000Z",
+  "note": "Start at observe-only; promote with `tnf protocol autonomy --set-level N` after substrate is clean."
+}

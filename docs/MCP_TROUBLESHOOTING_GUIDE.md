@@ -1,44 +1,112 @@
 # MCP Server Troubleshooting Guide
 
 ## Overview
-This guide documents the resolution of MCP (Model Context Protocol) server issues in "The New Fuse" inter-LLM communication system.
+
+This guide documents the resolution of MCP (Model Context Protocol) server
+issues in "The New Fuse" inter-LLM communication system.
+
+## Issue: Codex Supabase OAuth Callback Not Opening Automatically
+
+### Symptoms
+
+- Codex reports `failed to refresh OAuth tokens for server supabase`
+- `codex mcp login supabase` prints an authorization URL and waits for a local
+  callback
+- The shell cannot open the URL automatically, leaving the login blocked until a
+  browser completes the callback
+
+### TNF Shortcut
+
+Run:
+
+```bash
+tnf mcp codex-login supabase
+```
+
+This wraps `codex mcp login supabase`, watches Codex's stdout/stderr for the
+OAuth authorize URL, opens it with the platform browser opener, and waits until
+Codex exits. Use this when Codex reports a Supabase MCP OAuth refresh/login
+failure.
+
+Useful options:
+
+```bash
+tnf mcp codex-login supabase --dry-run --json
+tnf mcp codex-login supabase --no-open
+tnf mcp codex-login supabase --browser "open"
+```
+
+For an agent-facing assurance report:
+
+```bash
+tnf mcp supabase-agent-check --json --write
+tnf mcp supabase-agent-check --login --write
+```
+
+For opt-in TNF Codex startup handling:
+
+```bash
+TNF_CODEX_MCP_AUTO_LOGIN=supabase pnpm run tnf:start:codex
+```
+
+Use `TNF_CODEX_MCP_AUTO_LOGIN=1` to default to `TNF_CODEX_MCP_SERVER` or
+`supabase`.
+
+### Boundary
+
+Codex currently exposes `mcp login`, `logout`, `get`, and `list`, but not a
+read-only token-validity command. TNF therefore does not parse or store Codex
+OAuth credentials. The shortcut is an operator-triggered login wrapper, plus an
+opt-in startup hook, rather than a silent credential inspector.
 
 ## Issue: "mcp-config-manager" Server Connection Failure
 
 ### Symptoms
+
 - Claude Desktop shows "mcp-config-manager" server as "failed"
 - Error message: "Server disconnected"
 - MCP tools not accessible through Claude Desktop interface
 
 ### Root Cause
-**Protocol Version Mismatch**: The MCP server was using outdated protocol methods while Claude Desktop expected the modern MCP protocol format.
+
+**Protocol Version Mismatch**: The MCP server was using outdated protocol
+methods while Claude Desktop expected the modern MCP protocol format.
 
 ### Resolution Steps
 
 #### 1. Protocol Modernization
+
 **File Modified**: `scripts/mcp-config-manager-server.js`
 
 **Changes Made**:
-- Updated `handleInitialize()` function to return modern protocol version "2024-11-05"
+
+- Updated `handleInitialize()` function to return modern protocol version
+  "2024-11-05"
 - Added proper `capabilities` object with `tools` and `logging` support
 - Included `serverInfo` with name and version
 
 #### 2. Method Support Enhancement
+
 **Added Modern Methods**:
+
 - `tools/list` - Modern tool listing method
-- `tools/call` - Modern tool execution method  
+- `tools/call` - Modern tool execution method
 - `initialized` - Initialization confirmation method
 
 **Maintained Legacy Support**:
+
 - `rpc.discover` - Legacy tool discovery
 - `call_tool` - Legacy tool execution
 
 #### 3. Tool Schema Update
+
 **Changed Format**:
+
 - From: `parameters` (legacy format)
 - To: `inputSchema` (modern format)
 
 **Example**:
+
 ```javascript
 // Legacy format
 parameters: {
@@ -54,7 +122,9 @@ inputSchema: {
 ```
 
 #### 4. Syntax Error Resolution
+
 **Issues Fixed**:
+
 - Removed duplicate function implementations
 - Fixed bracket mismatches causing SyntaxError
 - Cleaned up redundant code blocks
@@ -62,21 +132,27 @@ inputSchema: {
 ### Verification Steps
 
 #### 1. Syntax Check
+
 ```bash
 node -c scripts/mcp-config-manager-server.js
 ```
+
 Expected: No errors
 
 #### 2. Protocol Test
+
 ```bash
 node test-mcp-server.js
 ```
+
 Expected output:
+
 - ✅ Server responds correctly to initialize
 - ✅ Server tools: [ 'list_mcp_servers', 'add_mcp_server', 'remove_mcp_server' ]
 - ✅ Test completed successfully!
 
 #### 3. Claude Desktop Connection
+
 1. Restart Claude Desktop
 2. Check MCP server status (should show "connected")
 3. Test MCP commands:
@@ -85,9 +161,11 @@ Expected output:
    - "Remove an MCP server"
 
 #### 4. Process Verification
+
 ```bash
 ps aux | grep mcp-config-manager
 ```
+
 Expected: Server process running under Claude Desktop
 
 ### Available MCP Tools
@@ -96,7 +174,7 @@ Expected: Server process running under Claude Desktop
    - Description: List all registered MCP servers in a configuration file
    - Parameters: `config_path` (optional)
 
-2. **add_mcp_server**  
+2. **add_mcp_server**
    - Description: Add or update an MCP server in a configuration file
    - Parameters: `name`, `command`, `args`, `config_path` (optional)
 
@@ -107,11 +185,13 @@ Expected: Server process running under Claude Desktop
 ### Configuration Files
 
 #### User's Claude Desktop Config
+
 ```
 /path/to/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
 #### Project MCP Config
+
 ```
 ./claude_desktop_config.json
 ```
@@ -119,12 +199,14 @@ Expected: Server process running under Claude Desktop
 ### Future Prevention
 
 1. **Protocol Compliance**: Always use the latest MCP protocol specification
-2. **Backward Compatibility**: Maintain support for legacy methods during transitions
+2. **Backward Compatibility**: Maintain support for legacy methods during
+   transitions
 3. **Testing Framework**: Use comprehensive protocol testing before deployment
 4. **Syntax Validation**: Implement automated syntax checking in CI/CD
 5. **Documentation**: Keep troubleshooting guides updated with protocol changes
 
 ### Related Files
+
 - `scripts/mcp-config-manager-server.js` - Main MCP server implementation
 - `test-mcp-server.js` - Protocol testing script
 - `verify-mcp-fix.md` - Fix verification documentation
@@ -132,6 +214,5 @@ Expected: Server process running under Claude Desktop
 
 ---
 
-**Last Updated**: June 2, 2025
-**Resolution Status**: ✅ Complete
-**Next Review**: When MCP protocol updates are released
+**Last Updated**: June 2, 2025 **Resolution Status**: ✅ Complete **Next
+Review**: When MCP protocol updates are released

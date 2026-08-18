@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -74,6 +74,50 @@
           },
           true
         );
+
+        // Google Translate / extension DOM desync guard (React removeChild/insertBefore)
+        try {
+          if (!window.__TNF_DOM_RECONCILE_GUARD__ && typeof Node === 'function') {
+            var isMissingChildError = function (error) {
+              if (!error) return false;
+              var name = String(error.name || '');
+              var message = String(error.message || '').toLowerCase();
+              return (
+                name === 'NotFoundError' ||
+                message.indexOf('not a child') !== -1 ||
+                message.indexOf('the node before which the new node is to be inserted is not a child') !== -1
+              );
+            };
+            var originalRemoveChild = Node.prototype.removeChild;
+            var originalInsertBefore = Node.prototype.insertBefore;
+            var originalAppendChild = Node.prototype.appendChild;
+            Node.prototype.removeChild = function (child) {
+              if (child && child.parentNode !== this) return child;
+              try {
+                return originalRemoveChild.call(this, child);
+              } catch (error) {
+                if (isMissingChildError(error)) return child;
+                throw error;
+              }
+            };
+            Node.prototype.insertBefore = function (newNode, referenceNode) {
+              if (referenceNode && referenceNode.parentNode !== this) {
+                return originalAppendChild.call(this, newNode);
+              }
+              try {
+                return originalInsertBefore.call(this, newNode, referenceNode);
+              } catch (error) {
+                if (isMissingChildError(error)) {
+                  return originalAppendChild.call(this, newNode);
+                }
+                throw error;
+              }
+            };
+            window.__TNF_DOM_RECONCILE_GUARD__ = true;
+          }
+        } catch (_domGuardErr) {
+          // Non-fatal: React-side guard in main.tsx is the fallback.
+        }
 
         try {
           // Keep track of all registered elements
@@ -202,10 +246,15 @@
       })();
     </script>
 
-    <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
+    <!--
+      Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support.
+      connect-src additionally allows the loopback AI relay (:43120) so AI Assist can be powered by
+      locally-available AI (Ollama / LM Studio) the same way the Virtual Library's Story Architect is.
+      Loopback is a trustworthy origin, so this does not weaken the policy for remote hosts.
+    -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss: ws: http://127.0.0.1:43120 http://localhost:43120; img-src 'self' https: data: blob:; worker-src 'self' blob:;"
     />
 
     <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
@@ -652,8 +701,8 @@
       }
     </style>
   </head>
-  <body>
-    <div id="root">
+  <body translate="no" class="notranslate">
+    <div id="root" translate="no" class="notranslate">
       <div class="loading" role="status" aria-live="polite">
         <div style="text-align: center">
           <div style="font-size: 48px; margin-bottom: 20px">🚀</div>

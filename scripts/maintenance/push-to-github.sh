@@ -13,7 +13,7 @@ if [ -z "$GH_TOKEN" ]; then
     exit 1
 fi
 
-REPO="whodaniel/fuse"
+REPO="whodaniel/The-New-Fuse"
 BRANCH="main"
 
 # Read Dockerfile content

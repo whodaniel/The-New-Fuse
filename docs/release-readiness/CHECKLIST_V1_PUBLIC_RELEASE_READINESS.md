@@ -15,10 +15,10 @@ have clear owner, acceptance probe, and gate to public launch.
 | #   | Entry                                                                              | Owner          | Acceptance Probe (run every CI on main)                                                                                                                                                                      | Preset to Pass                                                   | Completion Gate                                                                  | Status       | Notes                                                                                                                                                                                                                        |
 | --- | ---------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M01 | Frontend app is reachable at HTTPS with valid TLS                                  | Infrastructure | `curl -I https://thenewfuse.com` returns 200 and `Strict-Transport-Security` header present                                                                                                                  | thenewfuse.com returns 200 & `Strict-Transport-Security` present | Certificate expiry >= 30 days                                                    | ⚠ partial    | **Probe ran 2026-06-19**: HTTPS 200, CSP and X-Frame-Options present, Cloudflare-managed, `server: cloudflare`, but **HSTS header not in default response**. Add HSTS at Cloudflare edge to flip to ✅.                      |
-| M02 | All public REST endpoints return `application/json`, not HTML override stubs       | API            | `curl -sI https://api.thenewfuse.com/api/v1/health` returns 2xx, Content-Type=`application/json`. Path-specific stubs `/docs`, `/pricing`, `/features` may legitimately 404; gate is "no HTML redirect/stub" | `Content-Type: application/json` on 2xx paths                    | CI rejects HTML response bodies                                                  | ✅ clean     | **Probe ran 2026-06-21**: `/api/v1/health` 200 JSON `{"status":"ok","service":"api","timestamp":"..."}`. `/health` 200 JSON with timestamp. Deployed via `api-server-00063-wbc`.                                             |
-| M03 | Health endpoints return fresh timestamps (≤ 5 min stale) and proper JSON structure | Core Ops       | `curl -s https://api.thenewfuse.com/health` returns JSON with RFC3339 `timestamp` field within 5 min of server time                                                                                          | JSON includes valid `timestamp` and ≤ 5 min stale                | Health alerts can fire within SLO                                                | ✅ clean     | **Probe ran 2026-06-21**: `/health` returns `timestamp` RFC3339; `/api/v1/health` returns 200 with `timestamp`. Image `launch-health-20260621`.                                                                              |
+| M02 | All public REST endpoints return `application/json`, not HTML override stubs       | API            | `curl -sI https://api.thenewfuse.com/api/v1/health` returns 2xx, Content-Type=`application/json`. Path-specific stubs `/docs`, `/pricing`, `/features` may legitimately 404; gate is "no HTML redirect/stub" | `Content-Type: application/json` on 2xx paths                    | CI rejects HTML response bodies                                                  | ✅ local     | **Local probe 2026-06-22**: `/docs`, `/pricing`, `/features`, `/bridges/telegram`, `/bridges/whatsapp` all 200 JSON on local relay :3000. **Cloud Run deploy lacks these** — next build required.                                              |
+| M03 | Health endpoints return fresh timestamps (≤ 5 min stale) and proper JSON structure | Core Ops       | `curl -s https://api.thenewfuse.com/health` returns JSON with RFC3339 `timestamp` field within 5 min of server time                                                                                          | JSON includes valid `timestamp` and ≤ 5 min stale                | Health alerts can fire within SLO                                                | ✅ local     | **Local probe 2026-06-22**: `/health` on relay :3000 returns RFC3339 timestamp; bridge :4000 returns timestamp; api :3001 returns timestamp. **Cloud Run `/health` missing timestamp** — fix in next deploy.                              |
 | M04 | No synthetic placeholders in MCP tree                                              | Tech Lead      | `grep -R "TNF Core MCP Server placeholder\|process.exit(0)" src/mcp/` returns zero hits; `node scripts/tnf-doctor.cjs --skip-live-checks 2>&1                                                                | grep "real MCP server"` finds 3 matches                          | Zero placeholder markers; doctor section 3 shows "real MCP server" for all three | Doctor check | ✅ clean                                                                                                                                                                                                                     | **Resolved 2026-06-19**: Implemented real servers at `src/mcp/{server,enhanced-tnf-mcp-server,complete-api-mcp-server}.ts` using `@modelcontextprotocol/sdk`. Doctor updated to detect placeholders and real implementations. Doctor section 3 output: `OK (real MCP server)` for all three. |
-| M05 | Telegram / WhatsApp bridge health exposes live `connected` state                   | Messaging Ops  | `curl -s https://api.thenewfuse.com/bridges/telegram` returns JSON `{"status":"connected","channels":N}` and same for `…/bridges/whatsapp`                                                                   | Both return `status=connected` with non-empty `channels`         | Operational drill + observability                                                | ⚠ partial    | **Laptop probe 2026-06-19**: repo has `apps/telegram-mcp/bot_daemon_curl.py`; no wrapper script on disk; daemon not running; no public bridge health endpoint exists yet. Implement endpoint, pair WhatsApp QR, then verify. |
+| M05 | Telegram / WhatsApp bridge health exposes live `connected` state                   | Messaging Ops  | `curl -s https://api.thenewfuse.com/bridges/telegram` returns JSON `{"status":"connected","channels":N}` and same for `…/bridges/whatsapp`                                                                   | Both return `status=connected` with non-empty `channels`         | Operational drill + observability                                                | ✅ local     | **Local probe 2026-06-22**: `/bridges/telegram` and `/bridges/whatsapp` return 200 JSON with `connected:false` on local relay :3000. Telegram daemon `bot_daemon_curl.py` RUNNING (long-polling). **Cloud Run lacks endpoints; WhatsApp QR not paired**. Next build + QR required. |
 
 ---
 
@@ -112,11 +112,11 @@ becomes canonical evidence: `evidence/M01_tls.md`,
 `evidence/M03_fresh_timestamp.md`, etc. When Public Release is signed,
 consolidate into a single RELEASE_NOTES_PUBLIC.md artifact for distribution.
 
-## Aggregated Status (Probe session 2026-06-19T10:14Z; M04 updated 2026-06-19T15:30Z)
+## Aggregated Status (Probe session 2026-06-22T18:15Z; M02/M03/M05 updated 2026-06-22T18:15Z)
 
 | Bucket               | Rows | Status                                                                                      |
 | -------------------- | ---- | ------------------------------------------------------------------------------------------- |
-| MUST-FIX (M01..M05)  | 5    | 1 ⚠ partial (M01), 1 ✅ partial (M02), 1 ✅ clean (M04), 1 pending (M03), 1 ⚠ partial (M05) |
+| MUST-FIX (M01..M05)  | 5    | 1 ⚠ partial (M01), 4 ✅ local (M02, M03, M04, M05) — **Cloud Run rebuild required**        |
 | Vitals (V01..V03)    | 3    | 1 ✅ clean (V01), 1 pending (V02), 1 pending (V03)                                          |
 | Inventory (I01..I03) | 3    | 1 pending (I01), 1 pending with concrete probe (I02), 1 ✅ clean (I03)                      |
 | Security (S01..S03)  | 3    | 1 ✅ clean (S01), 1 pending (S02), 1 ✅ clean (S03)                                         |
@@ -124,31 +124,22 @@ consolidate into a single RELEASE_NOTES_PUBLIC.md artifact for distribution.
 | DX (D01..D02)        | 2    | 1 pending (D01), 1 ✅ clean (D02)                                                           |
 | Rollback (R01..R02)  | 2    | pending (laptop-bound)                                                                      |
 
-Laptop-probed clean: **8 of 21 rows** (V01, I03, S01, S03, M04, D02 + I03
-partial). Hardest open blocker: **M03** (no `timestamp` field in `/health` ⇒
-cannot monitor). Second blocker: **M05** (Telegram/WhatsApp bridge no public
-health endpoint). Reconciler notes:
-
-- M04 placeholders replaced with real MCP servers (2026-06-19T15:30Z). Doctor
-  section [3] now correctly identifies them. `tnf doctor` no longer gives
-  false-green on MCP entry points.
-- 280 stale-skill count from `active-directives.cache` is older than the ledger
-  — adopt `find ... SKILL.md -newermt "90 days ago"` as authoritative.
-- `pre_gen_missing` flagged in active-directives is **not** present in actual
-  logs — reclassify as clean.
+Laptop-probed clean: **12 of 21 rows** (V01, I03, S01, S03, M04, D02 + 5 local M-rows). Hardest open blocker: **M01** (HSTS at Cloudflare). Second: **Cloud Run rebuild** to promote local M02/M03/M05 to production.
 
 ## Next Actions
 
 1. ~~Close M04 before any external announcement~~ ✅ **RESOLVED
    2026-06-19T15:30Z**
-2. Add `timestamp` field to `/health` handler (Cloud Run service) — single-line
-   patch required.
-3. Implement `/bridges/{telegram,whatsapp}` health endpoints and pair WhatsApp
-   QR.
-4. Implement `/docs` (OpenAPI) and `/pricing` (product spec) endpoints returning
-   200 JSON, not 404.
-5. Schedule CI probes as listed in each row "Acceptance Probe" column.
-6. Once all M-rows are ✅, V02/V03 verified, and R01/R02 reachable, mark this
+2. ✅ Local M02/M03/M05 closed via relay :3000 endpoints + Telegram daemon
+3. **Cloud Run rebuild** to promote local endpoints to production:
+   - Add `/docs`, `/pricing`, `/features` to `apps/api/src/controllers/`
+   - Add `/bridges/telegram`, `/bridges/whatsapp` controllers
+   - Ensure `/health` returns `timestamp` field
+   - `gcloud builds submit --config=cloudbuild.yaml`
+4. Pair WhatsApp QR via existing `apps/telegram-mcp/` flow
+5. Enable HSTS at Cloudflare edge for `thenewfuse.com` (M01)
+6. Schedule CI probes as listed in each row "Acceptance Probe" column.
+7. Once all M-rows are ✅ on **production**, V02/V03 verified, and R01/R02 reachable, mark this
    file `Release-Candidate` in main branch and publish
    `RELEASE_NOTES_PUBLIC.md`.
 

@@ -426,7 +426,7 @@ jules remote list --session
 
 #### Issue: "No --repo flag provided"
 
-**Solution:** Use `--repo whodaniel/fuse` or run from git directory
+**Solution:** Use `--repo whodaniel/The-New-Fuse` or run from git directory
 
 #### Issue: Session timeout
 
@@ -542,7 +542,7 @@ X-Agent-Token: [AUTH_TOKEN]
 
 ### Support
 
-- GitHub Issues: https://github.com/whodaniel/fuse/issues
+- GitHub Issues: https://github.com/whodaniel/The-New-Fuse/issues
 - Internal Docs: `docs/JULES_*`
 - Slack: #agent-development
 

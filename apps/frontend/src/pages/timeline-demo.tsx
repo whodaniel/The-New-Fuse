@@ -41,7 +41,7 @@ const getTypeColor = (type: string) => {
     case 'feature':
       return 'bg-purple-500';
     default:
-      return 'bg-transparent0';
+      return 'bg-gray-500';
   }
 };
 

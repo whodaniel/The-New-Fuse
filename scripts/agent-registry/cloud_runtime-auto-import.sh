@@ -4,6 +4,10 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+
 SERVICE="${AGENT_REGISTRY_SERVICE:-backend}"
 ENVIRONMENT="${AGENT_REGISTRY_ENVIRONMENT:-production}"
 API_BASE="${AGENT_REGISTRY_API_BASE:-}"
@@ -17,12 +21,12 @@ Usage: cloud_runtime-auto-import.sh
 
 Environment:
   AGENT_REGISTRY_SERVICE=backend
-  AGENT_REGISTRY_ENVIRONMENT=production
-  AGENT_REGISTRY_API_BASE=https://backend-production-xxxx.thenewfuse.com
+  AGENT_REGISTRY_API_BASE=https://backend-....run.app   (preferred)
   AGENT_REGISTRY_HEALTH_PATH=/health
   AGENT_REGISTRY_AUTO_COMMIT=1
   AGENT_REGISTRY_AUTO_PUSH=1
   AGENT_REGISTRY_IMPORT_TOKEN=your-token
+  TNF_GCP_PROJECT_ID / TNF_GCP_REGION  (when resolving URL via gcloud)
 EOF
 }
 
@@ -31,35 +35,24 @@ if [ "${1:-}" = "--help" ]; then
   exit 0
 fi
 
-if ! command -v cloud_runtime >/dev/null 2>&1; then
-  echo "cloud_runtime CLI not found. Install with: npm i -g @cloud_runtime/cli" >&2
-  exit 1
-fi
-
-if ! cloud_runtime whoami >/dev/null 2>&1; then
-  echo "Not logged into CloudRuntime. Run: cloud_runtime login" >&2
-  exit 1
-fi
-
 if [ -z "$API_BASE" ]; then
-  VARS="$(cloud_runtime variable list -s "$SERVICE" -e "$ENVIRONMENT" -k 2>/dev/null || true)"
-  for key in BACKEND_URL API_URL API_GATEWAY_URL API_BASE_URL; do
-    if echo "$VARS" | rg -q "^${key}="; then
-      API_BASE="$(echo "$VARS" | rg "^${key}=" | head -n1 | cut -d= -f2-)"
-      break
+  if command -v gcloud >/dev/null 2>&1; then
+    tnf_require_gcloud
+    API_BASE="$(gcloud run services describe "$SERVICE" \
+      --project="$(tnf_gcp_project)" \
+      --region="$(tnf_gcp_region)" \
+      --format='value(status.url)' 2>/dev/null || true)"
+    if [ -z "${AGENT_REGISTRY_IMPORT_TOKEN:-}" ]; then
+      VAR_JSON="$(tnf_cloud_run_env_json "$SERVICE" 2>/dev/null || true)"
+      AGENT_REGISTRY_IMPORT_TOKEN="$(printf '%s' "$VAR_JSON" | jq -r '.AGENT_REGISTRY_IMPORT_TOKEN // empty')"
+      if [ -n "${AGENT_REGISTRY_IMPORT_TOKEN}" ]; then
+        export AGENT_REGISTRY_IMPORT_TOKEN
+      fi
     fi
-  done
-fi
-
-if [ -z "$API_BASE" ]; then
-  API_BASE="$(cloud_runtime domain -s "$SERVICE" -e "$ENVIRONMENT" 2>/dev/null | rg -o 'https?://[^[:space:]]+' -m 1 || true)"
-fi
-
-if [ -z "${AGENT_REGISTRY_IMPORT_TOKEN:-}" ]; then
-  VARS_FOR_TOKEN="$(cloud_runtime variable list -s "$SERVICE" -e "$ENVIRONMENT" -k 2>/dev/null || true)"
-  if echo "$VARS_FOR_TOKEN" | rg -q "^AGENT_REGISTRY_IMPORT_TOKEN="; then
-    AGENT_REGISTRY_IMPORT_TOKEN="$(echo "$VARS_FOR_TOKEN" | rg "^AGENT_REGISTRY_IMPORT_TOKEN=" | head -n1 | cut -d= -f2-)"
-    export AGENT_REGISTRY_IMPORT_TOKEN
+  else
+    echo "Set AGENT_REGISTRY_API_BASE (gcloud not available to auto-resolve)." >&2
+    tnf_cloud_runtime_retired_msg
+    exit 1
   fi
 fi
 

@@ -1,0 +1,9 @@
+# NEVER catch-all rewrite to marketing index.html.
+# That rule hijacks app.thenewfuse.com/auth/login (and every SPA route) onto the landing page
+# whenever the Cloudflare Pages Function is missing from a deploy.
+# Source of truth for static fallbacks: public/_redirects (copied into dist by Vite).
+# Domain-aware routing: functions/[[path]].js
+
+/auth/*          /app.html  200
+/login           /app.html  200
+/register        /app.html  200

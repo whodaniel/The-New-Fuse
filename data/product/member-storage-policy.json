@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-08-13",
+  "status": "active",
+  "principle": "TNF stores product metadata, indexes, lightweight generated artifacts, and storage references. TNF is not a member cloud drive.",
+  "directUploadMaxBytes": 10485760,
+  "directUploadMaxLabel": "10 MB",
+  "supabaseBoundary": {
+    "allowed": [
+      "account_and_auth_state",
+      "billing_and_entitlement_state",
+      "workspace_project_metadata",
+      "small_text_notes_and_prompts",
+      "generated_text_outputs_under_direct_upload_limit",
+      "document_extracts_summaries_and_embeddings",
+      "external_file_references_and_integration_metadata",
+      "audit_logs_with_retention"
+    ],
+    "forbidden": [
+      "member_cloud_drive",
+      "raw_media_libraries",
+      "large_documents_or_archives",
+      "backup_destination_for_user_devices",
+      "unbounded_chat_attachment_storage",
+      "third_party_drive_mirror_without_explicit_enterprise_contract"
+    ]
+  },
+  "tiers": {
+    "STARTER": {
+      "hostedRetainedStorageMaxBytes": 104857600,
+      "hostedRetainedStorageLabel": "100 MB",
+      "externalStorageRequiredAboveBytes": 10485760
+    },
+    "PRO": {
+      "hostedRetainedStorageMaxBytes": 1073741824,
+      "hostedRetainedStorageLabel": "1 GB",
+      "externalStorageRequiredAboveBytes": 10485760
+    },
+    "ENTERPRISE": {
+      "hostedRetainedStorageMaxBytes": null,
+      "hostedRetainedStorageLabel": "custom contract",
+      "externalStorageRequiredAboveBytes": 10485760
+    }
+  },
+  "externalStorageTargets": [
+    "google_drive",
+    "dropbox",
+    "box",
+    "onedrive",
+    "customer_s3_or_r2"
+  ],
+  "productPrompts": {
+    "oversizeUpload": "This file is larger than TNF direct upload storage. Save it in Google Drive, Dropbox, Box, OneDrive, or customer object storage, then attach the link for indexing.",
+    "nearQuota": "You are nearing the TNF hosted working-set limit. Move durable docs and media to connected storage and keep only links, extracts, and indexes in TNF.",
+    "quotaExceeded": "TNF hosted storage is full for this plan. Delete temporary artifacts, export data, upgrade with a storage contract, or connect external storage."
+  }
+}

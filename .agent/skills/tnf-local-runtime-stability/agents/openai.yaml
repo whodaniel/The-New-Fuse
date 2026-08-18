@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Local Runtime Stability"
+  short_description: "Harden TNF local startup health"
+  default_prompt: "Use $tnf-local-runtime-stability to diagnose and harden TNF local startup health."

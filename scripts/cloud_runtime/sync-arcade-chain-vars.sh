@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${ROOT_DIR}"
 
 AI_SERVICE="${AI_SERVICE:-ai-arcade}"
@@ -24,7 +27,6 @@ for var_name in "${required_vars[@]}"; do
   fi
 done
 
-# Frontend contract vars default to backend arcade vars when not explicitly set.
 VITE_CHAIN_NETWORK="${VITE_CHAIN_NETWORK:-base}"
 VITE_CHAIN_ID="${VITE_CHAIN_ID:-8453}"
 VITE_CHAIN_RPC_URL="${VITE_CHAIN_RPC_URL:-${ARCADE_RPC_HTTP_URL}}"
@@ -35,17 +37,10 @@ VITE_CONTRACT_TOKEN="${VITE_CONTRACT_TOKEN:-0x0000000000000000000000000000000000
 VITE_CONTRACT_MERKABA="${VITE_CONTRACT_MERKABA:-0x0000000000000000000000000000000000000000}"
 VITE_CONTRACT_GENESIS="${VITE_CONTRACT_GENESIS:-0x0000000000000000000000000000000000000000}"
 
-if ! command -v cloud_runtime >/dev/null 2>&1; then
-  echo "ERROR: cloud_runtime CLI is not installed."
-  exit 1
-fi
+tnf_require_gcloud
 
-if ! cloud_runtime whoami >/dev/null 2>&1; then
-  echo "ERROR: cloud_runtime CLI is not authenticated. Run: cloud_runtime login"
-  exit 1
-fi
-
-echo "Syncing production arcade chain variables..."
+echo "Syncing production arcade chain variables (Cloud Run)..."
+echo "Project/region: $(tnf_gcp_project) / $(tnf_gcp_region)"
 echo "API service: ${API_SERVICE}"
 echo "AI service: ${AI_SERVICE}"
 
@@ -63,9 +58,9 @@ if [[ -n "${mongo_uri}" ]]; then
   api_var_args+=("MONGODB_URI=${mongo_uri}")
 fi
 
-cloud_runtime variable set --service "${API_SERVICE}" "${api_var_args[@]}"
+tnf_cloud_run_update_env "${API_SERVICE}" "${api_var_args[@]}"
 
-cloud_runtime variable set --service "${AI_SERVICE}" \
+tnf_cloud_run_update_env "${AI_SERVICE}" \
   "VITE_CHAIN_NETWORK=${VITE_CHAIN_NETWORK}" \
   "VITE_CHAIN_ID=${VITE_CHAIN_ID}" \
   "VITE_CHAIN_RPC_URL=${VITE_CHAIN_RPC_URL}" \
@@ -77,10 +72,7 @@ cloud_runtime variable set --service "${AI_SERVICE}" \
   "VITE_CONTRACT_PRIZE_HOOK_ROUTER=${VITE_CONTRACT_PRIZE_HOOK_ROUTER}"
 
 if [[ "${TRIGGER_DEPLOY}" == "true" ]]; then
-  echo "Triggering deploy for ${AI_SERVICE}..."
-  cloud_runtime up --service "${AI_SERVICE}" --detach
-  echo "Triggering deploy for ${API_SERVICE}..."
-  cloud_runtime up --service "${API_SERVICE}" --detach
+  echo "TRIGGER_DEPLOY=true — use scripts/deployment/gcp-deploy.sh (cloud_runtime up is retired)."
 fi
 
 echo "Arcade production variable sync complete."

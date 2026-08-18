@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bell,
   Globe,
+  HardDrive,
   Key,
   Loader2,
   Moon,
@@ -28,8 +29,9 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import BackupRestore from './Admin/BackupRestore';
 
-type TabType = 'general' | 'account' | 'appearance' | 'notifications' | 'api';
+type TabType = 'general' | 'account' | 'appearance' | 'notifications' | 'api' | 'data_storage';
 
 interface NavItem {
   id: TabType;
@@ -40,6 +42,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'general', label: 'General', icon: Settings2, description: 'Language and region settings' },
+  {
+    id: 'data_storage',
+    label: 'Data & Backups',
+    icon: HardDrive,
+    description: 'Storage locations & automated cron',
+  },
   { id: 'account', label: 'Account', icon: User, description: 'Profile and security' },
   { id: 'appearance', label: 'Appearance', icon: Palette, description: 'Theme and display' },
   { id: 'notifications', label: 'Notifications', icon: Bell, description: 'Alerts and updates' },
@@ -590,6 +598,18 @@ export default function Settings() {
                       </div>
                     </div>
                   </GlassCard>
+                </motion.div>
+              )}
+
+              {activeTab === 'data_storage' && (
+                <motion.div
+                  key="data_storage"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <BackupRestore />
                 </motion.div>
               )}
             </AnimatePresence>

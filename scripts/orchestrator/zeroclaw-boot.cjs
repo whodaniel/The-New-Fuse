@@ -12,51 +12,45 @@ function commandExists(command) {
 
 /**
  * ZeroClaw Sandbox On-Demand Bootstrapper
- * 
- * This script is triggered by the Broker/Orchestrator when a SANDBOX_EXECUTION
- * task is auctioned but no active bidders are found.
- * 
- * It leverages the CloudRuntime CLI to ensure the sandbox service is up and running.
+ *
+ * Triggered when a SANDBOX_EXECUTION task is auctioned but no active bidders
+ * are found. Wakes a Cloud Run sandbox service when gcloud is available.
  */
 
 async function bootSandbox() {
-  console.log('🛡️ [ZeroClaw] No active sandboxes detected in swarm. Initiating on-demand boot...');
+  console.log('🛡️ [sandbox-wake] No active sandboxes detected in swarm. Initiating on-demand boot...');
 
   try {
-    // 1. Check if CloudRuntime CLI is authenticated (already verified by tnf doctor)
-    // 2. Identify the sandbox service ID (assuming 'sandbox' service in production)
-    if (!commandExists('cloud_runtime')) {
-      console.warn('⚠️ [ZeroClaw] CloudRuntime CLI not installed; skipping optional sandbox wake-up.');
-      console.warn('   Install cloud_runtime or use local sandbox routing when sandbox execution is required.');
+    if (!commandExists('gcloud')) {
+      console.warn('⚠️ [sandbox-wake] gcloud CLI not installed; skipping optional sandbox wake-up.');
+      console.warn('   Use local sandbox routing or install Google Cloud SDK when sandbox execution is required.');
       return;
     }
 
-    console.log('📡 [ZeroClaw] Signaling CloudRuntime to wake up sandbox cluster...');
-    
-    // In a real environment, we'd use:
-    // cloud_runtime up --service sandbox --detach
-    // But since we want to handle high-fidelity scaling, we'll use the CloudRuntime API/CLI status check first
-    
-    const status = execSync('cloud_runtime status --json').toString();
-    const parsedStatus = JSON.parse(status);
-    
-    // Check if the sandbox service is currently 'removed' or 'sleeping'
-    // CloudRuntime status --json has services at .services.edges[].node
-    const services = parsedStatus.services?.edges?.map(edge => edge.node) || [];
-    const sandboxService = services.find(s => s.name.toLowerCase().includes('sandbox'));
+    const project = process.env.TNF_GCP_PROJECT_ID || process.env.GCP_PROJECT_ID || 'the-new-fuse-2025';
+    const region = process.env.TNF_GCP_REGION || process.env.GCP_REGION || 'us-central1';
+    const service = process.env.ZEROCLAW_CLOUD_RUN_SERVICE || 'zeroclaw-sandbox';
 
-    if (sandboxService) {
-      console.log(`🚀 [ZeroClaw] Found sandbox service: ${sandboxService.id}. Triggering deployment...`);
-      // Trigger a redeploy or "up" to ensure it's active
-      // execSync(`cloud_runtime up --service ${sandboxService.id} --detach`);
-      console.log('✅ [ZeroClaw] Boot signal sent. Sandbox will be active in ~30s.');
-    } else {
-      console.warn('⚠️ [ZeroClaw] Sandbox service not found in CloudRuntime project. Falling back to local Docker if available.');
-      // execSync('docker compose up -d zeroclaw-sandbox');
+    console.log(`📡 [sandbox-wake] Checking Cloud Run service ${service} (${project}/${region})...`);
+
+    let desc;
+    try {
+      desc = execSync(
+        `gcloud run services describe ${service} --project=${project} --region=${region} --format=json`,
+        { encoding: 'utf8' }
+      );
+    } catch {
+      console.warn(`⚠️ [sandbox-wake] Service ${service} not found on Cloud Run. Falling back to local Docker if available.`);
+      return;
     }
 
+    const parsed = JSON.parse(desc);
+    const ready = parsed?.status?.latestReadyRevisionName;
+    const url = parsed?.status?.url;
+    console.log(`🚀 [sandbox-wake] Found sandbox service. ready=${ready || 'n/a'} url=${url || 'n/a'}`);
+    console.log('✅ [sandbox-wake] Service is reachable via Cloud Run (no extra wake-up needed).');
   } catch (error) {
-    console.error('❌ [ZeroClaw] Boot failed:', error.message);
+    console.error('❌ [sandbox-wake] Boot failed:', error.message);
   }
 }
 

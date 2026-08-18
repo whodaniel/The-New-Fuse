@@ -1,3 +1,4 @@
+import { authFetch } from '@/utils/authToken';
 import { useEffect, useMemo, useState } from 'react';
 
 type ProviderKey = 'openai-codex' | 'anthropic' | 'google-antigravity' | 'kilo';
@@ -159,15 +160,16 @@ export function OAuthInstanceRotationControl() {
   ]);
 
   const verifyCommand = useMemo(() => {
-    const checks = [
-      '.OPENCLAW_MODEL_PRIMARY',
-      '.OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY',
-      '.OPENCLAW_MODEL_FALLBACKS',
+    const names = [
+      'OPENCLAW_MODEL_PRIMARY',
+      'OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY',
+      'OPENCLAW_MODEL_FALLBACKS',
     ];
     if (provider === 'openai-codex') {
-      checks.unshift('.OPENAI_CODEX_ACCOUNT_ID', '.OPENCLAW_USE_CODEX_OAUTH');
+      names.unshift('OPENAI_CODEX_ACCOUNT_ID', 'OPENCLAW_USE_CODEX_OAUTH');
     }
-    return `cloud_runtime variable list --service ${service} --json | jq -r '${checks.join(', ')}'`;
+    const nameTest = names.join('|');
+    return `gcloud run services describe ${service} --region=\${TNF_GCP_REGION:-us-central1} --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name|test("${nameTest}")) | "\\(.name)=\\(.value)"'`;
   }, [provider, service]);
 
   function applyProviderDefaults(nextProvider: ProviderKey) {
@@ -190,13 +192,7 @@ export function OAuthInstanceRotationControl() {
   async function loadBindings() {
     setApiMessage(null);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/openclaw/oauth/bindings', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = await authFetch('/api/admin/openclaw/oauth/bindings');
       if (!res.ok) throw new Error(`Failed to load bindings (${res.status})`);
       const json = await res.json();
       setBindings(Array.isArray(json) ? json : []);
@@ -208,13 +204,7 @@ export function OAuthInstanceRotationControl() {
   async function loadActivity() {
     setActivityLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/openclaw/oauth/activity?limit=180', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = await authFetch('/api/admin/openclaw/oauth/activity?limit=180');
       if (!res.ok) throw new Error(`Failed to load activity (${res.status})`);
       const json = await res.json();
       const events = Array.isArray(json?.events) ? json.events : [];
@@ -231,7 +221,6 @@ export function OAuthInstanceRotationControl() {
     setSaving(true);
     setApiMessage(null);
     try {
-      const token = localStorage.getItem('token');
       if (!accessToken || !refreshToken) {
         throw new Error('Access token and refresh token are required for API binding save.');
       }
@@ -247,12 +236,8 @@ export function OAuthInstanceRotationControl() {
         primaryModel,
         fallbackModels,
       };
-      const res = await fetch('/api/admin/openclaw/oauth/bindings', {
+      const res = await authFetch('/api/admin/openclaw/oauth/bindings', {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
@@ -272,15 +257,10 @@ export function OAuthInstanceRotationControl() {
     setExecuting(true);
     setApiMessage(null);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
+      const res = await authFetch(
         `/api/admin/openclaw/oauth/execute/${tenantId}/${service}/${provider}`,
         {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ waitForSuccess: true, timeoutSeconds: 900 }),
         }
       );

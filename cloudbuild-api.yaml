@@ -6,7 +6,7 @@ steps:
         "-f",
         "Dockerfile.api",
         "-t",
-        "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-health-20260621",
+        "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-rc-20260705",
         ".",
       ]
     timeout: 1200s
@@ -14,8 +14,8 @@ steps:
     args:
       [
         "push",
-        "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-health-20260621",
+        "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-rc-20260705",
       ]
 images:
-  - "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-health-20260621"
+  - "us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:launch-rc-20260705"
 timeout: 1800s

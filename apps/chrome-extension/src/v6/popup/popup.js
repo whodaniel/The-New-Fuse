@@ -2,12 +2,19 @@
  * Fuse Connect v7 - Popup Logic
  */
 
-import { API_URLS, DEFAULT_NODES, NATIVE_HOST_NAME } from '../shared/constants.js';
+import {
+  API_URLS,
+  DEFAULT_NODES,
+  NATIVE_HOST_NAME,
+  relayActivityUrl,
+  relayHealthUrl,
+} from '../shared/constants.js';
 
 class FuseConnectPopup {
   constructor() {
     this.state = {
       connectionStatus: 'disconnected',
+      backgroundReachable: null,
       agents: [],
       platform: null,
       messages: [],
@@ -63,60 +70,178 @@ class FuseConnectPopup {
       },
     };
 
+    /** Serializes chrome.storage.local fuse_settings writes to avoid get/set races. */
+    this._settingsWriteChain = Promise.resolve();
+    this._handlersBound = false;
+
     this.init();
   }
 
+  /**
+   * Yield to the browser so popup HTML/CSS can paint before heavy JS work.
+   * Double-rAF is more reliable than a single timeout for first paint.
+   */
+  afterFirstPaint(task) {
+    const run = () => {
+      try {
+        task();
+      } catch (err) {
+        console.error('Popup deferred init error:', err);
+      }
+    };
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => requestAnimationFrame(run));
+      return;
+    }
+    setTimeout(run, 0);
+  }
+
+  /** Run non-critical hydration when the popup is idle (short timeout for MV3). */
+  whenIdle(task, timeoutMs = 120) {
+    const run = () => {
+      try {
+        task();
+      } catch (err) {
+        console.error('Popup idle init error:', err);
+      }
+    };
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(run, { timeout: timeoutMs });
+      return;
+    }
+    setTimeout(run, 0);
+  }
+
+  wakeBackground() {
+    try {
+      chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+        const err = chrome.runtime.lastError;
+        if (err) {
+          console.error('Background PING failed:', err.message);
+          this.state.backgroundReachable = false;
+          this.markBackgroundDegraded(err.message);
+          return;
+        }
+        this.state.backgroundReachable = true;
+        if (response && typeof response === 'object') {
+          // Optional: background may echo status in PING replies.
+        }
+      });
+    } catch (err) {
+      console.error('Runtime message error:', err);
+      this.state.backgroundReachable = false;
+      this.markBackgroundDegraded(String(err?.message || err));
+    }
+  }
+
+  markBackgroundDegraded(reason) {
+    const statusText = document.getElementById('connection-status-text');
+    if (statusText && this.state.connectionStatus === 'disconnected') {
+      statusText.textContent = 'Background unavailable';
+      statusText.title = reason || 'Extension service worker did not respond';
+    }
+  }
+
   async init() {
-    // Setup tab navigation
+    // Tabs + connect only — shell stays interactive while the heavy app hydrates.
     this.setupTabs();
+    this.bindCriticalHandlers();
+    try {
+      document.documentElement.classList.add('fuse-popup-ready');
+    } catch (_e) {
+      // ignore
+    }
 
-    // Setup event handlers
+    // Immediately wake background and register listeners
+    this.wakeBackground();
     this.setupEventHandlers();
-
-    // Load initial state from background
-    await this.loadState();
-
-    // Listen for updates
     this.setupMessageListener();
+    this.updateConnectionStatus();
 
-    // Load settings
-    await this.loadSettings();
+    // Fast-path state & settings hydration (non-blocking)
+    this.loadSettings().catch((err) => console.error('loadSettings failed:', err));
 
-    // Check native host
-    await this.checkNativeHost();
+    this.loadState()
+      .then(() => {
+        this.updateUI();
+        this.checkRelayAndUpdateHelper().catch((err) =>
+          console.warn('Relay health check failed:', err?.message || err)
+        );
+        // Autonomy status is non-critical for first open — defer
+        setTimeout(() => {
+          this.refreshAutonomyStatus().catch((err) =>
+            console.warn('Autonomy status refresh failed:', err?.message || err)
+          );
+        }, 300);
+      })
+      .catch((err) => console.error('loadState failed:', err));
 
-    // Check relay health and show helper if needed
-    await this.checkRelayAndUpdateHelper();
-    await this.refreshAutonomyStatus();
+    // Native host check runs asynchronously in background
+    setTimeout(() => {
+      this.checkNativeHost().catch((err) => {
+        console.warn('Native host check failed:', err?.message || err);
+      });
+    }, 200);
+  }
 
-    // Update UI
-    this.updateUI();
+  /** Connect / panel actions only — keeps first paint cheap. */
+  bindCriticalHandlers() {
+    document.getElementById('connect-btn')?.addEventListener('click', () => {
+      if (this.state.connectionStatus === 'connected') {
+        this.disconnect();
+      } else {
+        this.connect();
+      }
+    });
+
+    document.getElementById('open-panel-btn')?.addEventListener('click', () => {
+      this.openPanelOnPage();
+    });
   }
 
   async checkRelayAndUpdateHelper() {
     const helper = document.getElementById('quick-start-helper');
     if (!helper) return;
 
+    // Set initial state - assume relay not running until proven otherwise
+    helper.style.display = 'block';
+
     try {
-      const relayUrl = String(this.state.settings?.relayUrl || DEFAULT_NODES.relay).trim();
-      const healthUrl = relayUrl
-        .replace(/^ws:/, 'http:')
-        .replace(/^wss:/, 'https:')
-        .replace(/\/ws$/, '/health');
+      const healthUrl = relayHealthUrl(this.state.settings?.relayUrl || DEFAULT_NODES.relay);
+
       const response = await fetch(healthUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(2000),
-      });
-      const data = await response.json();
-      if (data?.status === 'ok' && data?.relay === 'running') {
-        helper.style.display = 'none';
-      } else {
-        helper.style.display = 'block';
+        signal: AbortSignal.timeout(800),
+      }).catch(() => null);
+
+      if (response && response.ok) {
+        try {
+          const data = await response.json();
+          if (data?.status === 'ok' && data?.relay === 'running') {
+            helper.style.display = 'none';
+          }
+        } catch (err) {
+          console.warn('Relay health JSON parse failed:', err?.message || err);
+        }
       }
     } catch (e) {
-      // Relay not running, show helper
-      helper.style.display = 'block';
+      console.warn('Relay health check error:', e?.message || e);
     }
+  }
+
+  enqueueSettingsWrite(mutator) {
+    this._settingsWriteChain = this._settingsWriteChain
+      .then(async () => {
+        const result = await chrome.storage.local.get(['fuse_settings']);
+        const currentSettings = result.fuse_settings || {};
+        const nextSettings = mutator({ ...currentSettings });
+        if (!nextSettings || nextSettings === currentSettings) return;
+        await chrome.storage.local.set({ fuse_settings: nextSettings });
+      })
+      .catch((err) => {
+        console.error('Settings write failed:', err?.message || err);
+      });
+    return this._settingsWriteChain;
   }
 
   setRelayUrlState(relayUrl, persist = false) {
@@ -132,15 +257,14 @@ class FuseConnectPopup {
 
     if (!persist) return;
 
-    chrome.storage.local.get(['fuse_settings'], (result) => {
-      const currentSettings = result.fuse_settings || {};
-      if (String(currentSettings.relayUrl || '').trim() === nextRelayUrl) return;
-      chrome.storage.local.set({
-        fuse_settings: {
-          ...currentSettings,
-          relayUrl: nextRelayUrl,
-        },
-      });
+    this.enqueueSettingsWrite((currentSettings) => {
+      if (String(currentSettings.relayUrl || '').trim() === nextRelayUrl) {
+        return currentSettings;
+      }
+      return {
+        ...currentSettings,
+        relayUrl: nextRelayUrl,
+      };
     });
   }
 
@@ -170,23 +294,18 @@ class FuseConnectPopup {
   }
 
   setupEventHandlers() {
-    // Connect button
-    document.getElementById('connect-btn')?.addEventListener('click', () => {
-      if (this.state.connectionStatus === 'connected') {
-        this.disconnect();
-      } else {
-        this.connect();
-      }
-    });
+    if (this._handlersBound) return;
+    this._handlersBound = true;
+
+    // Connect / open-panel are bound in bindCriticalHandlers() for first paint.
 
     // Refresh agents
     document.getElementById('refresh-agents')?.addEventListener('click', () => {
-      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' });
-    });
-
-    // Open Panel on current page
-    document.getElementById('open-panel-btn')?.addEventListener('click', () => {
-      this.openPanelOnPage();
+      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' }, () => {
+        if (chrome.runtime.lastError) {
+          console.error('REQUEST_SYNC failed:', chrome.runtime.lastError.message);
+        }
+      });
     });
 
     // Central chat controls
@@ -778,13 +897,16 @@ class FuseConnectPopup {
     } catch (e) {
       this.state.nativeHostAvailable = false;
     }
-    this.updateNativeHostIndicator();
+    // Defer UI update to avoid blocking
+    setTimeout(() => this.updateNativeHostIndicator(), 0);
   }
 
   async sendNativeMessage(message) {
     return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Native host timeout')), 400);
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
+          clearTimeout(timer);
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message));
           } else {
@@ -792,6 +914,7 @@ class FuseConnectPopup {
           }
         });
       } catch (e) {
+        clearTimeout(timer);
         reject(e);
       }
     });
@@ -829,8 +952,8 @@ class FuseConnectPopup {
         this.state.autonomy.masterClockRunning = !!response.masterClock?.running;
         this.state.autonomy.autoWakePing = !!response.settings?.autoWakePing;
         this.state.autonomy.source = 'background';
-        await this.refreshLastWakePingTime();
-        this.updateAutonomyStatusUI();
+        // Update UI asynchronously
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
         return;
       }
     } catch (e) {
@@ -847,19 +970,25 @@ class FuseConnectPopup {
         this.state.autonomy.masterClockRunning = !!masterClock?.running;
         this.state.autonomy.autoWakePing = !!this.state.settings.autoWakePing;
         this.state.autonomy.source = 'native-host-fallback';
-        await this.refreshLastWakePingTime();
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
       } catch (e) {
-        // Keep existing values
+        // Keep existing values, update UI with default
+        setTimeout(() => this.updateAutonomyStatusUI(), 0);
       }
+    } else {
+      setTimeout(() => this.updateAutonomyStatusUI(), 0);
     }
-    this.updateAutonomyStatusUI();
   }
 
   async refreshLastWakePingTime() {
     try {
-      const response = await fetch('http://localhost:3000/activity/recent?count=100', {
+      const activityUrl = relayActivityUrl(
+        this.state.settings?.relayUrl || DEFAULT_NODES.relay,
+        100
+      );
+      const response = await fetch(activityUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(2000),
+        signal: AbortSignal.timeout(1200),
       });
       const data = await response.json();
       const activities = Array.isArray(data?.events)
@@ -875,7 +1004,7 @@ class FuseConnectPopup {
       );
       this.state.autonomy.lastWakePingAt = lastWake?.timestamp || lastWake?.ts || null;
     } catch (e) {
-      // Best effort
+      console.warn('Wake ping activity fetch failed:', e?.message || e);
     }
   }
 
@@ -1964,31 +2093,64 @@ class FuseConnectPopup {
     });
   }
 
-  async loadState() {
+  applyStateResponse(response) {
+    if (!response) return;
+
+    this.state.connectionStatus = response.connectionStatus || 'disconnected';
+    this.state.agents = response.agents || [];
+    this.state.channels = response.channels || [];
+    this.state.joinedChannels = response.joinedChannels || [];
+    this.state.agentId = response.agentId || null;
+
+    const responseSelected = response.selectedChannel || null;
+    const settingsSelected = this.state.settings.popupSelectedChannel || null;
+    this.state.selectedChannel = responseSelected || settingsSelected || null;
+
+    if (typeof response.autoMonitor === 'boolean')
+      this.state.settings.autoMonitor = response.autoMonitor;
+    if (typeof response.autoMasterClock === 'boolean')
+      this.state.settings.autoMasterClock = response.autoMasterClock;
+    if (typeof response.autoWakePing === 'boolean')
+      this.state.settings.autoWakePing = response.autoWakePing;
+    if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
+  }
+
+  requestState(timeoutMs = 250) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-        if (response) {
-          this.state.connectionStatus = response.connectionStatus || 'disconnected';
-          this.state.agents = response.agents || [];
-          this.state.channels = response.channels || [];
-          this.state.joinedChannels = response.joinedChannels || [];
-          this.state.agentId = response.agentId || null;
-
-          const responseSelected = response.selectedChannel || null;
-          const settingsSelected = this.state.settings.popupSelectedChannel || null;
-          this.state.selectedChannel = responseSelected || settingsSelected || null;
-
-          if (typeof response.autoMonitor === 'boolean')
-            this.state.settings.autoMonitor = response.autoMonitor;
-          if (typeof response.autoMasterClock === 'boolean')
-            this.state.settings.autoMasterClock = response.autoMasterClock;
-          if (typeof response.autoWakePing === 'boolean')
-            this.state.settings.autoWakePing = response.autoWakePing;
-          if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
-        }
-        resolve();
-      });
+      let settled = false;
+      const finish = (payload) => {
+        if (settled) return;
+        settled = true;
+        resolve(payload);
+      };
+      const timer = setTimeout(() => finish({ response: null, err: 'timeout' }), timeoutMs);
+      try {
+        chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+          clearTimeout(timer);
+          finish({
+            response: response || null,
+            err: chrome.runtime.lastError?.message || null,
+          });
+        });
+      } catch (e) {
+        clearTimeout(timer);
+        finish({ response: null, err: String(e?.message || e) });
+      }
     });
+  }
+
+  async loadState() {
+    const first = await this.requestState(250);
+    if (first.response) {
+      this.applyStateResponse(first.response);
+      return;
+    }
+
+    const shouldRetry = /Receiving end does not exist|timeout/i.test(String(first.err || ''));
+    if (!shouldRetry) return;
+
+    const second = await this.requestState(250);
+    this.applyStateResponse(second.response);
   }
 
   async loadSettings() {
@@ -2001,44 +2163,53 @@ class FuseConnectPopup {
             this.state.settings.relayUrl = runtimeRelayUrl;
           }
 
-          // Update UI
-          const relayUrl = document.getElementById('relay-url');
-          if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
+          // Defer UI updates to next tick to avoid blocking
+          setTimeout(() => {
+            // Update relay URL field (don't clobber while the user is typing)
+            const relayUrl = document.getElementById('relay-url');
+            if (relayUrl && relayUrl !== document.activeElement) {
+              relayUrl.value = this.state.settings.relayUrl;
+            }
 
-          const autoReconnect = document.getElementById('auto-reconnect');
-          if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
+            // Update toggles
+            const autoReconnect = document.getElementById('auto-reconnect');
+            if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
 
-          const showPanel = document.getElementById('show-panel');
-          if (showPanel) showPanel.checked = this.state.settings.showPanel;
+            const showPanel = document.getElementById('show-panel');
+            if (showPanel) showPanel.checked = this.state.settings.showPanel;
 
-          const debugMode = document.getElementById('debug-mode');
-          if (debugMode) debugMode.checked = this.state.settings.debugMode;
+            const debugMode = document.getElementById('debug-mode');
+            if (debugMode) debugMode.checked = this.state.settings.debugMode;
 
-          const autoMonitor = document.getElementById('auto-monitor');
-          if (autoMonitor) autoMonitor.checked = !!this.state.settings.autoMonitor;
+            const autoMonitor = document.getElementById('auto-monitor');
+            if (autoMonitor) autoMonitor.checked = !!this.state.settings.autoMonitor;
 
-          const autoMasterClock = document.getElementById('auto-master-clock');
-          if (autoMasterClock) autoMasterClock.checked = !!this.state.settings.autoMasterClock;
+            const autoMasterClock = document.getElementById('auto-master-clock');
+            if (autoMasterClock) autoMasterClock.checked = !!this.state.settings.autoMasterClock;
 
-          const autoWakePing = document.getElementById('auto-wake-ping');
-          if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
+            const autoWakePing = document.getElementById('auto-wake-ping');
+            if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
 
-          if (!this.state.selectedChannel && this.state.settings.popupSelectedChannel) {
-            this.state.selectedChannel = this.state.settings.popupSelectedChannel;
-          }
+            // AI Video settings
+            const aiviSegmentDuration = document.getElementById('aivi-segment-duration-settings');
+            if (aiviSegmentDuration)
+              aiviSegmentDuration.value = String(this.state.settings.aiviSegmentDuration || 45);
+            const aiviConcurrent = document.getElementById('aivi-concurrent-processes');
+            if (aiviConcurrent)
+              aiviConcurrent.value = String(this.state.settings.aiviConcurrentProcesses || 1);
+            const aiviAutoOpen = document.getElementById('aivi-auto-open-notebook');
+            if (aiviAutoOpen) aiviAutoOpen.checked = !!this.state.settings.aiviAutoOpenNotebook;
+            const aiviAutoAudio = document.getElementById('aivi-auto-audio-overview');
+            if (aiviAutoAudio) aiviAutoAudio.checked = !!this.state.settings.aiviAutoAudioOverview;
 
-          const aiviSegmentDuration = document.getElementById('aivi-segment-duration-settings');
-          if (aiviSegmentDuration)
-            aiviSegmentDuration.value = String(this.state.settings.aiviSegmentDuration || 45);
-          const aiviConcurrent = document.getElementById('aivi-concurrent-processes');
-          if (aiviConcurrent)
-            aiviConcurrent.value = String(this.state.settings.aiviConcurrentProcesses || 1);
-          const aiviAutoOpen = document.getElementById('aivi-auto-open-notebook');
-          if (aiviAutoOpen) aiviAutoOpen.checked = !!this.state.settings.aiviAutoOpenNotebook;
-          const aiviAutoAudio = document.getElementById('aivi-auto-audio-overview');
-          if (aiviAutoAudio) aiviAutoAudio.checked = !!this.state.settings.aiviAutoAudioOverview;
+            // Update selected channel if needed
+            if (!this.state.selectedChannel && this.state.settings.popupSelectedChannel) {
+              this.state.selectedChannel = this.state.settings.popupSelectedChannel;
+            }
 
-          this.updateManagedSitesList();
+            // Update managed sites list
+            this.updateManagedSitesList();
+          }, 0);
         }
         resolve();
       });
@@ -2123,13 +2294,13 @@ class FuseConnectPopup {
           break;
 
         case 'AGENTS_UPDATE':
-          this.state.agents = message.agents;
+          this.state.agents = Array.isArray(message.agents) ? message.agents : [];
           this.updateAgentsList();
           this.updateStats();
           break;
 
         case 'NEW_MESSAGE':
-          this.state.messages.unshift(message.message);
+          this.state.messages.unshift(this.normalizeRelayMessage(message.message || message));
           if (this.state.messages.length > 120) {
             this.state.messages = this.state.messages.slice(0, 120);
           }
@@ -2138,13 +2309,15 @@ class FuseConnectPopup {
           break;
 
         case 'CHANNELS_UPDATE':
-          this.state.channels = message.channels || [];
+          this.state.channels = Array.isArray(message.channels) ? message.channels : [];
           this.reconcileSelectedChannel();
           this.updateCentralControlPanel();
           break;
 
         case 'JOINED_CHANNELS_UPDATE':
-          this.state.joinedChannels = message.joinedChannels || [];
+          this.state.joinedChannels = Array.isArray(message.joinedChannels)
+            ? message.joinedChannels
+            : [];
           this.updateCentralControlPanel();
           break;
 
@@ -2388,7 +2561,9 @@ class FuseConnectPopup {
     const container = document.getElementById('message-list');
     if (!container) return;
 
-    if (this.state.messages.length === 0) {
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+
+    if (messages.length === 0) {
       container.innerHTML = `
         <div class="empty-state small">
           <p>No recent messages</p>
@@ -2397,16 +2572,16 @@ class FuseConnectPopup {
       return;
     }
 
-    container.innerHTML = this.state.messages
+    container.innerHTML = messages
       .slice(0, 10)
       .map(
         (msg) => `
       <div class="message-item">
         <div class="message-item-header">
-          <span class="message-item-from">${msg.from}</span>
+          <span class="message-item-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
           <span class="message-item-time">${this.formatTime(msg.timestamp)}</span>
         </div>
-        <div class="message-item-content">${this.truncate(msg.content, 80)}</div>
+        <div class="message-item-content">${this.escapeHtml(this.truncate(msg.content, 80))}</div>
       </div>
     `
       )
@@ -2459,7 +2634,13 @@ class FuseConnectPopup {
       },
       (response) => {
         if (response?.success && response.channel?.id) {
-          this.showToast(`Channel "${normalizedName}" created`);
+          // `pending` means the relay was not connected, so the channel exists
+          // locally only until the link comes back. Do not call that "created".
+          this.showToast(
+            response.pending
+              ? response.warning || `Channel "${normalizedName}" created locally (relay offline)`
+              : `Channel "${normalizedName}" created`
+          );
           this.setSelectedChannel(response.channel.id);
         } else if (response?.alreadyExists && response.channel?.id) {
           this.showToast(`Channel "${response.channel.name}" already exists`);
@@ -2698,7 +2879,8 @@ class FuseConnectPopup {
       return;
     }
 
-    const filtered = this.state.messages
+    const messages = Array.isArray(this.state.messages) ? this.state.messages : [];
+    const filtered = messages
       .filter((msg) => msg?.channel === selectedChannel)
       .slice(0, 25)
       .reverse();
@@ -2717,10 +2899,10 @@ class FuseConnectPopup {
         (msg) => `
         <div class="central-chat-message">
           <div class="central-chat-message-header">
-            <span class="central-chat-from">${msg.from || 'Unknown'}</span>
+            <span class="central-chat-from">${this.escapeHtml(msg.from || 'Unknown')}</span>
             <span class="central-chat-meta">${this.formatTime(msg.timestamp)}</span>
           </div>
-          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content || '', 500))}</div>
+          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content, 500))}</div>
         </div>
       `
       )
@@ -2736,6 +2918,29 @@ class FuseConnectPopup {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  normalizeRelayMessage(message = {}) {
+    const source = message && typeof message === 'object' ? message : { content: message };
+    const metadata = source.metadata && typeof source.metadata === 'object' ? source.metadata : {};
+    const content =
+      source.content ??
+      source.text ??
+      source.body ??
+      source.message ??
+      metadata.content ??
+      metadata.text ??
+      '';
+
+    return {
+      ...source,
+      content: this.toDisplayText(content),
+      from: this.toDisplayText(
+        source.from || source.sender || source.senderId || metadata.senderId || 'Unknown'
+      ),
+      timestamp: source.timestamp || source.ts || metadata.timestamp || Date.now(),
+      channel: source.channel || source.channelId || metadata.channel || metadata.channelId || null,
+    };
   }
 
   showDirectMessagePrompt(agentId) {
@@ -2812,18 +3017,34 @@ class FuseConnectPopup {
   }
 
   formatTime(timestamp) {
-    return new Date(timestamp).toLocaleTimeString([], {
+    const date = new Date(timestamp || Date.now());
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
   }
 
+  toDisplayText(value) {
+    if (value === null || value === undefined) return '';
+    return typeof value === 'string' ? value : String(value);
+  }
+
   truncate(text, length) {
-    return text.length > length ? text.substring(0, length) + '...' : text;
+    const safeText = this.toDisplayText(text);
+    const maxLength = Number.isFinite(Number(length)) ? Number(length) : 0;
+    return safeText.length > maxLength ? safeText.substring(0, maxLength) + '...' : safeText;
   }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
+function bootPopup() {
+  if (window.__fuseConnectPopupBooted) return;
+  window.__fuseConnectPopupBooted = true;
   new FuseConnectPopup();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootPopup, { once: true });
+} else {
+  bootPopup();
+}

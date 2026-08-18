@@ -1,0 +1,17 @@
+#!/bin/bash
+# voice-chronicle: conversation spine for Voice Bridge (append, anchor, context)
+set -euo pipefail
+
+_script="${BASH_SOURCE[0]}"
+while [[ -L "$_script" ]]; do
+  _dir="$(cd -P "$(dirname "$_script")" && pwd)"
+  _script="$(readlink "$_script")"
+  [[ "$_script" != /* ]] && _script="$_dir/$_script"
+done
+_SCRIPT_DIR="$(cd -P "$(dirname "$_script")" && pwd)"
+# shellcheck source=voicebridge-paths.sh
+source "$_SCRIPT_DIR/voicebridge-paths.sh"
+
+export VOICEBRIDGE_STATE_DIR VOICEBRIDGE_PROJECT_ROOT VOICEBRIDGE_PROFILE
+
+exec python3 "${TNF_VOICE_SYSTEM_DIR}/voice_chronicle.py" "$@"

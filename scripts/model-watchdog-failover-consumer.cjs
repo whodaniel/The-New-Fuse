@@ -132,6 +132,22 @@ function failureReasonForCategory(category) {
   }
 }
 
+function defaultProviderChainFromPolicy() {
+  try {
+    const path = require('node:path');
+    const { resolveProviderFailover } = require(path.join(
+      __dirname,
+      'harness',
+      'provider-failover.cjs'
+    ));
+    const resolution = resolveProviderFailover({ host: 'watchdog', seed: true });
+    if (resolution.chain && resolution.chain.length) return resolution.chain;
+  } catch {
+    /* policy optional at boot */
+  }
+  return parseList('nvidia,google,neuralwatt,openrouter,anthropic,openai,deepseek');
+}
+
 function resolveConfig(overrides = {}) {
   const base = {
     agentName: process.env.MODEL_WATCHDOG_AGENT_NAME || 'model-watchdog',
@@ -156,8 +172,7 @@ function resolveConfig(overrides = {}) {
     stateTtlSeconds: parsePositiveInt(process.env.MODEL_WATCHDOG_STATE_TTL_SECONDS, 86400),
     maxRecentFailures: parsePositiveInt(process.env.MODEL_WATCHDOG_MAX_RECENT_FAILURES, 50, 5),
     providerChain: parseList(
-      process.env.MODEL_WATCHDOG_PROVIDER_CHAIN ||
-        'google,anthropic,openai,openrouter,nvidia,deepseek'
+      process.env.MODEL_WATCHDOG_PROVIDER_CHAIN || defaultProviderChainFromPolicy().join(',')
     ).map((entry) => normalizeToken(entry)),
     publishDecisionChannel: process.env.MODEL_WATCHDOG_PUBLISH_DECISION !== 'false',
     dryRun: process.env.MODEL_WATCHDOG_DRY_RUN === '1',

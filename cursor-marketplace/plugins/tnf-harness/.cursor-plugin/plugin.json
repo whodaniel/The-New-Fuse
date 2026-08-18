@@ -1,0 +1,36 @@
+{
+  "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
+  "name": "tnf-harness",
+  "displayName": "The New Fuse — Harness",
+  "description": "Governance and continuity harness for Cursor agents. Adds Turn Zero orientation, Inspect-Act-Verify discipline, session handoff continuity, operator safety gates, and a Model Context Protocol server that exposes The New Fuse skills library.",
+  "version": "1.0.0",
+  "author": {
+    "name": "The New Fuse",
+    "email": "hello@thenewfuse.com"
+  },
+  "publisher": "TheNewFuse",
+  "homepage": "https://thenewfuse.com",
+  "repository": "https://github.com/The-New-Fuse/cursor-marketplace",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "category": "Productivity",
+  "keywords": [
+    "agent",
+    "orchestration",
+    "governance",
+    "continuity",
+    "handoff",
+    "mcp",
+    "protocol",
+    "multi-agent",
+    "tnf",
+    "the-new-fuse"
+  ],
+  "tags": ["workflow", "safety", "verification", "context"],
+  "rules": "rules",
+  "skills": "skills",
+  "commands": "commands",
+  "agents": "agents",
+  "hooks": "hooks/hooks.json",
+  "mcpServers": "mcp.json"
+}

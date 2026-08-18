@@ -11,15 +11,32 @@ TNF uses a **single combined monorepo for development** with two downstream
 **read-only publication repos**:
 
 ```
-whodaniel/fuse              ← DEVELOPMENT HAPPENS HERE
-    ├──► fuse-open-runtime  ← 90% open-source (auto-synced, read-only)
-    └──► fuse-control-plane ← 10% proprietary (auto-synced, read-only)
+whodaniel/The-New-Fuse      ← DEVELOPMENT HAPPENS HERE (PRIVATE)
+    ├──► The-New-Fuse  ← 90% open-source (auto-synced, read-only, PUBLIC)
+    └──► fuse-control-plane ← 10% proprietary (auto-synced, read-only, PRIVATE)
 ```
+
+> **Corrected 2026-07-23.** This diagram previously named `whodaniel/The-New-Fuse` as the
+> development repo. Development had moved to `whodaniel/The-New-Fuse`
+> (`scripts/sync-repos.sh:9` is authoritative), and that repo was **public** —
+> publishing the full combined tree, including every path on the proprietary
+> list below, under the root MIT LICENSE, from 2026-04-25. It is now private.
+>
+> `The-New-Fuse` was never affected: the sync removes each proprietary path
+> and writes a stub in its place, verified — `master-clock.ts` is 801 bytes there
+> against 33,882 locally, `broker-agent.ts` 761 vs 50,253,
+> `modules/orchestrator/index.ts` 520 vs 35,265. When auditing this boundary,
+> **compare file contents, not path existence** — stubs live at the same paths by
+> design, so an existence check reports a leak that is not there.
+>
+> **Repo visibility is part of the boundary.** The exclusion lists only protect
+> the downstream repos; they do nothing for the monorepo itself. Any new repo
+> holding the combined tree must be private.
 
 ## Rules
 
-1. **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-2. **ALL development happens in `whodaniel/fuse`.**
+1. **NEVER commit directly to `The-New-Fuse` or `fuse-control-plane`.**
+2. **ALL development happens in `whodaniel/The-New-Fuse`.**
 3. Proprietary boundary is defined in `scripts/sync-repos.sh` (`PROPRIETARY_*`
    arrays).
 4. Run `pnpm run sync:repos` to push changes to both downstream repos.

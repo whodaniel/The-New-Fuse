@@ -1,3 +1,4 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Button, Card, Input, Label, Textarea } from '@/components/ui';
 import TimelineView from '@/features/timeline/components/TimelineView';
 import { useTimeline } from '@/features/timeline/hooks/useTimeline';
@@ -183,7 +184,13 @@ function isOptionalGithubImportFailure(message: string): boolean {
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const { data: macroData, loading: macroLoading, updateRecord } = useTimeline();
+  const {
+    data: macroData,
+    loading: macroLoading,
+    error: macroError,
+    updateRecord,
+    refresh,
+  } = useTimeline();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -298,7 +305,13 @@ export default function TimelinePage() {
       }
     } catch (error) {
       const message = getApiErrorMessage(error, 'Failed to generate your personal timeline');
-      if (/(missing authenticated user|unauthorized|forbidden|401|403)/i.test(message)) {
+      const statusCode =
+        error instanceof Error && 'status' in error ? Number((error as any).status) : 0;
+      if (
+        statusCode === 401 ||
+        statusCode === 403 ||
+        /(^|[^0-9])401([^0-9]|$)|unauthorized|forbidden/i.test(message)
+      ) {
         toast.error('Your session appears expired. Please sign in again and retry.');
       } else if (!auto) {
         toast.error(message);
@@ -657,6 +670,25 @@ export default function TimelinePage() {
                   Synchronizing with Macro Ledger...
                 </p>
               </div>
+            ) : macroError ? (
+              <div
+                className="h-full w-full flex flex-col items-center justify-center gap-4 bg-slate-950 rounded-lg border border-amber-500/30 px-6 text-center"
+                role="alert"
+              >
+                <p className="text-amber-300 font-semibold">Macro timeline unavailable</p>
+                <p className="text-sm text-slate-300 max-w-md">
+                  We could not load the project horizon graph. Your personal milestones below remain
+                  available.
+                </p>
+                <Button
+                  onClick={() => void refresh()}
+                  variant="outline"
+                  className="border-amber-500/40 text-amber-200"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Retry Macro Sync
+                </Button>
+              </div>
             ) : (
               <TimelineView
                 plans={macroData?.plans || []}
@@ -738,20 +770,22 @@ export default function TimelinePage() {
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col">
-              <h3 className="text-xl font-bold text-white tracking-tight">Personal Narrative</h3>
-              <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                Personal Narrative
+              </h3>
+              <p className="text-xs text-slate-700 uppercase font-bold tracking-widest mt-0.5">
                 Milestones, Identity & Life Events
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-300">
+              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-900">
                 Filter By Category
               </Label>
               <select
                 id="timeline-category-filter"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="h-9 rounded-md border border-slate-700 bg-slate-950 px-2 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                className="h-9 rounded-md border border-slate-300 bg-white px-2 text-sm text-slate-900 outline-none focus:border-amber-500/50"
               >
                 {availableCategories.map((category) => (
                   <option key={category} value={category}>
@@ -1008,18 +1042,44 @@ export default function TimelinePage() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <Card
             data-testid="timeline-create-card"
-            className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md space-y-5"
+            className="bg-white border-slate-300 text-slate-900 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center text-amber-500">
                 <Plus className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-bold text-white">Record New Milestone</h3>
+              <h3 className="text-xl font-bold text-slate-900">Record New Milestone</h3>
+              <TalkToAIFormAssist
+                formTitle="Record New Milestone"
+                fields={[
+                  { key: 'title', label: 'Title' },
+                  { key: 'description', label: 'Narrative Description' },
+                  { key: 'category', label: 'Category' },
+                  { key: 'when', label: 'Date & Time (datetime-local format)' },
+                  { key: 'point', label: 'Timeline position percent (0-100)' },
+                  { key: 'sourcesText', label: 'Sources, one per line' },
+                ]}
+                onApply={(values) => {
+                  setCreateForm((current) => ({
+                    ...current,
+                    title: String(values.title ?? current.title),
+                    description: String(values.description ?? current.description),
+                    category: String(values.category ?? current.category),
+                    when: String(values.when ?? current.when),
+                    point:
+                      typeof values.point === 'number'
+                        ? clampPoint(values.point)
+                        : clampPoint(values.point ?? current.point),
+                    sourcesText: String(values.sourcesText ?? current.sourcesText),
+                  }));
+                }}
+                className="ml-auto"
+              />
             </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="timeline-create-title-input" className="text-slate-300">
+                <Label htmlFor="timeline-create-title-input" className="text-slate-700">
                   Title
                 </Label>
                 <Input
@@ -1028,11 +1088,11 @@ export default function TimelinePage() {
                   value={createForm.title}
                   onChange={(e) => setCreateForm((s) => ({ ...s, title: e.target.value }))}
                   placeholder="e.g. Project Launch"
-                  className="bg-slate-950 border-slate-700 text-slate-200 focus:ring-amber-500/20"
+                  className="bg-white border-slate-300 text-slate-900 focus:ring-amber-500/20"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="timeline-create-description-input" className="text-slate-300">
+                <Label htmlFor="timeline-create-description-input" className="text-slate-700">
                   Narrative Description
                 </Label>
                 <Textarea
@@ -1041,11 +1101,11 @@ export default function TimelinePage() {
                   value={createForm.description}
                   onChange={(e) => setCreateForm((s) => ({ ...s, description: e.target.value }))}
                   placeholder="Describe the significance of this event..."
-                  className="bg-slate-950 border-slate-700 min-h-[100px] text-slate-200"
+                  className="bg-white border-slate-300 min-h-[100px] text-slate-900"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="timeline-create-sources-input" className="text-slate-300">
+                <Label htmlFor="timeline-create-sources-input" className="text-slate-700">
                   Sources & Evidence (one per line)
                 </Label>
                 <Textarea
@@ -1053,20 +1113,20 @@ export default function TimelinePage() {
                   value={createForm.sourcesText}
                   onChange={(e) => setCreateForm((s) => ({ ...s, sourcesText: e.target.value }))}
                   placeholder="URLs or citations..."
-                  className="bg-slate-950 border-slate-700 min-h-[90px] text-slate-200"
+                  className="bg-white border-slate-300 min-h-[90px] text-slate-900"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="timeline-create-category-select" className="text-slate-300">
+                  <Label htmlFor="timeline-create-category-select" className="text-slate-700">
                     Category
                   </Label>
                   <select
                     id="timeline-create-category-select"
                     value={createForm.category}
                     onChange={(e) => setCreateForm((s) => ({ ...s, category: e.target.value }))}
-                    className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                    className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-amber-500/50"
                   >
                     {selectableCategories.map((category) => (
                       <option key={category} value={category}>
@@ -1076,7 +1136,7 @@ export default function TimelinePage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="timeline-create-when-input" className="text-slate-300">
+                  <Label htmlFor="timeline-create-when-input" className="text-slate-700">
                     Date & Time
                   </Label>
                   <Input
@@ -1085,7 +1145,7 @@ export default function TimelinePage() {
                     type="datetime-local"
                     value={createForm.when}
                     onChange={(e) => setCreateForm((s) => ({ ...s, when: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 text-slate-200"
+                    className="bg-white border-slate-300 text-slate-900"
                   />
                 </div>
               </div>
@@ -1133,27 +1193,55 @@ export default function TimelinePage() {
 
           <Card
             data-testid="timeline-edit-card"
-            className="bg-slate-950/90 border-slate-600 text-slate-100 p-6 rounded-md space-y-5"
+            className="bg-white border-slate-300 text-slate-900 p-6 rounded-md space-y-5"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded bg-sky-500/10 flex items-center justify-center text-sky-500">
                 <Pencil className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-bold text-white">Edit Selection</h3>
+              <h3 className="text-xl font-bold text-slate-900">Edit Selection</h3>
+              {editingId ? (
+                <TalkToAIFormAssist
+                  formTitle="Edit Milestone"
+                  fields={[
+                    { key: 'title', label: 'Title' },
+                    { key: 'description', label: 'Description' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'when', label: 'Date & Time (datetime-local format)' },
+                    { key: 'point', label: 'Timeline position percent (0-100)' },
+                    { key: 'sourcesText', label: 'Sources, one per line' },
+                  ]}
+                  onApply={(values) => {
+                    setEditForm((current) => ({
+                      ...current,
+                      title: String(values.title ?? current.title),
+                      description: String(values.description ?? current.description),
+                      category: String(values.category ?? current.category),
+                      when: String(values.when ?? current.when),
+                      point:
+                        typeof values.point === 'number'
+                          ? clampPoint(values.point)
+                          : clampPoint(values.point ?? current.point),
+                      sourcesText: String(values.sourcesText ?? current.sourcesText),
+                    }));
+                  }}
+                  className="ml-auto"
+                />
+              ) : null}
             </div>
 
             {!editingId ? (
               <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
-                <Pencil className="w-10 h-10 text-slate-600 mb-4" />
-                <p className="text-slate-200 text-sm max-w-[240px]">
+                <Pencil className="w-10 h-10 text-slate-400 mb-4" />
+                <p className="text-slate-700 text-sm max-w-[240px]">
                   Select an event on the timeline and click{' '}
-                  <span className="text-slate-200 font-bold">Edit</span> to populate this form.
+                  <span className="text-slate-900 font-bold">Edit</span> to populate this form.
                 </p>
               </div>
             ) : (
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
                 <div className="space-y-2">
-                  <Label htmlFor="timeline-edit-title-input" className="text-slate-300">
+                  <Label htmlFor="timeline-edit-title-input" className="text-slate-700">
                     Title
                   </Label>
                   <Input
@@ -1161,11 +1249,11 @@ export default function TimelinePage() {
                     data-testid="timeline-edit-title"
                     value={editForm.title}
                     onChange={(e) => setEditForm((s) => ({ ...s, title: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 text-slate-200"
+                    className="bg-white border-slate-300 text-slate-900"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="timeline-edit-description-input" className="text-slate-300">
+                  <Label htmlFor="timeline-edit-description-input" className="text-slate-700">
                     Description
                   </Label>
                   <Textarea
@@ -1173,31 +1261,31 @@ export default function TimelinePage() {
                     data-testid="timeline-edit-description"
                     value={editForm.description}
                     onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 min-h-[100px] text-slate-200"
+                    className="bg-white border-slate-300 min-h-[100px] text-slate-900"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="timeline-edit-sources-input" className="text-slate-300">
+                  <Label htmlFor="timeline-edit-sources-input" className="text-slate-700">
                     Sources
                   </Label>
                   <Textarea
                     id="timeline-edit-sources-input"
                     value={editForm.sourcesText}
                     onChange={(e) => setEditForm((s) => ({ ...s, sourcesText: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 min-h-[90px] text-slate-200"
+                    className="bg-white border-slate-300 min-h-[90px] text-slate-900"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="timeline-edit-category-select" className="text-slate-300">
+                    <Label htmlFor="timeline-edit-category-select" className="text-slate-700">
                       Category
                     </Label>
                     <select
                       id="timeline-edit-category-select"
                       value={editForm.category}
                       onChange={(e) => setEditForm((s) => ({ ...s, category: e.target.value }))}
-                      className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-sky-500/50"
+                      className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-sky-500/50"
                     >
                       {selectableCategories.map((category) => (
                         <option key={category} value={category}>
@@ -1207,7 +1295,7 @@ export default function TimelinePage() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="timeline-edit-when-input" className="text-slate-300">
+                    <Label htmlFor="timeline-edit-when-input" className="text-slate-700">
                       Date & Time
                     </Label>
                     <Input
@@ -1216,7 +1304,7 @@ export default function TimelinePage() {
                       type="datetime-local"
                       value={editForm.when}
                       onChange={(e) => setEditForm((s) => ({ ...s, when: e.target.value }))}
-                      className="bg-slate-950 border-slate-700 text-slate-200"
+                      className="bg-white border-slate-300 text-slate-900"
                     />
                   </div>
                 </div>
@@ -1225,7 +1313,7 @@ export default function TimelinePage() {
                   <div className="flex justify-between items-center">
                     <Label
                       htmlFor="timeline-edit-point-range"
-                      className="text-slate-300 text-xs font-bold uppercase tracking-wider"
+                      className="text-slate-700 text-xs font-bold uppercase tracking-wider"
                     >
                       Position
                     </Label>

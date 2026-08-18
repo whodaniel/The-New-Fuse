@@ -1,0 +1,68 @@
+# Build + typecheck gate for pull requests.
+#
+# Added after a PR merged to main with a correct file list but wrong file
+# contents, leaving main unbuildable. Reviewing diffstats and file lists cannot
+# catch a wholesale content swap; compiling the code can, in one step.
+#
+# Deliberately narrow: this builds the two apps that ship (api, frontend) and
+# the workspace packages they depend on. It is a gate, not a full-repo CI.
+name: CI Build
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "apps/frontend/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/ci-build.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install
+        # Not --frozen-lockfile: this repo's lockfile carries a pnpmfileChecksum
+        # that drifts locally. Correctness here comes from the build, not the lock.
+        run: pnpm install --no-frozen-lockfile
+
+      # Workspace packages publish from dist/, which is gitignored. A clean
+      # checkout therefore cannot resolve @the-new-fuse/* until they are built.
+      # turbo's build task declares dependsOn: ["^build"], so this builds the
+      # dependency graph in topological order.
+      - name: Build workspace dependencies and apps
+        run: pnpm turbo run build --filter=@the-new-fuse/frontend-app... --filter=@the-new-fuse/api-server...
+
+      - name: Typecheck api
+        run: pnpm --filter @the-new-fuse/api-server exec tsc --noEmit -p tsconfig.json
+
+      - name: Typecheck frontend
+        run: pnpm --filter @the-new-fuse/frontend-app exec tsc --noEmit -p tsconfig.json
+
+      # Guards the specific regression that motivated this workflow: a file
+      # importing a module that does not exist on the target branch.
+      - name: Assert frontend build produced artifacts
+        run: |
+          test -f apps/frontend/dist/app.html \
+            || { echo "::error::apps/frontend/dist/app.html missing — build did not complete"; exit 1; }
+          echo "frontend artifacts present"

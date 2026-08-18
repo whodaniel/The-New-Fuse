@@ -1,6 +1,13 @@
 packages:
   - "apps/*"
   - "apps/mcp-servers/*"
-  - "!apps/skideancer-ide"
+  # Satellite / product apps live outside the monorepo (TNF-Extensions);
+  # apps/extensions is only a symlink redirect — do not pull it into the workspace.
+  - "!apps/extensions"
+  - "!apps/extensions/**"
   - "packages/*"
   - "tools/*"
+
+overrides:
+  "@types/three": "0.168.0"
+  "@types/react": "^19.0.0"

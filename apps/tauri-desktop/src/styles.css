@@ -191,7 +191,7 @@ body {
 
 .nav-section-title {
   color: var(--tnf-text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -688,7 +688,7 @@ body {
 }
 
 .list-item-url {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--tnf-text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -696,7 +696,7 @@ body {
 }
 
 .list-item-date {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--tnf-text-muted);
   margin-top: 2px;
 }
@@ -1299,7 +1299,7 @@ body.light-mode {
   padding: 4px 6px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .terminal-btn:hover {

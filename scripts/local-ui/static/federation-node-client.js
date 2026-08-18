@@ -30,6 +30,10 @@
       this.listeners = new Map();
       this.queue = [];
       this.heartbeatTimer = null;
+      this.autoReconnect = options.autoReconnect !== false;
+      this.reconnectDelay = 1000;
+      this.reconnectTimer = null;
+      this.manualClose = false;
     }
 
     on(event, handler) {
@@ -62,7 +66,9 @@
       ].filter(Boolean);
       for (const candidate of [...new Set(candidates)]) {
         try {
-          const response = await fetch(relayHealthUrl(candidate), { signal: AbortSignal.timeout(2000) });
+          const response = await fetch(relayHealthUrl(candidate), {
+            signal: AbortSignal.timeout(2000),
+          });
           if (!response.ok) continue;
           const data = await response.json();
           if (data?.status === 'ok' && data?.relay === 'running') return candidate;
@@ -73,6 +79,11 @@
 
     async connect(relayUrl) {
       if (relayUrl) this.relayUrl = relayUrl;
+      this.manualClose = false;
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
       const discovered = await this.discoverRelayUrl(this.relayUrl);
       if (discovered) this.relayUrl = discovered;
 
@@ -80,6 +91,7 @@
         this.ws = new WebSocket(this.relayUrl);
         this.ws.onopen = () => {
           this.connected = true;
+          this.reconnectDelay = 1000;
           this.emit('connected');
           this.registerAgent();
           this.flushQueue();
@@ -98,6 +110,7 @@
           this.registered = false;
           this.stopHeartbeat();
           this.emit('disconnected');
+          this.scheduleReconnect();
           resolve(false);
         };
         this.ws.onerror = (error) => {
@@ -105,6 +118,26 @@
           resolve(false);
         };
       });
+    }
+
+    disconnect() {
+      this.manualClose = true;
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
+      this.ws?.close();
+    }
+
+    scheduleReconnect() {
+      if (!this.autoReconnect || this.manualClose || this.reconnectTimer) return;
+      const delay = this.reconnectDelay;
+      this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000);
+      this.emit('reconnect_scheduled', delay);
+      this.reconnectTimer = setTimeout(() => {
+        this.reconnectTimer = null;
+        this.connect();
+      }, delay);
     }
 
     registerAgent() {
@@ -127,8 +160,12 @@
       });
     }
 
-    requestChannelList() { this.sendEnvelope('CHANNEL_LIST', {}); }
-    requestAgentList() { this.sendEnvelope('AGENT_LIST', {}); }
+    requestChannelList() {
+      this.sendEnvelope('CHANNEL_LIST', {});
+    }
+    requestAgentList() {
+      this.sendEnvelope('AGENT_LIST', {});
+    }
     createChannel(name, description = '', isPrivate = false) {
       this.sendEnvelope('CHANNEL_CREATE', { name, description, isPrivate });
     }
@@ -155,8 +192,31 @@
         },
       });
     }
-    pauseChannel(channelId) { this.sendEnvelope('CHANNEL_PAUSE', { channelId }); }
-    resumeChannel(channelId) { this.sendEnvelope('CHANNEL_RESUME', { channelId }); }
+    pauseChannel(channelId) {
+      this.sendEnvelope('CHANNEL_PAUSE', { channelId });
+    }
+    resumeChannel(channelId) {
+      this.sendEnvelope('CHANNEL_RESUME', { channelId });
+    }
+
+    sendDirectMessage(agentId, content, metadata = {}) {
+      this.sendRaw({
+        id: generateId('msg'),
+        type: 'MESSAGE_SEND',
+        timestamp: Date.now(),
+        source: this.agentId,
+        payload: {
+          to: agentId,
+          content,
+          messageType: 'text',
+          metadata: { sourceNode: this.platform, standaloneNode: true, ...metadata },
+        },
+      });
+    }
+
+    dispatchTask(task, channelId = null) {
+      this.sendEnvelope('TASK_DISPATCH', { task, channelId });
+    }
 
     sendEnvelope(type, payload) {
       this.sendRaw({
@@ -219,7 +279,8 @@
         case 'AGENT_STATUS': {
           const agent = message.payload?.agent;
           if (!agent) break;
-          if (agent.status === 'offline' || agent.status === 'disconnected') this.agents.delete(agent.id);
+          if (agent.status === 'offline' || agent.status === 'disconnected')
+            this.agents.delete(agent.id);
           else this.agents.set(agent.id, agent);
           this.emit('agents_updated', Array.from(this.agents.values()));
           break;
@@ -245,6 +306,12 @@
         case 'CHANNEL_MESSAGE':
         case 'MESSAGE_RECEIVE':
           this.emit('channel_message', message.payload);
+          break;
+        case 'TASK_ASSIGN':
+          this.emit('task_assign', message.payload);
+          break;
+        case 'ERROR':
+          this.emit('relay_error', message.payload);
           break;
         default:
           break;

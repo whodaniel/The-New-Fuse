@@ -43,7 +43,7 @@ if [ $API_STATUS -eq 0 ] && [ $FRONTEND_STATUS -eq 0 ]; then
     echo "  - bizsynth/the-new-fuse-frontend:${TAG}"
     echo ""
     echo "Next steps:"
-    echo "  1. Deploy to CloudRuntime: cloud_runtime up"
+    echo "  1. Deploy via GCP Cloud Run: scripts/deployment/gcp-deploy.sh"
     echo "  2. Or use docker-compose: docker-compose up"
     echo ""
 else

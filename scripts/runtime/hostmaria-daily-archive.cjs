@@ -8,6 +8,13 @@ if (!_guard.acquired) {
   process.exit(0);
 }
 
+// --- Fleet-wide pause gate (2026-07-21) ---
+const { isFleetPaused } = require('../lib/tnf-fleet-mode.cjs');
+if (isFleetPaused()) {
+  console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+  process.exit(0);
+}
+
 const fs = require('fs');
 const fsp = require('fs/promises');
 const os = require('os');

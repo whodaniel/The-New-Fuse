@@ -1,0 +1,84 @@
+{
+  "project": "value-ladder-production",
+  "version": "1.0",
+  "automations": [
+    {
+      "name": "welcome_playbook",
+      "trigger": "lead_optin_submitted",
+      "entry_criteria": ["tag:lead.playbook"],
+      "steps": [
+        {"wait": "0m", "action": "send_email", "template": "welcome_01_delivery"},
+        {"wait": "24h", "action": "if_not_clicked", "template": "welcome_01_resend"},
+        {"wait": "24h", "action": "send_email", "template": "welcome_02_story"},
+        {"wait": "24h", "action": "send_email", "template": "welcome_03_bridge_tripwire"}
+      ],
+      "goal": "tripwire_click"
+    },
+    {
+      "name": "tripwire_post_purchase",
+      "trigger": "tripwire_purchased",
+      "entry_criteria": ["tag:buyer.tripwire"],
+      "steps": [
+        {"wait": "0m", "action": "send_email", "template": "tripwire_01_access"},
+        {"wait": "24h", "action": "send_email", "template": "tripwire_02_start_here"},
+        {"wait": "48h", "action": "send_email", "template": "tripwire_03_webinar_invite"}
+      ],
+      "goal": "webinar_registered"
+    },
+    {
+      "name": "webinar_registration",
+      "trigger": "webinar_registered",
+      "entry_criteria": ["tag:webinar.reg"],
+      "steps": [
+        {"wait": "0m", "action": "send_email", "template": "webinar_01_confirm"},
+        {"wait": "-24h", "action": "send_email", "template": "webinar_02_24h_reminder"},
+        {"wait": "-1h", "action": "send_email", "template": "webinar_03_1h_reminder"},
+        {"wait": "+2h", "action": "send_email", "template": "webinar_04_replay"}
+      ],
+      "goal": "webinar_attended"
+    },
+    {
+      "name": "core_offer_close",
+      "trigger": "webinar_attended",
+      "entry_criteria": ["not tag:buyer.core"],
+      "steps": [
+        {"wait": "0m", "action": "send_email", "template": "close_01_offer_open"},
+        {"wait": "24h", "action": "send_email", "template": "close_02_objections"},
+        {"wait": "36h", "action": "send_email", "template": "close_03_deadline"},
+        {"wait": "47h", "action": "send_email", "template": "close_04_last_call"}
+      ],
+      "goal": "core_purchased"
+    },
+    {
+      "name": "ascension_high_ticket",
+      "trigger": "core_milestone_completed",
+      "entry_criteria": ["tag:buyer.core", "score>=70"],
+      "steps": [
+        {"wait": "0m", "action": "send_email", "template": "ascend_01_invite_apply"},
+        {"wait": "72h", "action": "if_not_applied_send", "template": "ascend_02_case_study"},
+        {"wait": "120h", "action": "if_not_applied_send", "template": "ascend_03_final_invite"}
+      ],
+      "goal": "high_ticket_applied"
+    },
+    {
+      "name": "continuity_retention",
+      "trigger": "core_purchased",
+      "entry_criteria": ["not tag:high_ticket.client"],
+      "steps": [
+        {"wait": "10d", "action": "send_email", "template": "cont_01_membership_intro"},
+        {"wait": "13d", "action": "send_email", "template": "cont_02_member_outcomes"},
+        {"wait": "15d", "action": "send_email", "template": "cont_03_join_now"}
+      ],
+      "goal": "continuity_started"
+    }
+  ],
+  "tags": [
+    "lead.playbook",
+    "buyer.tripwire",
+    "webinar.reg",
+    "buyer.core",
+    "high_ticket.applied",
+    "high_ticket.client",
+    "continuity.member"
+  ]
+}

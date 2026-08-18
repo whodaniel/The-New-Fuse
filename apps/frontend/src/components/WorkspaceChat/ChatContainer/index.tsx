@@ -19,6 +19,7 @@ import DnDFileUploaderWrapper, { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } f
 import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput';
 // import { ChatTooltips } from './ChatTooltips';
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
+import AISourceSelector from '@/components/ai/AISourceSelector';
 import {
   Dialog,
   DialogContent,
@@ -418,13 +419,15 @@ export default function ChatContainer({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Choose AI Model</DialogTitle>
+                <DialogTitle>Choose AI Source</DialogTitle>
               </DialogHeader>
-              <div className="py-2">
+              <div className="py-2 space-y-4">
+                <AISourceSelector description="Applies across Talk to AI, chat, and form assist surfaces." />
                 <LLMSelector
                   selectedProviderId={selectedLLMProviderId}
                   onChange={handleLLMProviderChange}
-                  description="Select the AI model you want to chat with"
+                  label="Legacy Workspace Provider"
+                  description="Workspace-specific provider override (optional)"
                 />
               </div>
             </DialogContent>

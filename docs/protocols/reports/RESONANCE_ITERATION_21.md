@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF Resonance Task - Iteration 21
 
 **Timestamp:** 2026-06-11T21:42:00Z **Agent:** Local Subdirector (Antigravity)

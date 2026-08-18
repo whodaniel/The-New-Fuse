@@ -92,7 +92,7 @@ describe('FilesController', () => {
         BadRequestException
       );
       await expect(controller.uploadFile(mockFile, req)).rejects.toThrow(
-        'File size exceeds 10MB limit'
+        'File size exceeds 10MB direct upload limit'
       );
     });
   });

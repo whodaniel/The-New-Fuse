@@ -1623,7 +1623,7 @@ communicationManager
 
 - [Project README](../../README.md) - Project overview
 - [Quick Start Guide](../../QUICK_START_GUIDE.md) - Quick setup
-- [Documentation Index](../../DOCUMENTATION_INDEX.md) - All documentation
+- [Documentation Index](../core/DOCUMENTATION_INDEX.md) - All documentation
 
 ---
 

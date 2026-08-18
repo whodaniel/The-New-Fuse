@@ -1,9 +1,13 @@
+import { Brain, Network, Radio } from 'lucide-react';
 import React, { useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
+import {
+  describePopulation,
+  selectAgentPopulations,
+} from '../services/operatorSynergy/populations';
 import type { TopologyNode } from '../services/operatorSynergy/types';
 import { useSettingsStore } from '../stores/settingsStore';
 
@@ -17,6 +21,7 @@ interface MemoryIndexEntry {
 
 const KnowledgeHub: React.FC = () => {
   const { state: synergy } = useOperatorSynergy();
+  const population = selectAgentPopulations(synergy);
   const { environment } = useSettingsStore();
   const webPkgUrl = webSurfaceUrl(resolveWebAppBaseUrl(environment), '/knowledge-hub');
   const [activeTab, setActiveTab] = useState<'topology' | 'relay-clusters' | 'memory-index'>(
@@ -42,20 +47,39 @@ const KnowledgeHub: React.FC = () => {
     return colors[node.status] || '#64748b';
   };
 
-  const getGroupIcon = (group: string): string => {
-    const icons: Record<string, string> = {
-      local: '💻',
-      cloud: '☁️',
-      agent: '🤖',
-      relay: '📡',
-    };
-    return icons[group] || '❓';
+  /**
+   * Chrome (tabs, buttons) uses lucide, matching the sidebar. Graph nodes are the
+   * one exception: the glyph lives inside an SVG <text>, which cannot host a React
+   * icon component, so it stays a character. A short uppercase initial reads far
+   * better than an emoji at 20px — the emoji were unreadable at node size and
+   * rendered differently per platform.
+   */
+  /** Wrap a node name onto at most two lines instead of clipping it to a stub. */
+  const splitNodeLabel = (label: string): string[] => {
+    if (label.length <= 14) return [label];
+    const words = label.split(/[\s-]+/);
+    const lines: string[] = [];
+    let current = '';
+    for (const word of words) {
+      if (!current) current = word;
+      else if ((current + ' ' + word).length <= 16) current += ' ' + word;
+      else {
+        lines.push(current);
+        current = word;
+      }
+      if (lines.length === 2) break;
+    }
+    if (current && lines.length < 2) lines.push(current);
+    return lines.length ? lines.slice(0, 2) : [label.slice(0, 16)];
   };
+
+  const getGroupGlyph = (group: string): string =>
+    ({ local: 'L', cloud: 'C', agent: 'A', relay: 'R' })[group] ?? '?';
 
   return (
     <PageShell
       title="Knowledge Hub"
-      subtitle={`Agent topology · ${synergy.topology.nodes.length} nodes · ${synergy.channelCount} relay clusters · relay ${synergy.relayRegistered ? 'registered' : synergy.relayConnected ? 'connected' : 'offline'}`}
+      subtitle={`Agent topology · ${population.topologyNodes} graph nodes · ${describePopulation(population)} · ${population.channels} relay clusters · relay ${synergy.relayRegistered ? 'registered' : synergy.relayConnected ? 'connected' : 'offline'}`}
       actions={
         <>
           <button
@@ -71,8 +95,6 @@ const KnowledgeHub: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
-
       {/* Tab Navigation */}
       <div className="tab-nav">
         {(['topology', 'relay-clusters', 'memory-index'] as const).map((tab) => (
@@ -81,9 +103,9 @@ const KnowledgeHub: React.FC = () => {
             className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
             onClick={() => setActiveTab(tab)}
           >
-            {tab === 'topology' && '🔌'}
-            {tab === 'relay-clusters' && '📡'}
-            {tab === 'memory-index' && '🧠'}
+            {tab === 'topology' && <Network size={15} aria-hidden />}
+            {tab === 'relay-clusters' && <Radio size={15} aria-hidden />}
+            {tab === 'memory-index' && <Brain size={15} aria-hidden />}
             <span className="tab-label">
               {tab === 'relay-clusters'
                 ? 'Relay Clusters'
@@ -145,10 +167,19 @@ const KnowledgeHub: React.FC = () => {
                       strokeWidth={2}
                     />
                     <text textAnchor="middle" dy="4" fill="#f8fafc" fontSize={10} fontWeight={600}>
-                      {getGroupIcon(node.group)}
+                      {getGroupGlyph(node.group)}
                     </text>
-                    <text textAnchor="middle" dy={28} fill="#94a3b8" fontSize={10}>
-                      {node.label.length > 16 ? `${node.label.slice(0, 14)}…` : node.label}
+                    {/* 10px truncated to 14 chars produced unreadable stubs
+                        ("TNF Master Orc…", "Local Sub-Dire…") that also collided
+                        with neighbouring nodes. Wrap onto a second line at 11px
+                        instead, and keep the full name reachable on hover. */}
+                    <text textAnchor="middle" fill="#cbd5e1" fontSize={11} pointerEvents="none">
+                      <title>{node.label}</title>
+                      {splitNodeLabel(node.label).map((line, i) => (
+                        <tspan key={line + i} x={0} dy={i === 0 ? 28 : 12}>
+                          {line}
+                        </tspan>
+                      ))}
                     </text>
                   </g>
                 );

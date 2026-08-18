@@ -8,6 +8,9 @@
  * 2. User presses Ctrl+Shift+F keyboard shortcut
  */
 
+import { EXTENSION_VERSION as FUSE_VERSION } from '../shared/constants';
+import { buildPageAgentIdentity } from '../shared/federation-identity';
+import { isControlPlaneRelayMessage } from '../shared/utils';
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
@@ -15,6 +18,10 @@ import { SelfPrompter } from './self-prompting';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
+
+/** Page-world <-> content-script test bridge event names (loopback origins only). */
+const FUSE_BRIDGE_REQUEST = 'fuse-connect:request';
+const FUSE_BRIDGE_RESPONSE = 'fuse-connect:response';
 
 const shouldSkipForPage = (): boolean => {
   const host = window.location.hostname;
@@ -116,14 +123,15 @@ class FuseConnectContentScript {
     // Initialize the simple chat bridge with callbacks
     simpleChatBridge.init({
       onResponse: (content) => {
-        console.log('[FuseConnect v7] AI Response received, length:', content.length);
+        const safeContent = typeof content === 'string' ? content : String(content || '');
+        console.log('[FuseConnect v7] AI Response received, length:', safeContent.length);
         this.selfPrompter.updateActivity();
 
         // Forward to panel
         if (this.panel) {
           this.panel.handleMessage({
             type: 'RESPONSE_COMPLETE',
-            content: content,
+            content: safeContent,
           });
         }
 
@@ -160,7 +168,7 @@ class FuseConnectContentScript {
         // Forward to background for relay with correlation info
         this.safeSendMessage({
           type: 'RESPONSE_COMPLETE',
-          content: content.length > 50000 ? content.substring(0, 50000) : content,
+          content: safeContent.length > 50000 ? safeContent.substring(0, 50000) : safeContent,
           channel: currentChannel, // Also pass at top level for easier access
           metadata: responseMetadata,
         });
@@ -233,9 +241,12 @@ class FuseConnectContentScript {
             },
           },
           (response) => {
-            if (response?.agentId) {
-              this.pageAgentId = response.agentId;
+            if (response?.pageAgentId || response?.agentId) {
+              this.pageAgentId = response.pageAgentId || response.agentId;
               console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId);
+              if (this.panel) {
+                this.panel.setAgentId(this.pageAgentId);
+              }
             }
           }
         );
@@ -316,6 +327,119 @@ class FuseConnectContentScript {
     };
 
     console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG');
+    this.setupPageWorldBridge();
+  }
+
+  /**
+   * `window.__FUSE_DEBUG` lives in the content script's isolated world, so page
+   * scripts (and any browser-driven test harness, which evaluates in the main
+   * world) cannot see it — there was previously NO way to tell from the page
+   * whether this content script had attached.
+   *
+   * Two things fix that:
+   *  - a `data-fuse-connect` attribute on <html>, readable anywhere;
+   *  - a CustomEvent request/response bridge, enabled only on loopback origins
+   *    so real sites can never drive the composer through it.
+   */
+  private setupPageWorldBridge(): void {
+    try {
+      document.documentElement.setAttribute('data-fuse-connect', FUSE_VERSION);
+    } catch (e) {
+      console.warn('[FuseConnect v7] Could not set page marker:', e);
+    }
+
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1' && host !== '[::1]') return;
+
+    document.addEventListener(FUSE_BRIDGE_REQUEST, (event: Event) => {
+      const detail = (event as CustomEvent).detail || {};
+      const respond = (payload: Record<string, unknown>) => {
+        document.dispatchEvent(
+          new CustomEvent(FUSE_BRIDGE_RESPONSE, { detail: { id: detail.id, ...payload } })
+        );
+      };
+
+      // Async actions round-trip to the background worker.
+      if (detail.action === 'keepalive' || detail.action === 'connection') {
+        try {
+          chrome.runtime.sendMessage({ type: 'GET_KEEPALIVE_STATUS' }, (response) => {
+            if (chrome.runtime.lastError) {
+              respond({ ok: false, error: chrome.runtime.lastError.message });
+              return;
+            }
+            respond({ ok: true, result: response });
+          });
+        } catch (e: any) {
+          respond({ ok: false, error: e?.message || String(e) });
+        }
+        return;
+      }
+
+      try {
+        respond({ ok: true, result: this.runBridgeAction(detail.action, detail.args || {}) });
+      } catch (e: any) {
+        respond({ ok: false, error: e?.message || String(e) });
+      }
+    });
+
+    document.documentElement.setAttribute('data-fuse-connect-bridge', 'on');
+    console.warn('[FuseConnect v7] Page-world test bridge enabled (loopback origin)');
+  }
+
+  /**
+   * Allowlisted bridge actions. Deliberately limited to things a page script
+   * could already do to its own DOM, plus read-only extension state — never
+   * relay messaging, storage, or cross-tab operations.
+   */
+  private runBridgeAction(action: string, args: Record<string, any>): unknown {
+    switch (action) {
+      case 'status': {
+        const elements = simpleChatBridge.findElements();
+        return {
+          version: FUSE_VERSION,
+          initialized: this.isInitialized,
+          chatReady: this.chatReady,
+          pageAgentId: this.pageAgentId,
+          panelVisible: this.panelVisible,
+          extensionContextValid: !!chrome.runtime?.id,
+          elements: {
+            hasInput: !!elements.input,
+            hasSendButton: !!elements.sendButton,
+            isReady: elements.isReady,
+            inputTag: elements.input?.tagName || null,
+            inputId: (elements.input as HTMLElement | null)?.id || null,
+            sendButtonTestId: elements.sendButton?.getAttribute('data-testid') || null,
+          },
+        };
+      }
+      case 'findElements': {
+        const elements = simpleChatBridge.findElements();
+        return {
+          isReady: elements.isReady,
+          inputTag: elements.input?.tagName || null,
+          inputId: (elements.input as HTMLElement | null)?.id || null,
+          sendButtonTag: elements.sendButton?.tagName || null,
+        };
+      }
+      case 'sendMessage':
+        void simpleChatBridge.sendMessage(String(args.text || ''));
+        return { queued: true };
+      case 'getLastResponse':
+        return { response: simpleChatBridge.getLastResponse() };
+      case 'getLastSendResult':
+        return simpleChatBridge.getLastSendResult();
+      case 'showPanel':
+        this.showPanel();
+        return { panelVisible: this.panelVisible };
+      case 'hidePanel':
+        this.hidePanel();
+        return { panelVisible: this.panelVisible };
+      case 'togglePanel':
+        this.togglePanel();
+        return { panelVisible: this.panelVisible };
+      default:
+        throw new Error(`Unknown bridge action: ${action}`);
+    }
   }
 
   /**
@@ -428,8 +552,13 @@ class FuseConnectContentScript {
             return true;
 
           case 'INJECT_MESSAGE':
-            this.injectMessage(message.content).then((success) => {
-              safeSendResponse({ success });
+            this.injectMessage(message.content, message.metadata, {
+              preserveUserFocus: true,
+            }).then((success) => {
+              safeSendResponse({
+                success,
+                result: simpleChatBridge.getLastSendResult(),
+              });
             });
             return true;
 
@@ -582,6 +711,19 @@ class FuseConnectContentScript {
           case 'CHANNEL_SELECTED':
           case 'NOTIFICATION':
           case 'TASK_ASSIGN':
+          case 'AI_VIDEO_PROCESSING_UPDATE':
+          case 'FUSE_ONBOARDING_CONTEXT':
+          case 'TASK_COMPLETE':
+          case 'TASK_ERROR':
+          // The background fans RESPONSE_COMPLETE out to every tab so that all
+          // tabs bound to the same channel share one conversation. These two
+          // were missing from this list, so the fan-out hit `default:` and was
+          // silently dropped — only the tab that produced the response ever saw
+          // it, because its own onResponse callback hands it to the panel
+          // directly. The panel de-dupes RESPONSE_COMPLETE by content, so the
+          // originating tab does not render it twice.
+          case 'RESPONSE_COMPLETE':
+          case 'STREAMING_UPDATE':
             if (message.type === 'CHANNEL_SELECTED') {
               this.currentChannel = message.channelId || null;
             }
@@ -590,6 +732,14 @@ class FuseConnectContentScript {
                 ? message.pausedChannels.map((id: unknown) => String(id))
                 : [];
               this.pausedChannels = new Set(paused);
+            }
+            if (message.type === 'FUSE_ONBOARDING_CONTEXT' && message.payload) {
+              // Background front-loads channel/agent context for page agents.
+              if (this.panel) {
+                this.panel.handleMessage(message);
+              }
+              safeSendResponse({ success: true });
+              return true;
             }
             if (this.panel) {
               this.panel.handleMessage(message);
@@ -674,10 +824,12 @@ class FuseConnectContentScript {
                   return true;
                 }
                 console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
-                this.injectMessage(msg.content).then((success) => {
-                  if (success) console.log('[FuseConnect v7] Injection successful');
-                  else console.warn('[FuseConnect v7] Injection failed');
-                });
+                this.injectMessage(msg.content, msg.metadata, { preserveUserFocus: true }).then(
+                  (success) => {
+                    if (success) console.log('[FuseConnect v7] Injection successful');
+                    else console.warn('[FuseConnect v7] Injection failed');
+                  }
+                );
               }
               // CHANNEL BROADCAST INJECTION: If from external agent on same channel
               else if (msg.to === 'broadcast' && msg.content && msg.from) {
@@ -757,7 +909,8 @@ class FuseConnectContentScript {
                       msg.content.substring(0, 50)
                     );
                     this.queueMessage(msg.content, msg.metadata);
-                    return;
+                    safeSendResponse({ success: true, reason: 'queued_while_streaming' });
+                    return true;
                   }
 
                   // This is from an external agent - inject it!
@@ -788,10 +941,12 @@ class FuseConnectContentScript {
                     });
                   }
 
-                  this.injectMessage(msg.content).then((success) => {
-                    if (success) console.log('[FuseConnect v7] ✅ Injection successful');
-                    else console.warn('[FuseConnect v7] ⚠️ Injection failed');
-                  });
+                  this.injectMessage(msg.content, msg.metadata, { preserveUserFocus: true }).then(
+                    (success) => {
+                      if (success) console.log('[FuseConnect v7] ✅ Injection successful');
+                      else console.warn('[FuseConnect v7] ⚠️ Injection failed');
+                    }
+                  );
                 }
               }
             }
@@ -799,6 +954,11 @@ class FuseConnectContentScript {
             safeSendResponse({ success: true });
             return true;
           }
+
+          default:
+            // Always ack unknown broadcasts so background fire-and-forget stays quiet.
+            safeSendResponse({ success: true, ignored: true, type: message?.type || null });
+            return false;
         }
       } catch (e: any) {
         console.error('[FuseConnect] Content script message handler error:', e);
@@ -810,6 +970,7 @@ class FuseConnectContentScript {
           // ignore if response sent already
         }
       }
+      return false;
     });
   }
 
@@ -822,6 +983,15 @@ class FuseConnectContentScript {
       chrome.runtime.sendMessage(message, (response) => {
         // Access lastError to suppress "Unchecked runtime.lastError" warnings
         const error = chrome.runtime.lastError;
+        if (error) {
+          const errorMessage = error.message || '';
+          callback?.({
+            success: false,
+            transient: errorMessage.includes('Receiving end does not exist'),
+            error: errorMessage,
+          });
+          return;
+        }
         if (callback && !error) {
           callback(response);
         }
@@ -847,53 +1017,60 @@ class FuseConnectContentScript {
         });
       }
     });
+
+    window.addEventListener('fuse:inject-message', (e: any) => {
+      const { content, metadata } = e.detail || {};
+      if (content) {
+        this.injectMessage(content, metadata);
+      }
+    });
   }
 
   /**
    * Only conversational payloads should be auto-injected into page chat.
-   * Control-plane events (activity/wake/heartbeat) must stay out of model input.
+   * Control-plane events (activity/wake/heartbeat) stay in the injectable panel
+   * and must not be submitted into the host model input.
    */
   private shouldInjectRelayMessage(msg: any): boolean {
     const content = String(msg?.content || '').trim();
     if (!content) return false;
-
-    const messageType = String(msg?.messageType || '').toLowerCase();
-    const eventType = String(msg?.metadata?.eventType || '').toLowerCase();
-    const lower = content.toLowerCase();
-
-    if (messageType === 'event') return false;
-
-    const blockedEventTypes = new Set([
-      'activity',
-      'wake_ping',
-      'wake_ack',
-      'monitor_idle',
-      'page_agent_registered',
-      'agent_registered',
-      // 'heartbeat', // HEARTBEAT RECOVERY: allow heartbeats to be injected
-    ]);
-    if (blockedEventTypes.has(eventType)) return false;
-
-    // Explicitly allow heartbeats even if eventType check above was modified
-    if (lower.includes('tnf heartbeat') || msg?.metadata?.isRecoveryAttempt) {
-      return true;
-    }
-
-    if (
-      lower.startsWith('[activity]') ||
-      lower.startsWith('[wake_ping') ||
-      lower.startsWith('[wake_ack')
-    ) {
-      return false;
-    }
-
+    if (isControlPlaneRelayMessage(msg)) return false;
     return true;
   }
 
-  private async injectMessage(content: string, metadata?: any): Promise<boolean> {
+  private async injectMessage(
+    content: string,
+    metadata?: any,
+    options?: { preserveUserFocus?: boolean }
+  ): Promise<boolean> {
     console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
 
-    const success = await simpleChatBridge.sendMessage(content);
+    let finalContent = content;
+
+    // FEDERATION IMPROVEMENT: Prepend full federated ID#ing logic if it's missing
+    if (!finalContent.includes('[Sender:')) {
+      const senderId = metadata?.senderId || this.pageAgentId || 'Human';
+      const channel = metadata?.channel || this.currentChannel || 'global';
+
+      // Compute full UFTE / Phase 9 Federated Identity
+      let handle = senderId;
+      let idNumber = 'UNKNOWN';
+      try {
+        const identity = buildPageAgentIdentity(senderId, 'FUSE_BROWSER');
+        handle = identity.operationalHandle;
+        idNumber = identity.idNumber;
+      } catch (e) {
+        // Fallback if senderId is malformed
+      }
+
+      // Format: [Sender: XXX (@ID#:YYY)][Channel: ZZZ] text
+      // Follows Phase 9 DACC formatting + UFTE identity requirements
+      finalContent = `[Sender: ${handle} (@${idNumber})][Channel: ${channel}]\n${finalContent}`;
+    }
+
+    const preserveUserFocus =
+      options?.preserveUserFocus === true || isControlPlaneRelayMessage({ content, metadata });
+    const success = await simpleChatBridge.sendMessage(finalContent, { preserveUserFocus });
 
     if (success) {
       this.selfPrompter.updateActivity();
@@ -1051,7 +1228,7 @@ class FuseConnectContentScript {
           });
         }
 
-        await this.injectMessage(item.content, item.metadata);
+        await this.injectMessage(item.content, item.metadata, { preserveUserFocus: true });
 
         // Wait a bit before next injection to allow UI to update
         // (Wait longer than the _sendingGuard in SimpleChatBridge to avoid self-blocking)

@@ -24,7 +24,7 @@ const IntegrationCard = ({
   description: string;
 }) => (
   <GlassCard hover className="p-4">
-    <div className="w-12 h-12 rounded-md bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+    <div className="w-12 h-12 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
       <Icon className="h-6 w-6 text-white" />
     </div>
     <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
@@ -34,9 +34,9 @@ const IntegrationCard = ({
 
 export const Integrations = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
       <main className="grow">
-        <section className="py-20 lg:py-22 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
+        <section className="py-20 lg:py-22 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
           <div className="container mx-auto px-4">
             <Badge className="mb-6 bg-slate-800/50 text-white border-white/20">
               <Puzzle className="w-4 h-4 mr-2" />
@@ -132,7 +132,7 @@ export const Integrations = () => {
             to="/"
             className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <Rocket className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold">The New Fuse</span>

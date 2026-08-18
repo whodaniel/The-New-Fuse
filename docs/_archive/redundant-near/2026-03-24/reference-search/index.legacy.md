@@ -9,10 +9,10 @@
 - #onboarding - [Onboarding Process](../../sections/getting-started.md#onboarding)
 
 ### Core Concepts
-- #ai - [AI Assistants](../../sections/core-concepts.md#ai-assistants)
-- #workflow - [Workflow System](../../sections/core-concepts.md#workflow-system)
-- #integration - [Integration Patterns](../../sections/core-concepts.md#integration)
-- #webtools - [Web Tools](../../sections/core-concepts.md#web-tools)
+- #ai - [AI Assistants](../../../../sections/core-concepts.md#ai-assistants)
+- #workflow - [Workflow System](../../../../sections/core-concepts.md#workflow-system)
+- #integration - [Integration Patterns](../../../../sections/core-concepts.md#integration)
+- #webtools - [Web Tools](../../../../sections/core-concepts.md#web-tools)
 
 ### Advanced Features
 - #performance - [Performance Optimization](../../sections/advanced-features.md#performance)
@@ -21,10 +21,10 @@
 - #models - [Custom Models](../../sections/advanced-features.md#custom-models)
 
 ### API Reference
-- #auth - [Authentication](../../sections/api-reference.md#authentication)
-- #endpoints - [API Endpoints](../../sections/api-reference.md#endpoints)
-- #ratelimit - [Rate Limiting](../../sections/api-reference.md#rate-limiting)
-- #errors - [Error Handling](../../sections/api-reference.md#error-handling)
+- #auth - [Authentication](../../../../../apps/chrome-extension/docs/api-reference.md#authentication)
+- #endpoints - [API Endpoints](../../../../../apps/chrome-extension/docs/api-reference.md#endpoints)
+- #ratelimit - [Rate Limiting](../../../../../apps/chrome-extension/docs/api-reference.md#rate-limiting)
+- #errors - [Error Handling](../../../../../apps/chrome-extension/docs/api-reference.md#error-handling)
 
 ### Components
 - #authcomponents - [Authentication Components](../../sections/components.md#authentication)
@@ -68,8 +68,8 @@
 ## Search by Feature
 
 ### Security Features
-- #oauth - [OAuth Implementation](../../sections/api-reference.md#authentication)
-- #jwt - [JWT Tokens](../../sections/api-reference.md#authentication)
+- #oauth - [OAuth Implementation](../../../../../apps/chrome-extension/docs/api-reference.md#authentication)
+- #jwt - [JWT Tokens](../../../../../apps/chrome-extension/docs/api-reference.md#authentication)
 - #encryption - [Data Encryption](../../sections/advanced-features.md#security)
 - #permissions - [Access Control](../../sections/advanced-features.md#security)
 
@@ -82,7 +82,7 @@
 ### Development Features
 - #testing - [Testing Guide](../../sections/components.md#testing)
 - #styling - [Styling System](../../sections/components.md#styling)
-- #api - [API Development](../../sections/api-reference.md)
+- #api - [API Development](../../../../../apps/chrome-extension/docs/api-reference.md)
 - #components - [Component Development](../../sections/components.md)
 
 ## Search by Example
@@ -94,14 +94,14 @@
 - #content - [Content Generation](../../sections/workflow-examples.md#content)
 
 ### Integration Examples
-- #websocket - [WebSocket Integration](../../sections/api-reference.md#websocket-api)
-- #graphql - [GraphQL Integration](../../sections/api-reference.md#graphql-api)
+- #websocket - [WebSocket Integration](../../../../../apps/chrome-extension/docs/api-reference.md#websocket-api)
+- #graphql - [GraphQL Integration](../../../../../apps/chrome-extension/docs/api-reference.md#graphql-api)
 - #web3 - [Web3 Integration](../../sections/components.md#integration)
 - #ai - [AI Integration](../../sections/components.md#integration)
 
 ## Quick Links
 - [Documentation Home](../../index.md)
 - [Getting Started](../../sections/getting-started.md)
-- [API Reference](../../sections/api-reference.md)
+- [API Reference](../../../../../apps/chrome-extension/docs/api-reference.md)
 - [Component Library](../../sections/components.md)
 - [Examples](../../sections/workflow-examples.md)

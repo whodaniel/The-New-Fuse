@@ -68,8 +68,8 @@
   (`apps/frontend/src/pages/workspace/WorkspaceAnalytics.tsx`)
 - `/workspace/members` - Members
   (`apps/frontend/src/pages/workspace/Members.tsx`)
-- `/workspace/chat` - Team Chat
-  (`apps/frontend/src/pages/WorkspaceChat/index.tsx`)
+- `/chat?mode=workspace` - Team Chat (redirected from `/workspace/chat`,
+  component: `apps/frontend/src/pages/chat/ChatHub.tsx`)
 
 ## 7. Tasks
 

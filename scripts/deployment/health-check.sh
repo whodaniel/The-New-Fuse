@@ -551,38 +551,35 @@ check_build_health() {
 ###############################################################################
 
 check_cloud_runtime_health() {
-  print_section "CloudRuntime Platform Health Check"
+  print_section "Cloud Run Platform Health Check"
 
-  if ! command -v cloud_runtime &>/dev/null; then
-    check_result warning "CloudRuntime CLI not installed"
+  if ! command -v gcloud &>/dev/null; then
+    check_result warning "gcloud CLI not installed (legacy cloud_runtime CLI is retired)"
     return 0
   fi
 
-  if ! cloud_runtime whoami &>/dev/null; then
-    check_result warning "Not authenticated with CloudRuntime"
+  if ! gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | head -n1 | grep -q '.'; then
+    check_result warning "gcloud not authenticated"
     return 0
   fi
 
-  if ! cloud_runtime status &>/dev/null; then
-    check_result warning "Not linked to a CloudRuntime project"
-    return 0
-  fi
-
-  log STEP "Checking CloudRuntime services..."
+  log STEP "Checking Cloud Run services..."
 
   local services=("api-gateway" "backend" "frontend" "api")
+  local project="${TNF_GCP_PROJECT_ID:-the-new-fuse-2025}"
+  local region="${TNF_GCP_REGION:-us-central1}"
   local failed_services=()
 
   for service in "${services[@]}"; do
-    if cloud_runtime status --service "$service" &>/dev/null; then
-      check_result success "CloudRuntime service '$service' is running"
+    if gcloud run services describe "$service" --project="$project" --region="$region" &>/dev/null; then
+      check_result success "Cloud Run service '$service' exists"
     else
       failed_services+=("$service")
     fi
   done
 
   if [[ ${#failed_services[@]} -gt 0 ]]; then
-    check_result warning "CloudRuntime services not running: ${failed_services[*]}"
+    check_result warning "Cloud Run services not found: ${failed_services[*]}"
   fi
 }
 

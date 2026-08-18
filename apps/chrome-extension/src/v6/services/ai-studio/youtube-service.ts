@@ -48,7 +48,8 @@ class YouTubeService {
   async authenticate(): Promise<boolean> {
     try {
       console.log('Starting YouTube OAuth2 authentication...');
-      const token = await chrome.identity.getAuthToken({ interactive: true });
+      // MV3 resolves to { token?, grantedScopes? } — not a bare string.
+      const { token } = await chrome.identity.getAuthToken({ interactive: true });
 
       if (token) {
         this.accessToken = token;
@@ -72,7 +73,10 @@ class YouTubeService {
 
   async isAuthenticated(): Promise<boolean> {
     if (!this.accessToken || !this.tokenExpiry) {
-      const data = (await chrome.storage.local.get(['youtubeToken', 'youtubeTokenExpiry'])) as Record<string, any>;
+      const data = (await chrome.storage.local.get([
+        'youtubeToken',
+        'youtubeTokenExpiry',
+      ])) as Record<string, any>;
 
       if (data.youtubeToken && data.youtubeTokenExpiry > Date.now()) {
         this.accessToken = data.youtubeToken;
@@ -97,7 +101,9 @@ class YouTubeService {
 
     let apiKey = this.apiKey;
     if (!apiKey) {
-      const stored = (await chrome.storage.local.get('youtubeApiKey')) as { youtubeApiKey?: string };
+      const stored = (await chrome.storage.local.get('youtubeApiKey')) as {
+        youtubeApiKey?: string;
+      };
       apiKey = stored.youtubeApiKey;
       this.apiKey = apiKey || null;
     }
@@ -105,7 +111,9 @@ class YouTubeService {
     const isWriteOperation = ['POST', 'PUT', 'DELETE'].includes(params.method || 'GET');
 
     if (!isOAuth && !apiKey) {
-      throw new Error('Quota Protection: You must specify a YouTube API Key in settings OR Sign In.');
+      throw new Error(
+        'Quota Protection: You must specify a YouTube API Key in settings OR Sign In.'
+      );
     }
 
     if (isWriteOperation && !this.accessToken) {
@@ -129,7 +137,8 @@ class YouTubeService {
     const fetchOptions: RequestInit = { method: params.method || 'GET', headers };
 
     if (params.body) {
-      fetchOptions.body = typeof params.body === 'string' ? params.body : JSON.stringify(params.body);
+      fetchOptions.body =
+        typeof params.body === 'string' ? params.body : JSON.stringify(params.body);
       headers['Content-Type'] = 'application/json';
     }
 
@@ -148,16 +157,20 @@ class YouTubeService {
   async getPlaylists(): Promise<Playlist[]> {
     try {
       const data = await this.makeRequest('playlists', {
-        part: 'snippet,contentDetails', mine: 'true', maxResults: 50,
+        part: 'snippet,contentDetails',
+        mine: 'true',
+        maxResults: 50,
       });
 
-      return data.items.map((item: any): Playlist => ({
-        id: item.id,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        videoCount: item.contentDetails.itemCount,
-        thumbnail: item.snippet.thumbnails?.default?.url,
-      }));
+      return data.items.map(
+        (item: any): Playlist => ({
+          id: item.id,
+          title: item.snippet.title,
+          description: item.snippet.description,
+          videoCount: item.contentDetails.itemCount,
+          thumbnail: item.snippet.thumbnails?.default?.url,
+        })
+      );
     } catch (error) {
       console.error('Failed to fetch playlists:', error);
       throw error;
@@ -170,21 +183,27 @@ class YouTubeService {
       let nextPageToken: string | null = null;
 
       do {
-        const params: Record<string, any> = { part: 'snippet,contentDetails', playlistId, maxResults };
+        const params: Record<string, any> = {
+          part: 'snippet,contentDetails',
+          playlistId,
+          maxResults,
+        };
         if (nextPageToken) params.pageToken = nextPageToken;
 
         const data = await this.makeRequest('playlistItems', params);
 
-        const videos = data.items.map((item: any): PlaylistVideo => ({
-          id: item.snippet.resourceId.videoId,
-          playlistItemId: item.id,
-          title: item.snippet.title,
-          description: item.snippet.description,
-          thumbnail: item.snippet.thumbnails?.default?.url,
-          channelTitle: item.snippet.channelTitle,
-          publishedAt: item.snippet.publishedAt,
-          position: item.snippet.position,
-        }));
+        const videos = data.items.map(
+          (item: any): PlaylistVideo => ({
+            id: item.snippet.resourceId.videoId,
+            playlistItemId: item.id,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails?.default?.url,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt,
+            position: item.snippet.position,
+          })
+        );
 
         allVideos = allVideos.concat(videos);
         nextPageToken = data.nextPageToken;
@@ -206,18 +225,21 @@ class YouTubeService {
 
       for (const chunk of chunks) {
         const data = await this.makeRequest('videos', {
-          part: 'contentDetails,snippet,statistics', id: chunk.join(','),
+          part: 'contentDetails,snippet,statistics',
+          id: chunk.join(','),
         });
 
-        const videos = data.items.map((item: any): VideoDetails => ({
-          id: item.id,
-          duration: this.parseDuration(item.contentDetails.duration),
-          durationISO: item.contentDetails.duration,
-          title: item.snippet.title,
-          channelTitle: item.snippet.channelTitle,
-          viewCount: item.statistics?.viewCount,
-          likeCount: item.statistics?.likeCount,
-        }));
+        const videos = data.items.map(
+          (item: any): VideoDetails => ({
+            id: item.id,
+            duration: this.parseDuration(item.contentDetails.duration),
+            durationISO: item.contentDetails.duration,
+            title: item.snippet.title,
+            channelTitle: item.snippet.channelTitle,
+            viewCount: item.statistics?.viewCount,
+            likeCount: item.statistics?.likeCount,
+          })
+        );
 
         allVideos = allVideos.concat(videos);
       }
@@ -254,7 +276,10 @@ class YouTubeService {
     try {
       const response = await fetch(`${this.baseUrl}/playlistItems?part=snippet`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           snippet: { playlistId, resourceId: { kind: 'youtube#video', videoId } },
         }),
@@ -275,7 +300,8 @@ class YouTubeService {
         headers: { Authorization: `Bearer ${this.accessToken}` },
       });
 
-      if (!response.ok) throw new Error(`Failed to remove video from playlist: ${response.statusText}`);
+      if (!response.ok)
+        throw new Error(`Failed to remove video from playlist: ${response.statusText}`);
       return true;
     } catch (error) {
       console.error('Failed to remove video from playlist:', error);
@@ -283,7 +309,11 @@ class YouTubeService {
     }
   }
 
-  async moveVideo(videoId: string, fromPlaylistItemId: string, toPlaylistId: string): Promise<boolean> {
+  async moveVideo(
+    videoId: string,
+    fromPlaylistItemId: string,
+    toPlaylistId: string
+  ): Promise<boolean> {
     try {
       await this.addToPlaylist(toPlaylistId, videoId);
       await this.removeFromPlaylist(fromPlaylistItemId);
@@ -294,12 +324,22 @@ class YouTubeService {
     }
   }
 
-  async createPlaylist(title: string, description = '', privacy = 'private'): Promise<{ id: string; title: string; description: string }> {
+  async createPlaylist(
+    title: string,
+    description = '',
+    privacy = 'private'
+  ): Promise<{ id: string; title: string; description: string }> {
     try {
       const response = await fetch(`${this.baseUrl}/playlists?part=snippet,status`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ snippet: { title, description }, status: { privacyStatus: privacy } }),
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          snippet: { title, description },
+          status: { privacyStatus: privacy },
+        }),
       });
 
       if (!response.ok) throw new Error(`Failed to create playlist: ${response.statusText}`);
@@ -315,7 +355,8 @@ class YouTubeService {
   async getWatchLaterPlaylistId(): Promise<string | null> {
     try {
       const data = await this.makeRequest('channels', { part: 'contentDetails', mine: 'true' });
-      if (data.items && data.items.length > 0) return data.items[0].contentDetails.relatedPlaylists.watchLater;
+      if (data.items && data.items.length > 0)
+        return data.items[0].contentDetails.relatedPlaylists.watchLater;
       return null;
     } catch (error) {
       console.error('Failed to get Watch Later playlist:', error);
@@ -325,17 +366,23 @@ class YouTubeService {
 
   async getLikedVideos(maxResults = 50): Promise<LikedVideo[]> {
     try {
-      const data = await this.makeRequest('videos', { part: 'snippet,contentDetails', myRating: 'like', maxResults });
+      const data = await this.makeRequest('videos', {
+        part: 'snippet,contentDetails',
+        myRating: 'like',
+        maxResults,
+      });
 
-      return data.items.map((item: any): LikedVideo => ({
-        id: item.id,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        thumbnail: item.snippet.thumbnails?.default?.url,
-        channelTitle: item.snippet.channelTitle,
-        publishedAt: item.snippet.publishedAt,
-        url: `https://www.youtube.com/watch?v=${item.id}`,
-      }));
+      return data.items.map(
+        (item: any): LikedVideo => ({
+          id: item.id,
+          title: item.snippet.title,
+          description: item.snippet.description,
+          thumbnail: item.snippet.thumbnails?.default?.url,
+          channelTitle: item.snippet.channelTitle,
+          publishedAt: item.snippet.publishedAt,
+          url: `https://www.youtube.com/watch?v=${item.id}`,
+        })
+      );
     } catch (error) {
       console.error('Failed to fetch liked videos:', error);
       throw error;

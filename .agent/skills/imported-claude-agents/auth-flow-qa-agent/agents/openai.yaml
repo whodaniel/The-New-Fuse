@@ -1,0 +1,8 @@
+agent:
+  name: auth-flow-qa-agent
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the auth-flow-qa-agent workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/auth-flow-qa-agent.md

@@ -15,9 +15,55 @@
           Standalone operator surface for relay-backed browser control and federation channels.
           Works without the Chrome extension for channel orchestration.
         </p>
+        <div class="hero-actions">
+          <button id="token-btn" class="ghost small">Set API token</button>
+          <button id="token-clear-btn" class="ghost small" hidden>Clear token</button>
+        </div>
+      </section>
+
+      <section class="mission-strip" id="mission-strip">
+        <div class="mission-cell" id="mission-goals">
+          <span class="zone-chip personal">PERSONAL</span>
+          <h3>Goals</h3>
+          <div class="mission-body" id="mission-goals-body">Loading…</div>
+          <a class="mission-link" href="#" id="goals-expand">Show all →</a>
+        </div>
+        <div class="mission-cell" id="mission-cron">
+          <span class="zone-chip personal">PERSONAL</span>
+          <h3>Next Cron Fires</h3>
+          <div class="mission-body" id="mission-cron-body">Loading…</div>
+          <a class="mission-link" href="#" id="cron-expand">Show all →</a>
+        </div>
+        <div class="mission-cell" id="mission-terminals">
+          <span class="zone-chip personal">PERSONAL</span>
+          <h3>Terminals</h3>
+          <div class="mission-body" id="mission-terminals-body">Loading…</div>
+          <a class="mission-link" href="#terminal-mirror-card">Full spatial mirror →</a>
+        </div>
+        <div class="mission-cell system" id="mission-services">
+          <span class="zone-chip system">SYSTEM</span>
+          <h3>Services</h3>
+          <div class="mission-body" id="mission-services-body">Loading…</div>
+        </div>
+      </section>
+
+      <section class="drilldown" id="mission-drilldown" hidden>
+        <div class="drilldown-head">
+          <h3 id="drilldown-title"></h3>
+          <button id="drilldown-close" class="ghost small">Close</button>
+        </div>
+        <div id="drilldown-body"></div>
       </section>
 
       <section class="grid">
+        <article class="card wide" id="terminal-mirror-card">
+          <div class="card-head">
+            <h2>Terminal Mirror</h2>
+            <span id="mirror-meta" class="meta"></span>
+          </div>
+          <div id="mirror-canvas" class="mirror-canvas"></div>
+        </article>
+
         <article class="card">
           <h2>Connection</h2>
           <label>Relay URL<input id="relay-url" value="ws://127.0.0.1:3000/ws" /></label>
@@ -49,10 +95,41 @@
           </div>
         </article>
 
+        <article class="card">
+          <h2>Direct Message</h2>
+          <select id="dm-agent-select">
+            <option value="">Select agent…</option>
+          </select>
+          <textarea id="dm-input" rows="3" placeholder="Message a specific agent…"></textarea>
+          <button id="dm-send-btn">Send Direct</button>
+        </article>
+
+        <article class="card">
+          <h2>Task Dispatch</h2>
+          <input id="task-title" placeholder="Task title" />
+          <textarea id="task-description" rows="2" placeholder="Description"></textarea>
+          <input id="task-capabilities" placeholder="Required capabilities (comma-separated)" />
+          <button id="task-dispatch-btn">Dispatch to Fleet</button>
+        </article>
+
         <article class="card wide">
           <h2>Channel Message</h2>
           <textarea id="message-input" rows="4" placeholder="Broadcast to selected channel…"></textarea>
           <button id="send-btn">Send to Channel</button>
+        </article>
+
+        <article class="card">
+          <h2>Bridge Gate</h2>
+          <div class="status-row">
+            <span id="gate-status" class="pill off">Gate —</span>
+            <button id="gate-toggle-btn" class="ghost small">Toggle</button>
+          </div>
+          <ul id="gate-pending" class="list"></ul>
+        </article>
+
+        <article class="card" id="processes-card" hidden>
+          <h2>System Processes <span class="zone-chip system">SYSTEM</span></h2>
+          <ul id="process-list" class="list"></ul>
         </article>
 
         <article class="card wide">
@@ -72,7 +149,11 @@
       </section>
     </main>
 
+    <script src="/panel-common.js"></script>
     <script src="/federation-node-client.js"></script>
     <script src="/browser-control.js"></script>
+    <script src="/mission-strip.js"></script>
+    <script src="/terminal-mirror.js"></script>
+    <script src="/system-processes.js"></script>
   </body>
 </html>

@@ -1,7 +1,6 @@
 // @ts-nocheck
-import { GlassCard, PremiumButton, useToast } from '@/components/ui';
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { GlassCard, PremiumButton, useToast } from '@/components/ui';
 import { agentService } from '@/services/agent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';
@@ -73,8 +72,6 @@ export const NewAgentPage = () => {
   };
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar />
-
       <main className="flex-1 p-4 overflow-auto">
         <div className="max-w-3xl mx-auto">
           <PremiumButton

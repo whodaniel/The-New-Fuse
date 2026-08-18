@@ -7,13 +7,15 @@ import * as path from 'path';
 export interface MCPServerConfig {
   name: string;
   type?: 'local' | 'remote' | 'sse' | 'ws';
-  command: string;
+  command?: string;
   args?: string[];
   env?: Record<string, string>;
   environment?: Record<string, string>;
   cwd?: string;
-  transport?: 'stdio' | 'sse' | 'ws';
+  transport?: 'stdio' | 'streamable-http' | 'sse' | 'ws';
   url?: string;
+  headers?: Record<string, string>;
+  bearerTokenEnv?: string;
   enabled?: boolean;
   oauth?: {
     enabled: boolean;
@@ -112,6 +114,8 @@ export class MCPManagerService {
       cwd: serverConfig.cwd,
       transport: serverConfig.transport,
       url: serverConfig.url,
+      headers: serverConfig.headers,
+      bearerTokenEnv: serverConfig.bearerTokenEnv || serverConfig.tokenEnv || serverConfig.accessTokenEnv,
       enabled: serverConfig.enabled !== false && serverConfig.disabled !== true,
       oauth: serverConfig.oauth,
     };
@@ -173,8 +177,8 @@ export class MCPManagerService {
     for (const [name, config] of this.servers) {
       const entry: Record<string, any> = {
         name: config.name,
-        command: config.command,
       };
+      if (config.command) entry.command = config.command;
       if (config.type) entry.type = config.type;
       if (config.args && config.args.length > 0) entry.args = config.args;
       if (config.env) entry.env = config.env;
@@ -182,6 +186,8 @@ export class MCPManagerService {
       if (config.cwd) entry.cwd = config.cwd;
       if (config.transport) entry.transport = config.transport;
       if (config.url) entry.url = config.url;
+      if (config.headers) entry.headers = config.headers;
+      if (config.bearerTokenEnv) entry.bearerTokenEnv = config.bearerTokenEnv;
       if (config.enabled !== undefined) entry.enabled = config.enabled;
       if (config.oauth) entry.oauth = config.oauth;
       serversObj[name] = entry;
@@ -239,6 +245,19 @@ export class MCPManagerService {
     return enabledOnly ? tools.filter((tool) => tool.enabled) : tools;
   }
 
+  getServerConfig(name: string): MCPServerConfig | undefined {
+    const config = this.servers.get(name);
+    return config ? { ...config, args: config.args ? [...config.args] : undefined } : undefined;
+  }
+
+  getServerConfigs(enabledOnly = false): MCPServerConfig[] {
+    const configs = Array.from(this.servers.values()).map((config) => ({
+      ...config,
+      args: config.args ? [...config.args] : undefined,
+    }));
+    return enabledOnly ? configs.filter((config) => config.enabled !== false) : configs;
+  }
+
   async enableTool(name: string): Promise<{ success: boolean; message: string }> {
     if (!this.servers.has(name)) {
       return { success: false, message: `MCP tool '${name}' not found` };
@@ -292,6 +311,12 @@ export class MCPManagerService {
       );
     }
 
+    if (!config.command) {
+      throw new Error(
+        `MCP server '${name}' is URL-backed and cannot be started as a detached local process. Use 'tnf mcp tools ${name}' or 'tnf mcp call ${name} <tool>' to execute it.`
+      );
+    }
+
     if (config.oauth?.enabled) {
       const cred = this.credentials.get(name);
       if (!cred || (cred.expiresAt && cred.expiresAt <= Date.now())) {
@@ -307,7 +332,7 @@ export class MCPManagerService {
       env: mergedEnv,
       stdio: ['pipe', 'pipe', 'pipe'],
       detached: true,
-    });
+    }) as ReturnType<typeof spawn>;
 
     proc.unref();
 
@@ -316,7 +341,7 @@ export class MCPManagerService {
         this.processes.set(name, { pid: proc.pid!, process: proc });
         resolve({ pid: proc.pid! });
       });
-      proc.on('error', (err) => {
+      proc.on('error', (err: Error) => {
         reject(err);
       });
     });

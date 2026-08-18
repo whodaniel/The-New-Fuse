@@ -1,11 +1,15 @@
 ---
 name: tnf-cursor-harness-protocol
-description: Onboard and operate Cursor CLI agents under TNF harness protocol (Turn Zero, inspect-act-verify, MCP routing). Use when launching Cursor CLI from TNF, running tnf cursor, or assimilating Cursor into the TNF control plane.
+description:
+  Onboard and operate Cursor CLI agents under TNF harness protocol (Turn Zero,
+  inspect-act-verify, MCP routing). Use when launching Cursor CLI from TNF,
+  running tnf cursor, or assimilating Cursor into the TNF control plane.
 ---
 
 # TNF Cursor Harness Protocol
 
-Use this skill when Cursor CLI is routed through TNF (`tnf cursor`, `tnf assimilate run cursor`, or `pnpm run tnf:start:cursor`).
+Use this skill when Cursor CLI is routed through TNF (`tnf cursor`,
+`tnf assimilate run cursor`, or `pnpm run tnf:start:cursor`).
 
 ## Boot Sequence (Inspect → Act → Verify)
 
@@ -33,9 +37,12 @@ node scripts/cursor/tnf-cursor-harness-onboard.cjs --repair
 ## Cursor Operator Policy
 
 - TNF remains the protocol-neutral control plane.
-- Prefer `tnf cursor ...` over raw `cursor ...` so MCP config and harness receipts stay attached.
-- Run Turn Zero before code changes unless the operator already requested implementation.
-- Verify every action; never trust upstream agent output without structured confirmation.
+- Prefer `tnf cursor ...` over raw `cursor ...` so MCP config and harness
+  receipts stay attached.
+- Run Turn Zero before code changes unless the operator already requested
+  implementation.
+- Verify every action; never trust upstream agent output without structured
+  confirmation.
 
 ## Raw Agent Prompt
 
@@ -51,3 +58,6 @@ Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_
 - Run through TNF harness: `tnf assimilate run cursor -- agent --help`
 - Full start pipeline: `pnpm run tnf:start:cursor`
 - Protocol health: `tnf protocol gate`
+- Harness master loop: `tnf harness cycle` (see skill:
+  `tnf-harness-master-loop`)
+- Interactive harness: `/harness inspect`, `/harness cycle`, `/autonomous on`

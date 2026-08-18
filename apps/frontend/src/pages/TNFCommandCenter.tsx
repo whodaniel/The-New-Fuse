@@ -13,6 +13,7 @@ import { CapabilityBadge } from '@/components/ui';
  */
 
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
+import { fetchFirstJson as fetchFirstJsonAuth } from '@/utils/fetchFirstJson';
 import {
   Activity,
   AlertTriangle,
@@ -203,7 +204,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
   const getStatusColor = (status: AgentActivity['status']) => {
     switch (status) {
       case 'idle':
-        return 'bg-transparent0';
+        return 'bg-gray-500';
       case 'thinking':
         return 'bg-purple-500 animate-pulse';
       case 'working':
@@ -226,7 +227,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
         </h3>
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-transparent0'}`}
+            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-gray-500'}`}
           />
           <span className="text-sm text-gray-400">{activeCount} active</span>
         </div>
@@ -322,7 +323,7 @@ const TaskQueuePanel: React.FC<{
       case 'medium':
         return 'border-l-yellow-500 bg-yellow-500/10';
       case 'low':
-        return 'border-l-gray-500 bg-transparent0/10';
+        return 'border-l-gray-500 bg-gray-500/10';
     }
   };
 
@@ -551,30 +552,20 @@ export const TNFCommandCenter: React.FC = () => {
 
   const fetchFirstJson = useCallback(
     async (paths: string[], contextLabel: string): Promise<EndpointResolution> => {
-      for (let idx = 0; idx < paths.length; idx++) {
-        const path = paths[idx];
-        const usedFallback = idx > 0;
-        try {
-          const response = await fetch(path, { headers: { 'Content-Type': 'application/json' } });
-          if (!response.ok) {
-            continue;
-          }
-          const text = await response.text();
-          if (usedFallback) {
-            console.warn(
-              `[TNF Command Center] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${path}`
-            );
-          }
-          return {
-            data: text ? JSON.parse(text) : {},
-            source: path,
-            usedFallback,
-          };
-        } catch (_error) {
-          continue;
-        }
+      const result = await fetchFirstJsonAuth(paths);
+      if (!result) {
+        throw new Error(`All endpoints failed: ${paths.join(', ')}`);
       }
-      throw new Error(`All endpoints failed: ${paths.join(', ')}`);
+      if (result.usedAlternate) {
+        console.warn(
+          `[TNF Command Center] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${result.source}`
+        );
+      }
+      return {
+        data: result.data,
+        source: result.source,
+        usedFallback: result.usedAlternate,
+      };
     },
     []
   );

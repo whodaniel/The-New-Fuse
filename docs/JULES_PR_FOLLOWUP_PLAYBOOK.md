@@ -50,7 +50,7 @@ node scripts/jules-pr-orchestrator.cjs approve-plans --sessions-file .agent/jule
 set -a; source .env.local; set +a
 node scripts/jules-pr-orchestrator.cjs advance \
   --sessions-file .agent/jules-logs/jules-15-session-ids.txt \
-  --prompt "Required follow-up: use Publish Branch now, open PR to whodaniel/fuse main, and reply with exactly BRANCH: <name> and PR_URL: <url>."
+  --prompt "Required follow-up: use Publish Branch now, open PR to whodaniel/The-New-Fuse main, and reply with exactly BRANCH: <name> and PR_URL: <url>."
 ```
 
 ### 5) Watch loop (auto re-trigger + handoff regeneration)

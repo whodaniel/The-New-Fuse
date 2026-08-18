@@ -1,6 +1,7 @@
 /**
  * API Service - HTTP client for backend communication
  */
+import { probeRestApiUrl } from '../config/endpointDiscovery';
 import type {
   Agent,
   AnalyticsExportPayload,
@@ -79,6 +80,11 @@ class ApiService {
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          const hint = retryAfter ? ` (retry after ${retryAfter}s)` : '';
+          throw new Error(`HTTP 429: Too Many Requests${hint}`);
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -307,16 +313,56 @@ class ApiService {
     });
   }
 
-  // Health check
+  // Local runtime (Mission Control) endpoints
+  async getLocalRuntimeSummary(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/summary');
+  }
+
+  async getLocalRuntimeTerminalMirror(): Promise<ApiResponse<unknown>> {
+    return this.request<unknown>('/api/local-runtime/terminal-mirror');
+  }
+
+  // Health check — REST capability, not gateway-only /health.
   async healthCheck(): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl.replace(/\/$/, '')}/api/agents`, {
-        signal: AbortSignal.timeout(2500),
-      });
-      return response.ok;
-    } catch {
-      return false;
+    return probeRestApiUrl(this.baseUrl, 2500);
+  }
+
+  /** Dynamic LLM catalog for Create Agent (NVIDIA-first verified + optional live). */
+  async getAvailableModels(options?: { provider?: string; refresh?: boolean }): Promise<
+    ApiResponse<{
+      defaultProvider: string;
+      providers: Array<{
+        id: string;
+        name: string;
+        configured: boolean;
+        source: string;
+        priority: number;
+        models: Array<{ id: string; name: string; provider: string }>;
+      }>;
+    }>
+  > {
+    const params = new URLSearchParams();
+    if (options?.provider) params.set('provider', options.provider);
+    if (options?.refresh) params.set('refresh', '1');
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    const bases = [`/api/llm/models${qs}`, `/llm/models${qs}`];
+    let lastError = 'Models endpoint unavailable';
+    for (const path of bases) {
+      const result = await this.request<{
+        defaultProvider: string;
+        providers: Array<{
+          id: string;
+          name: string;
+          configured: boolean;
+          source: string;
+          priority: number;
+          models: Array<{ id: string; name: string; provider: string }>;
+        }>;
+      }>(path);
+      if (result.success) return result;
+      lastError = result.error || lastError;
     }
+    return { success: false, error: lastError };
   }
 }
 

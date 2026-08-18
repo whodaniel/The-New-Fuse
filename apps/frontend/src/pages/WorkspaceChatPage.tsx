@@ -7,6 +7,7 @@ import {
   PremiumButton,
   PremiumInput,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Ban,
@@ -190,14 +191,6 @@ const WorkspaceChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-  };
-
   const getCurrentUserId = () => {
     try {
       const raw = localStorage.getItem('user');
@@ -244,8 +237,7 @@ const WorkspaceChat: React.FC = () => {
   }, [messages]);
 
   const fetchWorkspaceData = async () => {
-    const wsResponse = await fetch('/api/workspaces', {
-      headers: getAuthHeaders(),
+    const wsResponse = await authFetch('/api/workspaces', {
       credentials: 'include',
     });
     if (!wsResponse.ok) {
@@ -260,11 +252,12 @@ const WorkspaceChat: React.FC = () => {
     }
 
     const [membersRes, agentsRes] = await Promise.all([
-      fetch(`/api/workspaces/${current.id}/members`, {
-        headers: getAuthHeaders(),
+      authFetch(`/api/workspaces/${current.id}/members`, {
         credentials: 'include',
       }),
-      fetch('/api/agents', { headers: getAuthHeaders(), credentials: 'include' }),
+      authFetch('/api/agents', {
+        credentials: 'include',
+      }),
     ]);
 
     const membersRaw = membersRes.ok ? await membersRes.json() : [];
@@ -296,8 +289,7 @@ const WorkspaceChat: React.FC = () => {
   };
 
   const fetchMessages = async () => {
-    const roomsResponse = await fetch('/api/chat/rooms', {
-      headers: getAuthHeaders(),
+    const roomsResponse = await authFetch('/api/chat/rooms', {
       credentials: 'include',
     });
     if (!roomsResponse.ok) {
@@ -313,10 +305,9 @@ const WorkspaceChat: React.FC = () => {
     }
 
     setRoomId(String(room.id));
-    const messagesResponse = await fetch(
+    const messagesResponse = await authFetch(
       `/api/chat/rooms/${encodeURIComponent(room.id)}/messages?limit=100&offset=0`,
       {
-        headers: getAuthHeaders(),
         credentials: 'include',
       }
     );
@@ -352,10 +343,8 @@ const WorkspaceChat: React.FC = () => {
         throw new Error('No chat room is available for this workspace.');
       }
 
-      const response = await fetch(`/api/chat/rooms/${encodeURIComponent(roomId)}/messages`, {
+      const response = await authFetch(`/api/chat/rooms/${encodeURIComponent(roomId)}/messages`, {
         method: 'POST',
-        headers: getAuthHeaders(),
-        credentials: 'include',
         body: JSON.stringify({
           content: newMessage,
           type: 'text',
@@ -486,7 +475,7 @@ const WorkspaceChat: React.FC = () => {
                           ? 'bg-emerald-500'
                           : member.status === 'away'
                             ? 'bg-amber-500'
-                            : 'bg-transparent0'
+                            : 'bg-gray-500'
                       }`}
                     />
                   </div>
@@ -523,7 +512,7 @@ const WorkspaceChat: React.FC = () => {
                     </div>
                     <div
                       className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-transparent0'
+                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
                       }`}
                     />
                   </div>

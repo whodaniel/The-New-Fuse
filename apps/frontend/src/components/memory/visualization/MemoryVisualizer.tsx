@@ -221,7 +221,10 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
   );
 };
 
-const VisualizerAction: React.FC<{ icon: React.ReactNode; ariaLabel: string }> = ({ icon, ariaLabel }) => (
+const VisualizerAction: React.FC<{ icon: React.ReactNode; ariaLabel: string }> = ({
+  icon,
+  ariaLabel,
+}) => (
   <button
     className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 hover:text-white hover:bg-transparent/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     aria-label={ariaLabel}

@@ -9,6 +9,8 @@ import { RouteProvider } from './components/route-context';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
+import { LiveAIAssist } from './components/LiveAIAssist';
+import './components/LiveAIAssist.css';
 import ComprehensiveRouter from './ComprehensiveRouter';
 import { AuthProvider } from './providers/AuthProvider';
 import { OperatorSynergyProvider } from './providers/OperatorSynergyProvider';
@@ -23,6 +25,7 @@ const AppContent: React.FC = () => {
     <>
       <ComprehensiveRouter />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
+      <LiveAIAssist />
     </>
   );
 };
@@ -30,7 +33,7 @@ const AppContent: React.FC = () => {
 export function App() {
   // Performance monitoring in development
   React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('🚀 Performance-optimized The New Fuse App starting...');
       console.log('📊 Bundle analysis: Run "pnpm build:analyze" to view detailed bundle analysis');
       console.log('🎯 Performance monitor: Press Ctrl+Shift+P to toggle performance monitor');

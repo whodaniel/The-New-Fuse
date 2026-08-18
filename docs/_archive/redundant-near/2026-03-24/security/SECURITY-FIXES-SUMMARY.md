@@ -172,7 +172,7 @@ brew install bfg  # macOS
 # or download from https://rtyley.github.io/bfg-repo-cleaner/
 
 # Create a fresh clone
-git clone --mirror https://github.com/whodaniel/fuse.git
+git clone --mirror https://github.com/whodaniel/The-New-Fuse.git
 
 # Remove sensitive files from entire history
 cd fuse.git
@@ -197,7 +197,7 @@ git gc --prune=now --aggressive
 git push --force
 
 # All developers must fresh clone:
-# git clone https://github.com/whodaniel/fuse.git
+# git clone https://github.com/whodaniel/The-New-Fuse.git
 ```
 
 ---

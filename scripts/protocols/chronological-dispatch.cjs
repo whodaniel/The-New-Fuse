@@ -6,9 +6,49 @@ const { createClient } = require('redis');
 
 const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
 
+const DEFAULT_REDIS_URL = 'redis://127.0.0.1:6379';
 const DEFAULT_QUEUE = 'tnf:master:tasks:planning';
 const COMPAT_QUEUE = 'tnf:master:tasks:pending';
+const REALTIME_QUEUE = 'tnf:master:tasks:realtime';
 const LOG_QUEUE = 'tnf:master:logs';
+
+/** Queues that are first-class homes — never dual-write into pending. */
+const NO_COMPAT_DUAL_WRITE = new Set([
+  REALTIME_QUEUE,
+  COMPAT_QUEUE,
+  'tnf:master:tasks:analytics',
+  'tnf:master:tasks:maintenance',
+  'tnf:master:tasks:context',
+  'tnf:master:tasks:quality',
+  'tnf:master:tasks:planning',
+]);
+
+/** Lanes the broker consumes via realtime (keep in sync with task-scheduler.service.ts). */
+const REALTIME_LANES = new Set([
+  'realtime_broker_routing',
+  'relay_federation',
+  'redis_sync',
+  'tauri_sync',
+  'directive',
+  'orchestration',
+  'reliability',
+  'quality',
+  'context',
+  'self_improvement',
+  'analytics',
+  'maintenance',
+]);
+
+function resolveTargetQueue(profile, queueItem) {
+  const configured = profile.targetQueue || DEFAULT_QUEUE;
+  const lane = String(queueItem?.itinerary?.lane || '').toLowerCase();
+  // Broker only BRPOPs realtime. Do not park realtime-eligible work on planning
+  // (or dual-write it into pending) or it becomes a write-only black hole.
+  if (REALTIME_LANES.has(lane)) {
+    return REALTIME_QUEUE;
+  }
+  return configured;
+}
 
 function parseArgs(argv) {
   const options = {
@@ -71,9 +111,30 @@ function readJson(filePath, fallback) {
   }
 }
 
+function buildLocalGateDecisions(createdAt) {
+  const gates = [
+    'TENANT_SCOPE_GATE',
+    'TRACE_CONTINUITY_GATE',
+    'TERMINAL_BINDING_GATE',
+    'HIGH_RISK_RUNTIME_GATE',
+    'CHANNEL_MEMBERSHIP_GATE',
+  ];
+  return gates.map((gate) => ({
+    gate,
+    decision: 'allow',
+    reason: 'local chronological dispatch under Local Subdirector authority',
+    at: createdAt,
+  }));
+}
+
 function buildQueueItem(processId, profile) {
   const dispatchId = `${processId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const createdAt = new Date().toISOString();
+  const localTenantId = process.env.TNF_LOCAL_TENANT_ID || 'local';
+  const localSubdirector =
+    process.env.TNF_LOCAL_SUBDIRECTOR_AGENT_ID ||
+    process.env.TNF_AGENT_ID ||
+    'tnf-cli-agent';
   return {
     id: dispatchId,
     title: profile.title || processId,
@@ -85,6 +146,17 @@ function buildQueueItem(processId, profile) {
     processId,
     kind: profile.kind || 'agent-turn',
     createdAt,
+    // Local tenant scope so federation TENANT_SCOPE / cumulative checks pass for
+    // machine-local loops that report to Local Subdirector (tnf-cli-agent).
+    scope: {
+      tenantId: localTenantId,
+      authority: 'local_subdirector',
+    },
+    cumulativeId: {
+      scope: { tenant_id: localTenantId },
+      lineage: { processId, clockSource: 'master-clock' },
+    },
+    gateDecisions: buildLocalGateDecisions(createdAt),
     itinerary: profile.itinerary || {
       lane: 'directive',
       horizon: 'short_term',
@@ -96,6 +168,9 @@ function buildQueueItem(processId, profile) {
       scheduledProcessId: processId,
       dispatchSource: 'master-clock',
       importedFromLegacyCron: true,
+      localAuthority: 'local_subdirector',
+      reportTo: localSubdirector,
+      tenantId: localTenantId,
     },
   };
 }
@@ -104,8 +179,14 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
   const redis = createClient({ url: redisUrl });
   await redis.connect();
   try {
-    await redis.lPush(targetQueue, JSON.stringify(queueItem));
-    await redis.lPush(COMPAT_QUEUE, JSON.stringify(queueItem));
+    const payload = JSON.stringify(queueItem);
+    await redis.lPush(targetQueue, payload);
+    // Compat dual-write only when the target is not already a first-class queue.
+    // Dual-writing realtime/specialty work into pending recreated black holes.
+    const dualWrite = !NO_COMPAT_DUAL_WRITE.has(targetQueue);
+    if (dualWrite) {
+      await redis.lPush(COMPAT_QUEUE, payload);
+    }
     await redis.lPush(
       LOG_QUEUE,
       JSON.stringify({
@@ -117,6 +198,7 @@ async function dispatchToRedis(redisUrl, queueItem, targetQueue) {
           dispatchId: queueItem.id,
           targetQueue,
           priority: queueItem.priority,
+          compatDualWrite: dualWrite,
         },
       })
     );
@@ -166,38 +248,58 @@ async function main() {
   }
 
   const queueItem = buildQueueItem(options.processId, profile);
-  const targetQueue = profile.targetQueue || DEFAULT_QUEUE;
-  const redisUrl = process.env.REDIS_URL || '';
+  const targetQueue = resolveTargetQueue(profile, queueItem);
+  const explicitUrl = process.env.REDIS_URL || '';
+  // An unset REDIS_URL in the cron environment routed every dispatch to the
+  // local-artifact fallback for months while Redis was running normally on the
+  // conventional port. Absence of the variable is not evidence of absence of
+  // Redis, so probe the default before declaring the queue unreachable.
+  const attempts = explicitUrl
+    ? [{ url: explicitUrl, source: 'REDIS_URL' }]
+    : [{ url: DEFAULT_REDIS_URL, source: 'default-local' }];
 
-  if (redisUrl) {
-    await dispatchToRedis(redisUrl, queueItem, targetQueue);
-    console.log(
-      JSON.stringify(
-        {
-          ok: true,
-          dispatched: true,
-          processId: options.processId,
-          dispatchId: queueItem.id,
-          targetQueue,
-        },
-        null,
-        2
-      )
-    );
-    return;
+  let lastError = null;
+  for (const attempt of attempts) {
+    try {
+      await dispatchToRedis(attempt.url, queueItem, targetQueue);
+      console.log(
+        JSON.stringify(
+          {
+            ok: true,
+            dispatched: true,
+            processId: options.processId,
+            dispatchId: queueItem.id,
+            targetQueue,
+            resolvedFrom: attempt.source,
+          },
+          null,
+          2
+        )
+      );
+      return;
+    } catch (error) {
+      lastError = error;
+    }
   }
 
   if (!options.allowLocalFallback) {
-    throw new Error('REDIS_URL is required for TNF-native chronological dispatch');
+    throw new Error(
+      `Chronological dispatch could not reach Redis (${lastError?.message || 'unknown error'})`
+    );
   }
 
   const artifactPath = writeFallbackArtifact(repoRoot, queueItem, targetQueue);
+  // Persisting the item is not the same as delivering it. The caller
+  // (run-chronological-process.cjs) records only our exit code, so reporting
+  // ok:true / exit 0 here is precisely what let undelivered items pile up
+  // unnoticed while every cycle logged healthy.
   console.log(
     JSON.stringify(
       {
-        ok: true,
+        ok: false,
         dispatched: false,
         fallback: 'local-artifact',
+        reason: `redis unreachable: ${lastError?.message || 'no REDIS_URL and default probe failed'}`,
         processId: options.processId,
         dispatchId: queueItem.id,
         targetQueue,
@@ -207,6 +309,7 @@ async function main() {
       2
     )
   );
+  process.exitCode = 1;
 }
 
 main().catch((error) => {

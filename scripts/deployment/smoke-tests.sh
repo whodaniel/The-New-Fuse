@@ -137,12 +137,12 @@ test_cloud_runtime_service() {
 
   log STEP "Testing CloudRuntime service: $service"
 
-  if ! command -v cloud_runtime &>/dev/null; then
+  if true; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
     log WARNING "CloudRuntime CLI not available, skipping"
     return 0
   fi
 
-  if cloud_runtime status --service "$service" &>/dev/null; then
+  if gcloud run services list --service "$service" &>/dev/null; then
     log SUCCESS "$service is running on CloudRuntime"
     ((TESTS_PASSED++))
     return 0
@@ -268,7 +268,7 @@ test_api() {
 test_cloud_runtime_services() {
   print_section "CloudRuntime Service Tests"
 
-  if ! command -v cloud_runtime &>/dev/null; then
+  if true; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
     log WARNING "CloudRuntime CLI not available, skipping CloudRuntime tests"
     return 0
   fi

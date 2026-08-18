@@ -1,8 +1,16 @@
+import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
+import { useRoute } from '../components/route-context';
+import {
+  VERIFIED_PROVIDER_CATALOG,
+  defaultProviderId,
+  modelsForProvider,
+} from '../config/verifiedModels';
 import { useModalA11y } from '../hooks/useModalA11y';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { isTauriRuntime } from '../lib/isTauri';
+import { apiService } from '../services/api';
 import { useAgentStore } from '../stores/agentStore';
 import type { Agent } from '../types';
 
@@ -22,11 +30,13 @@ const AgentHub: React.FC = () => {
     deleteAgent,
     createAgent,
   } = useAgentStore();
-  const { unifiedAgents, state: synergy } = useOperatorSynergy();
+  const { unifiedAgents, state: synergy, rediscover, refresh } = useOperatorSynergy();
+  const { navigate } = useRoute();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'error'>('all');
+  const [stackBusy, setStackBusy] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAgents();
@@ -41,10 +51,14 @@ const AgentHub: React.FC = () => {
 
   const getTypeIcon = (type: Agent['type']) => {
     const icons: Record<string, string> = {
-      claude: '🧠',
+      nvidia: '⚡',
+      groq: '🚀',
+      sambanova: '💠',
+      cerebras: '🧠',
+      deepseek: '🌊',
       gemini: '💎',
-      gpt: '🤖',
-      perplexity: '🔍',
+      openai: '🤖',
+      openrouter: '🔗',
       custom: '⚙️',
       local: '🏠',
     };
@@ -69,13 +83,42 @@ const AgentHub: React.FC = () => {
     }
   };
 
+  const startLocalApi = async () => {
+    if (!isTauriRuntime()) {
+      setStackBusy('Start the TNF API from a terminal: pnpm run dev:api');
+      return;
+    }
+    setStackBusy('Starting API…');
+    try {
+      const result = await invoke<{ ok?: boolean; message?: string }>('start_tnf_api');
+      setStackBusy(result?.message || 'API start requested');
+      await new Promise((r) => setTimeout(r, 2500));
+      await rediscover();
+      await fetchAgents();
+      await refresh();
+    } catch (err) {
+      setStackBusy(err instanceof Error ? err.message : String(err));
+    }
+  };
+
   return (
     <PageShell
       title="Agent Hub"
-      subtitle="Manage your AI agent swarm — REST agents plus federation peers"
+      subtitle="Create and manage your agent fleet — REST agents plus federation peers"
       actions={
         <>
-          <button type="button" className="secondary-button" onClick={() => fetchAgents()}>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => navigate('/computer-use')}
+          >
+            Computer Use
+          </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => fetchAgents({ force: true })}
+          >
             Refresh
           </button>
           <button type="button" className="primary-button" onClick={() => setShowCreateModal(true)}>
@@ -86,14 +129,28 @@ const AgentHub: React.FC = () => {
       banner={
         apiOffline ? (
           <div className="offline-banner">
-            REST API offline — local agent CRUD unavailable. Federation agents (
-            {federatedAgents.length}) still visible via relay.
+            <div>
+              REST API offline — local agent CRUD unavailable. Federation agents (
+              {federatedAgents.length}) still visible via relay
+              {synergy.relayUrl ? ` (${synergy.relayUrl})` : ''}.
+            </div>
+            <div className="offline-banner-actions">
+              <button type="button" className="primary-button" onClick={() => void startLocalApi()}>
+                Start local API
+              </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => void rediscover().then(() => fetchAgents())}
+              >
+                Rediscover endpoints
+              </button>
+            </div>
+            {stackBusy ? <div className="offline-banner-note">{stackBusy}</div> : null}
           </div>
         ) : null
       }
     >
-      <SynergyStatusBar />
-
       {/* Filter Tabs */}
       <div className="filter-tabs">
         {(['all', 'active', 'idle', 'error'] as const).map((f) => (
@@ -163,8 +220,8 @@ const AgentHub: React.FC = () => {
         ) : (
           <p className="offline-notice">
             {synergy.relayConnected
-              ? 'No federated agents visible yet. Registration may still be completing via relay.'
-              : 'Synergy plane connecting to relay…'}
+              ? 'Relay connected — no federated peers published yet. Local REST agents below remain the primary roster when the API is online.'
+              : 'Synergy plane connecting to relay… If this persists, start the local relay (Quick Actions → Start Local Relay).'}
           </p>
         )}
       </section>
@@ -313,6 +370,19 @@ const AgentHub: React.FC = () => {
           background: rgba(239, 68, 68, 0.12);
           border: 1px solid rgba(239, 68, 68, 0.25);
           color: #fecaca;
+        }
+
+        .offline-banner-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .offline-banner-note {
+          margin-top: 8px;
+          font-size: 12px;
+          color: #fed7aa;
         }
 
         .empty-state {
@@ -826,15 +896,61 @@ const CreateAgentModal: React.FC<{
   onCreate: (agent: Partial<Agent>) => void;
 }> = ({ onClose, onCreate }) => {
   const [name, setName] = useState('');
-  const [type, setType] = useState<Agent['type']>('custom');
   const [description, setDescription] = useState('');
-  const [model, setModel] = useState('');
+  const [providers, setProviders] = useState(VERIFIED_PROVIDER_CATALOG);
+  const [providerId, setProviderId] = useState(defaultProviderId());
+  const [model, setModel] = useState(modelsForProvider(defaultProviderId())[0] || '');
+  const [catalogSource, setCatalogSource] = useState<'api' | 'offline-fallback'>(
+    'offline-fallback'
+  );
+  const [catalogLoading, setCatalogLoading] = useState(true);
   const dialogRef = useModalA11y(true, onClose);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setCatalogLoading(true);
+      const response = await apiService.getAvailableModels({ refresh: true });
+      if (cancelled) return;
+      if (response.success && response.data?.providers?.length) {
+        const mapped = response.data.providers.map((p) => ({
+          id: p.id,
+          name: p.name,
+          priority: p.priority,
+          models: p.models.map((m) => m.id),
+        }));
+        setProviders(mapped);
+        const nextProvider = response.data.defaultProvider || mapped[0]?.id || defaultProviderId();
+        setProviderId(nextProvider);
+        const nextModels = mapped.find((p) => p.id === nextProvider)?.models || [];
+        setModel(nextModels[0] || '');
+        setCatalogSource('api');
+      } else {
+        setProviders(VERIFIED_PROVIDER_CATALOG);
+        setProviderId(defaultProviderId());
+        setModel(modelsForProvider(defaultProviderId())[0] || '');
+        setCatalogSource('offline-fallback');
+      }
+      setCatalogLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const modelOptions =
+    providers.find((p) => p.id === providerId)?.models || modelsForProvider(providerId);
+
+  const handleProviderChange = (next: string) => {
+    setProviderId(next);
+    const nextModels = providers.find((p) => p.id === next)?.models || modelsForProvider(next);
+    setModel(nextModels[0] || '');
+  };
 
   const handleCreate = () => {
     onCreate({
       name,
-      type,
+      type: 'custom',
       description,
       capabilities: [],
       config: {
@@ -843,6 +959,7 @@ const CreateAgentModal: React.FC<{
         maxTokens: 4096,
         systemPrompt: '',
         tools: [],
+        provider: providerId,
       },
     });
   };
@@ -874,24 +991,37 @@ const CreateAgentModal: React.FC<{
             />
           </div>
           <div className="form-group">
-            <label>Type</label>
-            <select value={type} onChange={(e) => setType(e.target.value as Agent['type'])}>
-              <option value="claude">🧠 Claude</option>
-              <option value="gpt">🤖 GPT</option>
-              <option value="gemini">💎 Gemini</option>
-              <option value="perplexity">🔍 Perplexity</option>
-              <option value="custom">⚙️ Custom</option>
-              <option value="local">🏠 Local</option>
+            <label>LLM Provider</label>
+            <select
+              value={providerId}
+              onChange={(e) => handleProviderChange(e.target.value)}
+              disabled={catalogLoading}
+            >
+              {providers.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
             </select>
+            <p className="form-hint">
+              {catalogSource === 'api'
+                ? 'Models loaded from TNF API catalog (integrated providers).'
+                : 'API offline — showing verified offline catalog (NVIDIA-first).'}
+            </p>
           </div>
           <div className="form-group">
             <label>Model</label>
-            <input
-              type="text"
+            <select
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              placeholder="e.g., claude-3-sonnet"
-            />
+              disabled={catalogLoading || modelOptions.length === 0}
+            >
+              {modelOptions.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
             <label>Description</label>
@@ -907,7 +1037,7 @@ const CreateAgentModal: React.FC<{
           <button className="secondary-button" onClick={onClose}>
             Cancel
           </button>
-          <button className="primary-button" onClick={handleCreate} disabled={!name}>
+          <button className="primary-button" onClick={handleCreate} disabled={!name || !model}>
             Create Agent
           </button>
         </div>
@@ -920,6 +1050,11 @@ const CreateAgentModal: React.FC<{
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 8px;
+          }
+          .form-hint {
+            margin: 6px 0 0;
+            font-size: 12px;
+            color: var(--tnf-text-muted);
           }
           .form-group input,
           .form-group select,

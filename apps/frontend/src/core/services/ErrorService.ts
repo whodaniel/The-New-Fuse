@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import { EventBus } from '../../domain/core/eventBus';
 import { StateManager } from '../../domain/core/stateManager';
 import { LoggingService } from '../../services/logging';
@@ -52,7 +53,7 @@ export class ErrorService {
   }
   async reportError(error) {
     try {
-      await fetch('/api/errors/report', {
+      await authFetch('/api/errors/report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

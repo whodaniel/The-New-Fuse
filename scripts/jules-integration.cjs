@@ -18,7 +18,7 @@ const path = require('path');
 // ═══════════════════════════════════════════════════════════════════════════
 
 const CONFIG = {
-  defaultRepo: 'whodaniel/fuse',
+  defaultRepo: 'whodaniel/The-New-Fuse',
   commandTimeout: 120000, // 2 minutes
   maxBuffer: 50 * 1024 * 1024, // 50MB
   retryDelay: 2000, // 2 seconds between retries

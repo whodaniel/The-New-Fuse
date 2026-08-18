@@ -22,6 +22,59 @@ const TNF_ROOT = process.env.TNF_ROOT_DIR
   ? path.resolve(process.env.TNF_ROOT_DIR)
   : path.resolve(__dirname, '..');
 
+// Sync function to unify and distribute MCP configurations
+function syncConfigs() {
+  console.log(`${colors.cyan}Syncing MCP configurations...${colors.reset}`);
+  const baseConfigPath = path.join(TNF_ROOT, 'data/mcp_config.json');
+  let baseConfig = readConfigFile(baseConfigPath) || { mcpServers: {} };
+
+  // Deep clone to avoid modifying original read if we want to save later, though readConfigFile parses anew.
+  const mergedConfig = JSON.parse(JSON.stringify(baseConfig));
+
+  const serversDir = path.join(TNF_ROOT, 'data/mcp.servers');
+  if (fs.existsSync(serversDir)) {
+    const templates = fs.readdirSync(serversDir).filter(f => f.endsWith('.template.json'));
+    for (const templateFile of templates) {
+      const templatePath = path.join(serversDir, templateFile);
+      const template = readConfigFile(templatePath);
+      if (template && template.activation && Array.isArray(template.activation.requiredEnv)) {
+        const meetsReqs = template.activation.requiredEnv.every(envVar => process.env[envVar] !== undefined && process.env[envVar] !== '');
+        if (meetsReqs && template.mcpServers) {
+          console.log(`${colors.green}Merging template: ${templateFile}${colors.reset}`);
+          for (const [serverName, serverConfig] of Object.entries(template.mcpServers)) {
+            // Replace ${ENV_VAR} in env
+            if (serverConfig.env) {
+               for (const [key, val] of Object.entries(serverConfig.env)) {
+                 if (typeof val === 'string' && val.startsWith('${') && val.endsWith('}')) {
+                   const envName = val.slice(2, -1);
+                   serverConfig.env[key] = process.env[envName] || '';
+                 }
+               }
+            }
+            mergedConfig.mcpServers[serverName] = serverConfig;
+          }
+        } else {
+          console.log(`${colors.yellow}Skipping template (missing env): ${templateFile}${colors.reset}`);
+        }
+      }
+    }
+  }
+
+  // Target endpoints
+  const targets = [
+    path.join(os.homedir(), '.cursor/mcp.json'),
+    path.join(os.homedir(), '.gemini/config/mcp_config.json'),
+    path.join(os.homedir(), '.kilocode/mcp.json'),
+    path.join(os.homedir(), 'Library/Application Support/Claude/claude_desktop_config.json')
+  ];
+
+  for (const target of targets) {
+     writeConfigFile(target, mergedConfig);
+  }
+  
+  console.log(`${colors.green}Sync complete.${colors.reset}`);
+}
+
 // Default paths for common MCP configuration files
 const DEFAULT_CONFIG_PATHS = {
   claude: path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'),
@@ -377,10 +430,14 @@ async function main() {
         process.exit(1);
       }
       break;
+
+    case 'sync':
+      syncConfigs();
+      break;
       
     default:
       console.error(`${colors.red}Unknown command: ${command}${colors.reset}`);
-      console.log(`Available commands: add, list, remove`);
+      console.log(`Available commands: add, list, remove, sync`);
       process.exit(1);
   }
   

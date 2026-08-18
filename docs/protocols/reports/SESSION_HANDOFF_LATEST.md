@@ -1,223 +1,50 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-06-21T17:19:05.990Z`  
-Handoff ID: `72de22f9-f7d7-4496-b07c-e1dd86770854`
+Created At: `2026-08-17T04:26:34.347Z`  
+Handoff ID: `61f04423-b881-43fc-bfe3-a4ca73ec6099`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
-- Branch: `tnf-cli-harness-implementation`
-- Head SHA: `cf3b1dcdc31a33e2ae4925c52a7a1864fa6b8517`
+- Branch: `main`
+- Head SHA: `b1eb732489bc4055ce3d7a33ed9be226da541ac8`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- API deploy live (api-server-00063-wbc): /health and /api/v1/health return
-  RFC3339 timestamps. Frontend legal routes deployed (SPA-Landing).
-  fuse-open-runtime public. Syncing install script + Dockerfile fixes to
-  open-runtime.
+- Add tnf google-ai view/resume over the Antigravity bridge; drop incomplete
+  cloud-sync stub.
 
 ## Changed Paths
 
-- .agent/runtime-logs/qa-swarm-service/heartbeat.json
-- .agent/runtime-logs/supercycle-history.jsonl
-- .agent/test-reports/\_rolling-summary.json
-- .env.openai
-- .env.telegram
-- TELEGRAM_IMPLEMENTATION_FINAL.md
-- TELEGRAM_IMPLEMENTATION_SUMMARY.md
-- apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts
-- apps/frontend/node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json
-- data/ingestion-runs/ai5-new-may-2026-action-queue.json
-- data/ingestion-runs/ai5-phase7-batch-002.json
-- data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json
-- data/ingestion-runs/ai5-phase7-evidence/act-1379d655a387b57e.json
-- data/ingestion-runs/ai5-phase7-evidence/act-2f6875662149bec5.json
-- data/ingestion-runs/ai5-phase7-evidence/act-3efcb13f8a2c4d5e.json
-- data/ingestion-runs/ai5-phase7-evidence/act-4157c1eb323c81a6.json
-- data/ingestion-runs/ai5-phase7-evidence/act-4ac367ca8d1f5e2b.json
-- data/ingestion-runs/ai5-phase7-evidence/act-60ae611151291b25.json
-- data/ingestion-runs/ai5-phase7-evidence/act-835de9bc3d8c04b3.json
-- data/ingestion-runs/ai5-phase7-evidence/act-ba65817fba8250a3.json
-- data/ingestion-runs/ai5-phase7-evidence/act-be553bc6c292ac9f.json
-- data/ingestion-runs/ai5-phase7-evidence/act-c249bb82e9ad3dfa.json
-- data/ingestion-runs/ai5-phase7-evidence/act-c6ef0132a57824fd.json
-- data/ingestion-runs/ai5-phase7-evidence/act-c986b240a1097b6e.json
-- data/ingestion-runs/ai5-phase7-evidence/act-d138a0b08d99d321.json
-- data/ingestion-runs/ai5-phase7-evidence/act-e1bad3de31012052.json
-- data/ingestion-runs/ai5-phase7-evidence/act-f8e0537dc402cd7d.json
-- data/ingestion-runs/ai5-phase7-evidence/act-fa38d4465b2d5e57.json
-- data/ingestion-runs/ai5-phase7-evidence/act-fc7429a2b8c4d5e6.json
-- data/ingestion-runs/ai5-phase7-evidence/act-fc7429a2e46c702e.json
-- data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json
-- data/llm-provider-status.json
-- data/mcp.clients/claude.mcp.json
-- data/mcp.clients/codex.mcp.json
-- data/mcp.clients/gemini.mcp.json
-- data/mcp.clients/hermes.mcp.json
-- data/mcp.clients/openclaw.mcp.json
-- data/mcp.clients/pi.mcp.json
-- data/protocols/CHANGE_OWNERSHIP.jsonl
-- data/protocols/cron-jobs.control-plane-state.json
-- data/telegram/registry/agent-192af88b.json
-- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.json
-- docs/protocols/reports/TNF_PHASE7_DIRECTIVE_CONVERSION_LATEST.md
-- packages/agent-evaluation-framework/package.json
-- packages/agent-evaluation-framework/src/business-rules-evaluator.ts
-- packages/agent-evaluation-framework/src/deterministic-code-evaluator.ts
-- packages/agent-evaluation-framework/src/index.ts
-- packages/agent-evaluation-framework/src/lm-judge.ts
-- packages/agent-evaluation-framework/src/multi-step-toolcall-evaluator.ts
-- packages/agent-evaluation-framework/src/types.ts
-- packages/agent-evaluation-framework/tsconfig.json
-- packages/agentic-rag-search/package.json
-- packages/agentic-rag-search/src/agent-rag-decider.ts
-- packages/agentic-rag-search/src/index.ts
-- packages/agentic-rag-search/src/search-tool.ts
-- packages/agentic-rag-search/tsconfig.json
-- packages/ai-security-bridge/package.json
-- packages/ai-security-bridge/src/index.ts
-- packages/ai-security-bridge/src/versa-labs-adapter.ts
-- packages/ai-security-bridge/tsconfig.json
-- packages/governance-gate/package.json
-- packages/governance-gate/src/audit-trail-gate.ts
-- packages/governance-gate/src/governance-gate.ts
-- packages/governance-gate/src/index.ts
-- packages/governance-gate/src/pii-detection-gate.ts
-- packages/governance-gate/src/security-review-gate.ts
-- packages/governance-gate/src/types.ts
-- packages/governance-gate/tsconfig.json
-- packages/logger/package.json
-- packages/logger/src/index.ts
-- packages/logger/tsconfig.json
-- packages/mcp-tar-bridge/package.json
-- packages/mcp-tar-bridge/src/index.ts
-- packages/mcp-tar-bridge/tsconfig.json
-- packages/messaging-bridge/package.json
-- packages/messaging-bridge/src/hermes-adapter.ts
-- packages/messaging-bridge/src/index.ts
-- packages/messaging-bridge/tsconfig.json
-- packages/relay-core/dist/.tsbuildinfo
-- packages/relay-core/dist/agent-registry-bridge.d.ts.map
-- packages/relay-core/dist/agent-registry-bridge.js
-- packages/relay-core/dist/agent-registry-bridge.js.map
-- packages/relay-core/dist/broker-agent.js
-- packages/relay-core/dist/broker-agent.js.map
-- packages/relay-core/dist/services/agent-registry.service.d.ts
-- packages/relay-core/dist/services/agent-registry.service.d.ts.map
-- packages/relay-core/dist/services/agent-registry.service.js
-- packages/relay-core/dist/services/agent-registry.service.js.map
-- packages/relay-core/dist/standalone-relay.d.ts
-- packages/relay-core/dist/standalone-relay.d.ts.map
-- packages/relay-core/dist/standalone-relay.js
-- packages/relay-core/dist/standalone-relay.js.map
-- packages/relay-core/relay.log
-- packages/telegram-bot-service/package.json
-- packages/telegram-bot-service/src/bot.ts
-- packages/telegram-bot-service/src/config.ts
-- packages/telegram-bot-service/src/index.ts
-- packages/telegram-bot-service/tsconfig.json
-- packages/tnf-cli/dist/cli.d.ts
-- packages/tnf-cli/dist/cli.d.ts.map
-- packages/tnf-cli/dist/cli.js
-- packages/tnf-cli/dist/cli.js.map
-- packages/tnf-cli/dist/commands/assimilate.d.ts.map
-- packages/tnf-cli/dist/commands/assimilate.js
-- packages/tnf-cli/dist/commands/assimilate.js.map
-- packages/tnf-cli/dist/orchestration/ProtocolInterceptor.d.ts
-- packages/tnf-cli/dist/orchestration/ProtocolInterceptor.d.ts.map
-- packages/tnf-cli/dist/orchestration/ProtocolInterceptor.js
-- packages/tnf-cli/dist/orchestration/ProtocolInterceptor.js.map
-- packages/tnf-cli/dist/services/AssimilationService.d.ts
-- packages/tnf-cli/dist/services/AssimilationService.d.ts.map
-- packages/tnf-cli/dist/services/AssimilationService.js
-- packages/tnf-cli/dist/services/AssimilationService.js.map
-- packages/tnf-cli/dist/services/MCPManagerService.d.ts
-- packages/tnf-cli/dist/services/MCPManagerService.d.ts.map
-- packages/tnf-cli/dist/services/MCPManagerService.js
-- packages/tnf-cli/dist/services/MCPManagerService.js.map
-- packages/tnf-cli/dist/slashCommands.d.ts.map
-- packages/tnf-cli/dist/slashCommands.js
-- packages/tnf-cli/dist/slashCommands.js.map
-- packages/tnf-cli/dist/utils/llm-provider-detector.d.ts.map
-- packages/tnf-cli/dist/utils/llm-provider-detector.js
-- packages/tnf-cli/dist/utils/llm-provider-detector.js.map
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/cli.ts.backup3
-- packages/tnf-cli/src/commands/refresh-context/command.ts
-- packages/tnf-cli/src/commands/telegram/send.ts
-- packages/tnf-cli/src/commands/telegram/start.ts
-- packages/tnf-cli/src/commands/telegram/status.ts
-- packages/tnf-cli/src/commands/telegram/stop.ts
-- packages/tnf-cli/src/commands/telegram/tmp
-- packages/tnf-cli/src/refresh-context-runtime/discovery.ts
-- packages/tnf-cli/src/refresh-context-runtime/envelope.ts
-- packages/tnf-cli/src/refresh-context-runtime/orchestrator.ts
-- packages/tnf-cli/src/refresh-context-runtime/runner.ts
-- packages/tnf-cli/src/slashCommands.ts
-- packages/tnf-cli/test.txt
-- packages/tnf-cli/tsconfig.tsbuildinfo
-- packages/utils/dist/.tsbuildinfo
-- packages/utils/dist/auth/constants.d.ts
-- packages/utils/dist/auth/constants.d.ts.map
-- packages/utils/dist/auth/constants.js
-- packages/utils/dist/auth/constants.js.map
-- packages/utils/dist/auth/index.d.ts
-- packages/utils/dist/auth/index.d.ts.map
-- packages/utils/dist/auth/index.js
-- packages/utils/dist/auth/index.js.map
-- packages/utils/dist/performance.d.ts
-- packages/utils/dist/performance.d.ts.map
-- packages/utils/dist/performance.js
-- packages/utils/dist/performance.js.map
-- packages/utils/src/performance.ts
-- pnpm-lock.yaml
-- scripts/agents/tnf-agent-daemon.py
-- test-chrome-extension-comm.js
-- test-extension-comm-v2.js
-- test_bot.js
-- tmp/telegram-build/TelegramService.ts
-- tmp/telegram-build/send.ts
-- tmp/telegram-build/start.ts
-- tmp/telegram-build/status.ts
-- tmp/telegram-build/stop.ts
-- tmp/telegram-build/tmp
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/commands/google-ai.ts
+- scripts/google-ai/tnf_gemini_antigravity_bridge.py
 
 ## Verification
 
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
 
-- Owner: `cursor-auto-operator`
-- Targets: `orchestrator-agent`, `forge-agent`, `historian`
-- Priority: `critical`
+- Owner: `tnf-cli-agent`
+- Targets: `sub-director`, `story-architect`, `librarian`
+- Priority: `high`
 
 ### Resume Checklist
 
-- curl api.thenewfuse.com/health has timestamp
-- install script points to fuse-open-runtime
-- tnf protocol gate pass
-
-## Federation Lineage
-
-- Prior handoff: `3780c9a4-ea23-4700-8037-37d5684bfc2b`
-- Cumulative mcid: `045da6b5-ad4a-47d9-8956-80cb00918bd7`
-- Correlation: `12ec0260-60cd-44dc-addb-1a1a3ee6a4fa`
-- Causation: `96e2520e-4eb6-41e6-80c6-57cb76fabee4`
+- google-ai view missing-id errors
+- gitignore+untrack on main
+- broker up
 
 ## Next Actions
 
-- Verify install curl after sync:repos:open
-- Add HSTS at Cloudflare edge
-- Marketing Phase 0 soft launch
-- Reload chrome extension dist-v7
+- Defer BackupService path fix, rclone wiring, dist-v7, concordance JSON.

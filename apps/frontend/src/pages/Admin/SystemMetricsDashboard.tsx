@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertCircle,
@@ -61,12 +62,7 @@ export default function SystemMetricsDashboard() {
 
   const loadMetrics = async () => {
     try {
-      const response = await fetch('/api/system/metrics', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch('/api/system/metrics');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch metrics: ${response.statusText}`);

@@ -1,22 +1,30 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Workflow/Nexus/Webhook Recovery Audit (TNF Protocol)
 
 - Date (UTC): 2026-05-13
 - Operator: codex
-- Scope: `app.thenewfuse.com/workflows` + `nexus` layer integration + webhook orchestration parity
+- Scope: `app.thenewfuse.com/workflows` + `nexus` layer integration + webhook
+  orchestration parity
 - Protocol: Inspect -> Act -> Verify
 
 ## 1) Inspect
 
 ### 1.1 Regression source identified
+
 Evidence from git history:
 
 - Commit `eac6e8eff` rewired workflow builder routing:
-  - `ComprehensiveRouter.tsx` changed `WorkflowBuilder` import from `./pages/workflow-pages/Builder` to `./pages/SynapticNexus`.
-  - Result: `/workflows/builder` stopped loading the dedicated builder UI and instead loaded Nexus.
+  - `ComprehensiveRouter.tsx` changed `WorkflowBuilder` import from
+    `./pages/workflow-pages/Builder` to `./pages/SynapticNexus`.
+  - Result: `/workflows/builder` stopped loading the dedicated builder UI and
+    instead loaded Nexus.
 - Sidebar/Nexus coupling changed:
   - Sidebar entries pointed to `/nexus` and `/nexus?layer=*`.
   - `/nexus` route is protected by SUPER_ADMIN guard.
-  - Result: non-admin users lost direct access to Nexus layers that were intended to support workflow operations.
+  - Result: non-admin users lost direct access to Nexus layers that were
+    intended to support workflow operations.
 
 ### 1.2 Current recovery worktree (pre-existing + validated in this run)
 
@@ -41,7 +49,8 @@ Backend changes present in current worktree:
 - `POST /workflows/:id/webhook/:triggerId`
 - Trigger validation (enabled flag, optional secret, optional condition checks)
 - Execution metadata for trigger context
-- Node runtime extensions for webhook trigger + HTTP/webhook action nodes + condition branching
+- Node runtime extensions for webhook trigger + HTTP/webhook action nodes +
+  condition branching
 
 Frontend changes present in current worktree:
 
@@ -65,10 +74,12 @@ Additional protocol-aligned updates implemented in this run:
    - Removed unused capability import/vars
    - Removed unused catch bindings
 
-4. TNF session-coordination durability artifacts (outside repo, local TNF state):
+4. TNF session-coordination durability artifacts (outside repo, local TNF
+   state):
    - `~/.tnf/session-discovery/terminal-role-map.json` created
    - `~/.tnf/session-discovery/terminal-identity-registry.json` refreshed
-   - `~/.tnf/local-subdirector/state/live-session-coordination-20260513T161156Z.md` created
+   - `~/.tnf/local-subdirector/state/live-session-coordination-20260513T161156Z.md`
+     created
    - stale malformed coordination snapshot removed
 
 5. TNF multi-agent state governance run completed:
@@ -82,7 +93,8 @@ Additional protocol-aligned updates implemented in this run:
 
 Verified by source inspection:
 
-- Builder and Nexus are now split again in router (builder no longer aliased to Nexus).
+- Builder and Nexus are now split again in router (builder no longer aliased to
+  Nexus).
 - Workflow-scoped Nexus route exists and is member-accessible.
 - Sidebar points to workflow-scoped Nexus routes.
 
@@ -100,19 +112,23 @@ Command passed:
 
 ### 3.3 Type-check caveat
 
-Full package type-checks fail due broad unrelated baseline issues in this repository:
+Full package type-checks fail due broad unrelated baseline issues in this
+repository:
 
 - Frontend: many pre-existing errors across unrelated modules
-- API: pre-existing module resolution errors (`@the-new-fuse/core` in director module)
+- API: pre-existing module resolution errors (`@the-new-fuse/core` in director
+  module)
 
-These failures are not introduced by the focused workflow/nexus/webhook patch set.
+These failures are not introduced by the focused workflow/nexus/webhook patch
+set.
 
 ## 4) Remaining Gaps To Reach "Full Fledged" Webhook Orchestration
 
 1. Webhook management UI for trigger CRUD (not just execute/test).
 2. Secret rotation UI and encrypted-at-rest secret handling audit.
 3. Replay protection + signature verification policy (HMAC timestamp + nonce).
-4. Webhook delivery observability panel (attempt logs, retries, dead-letter queue).
+4. Webhook delivery observability panel (attempt logs, retries, dead-letter
+   queue).
 5. Per-workflow webhook docs export (OpenAPI-like contract per trigger).
 
 ## 5) Changed Files (Recovery Surface)
@@ -126,4 +142,3 @@ These failures are not introduced by the focused workflow/nexus/webhook patch se
 - `apps/frontend/src/services/WorkflowService.ts`
 - `apps/api/src/controllers/workflow.controller.ts`
 - `apps/api/src/services/workflow/WorkflowExecutionService.ts`
-

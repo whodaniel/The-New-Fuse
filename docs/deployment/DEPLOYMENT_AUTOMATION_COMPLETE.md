@@ -460,21 +460,21 @@ agnostic** - Works with CloudRuntime and others
 
 ### Core Documentation
 
-- **[Automated Deployment Guide](docs/deployment/AUTOMATED_DEPLOYMENT_GUIDE.md)** -
+- **[Automated Deployment Guide](./AUTOMATED_DEPLOYMENT_GUIDE.md)** -
   Complete deployment system guide
-- **[Quick Reference](docs/deployment/QUICK_REFERENCE.md)** - Fast command
+- **[Quick Reference](./QUICK_REFERENCE.md)** - Fast command
   reference
-- **[Emergency Procedures](docs/deployment/EMERGENCY_PROCEDURES.md)** -
+- **[Emergency Procedures](./EMERGENCY_PROCEDURES.md)** -
   Emergency response guide
-- **[Rollback Procedures](docs/deployment/ROLLBACK_PROCEDURES.md)** - Rollback
+- **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - Rollback
   guide
-- **[Troubleshooting](docs/deployment/TROUBLESHOOTING.md)** - Problem resolution
+- **[Troubleshooting](./TROUBLESHOOTING.md)** - Problem resolution
 
 ### Configuration
 
 - **[Environment Example](.env.deployment.example)** - Complete configuration
   template
-- **[Deployment Checklist](docs/deployment/DEPLOYMENT_CHECKLIST.md)** -
+- **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** -
   Pre-deployment checklist
 
 ## 🎓 Usage Examples

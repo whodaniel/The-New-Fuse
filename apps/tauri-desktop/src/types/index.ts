@@ -6,7 +6,17 @@
 export interface Agent {
   id: string;
   name: string;
-  type: 'claude' | 'gemini' | 'gpt' | 'perplexity' | 'custom' | 'local';
+  type:
+    | 'nvidia'
+    | 'groq'
+    | 'sambanova'
+    | 'cerebras'
+    | 'deepseek'
+    | 'gemini'
+    | 'openai'
+    | 'openrouter'
+    | 'custom'
+    | 'local';
   status: 'active' | 'idle' | 'error' | 'offline';
   description: string;
   capabilities: string[];
@@ -21,6 +31,8 @@ export interface AgentConfig {
   maxTokens: number;
   systemPrompt: string;
   tools: string[];
+  /** LLM provider id from integrated catalog (e.g. nvidia). */
+  provider?: string;
 }
 
 // Workflow Types

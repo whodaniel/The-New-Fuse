@@ -1,6 +1,28 @@
-import { simpleHash } from '../utils';
+import { isControlPlaneRelayMessage, simpleHash } from '../utils';
 
 describe('Shared Utils', () => {
+  describe('isControlPlaneRelayMessage', () => {
+    it('detects heartbeat payloads that used to steal composer focus', () => {
+      expect(
+        isControlPlaneRelayMessage({
+          content: 'TNF heartbeat from page-agent-abc',
+          metadata: { eventType: 'heartbeat' },
+        })
+      ).toBe(true);
+      expect(isControlPlaneRelayMessage({ type: 'HEARTBEAT', content: 'ping' })).toBe(true);
+      expect(
+        isControlPlaneRelayMessage({
+          content: '[ACTIVITY] wake_ping',
+          messageType: 'event',
+          metadata: { eventType: 'wake_ping' },
+        })
+      ).toBe(true);
+      expect(
+        isControlPlaneRelayMessage({ content: 'hello from another agent', messageType: 'text' })
+      ).toBe(false);
+    });
+  });
+
   describe('simpleHash', () => {
     it('should return the same hash for the same string', () => {
       const input = 'hello world';

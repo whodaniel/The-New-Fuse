@@ -70,7 +70,7 @@ export default function UserIcon({
 
   if (role === 'system') {
     return (
-      <div className={`${baseClasses} bg-transparent0`}>
+      <div className={`${baseClasses} bg-gray-500`}>
         <div className="w-2 h-2 bg-transparent rounded-full"></div>
       </div>
     );

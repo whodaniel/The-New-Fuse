@@ -53,6 +53,32 @@ Auditor (Traversal: INFRA-002)
   confirmation. (Artifact #43, #397).
 - **Voice Confirmation:** Voice agents must parrot commands back for vocal
   approval before high-risk execution. (Artifact #338).
+- **Rate Limit Gateway:** Per-agent message-flow controls MUST be enforced:
+  steady-state cap and burst cap (ground truth:
+  `TNF_GOVERNANCE_SYNTHESIS_v2.0.md` §8, "Authentication & Access Control"
+  matrix — Rate Limiting row: _Max 100 msg/min/agent, burst limit 20_). Breach →
+  HITL review; sustained breach → `Agent Status Ledger` row transitions to
+  `Blocked` and triggers `TNF_SELF_HEALING_PROTOCOL.md` §2 escalation. Anchored
+  2026-07-09 to fix Gate 4 (Linkage & Attribution) drift surfaced by 5-pass
+  Prometheus validator subagent `deleg_138473bd`. (Artifact #43, #397, #202
+  cross-ref).
+
+### C. Audit Trail for the foregoing mutation
+
+- **Mutation:** added `Rate Limit Gateway` bullet in §3.B (this file,
+  `TNF_GOVERNANCE_TENETS.md` v2.0 currently ACTIVE/[CLASS:PRIME]).
+- **challenge_rationale (Gate 5 Doc Vetting):** the `DIRECTIVES.md` v2
+  (canonical) §3 enumerates this tenet as #11; the synthesis document holds the
+  implementation (matrix row); this tenets file did not reassert it. Anchoring
+  closes the gap without requiring a separate §6/§7 restatement, satisfying Gate
+  4 (Linkage & Attribution). Velocity-Integrity satisfied: legacy (synthesis)
+  continues as primary normative surface; this tenets-level restatement is a
+  class-fix pointer, not an override.
+- **Baseline comparison vs legacy:** legacy behaviour is unchanged. The
+  per-agent rate cap and burst cap were already enforced by the gateway row in
+  the synthesis. The mutation adds no new behaviour; it anchors an existing rule
+  at the tenets level so any agent booted via this file alone (P0 path) can
+  satisfy Gate 4 without needing the synthesis as a parallel read.
 
 ---
 

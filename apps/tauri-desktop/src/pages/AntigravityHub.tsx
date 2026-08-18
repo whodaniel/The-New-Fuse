@@ -7,7 +7,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useModalA11y } from '../hooks/useModalA11y';
 import { AntigravityService, type AntigravityStatus, type PageInfo } from '../services';
 
@@ -321,7 +320,6 @@ export const AntigravityHub: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
       <div className="antigravity-hub">
         {/* Status Card */}
         <div className="status-card">

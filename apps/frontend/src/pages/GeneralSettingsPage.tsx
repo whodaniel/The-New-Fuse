@@ -6,6 +6,7 @@ import {
   PremiumSelect,
   ToggleSwitch,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import { Bell, Clock, Globe, Palette, Save, Shield, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -59,7 +60,7 @@ export default function GeneralSettings() {
     // Fetch current settings from backend
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings/general');
+        const response = await authFetch('/api/settings/general');
         if (response.ok) {
           const data = await response.json();
           setSettings(data);
@@ -77,11 +78,8 @@ export default function GeneralSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch('/api/settings/general', {
+      const response = await authFetch('/api/settings/general', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(settings),
       });
 
@@ -100,7 +98,7 @@ export default function GeneralSettings() {
     setSettings((prev) => {
       const keys = path.split('.');
       const newSettings = { ...prev };
-
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let current: Record<string, any> = newSettings;
 
       for (let i = 0; i < keys.length - 1; i++) {

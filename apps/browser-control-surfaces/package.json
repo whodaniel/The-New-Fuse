@@ -1,0 +1,48 @@
+{
+  "name": "@tnf/browser-control-surface",
+  "version": "2.0.0",
+  "description": "TNF Browser Control Surface - Multi-platform AI chat automation with federation integration",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./components": "./components/index.ts",
+    "./hooks": "./hooks/index.ts",
+    "./types": "./types/index.ts",
+    "./lib": "./lib/harness-protocol.ts"
+  },
+  "files": [
+    "index.ts",
+    "BROWSER_CONTROL_SURFACE.tsx",
+    "BROWSER_CONTROL_SURFACE.css",
+    "components/",
+    "hooks/",
+    "types/",
+    "lib/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint src/**/*.ts src/**/*.tsx"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@radix-ui/react-content": "^1.0.0",
+    "@radix-ui/react-tabs": "^1.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "tnf",
+    "browser-control",
+    "federation",
+    "agent-automation",
+    "harness-framework",
+    "terminal-heartbeat"
+  ],
+  "author": "TNF Team",
+  "license": "MIT"
+}

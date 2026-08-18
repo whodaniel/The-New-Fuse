@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Fuse Connect Mock Chat</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f1115; color: #e6e8ee;
+    display: grid; grid-template-columns: 1fr 380px; height: 100vh;
+  }
+  main { display: flex; flex-direction: column; min-width: 0; }
+  header { padding: 12px 16px; border-bottom: 1px solid #232733; font-weight: 600; }
+  #transcript { flex: 1; overflow-y: auto; padding: 16px; }
+  .msg { max-width: 70ch; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px; white-space: pre-wrap; }
+  .msg[data-message-author-role="user"] { background: #1d2633; margin-left: auto; }
+  .msg[data-message-author-role="assistant"] { background: #1a2b22; }
+  form { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #232733; align-items: flex-end; }
+  #prompt-textarea {
+    flex: 1; min-height: 44px; max-height: 180px; overflow-y: auto;
+    background: #161a22; border: 1px solid #2b3140; border-radius: 10px;
+    padding: 11px 13px; outline: none;
+  }
+  #prompt-textarea:empty::before { content: attr(data-placeholder); color: #5d6577; }
+  button[data-testid="send-button"] {
+    background: #3d7dfa; color: #fff; border: 0; border-radius: 10px;
+    padding: 12px 18px; font-weight: 600; cursor: pointer;
+  }
+  aside { border-left: 1px solid #232733; padding: 14px; overflow-y: auto; background: #0b0d11; }
+  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #7d879c; margin: 18px 0 8px; }
+  aside h2:first-child { margin-top: 0; }
+  .kv { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid #171b23; }
+  .kv span:last-child { font-family: ui-monospace, Menlo, monospace; font-size: 12px; text-align: right; word-break: break-all; }
+  .ok { color: #5ddb9a; } .bad { color: #ff6b6b; } .warn { color: #ffcc66; }
+  #harness-log { font-family: ui-monospace, Menlo, monospace; font-size: 11px; white-space: pre-wrap; color: #9aa3b8; }
+</style>
+</head>
+<body>
+<main>
+  <header>Mock AI Chat &mdash; Fuse Connect test harness</header>
+  <div id="transcript" role="log"></div>
+  <form id="composer" onsubmit="return false;">
+    <div id="prompt-textarea" contenteditable="true" role="textbox"
+         data-placeholder="Message the mock assistant..." aria-label="Message"></div>
+    <button type="submit" data-testid="send-button" aria-label="Send message">Send</button>
+  </form>
+</main>
+
+<aside>
+  <h2>Content script</h2>
+  <div class="kv"><span>data-fuse-connect</span><span id="d-init">—</span></div>
+  <div class="kv"><span>test bridge</span><span id="d-debug">—</span></div>
+  <div class="kv"><span>chatReady</span><span id="d-ready">—</span></div>
+  <div class="kv"><span>input</span><span id="d-input">—</span></div>
+  <div class="kv"><span>send button</span><span id="d-send">—</span></div>
+  <div class="kv"><span>pageAgentId</span><span id="d-agent">—</span></div>
+  <div class="kv"><span>floating panel in DOM</span><span id="d-panel">—</span></div>
+
+  <h2>Service worker</h2>
+  <div class="kv"><span>relay link</span><span id="d-conn">—</span></div>
+  <div class="kv"><span>keepalive alarm</span><span id="d-alarm">—</span></div>
+  <div class="kv"><span>ticks this worker</span><span id="d-ticks">—</span></div>
+  <div class="kv"><span>last tick</span><span id="d-tick-age">—</span></div>
+
+  <h2>Harness state</h2>
+  <div class="kv"><span>user messages</span><span id="d-user">0</span></div>
+  <div class="kv"><span>assistant messages</span><span id="d-asst">0</span></div>
+  <div class="kv"><span>last injected text</span><span id="d-last">—</span></div>
+
+  <h2>Event log</h2>
+  <div id="harness-log"></div>
+</aside>
+
+<script>
+(() => {
+  const transcript = document.getElementById('transcript');
+  const input = document.getElementById('prompt-textarea');
+  const sendBtn = document.querySelector('button[data-testid="send-button"]');
+  const logEl = document.getElementById('harness-log');
+
+  // Exposed so automated tests can assert on harness-side state.
+  const state = { user: [], assistant: [], events: [] };
+  window.__HARNESS__ = state;
+
+  function log(line) {
+    state.events.push({ t: Date.now(), line });
+    logEl.textContent = state.events.slice(-40).map(e =>
+      new Date(e.t).toISOString().slice(11, 23) + '  ' + e.line).join('\n');
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  state.log = log;
+
+  function append(role, text) {
+    const div = document.createElement('div');
+    div.className = 'msg';
+    div.setAttribute('data-message-author-role', role);
+    div.textContent = text;
+    transcript.appendChild(div);
+    transcript.scrollTop = transcript.scrollHeight;
+    return div;
+  }
+
+  function readInput() {
+    return (input.innerText || input.textContent || '').trim();
+  }
+
+  // Streams a reply token-by-token so streaming detection has something to observe.
+  function reply(to) {
+    const words = ('Mock assistant acknowledging: "' + to + '". This reply is streamed ' +
+      'word by word so response detection and completion signalling can be exercised ' +
+      'end to end without contacting a real model.').split(' ');
+    const node = append('assistant', '');
+    node.setAttribute('data-is-streaming', 'true');
+    let i = 0;
+    const timer = setInterval(() => {
+      node.textContent += (i ? ' ' : '') + words[i++];
+      transcript.scrollTop = transcript.scrollHeight;
+      if (i >= words.length) {
+        clearInterval(timer);
+        node.removeAttribute('data-is-streaming');
+        state.assistant.push(node.textContent);
+        document.getElementById('d-asst').textContent = state.assistant.length;
+        log('assistant reply complete (' + node.textContent.length + ' chars)');
+      }
+    }, 40);
+  }
+
+  function submit() {
+    const text = readInput();
+    if (!text) { log('submit ignored: empty composer'); return; }
+    input.textContent = '';
+    append('user', text);
+    state.user.push(text);
+    document.getElementById('d-user').textContent = state.user.length;
+    document.getElementById('d-last').textContent = text.slice(0, 60);
+    log('user submitted: ' + text.slice(0, 60));
+    setTimeout(() => reply(text), 500);
+  }
+
+  sendBtn.addEventListener('click', submit);
+  document.getElementById('composer').addEventListener('submit', (e) => { e.preventDefault(); submit(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
+  });
+  input.addEventListener('input', () => log('composer input event, len=' + readInput().length));
+
+  // ---- diagnostics polling -------------------------------------------------
+  const set = (id, text, cls) => {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = cls || '';
+  };
+
+  // The content script runs in an isolated world, so its globals are invisible
+  // here. It exposes a CustomEvent bridge on loopback origins instead.
+  let seq = 0;
+  const pending = new Map();
+  document.addEventListener('fuse-connect:response', (e) => {
+    const d = e.detail || {};
+    const entry = pending.get(d.id);
+    if (!entry) return;
+    pending.delete(d.id);
+    clearTimeout(entry.timer);
+    d.ok ? entry.resolve(d.result) : entry.reject(new Error(d.error || 'bridge error'));
+  });
+
+  function bridge(action, args, timeoutMs = 3000) {
+    return new Promise((resolve, reject) => {
+      const id = 'h' + (++seq);
+      const timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new Error('bridge timeout: ' + action));
+      }, timeoutMs);
+      pending.set(id, { resolve, reject, timer });
+      document.dispatchEvent(new CustomEvent('fuse-connect:request', {
+        detail: { id, action, args: args || {} }
+      }));
+    });
+  }
+  // Exposed so an automated driver can call the extension directly.
+  window.__FUSE_BRIDGE__ = bridge;
+
+  setInterval(async () => {
+    const marker = document.documentElement.getAttribute('data-fuse-connect');
+    set('d-init', marker || 'absent', marker ? 'ok' : 'bad');
+    const bridgeOn = document.documentElement.getAttribute('data-fuse-connect-bridge') === 'on';
+    set('d-debug', bridgeOn ? 'on' : 'off', bridgeOn ? 'ok' : 'bad');
+
+    if (bridgeOn) {
+      try {
+        const s = await bridge('status');
+        set('d-ready', String(s.chatReady), s.chatReady ? 'ok' : 'warn');
+        set('d-input', s.elements.inputTag
+            ? s.elements.inputTag + (s.elements.inputId ? '#' + s.elements.inputId : '')
+            : 'null', s.elements.hasInput ? 'ok' : 'bad');
+        set('d-send', s.elements.sendButtonTestId || (s.elements.hasSendButton ? 'found' : 'null'),
+            s.elements.hasSendButton ? 'ok' : 'bad');
+        set('d-agent', s.pageAgentId || 'none', s.pageAgentId ? 'ok' : 'warn');
+      } catch (err) {
+        set('d-ready', 'bridge err', 'bad');
+      }
+    }
+
+    const panel = document.getElementById('fuse-connect-panel-v7') ||
+                  document.getElementById('fuse-connect-panel');
+    set('d-panel', panel ? panel.id : 'absent', panel ? 'ok' : 'warn');
+
+    if (bridgeOn) {
+      try {
+        const k = await bridge('keepalive');
+        set('d-conn', k.connectionStatus, k.connectionStatus === 'connected' ? 'ok' : 'bad');
+        set('d-alarm', k.alarm ? `every ${k.alarm.periodInMinutes}m` : 'NOT REGISTERED',
+            k.alarm ? 'ok' : 'bad');
+        set('d-ticks', String(k.ticksThisWorker ?? '—'), k.ticksThisWorker ? 'ok' : 'warn');
+        const last = k.diag && k.diag.lastTickAt;
+        set('d-tick-age', last ? Math.round((k.now - last) / 1000) + 's ago' : 'never',
+            last ? 'ok' : 'warn');
+      } catch (err) {
+        set('d-conn', 'bridge err', 'bad');
+      }
+    }
+  }, 1500);
+
+  // NOTE: do NOT mount chrome-extension:// iframes here. A cross-extension frame
+  // in this tab blocks other automation tooling from scripting the page.
+
+  log('harness ready at ' + location.href);
+})();
+</script>
+</body>
+</html>

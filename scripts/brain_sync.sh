@@ -1,1 +1,1 @@
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/autonomy/brain_sync.sh
+/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/autonomy/brain_sync.sh

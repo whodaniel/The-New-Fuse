@@ -7,6 +7,7 @@ import {
   ToggleSwitch,
 } from '@/components/ui';
 import { WorkflowCanvas } from '@/components/WorkflowBuilder/WorkflowCanvas';
+import { authFetch } from '@/utils/authToken';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3,
@@ -94,14 +95,7 @@ export const WorkflowsPage: React.FC = () => {
     const fetchAnalytics = async () => {
       setAnalyticsError(null);
       try {
-        const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
-        const response = await fetch('/api/workflows/executions?limit=200', {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          credentials: 'include',
-        });
+        const response = await authFetch('/api/workflows/executions?limit=200');
 
         if (!response.ok) {
           throw new Error(`Workflow analytics unavailable (${response.status})`);

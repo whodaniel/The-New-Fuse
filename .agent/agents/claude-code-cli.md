@@ -1,24 +1,38 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: claude-code-cli
-displayName: Claude Code CLI
-description: Anthropic Claude Code CLI local assistant profile for coding, analysis, and automation workflows.
-agentType: external
-tools: [Bash]
+description: Anthropic Claude Code CLI local assistant profile for coding, analysis,
+  and automation workflows.
+version: 1.0.0
 skills:
-  - chat
-  - code-generation
-  - file-management
-  - data-analysis
-  - automation
+- chat
+- code-generation
+- file-management
+- data-analysis
+- automation
 capabilities:
-  - CHAT
-  - CODE_GENERATION
-  - FILE_MANAGEMENT
-  - DATA_ANALYSIS
-  - AUTOMATION
-category: external-llm
+- CHAT
+- CODE_GENERATION
+- FILE_MANAGEMENT
+- DATA_ANALYSIS
+- AUTOMATION
+displayName: Claude Code CLI
+agentType: external
 status: active
-version: "1.0.0"
 ---
 You are the canonical Claude Code CLI agent profile for The New Fuse.
 

@@ -40,20 +40,67 @@ const colors = {
 
 const LOCK_FILE = path.join(__dirname, '.build-production.lock');
 
+const LOCK_STALE_MS = 10 * 60 * 1000; // 10 minutes — per TNF_COLLISION_PROVISION.md C1
+
 async function acquireLock() {
   try {
     // Attempt to create the lock file exclusively
     await fsp.mkdir(path.dirname(LOCK_FILE), { recursive: true });
-    await fsp.open(LOCK_FILE, 'wx');
-    console.log(`${colors.green}[LOCK]${colors.reset} Acquired build lock.`);
+    const lockPayload = JSON.stringify({
+      pid: process.pid,
+      startedAt: new Date().toISOString(),
+      cwd: process.cwd(),
+    });
+    await fsp.writeFile(LOCK_FILE, lockPayload, { flag: 'wx' });
+    console.log(`${colors.green}[LOCK]${colors.reset} Acquired build lock (pid=${process.pid}).`);
     return true;
   } catch (error) {
     if (error.code === 'EEXIST') {
+      // Lock exists — check if it's stale before giving up.
+      const isStale = await isLockStale();
+      if (isStale) {
+        console.log(`${colors.yellow}[LOCK]${colors.reset} Removed stale build lock (holder PID dead or lock older than ${LOCK_STALE_MS / 60000}min).`);
+        try {
+          const lockPayload = JSON.stringify({
+            pid: process.pid,
+            startedAt: new Date().toISOString(),
+            cwd: process.cwd(),
+          });
+          await fsp.writeFile(LOCK_FILE, lockPayload, { flag: 'wx' });
+          console.log(`${colors.green}[LOCK]${colors.reset} Acquired build lock (pid=${process.pid}) after stale cleanup.`);
+          return true;
+        } catch (retryErr) {
+          console.error(`${colors.red}[LOCK ERROR]${colors.reset} Failed to acquire lock after stale cleanup: ${retryErr.message}`);
+          return false;
+        }
+      }
       console.error(`${colors.red}[LOCK ERROR]${colors.reset} Another build is already running. Exiting.`);
       return false;
     }
     console.error(`${colors.red}[LOCK ERROR]${colors.reset} Failed to acquire lock: ${error.message}`);
     return false;
+  }
+}
+
+async function isLockStale() {
+  try {
+    const raw = await fsp.readFile(LOCK_FILE, 'utf8');
+    const lock = JSON.parse(raw);
+    if (lock.pid) {
+      try {
+        process.kill(lock.pid, 0);
+        return false;
+      } catch {
+        return true;
+      }
+    }
+    if (lock.startedAt) {
+      const age = Date.now() - new Date(lock.startedAt).getTime();
+      if (age > LOCK_STALE_MS) return true;
+    }
+    return false;
+  } catch {
+    return true;
   }
 }
 

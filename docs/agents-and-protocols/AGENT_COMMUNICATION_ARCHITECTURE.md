@@ -1098,11 +1098,11 @@ production-ready and designed for extensibility.
 ### Resources
 
 - [Agent Framework
-  Protocols](<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
+  Protocols](./AGENT_FRAMEWORK_PROTOCOLS.md)
 - [Complete Agent Communication
   Guide](<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md)
-- [Available Agents Registry](<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md)
-- [MCP Complete Guide](<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md)
+- [Available Agents Registry](../AVAILABLE_AGENTS_REGISTRY.md)
+- [MCP Complete Guide](../protocols/MCP-COMPLETE-GUIDE.md)
 
 ---
 

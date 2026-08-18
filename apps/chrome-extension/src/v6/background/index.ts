@@ -12,10 +12,19 @@ import {
   AI_MODELS,
   API_URLS,
   DEFAULT_NODES as DEFAULT_NODES_CONST,
+  isStandardChannel,
   NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
   STORAGE_KEYS as STORAGE_KEYS_CONST,
   TIMINGS,
 } from '../shared/constants';
+import {
+  buildBrowserAgentIdentity,
+  buildPageAgentIdentity,
+  enrichOutboundMetadata,
+  mergeRegistrationPayload,
+  resolveMessageTarget,
+  type FederationIdentityRecord,
+} from '../shared/federation-identity';
 import type {
   Agent,
   AgentMessage,
@@ -50,6 +59,16 @@ const DEFAULT_NODES = DEFAULT_NODES_CONST;
 const NATIVE_HOST_NAME = NATIVE_HOST_NAME_CONST;
 const AI_VIDEO_PROCESS_ALARM = 'ai_video_process_tick';
 
+/**
+ * MV3 suspends this worker after ~30s idle, which kills every setInterval/
+ * setTimeout below AND the relay WebSocket. Only an event can revive it, so a
+ * periodic alarm is the one thing that keeps the extension reachable while the
+ * browser sits idle. 0.5 min is the shortest period Chrome honours.
+ */
+const KEEPALIVE_ALARM = 'fuse_keepalive_tick';
+const KEEPALIVE_PERIOD_MINUTES = 0.5;
+const KEEPALIVE_DIAG_KEY = 'fuse_keepalive_diag';
+
 class BackgroundService {
   // Connections
   private connections: Map<string, WebSocket> = new Map();
@@ -81,6 +100,7 @@ class BackgroundService {
   private channelLastActivityAt: Map<string, number> = new Map();
   private connectionAttempts: number = 0;
   private maxInitialAttempts: number = 1; // Only try once on startup
+  private browserIdentity: FederationIdentityRecord | null = null;
 
   // Message deduplication - track recently sent/received message hashes
   private recentMessageHashes: Map<string, number> = new Map();
@@ -94,6 +114,27 @@ class BackgroundService {
   private stallWatchdogTimer: number | null = null;
   private nativeHostUnavailable: boolean = false;
   private nativeHostMissingLogged: boolean = false;
+  private nativeHostBackoffUntil: number = 0;
+  /**
+   * Starting a relay is not idempotent — a second instance takes port 3000 from
+   * the first, which kills it. The existing nativeHostBackoffUntil only covers
+   * the native host *failing*, so a succeeding start could be re-issued on every
+   * reconnect attempt and spawn relays in a loop. This throttles the action.
+   */
+  private relayBootstrapCooldownUntil: number = 0;
+  private readonly RELAY_BOOTSTRAP_COOLDOWN_MS = 120000;
+  private keepAliveTicks = 0;
+  /**
+   * Deadline for an in-flight relay connect. `connections` is only populated in
+   * ws.onopen, so a socket that is still CONNECTING is invisible there and
+   * repeated connect attempts silently stacked up new sockets.
+   */
+  private relayConnectInFlightUntil = 0;
+  private readonly RELAY_CONNECT_INFLIGHT_MS = 15000;
+  private readyContentTabs: Set<number> = new Set();
+  private unreachableTabs: Map<number, number> = new Map();
+  private readonly TAB_UNREACHABLE_COOLDOWN_MS = 30000;
+  private broadcastFailLogAt: Map<number, number> = new Map();
   private extensionEventLog: ExtensionLogEntry[] = [];
   private readonly EVENT_LOG_LIMIT = TIMINGS.eventLogLimit;
   private eventLogFlushTimer: number | null = null;
@@ -105,7 +146,18 @@ class BackgroundService {
   private pendingTaskResolve: ((value: any) => void) | null = null;
 
   constructor() {
-    this.init();
+    this.init().catch((err) => {
+      console.error('[FuseConnect v7] Background init failed:', err);
+      try {
+        this.setupMessageHandlers();
+        this.setupCommands();
+        this.setupTabLifecycleHandlers();
+        this.setupAlarmHandlers();
+        this.ensureKeepAliveAlarm();
+      } catch (setupErr) {
+        console.error('[FuseConnect v7] Emergency handler setup failed:', setupErr);
+      }
+    });
   }
 
   private async init(): Promise<void> {
@@ -117,9 +169,11 @@ class BackgroundService {
     this.setupCommands();
     this.setupTabLifecycleHandlers();
     this.setupAlarmHandlers();
+    this.ensureKeepAliveAlarm();
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
+    this.browserIdentity = buildBrowserAgentIdentity(this.agentId);
 
     // Load saved state
     await this.loadSavedState();
@@ -137,7 +191,9 @@ class BackgroundService {
 
     // Only auto-connect if user has enabled it
     if (this.autoConnect) {
-      this.tryInitialConnection();
+      void this.tryInitialConnection().catch((err) => {
+        console.warn('[FuseConnect v7] Initial connection failed:', err);
+      });
     } else {
       // Set initial status to disconnected without error
       this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
@@ -187,8 +243,33 @@ class BackgroundService {
       return;
     }
 
+    // The health probe is HTTP; the link we actually need is the WebSocket. A
+    // relay whose HTTP handler is wedged still serves WS fine, and treating that
+    // as "relay down" made us spawn a duplicate relay process over native
+    // messaging — which then fights the running one for port 3000. Probe the
+    // socket itself before concluding anything needs starting.
+    if (await this.probeRelaySocket(this.relayUrl)) {
+      console.warn(
+        '[FuseConnect v7] Relay health endpoint unreachable but WebSocket accepted - connecting anyway'
+      );
+      this.connectToNode('relay', this.relayUrl);
+      return;
+    }
+
     console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
     this.updateNodeStatus('relay', this.relayUrl, 'disconnected');
+
+    const now = Date.now();
+    if (now < this.relayBootstrapCooldownUntil) {
+      console.warn(
+        `[FuseConnect v7] Relay bootstrap on cooldown for another ${Math.round(
+          (this.relayBootstrapCooldownUntil - now) / 1000
+        )}s - not spawning another relay`
+      );
+      return;
+    }
+    this.relayBootstrapCooldownUntil = now + this.RELAY_BOOTSTRAP_COOLDOWN_MS;
+
     this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
       if (nativeResp?.error) {
         return;
@@ -212,6 +293,41 @@ class BackgroundService {
   /**
    * Check if relay is available via HTTP health endpoint
    */
+  /**
+   * Open-and-close probe of the relay WebSocket. Used as a second opinion when
+   * the HTTP health endpoint does not answer, so a wedged HTTP handler cannot
+   * make us believe the relay is down.
+   */
+  private probeRelaySocket(relayUrl: string = this.relayUrl, timeoutMs = 2500): Promise<boolean> {
+    return new Promise((resolve) => {
+      let settled = false;
+      let socket: WebSocket | null = null;
+
+      const finish = (result: boolean) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        try {
+          socket?.close();
+        } catch {
+          // already closing
+        }
+        resolve(result);
+      };
+
+      const timer = setTimeout(() => finish(false), timeoutMs);
+
+      try {
+        socket = new WebSocket(relayUrl);
+        socket.onopen = () => finish(true);
+        socket.onerror = () => finish(false);
+        socket.onclose = () => finish(false);
+      } catch {
+        finish(false);
+      }
+    });
+  }
+
   private async checkRelayHealth(relayUrl: string = this.relayUrl): Promise<boolean> {
     try {
       const response = await fetch(this.relayHealthUrl(relayUrl), {
@@ -343,8 +459,9 @@ class BackgroundService {
       this.extensionEventLog = existing.slice(-this.EVENT_LOG_LIMIT);
     }
 
-    // Auto-join Red channel
-    this.joinedChannels.add('red');
+    // No channel is auto-joined by name. Membership is driven entirely by saved
+    // state and explicit CHANNEL_JOIN/CHANNEL_CREATE, so every channel — the ones
+    // restored above and any created later — is treated identically.
 
     // Load auto-connect preference (default true)
     this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
@@ -403,11 +520,16 @@ class BackgroundService {
     console.log(`[FuseConnect v7] Connecting to ${nodeType} at ${url}...`);
     this.updateNodeStatus(nodeType, url, 'connecting');
 
+    if (nodeType === 'relay') {
+      this.relayConnectInFlightUntil = Date.now() + this.RELAY_CONNECT_INFLIGHT_MS;
+    }
+
     try {
       const ws = new WebSocket(url);
 
       ws.onopen = () => {
         console.log(`[FuseConnect v7] Connected to ${nodeType}`);
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connections.set(nodeType, ws);
         this.updateNodeStatus(nodeType, url, 'connected');
         this.connectionAttempts = 0; // Reset on success
@@ -448,6 +570,7 @@ class BackgroundService {
 
       ws.onclose = () => {
         console.log(`[FuseConnect v7] Disconnected from ${nodeType}`);
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connections.delete(nodeType);
         this.updateNodeStatus(nodeType, url, 'disconnected');
 
@@ -473,6 +596,7 @@ class BackgroundService {
 
       ws.onerror = () => {
         // Don't log error details - they're not useful and clutter console
+        if (nodeType === 'relay') this.relayConnectInFlightUntil = 0;
         this.connectionAttempts++;
         this.updateNodeStatus(nodeType, url, 'disconnected');
 
@@ -555,57 +679,118 @@ class BackgroundService {
    * Register agent with relay
    */
   private registerAgent(ws: WebSocket): void {
+    const identity = this.browserIdentity || buildBrowserAgentIdentity(this.agentId);
+    const agent: Agent = {
+      id: this.agentId,
+      name: 'Browser Agent',
+      platform: 'chrome-extension',
+      status: 'active',
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
+      capabilities: [
+        'chat-injection',
+        'dom-reading',
+        'universal-detection',
+        'streaming-detection',
+        'notifications',
+      ],
+      channels: Array.from(this.joinedChannels),
+      metadata: {
+        ...enrichOutboundMetadata(identity, {
+          senderId: this.agentId,
+          extra: {
+            eventType: 'agent_registered',
+          },
+        }),
+        node: {
+          type: 'browser',
+          platform: navigator.platform,
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+        },
+      },
+      lastSeen: Date.now(),
+    };
+    this.agents.set(this.agentId, agent);
+
     const message: ProtocolMessage = {
       id: crypto.randomUUID(),
       type: 'AGENT_REGISTER',
       timestamp: Date.now(),
       source: this.agentId,
       payload: {
-        agent: {
-          id: this.agentId,
-          name: 'Browser Agent',
-          platform: 'chrome-extension',
-          status: 'active',
-          capabilities: [
-            'chat-injection',
-            'dom-reading',
-            'universal-detection',
-            'streaming-detection',
-            'notifications',
-          ],
-          channels: Array.from(this.joinedChannels),
-          metadata: {
-            node: {
-              type: 'browser',
-              platform: navigator.platform,
-              userAgent: navigator.userAgent,
-              language: navigator.language,
-            },
-          },
-        },
+        agent,
       },
     };
 
     ws.send(JSON.stringify(message));
   }
 
+  private getCompleteAgentIdentity(agentId: string): FederationIdentityRecord | null {
+    const agent = this.agents.get(agentId);
+    if (!agent) return null;
+    if (
+      !agent.operationalHandle ||
+      !agent.runtimeSessionId ||
+      !agent.idNumber ||
+      !agent.correlationId ||
+      !agent.mcid
+    ) {
+      return null;
+    }
+    return {
+      id: agent.id,
+      operationalHandle: agent.operationalHandle,
+      runtimeSessionId: agent.runtimeSessionId,
+      canonicalEntityId: agent.canonicalEntityId || null,
+      idNumber: agent.idNumber,
+      aliases: agent.aliases || [],
+      daccRole: agent.daccRole || 'participant',
+      correlationId: agent.correlationId,
+      mcid: agent.mcid as unknown as FederationIdentityRecord['mcid'],
+    };
+  }
+
   /**
    * Register a new page agent (for AI chat tabs)
    */
   private registerPageAgent(id: string, name: string, platform: string, tabId?: number): void {
+    const identity = buildPageAgentIdentity(id, platform, tabId);
     // 1. Create agent object
     const agent: Agent = {
       id: id,
       name: name,
       platform: 'browser-page',
       status: 'active',
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
       capabilities: ['chat-injection', 'dom-reading'], // Basic capabilities for a page agent
       channels: [], // Initially no channels
       metadata: {
+        ...enrichOutboundMetadata(identity, {
+          senderId: id,
+          platform,
+          extra: {
+            eventType: 'page_agent_registered',
+          },
+        }),
         node: {
           type: 'browser-tab',
           platform: platform,
         },
+        aliases: identity.aliases,
         tabId: tabId, // TRACK TAB ID
       },
       lastSeen: Date.now(),
@@ -683,6 +868,16 @@ class BackgroundService {
    */
   private send(data: Record<string, unknown>, ws?: WebSocket): void {
     const connection = ws || this.primaryConnection;
+    const senderId = String((data.metadata as any)?.senderId || data.source || this.agentId);
+    const senderIdentity =
+      this.getCompleteAgentIdentity(senderId) || this.getCompleteAgentIdentity(this.agentId);
+    const enrichedMetadata = senderIdentity
+      ? enrichOutboundMetadata(senderIdentity, {
+          channel: (data.channel as string) || 'general',
+          senderId,
+          extra: (data.metadata as Record<string, unknown>) || {},
+        })
+      : data.metadata;
 
     let message: ProtocolMessage;
 
@@ -698,7 +893,7 @@ class BackgroundService {
           to: data.to,
           content: data.content,
           messageType: data.messageType || 'text',
-          metadata: data.metadata, // <-- INCLUDE SENDER METADATA
+          metadata: enrichedMetadata, // <-- INCLUDE SENDER METADATA
         },
       };
     } else {
@@ -775,6 +970,48 @@ class BackgroundService {
   }
 
   /**
+   * Join every registered page agent to a channel.
+   *
+   * Channel membership has to be symmetric in both directions:
+   *   - registerPageAgent() joins a NEW page agent to the channels that already exist
+   *   - this joins the page agents that ALREADY exist to a NEW channel
+   *
+   * Only the first half used to be implemented, so a channel created (or joined)
+   * after a tab had registered never delivered to that tab — the tab was in the
+   * channel locally but was never a member on the relay. That made older channels
+   * look healthy while newly created ones appeared half-broken.
+   *
+   * `agent.channels` is updated whether or not the socket is currently open, so
+   * reRegisterAllAgents() replays the membership after a reconnect.
+   */
+  private joinPageAgentsToChannel(channelId: string): void {
+    const id = String(channelId || '').trim();
+    if (!id) return;
+
+    const isOpen = this.primaryConnection?.readyState === WebSocket.OPEN;
+
+    for (const [agentId, agent] of this.agents) {
+      // The browser agent joins through this.send() on the caller's behalf.
+      if (agentId === this.agentId) continue;
+
+      if (!Array.isArray(agent.channels)) agent.channels = [];
+      const alreadyMember = agent.channels.includes(id);
+      if (!alreadyMember) agent.channels.push(id);
+
+      if (!isOpen) continue;
+
+      const joinMessage: ProtocolMessage = {
+        id: crypto.randomUUID(),
+        type: 'CHANNEL_JOIN',
+        timestamp: Date.now(),
+        source: agentId,
+        payload: { channelId: id },
+      };
+      this.primaryConnection!.send(JSON.stringify(joinMessage));
+    }
+  }
+
+  /**
    * Re-register all existing agents (called on reconnection)
    */
   private reRegisterAllAgents(ws: WebSocket): void {
@@ -824,7 +1061,16 @@ class BackgroundService {
   private startHeartbeat(): void {
     if (this.heartbeatTimer) return;
 
-    this.heartbeatTimer = setInterval(() => {
+    this.heartbeatTimer = setInterval(() => this.sendHeartbeatTick(), 30000) as unknown as number;
+  }
+
+  /**
+   * One heartbeat round. Called by the 30s interval while the worker is alive,
+   * and by the keepalive alarm after the worker has been suspended and revived
+   * (which is when the interval no longer exists).
+   */
+  private sendHeartbeatTick(): void {
+    {
       // Send heartbeat for main browser agent
       this.send({ type: 'HEARTBEAT' });
 
@@ -873,7 +1119,7 @@ class BackgroundService {
           }
         }
       }
-    }, 30000) as unknown as number;
+    }
   }
 
   /**
@@ -909,9 +1155,40 @@ class BackgroundService {
         break;
 
       case 'AGENT_LIST': {
-        const agents = (message.payload as any).agents || [];
-        this.agents.clear();
-        agents.forEach((a: Agent) => this.agents.set(a.id, a));
+        const incoming = ((message.payload as any).agents || []) as Agent[];
+
+        // The relay is authoritative for WHICH agents exist and for their volatile
+        // state, but it does not carry this browser's local bookkeeping (tabId), and
+        // it may echo an agent back before it has re-broadcast the federated identity
+        // this edge minted. Clearing and overwriting therefore dropped `metadata.tabId`
+        // — breaking tab reuse in CHAT_DETECTED — and dropped idNumber/handle, which
+        // is what made `@ID#:` and `/to` addressing stop resolving after any sync.
+        const next = new Map<string, Agent>();
+        for (const agent of incoming) {
+          const existing = this.agents.get(agent.id);
+          if (!existing) {
+            next.set(agent.id, agent);
+            continue;
+          }
+          const base: Agent = {
+            ...agent,
+            metadata: { ...(agent.metadata || {}), ...(existing.metadata || {}) },
+          };
+          next.set(
+            agent.id,
+            mergeRegistrationPayload(base, agent as unknown as Record<string, unknown>)
+          );
+        }
+
+        // Page agents this browser owns can be missing from the relay's snapshot while
+        // their registration is still in flight. Dropping them would orphan the tab.
+        for (const [id, agent] of this.agents) {
+          if (next.has(id)) continue;
+          if (agent.metadata?.tabId != null) next.set(id, agent);
+        }
+
+        this.agents = next;
+        const agents = Array.from(this.agents.values());
         this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents });
         this.notifyPopup({ type: 'AGENTS_UPDATE', agents });
         break;
@@ -929,12 +1206,21 @@ class BackgroundService {
             console.log(`[FuseConnect v7] Agent ${agent.id} went offline/removed`);
             this.agents.delete(agent.id);
           } else {
-            // Keep local metadata (like tabId) if we're just updating status
+            // Keep local bookkeeping (tabId) AND the federated identity fields when
+            // the relay sends a status-only update that omits them.
             const existing = this.agents.get(agent.id);
-            if (existing && existing.metadata?.tabId && !agent.metadata?.tabId) {
-              agent.metadata = { ...agent.metadata, tabId: existing.metadata.tabId };
+            if (existing) {
+              const base: Agent = {
+                ...agent,
+                metadata: { ...(agent.metadata || {}), ...(existing.metadata || {}) },
+              };
+              this.agents.set(
+                agent.id,
+                mergeRegistrationPayload(base, agent as unknown as Record<string, unknown>)
+              );
+            } else {
+              this.agents.set(agent.id, agent);
             }
-            this.agents.set(agent.id, agent);
           }
 
           this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) });
@@ -996,6 +1282,37 @@ class BackgroundService {
           });
           this.saveChannels();
         }
+        break;
+      }
+
+      // The relay answers CHANNEL_CREATE directly with one of these, carrying
+      // the authoritative channel (and its real id). These were previously
+      // unhandled, so a newly created channel stayed pinned to its throwaway
+      // `local-` id until some later CHANNEL_LIST broadcast happened to fix it.
+      case 'CHANNEL_CREATED':
+      case 'CHANNEL_JOINED': {
+        const channel = (message.payload as any)?.channel as FederationChannel | undefined;
+        if (!channel?.id) break;
+
+        const existingByName = this.findChannelByName(channel.name);
+        if (existingByName && existingByName.id !== channel.id) {
+          this.channels.delete(existingByName.id);
+          this.remapChannelReferences(existingByName.id, channel.id);
+        }
+
+        this.channels.set(channel.id, channel);
+        this.joinedChannels.add(channel.id);
+        this.joinPageAgentsToChannel(channel.id);
+        this.broadcastToTabs({
+          type: 'CHANNELS_UPDATE',
+          channels: Array.from(this.channels.values()),
+        });
+        this.notifyPopup({
+          type: 'CHANNELS_UPDATE',
+          channels: Array.from(this.channels.values()),
+        });
+        this.saveChannels();
+        console.log(`[FuseConnect v7] Relay confirmed channel: ${channel.name} (${channel.id})`);
         break;
       }
 
@@ -1277,29 +1594,30 @@ class BackgroundService {
   /**
    * Inject message to active tab
    */
-  private async injectMessageToActiveTab(text: string): Promise<void> {
+  private async injectMessageToActiveTab(text: string): Promise<any> {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs[0]?.id) {
       this.logEvent('chat', 'inject_active_tab', {
         tabId: tabs[0].id,
         preview: String(text || '').slice(0, 120),
       });
-      chrome.tabs.sendMessage(tabs[0].id, {
+      return await chrome.tabs.sendMessage(tabs[0].id, {
         type: 'INJECT_MESSAGE',
         content: text,
       });
     }
+    return { success: false, error: 'No active tab available for injection' };
   }
 
   /**
    * Inject message to a specific tab
    */
-  private async injectMessageToTab(tabId: number, text: string): Promise<void> {
+  private async injectMessageToTab(tabId: number, text: string): Promise<any> {
     this.logEvent('chat', 'inject_specific_tab', {
       tabId,
       preview: String(text || '').slice(0, 120),
     });
-    chrome.tabs.sendMessage(tabId, {
+    return await chrome.tabs.sendMessage(tabId, {
       type: 'INJECT_MESSAGE',
       content: text,
     });
@@ -1336,33 +1654,77 @@ class BackgroundService {
   }
 
   /**
-   * Broadcast to all tabs
+   * Broadcast to tabs that actually host Fuse content scripts.
+   * Fire-and-forget: never wait for a reply (avoids "message port closed" spam).
    */
   private async broadcastToTabs(message: Record<string, unknown>): Promise<void> {
+    const now = Date.now();
     const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      if (tab.id) {
-        // Use a wrapper to catch the specific "Receiving end does not exist" error
-        // which occurs when sending to tabs that don't have our content script loaded
+    const targets = tabs.filter((tab) => this.shouldBroadcastToTab(tab, now));
+
+    await Promise.all(
+      targets.map(async (tab) => {
+        const tabId = tab.id!;
         try {
-          // WE MUST usage callback style or await the promise to catch the error
-          chrome.tabs.sendMessage(tab.id, message, () => {
-            // Checking lastError inside the callback suppresses the "Unchecked runtime.lastError"
-            const err = chrome.runtime.lastError;
-            if (
-              err &&
-              !err.message?.includes('Receiving end does not exist') &&
-              !err.message?.includes('Could not establish connection')
-            ) {
-              console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tab.id}:`, err);
-            }
-          });
-        } catch (e) {
-          // This catch block might not be reached for async sendMessage errors,
-          // but good for synchronous ones.
+          // No response callback — content scripts may not reply to every event type.
+          await chrome.tabs.sendMessage(tabId, message);
+          this.unreachableTabs.delete(tabId);
+        } catch (err) {
+          const errMsg = String((err as Error)?.message || err || '');
+          if (this.isBenignTabMessageError(errMsg)) {
+            this.markTabUnreachable(tabId, now);
+            return;
+          }
+
+          const lastLog = this.broadcastFailLogAt.get(tabId) || 0;
+          if (now - lastLog > 15000) {
+            this.broadcastFailLogAt.set(tabId, now);
+            console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tabId}:`, errMsg);
+          }
+          this.markTabUnreachable(tabId, now);
         }
-      }
+      })
+    );
+  }
+
+  private shouldBroadcastToTab(tab: chrome.tabs.Tab, now: number): boolean {
+    if (!tab.id || tab.id < 0) return false;
+    const url = String(tab.url || tab.pendingUrl || '');
+    if (!url || /^(chrome|chrome-extension|devtools|edge|about|brave):/i.test(url)) {
+      return false;
     }
+
+    const unreachableUntil = this.unreachableTabs.get(tab.id) || 0;
+    if (unreachableUntil > now) {
+      return false;
+    }
+
+    // Prefer tabs that announced CONTENT_SCRIPT_READY or host a registered page agent.
+    if (this.readyContentTabs.has(tab.id)) return true;
+    for (const agent of this.agents.values()) {
+      if (agent.metadata?.tabId === tab.id) return true;
+    }
+
+    // Fallback: http(s) pages that may still have the content script injected.
+    return /^https?:/i.test(url);
+  }
+
+  private markTabUnreachable(tabId: number, now = Date.now()): void {
+    this.unreachableTabs.set(tabId, now + this.TAB_UNREACHABLE_COOLDOWN_MS);
+    this.readyContentTabs.delete(tabId);
+  }
+
+  private isBenignTabMessageError(message: string): boolean {
+    const msg = String(message || '').toLowerCase();
+    return (
+      msg.includes('receiving end does not exist') ||
+      msg.includes('could not establish connection') ||
+      msg.includes('message port closed') ||
+      msg.includes('the message port closed before a response was received') ||
+      msg.includes('extension context invalidated') ||
+      msg.includes('no tab with id') ||
+      msg.includes('the tab was closed')
+    );
   }
 
   private notifyPopup(message: Record<string, unknown>): void {
@@ -1501,7 +1863,102 @@ class BackgroundService {
     chrome.alarms.onAlarm.addListener((alarm) => {
       if (alarm.name === AI_VIDEO_PROCESS_ALARM) {
         void this.processAIVideoTick();
+      } else if (alarm.name === KEEPALIVE_ALARM) {
+        this.onKeepAliveTick();
       }
+    });
+  }
+
+  /**
+   * Register the worker-revival alarm. `create` replaces an existing alarm of
+   * the same name, so calling this on every worker boot is safe and idempotent.
+   */
+  private ensureKeepAliveAlarm(): void {
+    try {
+      chrome.alarms.create(KEEPALIVE_ALARM, {
+        periodInMinutes: KEEPALIVE_PERIOD_MINUTES,
+      });
+      // Chrome silently clamps or rejects short periods depending on version and
+      // packed/unpacked state, so record what it ACTUALLY scheduled. Without
+      // this there is no way to tell "alarm never fired" from "alarm never
+      // existed" — the worker is asleep exactly when you would want to look.
+      void chrome.alarms.get(KEEPALIVE_ALARM).then((alarm) => {
+        void this.recordKeepAliveDiag({
+          requestedPeriodMinutes: KEEPALIVE_PERIOD_MINUTES,
+          scheduledPeriodMinutes: alarm?.periodInMinutes ?? null,
+          nextFireAt: alarm?.scheduledTime ?? null,
+          alarmExists: !!alarm,
+          workerBootedAt: Date.now(),
+        });
+        if (!alarm) {
+          console.error('[FuseConnect v7] Keepalive alarm was not registered by Chrome');
+        } else if (alarm.periodInMinutes !== KEEPALIVE_PERIOD_MINUTES) {
+          console.warn(
+            `[FuseConnect v7] Keepalive period clamped by Chrome: requested ${KEEPALIVE_PERIOD_MINUTES}m, scheduled ${alarm.periodInMinutes}m`
+          );
+        }
+      });
+    } catch (err) {
+      console.error('[FuseConnect v7] Failed to create keepalive alarm:', err);
+    }
+  }
+
+  /**
+   * Persist keepalive telemetry. Storage, not memory: the whole point is to
+   * survive the worker being torn down between ticks.
+   */
+  private async recordKeepAliveDiag(patch: Record<string, unknown>): Promise<void> {
+    try {
+      const stored = await chrome.storage.local.get(KEEPALIVE_DIAG_KEY);
+      const current = (stored?.[KEEPALIVE_DIAG_KEY] as Record<string, unknown>) || {};
+      await chrome.storage.local.set({
+        [KEEPALIVE_DIAG_KEY]: { ...current, ...patch, updatedAt: Date.now() },
+      });
+    } catch {
+      // Diagnostics must never break the keepalive path.
+    }
+  }
+
+  /**
+   * Runs on every keepalive alarm. The alarm firing has already woken the
+   * worker (re-running init() if it had been torn down); this decides whether
+   * the relay link needs re-establishing and refreshes agent liveness so the
+   * relay does not time our agents out.
+   */
+  private onKeepAliveTick(): void {
+    this.keepAliveTicks += 1;
+    const relayState = this.connections.get('relay')?.readyState ?? null;
+    void this.recordKeepAliveDiag({
+      lastTickAt: Date.now(),
+      ticksThisWorker: this.keepAliveTicks,
+      lastTickAutoConnect: this.autoConnect,
+      lastTickRelayReadyState: relayState,
+    });
+
+    if (!this.autoConnect) {
+      console.warn('[FuseConnect v7] Keepalive tick ignored: autoConnect is off');
+      return;
+    }
+
+    const relay = this.connections.get('relay');
+    if (relay?.readyState === WebSocket.OPEN) {
+      // Traffic on the socket also resets the worker's idle timer.
+      this.sendHeartbeatTick();
+      return;
+    }
+
+    // A socket that never opens stays in CONNECTING forever, so this must be a
+    // bounded in-flight guard rather than a readyState check — otherwise one
+    // half-open attempt would block every future reconnect.
+    if (this.relayConnectInFlightUntil > Date.now()) {
+      console.warn('[FuseConnect v7] Keepalive: relay connect already in flight');
+      return;
+    }
+
+    console.warn('[FuseConnect v7] Keepalive: relay link down, reconnecting...');
+    this.connectionAttempts = 0;
+    void this.tryInitialConnection().catch((err) => {
+      console.warn('[FuseConnect v7] Keepalive reconnect failed:', err);
     });
   }
 
@@ -1910,8 +2367,8 @@ class BackgroundService {
     );
     return {
       id: String(data?.id || ''),
-      title: String(data?.snippet?.title || title),
-      description: String(data?.snippet?.description || data?.description || ''),
+      title: String(data?.title || title),
+      description: String(data?.description || ''),
     };
   }
 
@@ -2295,6 +2752,9 @@ class BackgroundService {
       if (this.tabPausedChannels.delete(tabId)) {
         void this.saveTabPausedChannels();
       }
+      this.readyContentTabs.delete(tabId);
+      this.unreachableTabs.delete(tabId);
+      this.broadcastFailLogAt.delete(tabId);
       this.logEvent('browser.tabs', 'removed', { tabId });
     });
   }
@@ -2336,14 +2796,18 @@ class BackgroundService {
    * Send native message to control services
    */
   private async sendNativeMessage(message: Record<string, unknown>): Promise<any> {
-    if (this.nativeHostUnavailable) {
+    const now = Date.now();
+    if (this.nativeHostUnavailable || now < this.nativeHostBackoffUntil) {
       return {
-        error: 'Specified native messaging host not found',
+        error:
+          now < this.nativeHostBackoffUntil
+            ? 'Native host temporarily unavailable'
+            : 'Specified native messaging host not found',
         unavailable: true,
       };
     }
 
-    console.log('[NativeMessaging] Sending:', message.action, message.service || '');
+    console.debug('[NativeMessaging] Sending:', message.action, message.service || '');
     return new Promise((resolve) => {
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
@@ -2352,6 +2816,10 @@ class BackgroundService {
             const hostMissing =
               errMsg.includes('Specified native messaging host not found') ||
               errMsg.includes('No such native application');
+            const hostExited =
+              /native host has exited/i.test(errMsg) ||
+              /host .+ has exited/i.test(errMsg) ||
+              /disconnected port/i.test(errMsg);
 
             if (hostMissing) {
               this.nativeHostUnavailable = true;
@@ -2361,17 +2829,28 @@ class BackgroundService {
                   '[NativeMessaging] Native host not installed; native service controls disabled'
                 );
               }
+            } else if (hostExited) {
+              // Host binary exists but crashed/exited — back off instead of spamming errors.
+              this.nativeHostBackoffUntil = Date.now() + 60000;
+              if (!this.nativeHostMissingLogged) {
+                this.nativeHostMissingLogged = true;
+                console.warn(
+                  '[NativeMessaging] Native host exited; retrying after cooldown. Re-run apps/chrome-extension/install.sh if this persists.'
+                );
+              }
             } else {
-              console.error('[NativeMessaging] Error:', errMsg);
+              console.warn('[NativeMessaging] Error:', errMsg);
             }
 
-            resolve({ error: errMsg, unavailable: hostMissing });
+            resolve({ error: errMsg, unavailable: hostMissing || hostExited });
           } else {
+            // Successful response clears the one-shot warning latch for future sessions.
+            this.nativeHostMissingLogged = false;
             resolve(response || {});
           }
         });
       } catch (e) {
-        console.error('[NativeMessaging] Exception:', e);
+        console.warn('[NativeMessaging] Exception:', e);
         resolve({ error: 'Native messaging not available' });
       }
     });
@@ -2560,10 +3039,12 @@ class BackgroundService {
         case 'GET_STATE': {
           // Find the page agent for this tab if it exists
           let tabPageAgentId = null;
+          let tabPageAgent: Agent | null = null;
           if (sender.tab?.id) {
             for (const [id, agent] of this.agents) {
               if (agent.metadata?.tabId === sender.tab.id) {
                 tabPageAgentId = id;
+                tabPageAgent = agent;
                 break;
               }
             }
@@ -2580,6 +3061,9 @@ class BackgroundService {
             nodes: Object.fromEntries(this.nodeStatus),
             agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
             browserAgentId: this.agentId,
+            pageAgentId: tabPageAgentId,
+            pageAgent: tabPageAgent,
+            browserIdentity: this.browserIdentity,
             relayUrl: this.relayUrl,
             autoConnect: this.autoConnect,
             autoMonitor: this.autoMonitor,
@@ -3092,7 +3576,7 @@ class BackgroundService {
                 chrome.storage.local.set(
                   { processingState: nextState, ai_video_total_count: queue.length },
                   () => {
-                    chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 0.1 });
+                    chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 1 });
                     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
                     sendResponse({ success: true, data: { started: true }, state: nextState });
                   }
@@ -3130,7 +3614,7 @@ class BackgroundService {
               lastUpdated: Date.now(),
             };
             chrome.storage.local.set({ processingState: next }, () => {
-              chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 0.1 });
+              chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, { periodInMinutes: 1 });
               this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: next });
               sendResponse({ success: true, data: { resumed: true }, state: next });
             });
@@ -3535,27 +4019,70 @@ Format as JSON array:
           break;
 
         case 'CONTENT_SCRIPT_READY':
-          console.log('📢 Content script ready on:', message.url);
+          if (sender.tab?.id) {
+            this.readyContentTabs.add(sender.tab.id);
+            this.unreachableTabs.delete(sender.tab.id);
+          }
+          console.debug('📢 Content script ready on:', message.url);
           sendResponse({ success: true });
           break;
 
         case 'BROADCAST_MESSAGE':
           // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
           // can identify messages that originated from themselves and avoid self-injection loops.
-          this.send({
-            type: 'MESSAGE_SEND',
-            to: 'broadcast',
-            channel: message.channel,
-            content: message.content,
-            messageType: 'text',
-            metadata: message.metadata, // <-- PRESERVE SENDER INFO
-          });
-          this.sendActivityEvent('broadcast_message', {
-            channel: message.channel || null,
-            senderId: message.senderId || message.metadata?.senderId || null,
-            contentPreview: String(message.content || '').substring(0, 120),
-          });
-          sendResponse({ success: true });
+          {
+            const senderId = String(message.senderId || message.metadata?.senderId || '');
+            const senderIdentity = senderId ? this.getCompleteAgentIdentity(senderId) : null;
+
+            // Federated addressing: `/to <handle>`, `@ID#:<base58>`, `@page-agent-...`
+            // and `@<Platform>` resolve to a concrete recipient and are stripped from
+            // the content. Anything unaddressed stays a broadcast. Mirrors
+            // scripts/lib/federation-relay-client.cjs#sendChannelMessage so the browser
+            // edge and standalone relay clients address each other identically.
+            const resolved = resolveMessageTarget(
+              String(message.content ?? ''),
+              Array.from(this.agents.values())
+            );
+
+            const metadata = senderIdentity
+              ? enrichOutboundMetadata(senderIdentity, {
+                  channel: message.channel || null,
+                  senderId,
+                  extra: {
+                    ...(message.metadata || {}),
+                    addressedAgentId: resolved.addressedAgentId,
+                    addressedHandle: resolved.addressedHandle,
+                  },
+                })
+              : {
+                  ...(message.metadata || {}),
+                  addressedAgentId: resolved.addressedAgentId,
+                  addressedHandle: resolved.addressedHandle,
+                };
+
+            if (resolved.addressedAgentId) {
+              console.log('[FuseConnect v7] Addressed message ->', {
+                to: resolved.to,
+                handle: resolved.addressedHandle,
+                channel: message.channel || null,
+              });
+            }
+
+            this.send({
+              type: 'MESSAGE_SEND',
+              to: resolved.to,
+              channel: message.channel,
+              content: resolved.content,
+              messageType: 'text',
+              metadata, // <-- PRESERVE SENDER INFO
+            });
+            this.sendActivityEvent('broadcast_message', {
+              channel: message.channel || null,
+              senderId: senderId || null,
+              contentPreview: String(message.content || '').substring(0, 120),
+            });
+            sendResponse({ success: true });
+          }
           break;
 
         case 'SEND_TO_AGENT':
@@ -3601,6 +4128,8 @@ Format as JSON array:
 
           this.channels.set(newChannel.id, newChannel);
           this.joinedChannels.add(newChannel.id);
+          // A brand-new channel must reach the tabs that are already open.
+          this.joinPageAgentsToChannel(newChannel.id);
           this.broadcastToTabs({
             type: 'CHANNELS_UPDATE',
             channels: Array.from(this.channels.values()),
@@ -3622,12 +4151,29 @@ Format as JSON array:
             channelId: newChannel.id,
             name: trimmedName,
           });
-          sendResponse({ success: true, channel: newChannel });
+
+          // The local `local-` channel is a placeholder that only becomes real
+          // when the relay echoes CHANNEL_CREATED/CHANNEL_LIST back and we remap
+          // onto its id. Reporting a flat success while the relay link is down
+          // told the user the channel existed federation-wide when it did not.
+          const relayConnected = this.primaryConnection?.readyState === WebSocket.OPEN;
+          sendResponse({
+            success: true,
+            pending: !relayConnected,
+            channel: newChannel,
+            ...(relayConnected
+              ? {}
+              : {
+                  warning: `Created locally only — relay is not connected, "${trimmedName}" will be published when the link is restored`,
+                }),
+          });
           break;
         }
 
         case 'CHANNEL_JOIN':
           this.joinedChannels.add(message.channelId);
+          // Existing page agents must become members too, not just this tab.
+          this.joinPageAgentsToChannel(message.channelId);
           if (sender.tab?.id) {
             this.setTabActiveChannel(sender.tab.id, message.channelId);
             chrome.tabs.sendMessage(sender.tab.id, {
@@ -3752,8 +4298,13 @@ Format as JSON array:
 
         case 'CHANNEL_DELETE': {
           const channelIdToDelete = message.channelId;
-          if (channelIdToDelete === 'general') {
-            sendResponse({ success: false, error: 'Cannot delete general channel' });
+          // Guard the whole seeded set, not just general. These are federation
+          // infrastructure; deleting one propagates to the relay and every peer.
+          if (isStandardChannel(channelIdToDelete)) {
+            sendResponse({
+              success: false,
+              error: `"${channelIdToDelete}" is a standard federation channel and cannot be deleted`,
+            });
             break;
           }
           this.channels.delete(channelIdToDelete);
@@ -3774,6 +4325,30 @@ Format as JSON array:
           this.sendActivityEvent('channel_delete', { channelId: channelIdToDelete });
           sendResponse({ success: true });
           break;
+        }
+
+        case 'GET_KEEPALIVE_STATUS': {
+          void (async () => {
+            const stored = await chrome.storage.local.get(KEEPALIVE_DIAG_KEY);
+            const alarm = await chrome.alarms.get(KEEPALIVE_ALARM).catch(() => undefined);
+            sendResponse({
+              success: true,
+              diag: stored?.[KEEPALIVE_DIAG_KEY] || null,
+              alarm: alarm
+                ? { periodInMinutes: alarm.periodInMinutes, scheduledTime: alarm.scheduledTime }
+                : null,
+              autoConnect: this.autoConnect,
+              relayUrl: this.relayUrl,
+              relayReadyState: this.connections.get('relay')?.readyState ?? null,
+              connectionStatus:
+                this.primaryConnection?.readyState === WebSocket.OPEN
+                  ? 'connected'
+                  : 'disconnected',
+              ticksThisWorker: this.keepAliveTicks,
+              now: Date.now(),
+            });
+          })();
+          return true;
         }
 
         case 'CONTENT_SCRIPT_READY':
@@ -3899,12 +4474,19 @@ Format as JSON array:
             ? this.injectMessageToTab(sender.tab.id, message.content)
             : this.injectMessageToActiveTab(message.content)
           )
-            .then(() => {
+            .then((result) => {
+              const success = result?.success !== false;
               this.logEvent('chat', 'inject_message', {
                 tabId: sender.tab?.id ?? null,
                 preview: String(message.content || '').slice(0, 120),
+                success,
+                error: result?.error || result?.result?.error || null,
               });
-              sendResponse({ success: true });
+              sendResponse({
+                success,
+                result: result?.result || result,
+                error: result?.error || result?.result?.error,
+              });
             })
             .catch((error) => {
               console.error('[FuseConnect v7] Error injecting message:', error);
@@ -3939,9 +4521,14 @@ Format as JSON array:
             // Clean hostname for better display (e.g. "gemini.google.com" -> "Gemini")
             let platformName = hostname;
             if (hostname.includes('gemini.google')) platformName = 'Gemini';
+            else if (hostname.includes('cursor.com') || hostname.includes('cursor.sh'))
+              platformName = 'Cursor';
             else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
             else if (hostname.includes('claude.ai')) platformName = 'Claude';
             else if (hostname.includes('perplexity.ai')) platformName = 'Perplexity';
+            else if (hostname.includes('kimi.com') || hostname.includes('moonshot.cn'))
+              platformName = 'Kimi';
+            else if (hostname.includes('qwen.ai')) platformName = 'Qwen';
 
             this.registerPageAgent(
               pageAgentId,
@@ -3958,7 +4545,8 @@ Format as JSON array:
             this.broadcastToTabs(message);
 
             // 3. Return the assigned Agent ID to the tab so it knows who it is
-            sendResponse({ success: true, agentId: pageAgentId });
+            const agent = this.agents.get(pageAgentId);
+            sendResponse({ success: true, agentId: pageAgentId, pageAgentId, agent });
           } else {
             sendResponse({ success: true });
           }
@@ -4020,10 +4608,29 @@ Format as JSON array:
               // This supports per-tab channel selection where each tab maintains its own channel
               let channel = message.channel || message.metadata?.channel;
 
-              if (!channel && this.joinedChannels.size > 0) {
-                // Fallback to first joined channel if no specific channel provided
+              if (!channel && sender.tab?.id) {
+                // Authoritative per-tab binding, set on CHANNEL_JOIN and persisted.
+                channel = this.tabActiveChannels.get(sender.tab.id);
+                if (channel) {
+                  console.log('[FuseConnect v7] Using tab-bound channel:', channel);
+                }
+              }
+
+              if (!channel && this.joinedChannels.size === 1) {
+                // Only safe to infer when exactly one channel is joined. Picking the
+                // first of several would publish this response into whichever channel
+                // happened to be enumerated first — a cross-channel leak that looks
+                // like one channel "stealing" another channel's traffic.
                 channel = Array.from(this.joinedChannels)[0];
-                console.log('[FuseConnect v7] Using fallback channel:', channel);
+                console.log('[FuseConnect v7] Using sole joined channel:', channel);
+              }
+
+              if (!channel && this.joinedChannels.size > 1) {
+                console.warn(
+                  '[FuseConnect v7] Response has no channel and tab has no binding; ' +
+                    'not broadcasting rather than guessing among',
+                  Array.from(this.joinedChannels)
+                );
               }
 
               if (channel) {
@@ -4032,20 +4639,39 @@ Format as JSON array:
                 let platformName = message.platform || 'unknown';
                 if (!message.platform) {
                   if (tabUrl.includes('gemini.google')) platformName = 'Gemini';
+                  else if (tabUrl.includes('cursor.com') || tabUrl.includes('cursor.sh'))
+                    platformName = 'Cursor';
+                  else if (tabUrl.includes('/codex') || tabUrl.includes('codex.openai'))
+                    platformName = 'Codex';
                   else if (tabUrl.includes('chat.openai') || tabUrl.includes('chatgpt'))
                     platformName = 'ChatGPT';
                   else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
                   else if (tabUrl.includes('copilot')) platformName = 'Copilot';
+                  else if (tabUrl.includes('kimi.com') || tabUrl.includes('moonshot.cn'))
+                    platformName = 'Kimi';
+                  else if (tabUrl.includes('qwen.ai')) platformName = 'Qwen';
                 }
 
                 // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
-                const responseMetadata: any = {
-                  senderId: senderId, // KEY: Used to prevent self-injection
-                  senderType: 'ai-agent',
-                  platform: platformName,
-                  isAIResponse: true,
-                  timestamp: Date.now(),
-                };
+                const senderIdentity = this.getCompleteAgentIdentity(senderId);
+                const responseMetadata: any = senderIdentity
+                  ? enrichOutboundMetadata(senderIdentity, {
+                      channel,
+                      senderId,
+                      extra: {
+                        senderType: 'ai-agent',
+                        platform: platformName,
+                        isAIResponse: true,
+                        timestamp: Date.now(),
+                      },
+                    })
+                  : {
+                      senderId: senderId, // KEY: Used to prevent self-injection
+                      senderType: 'ai-agent',
+                      platform: platformName,
+                      isAIResponse: true,
+                      timestamp: Date.now(),
+                    };
 
                 // Include correlation info if present (from orchestrator requests)
                 if (message.metadata?.correlationId) {
@@ -4125,5 +4751,34 @@ Format as JSON array:
   }
 }
 
-// Initialize
-new BackgroundService();
+// Global SW guards — uncaught errors put MV3 workers into "bad state".
+try {
+  self.addEventListener('error', (event) => {
+    console.error(
+      '[FuseConnect v7] Service worker error:',
+      event?.error || event?.message || event
+    );
+  });
+  self.addEventListener('unhandledrejection', (event) => {
+    console.error('[FuseConnect v7] Service worker unhandled rejection:', event?.reason);
+    try {
+      event.preventDefault();
+    } catch (_e) {
+      // ignore
+    }
+  });
+} catch (_e) {
+  // Older runtimes may not expose self event APIs the same way.
+}
+
+chrome.runtime.onInstalled.addListener((details) => {
+  console.log('[FuseConnect v7] onInstalled:', details.reason);
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  console.log('[FuseConnect v7] onStartup');
+});
+
+// Initialize once per worker boot.
+const __fuseBackground = new BackgroundService();
+void __fuseBackground;

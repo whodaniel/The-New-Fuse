@@ -56,21 +56,47 @@ tsPackages.forEach((pkgDir) => {
     return;
   }
 
-  // Check if declaration files should be generated
-  const shouldGenerateDeclarations = tsconfig?.compilerOptions?.declaration !== false;
+  const compilerOptions = tsconfig?.compilerOptions || {};
 
-  if (!shouldGenerateDeclarations) {
-    return; // Skip packages that don't generate declarations
+  // Vite / app tsconfigs often set noEmit — they never produce .d.ts
+  if (compilerOptions.noEmit === true) {
+    return;
+  }
+
+  // TypeScript default for `declaration` is false. Only enforce when explicitly true
+  // (prior bug: `!== false` treated unset as required, false-failing Vite apps).
+  const shouldGenerateDeclarations = compilerOptions.declaration === true;
+  const claimsTypesField =
+    typeof packageJson.types === 'string' ||
+    typeof packageJson.typings === 'string' ||
+    Boolean(packageJson.exports && JSON.stringify(packageJson.exports).includes('.d.ts'));
+
+  if (!shouldGenerateDeclarations && !claimsTypesField) {
+    return;
   }
 
   // Get output directory
-  const outDir = tsconfig?.compilerOptions?.outDir || 'dist';
+  const outDir = compilerOptions.outDir || 'dist';
   const distPath = path.join(absPath, outDir);
 
   // Check if dist exists
   if (!fs.existsSync(distPath)) {
     warnings.push(
       `⚠️  ${packageName}: Output directory '${outDir}' does not exist (may not have been built yet)`
+    );
+    return;
+  }
+
+  const hasJsOutputs =
+    execSync(`find "${distPath}" \\( -name "*.js" -o -name "*.mjs" -o -name "*.cjs" \\) 2>/dev/null | head -1`, {
+      encoding: 'utf-8',
+      cwd: rootDir,
+    }).trim().length > 0;
+
+  // Incomplete / emit-only-tsbuildinfo builds are not declaration failures
+  if (!hasJsOutputs) {
+    warnings.push(
+      `⚠️  ${packageName}: '${outDir}' has no JS emit yet (incomplete build; skip .d.ts check)`
     );
     return;
   }
@@ -83,9 +109,15 @@ tsPackages.forEach((pkgDir) => {
     }).trim().length > 0;
 
   if (!hasDeclarationFiles) {
-    errors.push(
-      `❌ ${packageName}: No .d.ts files found in '${outDir}' but declaration=true in tsconfig`
-    );
+    if (shouldGenerateDeclarations) {
+      errors.push(
+        `❌ ${packageName}: No .d.ts files found in '${outDir}' but declaration=true in tsconfig`
+      );
+    } else {
+      warnings.push(
+        `⚠️  ${packageName}: package.json claims types but '${outDir}' has no .d.ts (enable declaration or drop types field)`
+      );
+    }
   }
 
   // Check for stale tsconfig.tsbuildinfo

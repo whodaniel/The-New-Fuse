@@ -137,7 +137,7 @@ const Tasks: React.FC = () => {
       Completed: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', icon: CheckCircle },
       'In Progress': { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: Clock },
       'Pending Review': { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: Clock },
-      'Not Started': { bg: 'bg-transparent0/20', text: 'text-gray-400', icon: Clock },
+      'Not Started': { bg: 'bg-gray-500/20', text: 'text-gray-400', icon: Clock },
     };
     const { bg, text, icon: Icon } = config[status] || config['Not Started'];
     return (

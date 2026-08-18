@@ -1,3 +1,4 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Badge, Button, Card, Input, Label, Textarea } from '@/components/ui';
 import { createSuggestion } from '@/services/unifiedLedgerApi';
 import { ChevronLeft, Lightbulb, Plus, X } from 'lucide-react';
@@ -49,11 +50,25 @@ const NewSuggestion: React.FC = () => {
           <ChevronLeft className="h-4 w-4 mr-1" />
           Back to Feed
         </Button>
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Submit Suggestion</h1>
-          <p className="text-slate-400 mt-1">
-            Propose a new capability or architectural enhancement.
-          </p>
+        <div className="flex items-center gap-3 flex-1">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Submit Suggestion</h1>
+            <p className="text-slate-400 mt-1">
+              Propose a new capability or architectural enhancement.
+            </p>
+          </div>
+          <TalkToAIFormAssist
+            formTitle="Submit Suggestion"
+            fields={[
+              { key: 'title', label: 'Headline' },
+              { key: 'description', label: 'Description' },
+            ]}
+            onApply={(values) => {
+              if (values.title) setTitle(String(values.title));
+              if (values.description) setDescription(String(values.description));
+            }}
+            className="ml-auto"
+          />
         </div>
       </div>
 

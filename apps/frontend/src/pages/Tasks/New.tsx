@@ -1,5 +1,7 @@
+import TalkToAIFormAssist from '@/components/forms/TalkToAIFormAssist';
 import { Badge, Button, Card, Input, Label, Textarea } from '@/components/ui';
 import { createTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
+import { authFetch } from '@/utils/authToken';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Tag, X, Zap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -49,7 +51,7 @@ const NewTask: React.FC = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await fetch('/api/agents');
+        const response = await authFetch('/api/agents');
         if (response.ok) {
           const data = await response.json();
           // Adjust based on your API response structure (e.g. data.agents or just data)
@@ -166,9 +168,43 @@ const NewTask: React.FC = () => {
           <ChevronLeft className="h-4 w-4 mr-1" />
           Return to Ledger
         </Button>
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Create New Task</h1>
-          <p className="text-slate-400 mt-1">Initialize a new operative directive for the swarm.</p>
+        <div className="flex items-center gap-3 flex-1">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Create New Task</h1>
+            <p className="text-slate-400 mt-1">
+              Initialize a new operative directive for the swarm.
+            </p>
+          </div>
+          <TalkToAIFormAssist
+            formTitle="Create New Task"
+            fields={[
+              { key: 'title', label: 'Title' },
+              { key: 'description', label: 'Description' },
+              {
+                key: 'status',
+                label: 'Status (not_started, in_progress, pending_review, completed)',
+              },
+              { key: 'priority', label: 'Priority (low, medium, high, critical)' },
+              { key: 'category', label: 'Category' },
+              { key: 'assignedTo', label: 'Assigned agent ID' },
+              { key: 'dueDate', label: 'Due date (YYYY-MM-DD)' },
+              { key: 'estimatedHours', label: 'Estimated hours' },
+            ]}
+            onApply={(values) => {
+              setFormData((current) => ({
+                ...current,
+                title: String(values.title ?? current.title),
+                description: String(values.description ?? current.description),
+                status: String(values.status ?? current.status),
+                priority: String(values.priority ?? current.priority),
+                category: String(values.category ?? current.category),
+                assignedTo: String(values.assignedTo ?? current.assignedTo),
+                dueDate: String(values.dueDate ?? current.dueDate),
+                estimatedHours: String(values.estimatedHours ?? current.estimatedHours),
+              }));
+            }}
+            className="ml-auto"
+          />
         </div>
       </div>
 

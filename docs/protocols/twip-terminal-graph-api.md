@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TWIP Terminal Graph API (v0.1)
 
 Status: Draft  
@@ -16,7 +19,8 @@ agents and UI surfaces can reason over available terminals holistically.
 
 1. `tenantId` (optional): filter to one tenant scope.
 2. `limit` (optional): max terminals returned (`1..1000`, default `200`).
-3. `includeProcessNodes` (optional): include process nodes in graph (`true` by default).
+3. `includeProcessNodes` (optional): include process nodes in graph (`true` by
+   default).
 4. `includeCommands` (optional): include sampled commands (`false` by default).
 
 ## Authorization
@@ -38,4 +42,3 @@ agents and UI surfaces can reason over available terminals holistically.
 
 1. `/visualizations/terminals`
 2. `/terminals`
-

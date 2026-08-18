@@ -1,259 +1,79 @@
 {
   "spec": "tnf/llm-ranking-recommendations/0.1",
-  "generatedAt": "2026-05-12T00:30:01.963Z",
-  "intelSnapshotId": "intel_1778544001835",
+  "generatedAt": "2026-08-13T16:30:02.853Z",
+  "intelSnapshotId": "intel_1786636805079",
   "compositeScores": [
-    {
-      "nvidiaId": "z-ai/glm-5.1",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 3912,
-      "compositeRank": 1
-    },
-    {
-      "nvidiaId": "deepseek-ai/deepseek-v4-flash",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 1657,
-      "compositeRank": 2
-    },
-    {
-      "nvidiaId": "deepseek-ai/deepseek-v4-pro",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 4216,
-      "compositeRank": 3
-    },
-    {
-      "nvidiaId": "qwen/qwen3.5-397b-a17b",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 1479,
-      "compositeRank": 4
-    },
-    {
-      "nvidiaId": "mistralai/mistral-medium-3.5-128b",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 664,
-      "compositeRank": 5
-    },
-    {
-      "nvidiaId": "mistralai/mistral-small-4-119b-2603",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 442,
-      "compositeRank": 6
-    },
-    {
-      "nvidiaId": "mistralai/ministral-14b-instruct-2512",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 291,
-      "compositeRank": 7
-    },
-    {
-      "nvidiaId": "google/gemma-3n-e4b-it",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 728,
-      "compositeRank": 8
-    },
-    {
-      "nvidiaId": "meta/llama-4-maverick-17b-128e-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 481,
-      "compositeRank": 9
-    },
-    {
-      "nvidiaId": "meta/llama-3.3-70b-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 307,
-      "compositeRank": 10
-    },
-    {
-      "nvidiaId": "meta/llama-3.2-90b-vision-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 3661,
-      "compositeRank": 11
-    },
-    {
-      "nvidiaId": "meta/llama-guard-4-12b",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 495,
-      "compositeRank": 12
-    },
-    {
-      "nvidiaId": "openai/gpt-oss-120b",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 104,
-      "compositeRank": 13
-    },
     {
       "nvidiaId": "openai/gpt-oss-20b",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "live",
-      "latencyMs": 258,
-      "compositeRank": 14
+      "latencyMs": 325,
+      "compositeRank": 1
     },
     {
-      "nvidiaId": "bytedance/seed-oss-36b-instruct",
+      "nvidiaId": "meta/llama-3.3-70b-instruct",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 6700,
-      "compositeRank": 15
+      "healthStatus": "timeout",
+      "latencyMs": null,
+      "compositeRank": 2
     },
     {
-      "nvidiaId": "stockmark/stockmark-2-100b-instruct",
+      "nvidiaId": "meta/llama-3.2-90b-vision-instruct",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 385,
-      "compositeRank": 16
+      "healthStatus": "timeout",
+      "latencyMs": null,
+      "compositeRank": 3
     },
     {
-      "nvidiaId": "google/gemma-4-31b-it",
+      "nvidiaId": "meta/llama-guard-4-12b",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 1779,
-      "compositeRank": 17
+      "healthStatus": "timeout",
+      "latencyMs": null,
+      "compositeRank": 4
     },
     {
-      "nvidiaId": "z-ai/glm5",
+      "nvidiaId": "openai/gpt-oss-120b",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 3766,
-      "compositeRank": 18
+      "healthStatus": "timeout",
+      "latencyMs": null,
+      "compositeRank": 5
     },
     {
-      "nvidiaId": "z-ai/glm4.7",
+      "nvidiaId": "z-ai/glm-5.1",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 15052,
-      "compositeRank": 19
-    },
-    {
-      "nvidiaId": "qwen/qwen3-coder-480b-a35b-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 3323,
-      "compositeRank": 20
-    },
-    {
-      "nvidiaId": "qwen/qwen3-next-80b-a3b-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 288,
-      "compositeRank": 21
-    },
-    {
-      "nvidiaId": "qwen/qwen3-next-80b-a3b-thinking",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "live",
-      "latencyMs": 345,
-      "compositeRank": 22
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 6
     },
     {
       "nvidiaId": "moonshotai/kimi-k2.6",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "timeout",
+      "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 23
+      "compositeRank": 7
     },
     {
       "nvidiaId": "minimaxai/minimax-m2.7",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "timeout",
+      "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 24
-    },
-    {
-      "nvidiaId": "qwen/qwen3.5-122b-a10b",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
-      "compositeRank": 25
-    },
-    {
-      "nvidiaId": "mistralai/mistral-large-3-675b-instruct-2512",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
-      "compositeRank": 26
-    },
-    {
-      "nvidiaId": "microsoft/phi-4-multimodal-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
-      "compositeRank": 27
-    },
-    {
-      "nvidiaId": "microsoft/phi-4-mini-instruct",
-      "arenaScores": [],
-      "avgArenaScore": 0,
-      "bestRank": null,
-      "healthStatus": "timeout",
-      "latencyMs": null,
-      "compositeRank": 28
+      "compositeRank": 8
     },
     {
       "nvidiaId": "minimaxai/minimax-m2.5",
@@ -262,25 +82,106 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 29
+      "compositeRank": 9
+    },
+    {
+      "nvidiaId": "deepseek-ai/deepseek-v4-flash",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 10
+    },
+    {
+      "nvidiaId": "deepseek-ai/deepseek-v4-pro",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 11
+    },
+    {
+      "nvidiaId": "qwen/qwen3.5-397b-a17b",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 12
+    },
+    {
+      "nvidiaId": "qwen/qwen3.5-122b-a10b",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 13
+    },
+    {
+      "nvidiaId": "mistralai/mistral-large-3-675b-instruct-2512",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 14
+    },
+    {
+      "nvidiaId": "mistralai/mistral-medium-3.5-128b",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 15
     },
     {
       "nvidiaId": "mistralai/devstral-2-123b-instruct-2512",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
+      "healthStatus": "error",
+      "latencyMs": null,
+      "compositeRank": 16
+    },
+    {
+      "nvidiaId": "mistralai/mistral-small-4-119b-2603",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 30
+      "compositeRank": 17
     },
     {
       "nvidiaId": "mistralai/magistral-small-2506",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
+      "healthStatus": "error",
+      "latencyMs": null,
+      "compositeRank": 18
+    },
+    {
+      "nvidiaId": "mistralai/ministral-14b-instruct-2512",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 31
+      "compositeRank": 19
+    },
+    {
+      "nvidiaId": "google/gemma-3n-e4b-it",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 20
     },
     {
       "nvidiaId": "google/gemma-3-27b-it",
@@ -289,34 +190,88 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 32
+      "compositeRank": 21
+    },
+    {
+      "nvidiaId": "meta/llama-4-maverick-17b-128e-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 22
     },
     {
       "nvidiaId": "meta/llama-3.1-405b-instruct",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
+      "healthStatus": "error",
+      "latencyMs": null,
+      "compositeRank": 23
+    },
+    {
+      "nvidiaId": "microsoft/phi-4-multimodal-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 33
+      "compositeRank": 24
+    },
+    {
+      "nvidiaId": "microsoft/phi-4-mini-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 25
+    },
+    {
+      "nvidiaId": "bytedance/seed-oss-36b-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 26
+    },
+    {
+      "nvidiaId": "stockmark/stockmark-2-100b-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 27
     },
     {
       "nvidiaId": "abacusai/dracarys-llama-3.1-70b-instruct",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 28
+    },
+    {
+      "nvidiaId": "google/gemma-4-31b-it",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
       "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 34
+      "compositeRank": 29
     },
     {
       "nvidiaId": "moonshotai/kimi-k2-instruct-0905",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "eol",
+      "healthStatus": "error",
       "latencyMs": null,
-      "compositeRank": 35
+      "compositeRank": 30
     },
     {
       "nvidiaId": "moonshotai/kimi-k2-thinking",
@@ -325,10 +280,55 @@
       "bestRank": null,
       "healthStatus": "eol",
       "latencyMs": null,
-      "compositeRank": 36
+      "compositeRank": 31
     },
     {
       "nvidiaId": "moonshotai/kimi-k2-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 32
+    },
+    {
+      "nvidiaId": "z-ai/glm5",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 33
+    },
+    {
+      "nvidiaId": "z-ai/glm4.7",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 34
+    },
+    {
+      "nvidiaId": "qwen/qwen3-coder-480b-a35b-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 35
+    },
+    {
+      "nvidiaId": "qwen/qwen3-next-80b-a3b-instruct",
+      "arenaScores": [],
+      "avgArenaScore": 0,
+      "bestRank": null,
+      "healthStatus": "eol",
+      "latencyMs": null,
+      "compositeRank": 36
+    },
+    {
+      "nvidiaId": "qwen/qwen3-next-80b-a3b-thinking",
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
@@ -339,261 +339,636 @@
   ],
   "currentPriorityOrder": [
     {
-      "id": "nvidia-glm51",
-      "model": "z-ai/glm-5.1",
+      "id": "nvidia-nemotron-3-ultra",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
       "priority": 0
+    },
+    {
+      "id": "nvidia-google-gemma-4-31b-it",
+      "model": "google/gemma-4-31b-it",
+      "priority": 1
+    },
+    {
+      "id": "nvidia-z-ai-glm-52",
+      "model": "z-ai/glm-5.2",
+      "priority": 2
+    },
+    {
+      "id": "nvidia-minimax-m3",
+      "model": "minimaxai/minimax-m3",
+      "priority": 3
     },
     {
       "id": "nvidia-kimi-k26",
       "model": "moonshotai/kimi-k2.6",
-      "priority": 1
-    },
-    {
-      "id": "nvidia-minimax",
-      "model": "minimaxai/minimax-m2.7",
-      "priority": 2
-    },
-    {
-      "id": "nvidia-kimi-k2-0905",
-      "model": "moonshotai/kimi-k2-instruct-0905",
-      "priority": 3
-    },
-    {
-      "id": "nvidia-kimi-k2-thinking",
-      "model": "moonshotai/kimi-k2-thinking",
       "priority": 4
     },
     {
-      "id": "nvidia-kimi-k2",
-      "model": "moonshotai/kimi-k2-instruct",
-      "priority": 5
-    },
-    {
-      "id": "nvidia-deepseek-v4-flash",
-      "model": "deepseek-ai/deepseek-v4-flash",
-      "priority": 6
-    },
-    {
-      "id": "nvidia-deepseek-v4-pro",
-      "model": "deepseek-ai/deepseek-v4-pro",
-      "priority": 7
-    },
-    {
-      "id": "nvidia-deepseek-v3.2",
-      "model": "deepseek-ai/deepseek-v3.2",
+      "id": "nvidia-nvidia-nemotron-3-super-120b-a12b",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
       "priority": 8
     },
     {
-      "id": "nvidia-glm5",
-      "model": "z-ai/glm5",
+      "id": "nvidia-thinkingmachines-inkling",
+      "model": "thinkingmachines/inkling",
       "priority": 9
     },
     {
-      "id": "nvidia-glm47",
-      "model": "z-ai/glm4.7",
-      "priority": 10
-    },
-    {
-      "id": "nvidia-mistral-large3",
-      "model": "mistralai/mistral-large-3-675b-instruct-2512",
-      "priority": 11
-    },
-    {
-      "id": "nvidia-mistral-medium35",
-      "model": "mistralai/mistral-medium-3.5-128b",
-      "priority": 12
-    },
-    {
-      "id": "nvidia-devstral2",
-      "model": "mistralai/devstral-2-123b-instruct-2512",
+      "id": "nvidia-stepfun-37-flash",
+      "model": "stepfun-ai/step-3.7-flash",
       "priority": 13
     },
     {
-      "id": "nvidia-qwen35-397b",
-      "model": "qwen/qwen3.5-397b-a17b",
-      "priority": 14
-    },
-    {
-      "id": "nvidia-qwen3-coder",
-      "model": "qwen/qwen3-coder-480b-a35b-instruct",
+      "id": "nvidia-meta-llama-3-2-11b-vision-instruct",
+      "model": "meta/llama-3.2-11b-vision-instruct",
       "priority": 15
     },
     {
-      "id": "nvidia-qwen35-122b",
-      "model": "qwen/qwen3.5-122b-a10b",
-      "priority": 16
-    },
-    {
-      "id": "nvidia-gemma4-31b",
-      "model": "google/gemma-4-31b-it",
-      "priority": 17
-    },
-    {
-      "id": "nvidia-llama4-maverick",
-      "model": "meta/llama-4-maverick-17b-128e-instruct",
-      "priority": 18
-    },
-    {
-      "id": "nvidia-llama3.3-70b",
-      "model": "meta/llama-3.3-70b-instruct",
-      "priority": 19
-    },
-    {
-      "id": "nvidia-openai-gpt-oss-120b",
+      "id": "nvidia-gpt-oss-120b",
       "model": "openai/gpt-oss-120b",
-      "priority": 20
-    },
-    {
-      "id": "nvidia-openai-gpt-oss-20b",
-      "model": "openai/gpt-oss-20b",
-      "priority": 21
-    },
-    {
-      "id": "nvidia-mistral-small4",
-      "model": "mistralai/mistral-small-4-119b-2603",
-      "priority": 22
-    },
-    {
-      "id": "nvidia-minimax-m25",
-      "model": "minimaxai/minimax-m2.5",
-      "priority": 23
-    },
-    {
-      "id": "nvidia-phi4-multimodal",
-      "model": "microsoft/phi-4-multimodal-instruct",
-      "priority": 24
-    },
-    {
-      "id": "nvidia-yi-large",
-      "model": "01-ai/yi-large",
-      "priority": 25
-    },
-    {
-      "id": "nvidia-bytedance-seed",
-      "model": "bytedance/seed-oss-36b-instruct",
-      "priority": 26
-    },
-    {
-      "id": "nvidia-minimaxai-minimax-m2-1",
-      "model": "minimaxai/minimax-m2.1",
-      "priority": 27
-    },
-    {
-      "id": "nvidia-deepseek-ai-deepseek-v3-1-terminus",
-      "model": "deepseek-ai/deepseek-v3.1-terminus",
-      "priority": 28
+      "priority": 17
     },
     {
       "id": "nvidia-qwen-qwen3-next-80b-a3b-instruct",
       "model": "qwen/qwen3-next-80b-a3b-instruct",
+      "priority": 19
+    },
+    {
+      "id": "nvidia-qwen3-coder",
+      "model": "qwen/qwen3-coder-480b-a35b-instruct",
+      "priority": 25
+    },
+    {
+      "id": "nvidia-nemotron-super-49b-v15",
+      "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
       "priority": 29
     },
     {
-      "id": "nvidia-qwen-qwen3-next-80b-a3b-thinking",
-      "model": "qwen/qwen3-next-80b-a3b-thinking",
-      "priority": 30
-    },
-    {
-      "id": "nvidia-qwen-qwen3-coder-next",
-      "model": "qwen/qwen3-coder-next",
-      "priority": 31
-    },
-    {
-      "id": "nvidia-mistralai-magistral-small-2506",
-      "model": "mistralai/magistral-small-2506",
-      "priority": 32
-    },
-    {
-      "id": "nvidia-mistralai-ministral-14b-instruct-2512",
-      "model": "mistralai/ministral-14b-instruct-2512",
-      "priority": 33
-    },
-    {
-      "id": "nvidia-mistralai-mistral-medium-3-instruct",
-      "model": "mistralai/mistral-medium-3-instruct",
-      "priority": 34
-    },
-    {
-      "id": "nvidia-google-gemma-3n-e4b-it",
-      "model": "google/gemma-3n-e4b-it",
-      "priority": 35
-    },
-    {
-      "id": "nvidia-google-gemma-3-27b-it",
-      "model": "google/gemma-3-27b-it",
-      "priority": 36
-    },
-    {
-      "id": "nvidia-meta-llama-3-1-405b-instruct",
-      "model": "meta/llama-3.1-405b-instruct",
-      "priority": 37
-    },
-    {
-      "id": "nvidia-meta-llama-3-2-90b-vision-instruct",
-      "model": "meta/llama-3.2-90b-vision-instruct",
-      "priority": 38
-    },
-    {
-      "id": "nvidia-meta-llama-guard-4-12b",
-      "model": "meta/llama-guard-4-12b",
-      "priority": 39
-    },
-    {
-      "id": "nvidia-microsoft-phi-4-mini-instruct",
-      "model": "microsoft/phi-4-mini-instruct",
-      "priority": 40
-    },
-    {
-      "id": "nvidia-microsoft-phi-3-5-moe-instruct",
-      "model": "microsoft/phi-3.5-moe-instruct",
-      "priority": 41
-    },
-    {
-      "id": "nvidia-writer-palmyra-creative-122b",
-      "model": "writer/palmyra-creative-122b",
-      "priority": 42
-    },
-    {
-      "id": "nvidia-stockmark-stockmark-2-100b-instruct",
-      "model": "stockmark/stockmark-2-100b-instruct",
-      "priority": 43
+      "id": "nvidia-01-ai-yi-large",
+      "model": "01-ai/yi-large",
+      "priority": 53
     },
     {
       "id": "nvidia-abacusai-dracarys-llama-3-1-70b-instruct",
       "model": "abacusai/dracarys-llama-3.1-70b-instruct",
-      "priority": 44
+      "priority": 55
     },
     {
-      "id": "nvidia-stepfun-step35-flash",
-      "model": "stepfun-ai/step-3.5-flash",
-      "priority": 45
+      "id": "nvidia-adept-fuyu-8b",
+      "model": "adept/fuyu-8b",
+      "priority": 57
     },
     {
-      "id": "nvidia-qwen25-coder-32b",
-      "model": "qwen/qwen2.5-coder-32b-instruct",
-      "priority": 46
-    },
-    {
-      "id": "nvidia-llama33-nemotron-super-49b-v1",
-      "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
-      "priority": 47
-    },
-    {
-      "id": "nvidia-llama33-nemotron-super-49b-v15",
-      "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-      "priority": 48
-    },
-    {
-      "id": "nvidia-ai21labs-jamba-15-large",
+      "id": "nvidia-ai21labs-jamba-1-5-large-instruct",
       "model": "ai21labs/jamba-1.5-large-instruct",
-      "priority": 49
+      "priority": 59
+    },
+    {
+      "id": "nvidia-aisingapore-sea-lion-7b-instruct",
+      "model": "aisingapore/sea-lion-7b-instruct",
+      "priority": 61
+    },
+    {
+      "id": "nvidia-baai-bge-m3",
+      "model": "baai/bge-m3",
+      "priority": 63
+    },
+    {
+      "id": "nvidia-bigcode-starcoder2-15b",
+      "model": "bigcode/starcoder2-15b",
+      "priority": 65
+    },
+    {
+      "id": "nvidia-databricks-dbrx-instruct",
+      "model": "databricks/dbrx-instruct",
+      "priority": 67
+    },
+    {
+      "id": "nvidia-deepseek-ai-deepseek-coder-6-7b-instruct",
+      "model": "deepseek-ai/deepseek-coder-6.7b-instruct",
+      "priority": 69
+    },
+    {
+      "id": "nvidia-google-codegemma-1-1-7b",
+      "model": "google/codegemma-1.1-7b",
+      "priority": 71
+    },
+    {
+      "id": "nvidia-google-codegemma-7b",
+      "model": "google/codegemma-7b",
+      "priority": 73
+    },
+    {
+      "id": "nvidia-google-deplot",
+      "model": "google/deplot",
+      "priority": 75
+    },
+    {
+      "id": "nvidia-google-diffusiongemma-26b-a4b-it",
+      "model": "google/diffusiongemma-26b-a4b-it",
+      "priority": 77
+    },
+    {
+      "id": "nvidia-google-gemma-2-2b-it",
+      "model": "google/gemma-2-2b-it",
+      "priority": 79
+    },
+    {
+      "id": "nvidia-google-gemma-2b",
+      "model": "google/gemma-2b",
+      "priority": 81
+    },
+    {
+      "id": "nvidia-google-gemma-3-12b-it",
+      "model": "google/gemma-3-12b-it",
+      "priority": 83
+    },
+    {
+      "id": "nvidia-google-gemma-3-4b-it",
+      "model": "google/gemma-3-4b-it",
+      "priority": 85
+    },
+    {
+      "id": "nvidia-google-gemma-3n-e2b-it",
+      "model": "google/gemma-3n-e2b-it",
+      "priority": 87
+    },
+    {
+      "id": "nvidia-google-gemma-3n-e4b-it",
+      "model": "google/gemma-3n-e4b-it",
+      "priority": 89
+    },
+    {
+      "id": "nvidia-google-recurrentgemma-2b",
+      "model": "google/recurrentgemma-2b",
+      "priority": 91
+    },
+    {
+      "id": "nvidia-ibm-granite-3-0-3b-a800m-instruct",
+      "model": "ibm/granite-3.0-3b-a800m-instruct",
+      "priority": 93
+    },
+    {
+      "id": "nvidia-ibm-granite-3-0-8b-instruct",
+      "model": "ibm/granite-3.0-8b-instruct",
+      "priority": 95
+    },
+    {
+      "id": "nvidia-ibm-granite-34b-code-instruct",
+      "model": "ibm/granite-34b-code-instruct",
+      "priority": 97
+    },
+    {
+      "id": "nvidia-ibm-granite-8b-code-instruct",
+      "model": "ibm/granite-8b-code-instruct",
+      "priority": 99
+    },
+    {
+      "id": "nvidia-meta-codellama-70b",
+      "model": "meta/codellama-70b",
+      "priority": 101
+    },
+    {
+      "id": "nvidia-meta-llama-3-1-70b-instruct",
+      "model": "meta/llama-3.1-70b-instruct",
+      "priority": 103
+    },
+    {
+      "id": "nvidia-meta-llama-3-1-8b-instruct",
+      "model": "meta/llama-3.1-8b-instruct",
+      "priority": 105
+    },
+    {
+      "id": "nvidia-meta-llama-3-2-1b-instruct",
+      "model": "meta/llama-3.2-1b-instruct",
+      "priority": 107
+    },
+    {
+      "id": "nvidia-meta-llama-3-2-3b-instruct",
+      "model": "meta/llama-3.2-3b-instruct",
+      "priority": 109
+    },
+    {
+      "id": "nvidia-meta-llama-3-2-90b-vision-instruct",
+      "model": "meta/llama-3.2-90b-vision-instruct",
+      "priority": 111
+    },
+    {
+      "id": "nvidia-meta-llama-guard-4-12b",
+      "model": "meta/llama-guard-4-12b",
+      "priority": 113
+    },
+    {
+      "id": "nvidia-meta-llama2-70b",
+      "model": "meta/llama2-70b",
+      "priority": 115
+    },
+    {
+      "id": "nvidia-microsoft-kosmos-2",
+      "model": "microsoft/kosmos-2",
+      "priority": 117
+    },
+    {
+      "id": "nvidia-microsoft-phi-3-vision-128k-instruct",
+      "model": "microsoft/phi-3-vision-128k-instruct",
+      "priority": 119
+    },
+    {
+      "id": "nvidia-microsoft-phi-3-5-moe-instruct",
+      "model": "microsoft/phi-3.5-moe-instruct",
+      "priority": 121
+    },
+    {
+      "id": "nvidia-mistralai-codestral-22b-instruct-v0-1",
+      "model": "mistralai/codestral-22b-instruct-v0.1",
+      "priority": 127
+    },
+    {
+      "id": "nvidia-mistralai-ministral-14b-instruct-2512",
+      "model": "mistralai/ministral-14b-instruct-2512",
+      "priority": 129
+    },
+    {
+      "id": "nvidia-mistralai-mistral-7b-instruct-v0-3",
+      "model": "mistralai/mistral-7b-instruct-v0.3",
+      "priority": 131
+    },
+    {
+      "id": "nvidia-mistralai-mistral-large",
+      "model": "mistralai/mistral-large",
+      "priority": 133
+    },
+    {
+      "id": "nvidia-mistralai-mistral-large-2-instruct",
+      "model": "mistralai/mistral-large-2-instruct",
+      "priority": 135
+    },
+    {
+      "id": "nvidia-mistralai-mistral-nemotron",
+      "model": "mistralai/mistral-nemotron",
+      "priority": 137
+    },
+    {
+      "id": "nvidia-mistralai-mixtral-8x22b-v0-1",
+      "model": "mistralai/mixtral-8x22b-v0.1",
+      "priority": 139
+    },
+    {
+      "id": "nvidia-mistralai-mixtral-8x7b-instruct-v0-1",
+      "model": "mistralai/mixtral-8x7b-instruct-v0.1",
+      "priority": 141
+    },
+    {
+      "id": "nvidia-nv-mistralai-mistral-nemo-12b-instruct",
+      "model": "nv-mistralai/mistral-nemo-12b-instruct",
+      "priority": 143
+    },
+    {
+      "id": "nvidia-nvidia-ai-synthetic-video-detector",
+      "model": "nvidia/ai-synthetic-video-detector",
+      "priority": 145
+    },
+    {
+      "id": "nvidia-nvidia-embed-qa-4",
+      "model": "nvidia/embed-qa-4",
+      "priority": 147
+    },
+    {
+      "id": "nvidia-nvidia-gliner-pii",
+      "model": "nvidia/gliner-pii",
+      "priority": 149
+    },
+    {
+      "id": "nvidia-nvidia-ising-calibration-1-35b-a3b",
+      "model": "nvidia/ising-calibration-1-35b-a3b",
+      "priority": 151
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemoguard-8b-content-safety",
+      "model": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+      "priority": 153
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemoguard-8b-topic-control",
+      "model": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+      "priority": 155
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-51b-instruct",
+      "model": "nvidia/llama-3.1-nemotron-51b-instruct",
+      "priority": 157
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-70b-instruct",
+      "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+      "priority": 159
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-nano-8b-v1",
+      "model": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+      "priority": 161
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-nano-vl-8b-v1",
+      "model": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+      "priority": 163
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-safety-guard-8b-v3",
+      "model": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+      "priority": 165
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-2-nemoretriever-1b-vlm-embed-v1",
+      "model": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+      "priority": 167
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-2-nv-embedqa-1b-v1",
+      "model": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+      "priority": 169
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-3-nemotron-super-49b-v1",
+      "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
+      "priority": 171
+    },
+    {
+      "id": "nvidia-nvidia-llama-nemotron-embed-1b-v2",
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "priority": 173
+    },
+    {
+      "id": "nvidia-nvidia-llama-nemotron-embed-vl-1b-v2",
+      "model": "nvidia/llama-nemotron-embed-vl-1b-v2",
+      "priority": 175
+    },
+    {
+      "id": "nvidia-nvidia-llama3-chatqa-1-5-70b",
+      "model": "nvidia/llama3-chatqa-1.5-70b",
+      "priority": 177
+    },
+    {
+      "id": "nvidia-nvidia-mistral-nemo-minitron-8b-8k-instruct",
+      "model": "nvidia/mistral-nemo-minitron-8b-8k-instruct",
+      "priority": 179
+    },
+    {
+      "id": "nvidia-nvidia-nemoretriever-parse",
+      "model": "nvidia/nemoretriever-parse",
+      "priority": 181
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-3-content-safety",
+      "model": "nvidia/nemotron-3-content-safety",
+      "priority": 183
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-3-nano-30b-a3b",
+      "model": "nvidia/nemotron-3-nano-30b-a3b",
+      "priority": 185
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-3-nano-omni-30b-a3b-reasoning",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "priority": 187
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-3-5-content-safety",
+      "model": "nvidia/nemotron-3.5-content-safety",
+      "priority": 189
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-4-340b-instruct",
+      "model": "nvidia/nemotron-4-340b-instruct",
+      "priority": 191
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-4-340b-reward",
+      "model": "nvidia/nemotron-4-340b-reward",
+      "priority": 193
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-content-safety-reasoning-4b",
+      "model": "nvidia/nemotron-content-safety-reasoning-4b",
+      "priority": 195
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-mini-4b-instruct",
+      "model": "nvidia/nemotron-mini-4b-instruct",
+      "priority": 197
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-nano-12b-v2-vl",
+      "model": "nvidia/nemotron-nano-12b-v2-vl",
+      "priority": 199
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-nano-3-30b-a3b",
+      "model": "nvidia/nemotron-nano-3-30b-a3b",
+      "priority": 201
+    },
+    {
+      "id": "nvidia-nvidia-nemotron-parse",
+      "model": "nvidia/nemotron-parse",
+      "priority": 203
+    },
+    {
+      "id": "nvidia-nvidia-neva-22b",
+      "model": "nvidia/neva-22b",
+      "priority": 205
+    },
+    {
+      "id": "nvidia-nvidia-nv-embed-v1",
+      "model": "nvidia/nv-embed-v1",
+      "priority": 207
+    },
+    {
+      "id": "nvidia-nvidia-nv-embedcode-7b-v1",
+      "model": "nvidia/nv-embedcode-7b-v1",
+      "priority": 209
+    },
+    {
+      "id": "nvidia-nvidia-nv-embedqa-e5-v5",
+      "model": "nvidia/nv-embedqa-e5-v5",
+      "priority": 211
+    },
+    {
+      "id": "nvidia-nvidia-nv-embedqa-mistral-7b-v2",
+      "model": "nvidia/nv-embedqa-mistral-7b-v2",
+      "priority": 213
+    },
+    {
+      "id": "nvidia-nvidia-nvclip",
+      "model": "nvidia/nvclip",
+      "priority": 215
+    },
+    {
+      "id": "nvidia-nvidia-nvidia-nemotron-nano-9b-v2",
+      "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+      "priority": 217
+    },
+    {
+      "id": "nvidia-nvidia-riva-translate-4b-instruct",
+      "model": "nvidia/riva-translate-4b-instruct",
+      "priority": 219
+    },
+    {
+      "id": "nvidia-nvidia-riva-translate-4b-instruct-v1-1",
+      "model": "nvidia/riva-translate-4b-instruct-v1.1",
+      "priority": 221
+    },
+    {
+      "id": "nvidia-nvidia-vila",
+      "model": "nvidia/vila",
+      "priority": 223
+    },
+    {
+      "id": "nvidia-sarvamai-sarvam-m",
+      "model": "sarvamai/sarvam-m",
+      "priority": 225
+    },
+    {
+      "id": "nvidia-snowflake-arctic-embed-l",
+      "model": "snowflake/arctic-embed-l",
+      "priority": 227
+    },
+    {
+      "id": "nvidia-stockmark-stockmark-2-100b-instruct",
+      "model": "stockmark/stockmark-2-100b-instruct",
+      "priority": 229
+    },
+    {
+      "id": "nvidia-upstage-solar-10-7b-instruct",
+      "model": "upstage/solar-10.7b-instruct",
+      "priority": 231
+    },
+    {
+      "id": "nvidia-writer-palmyra-fin-70b-32k",
+      "model": "writer/palmyra-fin-70b-32k",
+      "priority": 233
+    },
+    {
+      "id": "nvidia-writer-palmyra-med-70b",
+      "model": "writer/palmyra-med-70b",
+      "priority": 235
+    },
+    {
+      "id": "nvidia-writer-palmyra-med-70b-32k",
+      "model": "writer/palmyra-med-70b-32k",
+      "priority": 237
+    },
+    {
+      "id": "nvidia-zyphra-zamba2-7b-instruct",
+      "model": "zyphra/zamba2-7b-instruct",
+      "priority": 239
+    },
+    {
+      "id": "nvidia-bytedance-seed-oss-36b-instruct",
+      "model": "bytedance/seed-oss-36b-instruct",
+      "priority": 241
+    },
+    {
+      "id": "nvidia-meta-llama-3-3-70b-instruct",
+      "model": "meta/llama-3.3-70b-instruct",
+      "priority": 245
+    },
+    {
+      "id": "nvidia-nvidia-cosmos-reason2-8b",
+      "model": "nvidia/cosmos-reason2-8b",
+      "priority": 249
+    },
+    {
+      "id": "nvidia-nvidia-llama-3-1-nemotron-ultra-253b-v1",
+      "model": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+      "priority": 251
+    },
+    {
+      "id": "nvidia-openai-gpt-oss-20b",
+      "model": "openai/gpt-oss-20b",
+      "priority": 253
+    },
+    {
+      "id": "nvidia-writer-palmyra-creative-122b",
+      "model": "writer/palmyra-creative-122b",
+      "priority": 255
+    },
+    {
+      "id": "nvidia-poolside-laguna-xs-21",
+      "model": "poolside/laguna-xs-2.1",
+      "priority": 5000
+    },
+    {
+      "id": "nvidia-deepseek-ai-deepseek-v4-flash",
+      "model": "deepseek-ai/deepseek-v4-flash",
+      "priority": 9000
+    },
+    {
+      "id": "nvidia-mistral-medium-35",
+      "model": "mistralai/mistral-medium-3.5-128b",
+      "priority": 9001
+    },
+    {
+      "id": "nvidia-deepseek-ai-deepseek-v4-pro",
+      "model": "deepseek-ai/deepseek-v4-pro",
+      "priority": 9002
+    },
+    {
+      "id": "nvidia-qwen35-122b",
+      "model": "qwen/qwen3.5-122b-a10b",
+      "priority": 27037
+    },
+    {
+      "id": "nvidia-microsoft-phi-4-mini-instruct",
+      "model": "microsoft/phi-4-mini-instruct",
+      "priority": 27123
+    },
+    {
+      "id": "nvidia-microsoft-phi-4-multimodal-instruct",
+      "model": "microsoft/phi-4-multimodal-instruct",
+      "priority": 27125
+    },
+    {
+      "id": "nvidia-mistral-small-4",
+      "model": "mistralai/mistral-small-4-119b-2603",
+      "priority": 45021
+    },
+    {
+      "id": "nvidia-stepfun-flash",
+      "model": "stepfun-ai/step-3.5-flash",
+      "priority": 45027
+    },
+    {
+      "id": "nvidia-minimaxai-minimax-m2-7",
+      "model": "minimaxai/minimax-m2.7",
+      "priority": 45247
+    },
+    {
+      "id": "nvidia-qwen35-397b",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "priority": 54006
+    },
+    {
+      "id": "nvidia-glm-51",
+      "model": "z-ai/glm-5.1",
+      "priority": 54010
+    },
+    {
+      "id": "nvidia-llama4-maverick",
+      "model": "meta/llama-4-maverick-17b-128e-instruct",
+      "priority": 54011
+    },
+    {
+      "id": "nvidia-mistral-large3",
+      "model": "mistralai/mistral-large-3-675b-instruct-2512",
+      "priority": 63007
     }
   ],
   "recommendations": [
     {
-      "model": "moonshotai/kimi-k2-instruct-0905",
+      "model": "qwen/qwen3-next-80b-a3b-instruct",
       "action": "remove-eol",
-      "currentPriority": 3,
+      "currentPriority": 19,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -601,9 +976,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "moonshotai/kimi-k2-thinking",
+      "model": "qwen/qwen3-coder-480b-a35b-instruct",
       "action": "remove-eol",
-      "currentPriority": 4,
+      "currentPriority": 25,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -611,9 +986,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "moonshotai/kimi-k2-instruct",
+      "model": "abacusai/dracarys-llama-3.1-70b-instruct",
       "action": "remove-eol",
-      "currentPriority": 5,
+      "currentPriority": 55,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -621,9 +996,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "mistralai/devstral-2-123b-instruct-2512",
+      "model": "google/gemma-3n-e4b-it",
       "action": "remove-eol",
-      "currentPriority": 13,
+      "currentPriority": 89,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -631,9 +1006,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "minimaxai/minimax-m2.5",
+      "model": "mistralai/ministral-14b-instruct-2512",
       "action": "remove-eol",
-      "currentPriority": 23,
+      "currentPriority": 129,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -641,9 +1016,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "mistralai/magistral-small-2506",
+      "model": "stockmark/stockmark-2-100b-instruct",
       "action": "remove-eol",
-      "currentPriority": 32,
+      "currentPriority": 229,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -651,19 +1026,9 @@
       "healthStatus": "eol"
     },
     {
-      "model": "google/gemma-3-27b-it",
+      "model": "bytedance/seed-oss-36b-instruct",
       "action": "remove-eol",
-      "currentPriority": 36,
-      "proposedPriority": null,
-      "delta": "eol",
-      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
-      "compositeScore": 0,
-      "healthStatus": "eol"
-    },
-    {
-      "model": "meta/llama-3.1-405b-instruct",
-      "action": "remove-eol",
-      "currentPriority": 37,
+      "currentPriority": 241,
       "proposedPriority": null,
       "delta": "eol",
       "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
@@ -672,256 +1037,226 @@
     },
     {
       "model": "deepseek-ai/deepseek-v4-flash",
-      "action": "reorder",
-      "currentPriority": 6,
-      "proposedPriority": 1,
-      "delta": -5,
-      "reason": "Arena score change suggests priority shift of 5 positions",
+      "action": "remove-eol",
+      "currentPriority": 9000,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
       "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "deepseek-ai/deepseek-v4-pro",
-      "action": "reorder",
-      "currentPriority": 7,
-      "proposedPriority": 2,
-      "delta": -5,
-      "reason": "Arena score change suggests priority shift of 5 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "qwen/qwen3.5-397b-a17b",
-      "action": "reorder",
-      "currentPriority": 14,
-      "proposedPriority": 3,
-      "delta": -11,
-      "reason": "Arena score change suggests priority shift of 11 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "eol"
     },
     {
       "model": "mistralai/mistral-medium-3.5-128b",
-      "action": "reorder",
-      "currentPriority": 12,
-      "proposedPriority": 4,
-      "delta": -8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
+      "action": "remove-eol",
+      "currentPriority": 9001,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "eol"
+    },
+    {
+      "model": "deepseek-ai/deepseek-v4-pro",
+      "action": "remove-eol",
+      "currentPriority": 9002,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "qwen/qwen3.5-122b-a10b",
+      "action": "remove-eol",
+      "currentPriority": 27037,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "microsoft/phi-4-mini-instruct",
+      "action": "remove-eol",
+      "currentPriority": 27123,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "microsoft/phi-4-multimodal-instruct",
+      "action": "remove-eol",
+      "currentPriority": 27125,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
     },
     {
       "model": "mistralai/mistral-small-4-119b-2603",
-      "action": "reorder",
-      "currentPriority": 22,
-      "proposedPriority": 5,
-      "delta": -17,
-      "reason": "Arena score change suggests priority shift of 17 positions",
+      "action": "remove-eol",
+      "currentPriority": 45021,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "eol"
     },
     {
-      "model": "mistralai/ministral-14b-instruct-2512",
-      "action": "reorder",
-      "currentPriority": 33,
-      "proposedPriority": 6,
-      "delta": -27,
-      "reason": "Arena score change suggests priority shift of 27 positions",
+      "model": "minimaxai/minimax-m2.7",
+      "action": "remove-eol",
+      "currentPriority": 45247,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "eol"
     },
     {
-      "model": "google/gemma-3n-e4b-it",
-      "action": "reorder",
-      "currentPriority": 35,
-      "proposedPriority": 7,
-      "delta": -28,
-      "reason": "Arena score change suggests priority shift of 28 positions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "action": "remove-eol",
+      "currentPriority": 54006,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "eol"
+    },
+    {
+      "model": "z-ai/glm-5.1",
+      "action": "remove-eol",
+      "currentPriority": 54010,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
     },
     {
       "model": "meta/llama-4-maverick-17b-128e-instruct",
+      "action": "remove-eol",
+      "currentPriority": 54011,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "mistralai/mistral-large-3-675b-instruct-2512",
+      "action": "remove-eol",
+      "currentPriority": 63007,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
       "action": "reorder",
-      "currentPriority": 18,
-      "proposedPriority": 8,
-      "delta": -10,
-      "reason": "Arena score change suggests priority shift of 10 positions",
+      "currentPriority": 253,
+      "proposedPriority": 0,
+      "delta": -253,
+      "reason": "Arena score change suggests priority shift of 253 positions",
       "compositeScore": 0,
       "healthStatus": "live"
     },
     {
       "model": "meta/llama-3.3-70b-instruct",
       "action": "reorder",
-      "currentPriority": 19,
-      "proposedPriority": 9,
-      "delta": -10,
-      "reason": "Arena score change suggests priority shift of 10 positions",
+      "currentPriority": 245,
+      "proposedPriority": 1,
+      "delta": -244,
+      "reason": "Arena score change suggests priority shift of 244 positions",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "timeout"
     },
     {
       "model": "meta/llama-3.2-90b-vision-instruct",
       "action": "reorder",
-      "currentPriority": 38,
-      "proposedPriority": 10,
-      "delta": -28,
-      "reason": "Arena score change suggests priority shift of 28 positions",
+      "currentPriority": 111,
+      "proposedPriority": 2,
+      "delta": -109,
+      "reason": "Arena score change suggests priority shift of 109 positions",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "timeout"
     },
     {
       "model": "meta/llama-guard-4-12b",
       "action": "reorder",
-      "currentPriority": 39,
-      "proposedPriority": 11,
-      "delta": -28,
-      "reason": "Arena score change suggests priority shift of 28 positions",
+      "currentPriority": 113,
+      "proposedPriority": 3,
+      "delta": -110,
+      "reason": "Arena score change suggests priority shift of 110 positions",
       "compositeScore": 0,
-      "healthStatus": "live"
+      "healthStatus": "timeout"
     },
     {
       "model": "openai/gpt-oss-120b",
       "action": "reorder",
-      "currentPriority": 20,
-      "proposedPriority": 12,
-      "delta": -8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "openai/gpt-oss-20b",
-      "action": "reorder",
-      "currentPriority": 21,
-      "proposedPriority": 13,
-      "delta": -8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "bytedance/seed-oss-36b-instruct",
-      "action": "reorder",
-      "currentPriority": 26,
-      "proposedPriority": 14,
-      "delta": -12,
-      "reason": "Arena score change suggests priority shift of 12 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "stockmark/stockmark-2-100b-instruct",
-      "action": "reorder",
-      "currentPriority": 43,
-      "proposedPriority": 15,
-      "delta": -28,
-      "reason": "Arena score change suggests priority shift of 28 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "z-ai/glm5",
-      "action": "reorder",
-      "currentPriority": 9,
-      "proposedPriority": 17,
-      "delta": 8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "z-ai/glm4.7",
-      "action": "reorder",
-      "currentPriority": 10,
-      "proposedPriority": 18,
-      "delta": 8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "qwen/qwen3-coder-480b-a35b-instruct",
-      "action": "reorder",
-      "currentPriority": 15,
-      "proposedPriority": 19,
-      "delta": 4,
-      "reason": "Arena score change suggests priority shift of 4 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "qwen/qwen3-next-80b-a3b-instruct",
-      "action": "reorder",
-      "currentPriority": 29,
-      "proposedPriority": 20,
-      "delta": -9,
-      "reason": "Arena score change suggests priority shift of 9 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "qwen/qwen3-next-80b-a3b-thinking",
-      "action": "reorder",
-      "currentPriority": 30,
-      "proposedPriority": 21,
-      "delta": -9,
-      "reason": "Arena score change suggests priority shift of 9 positions",
-      "compositeScore": 0,
-      "healthStatus": "live"
-    },
-    {
-      "model": "moonshotai/kimi-k2.6",
-      "action": "reorder",
-      "currentPriority": 1,
-      "proposedPriority": 22,
-      "delta": 21,
-      "reason": "Arena score change suggests priority shift of 21 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
-      "model": "minimaxai/minimax-m2.7",
-      "action": "reorder",
-      "currentPriority": 2,
-      "proposedPriority": 23,
-      "delta": 21,
-      "reason": "Arena score change suggests priority shift of 21 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
-      "model": "qwen/qwen3.5-122b-a10b",
-      "action": "reorder",
-      "currentPriority": 16,
-      "proposedPriority": 24,
-      "delta": 8,
-      "reason": "Arena score change suggests priority shift of 8 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
-      "model": "mistralai/mistral-large-3-675b-instruct-2512",
-      "action": "reorder",
-      "currentPriority": 11,
-      "proposedPriority": 25,
-      "delta": 14,
-      "reason": "Arena score change suggests priority shift of 14 positions",
-      "compositeScore": 0,
-      "healthStatus": "timeout"
-    },
-    {
-      "model": "microsoft/phi-4-mini-instruct",
-      "action": "reorder",
-      "currentPriority": 40,
-      "proposedPriority": 27,
+      "currentPriority": 17,
+      "proposedPriority": 4,
       "delta": -13,
       "reason": "Arena score change suggests priority shift of 13 positions",
       "compositeScore": 0,
       "healthStatus": "timeout"
     },
     {
-      "model": "deepseek-ai/deepseek-v3.2",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "action": "demote",
+      "currentPriority": 0,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "action": "demote",
+      "currentPriority": 1,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "error"
+    },
+    {
+      "model": "z-ai/glm-5.2",
+      "action": "demote",
+      "currentPriority": 2,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "minimaxai/minimax-m3",
+      "action": "demote",
+      "currentPriority": 3,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "moonshotai/kimi-k2.6",
+      "action": "demote",
+      "currentPriority": 4,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "error"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
       "action": "demote",
       "currentPriority": 8,
       "proposedPriority": null,
@@ -931,9 +1266,9 @@
       "healthStatus": "unknown"
     },
     {
-      "model": "01-ai/yi-large",
+      "model": "thinkingmachines/inkling",
       "action": "demote",
-      "currentPriority": 25,
+      "currentPriority": 9,
       "proposedPriority": null,
       "delta": "demote-unranked",
       "reason": "Model not found in arena rankings; consider demoting",
@@ -941,9 +1276,9 @@
       "healthStatus": "unknown"
     },
     {
-      "model": "minimaxai/minimax-m2.1",
+      "model": "stepfun-ai/step-3.7-flash",
       "action": "demote",
-      "currentPriority": 27,
+      "currentPriority": 13,
       "proposedPriority": null,
       "delta": "demote-unranked",
       "reason": "Model not found in arena rankings; consider demoting",
@@ -951,89 +1286,9 @@
       "healthStatus": "unknown"
     },
     {
-      "model": "deepseek-ai/deepseek-v3.1-terminus",
+      "model": "meta/llama-3.2-11b-vision-instruct",
       "action": "demote",
-      "currentPriority": 28,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "qwen/qwen3-coder-next",
-      "action": "demote",
-      "currentPriority": 31,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "mistralai/mistral-medium-3-instruct",
-      "action": "demote",
-      "currentPriority": 34,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "microsoft/phi-3.5-moe-instruct",
-      "action": "demote",
-      "currentPriority": 41,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "writer/palmyra-creative-122b",
-      "action": "demote",
-      "currentPriority": 42,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "abacusai/dracarys-llama-3.1-70b-instruct",
-      "action": "demote",
-      "currentPriority": 44,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "error"
-    },
-    {
-      "model": "stepfun-ai/step-3.5-flash",
-      "action": "demote",
-      "currentPriority": 45,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "qwen/qwen2.5-coder-32b-instruct",
-      "action": "demote",
-      "currentPriority": 46,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "unknown"
-    },
-    {
-      "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
-      "action": "demote",
-      "currentPriority": 47,
+      "currentPriority": 15,
       "proposedPriority": null,
       "delta": "demote-unranked",
       "reason": "Model not found in arena rankings; consider demoting",
@@ -1043,7 +1298,27 @@
     {
       "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
       "action": "demote",
-      "currentPriority": 48,
+      "currentPriority": 29,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "01-ai/yi-large",
+      "action": "demote",
+      "currentPriority": 53,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "adept/fuyu-8b",
+      "action": "demote",
+      "currentPriority": 57,
       "proposedPriority": null,
       "delta": "demote-unranked",
       "reason": "Model not found in arena rankings; consider demoting",
@@ -1053,7 +1328,887 @@
     {
       "model": "ai21labs/jamba-1.5-large-instruct",
       "action": "demote",
-      "currentPriority": 49,
+      "currentPriority": 59,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "aisingapore/sea-lion-7b-instruct",
+      "action": "demote",
+      "currentPriority": 61,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "baai/bge-m3",
+      "action": "demote",
+      "currentPriority": 63,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "bigcode/starcoder2-15b",
+      "action": "demote",
+      "currentPriority": 65,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "databricks/dbrx-instruct",
+      "action": "demote",
+      "currentPriority": 67,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "deepseek-ai/deepseek-coder-6.7b-instruct",
+      "action": "demote",
+      "currentPriority": 69,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/codegemma-1.1-7b",
+      "action": "demote",
+      "currentPriority": 71,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/codegemma-7b",
+      "action": "demote",
+      "currentPriority": 73,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/deplot",
+      "action": "demote",
+      "currentPriority": 75,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/diffusiongemma-26b-a4b-it",
+      "action": "demote",
+      "currentPriority": 77,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-2-2b-it",
+      "action": "demote",
+      "currentPriority": 79,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-2b",
+      "action": "demote",
+      "currentPriority": 81,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-3-12b-it",
+      "action": "demote",
+      "currentPriority": 83,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-3-4b-it",
+      "action": "demote",
+      "currentPriority": 85,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/gemma-3n-e2b-it",
+      "action": "demote",
+      "currentPriority": 87,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "google/recurrentgemma-2b",
+      "action": "demote",
+      "currentPriority": 91,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "ibm/granite-3.0-3b-a800m-instruct",
+      "action": "demote",
+      "currentPriority": 93,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "ibm/granite-3.0-8b-instruct",
+      "action": "demote",
+      "currentPriority": 95,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "ibm/granite-34b-code-instruct",
+      "action": "demote",
+      "currentPriority": 97,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "ibm/granite-8b-code-instruct",
+      "action": "demote",
+      "currentPriority": 99,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/codellama-70b",
+      "action": "demote",
+      "currentPriority": 101,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/llama-3.1-70b-instruct",
+      "action": "demote",
+      "currentPriority": 103,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/llama-3.1-8b-instruct",
+      "action": "demote",
+      "currentPriority": 105,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/llama-3.2-1b-instruct",
+      "action": "demote",
+      "currentPriority": 107,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/llama-3.2-3b-instruct",
+      "action": "demote",
+      "currentPriority": 109,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "meta/llama2-70b",
+      "action": "demote",
+      "currentPriority": 115,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "microsoft/kosmos-2",
+      "action": "demote",
+      "currentPriority": 117,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "microsoft/phi-3-vision-128k-instruct",
+      "action": "demote",
+      "currentPriority": 119,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "microsoft/phi-3.5-moe-instruct",
+      "action": "demote",
+      "currentPriority": 121,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/codestral-22b-instruct-v0.1",
+      "action": "demote",
+      "currentPriority": 127,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mistral-7b-instruct-v0.3",
+      "action": "demote",
+      "currentPriority": 131,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mistral-large",
+      "action": "demote",
+      "currentPriority": 133,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mistral-large-2-instruct",
+      "action": "demote",
+      "currentPriority": 135,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mistral-nemotron",
+      "action": "demote",
+      "currentPriority": 137,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mixtral-8x22b-v0.1",
+      "action": "demote",
+      "currentPriority": 139,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "mistralai/mixtral-8x7b-instruct-v0.1",
+      "action": "demote",
+      "currentPriority": 141,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nv-mistralai/mistral-nemo-12b-instruct",
+      "action": "demote",
+      "currentPriority": 143,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/ai-synthetic-video-detector",
+      "action": "demote",
+      "currentPriority": 145,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/embed-qa-4",
+      "action": "demote",
+      "currentPriority": 147,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/gliner-pii",
+      "action": "demote",
+      "currentPriority": 149,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/ising-calibration-1-35b-a3b",
+      "action": "demote",
+      "currentPriority": 151,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+      "action": "demote",
+      "currentPriority": 153,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+      "action": "demote",
+      "currentPriority": 155,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-51b-instruct",
+      "action": "demote",
+      "currentPriority": 157,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+      "action": "demote",
+      "currentPriority": 159,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+      "action": "demote",
+      "currentPriority": 161,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+      "action": "demote",
+      "currentPriority": 163,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+      "action": "demote",
+      "currentPriority": 165,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+      "action": "demote",
+      "currentPriority": 167,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+      "action": "demote",
+      "currentPriority": 169,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
+      "action": "demote",
+      "currentPriority": 171,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-nemotron-embed-1b-v2",
+      "action": "demote",
+      "currentPriority": 173,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-nemotron-embed-vl-1b-v2",
+      "action": "demote",
+      "currentPriority": 175,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama3-chatqa-1.5-70b",
+      "action": "demote",
+      "currentPriority": 177,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/mistral-nemo-minitron-8b-8k-instruct",
+      "action": "demote",
+      "currentPriority": 179,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemoretriever-parse",
+      "action": "demote",
+      "currentPriority": 181,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-3-content-safety",
+      "action": "demote",
+      "currentPriority": 183,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-3-nano-30b-a3b",
+      "action": "demote",
+      "currentPriority": 185,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "action": "demote",
+      "currentPriority": 187,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-3.5-content-safety",
+      "action": "demote",
+      "currentPriority": 189,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-4-340b-instruct",
+      "action": "demote",
+      "currentPriority": 191,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-4-340b-reward",
+      "action": "demote",
+      "currentPriority": 193,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-content-safety-reasoning-4b",
+      "action": "demote",
+      "currentPriority": 195,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-mini-4b-instruct",
+      "action": "demote",
+      "currentPriority": 197,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-nano-12b-v2-vl",
+      "action": "demote",
+      "currentPriority": 199,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-nano-3-30b-a3b",
+      "action": "demote",
+      "currentPriority": 201,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nemotron-parse",
+      "action": "demote",
+      "currentPriority": 203,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/neva-22b",
+      "action": "demote",
+      "currentPriority": 205,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nv-embed-v1",
+      "action": "demote",
+      "currentPriority": 207,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nv-embedcode-7b-v1",
+      "action": "demote",
+      "currentPriority": 209,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nv-embedqa-e5-v5",
+      "action": "demote",
+      "currentPriority": 211,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nv-embedqa-mistral-7b-v2",
+      "action": "demote",
+      "currentPriority": 213,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nvclip",
+      "action": "demote",
+      "currentPriority": 215,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+      "action": "demote",
+      "currentPriority": 217,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/riva-translate-4b-instruct",
+      "action": "demote",
+      "currentPriority": 219,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/riva-translate-4b-instruct-v1.1",
+      "action": "demote",
+      "currentPriority": 221,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/vila",
+      "action": "demote",
+      "currentPriority": 223,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "sarvamai/sarvam-m",
+      "action": "demote",
+      "currentPriority": 225,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "snowflake/arctic-embed-l",
+      "action": "demote",
+      "currentPriority": 227,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "upstage/solar-10.7b-instruct",
+      "action": "demote",
+      "currentPriority": 231,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "writer/palmyra-fin-70b-32k",
+      "action": "demote",
+      "currentPriority": 233,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "writer/palmyra-med-70b",
+      "action": "demote",
+      "currentPriority": 235,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "writer/palmyra-med-70b-32k",
+      "action": "demote",
+      "currentPriority": 237,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "zyphra/zamba2-7b-instruct",
+      "action": "demote",
+      "currentPriority": 239,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/cosmos-reason2-8b",
+      "action": "demote",
+      "currentPriority": 249,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+      "action": "demote",
+      "currentPriority": 251,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "writer/palmyra-creative-122b",
+      "action": "demote",
+      "currentPriority": 255,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "poolside/laguna-xs-2.1",
+      "action": "demote",
+      "currentPriority": 5000,
+      "proposedPriority": null,
+      "delta": "demote-unranked",
+      "reason": "Model not found in arena rankings; consider demoting",
+      "compositeScore": 0,
+      "healthStatus": "unknown"
+    },
+    {
+      "model": "stepfun-ai/step-3.5-flash",
+      "action": "demote",
+      "currentPriority": 45027,
       "proposedPriority": null,
       "delta": "demote-unranked",
       "reason": "Model not found in arena rankings; consider demoting",
@@ -1064,12 +2219,12 @@
   "newsDigest": [],
   "summary": {
     "totalModelsScored": 37,
-    "liveModels": 22,
-    "recommendationsCount": 47,
+    "liveModels": 1,
+    "recommendationsCount": 125,
     "addAction": 0,
-    "reorderAction": 25,
-    "removeEolAction": 8,
-    "demoteAction": 14,
+    "reorderAction": 5,
+    "removeEolAction": 19,
+    "demoteAction": 101,
     "newsItems": 0
   },
   "advisory": "This is an advisory report. No config files were modified. Review recommendations and apply manually or via tnf llm-apply-rankings."

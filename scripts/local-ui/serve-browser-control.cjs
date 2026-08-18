@@ -9,6 +9,124 @@ const { spawn } = require('node:child_process');
 const ROOT = process.cwd();
 const STATIC_DIR = path.join(ROOT, 'scripts/local-ui/static');
 const DEFAULT_PORT = 1421;
+const LOCAL_API_ORIGIN = process.env.TNF_LOCAL_API_ORIGIN || 'http://127.0.0.1:3001';
+// The gateway (3001) does not expose admin metrics routes; apps/api (3002) does.
+const ADMIN_API_ORIGIN = process.env.TNF_ADMIN_API_ORIGIN || 'http://127.0.0.1:3002';
+const RELAY_ORIGIN = process.env.TNF_RELAY_HTTP_ORIGIN || 'http://127.0.0.1:3000';
+const BRIDGE_ORIGIN = process.env.TNF_BRIDGE_HTTP_ORIGIN || 'http://127.0.0.1:3005';
+
+const RELAY_POST_ALLOW = /^\/bridge\/(approve|deny|toggle)$/;
+
+/**
+ * Same-origin pass-throughs: the static panel cannot call the local services
+ * directly without CORS, so allowlisted prefixes are proxied per rule below.
+ */
+const PROXY_RULES = [
+  {
+    prefix: '/api/local-runtime/',
+    origin: LOCAL_API_ORIGIN,
+    methods: ['GET'],
+    forwardAuth: true,
+  },
+  {
+    prefix: '/api/admin/metrics/chronological-processes',
+    origin: ADMIN_API_ORIGIN,
+    methods: ['GET', 'POST', 'PUT'],
+    forwardAuth: true,
+  },
+  {
+    prefix: '/bridge-api/',
+    origin: BRIDGE_ORIGIN,
+    methods: ['GET'],
+    stripPrefix: '/bridge-api',
+  },
+  {
+    prefix: '/relay-api/',
+    origin: RELAY_ORIGIN,
+    methods: ['GET', 'POST'],
+    stripPrefix: '/relay-api',
+    postAllow: RELAY_POST_ALLOW,
+    operatorHeader: 'browser-control-panel',
+  },
+];
+
+function proxyUpstream(req, res, rule, urlPath) {
+  const upstreamPath = rule.stripPrefix ? urlPath.slice(rule.stripPrefix.length) || '/' : urlPath;
+  if (req.method === 'POST' && rule.postAllow && !rule.postAllow.test(upstreamPath)) {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'POST not allowed for this path' }));
+    return;
+  }
+  const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  const target = new URL(upstreamPath + search, rule.origin);
+  const headers = { accept: 'application/json' };
+  if (req.headers['content-type']) headers['content-type'] = req.headers['content-type'];
+  if (rule.operatorHeader) headers['x-tnf-operator'] = rule.operatorHeader;
+  if (rule.forwardAuth) {
+    const auth = req.headers.authorization || process.env.TNF_LOCAL_RUNTIME_TOKEN;
+    if (auth) {
+      headers.authorization = auth.startsWith('Bearer ') ? auth : `Bearer ${auth}`;
+    }
+  }
+
+  const upstream = http.request(
+    target,
+    { method: req.method, headers, timeout: 10000 },
+    (upstreamRes) => {
+      res.writeHead(upstreamRes.statusCode || 502, {
+        'Content-Type': upstreamRes.headers['content-type'] || 'application/json',
+      });
+      upstreamRes.pipe(res);
+    }
+  );
+
+  upstream.on('timeout', () => upstream.destroy(new Error('timeout')));
+  upstream.on('error', (error) => {
+    res.writeHead(502, { 'Content-Type': 'application/json' });
+    res.end(
+      JSON.stringify({
+        available: false,
+        reason: `Upstream unreachable at ${rule.origin} (${error.message})`,
+      })
+    );
+  });
+
+  if (req.method === 'POST' || req.method === 'PUT') {
+    req.pipe(upstream);
+  } else {
+    upstream.end();
+  }
+}
+
+function probeHealth(origin, healthPath) {
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    const request = http.get(new URL(healthPath, origin), { timeout: 2000 }, (response) => {
+      response.resume();
+      resolve({
+        up: (response.statusCode || 0) >= 200 && (response.statusCode || 0) < 500,
+        statusCode: response.statusCode || 0,
+        latencyMs: Date.now() - startedAt,
+      });
+    });
+    request.on('timeout', () => request.destroy(new Error('timeout')));
+    request.on('error', (error) => {
+      resolve({ up: false, error: error.message, latencyMs: Date.now() - startedAt });
+    });
+  });
+}
+
+async function handlePanelHealth(res) {
+  const [relay, bridge, api] = await Promise.all([
+    probeHealth(RELAY_ORIGIN, '/health'),
+    probeHealth(BRIDGE_ORIGIN, '/health'),
+    probeHealth(LOCAL_API_ORIGIN, '/health'),
+  ]);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(
+    JSON.stringify({ generatedAt: new Date().toISOString(), relay, bridge, api })
+  );
+}
 
 function parseArgs(argv) {
   return {
@@ -63,10 +181,36 @@ function main() {
       env: { ...process.env, RELAY_PORT: process.env.RELAY_PORT || '3000' },
       detached: true,
     }).unref();
+    setTimeout(() => {
+      probeHealth(RELAY_ORIGIN, '/health').then((result) => {
+        if (result.up) {
+          console.log(`[relay] healthy at ${RELAY_ORIGIN} (${result.latencyMs}ms)`);
+        } else {
+          console.warn(`[relay] NOT healthy at ${RELAY_ORIGIN}: ${result.error || result.statusCode}`);
+        }
+      });
+    }, 5000).unref();
   }
 
   const server = http.createServer((req, res) => {
     const urlPath = req.url?.split('?')[0] || '/';
+
+    if (urlPath === '/panel/health') {
+      handlePanelHealth(res);
+      return;
+    }
+
+    const rule = PROXY_RULES.find((candidate) => urlPath.startsWith(candidate.prefix));
+    if (rule) {
+      if (!rule.methods.includes(req.method)) {
+        res.writeHead(405, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: `Method ${req.method} not allowed` }));
+        return;
+      }
+      proxyUpstream(req, res, rule, urlPath);
+      return;
+    }
+
     const relative = urlPath === '/' ? '/browser-control.html' : urlPath;
     const filePath = path.join(STATIC_DIR, relative);
 

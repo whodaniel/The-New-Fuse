@@ -10,14 +10,18 @@ RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
 
 WORKDIR /app
 
-# Copy workspace configuration
-COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+# Copy workspace configuration.
+#
+# pnpm-lock.yaml was absent from this list, so every build resolved the whole
+# dependency graph from scratch against the registry — a different graph on
+# every run, and nothing docs/operations/tnf-substrate-seal.json could attest.
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
 COPY scripts ./scripts
 COPY packages ./packages
 COPY apps/api-gateway ./apps/api-gateway
 
-# Install ALL dependencies
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
+# Install ALL dependencies against the committed lockfile.
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Build ALL internal dependencies in order
 RUN pnpm --filter @the-new-fuse/types build
@@ -41,15 +45,22 @@ RUN pnpm --filter @the-new-fuse/core build
 RUN pnpm --filter @the-new-fuse/api-types build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/n8n-workflows build
+# api-gateway depends on this as workspace:*; without an explicit build the
+# image would rely on a dist/ that happened to be present in the upload.
+RUN pnpm --filter @the-new-fuse/llm-catalog build
 
-# Final pass: Build the app and ensure all workspace links are solid
+# Final pass: Build the app and ensure all workspace links are solid.
+#
+# No `|| echo` here. That swallowed a failing build and let the image ship with
+# no dist/main, which the CMD below then fails to start — turning a build error
+# into a Cloud Run crash loop that looks like a runtime problem.
 WORKDIR /app/apps/api-gateway
-RUN pnpm build || echo "Build finished with warnings"
+RUN pnpm build
 
 # CRITICAL: Rerun install to ensure all dist folders are linked correctly in node_modules
 WORKDIR /app
 ENV NODE_ENV=production
-RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 EXPOSE 8080
 

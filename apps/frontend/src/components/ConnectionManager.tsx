@@ -82,7 +82,7 @@ export function ConnectionManager() {
       case 'disconnected':
         return 'bg-red-500';
       default:
-        return 'bg-transparent0';
+        return 'bg-gray-500';
     }
   };
 

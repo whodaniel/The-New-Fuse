@@ -24,6 +24,14 @@ export const PLATFORM_PARITY_FEATURES: PlatformParityFeature[] = [
     notes: 'Member chat interface with realtime flows.',
   },
   {
+    id: 'computer-use',
+    targetFeature: 'Computer Use / Agent Browser',
+    tnfRoute: '/computer-use',
+    status: 'partial',
+    notes:
+      'Canonical web entry for agent-browser. Chat-native tasks + screenshot preview. Desktop Tauri console remains the full operator surface.',
+  },
+  {
     id: 'channels',
     targetFeature: 'Channels',
     tnfRoute: '/channels',

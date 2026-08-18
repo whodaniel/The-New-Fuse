@@ -10,6 +10,7 @@ const repoRoot = process.cwd();
 const handoffJsonPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
 const handoffMdPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md');
 const ledgerPath = path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md');
+const livingStatePath = path.join(repoRoot, 'docs/protocols/LIVING_STATE.md');
 
 function run(command, options = {}) {
   return execSync(command, {
@@ -184,6 +185,9 @@ function gatherChangedPaths() {
     return [...new Set(listed)];
   }
 
+  // Union working-tree + last-commit paths. Returning the first non-empty
+  // source alone caused CI handoff gates (HEAD~1..HEAD) to fail when dirty
+  // untracked/workspace files short-circuited gather before commit coverage.
   const commands = [
     'git diff --cached --name-only --diff-filter=ACMR',
     'git diff --name-only --diff-filter=ACMR @{u}..HEAD',
@@ -191,34 +195,44 @@ function gatherChangedPaths() {
     'git diff --name-only --diff-filter=ACMR HEAD~1..HEAD',
   ];
 
+  const collected = new Set();
   for (const command of commands) {
     try {
       const out = run(command);
       if (!out) continue;
-      const changed = out
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => line.replace(/\\/g, '/'));
-      if (changed.length) return [...new Set(changed)];
+      for (const line of out.split('\n')) {
+        const cleaned = line.trim().replace(/\\/g, '/');
+        if (cleaned) collected.add(cleaned);
+      }
     } catch {
       continue;
     }
   }
 
   try {
-    const porcelain = run('git status --porcelain');
-    const changed = porcelain
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => line.replace(/^..\s+/, '').trim())
-      .map((line) => line.replace(/\\/g, '/'))
-      .filter(Boolean);
-    return [...new Set(changed)];
+    // Do not trim the whole porcelain blob — a leading space on the first
+    // status line is significant (e.g. " M path"); trimming collapses it to
+    // "M path" and poisons changed_paths.
+    const porcelain = execSync('git status --porcelain', {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: 1024 * 1024 * 128,
+    });
+    for (const line of porcelain.split('\n')) {
+      if (!line) continue;
+      // Porcelain is XY<space>path — status columns are always two chars.
+      const pathPart = line.length >= 4 && line[2] === ' ' ? line.slice(3) : line.trim();
+      const pathOnly = pathPart.includes(' -> ') ? pathPart.split(' -> ').pop() : pathPart;
+      const cleaned = String(pathOnly || '')
+        .trim()
+        .replace(/\\/g, '/');
+      if (cleaned) collected.add(cleaned);
+    }
   } catch {
-    return [];
+    /* ignore */
   }
+
+  return [...collected];
 }
 
 function ensureDirFor(filePath) {
@@ -248,6 +262,124 @@ function updateLedger(handoffId) {
   }
 
   fs.writeFileSync(ledgerPath, `${content.trimEnd()}\n\n${row}\n`, 'utf8');
+}
+
+function tipAligned(handoffPayload) {
+  let head = '';
+  try {
+    head = run('git rev-parse HEAD');
+  } catch {
+    head = '';
+  }
+  const handoffSha = String(handoffPayload.head_sha || '');
+  return Boolean(
+    head &&
+      handoffSha &&
+      (head === handoffSha ||
+        head.startsWith(handoffSha) ||
+        handoffSha.startsWith(head.slice(0, 12)))
+  );
+}
+
+function syncLivingState(handoffPayload) {
+  if (!fs.existsSync(livingStatePath)) {
+    console.warn('[emit-session-handoff] LIVING_STATE.md not found; skipping sync.');
+    return;
+  }
+
+  const projectId = handoffPayload.project_ids?.[0] || 'TNF-SESSION';
+  let leadAction = handoffPayload.next_actions?.[0] || 'Execute SESSION_HANDOFF_LATEST next actions.';
+  // Keep LIVING_STATE free of personal absolute paths (local-runtime-boundary).
+  const absRoot = `${repoRoot}${path.sep}`;
+  if (leadAction.startsWith(absRoot)) {
+    leadAction = leadAction.slice(absRoot.length);
+  }
+  leadAction = leadAction.split(repoRoot).join('.');
+  // Fenced slot stays short — no UUID / Project ID sludge (A5).
+  leadAction = String(leadAction).replace(/\s+/g, ' ').trim().slice(0, 400);
+  const handoffId = handoffPayload.handoff_id;
+  const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
+  const aligned = tipAligned(handoffPayload);
+  const statusMarker = aligned ? '[STATUS:SYNCHRONIZED]' : '[STATUS:DRIFT]';
+  const fence = [
+    '<!-- CURRENT_DIRECTIVE:START -->',
+    `**Current Directive:** ${leadAction}`,
+    '<!-- CURRENT_DIRECTIVE:END -->',
+  ].join('\n');
+  const historyLine = `- ${new Date().toISOString()} handoff \`${handoffId}\` head \`${headShort}\` project \`${projectId}\` — ${leadAction}`;
+
+  let content = fs.readFileSync(livingStatePath, 'utf8');
+  content = content.replace(/\[STATUS:(?:SYNCHRONIZED|DRIFT)\]/g, statusMarker);
+  if (!content.includes(statusMarker)) {
+    content = content.replace(/^`?\[CLASS:PRIME\][^\n]*/m, `[CLASS:PRIME] ${statusMarker}`);
+  }
+
+  const fenceRe =
+    /<!--\s*CURRENT_DIRECTIVE:START\s*-->[\s\S]*?<!--\s*CURRENT_DIRECTIVE:END\s*-->/;
+  if (fenceRe.test(content)) {
+    content = content.replace(fenceRe, fence);
+  } else if (/\*\*Current Directive:\*\*/.test(content)) {
+    // Collapse legacy multi-line sludge into a single fenced slot.
+    content = content.replace(
+      /\*\*Current Directive:\*\*[\s\S]*?(?=\n\n\*\*[A-Z]|\n\n## |\n---)/,
+      `${fence}\n`
+    );
+  } else {
+    content = `${fence}\n\n${content}`;
+  }
+
+  if (/## History\b/.test(content)) {
+    content = content.replace(/## History\b/, `## History\n\n${historyLine}`);
+  } else {
+    content = `${content.trimEnd()}\n\n## History\n\n${historyLine}\n`;
+  }
+
+  fs.writeFileSync(livingStatePath, content, 'utf8');
+}
+
+function syncLedgerP0(handoffPayload) {
+  if (!fs.existsSync(ledgerPath)) {
+    console.warn('[emit-session-handoff] AGENT_STATUS_LEDGER.md not found; skipping P0 sync.');
+    return;
+  }
+
+  const nextActions = handoffPayload.next_actions || [];
+  if (!nextActions.length) return;
+
+  const priorityForIndex = (index) => {
+    if (index < 4) return 'P0';
+    if (index < 6) return 'P1';
+    if (index < 8) return 'P2';
+    return 'P3';
+  };
+
+  const focusRows = nextActions
+    .slice(0, 8)
+    .map((action, index) => `| **${priorityForIndex(index)}**   | ${action.replace(/\|/g, '\\|')} |`)
+    .join('\n');
+
+  const focusTable = `| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+${focusRows}`;
+
+  const updatedLine = `Updated: **${handoffPayload.created_at}** — handoff \`${handoffPayload.handoff_id}\` (\`${String(handoffPayload.head_sha || '').slice(0, 12)}\`).`;
+
+  let content = fs.readFileSync(ledgerPath, 'utf8');
+  content = content.replace(/^Updated: \*\*.*\*\* — handoff.*$/m, updatedLine);
+  if (!content.includes(updatedLine)) {
+    content = content.replace(
+      /^Updated: \*\*.*$/m,
+      updatedLine,
+    );
+  }
+
+  const focusPattern =
+    /(## Next Agent Focus \(read first\)\s*\n\s*\n)\| Priority \| Action[\s\S]*?(?=\n\nFull detail:)/m;
+  if (focusPattern.test(content)) {
+    content = content.replace(focusPattern, `$1${focusTable}`);
+  }
+
+  fs.writeFileSync(ledgerPath, content, 'utf8');
 }
 
 function main() {
@@ -355,10 +487,22 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
   fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
   fs.writeFileSync(handoffMdPath, `${markdown.trimEnd()}\n`, 'utf8');
   updateLedger(handoffId);
+  syncLivingState(handoffPayload);
+  syncLedgerP0(handoffPayload);
+
+  try {
+    const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
+    syncFromRepo(repoRoot);
+  } catch (error) {
+    console.warn(
+      `[emit-session-handoff] handoff cache sync skipped: ${error?.message || error}`,
+    );
+  }
 
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffJsonPath)}`);
   console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffMdPath)}`);
   console.log(`[emit-session-handoff] updated ${path.relative(repoRoot, ledgerPath)}`);
+  console.log(`[emit-session-handoff] synced ${path.relative(repoRoot, livingStatePath)}`);
 }
 
 main();

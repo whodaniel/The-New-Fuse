@@ -347,17 +347,41 @@ async function main() {
   }
 
   console.log("\n[4] Local Service Ports (informational)");
+  // Ports come from configuration where the operator has set it, not from
+  // hardcoded guesses. Doctor previously reported "CLOSED Redis :6380" on a
+  // machine whose .env said REDIS_URL=redis://localhost:6379 and whose Redis
+  // answered PONG there. A newcomer reads that as "Redis is down" and debugs a
+  // problem that does not exist — a first-run diagnostic that cries wolf costs
+  // more trust than one that stays quiet.
+  // Only a LOCAL url tells us which local port to probe. A DATABASE_URL
+  // pointing at a Supabase pooler says nothing about localhost, and probing
+  // localhost:6543 for it reports CLOSED forever — a false alarm dressed as a
+  // config-aware check. Remote endpoints are reported as remote, not as down.
+  const localPortFromUrl = (url, fallback) => {
+    if (!url) return { port: fallback, remote: false };
+    const str = String(url);
+    const host = /^[a-z+]+:\/\/(?:[^@/]*@)?([^:/?#]+)/i.exec(str)?.[1];
+    if (host && !/^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/i.test(host)) {
+      return { port: null, remote: true, host };
+    }
+    const m = /:(\d{2,5})(?:\/|$)/.exec(str);
+    return { port: m ? Number(m[1]) : fallback, remote: false };
+  };
   const ports = [
-    ["Frontend", 3000],
-    ["API", 3001],
-    ["Backend", 3004],
-    ["Gateway", 3005],
-    ["Postgres", 5433],
-    ["Redis", 6380],
+    ["Frontend", localPortFromUrl(process.env.FRONTEND_URL, 3000)],
+    ["API", localPortFromUrl(process.env.API_URL, 3001)],
+    ["Backend", localPortFromUrl(process.env.BACKEND_URL, 3004)],
+    ["Gateway", localPortFromUrl(process.env.GATEWAY_URL, 3005)],
+    ["Postgres", localPortFromUrl(process.env.DATABASE_URL, 5433)],
+    ["Redis", localPortFromUrl(process.env.REDIS_URL, 6379)],
   ];
-  for (const [name, port] of ports) {
-    const open = await checkPort(port);
-    console.log(`- ${open ? "OPEN " : "CLOSED"} ${name} :${port}`);
+  for (const [name, spec] of ports) {
+    if (spec.remote) {
+      console.log(`- REMOTE ${name} -> ${spec.host} (not a local port; not checked)`);
+      continue;
+    }
+    const open = await checkPort(spec.port);
+    console.log(`- ${open ? "OPEN " : "CLOSED"} ${name} :${spec.port}`);
   }
 
   console.log("\n[5] Client MCP Generated Configs");

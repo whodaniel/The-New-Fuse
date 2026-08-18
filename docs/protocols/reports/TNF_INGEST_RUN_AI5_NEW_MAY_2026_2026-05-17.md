@@ -1,11 +1,12 @@
+`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # TNF Ingestion Run Report: AI 5 + NEW- May-2026
 
 - Run Timestamp: 2026-05-17T14:18:08.706959Z
 - Protocol Entry: `scripts/autonomy/ingest_ai5_and_new_may_notes.py`
-- Manifest:
-  `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json`
-- Scout Queue:
-  `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-scout-queue.json`
+- Manifest: `$TNF_ROOT/data/ingestion-runs/ai5-new-may-2026-manifest.json`
+- Scout Queue: `$TNF_ROOT/data/ingestion-runs/ai5-new-may-2026-scout-queue.json`
 
 ## Summary
 
@@ -40,7 +41,7 @@
 ## Authority Scouting Integration
 
 - Scout Snapshot JSON:
-  `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-authority-scout-2026-05-17.json`
+  `$TNF_ROOT/data/ingestion-runs/ai5-authority-scout-2026-05-17.json`
 - Scout Artifact ID: `eia-d5c166f78863c18e`
 - Ingestion Entry: `authority-scout-ai5-2026-05-17`
 

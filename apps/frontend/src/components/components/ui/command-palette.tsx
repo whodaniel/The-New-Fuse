@@ -93,7 +93,7 @@ export const CommandPalette: React.FC = () => {
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="min-h-screen px-4 text-center">
         <div
-          className="fixed inset-0 bg-transparent0 bg-opacity-75 transition-opacity"
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
           onClick={() => setIsOpen(false)}
         />
 

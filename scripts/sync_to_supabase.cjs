@@ -3,13 +3,18 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const SUPABASE_KEY =
+  process.env.SUPABASE_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY;
 const DATA_PATH =
   process.env.SUPABASE_AGENT_DATA_PATH ||
   path.join(REPO_ROOT, 'data/agent-registry/master_user_agents.json');
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('❌ Missing SUPABASE_URL or SUPABASE_KEY in environment.');
+  console.error(
+    '❌ Missing SUPABASE_URL or a Supabase key (SUPABASE_KEY, SUPABASE_SERVICE_ROLE_KEY, or SUPABASE_ANON_KEY).'
+  );
   process.exit(1);
 }
 

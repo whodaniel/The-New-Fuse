@@ -5,6 +5,7 @@ import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
 // Auth runtime is initialized via Supabase in hooks/providers.
 import './styles/globals.css'; // Re-add global CSS import
+import { installDomReconcileGuard } from './utils/dom-reconcile-guard';
 
 const CHUNK_RELOAD_KEY = '__tnf_chunk_reload_once__';
 
@@ -55,6 +56,7 @@ const installMceGuard = () => {
 };
 
 installMceGuard();
+installDomReconcileGuard();
 installChunkLoadRecovery();
 
 // Custom Element Guard: Moved to index.html for maximum interception coverage.

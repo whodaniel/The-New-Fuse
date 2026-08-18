@@ -35,7 +35,7 @@ git push -u origin fix/register-orphaned-controllers-and-modules
 ### Step 2: Create Pull Request
 
 Visit:
-https://github.com/whodaniel/fuse/compare/fix/register-orphaned-controllers-and-modules
+https://github.com/whodaniel/The-New-Fuse/compare/fix/register-orphaned-controllers-and-modules
 
 Or use GitHub CLI:
 

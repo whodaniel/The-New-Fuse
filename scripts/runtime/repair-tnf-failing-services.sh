@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Fleet-wide pause gate (2026-07-21) ---
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/lib/tnf-fleet-mode.sh"
+if tnf_fleet_paused; then
+  echo '{"ok":true,"skipped":"fleet-paused"}'
+  exit 0
+fi
+
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WRAPPER_PATH="$ROOT_DIR/scripts/runtime/launchd-shell-wrapper.sh"
 LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
@@ -40,7 +48,7 @@ write_plist() {
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.nvm/versions/node/v24.12.0/bin</string>
+    <string>${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.local/bin:${HOME}/.nvm/versions/node/*/bin</string>
     <key>HOME</key>
     <string>${HOME}</string>
   </dict>
@@ -48,8 +56,8 @@ write_plist() {
   <string>${ROOT_DIR}</string>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
+  <key>StartInterval</key>
+  <integer>300</integer>
   <key>StandardOutPath</key>
   <string>${service_log_dir}/stdout.log</string>
   <key>StandardErrorPath</key>
@@ -68,7 +76,7 @@ reload_service() {
   launchctl bootout "gui/${UID_VALUE}" "$plist_path" 2>/dev/null || true
   launchctl bootstrap "gui/${UID_VALUE}" "$plist_path"
   launchctl enable "gui/${UID_VALUE}/${label}" 2>/dev/null || true
-  launchctl kickstart -kp "gui/${UID_VALUE}/${label}" || true
+  launchctl kickstart "gui/${UID_VALUE}/${label}" || true
 }
 
 write_plist "com.thenewfuse.factory-supercycle" \

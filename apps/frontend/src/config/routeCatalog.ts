@@ -84,6 +84,11 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Knowledge Hub', path: '/knowledge-hub', description: 'Central Knowledge Repository' },
   { name: 'MCP Hub', path: '/mcp-hub', description: 'Model Context Protocol Management' },
+  {
+    name: 'Computer Use',
+    path: '/computer-use',
+    description: 'Agent browser control — canonical web entry (alias /browser)',
+  },
 
   // Workspace Management
   { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },
@@ -333,9 +338,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Admin Database', path: '/admin/database', description: 'Admin database panel' },
   {
-    name: 'Admin OpenClaw Security',
-    path: '/admin/openclaw-security',
-    description: 'OpenClaw security controls',
+    name: 'Admin harness credentials',
+    path: '/admin/harness-credentials',
+    description: 'Rotate provider keys for whichever harness staffs the runtime',
   },
   {
     name: 'Admin System Metrics',
@@ -669,9 +674,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     description: 'Public product map surface',
   },
   {
-    name: 'Platform Alias',
+    name: 'Personal Intelligence Hub',
     path: '/platform',
-    description: 'Platform alias redirect to product map',
+    description: 'Google Gemini / Antigravity personal intelligence concordance hub',
   },
   {
     name: 'Resources Skills',

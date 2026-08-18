@@ -8,6 +8,7 @@ const SystemStatus = lazy(() => import('./pages/SystemStatus'));
 const LaunchpadDashboard = lazy(() => import('./pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
+const FullscreenBrandLayout = lazy(() => import('./layouts/FullscreenBrandLayout'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
@@ -24,7 +25,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
 
 // Lazy load heavy components for better performance
-const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
 const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings'));
 const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
@@ -51,6 +51,7 @@ const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const PlatformParityDashboard = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
+const PlatformHub = lazy(() => import('./pages/PlatformHub'));
 const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
@@ -60,6 +61,7 @@ const WorkflowNexus = lazy(() => import('./pages/SynapticNexus'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
+const ComputerUsePage = lazy(() => import('./pages/ComputerUsePage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsGeneral = lazy(() => import('./pages/settings/General'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
@@ -69,7 +71,6 @@ const SettingsAPI = lazy(() => import('./pages/settings/API'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
 const ProjectView = lazy(() => import('./pages/Projects/ProjectView'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
-const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const PfpStudioPage = lazy(() => import('./pages/Agents/PfpStudio'));
@@ -135,21 +136,11 @@ const APIAnalyticsFull = lazy(() => import('./pages/Admin/APIAnalyticsFull'));
 const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationManagement'));
 const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
-const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
+const HarnessCredentials = lazy(() => import('./pages/Admin/HarnessCredentials'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 
-// Unified UI Components (from Hermes merge refactoring)
-const UnifiedCommunicationCanvas = lazy(() =>
-  import('./components/UnifiedChat/UnifiedCommunicationCanvas').then((m) => ({
-    default: m.UnifiedCommunicationCanvas,
-  }))
-);
-const CommandCenterDashboard = lazy(() =>
-  import('./components/CommandCenter/CommandCenterDashboard').then((m) => ({
-    default: m.CommandCenterDashboard,
-  }))
-);
+// Unified / scheduler surfaces
 const ScheduleBuilderPage = lazy(() =>
   import('./components/Scheduler/ScheduleBuilder').then((m) => ({ default: m.ScheduleBuilder }))
 );
@@ -165,13 +156,16 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 // Landing components archived to static HTML - These routes now redirect or are handled by static hosting
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
 
-const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
+const AboutPage = lazy(() => import('./pages/About'));
+
+const BlogPage = lazy(() => import('./pages/Blog'));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Features = lazy(() => import('./pages/Features'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
+const TerminalMirrorPage = lazy(() => import('./pages/TerminalMirrorPage'));
 const CodebaseMapPage = lazy(() => import('./pages/CodebaseMap'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
@@ -199,8 +193,8 @@ const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal'));
 const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
 const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 
-// Chat pages
-const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
+// Chat pages — single hub; legacy chat URLs redirect into ?mode=
+const ChatPage = lazy(() => import('./pages/chat/ChatHub'));
 
 // Legal pages
 const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
@@ -255,11 +249,7 @@ const MainPage = lazy(() => import('./pages/Main'));
 // Live View - Real-time AI browser activity viewer
 const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
-// AI Command Center - Multiple AI chat interfaces in one view
-const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
-
 // Restored Critical Components from Orphan Audit
-const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
 const FairtableDashboard = lazy(() => import('./pages/fairtable/FairtableDashboard'));
 const AgentTemplatesBrowser = lazy(() => import('./pages/Resources/AgentTemplatesBrowser'));
 const SkillsBrowser = lazy(() => import('./pages/Resources/SkillsBrowser'));
@@ -268,6 +258,8 @@ const WorkflowBrowser = lazy(() => import('./pages/Resources/WorkflowBrowser'));
 // Remaining Reconstructed Components
 const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
+const BillingPage = lazy(() => import('./pages/Billing'));
+const AdminLayoutConfigurator = lazy(() => import('./pages/Admin/AdminLayoutConfigurator'));
 
 // Archived or redundant components removed to resolve duplicates
 
@@ -283,7 +275,6 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
   </div>
 );
 
-const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 // Orphan audit router - reachable via specific debug paths
 
 // Redirect component to navigate to static landing page sections
@@ -470,23 +461,18 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
     !['/404', '/login', '/register'].includes(location.pathname)
   ) {
     Layout = PublicLayout;
-  } else if (isPublicRoute || hasOwnLayout) {
+  } else if (hasOwnLayout) {
+    // Canvas surfaces keep their full viewport but still get a brand mark and a
+    // route home; previously they rendered bare, stranding the user.
+    Layout = FullscreenBrandLayout;
+  } else if (isPublicRoute) {
+    // Auth, onboarding and 404 carry their own brand mark inline.
     Layout = ({ children }) => <>{children}</>;
   }
 
   return (
     <div>
       <AgentTruthLayer pathname={location.pathname} isAppHost={isAppHost} />
-
-      {/* Primary Universal Navigation */}
-      <Suspense fallback={<div className="h-16 bg-slate-950 border-b border-white/10" />}>
-        {!location.pathname.startsWith('/auth') &&
-          !location.pathname.startsWith('/onboarding') &&
-          !location.pathname.startsWith('/debug/orphans') &&
-          !['/404', '/login', '/register'].includes(location.pathname) &&
-          !hasOwnLayout &&
-          isPublicRoute && <SmartNavigation />}
-      </Suspense>
 
       <Suspense fallback={<LoadingFallback name="Layout" />}>
         <Layout>
@@ -517,20 +503,21 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
-                path="/dashboard/command-center"
+                path="/computer-use"
                 element={
                   <RequireMemberAccess>
-                    <CommandCenterDashboard />
+                    <ComputerUsePage />
                   </RequireMemberAccess>
                 }
               />
+              <Route path="/browser" element={<Navigate to="/computer-use" replace />} />
+              <Route
+                path="/dashboard/command-center"
+                element={<Navigate to="/command-center" replace />}
+              />
               <Route
                 path="/dashboard/unified-chat"
-                element={
-                  <RequireMemberAccess>
-                    <UnifiedCommunicationCanvas />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/chat?mode=unified" replace />}
               />
               <Route
                 path="/dashboard/schedule"
@@ -565,6 +552,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
+                path="/dashboard/overview"
+                element={
+                  <RequireMemberAccess>
+                    <Dashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
                 path="/dashboard/architecture"
                 element={
                   <RequireMemberAccess>
@@ -584,15 +579,15 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 path="/dashboard/logs"
                 element={
                   <RequireMemberAccess>
-                    <Dashboard />
+                    <Navigate to="/dashboard/audit" replace />
                   </RequireMemberAccess>
                 }
               />
               <Route
-                path="/dashboard/command-center"
+                path="/dashboard/audit"
                 element={
                   <RequireMemberAccess>
-                    <TNFCommandCenter />
+                    <Dashboard />
                   </RequireMemberAccess>
                 }
               />
@@ -664,14 +659,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/agents/create"
-                element={
-                  <RequireMemberAccess>
-                    <CreateAgent />
-                  </RequireMemberAccess>
-                }
-              />
+              <Route path="/agents/create" element={<Navigate to="/agents/new" replace />} />
               <Route
                 path="/hub"
                 element={
@@ -685,7 +673,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
               <Route path="/product-map" element={<MarketplacePublicPage />} />
               <Route path="/capabilities" element={<MarketplacePublicPage />} />
-              <Route path="/platform" element={<Navigate to="/product-map" replace />} />
+              <Route path="/platform" element={<PlatformHub />} />
 
               {/* Admin Marketplace Console */}
               <Route
@@ -712,11 +700,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               {/* All routes using LazyPage for now to avoid import issues */}
               <Route
                 path="/multi-agent-chat"
-                element={
-                  <RequireMemberAccess>
-                    <MultiAgentChat />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/chat?mode=multi" replace />}
               />
               <Route
                 path="/ai-portal"
@@ -758,14 +742,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/agent-builder"
-                element={
-                  <RequireMemberAccess>
-                    <CreateAgent />
-                  </RequireMemberAccess>
-                }
-              />
+              <Route path="/agent-builder" element={<Navigate to="/agents/new" replace />} />
               <Route
                 path="/agent-management"
                 element={
@@ -1255,10 +1232,18 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
+                path="/admin/harness-credentials"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <HarnessCredentials />
+                  </RequirePermission>
+                }
+              />
+              <Route
                 path="/admin/openclaw-security"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <OpenClawSecurity />
+                    <HarnessCredentials />
                   </RequirePermission>
                 }
               />
@@ -1507,7 +1492,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
-              <Route path="/about" element={<Navigate to="/brand" replace />} />
+              <Route path="/about" element={<AboutPage />} />
               {/* Route catalog parity aliases (first-principles no-prune pass) */}
               <Route path="/landing-page" element={<Navigate to="/landing" replace />} />
               <Route path="/simple-landing" element={<Navigate to="/landing" replace />} />
@@ -1542,7 +1527,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/agents/unified-creator"
-                element={<Navigate to="/agent-builder" replace />}
+                element={<Navigate to="/agents/new" replace />}
               />
               <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
               <Route
@@ -1569,6 +1554,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
+              <Route path="/terminals/mirror" element={<TerminalMirrorPage />} />
               <Route path="/status" element={<SystemStatus />} />
               <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
@@ -1594,11 +1580,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               {/* Enhanced Workspace Routes - Fixed duplications */}
               <Route
                 path="/workspace-chat"
-                element={
-                  <RequireMemberAccess>
-                    <WorkspaceChatPage />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/chat?mode=workspace" replace />}
               />
 
               {/* Enhanced Task Routes */}
@@ -1636,14 +1618,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/dashboard/agents/new"
-                element={
-                  <RequireMemberAccess>
-                    <CreateAgent />
-                  </RequireMemberAccess>
-                }
-              />
+              <Route path="/dashboard/agents/new" element={<Navigate to="/agents/new" replace />} />
               <Route
                 path="/dashboard/agents/:id"
                 element={
@@ -1850,33 +1825,25 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
 
-              {/* AI Command Center - Multiple AI chats in iframes */}
+              {/* AI Command Center — folded into Command Core Streams tab */}
               <Route
                 path="/ai-command-center"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
-                      <AICommandCenter />
-                    </Suspense>
-                  </RequirePermission>
-                }
+                element={<Navigate to="/command-center?tab=streams" replace />}
               />
 
               <Route
                 path="/admin/layout"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Admin Layout" path="/admin/layout" />
+                    <Suspense fallback={<LoadingFallback name="Admin Layout" />}>
+                      <AdminLayoutConfigurator />
+                    </Suspense>
                   </RequirePermission>
                 }
               />
               <Route
                 path="/multi-agent-chat-demo"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <MultiAgentChat />
-                  </RequirePermission>
-                }
+                element={<Navigate to="/chat?mode=multi" replace />}
               />
               <Route
                 path="/api/admin/database"
@@ -2006,7 +1973,16 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </Suspense>
                 }
               />
-              <Route path="/billing" element={<LazyPage name="Billing" path="/billing" />} />
+              <Route
+                path="/billing"
+                element={
+                  <RequireAuth>
+                    <Suspense fallback={<LoadingFallback name="Billing" />}>
+                      <BillingPage />
+                    </Suspense>
+                  </RequireAuth>
+                }
+              />
               <Route path="/community" element={<LazyPage name="Community" path="/community" />} />
               <Route path="/contact" element={<LazyPage name="Contact" path="/contact" />} />
               <Route

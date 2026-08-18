@@ -45,6 +45,7 @@ import {
 } from '@/components/ui';
 import { enhancedNodeTypes } from '@/components/workflow/EnhancedNodeTypes';
 import { useUndoRedo } from '@/hooks/useUndoRedo';
+import { authFetch } from '@/utils/authToken';
 import { getLayoutedElements } from '@/utils/workflowLayout';
 import { detectWorkflowCycles, validateWorkflowDryRun } from '@/utils/workflowValidation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -386,14 +387,14 @@ const EnhancedWorkflowBuilder: React.FC = () => {
   const loadAvailableAgents = async () => {
     try {
       setAgentLoadError(null);
-      const registryResponse = await fetch('/api/agents/registry');
+      const registryResponse = await authFetch('/api/agents/registry');
       if (registryResponse.ok) {
         const agents = await registryResponse.json();
         setAvailableAgents(Array.isArray(agents) ? agents : []);
         return;
       }
 
-      const agentsResponse = await fetch('/api/agents');
+      const agentsResponse = await authFetch('/api/agents');
       if (!agentsResponse.ok) {
         throw new Error(`HTTP ${agentsResponse.status}`);
       }
@@ -679,7 +680,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       };
 
       // Call API to save workflow
-      const response = await fetch('/api/workflows', {
+      const response = await authFetch('/api/workflows', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workflowData),

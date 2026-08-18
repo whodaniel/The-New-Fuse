@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PageShell from '../components/layout/PageShell';
-import SynergyStatusBar from '../components/layout/SynergyStatusBar';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 
@@ -112,7 +111,6 @@ const Analytics: React.FC = () => {
         </>
       }
     >
-      <SynergyStatusBar />
       <div className="analytics-container">
         {/* Tab Navigation */}
         <div className="tab-nav">

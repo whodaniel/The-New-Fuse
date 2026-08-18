@@ -61,12 +61,19 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, class
 
   return (
     <button
+      type="button"
+      aria-selected={isActive}
+      role="tab"
       className={`
-        inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5
-        text-sm font-medium ring-offset-white transition-all focus-visible:outline-none
+        inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5
+        text-sm font-medium transition-all focus-visible:outline-none
         focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         disabled:pointer-events-none disabled:opacity-50
-        ${isActive ? 'bg-transparent text-gray-950 shadow-none' : 'text-muted-foreground hover:text-gray-900'}
+        ${
+          isActive
+            ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md border border-transparent'
+            : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+        }
         ${className}
       `}
       onClick={() => context.onValueChange(value)}

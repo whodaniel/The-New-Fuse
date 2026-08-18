@@ -9,6 +9,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import { getTask, updateTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
+import { authFetch } from '@/utils/authToken';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -88,7 +89,7 @@ const EditTask: React.FC = () => {
     const loadAgents = async () => {
       setAgentLoadError(null);
       try {
-        const response = await fetch('/api/agents');
+        const response = await authFetch('/api/agents');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
         const items = Array.isArray(payload)

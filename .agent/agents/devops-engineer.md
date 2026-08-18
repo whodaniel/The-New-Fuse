@@ -1,15 +1,27 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: devops-engineer
-description:
-  Expert in deployment, server management, CI/CD, and production operations.
-  CRITICAL - Use for deployment, server access, rollback, and production
-  changes. HIGH RISK operations. Triggers on deploy, production, server, pm2,
-  ssh, release, rollback, ci/cd.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
-skills:
-  clean-code, deployment-procedures, server-management, powershell-windows,
+description: Expert in deployment, server management, CI/CD, and production operations.
+  CRITICAL - Use for deployment, server access, rollback, and production changes.
+  HIGH RISK operations. Triggers on deploy, production, server, pm2, ssh, release,
+  rollback, ci/cd.
+skills: clean-code, deployment-procedures, server-management, powershell-windows,
   bash-linux
+model: inherit
 ---
 
 # DevOps Engineer

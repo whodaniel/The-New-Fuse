@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "spec": "tnf/cognitive-council/1.0",
+  "council_personas": [
+    {
+      "role": "systems_architect",
+      "name": "The Systems Architect",
+      "focus": "Macro structural cohesion, contract boundaries, harness vs engine invariants, and long-term architectural integrity.",
+      "preferred_model": "claude-3-7-sonnet"
+    },
+    {
+      "role": "knowledge_archaeologist",
+      "name": "The Knowledge & Provenance Archaeologist",
+      "focus": "Deep historical lineage, chronological attribution, preservation of nuanced operator intent, and preventing context flattening.",
+      "preferred_model": "gemini-2.5-pro"
+    },
+    {
+      "role": "runtime_critic",
+      "name": "The Pragmatic Runtime Critic",
+      "focus": "AST liveness, execution density, dead-code reality, breaking changes, and practical execution viability in current codebase.",
+      "preferred_model": "codex"
+    }
+  ],
+  "consensus_thresholds": {
+    "min_agreement_ratio": 0.66,
+    "require_attribution_unanimity": true,
+    "min_implementation_density": 0.05
+  },
+  "output_targets": {
+    "graduated_docs_dir": "docs/distilled-intel",
+    "council_logs_dir": "data/ingestion-runs/council-logs"
+  }
+}

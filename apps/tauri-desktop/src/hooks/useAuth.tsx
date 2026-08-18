@@ -46,15 +46,27 @@ const mapUser = (supabaseUser: SupabaseUser): User => ({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      apiService.clearToken();
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) setLoading(false);
+    }, 4000);
+
     const initAuth = async () => {
       try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+        if (cancelled) return;
         if (session?.user) {
           setUser(mapUser(session.user));
         }
@@ -62,7 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (err: unknown) {
         console.error('Error initializing auth:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
+        window.clearTimeout(timeout);
       }
     };
 
@@ -81,6 +94,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, []);

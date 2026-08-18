@@ -1,9 +1,0 @@
-{
-  "id": "act-9bd19e9cfd37307c",
-  "state": "ready",
-  "updatedAt": "2026-06-16T02:35:40.002831Z",
-  "blocker": {
-    "type": "manual-override",
-    "description": "Promoted by phase7_retriage_v2.py after heuristic reclassification."
-  }
-}

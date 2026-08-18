@@ -18,7 +18,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
         return 'bg-red-500';
       case AgentStatus.OFFLINE:
       default:
-        return 'bg-transparent0';
+        return 'bg-gray-500';
     }
   };
 

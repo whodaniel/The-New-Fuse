@@ -19,6 +19,7 @@ import time
 from pathlib import Path
 import glob
 from collections import deque
+from datetime import datetime, timezone
 
 def normalize_profile(raw: str | None) -> str:
     profile = (raw or "main").strip().lower()
@@ -50,10 +51,14 @@ def profile_suffix(profile: str) -> str:
 
 
 def default_voice_for_profile(profile: str) -> str:
+    # Inky is the TNF voice front door — one speaker identity for all beam TTS.
+    inky = os.environ.get("VOICE_INKY_VOICE", "").strip()
+    if inky:
+        return inky
     normalized = normalize_profile(profile)
     if normalized in {"b", "samantha"}:
         return "Samantha"
-    return "Daniel"
+    return os.environ.get("VOICE_RESPONSE_AUDIO_VOICE", "Daniel")
 
 
 VOICEBRIDGE_PROFILE = normalize_profile(
@@ -142,16 +147,37 @@ LAST_ASSISTANT_OUTPUT_TEXT_FILE = Path(f"/tmp/voice_last_assistant_output_text{P
 POLL_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_POLL_SECONDS", "0.9"))
 MAX_TAIL_CHARS = int(os.environ.get("VOICE_RESPONSE_AUDIO_MAX_TAIL_CHARS", "12000"))
 MAX_SPEAK_CHARS = int(os.environ.get("VOICE_RESPONSE_AUDIO_MAX_SPEAK_CHARS", "420"))
-MIN_SPEAK_CHARS = int(os.environ.get("VOICE_RESPONSE_AUDIO_MIN_SPEAK_CHARS", "28"))
+MIN_SPEAK_CHARS = int(os.environ.get("VOICE_RESPONSE_AUDIO_MIN_SPEAK_CHARS", "18"))
 POST_SPEECH_DELAY_SECONDS = float(
-    os.environ.get("VOICE_RESPONSE_AUDIO_POST_DELAY_SECONDS", "0.30")
+    os.environ.get("VOICE_RESPONSE_AUDIO_POST_DELAY_SECONDS", "2.0")
 )
-VOICE_NAME = os.environ.get("VOICE_RESPONSE_AUDIO_VOICE", default_voice_for_profile(VOICEBRIDGE_PROFILE))
+VOICE_NAME = os.environ.get(
+    "VOICE_INKY_VOICE",
+    os.environ.get("VOICE_RESPONSE_AUDIO_VOICE", default_voice_for_profile(VOICEBRIDGE_PROFILE)),
+)
+INKY_SPEAK_AS_FRONT_DOOR = os.environ.get("VOICE_INKY_FRONT_DOOR_TTS", "1").strip().lower() not in {
+    "0",
+    "false",
+    "no",
+    "off",
+}
 SPEECH_LOCK_FILE = Path(os.environ.get("VOICE_RESPONSE_AUDIO_SPEECH_LOCK_FILE", "/tmp/codex_voice.lock"))
 SPEECH_LOCK_TIMEOUT_SECONDS = float(
     os.environ.get("VOICE_RESPONSE_AUDIO_SPEECH_LOCK_TIMEOUT_SECONDS", "3.0")
 )
-QUIET_WINDOW_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_QUIET_WINDOW_SECONDS", "0.9"))
+QUIET_WINDOW_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_QUIET_WINDOW_SECONDS", "1.2"))
+STABLE_BEFORE_SPEAK_SECONDS = float(
+    os.environ.get("VOICE_RESPONSE_AUDIO_STABLE_SECONDS", "0.9")
+)
+MIC_PAUSE_FILE = STATE_DIR / state_file_name("voice_mic_paused")
+LAST_AI_SPEECH_TEXT_FILE = Path(f"/tmp/voice_last_ai_speech_text{PROFILE_SUFFIX}")
+TTS_QUEUE_FILE = STATE_DIR / state_file_name("inky_tts_queue.txt")
+ALWAYS_SPEAK_IDLE_REPLY = os.environ.get("VOICE_INKY_ALWAYS_SPEAK_IDLE_REPLY", "1").strip().lower() not in {
+    "0",
+    "false",
+    "no",
+    "off",
+}
 ECHO_SUPPRESS_ENABLED = os.environ.get("VOICE_RESPONSE_AUDIO_ECHO_SUPPRESS", "1").strip().lower() not in {
     "0",
     "false",
@@ -159,7 +185,7 @@ ECHO_SUPPRESS_ENABLED = os.environ.get("VOICE_RESPONSE_AUDIO_ECHO_SUPPRESS", "1"
     "off",
 }
 ECHO_RECENT_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_ECHO_RECENT_SECONDS", "18"))
-ECHO_OVERLAP_THRESHOLD = float(os.environ.get("VOICE_RESPONSE_AUDIO_ECHO_OVERLAP_THRESHOLD", "0.74"))
+ECHO_OVERLAP_THRESHOLD = float(os.environ.get("VOICE_RESPONSE_AUDIO_ECHO_OVERLAP_THRESHOLD", "0.55"))
 ALLOW_LEGACY_TTY_FALLBACK = os.environ.get("VOICE_RESPONSE_AUDIO_ALLOW_LEGACY_TTY_FALLBACK", "1").strip().lower() not in {
     "0",
     "false",
@@ -195,6 +221,13 @@ REQUIRE_SAY_TAG = os.environ.get("VOICE_RESPONSE_AUDIO_REQUIRE_TAG", "0").strip(
     "off",
 }
 SAY_TAG_PREFIX = os.environ.get("VOICE_RESPONSE_AUDIO_TAG_PREFIX", "[[SAY]]")
+APPLESCRIPT_TIMEOUT_SECONDS = float(os.environ.get("VOICE_RESPONSE_AUDIO_APPLESCRIPT_TIMEOUT_SECONDS", "3.0"))
+TERMINAL_AUTOMATION_GUARD_FILE = Path(
+    os.environ.get(
+        "VOICE_RESPONSE_AUDIO_TERMINAL_AUTOMATION_GUARD_FILE",
+        "~/.tnf/terminal-heartbeat/state/terminal-heartbeat-applescript-guard.json",
+    )
+).expanduser()
 
 NO_TTY_MARKER = "__VOICE_NO_TTY__"
 ANSI_ESCAPE_RE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
@@ -206,8 +239,24 @@ SHELL_CMD_RE = re.compile(
 SHELL_PROMPT_RE = re.compile(
     r"^\s*(\$|%|#|❯|➜|›|>>>|\.{3}|[A-Za-z0-9._-]+@[A-Za-z0-9._-]+[:~])"
 )
+ENV_ASSIGN_RE = re.compile(r"^(export\s+)?[A-Z][A-Z0-9_]*=.+")
+JSONISH_RE = re.compile(r"^\s*[\{\[].*[\}\]]\s*$")
+SPINNER_RE = re.compile(r"[\u2800-\u28FF⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏⠘⠆]+")
+TOKEN_STATUS_RE = re.compile(
+    r"\b(\d+(\.\d+)?k?\s*tokens|files edited|run everything|ctrl\+c to stop|"
+    r"input lines hidden|output lines hidden|ctrl\+[a-z0-9]|ctrl\+o to expand|"
+    r"\d+\s+task|send to background|to review)\b",
+    re.IGNORECASE,
+)
+VOICE_INJECT_RE = re.compile(r"[\[]?\s*↑t\d+\s*[\]]?", re.IGNORECASE)
+TOOL_UI_RE = re.compile(
+    r"(bash\(|shell\(|read\s+\.\.\.|grepping|strreplace|modifiers matched|"
+    r"anchor set:|foundtab|osascript|/users/danielgoldberg|"
+    r"black small square)",
+    re.IGNORECASE,
+)
 SKIP_PHRASES = (
-    "tab to queue message",
+    "tab to review message",
     "press ctrl+c to stop",
     "voice link active",
     "activate beam",
@@ -216,7 +265,7 @@ SKIP_PHRASES = (
     "chunk id:",
     "process exited with code",
     "working (",
-    "• ran ",
+    "ran ",
     "conversation interrupted - tell the model what to do differently",
     "hit `/feedback` to report the issue",
     "hit /feedback to report the issue",
@@ -227,7 +276,12 @@ SKIP_PHRASES = (
     "command pid",
     "tail -n ",
     "rg -n ",
-    " +",
+    "voicebridge_",
+    "mic_state",
+    "target_state",
+    "send to background",
+    "lines hidden",
+    "run everything",
 )
 
 
@@ -248,6 +302,22 @@ def is_terminal_like(app_name: str, bundle_id: str) -> bool:
     app = (app_name or "").strip().lower()
     bundle = (bundle_id or "").strip().lower()
     return "terminal" in app or "iterm" in app or "terminal" in bundle or "iterm" in bundle
+
+
+def active_terminal_automation_hold_until() -> str | None:
+    try:
+        payload = json.loads(TERMINAL_AUTOMATION_GUARD_FILE.read_text(encoding="utf-8"))
+        hold_until = str(payload.get("holdUntil") or "")
+        if not hold_until:
+            return None
+        parsed = datetime.fromisoformat(hold_until.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        if parsed > datetime.now(timezone.utc):
+            return hold_until
+    except Exception:
+        return None
+    return None
 
 
 def read_target_tty(startup_tty: str | None) -> str | None:
@@ -286,6 +356,11 @@ def read_target_tty(startup_tty: str | None) -> str | None:
 
 
 def read_terminal_tail(tty: str, tail_chars: int) -> str:
+    hold_until = active_terminal_automation_hold_until()
+    if hold_until:
+        log(f"terminal read skipped; AppleScript hold active until {hold_until}")
+        return ""
+
     quoted_tty = applescript_quote(tty)
     activate_target = "true" if VOICE_RESPONSE_AUDIO_ACTIVATE_TARGET else "false"
     script = f'''
@@ -315,37 +390,42 @@ tell application "Terminal"
         return "{NO_TTY_MARKER}"
     end if
 
+    -- Prefer history: cursor-agent / boxed TUIs redraw contents each frame,
+    -- and `contents of tab` often errors when the tab is not frontmost.
     if activateTarget then
         set selected of foundTab to true
         set index of foundWindow to 1
         activate
+    end if
+    try
+        set tabText to (history of foundTab as text)
+    on error
         try
-            set tabText to (contents of selected tab of foundWindow as text)
+            set tabText to (contents of foundTab as text)
         on error
             try
-                set tabText to (contents of front window as text)
+                set tabText to (contents of selected tab of foundWindow as text)
             on error
                 return "{NO_TTY_MARKER}"
             end try
         end try
-    else
-        try
-            set tabText to (contents of foundTab as text)
-        on error
-            return "{NO_TTY_MARKER}"
-        end try
-    end if
+    end try
     return tabText
 end tell
 '''.strip()
 
-    proc = subprocess.run(
-        ["osascript"],
-        input=script,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["osascript"],
+            input=script,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=APPLESCRIPT_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        log(f"osascript read timed out after {APPLESCRIPT_TIMEOUT_SECONDS:.1f}s")
+        return ""
     if proc.returncode != 0:
         err = (proc.stderr or "").strip()
         if err:
@@ -379,6 +459,24 @@ def extract_delta(previous: str, current: str) -> str:
     return ""
 
 
+def extract_new_prose_lines(previous: str, current: str) -> str:
+    """TUI-friendly diff: Terminal apps like cursor-agent redraw history."""
+    prev_norm = {
+        strip_box_chrome(ln)
+        for ln in normalize_text(previous).splitlines()
+        if strip_box_chrome(ln)
+    }
+    fresh: list[str] = []
+    for raw in normalize_text(current).splitlines():
+        line = strip_box_chrome(raw)
+        if not line or line in prev_norm:
+            continue
+        if is_noise_line(line):
+            continue
+        fresh.append(line)
+    return "\n".join(fresh)
+
+
 def normalize_text(raw: str) -> str:
     text = raw.replace("\r", "\n")
     text = ANSI_ESCAPE_RE.sub("", text)
@@ -388,15 +486,35 @@ def normalize_text(raw: str) -> str:
     return text
 
 
+def strip_box_chrome(line: str) -> str:
+    s = (line or "").strip()
+    if not s:
+        return ""
+    # Cursor-agent / boxed TUIs wrap prose in drawing characters.
+    s = re.sub(r"^[\s│┃║|▌▐]+", "", s)
+    s = re.sub(r"[\s│┃║|▌▐]+$", "", s)
+    s = s.strip("─━═-_")
+    return s.strip()
+
+
 def is_noise_line(line: str) -> bool:
-    stripped = line.strip()
+    stripped = strip_box_chrome(line)
     if not stripped:
         return True
-    if stripped.startswith(("│", "└", "• Ran ", "• Working", "────────────────")):
+    # Never speak user voice-inject markers — that creates an echo loop.
+    if VOICE_INJECT_RE.search(stripped):
+        return True
+    if TOOL_UI_RE.search(stripped):
+        return True
+    if stripped.startswith(("└", "• Ran ", "• Working", "────────────────", "$ ", "→")):
         return True
     if re.search(r"\[\d{2}:\d{2}:\d{2}\]", stripped):
         return True
     if NOISE_LINE_RE.fullmatch(stripped):
+        return True
+    if ENV_ASSIGN_RE.match(stripped) or JSONISH_RE.match(stripped):
+        return True
+    if SPINNER_RE.search(stripped) or TOKEN_STATUS_RE.search(stripped):
         return True
     lower = stripped.lower()
     # Drop lines with very low alpha density (command/log gibberish).
@@ -409,7 +527,38 @@ def is_noise_line(line: str) -> bool:
         return True
     if SHELL_CMD_RE.match(stripped):
         return True
+    # Pure UI chrome / tips / status.
+    if lower.startswith(("tip:", "cursor agent", "v20", "? for shortcuts", "use /", "auto ·", "reading", "running")):
+        return True
     return False
+
+
+def extract_assistant_paragraphs(lines: list[str]) -> list[str]:
+    """Group contiguous prose lines; drop tool/user inject interruptions."""
+    paragraphs: list[str] = []
+    current: list[str] = []
+    for raw in lines:
+        line = strip_box_chrome(raw)
+        if not line or is_noise_line(line):
+            if current:
+                paragraphs.append(re.sub(r"\s+", " ", " ".join(current)).strip())
+                current = []
+            continue
+        ll = line.lower()
+        if ll.startswith(("test now:", "controls:", "state dir:", "ai response audio:", "cloud forwarding:")):
+            if current:
+                paragraphs.append(re.sub(r"\s+", " ", " ".join(current)).strip())
+                current = []
+            continue
+        if re.match(r"^\d+\.\s", line):
+            if current:
+                paragraphs.append(re.sub(r"\s+", " ", " ".join(current)).strip())
+                current = []
+            continue
+        current.append(line)
+    if current:
+        paragraphs.append(re.sub(r"\s+", " ", " ".join(current)).strip())
+    return [p for p in paragraphs if p]
 
 
 def clip_for_speech(text: str, max_chars: int) -> str:
@@ -443,27 +592,31 @@ def looks_technical_or_meta(text: str) -> bool:
         "nohup",
         "python3 -u",
         "set -e",
-        "/users/",
-        "/tmp/",
-        "tty",
         "lsof",
         "shasum",
         "synced ",
         "working (",
         "explored",
-        "ran ",
+        "• ran ",
+        "• working",
+        "stall break",
+        "no commands executed",
+        "auto-held after",
+        "self-prompting to continue",
+        "remaining artifacts",
     )
     if any(marker in s for marker in technical_markers):
         return True
-    # Path-heavy / command-heavy strings are almost always jargon.
+    alpha = sum(ch.isalpha() for ch in s)
+    alpha_ratio = alpha / max(1, len(s))
+    # Path-heavy / command-heavy strings are jargon when prose density is low.
     slash_count = s.count("/")
-    if slash_count >= 2:
+    if slash_count >= 3 and alpha_ratio < 0.62:
         return True
     symbol_count = sum(1 for ch in s if ch in "{}[]|`$<>")
-    if symbol_count >= 3:
+    if symbol_count >= 4 and alpha_ratio < 0.62:
         return True
-    alpha = sum(ch.isalpha() for ch in s)
-    if len(s) >= 24 and (alpha / max(1, len(s))) < 0.55:
+    if len(s) >= 24 and alpha_ratio < 0.50:
         return True
     return False
 
@@ -523,27 +676,69 @@ def build_speakable_chunk(delta: str) -> str:
         return clip_for_speech(candidates[-1], MAX_SPEAK_CHARS)
 
     lines = [ln.strip() for ln in raw_lines]
-    filtered = [ln for ln in lines if not is_noise_line(ln)]
-    if not filtered:
+    paragraphs = extract_assistant_paragraphs(lines)
+    if not paragraphs:
         return ""
-    # Prefer likely assistant prose lines; avoid numbered/meta instruction blocks.
-    prose_lines = []
-    for ln in filtered:
-        ll = ln.lower()
-        if ll.startswith(("test now:", "controls:", "state dir:", "ai response audio:", "cloud forwarding:")):
+
+    # Speak only the latest clean assistant paragraph — never a mash of tools + injects.
+    for candidate in reversed(paragraphs):
+        chunk = candidate.replace("▎", " ").replace("```", " ")
+        chunk = VOICE_INJECT_RE.sub(" ", chunk)
+        chunk = re.sub(r"\s+", " ", chunk).strip()
+        if len(chunk) < MIN_SPEAK_CHARS:
             continue
-        if re.match(r"^\d+\.\s", ln):
+        if looks_technical_or_meta(chunk):
             continue
-        prose_lines.append(ln)
-    if prose_lines:
-        filtered = prose_lines
-    chunk = " ".join(filtered)
-    chunk = re.sub(r"\s+", " ", chunk).strip()
-    if len(chunk) < MIN_SPEAK_CHARS:
-        return ""
-    if looks_technical_or_meta(chunk):
-        return ""
-    return clip_for_speech(chunk, MAX_SPEAK_CHARS)
+        if TOOL_UI_RE.search(chunk) or TOKEN_STATUS_RE.search(chunk):
+            continue
+        if not looks_like_spoken_prose(chunk):
+            continue
+        return clip_for_speech(chunk, MAX_SPEAK_CHARS)
+    return ""
+
+
+def looks_like_spoken_prose(text: str) -> bool:
+    """Keep macOS say on conversational assistant lines, not tool/code dumps."""
+    s = text.strip()
+    if not s:
+        return False
+    words = [w for w in re.split(r"\s+", s) if w]
+    # Short confirmations still need audio ("Got it.", "Yes — locked.").
+    if len(words) < 3:
+        return False
+    lower = s.lower()
+    if TOKEN_STATUS_RE.search(s) or SPINNER_RE.search(s):
+        return False
+    codeish = (
+        "def ",
+        "class ",
+        "import ",
+        "const ",
+        "function ",
+        "subprocess",
+        "osascript",
+        "pathlib",
+        "strreplace",
+        "old_string",
+        "new_string",
+        "function_calls",
+        "tool_call",
+        "strip_box",
+        "voicebridge",
+    )
+    if any(token in lower for token in codeish):
+        return False
+    if s.count("_") >= 2:
+        return False
+    if "=" in s and re.search(r"\w+\(", s):
+        return False
+    alpha = sum(ch.isalpha() for ch in s)
+    if (alpha / max(1, len(s))) < 0.55:
+        return False
+    # Prefer sentence-like text; allow short conversational replies without punctuation.
+    if not re.search(r"[.!?—–-]", s) and len(words) < 6:
+        return False
+    return True
 
 
 def normalize_for_compare(text: str) -> list[str]:
@@ -594,12 +789,94 @@ def should_suppress_echo(chunk: str, now: float, last_user_ts: float) -> bool:
     return False
 
 
+def terminal_looks_busy(text: str) -> bool:
+    tail = (text or "")[-700:]
+    if SPINNER_RE.search(tail):
+        return True
+    lower = tail.lower()
+    busy_markers = (
+        " reading",
+        " running",
+        " thinking",
+        "ctrl+b twice",
+        "send to background",
+        "working (",
+    )
+    return any(marker in lower for marker in busy_markers)
+
+
+def drain_inky_tts_queue() -> int:
+    """Guaranteed speak path: every queued line is spoken as Inky."""
+    if not ENABLE_FILE.exists() or not TTS_QUEUE_FILE.exists():
+        return 0
+    try:
+        raw = TTS_QUEUE_FILE.read_text(encoding="utf-8")
+    except Exception:
+        return 0
+    lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+    if not lines:
+        return 0
+    try:
+        TTS_QUEUE_FILE.write_text("", encoding="utf-8")
+    except Exception:
+        return 0
+    spoken_n = 0
+    for line in lines:
+        if VOICE_INJECT_RE.search(line):
+            continue
+        speak(line)
+        spoken_n += 1
+    return spoken_n
+
+
+def latest_idle_assistant_chunk(terminal_text: str) -> str:
+    paragraphs = extract_assistant_paragraphs(
+        [ln for ln in normalize_text(terminal_text).splitlines() if ln.strip()]
+    )
+    for candidate in reversed(paragraphs):
+        chunk = build_speakable_chunk(candidate)
+        if chunk:
+            return chunk
+    # Looser fallback: last paragraph that clears meta/noise only.
+    for candidate in reversed(paragraphs):
+        chunk = re.sub(r"\s+", " ", candidate.replace("▎", " ")).strip()
+        chunk = VOICE_INJECT_RE.sub(" ", chunk).strip()
+        if len(chunk) < MIN_SPEAK_CHARS:
+            continue
+        if looks_technical_or_meta(chunk) or TOOL_UI_RE.search(chunk):
+            continue
+        if VOICE_INJECT_RE.search(chunk):
+            continue
+        return clip_for_speech(chunk, MAX_SPEAK_CHARS)
+    return build_speakable_chunk("\n".join(paragraphs[-4:])) if paragraphs else ""
+
+
 def speak(text: str) -> None:
     if not text:
         return
+    # TNF front door: all beam TTS is Inky's audio output.
+    spoken = text
+    if INKY_SPEAK_AS_FRONT_DOOR and not spoken.lower().lstrip().startswith("inky"):
+        # Don't re-prefix every sentence; only tag stream for UI.
+        pass
     AI_SPEAKING_FLAG.touch(exist_ok=True)
+    # Stop listen from capturing TTS into the next user transcript.
     try:
-        log(f'speaking ({VOICE_NAME}): "{text[:120]}"')
+        MIC_PAUSE_FILE.write_text("1\n", encoding="utf-8")
+    except Exception:
+        pass
+    try:
+        LAST_AI_SPEECH_TEXT_FILE.write_text(spoken, encoding="utf-8")
+    except Exception:
+        pass
+    try:
+        log(f'inky speaking ({VOICE_NAME}): "{spoken[:120]}"')
+        try:
+            stream = STATE_DIR / state_file_name("voice_stream.txt")
+            with stream.open("a", encoding="utf-8") as f:
+                f.write(f"[INKY] {spoken[:500]}\n")
+        except Exception:
+            pass
         lock_fh = None
         lock_acquired = False
         deadline = time.time() + max(0.1, SPEECH_LOCK_TIMEOUT_SECONDS)
@@ -615,7 +892,7 @@ def speak(text: str) -> None:
                 except Exception:
                     break
             subprocess.run(
-                ["say", "-v", VOICE_NAME, text],
+                ["say", "-v", VOICE_NAME, spoken],
                 check=False,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
@@ -642,6 +919,11 @@ def speak(text: str) -> None:
             pass
         try:
             LAST_AI_SPEECH_TS_FILE.write_text(f"{time.time():.6f}\n", encoding="utf-8")
+        except Exception:
+            pass
+        try:
+            if MIC_PAUSE_FILE.exists():
+                MIC_PAUSE_FILE.unlink()
         except Exception:
             pass
 
@@ -708,7 +990,7 @@ def redis_listener_thread():
                 platform = data.get("from", {}).get("platform", "")
                 content = data.get("content", "")
                 
-                if platform in ["gemini", "claude", "antigravity"] and content:
+                if platform in ["gemini", "claude", "antigravity", "cursor"] and content:
                     # Append to stream with [A2A] prefix to trigger TTS in stream_watch.py
                     with open(STREAM_FILE, "a", encoding="utf-8") as f:
                         f.write(f"[A2A] {content}\n")
@@ -738,14 +1020,27 @@ def main() -> None:
     snapshot = ""
     last_spoken = ""
     recent_spoken: deque[tuple[float, str]] = deque(maxlen=80)
+    pending_chunk = ""
+    pending_since = 0.0
+    pending_fp = ""
 
     while True:
+        # Always drain explicit Inky TTS queue first — independent of tty scrape.
+        if ENABLE_FILE.exists():
+            queued = drain_inky_tts_queue()
+            if queued:
+                time.sleep(POLL_SECONDS)
+                continue
+
         target_tty = read_target_tty(startup_tty)
 
         if target_tty != active_tty:
             active_tty = target_tty
             snapshot = ""
             last_spoken = ""
+            pending_chunk = ""
+            pending_since = 0.0
+            pending_fp = ""
             if active_tty:
                 log(f"tracking tty: {active_tty}")
                 snapshot = read_terminal_tail(active_tty, MAX_TAIL_CHARS)
@@ -763,29 +1058,83 @@ def main() -> None:
             time.sleep(POLL_SECONDS)
             continue
 
-        delta = extract_delta(snapshot, current)
+        appended = extract_delta(snapshot, current)
+        prose = extract_new_prose_lines(snapshot, current)
+        # Prefer filtered prose lines. Raw history deltas often include shell/UI chrome
+        # when cursor-agent redraws mid-scrollback.
+        if prose and (
+            not appended
+            or len(appended) > 600
+            or looks_technical_or_meta(appended[:240])
+        ):
+            delta = prose
+        else:
+            delta = appended or prose
         snapshot = current
 
-        if not ENABLE_FILE.exists() or not delta:
+        if not ENABLE_FILE.exists():
+            pending_chunk = ""
+            pending_since = 0.0
+            pending_fp = ""
             time.sleep(POLL_SECONDS)
             continue
 
-        log(f"delta chars={len(delta)}")
-
-        chunk = build_speakable_chunk(delta)
-        if not chunk:
-            log("skip: no speakable chunk")
-            time.sleep(POLL_SECONDS)
-            continue
-
-        if chunk == last_spoken:
-            time.sleep(POLL_SECONDS)
-            continue
-
+        busy = terminal_looks_busy(current)
         now = time.time()
+        if delta and not busy:
+            log(f"delta chars={len(delta)}")
+            chunk = build_speakable_chunk(delta)
+            if chunk and chunk != last_spoken and VOICE_INJECT_RE.search(chunk) is None:
+                fp = fingerprint_chunk(chunk)
+                if fp != pending_fp:
+                    pending_chunk = chunk
+                    pending_fp = fp
+                    pending_since = now
+                    log("pending speakable chunk; waiting for idle settle")
+
+        # Consistency: after user input, when agent is idle, always try latest reply.
+        if (
+            ALWAYS_SPEAK_IDLE_REPLY
+            and not busy
+            and not pending_chunk
+        ):
+            last_user_ts = read_last_user_input_ts()
+            if last_user_ts > 0 and 1.5 <= (now - last_user_ts) <= 180.0:
+                idle_chunk = latest_idle_assistant_chunk(current)
+                if (
+                    idle_chunk
+                    and idle_chunk != last_spoken
+                    and VOICE_INJECT_RE.search(idle_chunk) is None
+                ):
+                    pending_chunk = idle_chunk
+                    pending_fp = fingerprint_chunk(idle_chunk)
+                    pending_since = now - STABLE_BEFORE_SPEAK_SECONDS
+                    log("idle-reply candidate armed")
+
+        if busy:
+            time.sleep(POLL_SECONDS)
+            continue
+
+        if not pending_chunk:
+            time.sleep(POLL_SECONDS)
+            continue
+
+        if (now - pending_since) < STABLE_BEFORE_SPEAK_SECONDS:
+            time.sleep(POLL_SECONDS)
+            continue
+
+        chunk = pending_chunk
+        pending_chunk = ""
+        pending_since = 0.0
+        pending_fp = ""
+
         last_user_ts = read_last_user_input_ts()
         if last_user_ts > 0 and (now - last_user_ts) < QUIET_WINDOW_SECONDS:
-            log("skip: quiet window")
+            # Hold — do not drop; speak as soon as quiet window ends.
+            pending_chunk = chunk
+            pending_fp = fingerprint_chunk(chunk)
+            pending_since = now
+            log("hold: quiet window")
             time.sleep(POLL_SECONDS)
             continue
 

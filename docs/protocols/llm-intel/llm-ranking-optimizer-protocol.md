@@ -1,27 +1,41 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # LLM Ranking Optimizer Protocol
 
 ## Overview
-Reads arena intel data and generates advisory ranking recommendations for model fallback chains. Updates `data/llm-intel/ranking-recommendations.json` and `ranking-report-latest.md`. **Advisory only** — no configs are modified automatically.
+
+Reads arena intel data and generates advisory ranking recommendations for model
+fallback chains. Updates `data/llm-intel/ranking-recommendations.json` and
+`ranking-report-latest.md`. **Advisory only** — no configs are modified
+automatically.
 
 ## Schedule
-- **Cron**: `30 */4 * * *` (every 4 hours at :30, UTC — runs 30min after collector)
+
+- **Cron**: `30 */4 * * *` (every 4 hours at :30, UTC — runs 30min after
+  collector)
 - **Registry ID**: `tnf-llm-ranking-optimizer`
 - **Category**: `llm_intelligence`
 - **Owner**: `llm-ranking-optimizer` agent / `super-admin`
 
 ## Input
+
 - `data/llm-intel/arena-intel-latest.json` (from collector)
 
 ## Processing Pipeline
 
-1. **Load intel data** — read arena rankings, news, NVIDIA health from latest snapshot
-2. **Normalize model names** — map short arena names (e.g., "kimi-k2.6") to NVIDIA NGC IDs (e.g., "moonshotai/kimi-k2.6")
+1. **Load intel data** — read arena rankings, news, NVIDIA health from latest
+   snapshot
+2. **Normalize model names** — map short arena names (e.g., "kimi-k2.6") to
+   NVIDIA NGC IDs (e.g., "moonshotai/kimi-k2.6")
 3. **Compute composite scores** — weighted combination:
-   - Arena rankings: weight 1.0 (averaged across all sources where model appears)
+   - Arena rankings: weight 1.0 (averaged across all sources where model
+     appears)
    - Benchmark scores (Aider, SWE-bench): weight 0.7
    - Health status: primary sort key (live > slow > eol)
    - Latency: secondary sort within same health tier
-4. **Compare vs current priorities** — read from `~/.tnf/model-providers.json` and `~/.hermes/model-fallback-chain.json`
+4. **Compare vs current priorities** — read from `~/.tnf/model-providers.json`
+   and `~/.hermes/model-fallback-chain.json`
 5. **Generate recommendations** — actions:
    - `add`: model not in current config but has arena presence
    - `reorder`: model exists but composite rank differs from current priority
@@ -39,6 +53,7 @@ data/llm-intel/
 ```
 
 ### ranking-recommendations.json
+
 ```json
 {
   "schema": "tnf/llm-ranking-recommendations/0.1",
@@ -56,6 +71,7 @@ data/llm-intel/
 ```
 
 ## Applying Recommendations
+
 ```bash
 # Preview changes
 pnpm tnf:llm:apply-rankings
@@ -73,6 +89,7 @@ pnpm tnf:llm:apply-rankings
 All changes are backed up with `.bak-<timestamp>` files before modification.
 
 ## Run Commands
+
 ```bash
 # Manual run
 pnpm tnf:llm:optimize

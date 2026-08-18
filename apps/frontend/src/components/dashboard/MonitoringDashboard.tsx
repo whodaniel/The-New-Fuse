@@ -2,6 +2,7 @@
 // Monitoring Dashboard Component - Real-time system monitoring interface
 // Displays comprehensive system metrics, alerts, health checks, and performance analytics
 
+import { authFetch } from '@/utils/authToken';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -111,7 +112,7 @@ const MonitoringDashboard: React.FC = () => {
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const response = await fetch('/api/monitoring/dashboard');
+      const response = await authFetch('/api/monitoring/dashboard');
       const data = await response.json();
       setDashboardData(data);
     } catch (error) {
@@ -123,7 +124,7 @@ const MonitoringDashboard: React.FC = () => {
 
   const resolveAlert = async (alertId: string) => {
     try {
-      await fetch(`/api/monitoring/alerts/${alertId}/resolve`, {
+      await authFetch(`/api/monitoring/alerts/${alertId}/resolve`, {
         method: 'PUT',
       });
       fetchDashboardData(); // Refresh data

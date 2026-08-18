@@ -13,7 +13,7 @@ The branch `feature/comprehensive-testing-and-workflow-system-verification` is r
 ```
 Error: remote: You must verify your email address.
 remote: See https://github.com/settings/emails.
-fatal: unable to access 'https://github.com/whodaniel/fuse.git/': The requested URL returned error: 403
+fatal: unable to access 'https://github.com/whodaniel/The-New-Fuse.git/': The requested URL returned error: 403
 ```
 
 ## 🔧 How to Fix This
@@ -29,13 +29,13 @@ fatal: unable to access 'https://github.com/whodaniel/fuse.git/': The requested 
 2. Generate a new personal access token with `repo` permissions
 3. Use token for authentication:
    ```bash
-   git remote set-url origin https://YOUR_USERNAME:YOUR_TOKEN@github.com/whodaniel/fuse.git
+   git remote set-url origin https://YOUR_USERNAME:YOUR_TOKEN@github.com/whodaniel/The-New-Fuse.git
    ```
 
 ### Option 3: Use SSH (If you have SSH keys set up)
 1. Add SSH remote:
    ```bash
-   git remote set-url origin git@github.com:whodaniel/fuse.git
+   git remote set-url origin git@github.com:whodaniel/The-New-Fuse.git
    ```
 
 ## 🚀 Commands to Run (After fixing authentication)
@@ -53,7 +53,7 @@ git log --oneline -1
 
 ### Check Branch on GitHub
 The branch should appear at:
-https://github.com/whodaniel/fuse/tree/feature/comprehensive-testing-and-workflow-system-verification
+https://github.com/whodaniel/The-New-Fuse/tree/feature/comprehensive-testing-and-workflow-system-verification
 
 ## 📊 What Will Be Pushed
 
@@ -130,7 +130,7 @@ Compressing objects: ..., done.
 Writing objects: ..., done.
 Total ... (delta ...), reused ... (delta ...)
 remote: Resolving deltas: ..., done.
-To https://github.com/whodaniel/fuse.git
+To https://github.com/whodaniel/The-New-Fuse.git
  * [new branch]      feature/comprehensive-testing-and-workflow-system-verification -> feature/comprehensive-testing-and-workflow-system-verification
 Branch 'feature/comprehensive-testing-and-workflow-system-verification' set up to track remote branch 'feature/comprehensive-testing-and-workflow-system-verification' from 'origin'.
 ```

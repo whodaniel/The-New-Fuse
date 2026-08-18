@@ -834,10 +834,55 @@ export class LLMClient {
       }
     }
 
+    // Cap hit while the model was still tool-calling. The last working
+    // message is almost always a tool result — never surface that JSON as
+    // the assistant reply (that broke TUI persistence: operators only saw
+    // raw {"ok":true,...} dumps and stall breaks). Prefer the last real
+    // assistant text, then force one tool-free synthesis turn.
+    const lastAssistantText = [...working]
+      .reverse()
+      .find(
+        (m) =>
+          m.role === 'assistant' &&
+          typeof m.content === 'string' &&
+          m.content.trim() &&
+          !(m as { tool_calls?: unknown }).tool_calls
+      )?.content;
+
+    working.push({
+      role: 'system',
+      content:
+        '[tool loop] Iteration cap reached. Stop calling tools. Reply to the operator in plain language: what you did, what you learned, and the next concrete step.',
+    });
+    try {
+      const synthesis = await this._callProviderRawWithFallbacks(working, {
+        ...options,
+        toolChoice: 'none',
+        maxTokens: Math.max(options.maxTokens ?? 0, 2000),
+      });
+      if (synthesis.ok) {
+        const synthText = String(
+          (synthesis.body as any)?.choices?.[0]?.message?.content || ''
+        ).trim();
+        if (synthText) {
+          return {
+            content: synthText,
+            toolCallsMade,
+            iterations,
+            finishReason: 'max_iterations_synthesized',
+          };
+        }
+      }
+    } catch {
+      // Fall through to last-assistant / explicit notice.
+    }
+
     return {
       content:
-        (working[working.length - 1] as any)?.content ||
-        `Agent loop hit maxIterations (${maxIter}) without a final assistant message.`,
+        (typeof lastAssistantText === 'string' && lastAssistantText.trim()
+          ? lastAssistantText
+          : '') ||
+        `Agent loop hit maxIterations (${maxIter}) after ${toolCallsMade} tool call(s) without a final assistant message. Summarize progress for the operator on the next turn.`,
       toolCallsMade,
       iterations,
       finishReason: 'max_iterations',

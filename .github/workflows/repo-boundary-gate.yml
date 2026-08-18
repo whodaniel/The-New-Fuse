@@ -1,0 +1,57 @@
+name: Repo Boundary Gate
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-dry-run:
+    name: Distribution sync dry-run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Preview open-runtime export (no push)
+        run: |
+          chmod +x scripts/verify-open-runtime-export.sh scripts/check-proprietary-leakage.sh
+          ./scripts/verify-open-runtime-export.sh
+
+  control-plane-completeness:
+    name: Control-plane proprietary paths exist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify proprietary source paths in monorepo
+        run: |
+          set -euo pipefail
+          missing=0
+          for p in \
+            packages/relay-core/src/master-clock.ts \
+            packages/relay-core/src/broker-agent.ts \
+            apps/backend/src/modules/orchestrator \
+            apps/nexus-orchestrator \
+            cloudflare-sharedstate; do
+            if [ ! -e "$p" ]; then
+              echo "MISSING proprietary source: $p"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ "$missing" -gt 0 ]; then
+            echo "FAIL: $missing proprietary path(s) missing from monorepo"
+            exit 1
+          fi
+          echo "PASS: proprietary source paths present"

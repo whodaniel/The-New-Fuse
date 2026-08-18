@@ -12,7 +12,7 @@ Documentation has been organized into logical categories.
 | Document                                           | Purpose                                   | Priority |
 | -------------------------------------------------- | ----------------------------------------- | -------- |
 | [README.md](README.md)                             | Project overview and setup                | ⭐⭐⭐   |
-| [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) | **Current production status and roadmap** | ⭐⭐⭐   |
+| [PRODUCTION_READINESS.md](../../../../project-management/PRODUCTION_READINESS.md) | **Current production status and roadmap** | ⭐⭐⭐   |
 | [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)       | Fast setup for development                | ⭐⭐⭐   |
 
 ---
@@ -21,11 +21,11 @@ Documentation has been organized into logical categories.
 
 | Document                                               | Purpose                                | Last Updated |
 | ------------------------------------------------------ | -------------------------------------- | ------------ |
-| [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md)     | **Latest production readiness report** | Dec 14, 2025 |
-| [HANDOFF_NEXT_SESSION.md](HANDOFF_NEXT_SESSION.md)     | Session handoff notes                  | Dec 10, 2025 |
-| [WORK_COMPLETED_SUMMARY.md](WORK_COMPLETED_SUMMARY.md) | Completed work summary                 | Dec 9, 2025  |
-| [REMAINING_WORK.md](REMAINING_WORK.md)                 | Outstanding tasks                      | Dec 9, 2025  |
-| [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)     | Implementation details                 | Dec 9, 2025  |
+| [PRODUCTION_READINESS.md](../../../../project-management/PRODUCTION_READINESS.md)     | **Latest production readiness report** | Dec 14, 2025 |
+| [HANDOFF_NEXT_SESSION.md](../../../../archive/HANDOFF_NEXT_SESSION.md)     | Session handoff notes                  | Dec 10, 2025 |
+| [WORK_COMPLETED_SUMMARY.md](../../../../archive/WORK_COMPLETED_SUMMARY.md) | Completed work summary                 | Dec 9, 2025  |
+| [REMAINING_WORK.md](../../../../REMAINING_WORK.md)                 | Outstanding tasks                      | Dec 9, 2025  |
+| [IMPLEMENTATION_NOTES.md](../../../../archive/IMPLEMENTATION_NOTES.md)     | Implementation details                 | Dec 9, 2025  |
 
 ---
 
@@ -33,34 +33,34 @@ Documentation has been organized into logical categories.
 
 ### Core Architecture
 
-- [ARCHITECTURE_STANDARDS.md](ARCHITECTURE_STANDARDS.md) - Architectural
+- [ARCHITECTURE_STANDARDS.md](../../../../architecture/ARCHITECTURE_STANDARDS.md) - Architectural
   standards and patterns
-- [MONOREPO_ARCHITECTURE.md](MONOREPO_ARCHITECTURE.md) - Monorepo structure
-- [docs/ARCHITECTURE_PATTERN_INDEX.md](docs/ARCHITECTURE_PATTERN_INDEX.md) -
+- [MONOREPO_ARCHITECTURE.md](../../../../architecture/MONOREPO_ARCHITECTURE.md) - Monorepo structure
+- [docs/ARCHITECTURE_PATTERN_INDEX.md](../../../../ARCHITECTURE_PATTERN_INDEX.md) -
   Cross-cutting architecture patterns index
-- [ARCHITECTURAL_CONSISTENCY_REPORT.md](ARCHITECTURAL_CONSISTENCY_REPORT.md) -
+- [ARCHITECTURAL_CONSISTENCY_REPORT.md](../../../../architecture/ARCHITECTURAL_CONSISTENCY_REPORT.md) -
   Consistency analysis
-- [ARCHITECTURE_ANALYSIS_SUMMARY.md](ARCHITECTURE_ANALYSIS_SUMMARY.md) -
+- [ARCHITECTURE_ANALYSIS_SUMMARY.md](../../../../architecture/ARCHITECTURE_ANALYSIS_SUMMARY.md) -
   Architecture analysis
 
 ### Chrome Extension Autonomy
 
-- [apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md](apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md) -
+- [apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md](../../../../../apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md) -
   Popup autonomy controls quick guide
 
 ### Protocols & Primitives (New!)
 
-- [docs/protocols/UTP_SPEC_v1.0.md](docs/protocols/UTP_SPEC_v1.0.md) - Universal
+- [docs/protocols/UTP_SPEC_v1.0.md](../../../../protocols/UTP_SPEC_v1.0.md) - Universal
   Timeline Protocol (UTP)
 
 ### Code Quality & Refactoring
 
-- [CODE_DUPLICATION_REPORT.md](CODE_DUPLICATION_REPORT.md) - Duplication
+- [CODE_DUPLICATION_REPORT.md](../../../../architecture/CODE_DUPLICATION_REPORT.md) - Duplication
   analysis
-- [REFACTORING_OPPORTUNITIES.md](REFACTORING_OPPORTUNITIES.md) - Refactoring
+- [REFACTORING_OPPORTUNITIES.md](../../../../architecture/REFACTORING_OPPORTUNITIES.md) - Refactoring
   recommendations
-- [REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md) - Refactoring work summary
-- [FEATURE_RECREATION_ANALYSIS.md](FEATURE_RECREATION_ANALYSIS.md) - Feature
+- [REFACTORING_SUMMARY.md](../../../../architecture/REFACTORING_SUMMARY.md) - Refactoring work summary
+- [FEATURE_RECREATION_ANALYSIS.md](../../../../architecture/FEATURE_RECREATION_ANALYSIS.md) - Feature
   recreation analysis
 
 ---
@@ -69,23 +69,23 @@ Documentation has been organized into logical categories.
 
 ### Build System
 
-- [BUILD_SYSTEM.md](BUILD_SYSTEM.md) - Build system overview
-- [BUILD_GUIDE.md](BUILD_GUIDE.md) - Comprehensive build guide
-- [BUILD_QUICK_START.md](BUILD_QUICK_START.md) - Quick build instructions
-- [BUILD_STATUS.md](BUILD_STATUS.md) - Current build status
-- [BUILD_SYSTEM_SUMMARY.md](BUILD_SYSTEM_SUMMARY.md) - Build system summary
+- [BUILD_SYSTEM.md](../../../../development/BUILD_SYSTEM.md) - Build system overview
+- [BUILD_GUIDE.md](../../../../development/BUILD_GUIDE.md) - Comprehensive build guide
+- [BUILD_QUICK_START.md](../../../../development/BUILD_QUICK_START.md) - Quick build instructions
+- [BUILD_STATUS.md](../../../../development/BUILD_STATUS.md) - Current build status
+- [BUILD_SYSTEM_SUMMARY.md](../../../../development/BUILD_SYSTEM_SUMMARY.md) - Build system summary
 
 ### Dependencies
 
-- [DEPENDENCY-MAP.md](DEPENDENCY-MAP.md) - Dependency mapping
-- [DEPENDENCY_SECURITY_REPORT.md](DEPENDENCY_SECURITY_REPORT.md) - Security
+- [DEPENDENCY-MAP.md](../../../../development/DEPENDENCY-MAP.md) - Dependency mapping
+- [DEPENDENCY_SECURITY_REPORT.md](../../../../development/DEPENDENCY_SECURITY_REPORT.md) - Security
   audit
 
 ### Monorepo Management
 
-- [MONOREPO-AUDIT-INDEX.md](MONOREPO-AUDIT-INDEX.md) - Monorepo audit index
-- [monorepo-audit-report.md](monorepo-audit-report.md) - Detailed audit report
-- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - CloudRuntime build
+- [MONOREPO-AUDIT-INDEX.md](../../../../architecture/MONOREPO-AUDIT-INDEX.md) - Monorepo audit index
+- [monorepo-audit-report.md](../../../../development/monorepo-audit-report.md) - Detailed audit report
+- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](../../../../deployment/CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - CloudRuntime build
   fixes
 
 ---
@@ -95,76 +95,76 @@ Documentation has been organized into logical categories.
 ### Deployment Guides
 
 - [DEPLOYMENT.md](DEPLOYMENT.md) - Main deployment guide
-- [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md) - Current deployment status
-- [DEPLOYMENT_AUTOMATION_COMPLETE.md](DEPLOYMENT_AUTOMATION_COMPLETE.md) -
+- [DEPLOYMENT_STATUS.md](../../../../deployment/DEPLOYMENT_STATUS.md) - Current deployment status
+- [DEPLOYMENT_AUTOMATION_COMPLETE.md](../../../../deployment/DEPLOYMENT_AUTOMATION_COMPLETE.md) -
   Automation setup
-- [DEPLOYMENT_AUTOMATION_SUMMARY.md](DEPLOYMENT_AUTOMATION_SUMMARY.md) -
+- [DEPLOYMENT_AUTOMATION_SUMMARY.md](../../../../deployment/DEPLOYMENT_AUTOMATION_SUMMARY.md) -
   Automation summary
 
 ### CloudRuntime Deployment
 
-- [CLOUD_RUNTIME_DEPLOYMENT.md](CLOUD_RUNTIME_DEPLOYMENT.md) - CloudRuntime deployment guide
-- [CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - Detailed CloudRuntime
+- [CLOUD_RUNTIME_DEPLOYMENT.md](../../../../deployment/CLOUD_RUNTIME_DEPLOYMENT.md) - CloudRuntime deployment guide
+- [CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md](../../../../deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md) - Detailed CloudRuntime
   guide
-- [CLOUD_RUNTIME_FAILURE_ANALYSIS.md](CLOUD_RUNTIME_FAILURE_ANALYSIS.md) - Failure analysis
-- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - Build fixes
+- [CLOUD_RUNTIME_FAILURE_ANALYSIS.md](../../../../deployment/CLOUD_RUNTIME_FAILURE_ANALYSIS.md) - Failure analysis
+- [CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md](../../../../deployment/CLOUD_RUNTIME_BUILD_FIX_SUMMARY.md) - Build fixes
 
 ### Docker
 
-- [DOCKER_OPTIMIZATION_SUMMARY.md](DOCKER_OPTIMIZATION_SUMMARY.md) - Docker
+- [DOCKER_OPTIMIZATION_SUMMARY.md](../../../../deployment/DOCKER_OPTIMIZATION_SUMMARY.md) - Docker
   optimization
 
 ### CI/CD
 
-- [CI_CD_SETUP_COMPLETE.md](CI_CD_SETUP_COMPLETE.md) - CI/CD pipeline setup
+- [CI_CD_SETUP_COMPLETE.md](../../../../ci-cd/CI_CD_SETUP_COMPLETE.md) - CI/CD pipeline setup
 
 ---
 
 ## 🔐 **Security**
 
-- [SECURITY_FIXES.md](SECURITY_FIXES.md) - Security fixes applied
-- [SECURITY_VULNERABILITIES_FIXED.md](SECURITY_VULNERABILITIES_FIXED.md) -
+- [SECURITY_FIXES.md](../../../../security/SECURITY_FIXES.md) - Security fixes applied
+- [SECURITY_VULNERABILITIES_FIXED.md](../../../../security/SECURITY_VULNERABILITIES_FIXED.md) -
   Vulnerabilities resolved
-- [SECURITY-FIXES-SUMMARY.md](SECURITY-FIXES-SUMMARY.md) - Fixes summary
-- [SECURITY-CLEANUP-SUMMARY.md](SECURITY-CLEANUP-SUMMARY.md) - Cleanup work
-- [SECURITY_INCIDENT_RESPONSE.md](SECURITY_INCIDENT_RESPONSE.md) - Incident
+- [SECURITY-FIXES-SUMMARY.md](../security/SECURITY-FIXES-SUMMARY.md) - Fixes summary
+- [SECURITY-CLEANUP-SUMMARY.md](../../../../security/SECURITY-CLEANUP-SUMMARY.md) - Cleanup work
+- [SECURITY_INCIDENT_RESPONSE.md](../../../../security/SECURITY_INCIDENT_RESPONSE.md) - Incident
   response plan
-- [DEPENDENCY_SECURITY_REPORT.md](DEPENDENCY_SECURITY_REPORT.md) - Dependency
+- [DEPENDENCY_SECURITY_REPORT.md](../../../../development/DEPENDENCY_SECURITY_REPORT.md) - Dependency
   security
 
 ---
 
 ## 🧪 **Testing**
 
-- [TESTING_SETUP_COMPLETE.md](TESTING_SETUP_COMPLETE.md) - Test framework setup
-- [E2E_TEST_SUMMARY.md](E2E_TEST_SUMMARY.md) - E2E testing summary
-- [CODE_QUALITY_SETUP_COMPLETE.md](CODE_QUALITY_SETUP_COMPLETE.md) - Quality
+- [TESTING_SETUP_COMPLETE.md](../../../../testing/TESTING_SETUP_COMPLETE.md) - Test framework setup
+- [E2E_TEST_SUMMARY.md](../../../../testing/E2E_TEST_SUMMARY.md) - E2E testing summary
+- [CODE_QUALITY_SETUP_COMPLETE.md](../../../../development/CODE_QUALITY_SETUP_COMPLETE.md) - Quality
   tools
 
 ---
 
 ## ⚡ **Performance**
 
-- [PERFORMANCE_OPTIMIZATION_REPORT.md](PERFORMANCE_OPTIMIZATION_REPORT.md) -
+- [PERFORMANCE_OPTIMIZATION_REPORT.md](../../../../performance/PERFORMANCE_OPTIMIZATION_REPORT.md) -
   Optimization report
-- [PERFORMANCE_OPTIMIZATION_SUMMARY.md](PERFORMANCE_OPTIMIZATION_SUMMARY.md) -
+- [PERFORMANCE_OPTIMIZATION_SUMMARY.md](../../../../performance/PERFORMANCE_OPTIMIZATION_SUMMARY.md) -
   Summary
-- [PERFORMANCE_IMPLEMENTATION_GUIDE.md](PERFORMANCE_IMPLEMENTATION_GUIDE.md) -
+- [PERFORMANCE_IMPLEMENTATION_GUIDE.md](../../../../performance/PERFORMANCE_IMPLEMENTATION_GUIDE.md) -
   Implementation guide
-- [PERFORMANCE_MONITORING_SUMMARY.md](PERFORMANCE_MONITORING_SUMMARY.md) -
+- [PERFORMANCE_MONITORING_SUMMARY.md](../../../../performance/PERFORMANCE_MONITORING_SUMMARY.md) -
   Monitoring setup
-- [PERFORMANCE_QUICK_START.md](PERFORMANCE_QUICK_START.md) - Quick start
-- [BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md](BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md) -
+- [PERFORMANCE_QUICK_START.md](../../../../performance/PERFORMANCE_QUICK_START.md) - Quick start
+- [BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md](../../../../performance/BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md) -
   Backend optimizations
 
 ---
 
 ## 🤖 **Agent System**
 
-- [AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md](AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md) -
+- [AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md](../../../../agents/AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md) -
   Communication protocol
-- [AGENT_DISCOVERY_SUMMARY.md](AGENT_DISCOVERY_SUMMARY.md) - Agent discovery
-- [AGENT_SWARM_SUMMARY.md](AGENT_SWARM_SUMMARY.md) - Agent swarm implementation
+- [AGENT_DISCOVERY_SUMMARY.md](../../../../agents/AGENT_DISCOVERY_SUMMARY.md) - Agent discovery
+- [AGENT_SWARM_SUMMARY.md](../../../../agents/AGENT_SWARM_SUMMARY.md) - Agent swarm implementation
 
 ---
 
@@ -172,26 +172,26 @@ Documentation has been organized into logical categories.
 
 ### UX Audits
 
-- [UX_AUDIT_SUMMARY.md](UX_AUDIT_SUMMARY.md) - UX audit summary
-- [UX_AUDIT_COMPREHENSIVE_PAGE_INVENTORY.md](UX_AUDIT_COMPREHENSIVE_PAGE_INVENTORY.md) -
+- [UX_AUDIT_SUMMARY.md](../../../../ui-ux/UX_AUDIT_SUMMARY.md) - UX audit summary
+- [UX_AUDIT_COMPREHENSIVE_PAGE_INVENTORY.md](../../../../ui-ux/UX_AUDIT_COMPREHENSIVE_PAGE_INVENTORY.md) -
   Page inventory
-- [UX_VISUAL_INSPECTION_CHECKLIST.md](UX_VISUAL_INSPECTION_CHECKLIST.md) -
+- [UX_VISUAL_INSPECTION_CHECKLIST.md](../../../../ui-ux/UX_VISUAL_INSPECTION_CHECKLIST.md) -
   Visual checklist
 - [UI_UX_TRANSFORMATION_ROADMAP.md](UI_UX_TRANSFORMATION_ROADMAP.md) -
   Transformation roadmap
-- [docs/SAAS_FRONTEND_OVERHAUL_PLAN.md](docs/SAAS_FRONTEND_OVERHAUL_PLAN.md) -
+- [docs/SAAS_FRONTEND_OVERHAUL_PLAN.md](../../../../SAAS_FRONTEND_OVERHAUL_PLAN.md) -
   Frontend consolidation and refactor execution plan
 
 ### Landing Page & Marketing
 
-- [LANDING_PAGE_OPTIMIZATION.md](LANDING_PAGE_OPTIMIZATION.md) - Landing page
+- [LANDING_PAGE_OPTIMIZATION.md](../../../../ui-ux/LANDING_PAGE_OPTIMIZATION.md) - Landing page
   optimization
-- [RESPONSIVE_LANDING_PAGE_COMPLETE.md](RESPONSIVE_LANDING_PAGE_COMPLETE.md) -
+- [RESPONSIVE_LANDING_PAGE_COMPLETE.md](../../../../ui-ux/RESPONSIVE_LANDING_PAGE_COMPLETE.md) -
   Responsive design
-- [HERO_SECTION_ENHANCEMENT_SUMMARY.md](HERO_SECTION_ENHANCEMENT_SUMMARY.md) -
+- [HERO_SECTION_ENHANCEMENT_SUMMARY.md](../../../../ui-ux/HERO_SECTION_ENHANCEMENT_SUMMARY.md) -
   Hero section
-- [CTA_COMPONENTS_SUMMARY.md](CTA_COMPONENTS_SUMMARY.md) - CTA components
-- [FEATURE_SHOWCASE_SUMMARY.md](FEATURE_SHOWCASE_SUMMARY.md) - Feature showcase
+- [CTA_COMPONENTS_SUMMARY.md](../../../../ui-ux/CTA_COMPONENTS_SUMMARY.md) - CTA components
+- [FEATURE_SHOWCASE_SUMMARY.md](../../../../ui-ux/FEATURE_SHOWCASE_SUMMARY.md) - Feature showcase
 
 ---
 
@@ -199,9 +199,9 @@ Documentation has been organized into logical categories.
 
 ### MCP Integration
 
-- [MCP_INTEGRATION_COMPLETE.md](MCP_INTEGRATION_COMPLETE.md) - MCP setup
+- [MCP_INTEGRATION_COMPLETE.md](../../../../integrations/MCP_INTEGRATION_COMPLETE.md) - MCP setup
   complete
-- [MCP_INTEGRATION_SUMMARY.md](MCP_INTEGRATION_SUMMARY.md) - Integration summary
+- [MCP_INTEGRATION_SUMMARY.md](../../../../integrations/MCP_INTEGRATION_SUMMARY.md) - Integration summary
 
 ### n8n Workflows
 
@@ -210,9 +210,9 @@ Documentation has been organized into logical categories.
 
 ### Workflows
 
-- [WORKFLOW_BUILDER_ENHANCEMENTS.md](WORKFLOW_BUILDER_ENHANCEMENTS.md) - Builder
+- [WORKFLOW_BUILDER_ENHANCEMENTS.md](../../../../workflows/WORKFLOW_BUILDER_ENHANCEMENTS.md) - Builder
   enhancements
-- [WORKFLOW_QUICKSTART.md](WORKFLOW_QUICKSTART.md) - Quick start guide
+- [WORKFLOW_QUICKSTART.md](../../../../workflows/WORKFLOW_QUICKSTART.md) - Quick start guide
 
 ### WebSocket
 
@@ -221,33 +221,33 @@ Documentation has been organized into logical categories.
 
 ### Resources Dashboard
 
-- [RESOURCES_DASHBOARD_SUMMARY.md](RESOURCES_DASHBOARD_SUMMARY.md) - Dashboard
+- [RESOURCES_DASHBOARD_SUMMARY.md](../../../../admin/RESOURCES_DASHBOARD_SUMMARY.md) - Dashboard
   summary
-- [RESOURCES_DASHBOARD_UI_DESIGN.md](RESOURCES_DASHBOARD_UI_DESIGN.md) - UI
+- [RESOURCES_DASHBOARD_UI_DESIGN.md](../../../../admin/RESOURCES_DASHBOARD_UI_DESIGN.md) - UI
   design
-- [RESOURCE_REGISTRY_IMPLEMENTATION_REPORT.md](RESOURCE_REGISTRY_IMPLEMENTATION_REPORT.md) -
+- [RESOURCE_REGISTRY_IMPLEMENTATION_REPORT.md](../../../../admin/RESOURCE_REGISTRY_IMPLEMENTATION_REPORT.md) -
   Registry implementation
 
 ### Background Jobs
 
-- [BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md](BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md) -
+- [BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md](../../../../development/BACKGROUND_JOBS_IMPLEMENTATION_SUMMARY.md) -
   Jobs implementation
 
 ### GraphQL
 
-- [GRAPHQL_IMPLEMENTATION_SUMMARY.md](GRAPHQL_IMPLEMENTATION_SUMMARY.md) -
+- [GRAPHQL_IMPLEMENTATION_SUMMARY.md](../../../../integrations/GRAPHQL_IMPLEMENTATION_SUMMARY.md) -
   GraphQL setup
 
 ### Error Handling
 
-- [ERROR_HANDLING_IMPLEMENTATION.md](ERROR_HANDLING_IMPLEMENTATION.md) - Error
+- [ERROR_HANDLING_IMPLEMENTATION.md](../../../../development/ERROR_HANDLING_IMPLEMENTATION.md) - Error
   handling
 
 ---
 
 ## 📚 **API Documentation**
 
-- [API_DOCUMENTATION_SUMMARY.md](API_DOCUMENTATION_SUMMARY.md) - API
+- [API_DOCUMENTATION_SUMMARY.md](../../../../integrations/API_DOCUMENTATION_SUMMARY.md) - API
   documentation
 
 ---
@@ -257,12 +257,12 @@ Documentation has been organized into logical categories.
 ### Roadmaps & Planning
 
 - [PUBLIC_LAUNCH_ROADMAP.md](PUBLIC_LAUNCH_ROADMAP.md) - Launch roadmap
-- [DELIVERABLES.md](DELIVERABLES.md) - Project deliverables
+- [DELIVERABLES.md](../../../../project-management/DELIVERABLES.md) - Project deliverables
 - [FINAL_SPRINT_SUMMARY.md](FINAL_SPRINT_SUMMARY.md) - Sprint summary
 
 ### Scripts & Tools
 
-- [SCRIPTS_REFERENCE.md](SCRIPTS_REFERENCE.md) - Available scripts
+- [SCRIPTS_REFERENCE.md](../../../../project-management/SCRIPTS_REFERENCE.md) - Available scripts
 - [SCRIPT_OPTIMIZATION_SUMMARY.md](SCRIPT_OPTIMIZATION_SUMMARY.md) - Script
   optimizations
 
@@ -270,22 +270,22 @@ Documentation has been organized into logical categories.
 
 ## 🔍 **Audits & Reports**
 
-- [CODEBASE_AUDIT_RESULTS.md](CODEBASE_AUDIT_RESULTS.md) - Codebase audit
+- [CODEBASE_AUDIT_RESULTS.md](../../../../status-reports/CODEBASE_AUDIT_RESULTS.md) - Codebase audit
   (Dec 10)
-- [SELF_IMPROVEMENT_REPORT.md](SELF_IMPROVEMENT_REPORT.md) - Self-improvement
+- [SELF_IMPROVEMENT_REPORT.md](../../../../status-reports/SELF_IMPROVEMENT_REPORT.md) - Self-improvement
   analysis
-- [ADMIN_DASHBOARD_SUMMARY.md](ADMIN_DASHBOARD_SUMMARY.md) - Admin dashboard
+- [ADMIN_DASHBOARD_SUMMARY.md](../../../../admin/ADMIN_DASHBOARD_SUMMARY.md) - Admin dashboard
 
 ---
 
 ## 🚨 **Emergency & Fixes**
 
-- [EMERGENCY_FIXES_COMPLETE.md](EMERGENCY_FIXES_COMPLETE.md) - Emergency fixes
+- [EMERGENCY_FIXES_COMPLETE.md](../../../../archive/EMERGENCY_FIXES_COMPLETE.md) - Emergency fixes
   (Dec 10)
-- [QUICK-START-FIXES.md](QUICK-START-FIXES.md) - Quick fixes
-- [SYNC_CORE_FIX_SUMMARY.md](SYNC_CORE_FIX_SUMMARY.md) - Sync core fixes
-- [fix-plan.md](fix-plan.md) - Fix planning
-- [ESLINT_MEMORY_INVESTIGATION.md](ESLINT_MEMORY_INVESTIGATION.md) - ESLint
+- [QUICK-START-FIXES.md](../../../../archive/QUICK-START-FIXES.md) - Quick fixes
+- [SYNC_CORE_FIX_SUMMARY.md](../../../../archive/SYNC_CORE_FIX_SUMMARY.md) - Sync core fixes
+- [fix-plan.md](../../../../archive/fix-plan.md) - Fix planning
+- [ESLINT_MEMORY_INVESTIGATION.md](../../../../development/ESLINT_MEMORY_INVESTIGATION.md) - ESLint
   memory issue
 
 ---
@@ -310,8 +310,8 @@ Documentation has been organized into logical categories.
 
 ## 📝 **Git & Contribution**
 
-- [PR_CREATION_GUIDE.md](PR_CREATION_GUIDE.md) - How to create PRs
-- [PR_DESCRIPTION.md](PR_DESCRIPTION.md) - PR template
+- [PR_CREATION_GUIDE.md](../../../../project-management/PR_CREATION_GUIDE.md) - How to create PRs
+- [PR_DESCRIPTION.md](../../../../project-management/PR_DESCRIPTION.md) - PR template
 
 ---
 
@@ -356,10 +356,10 @@ Many `*_SUMMARY.md` and `*_COMPLETE.md` files can be archived:
 ## 🎯 **For New Team Members**
 
 1. **Start Here:** [README.md](README.md)
-2. **Production Status:** [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) ⭐
+2. **Production Status:** [PRODUCTION_READINESS.md](../../../../project-management/PRODUCTION_READINESS.md) ⭐
 3. **Quick Setup:** [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
-4. **Architecture:** [ARCHITECTURE_STANDARDS.md](ARCHITECTURE_STANDARDS.md)
-5. **Current Work:** [REMAINING_WORK.md](REMAINING_WORK.md)
+4. **Architecture:** [ARCHITECTURE_STANDARDS.md](../../../../architecture/ARCHITECTURE_STANDARDS.md)
+5. **Current Work:** [REMAINING_WORK.md](../../../../REMAINING_WORK.md)
 
 ---
 

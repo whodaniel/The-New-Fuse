@@ -21,13 +21,17 @@ GOOGLE_PROJECT_PATH="${OPENCLAW_AUTH_GOOGLE_PROJECT_PATH:-.tokens.project_id}"
 
 WAIT_FOR_SUCCESS=true
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/lib/tnf-cloud-run.sh
+source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
+
 usage() {
   cat <<'EOF'
 Usage:
   bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh [options]
 
 Options:
-  --service NAME          CloudRuntime service name
+  --service NAME          Cloud Run service name
   --provider NAME         openai-codex | anthropic | google-antigravity | kilo
   --auth-file PATH        OAuth token json file
   --codex-home PATH       Shorthand for --auth-file PATH/auth.json
@@ -42,6 +46,10 @@ Options:
   --google-project-path JQ JQ path in auth file for Google project ID
   --no-wait               Skip deployment wait loop
   -h, --help              Show help
+
+Notes:
+  Uses gcloud (Cloud Run). The legacy cloud_runtime/railway CLI does not exist.
+  Env: TNF_GCP_PROJECT_ID / TNF_GCP_REGION (defaults: the-new-fuse-2025 / us-central1).
 EOF
 }
 
@@ -122,10 +130,10 @@ need_cmd() {
   fi
 }
 
-need_cmd cloud_runtime
 need_cmd jq
 need_cmd curl
 need_cmd rg
+tnf_require_gcloud
 
 if [ ! -f "$AUTH_FILE" ]; then
   echo "ERROR: auth file not found: $AUTH_FILE"
@@ -134,21 +142,6 @@ fi
 
 if [ -z "$INSTANCE_ID" ] || [ -z "$INSTANCE_NAME" ]; then
   echo "ERROR: --instance-id and --instance-name are required."
-  exit 1
-fi
-
-CLOUD_RUNTIME_WHOAMI="$(cloud_runtime whoami 2>&1 || true)"
-if [ -z "$CLOUD_RUNTIME_WHOAMI" ]; then
-  echo "ERROR: unable to determine CloudRuntime auth state."
-  exit 1
-fi
-if echo "$CLOUD_RUNTIME_WHOAMI" | rg -qi "failed to fetch|dns error|lookup address"; then
-  echo "ERROR: CloudRuntime API unreachable from this shell."
-  echo "$CLOUD_RUNTIME_WHOAMI" | sed -n '1,2p'
-  exit 1
-fi
-if echo "$CLOUD_RUNTIME_WHOAMI" | rg -qi "login|not authenticated|unauthorized"; then
-  echo "ERROR: CloudRuntime CLI is not authenticated (run: cloud_runtime login)."
   exit 1
 fi
 
@@ -165,7 +158,8 @@ if [ -z "$ACCESS_TOKEN" ] || [ -z "$REFRESH_TOKEN" ]; then
   exit 1
 fi
 
-echo "Syncing provider auth -> CloudRuntime service: $SERVICE"
+echo "Syncing provider auth -> Cloud Run service: $SERVICE"
+echo "Project/region: $(tnf_gcp_project) / $(tnf_gcp_region)"
 echo "Provider: $PROVIDER"
 echo "Instance: $INSTANCE_ID ($INSTANCE_NAME)"
 echo "Primary model: $PRIMARY_MODEL"
@@ -174,81 +168,75 @@ if [ "$PROVIDER" = "openai-codex" ]; then
   echo "Account: ${ACCOUNT_ID:-<missing>}"
 fi
 
+ENV_PAIRS=()
+case "$PROVIDER" in
+  openai-codex)
+    if [ -z "$ACCOUNT_ID" ]; then
+      echo "ERROR: missing account id path for openai-codex provider: $ACCOUNT_PATH"
+      exit 1
+    fi
+    ENV_PAIRS=(
+      "OPENAI_CODEX_ACCESS_TOKEN=$ACCESS_TOKEN"
+      "OPENAI_CODEX_REFRESH_TOKEN=$REFRESH_TOKEN"
+      "OPENAI_CODEX_ACCOUNT_ID=$ACCOUNT_ID"
+      "OPENCLAW_USE_CODEX_OAUTH=true"
+      "OPENCLAW_INSTANCE_ID=$INSTANCE_ID"
+      "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME"
+      "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME"
+      "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS"
+    )
+    ;;
+  anthropic)
+    ENV_PAIRS=(
+      "ANTHROPIC_OAUTH_ACCESS_TOKEN=$ACCESS_TOKEN"
+      "ANTHROPIC_OAUTH_REFRESH_TOKEN=$REFRESH_TOKEN"
+      "OPENCLAW_INSTANCE_ID=$INSTANCE_ID"
+      "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME"
+      "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME"
+      "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS"
+    )
+    ;;
+  google-antigravity)
+    ENV_PAIRS=(
+      "GOOGLE_ANTIGRAVITY_ACCESS_TOKEN=$ACCESS_TOKEN"
+      "GOOGLE_ANTIGRAVITY_REFRESH_TOKEN=$REFRESH_TOKEN"
+      "GOOGLE_ANTIGRAVITY_EMAIL=$GOOGLE_EMAIL"
+      "GOOGLE_ANTIGRAVITY_PROJECT_ID=$GOOGLE_PROJECT_ID"
+      "OPENCLAW_INSTANCE_ID=$INSTANCE_ID"
+      "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME"
+      "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME"
+      "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS"
+    )
+    ;;
+  kilo)
+    ENV_PAIRS=(
+      "KILO_ACCESS_TOKEN=$ACCESS_TOKEN"
+      "KILO_REFRESH_TOKEN=$REFRESH_TOKEN"
+      "OPENCLAW_INSTANCE_ID=$INSTANCE_ID"
+      "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME"
+      "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME"
+      "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL"
+      "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS"
+    )
+    ;;
+  *)
+    echo "ERROR: unsupported provider: $PROVIDER"
+    echo "Supported: openai-codex, anthropic, google-antigravity, kilo"
+    exit 1
+    ;;
+esac
+
 set_ok=false
 for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
-  case "$PROVIDER" in
-    openai-codex)
-      if [ -z "$ACCOUNT_ID" ]; then
-        echo "ERROR: missing account id path for openai-codex provider: $ACCOUNT_PATH"
-        exit 1
-      fi
-      if cloud_runtime variables set \
-        "OPENAI_CODEX_ACCESS_TOKEN=$ACCESS_TOKEN" \
-        "OPENAI_CODEX_REFRESH_TOKEN=$REFRESH_TOKEN" \
-        "OPENAI_CODEX_ACCOUNT_ID=$ACCOUNT_ID" \
-        "OPENCLAW_USE_CODEX_OAUTH=true" \
-        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
-        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
-        --service "$SERVICE" >/tmp/openclaw_oauth_set.out 2>/tmp/openclaw_oauth_set.err; then
-        set_ok=true
-      fi
-      ;;
-    anthropic)
-      if cloud_runtime variables set \
-        "ANTHROPIC_OAUTH_ACCESS_TOKEN=$ACCESS_TOKEN" \
-        "ANTHROPIC_OAUTH_REFRESH_TOKEN=$REFRESH_TOKEN" \
-        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
-        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
-        --service "$SERVICE" >/tmp/openclaw_oauth_set.out 2>/tmp/openclaw_oauth_set.err; then
-        set_ok=true
-      fi
-      ;;
-    google-antigravity)
-      if cloud_runtime variables set \
-        "GOOGLE_ANTIGRAVITY_ACCESS_TOKEN=$ACCESS_TOKEN" \
-        "GOOGLE_ANTIGRAVITY_REFRESH_TOKEN=$REFRESH_TOKEN" \
-        "GOOGLE_ANTIGRAVITY_EMAIL=$GOOGLE_EMAIL" \
-        "GOOGLE_ANTIGRAVITY_PROJECT_ID=$GOOGLE_PROJECT_ID" \
-        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
-        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
-        --service "$SERVICE" >/tmp/openclaw_oauth_set.out 2>/tmp/openclaw_oauth_set.err; then
-        set_ok=true
-      fi
-      ;;
-    kilo)
-      if cloud_runtime variables set \
-        "KILO_ACCESS_TOKEN=$ACCESS_TOKEN" \
-        "KILO_REFRESH_TOKEN=$REFRESH_TOKEN" \
-        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
-        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
-        "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
-        "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
-        --service "$SERVICE" >/tmp/openclaw_oauth_set.out 2>/tmp/openclaw_oauth_set.err; then
-        set_ok=true
-      fi
-      ;;
-    *)
-      echo "ERROR: unsupported provider: $PROVIDER"
-      echo "Supported: openai-codex, anthropic, google-antigravity, kilo"
-      exit 1
-      ;;
-  esac
-
-  if [ "$set_ok" = true ]; then
+  if tnf_cloud_run_update_env "$SERVICE" "${ENV_PAIRS[@]}" >/tmp/openclaw_oauth_set.out 2>/tmp/openclaw_oauth_set.err; then
+    set_ok=true
     echo "Set vars: success (attempt $attempt)"
     break
   fi
@@ -257,17 +245,23 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
 done
 
 if [ "$set_ok" = false ]; then
-  echo "ERROR: failed to set CloudRuntime vars."
+  echo "ERROR: failed to set Cloud Run env vars."
   sed -n '1,40p' /tmp/openclaw_oauth_set.err || true
   exit 2
 fi
 
-VAR_JSON="$(cloud_runtime variable list --service "$SERVICE" --json)"
+VAR_JSON="$(tnf_cloud_run_env_json "$SERVICE")"
 REMOTE_PRIMARY="$(printf '%s' "$VAR_JSON" | jq -r '.OPENCLAW_MODEL_PRIMARY // empty')"
 REMOTE_USE_CODEX="$(printf '%s' "$VAR_JSON" | jq -r '.OPENCLAW_USE_CODEX_OAUTH // empty')"
 REMOTE_FALLBACKS="$(printf '%s' "$VAR_JSON" | jq -r '.OPENCLAW_MODEL_FALLBACKS // empty')"
 REMOTE_AGENT_PRIMARY="$(printf '%s' "$VAR_JSON" | jq -r '.OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY // empty')"
-PUBLIC_DOMAIN="$(printf '%s' "$VAR_JSON" | jq -r '.CLOUD_RUNTIME_PUBLIC_DOMAIN // empty')"
+PUBLIC_DOMAIN="$(printf '%s' "$VAR_JSON" | jq -r '.CLOUD_RUNTIME_PUBLIC_DOMAIN // .TNF_PUBLIC_DOMAIN // empty')"
+if [ -z "$PUBLIC_DOMAIN" ]; then
+  PUBLIC_DOMAIN="$(gcloud run services describe "$SERVICE" \
+    --project="$(tnf_gcp_project)" \
+    --region="$(tnf_gcp_region)" \
+    --format='value(status.url)' 2>/dev/null | sed 's#^https://##' || true)"
+fi
 
 echo "Verification:"
 echo "  OPENCLAW_MODEL_PRIMARY=$REMOTE_PRIMARY"
@@ -296,21 +290,10 @@ if [ "$PROVIDER" = "openai-codex" ] && [ "$REMOTE_USE_CODEX" != "true" ]; then
 fi
 
 if [ "$WAIT_FOR_SUCCESS" = true ]; then
-  echo "Waiting for latest deployment on $SERVICE to reach SUCCESS..."
-  for attempt in $(seq 1 "$MAX_STATUS_RETRIES"); do
-    STATUS="$(cloud_runtime status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | select(.serviceName=="'"$SERVICE"'") | .latestDeployment.status' | head -n1)"
-    CREATED_AT="$(cloud_runtime status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | select(.serviceName=="'"$SERVICE"'") | .latestDeployment.createdAt' | head -n1)"
-    DEPLOY_ID="$(cloud_runtime status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | select(.serviceName=="'"$SERVICE"'") | .latestDeployment.id' | head -n1)"
-    echo "  attempt=$attempt status=$STATUS deployId=$DEPLOY_ID createdAt=$CREATED_AT"
-    if [ "$STATUS" = "SUCCESS" ]; then
-      break
-    fi
-    sleep "$SLEEP_SECONDS"
-    if [ "$attempt" -eq "$MAX_STATUS_RETRIES" ]; then
-      echo "ERROR: deployment did not reach SUCCESS in time."
-      exit 4
-    fi
-  done
+  echo "Waiting for Cloud Run service $SERVICE to become ready..."
+  if ! tnf_cloud_run_wait_ready "$SERVICE" "$MAX_STATUS_RETRIES" "$SLEEP_SECONDS"; then
+    exit 4
+  fi
 fi
 
 if [ -n "$PUBLIC_DOMAIN" ]; then

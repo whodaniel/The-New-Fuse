@@ -21,10 +21,10 @@ export * from './feedback.js';
 export * from './jules.js';
 export * from './marketplace.js';
 export * from './mass.js';
+export * from './personal-data-locations.js';
 export * from './personal-skills.js';
 export * from './prompt-templates.js';
 export * from './resource-interactions.js';
-export * from './spaces.js';
 export * from './system.js';
 export * from './tasks.js';
 export * from './tnf.js'; // TNF Entity ID Taxonomy V2

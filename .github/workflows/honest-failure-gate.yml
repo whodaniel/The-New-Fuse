@@ -1,0 +1,52 @@
+name: Honest Failure Gate
+
+# Enforces that nothing in this repo can report success it did not achieve.
+#
+# This lives in CI rather than only in a git hook on purpose. Local hooks are
+# bypassable — `HUSKY=0`, `git commit --no-verify`, or simply deleting the
+# hook — and on 2026-08-03 an automated agent read a hook's error message and
+# set the bypass variable for itself 36 seconds later. GitHub Actions runs on
+# GitHub's side of the wire, so it is the only enforcement point in this repo
+# that an agent with local write access cannot talk its way around.
+#
+# What it catches is documented in scripts/protocols/verify-honest-failure.cjs.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  honest-failure:
+    name: No success-masking patterns
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      # Deliberately dependency-free: the checker is plain Node with no imports
+      # beyond fs/path, so this gate keeps working even when the install or the
+      # build is broken — which is exactly when it matters most.
+      - name: Verify no component can report false success
+        run: node scripts/protocols/verify-honest-failure.cjs
+
+      # Complementary class: declarations that resolve nowhere. verify-honest-failure
+      # catches success-masking patterns in source; this catches catalogs naming
+      # scripts that do not exist, PROPRIETARY_* entries protecting nothing, and
+      # node versions that disagree across .nvmrc, workflows and Dockerfiles.
+      # Exit 2 (missing inputs) is distinct from exit 1 (drift) and neither is 0.
+      # Also dependency-free — plain Node, no install required.
+      - name: Verify declarations resolve to real paths
+        run: node scripts/protocols/verify-declarations.cjs
+
+      - name: Report violations as JSON
+        if: failure()
+        run: node scripts/protocols/verify-honest-failure.cjs --json || true

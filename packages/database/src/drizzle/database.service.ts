@@ -232,11 +232,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   /**
    * Execute a raw SQL query
    */
-  async executeRaw<T = unknown>(query: string, params?: unknown[]): Promise<T[]> {
-    if (params && params.length > 0) {
-      const result = await queryClient.unsafe(query, params as any[]);
-      return result as unknown as T[];
-    }
+  async executeRaw<T = unknown>(query: string): Promise<T[]> {
     const result = await db.execute(sql.raw(query));
     return result as T[];
   }

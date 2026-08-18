@@ -645,7 +645,8 @@ export const sitemap: SiteMapNode[] = [
       { path: '/admin/configuration', title: 'Configuration Management' },
       { path: '/admin/settings', title: 'Admin Settings' },
       { path: '/admin/backup-restore', title: 'Backup & Restore' },
-      { path: '/admin/openclaw-security', title: 'OpenClaw Security' },
+      { path: '/admin/harness-credentials', title: 'Harness credentials' },
+      { path: '/admin/openclaw-security', title: 'Harness credentials (legacy path)' },
       { path: '/admin/marketplace', title: 'Marketplace Console' },
       { path: '/admin/onboarding', title: 'Admin Onboarding' },
       { path: '/admin/experimental-features', title: 'Experimental Features' },
@@ -868,7 +869,7 @@ export const sitemap: SiteMapNode[] = [
   { path: '/careers', title: 'Careers', isPublic: true },
   { path: '/ambassador', title: 'Ambassador', isPublic: true },
   { path: '/testimonials', title: 'Testimonials', isPublic: true },
-  { path: '/platform', title: 'Platform (Alias → Product Map)', isPublic: true },
+  { path: '/platform', title: 'Personal Intelligence Hub', isPublic: false },
   { path: '/help', title: 'Help Center', isPublic: true, sources: ['routing-structure.md'] },
   {
     path: '/documentation',

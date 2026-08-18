@@ -114,6 +114,35 @@ export class SessionManagerService {
     return updated;
   }
 
+  /**
+   * Persist the current in-memory transcript to the session's disk file.
+   * Used by the live TUI/chat agent loops to make sessions resumable across
+   * CLI restarts. Accepts plain {role, content} messages and coerces them
+   * into SessionMessage shape with a timestamp. Also updates the session's
+   * `updatedAt` and `messageCount` in the index.
+   */
+  saveMessages(
+    id: string,
+    messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+  ): Session | undefined {
+    const session = this.sessions.get(id);
+    if (!session) return undefined;
+    const sessionMessages: SessionMessage[] = messages.map((m) => ({
+      role: m.role,
+      content: m.content,
+      timestamp: new Date().toISOString(),
+    }));
+    this.saveSessionFile(session, sessionMessages);
+    const updated: Session = {
+      ...session,
+      updatedAt: new Date().toISOString(),
+      messageCount: messages.filter((m) => m.role !== 'system').length,
+    };
+    this.sessions.set(id, updated);
+    this.saveSessionsIndex();
+    return updated;
+  }
+
   delete(id: string): { success: boolean; message: string } {
     const session = this.sessions.get(id);
     if (!session) {

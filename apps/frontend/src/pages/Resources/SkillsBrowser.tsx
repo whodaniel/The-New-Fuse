@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { ClaudeSkill, PersonalSkill, SkillExample } from '@/types/resources';
@@ -319,7 +319,7 @@ export default function SkillsBrowser() {
                       <span>
                         by <span className="text-white">{selectedSkill.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
+                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
                       <span>v{selectedSkill.version}</span>
                     </div>
                   </div>

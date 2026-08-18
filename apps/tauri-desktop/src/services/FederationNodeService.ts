@@ -1,12 +1,16 @@
-import { FederationNodeClient, type FederationNodeEvent } from '@the-new-fuse/shared/federation';
 import {
+  FederationNodeClient,
   generateFederationId,
   type FederationChannel,
   type FederationChannelMessage,
-} from '@the-new-fuse/shared/federation/protocol';
+  type FederationNodeEvent,
+} from '../lib/sharedFederation';
 import { EventEmitter } from './EventEmitter';
 
 export type FederationNodeServiceEvent = FederationNodeEvent;
+
+/** `platform` the TNF Chrome extension registers under on the relay. */
+export const BROWSER_EXTENSION_PLATFORM = 'chrome-extension';
 
 class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent> {
   private client: FederationNodeClient;
@@ -65,6 +69,20 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
     return this.client.isRegistered();
   }
 
+  /**
+   * Whether the TNF Chrome extension is present on the relay.
+   *
+   * The extension registers itself with `AGENT_REGISTER` and
+   * `platform: 'chrome-extension'` (see apps/chrome-extension v6 background),
+   * so its presence is observable only through the federation agent list.
+   * Changes are announced by the `agents_updated` event.
+   */
+  isBrowserExtensionConnected(): boolean {
+    return this.getState().agents.some(
+      (agent) => String(agent.platform) === BROWSER_EXTENSION_PLATFORM
+    );
+  }
+
   async connect(relayUrl?: string): Promise<boolean> {
     return this.client.connect(relayUrl || this.relayUrl);
   }
@@ -95,6 +113,10 @@ class FederationNodeServiceClass extends EventEmitter<FederationNodeServiceEvent
 
   sendChannelMessage(channelId: string, content: string, metadata?: Record<string, unknown>): void {
     this.client.sendChannelMessage(channelId, content, metadata);
+  }
+
+  publishDesktopPresence(presence: Record<string, unknown>): void {
+    this.client.registerAgent({ metadata: { desktopPresence: presence } });
   }
 
   sendA2AMessage(targetAgentId: string, content: string, messageType = 'task'): void {

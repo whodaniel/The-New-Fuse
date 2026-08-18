@@ -3,7 +3,7 @@
 **Date**: December 10, 2024, 04:00 UTC  
 **Branch**: `fix/register-orphaned-controllers-and-modules`  
 **Current Status**: Emergency Production Fixes Completed & Pushed  
-**PR**: #279 - https://github.com/whodaniel/fuse/pull/279
+**PR**: #279 - https://github.com/whodaniel/The-New-Fuse/pull/279
 
 ---
 
@@ -367,7 +367,7 @@ When Sprint 1 is complete:
 1. **IMPLEMENTATION_NOTES.md** - Detailed testing checklist
 2. **PR_CREATION_GUIDE.md** - PR standards and templates
 3. **REMAINING_WORK.md** - Full work breakdown
-4. **PR #279** - https://github.com/whodaniel/fuse/pull/279
+4. **PR #279** - https://github.com/whodaniel/The-New-Fuse/pull/279
 
 ### Common Issues:
 

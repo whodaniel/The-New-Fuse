@@ -1,0 +1,8 @@
+agent:
+  name: e2e-workflow-qa-agent
+  provider: openai
+  model: gpt-5
+  default_prompt: "Run the e2e-workflow-qa-agent workflow using SKILL.md instructions."
+source:
+  kind: imported-claude-agent
+  agent_file: .claude/agents/e2e-workflow-qa-agent.md

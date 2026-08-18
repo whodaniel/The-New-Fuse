@@ -1,0 +1,6 @@
+
+public/__local_auth_token.json
+
+# Operator-local personal intelligence mirrors (never commit)
+public/local-intel/**
+!public/local-intel/.gitkeep

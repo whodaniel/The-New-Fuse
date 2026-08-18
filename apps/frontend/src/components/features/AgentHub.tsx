@@ -8,6 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import React, { useEffect, useState } from 'react';
 
 interface Agent {
@@ -32,7 +33,7 @@ export const AgentHub: React.FC = () => {
       setLoadError(null);
 
       try {
-        const response = await fetch('/api/agents');
+        const response = await authFetch('/api/agents');
         if (!response.ok) {
           throw new Error(`Agent directory unavailable (${response.status})`);
         }

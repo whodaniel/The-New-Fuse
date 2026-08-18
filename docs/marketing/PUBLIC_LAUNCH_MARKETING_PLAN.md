@@ -41,7 +41,7 @@ proxy).
 | **MCP + A2A Native**    | Connect Claude, GPT, Gemini, GLM as a federated swarm    | Chrome extension + relay demo video      |
 | **Lux Bridge**          | DOM-exact + visual-first automation in one stack         | Side-by-side browser automation clip     |
 | **Turn Zero / Harness** | Agents boot with living state, handoff, and verification | `tnf onboard` terminal recording         |
-| **Open Runtime**        | 90% open source; host yourself or use SaaS               | Public `fuse-open-runtime` repo + Docker |
+| **Open Runtime**        | 90% open source; host yourself or use SaaS               | Public `The-New-Fuse` repo + Docker |
 | **PKG Memory**          | Cross-session knowledge graph compounds over time        | Dashboard screenshot + docs              |
 
 ### Audience Segments
@@ -55,12 +55,16 @@ proxy).
 
 ### Competitive Frame (do not name-drop in hero; use in comparison content)
 
+- vs. **Grok Bot / Claude Cowork / Copilot Tasks / ChatGPT Work**: those are
+  teammate *runtimes*; TNF is the nervous system that assigns work to them,
+  keeps handoff lineage, and federates heterogeneous agents (see
+  `VENDORS_SHIP_TEAMMATES_TNF_IS_THE_NERVOUS_SYSTEM.md`, 2026-08-13)
 - vs. **LangGraph / CrewAI**: TNF adds browser federation, MCP-native tooling,
   and hosted relay
 - vs. **OpenClaw / raw MCP**: TNF is the control plane that routes _through_
   interoperability layers
 - vs. **ChatGPT / Claude projects**: TNF is multi-agent, multi-surface,
-  persistent
+  persistent — including across vendor teammate products
 
 ### Taglines (test rotation)
 
@@ -68,6 +72,7 @@ proxy).
 2. **Dev:** Stop duct-taping APIs. Start orchestrating intelligence.
 3. **OSS:** The open control plane for agent swarms.
 4. **Urgency:** The New Fuse 2.0 — federate now.
+5. **Category (2026-08-13):** Vendors ship teammates. TNF ships the nervous system.
 
 ---
 
@@ -77,7 +82,7 @@ These must be green before paid acquisition or press:
 
 | #   | Blocker                                                          | Marketing impact                          | Fix                                                |
 | --- | ---------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------- |
-| B1  | `github.com/whodaniel/fuse` is **private**                       | "Open Source" + "Star on GitHub" CTAs 404 | Publish `fuse-open-runtime`; point all links there |
+| B1  | `github.com/whodaniel/The-New-Fuse` is **private**                       | "Open Source" + "Star on GitHub" CTAs 404 | Publish `The-New-Fuse`; point all links there |
 | B2  | CLI install script 404 on raw.githubusercontent                  | Broken first-run funnel                   | Public repo + verify `install-tnf-cli.sh`          |
 | B3  | `/about`, `/blog`, `/legal/*` serve landing SPA (semantic dupes) | SEO + trust failure                       | SSR routes or static pages per path                |
 | B4  | `/api/v1/health` 404; `/health` lacks `timestamp`                | Dev trust / status page                   | API patch per release checklist M02/M03            |
@@ -152,7 +157,7 @@ These must be green before paid acquisition or press:
 | `thenewfuse.com`           | Convert + educate   | 3% signup rate from landing |
 | `app.thenewfuse.com`       | Activation          | 40% complete onboarding     |
 | Docs / changelog           | SEO + retention     | 500 organic doc sessions    |
-| GitHub `fuse-open-runtime` | OSS credibility     | 500 stars                   |
+| GitHub `The-New-Fuse` | OSS credibility     | 500 stars                   |
 | Discord                    | Support + community | 200 members                 |
 
 ### Earned
@@ -238,7 +243,7 @@ multi-agent workflow per week.
 
 ### T-0h (Launch hour)
 
-1. Flip `fuse-open-runtime` public
+1. Flip `The-New-Fuse` public
 2. Publish GitHub release `v2.0.0`
 3. Post Show HN + PH + X thread (stagger 15 min)
 4. Update site banner: "Now Open Source"
@@ -287,7 +292,7 @@ multi-agent workflow per week.
 | `app.thenewfuse.com`               | ✅ 200, SPA routing                             |
 | `api.thenewfuse.com/health`        | ✅ 200 JSON (no timestamp)                      |
 | `api.thenewfuse.com/api/v1/health` | ❌ 404                                          |
-| GitHub `whodaniel/fuse`            | ❌ Private (404 public)                         |
+| GitHub `whodaniel/The-New-Fuse`            | ❌ Private (404 public)                         |
 | CLI install script (raw GitHub)    | ❌ 404                                          |
 | Auth paths audit                   | ✅ 4/4 pass                                     |
 | `release:gate`                     | ❌ Personal path in TelegramService             |

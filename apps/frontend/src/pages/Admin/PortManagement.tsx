@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Button, Input } from '@/components/core';
 import Loading from '@/components/Loading';
+import { authFetch } from '@/utils/authToken';
 import { useEffect, useState } from 'react';
 
 interface PortRegistration {
@@ -16,12 +17,15 @@ export default function PortManagement() {
   const [loading, setLoading] = useState(true);
   const [reassignValues, setReassignValues] = useState<Record<string, number>>({});
 
-  const fetchPorts = () => {
+  const fetchPorts = async () => {
     setLoading(true);
-    fetch('/api/ports')
-      .then((res) => res.json())
-      .then((data: PortRegistration[]) => setPorts(data))
-      .finally(() => setLoading(false));
+    try {
+      const res = await authFetch('/api/ports');
+      const data = (await res.json()) as PortRegistration[];
+      setPorts(data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -31,9 +35,8 @@ export default function PortManagement() {
   const handleReassign = (id: string) => {
     const newPort = reassignValues[id];
     if (!newPort) return;
-    fetch(`/api/ports/${id}/reassign`, {
+    authFetch(`/api/ports/${id}/reassign`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ port: newPort }),
     }).then(() => fetchPorts());
   };

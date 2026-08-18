@@ -1,0 +1,104 @@
+{
+  "project": "value-ladder-production",
+  "source_report": "/Users/<owner>/.codex/skills/imported-claude-agents/value-ladder-architect-agent/output/value_ladder_report.json",
+  "offers": [
+    "Free Growth Playbook",
+    "Starter Toolkit",
+    "Core Accelerator Program",
+    "Insider Membership",
+    "Elite Advisory"
+  ],
+  "tasks": [
+    {
+      "id": "T01",
+      "agent": "audience-persona-architect-agent",
+      "goal": "Finalize ICP and buyer objections for all ladder rungs.",
+      "depends_on": [],
+      "deliverable": "persona-brief.json"
+    },
+    {
+      "id": "T02",
+      "agent": "sales-funnel-architect-agent",
+      "goal": "Translate ladder into page-level funnel architecture and handoffs.",
+      "depends_on": ["T01"],
+      "deliverable": "funnel-blueprint.md"
+    },
+    {
+      "id": "T03",
+      "agent": "lead-magnet-funnel-agent",
+      "goal": "Build lead magnet funnel assets for Free Growth Playbook.",
+      "depends_on": ["T02"],
+      "deliverable": "lead-magnet-funnel-pack.md"
+    },
+    {
+      "id": "T04",
+      "agent": "digital-product-factory-agent",
+      "goal": "Build Starter Toolkit deliverables and fulfillment assets.",
+      "depends_on": ["T02"],
+      "deliverable": "tripwire-product-pack.md"
+    },
+    {
+      "id": "T05",
+      "agent": "content-writer-agent",
+      "goal": "Draft webinar page copy, sales page copy, and email angles for Core Accelerator Program.",
+      "depends_on": ["T01", "T02"],
+      "deliverable": "core-offer-copy-pack.md"
+    },
+    {
+      "id": "T06",
+      "agent": "email-marketing-automation-agent",
+      "goal": "Implement onboarding, nurture, webinar, close, and ascension automations.",
+      "depends_on": ["T03", "T04", "T05"],
+      "deliverable": "automation-map.json"
+    },
+    {
+      "id": "T07",
+      "agent": "deal-negotiator-agent",
+      "goal": "Package and script Elite Advisory positioning, pricing, and qualification criteria.",
+      "depends_on": ["T05"],
+      "deliverable": "high-ticket-offer-terms.md"
+    },
+    {
+      "id": "T08",
+      "agent": "legal-compliance-agent",
+      "goal": "Generate compliance requirements (FTC, privacy, terms, disclosures) across all funnels.",
+      "depends_on": ["T03", "T04", "T05", "T07"],
+      "deliverable": "compliance-checklist.md"
+    },
+    {
+      "id": "T09",
+      "agent": "traffic-generation-agent",
+      "goal": "Launch multichannel traffic plan to feed lead magnet and webinar funnel.",
+      "depends_on": ["T03", "T05", "T06"],
+      "deliverable": "traffic-plan-30d.md"
+    },
+    {
+      "id": "T10",
+      "agent": "ab-testing-optimizer-agent",
+      "goal": "Run A/B tests on headline, CTA, price, and webinar angle.",
+      "depends_on": ["T09"],
+      "deliverable": "ab-test-backlog.md"
+    },
+    {
+      "id": "T11",
+      "agent": "analytics-and-reporting-agent",
+      "goal": "Track conversion by rung and produce weekly performance report.",
+      "depends_on": ["T09"],
+      "deliverable": "weekly-growth-report-template.md"
+    },
+    {
+      "id": "T12",
+      "agent": "cro-process-agent",
+      "goal": "Execute monthly CRO cycle from investigation to evaluation.",
+      "depends_on": ["T10", "T11"],
+      "deliverable": "cro-sprint-plan.md"
+    },
+    {
+      "id": "T13",
+      "agent": "funnel-economics-analyst-agent",
+      "goal": "Compute CAC, LTV, payback period, and LTV:CAC by segment.",
+      "depends_on": ["T11"],
+      "deliverable": "unit-economics-report.md"
+    }
+  ]
+}

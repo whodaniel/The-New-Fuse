@@ -97,22 +97,12 @@ export function DataTable<T extends { id: string | number }>({
 
     // Search
     if (searchTerm) {
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      // Precompute the opt-outs to avoid an O(N * C) find() during the filter.
-      // Tracking the excluded ids (rather than the included ones) is what keeps
-      // behaviour identical: the original tested `column?.filterable !== false`,
-      // which is true for a row key that matches no column at all, so undeclared
-      // keys were searched. A set of filterable ids would silently stop matching
-      // them and narrow search results.
-      const nonFilterableColumnIds = new Set(
-        columns.filter((col) => col.filterable === false).map((col) => col.id)
-      );
-
       result = result.filter((row) =>
         Object.entries(row).some(([key, value]) => {
+          const column = columns.find((col) => col.id === key);
           return (
-            !nonFilterableColumnIds.has(key) &&
-            String(value).toLowerCase().includes(lowerSearchTerm)
+            column?.filterable !== false &&
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
           );
         })
       );
@@ -120,15 +110,12 @@ export function DataTable<T extends { id: string | number }>({
 
     // Sort
     if (sortBy) {
-      // Find sort column once outside the sort loop to prevent O(N log N) lookups
-      const sortColumn = columns.find((col) => col.id === sortBy);
-      const isNumeric = sortColumn?.numeric;
-
       result.sort((a, b) => {
         const aValue = (a as any)[sortBy];
         const bValue = (b as any)[sortBy];
+        const column = columns.find((col) => col.id === sortBy);
 
-        if (isNumeric) {
+        if (column?.numeric) {
           return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
         }
 
@@ -225,8 +212,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Add">
               <button
                 onClick={() => onAction?.('add', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                aria-label="Add"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -237,8 +223,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Edit">
               <button
                 onClick={() => onAction?.('edit', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                aria-label="Edit"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <Edit className="h-4 w-4" />
               </button>
@@ -249,8 +234,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Delete">
               <button
                 onClick={() => onAction?.('delete', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md text-danger-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                aria-label="Delete"
+                className="p-1.5 hover:bg-muted/30 rounded-md text-danger-600"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -261,8 +245,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Refresh">
               <button
                 onClick={() => onAction?.('refresh', selectedRows)}
-                className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                aria-label="Refresh"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <RefreshCw className="h-4 w-4" />
               </button>
@@ -271,7 +254,7 @@ export function DataTable<T extends { id: string | number }>({
 
           {actions.export && (
             <Tooltip label="Export">
-              <button onClick={handleExport} className="p-1.5 hover:bg-muted/30 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1" aria-label="Export">
+              <button onClick={handleExport} className="p-1.5 hover:bg-muted/30 rounded-md">
                 <Download className="h-4 w-4" />
               </button>
             </Tooltip>
@@ -294,8 +277,7 @@ export function DataTable<T extends { id: string | number }>({
                       processedData.length > 0 && selectedRows.length === processedData.length
                     }
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                    aria-label="Select all rows"
+                    className="rounded"
                   />
                 </th>
               )}
@@ -372,8 +354,7 @@ export function DataTable<T extends { id: string | number }>({
                         checked={selectedRows.some((r) => r.id === row.id)}
                         onChange={() => handleSelectRow(row)}
                         onClick={(e) => e.stopPropagation()}
-                        className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                        aria-label="Select row"
+                        className="rounded"
                       />
                     </td>
                   )}

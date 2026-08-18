@@ -1,0 +1,73 @@
+%% Authority Coherence Graph — 2026-07-24
+%% Audit commit: 9c7e6bd7a1
+%% Focus: closed enforcement gaps vs remaining fail-open / soft defaults
+flowchart TB
+  classDef closed fill:#166534,color:#fff,stroke:#16a34a,stroke-width:3px
+  classDef open fill:#7f1d1d,color:#fff,stroke:#ef4444,stroke-width:3px
+  classDef core fill:#1e3a8a,color:#fff,stroke:#2563eb
+  classDef gate fill:#92400e,color:#fff,stroke:#d97706
+  classDef bus fill:#991b1b,color:#fff,stroke:#dc2626
+
+  subgraph closed_gaps["Closed at 9c7e6bd7a1"]
+    direction TB
+    node-redis-agent-client-shim("redis-agent-client shim → full RedisAgentClient")
+    entry-redis-agent-client("RedisAgentClient chokepoint")
+    gate-secure-auth-user-default{"SecureAuthGuard USER default"}
+    gate-secure-auth{"SecureAuthGuard APP_GUARD"}
+    handler-stringify-signed-bus["stringifySignedBusMessage"]
+    entry-broker-agent("BrokerAgent")
+    handler-redis-relay-bridge["RedisRelayBridge"]
+    node-redis-agent-client-shim -->|"loadFullClient + initialize"| entry-redis-agent-client
+    entry-broker-agent -->|"task envelope publish"| handler-stringify-signed-bus
+    handler-redis-relay-bridge -->|"ingress / publishToIngress"| handler-stringify-signed-bus
+    handler-redis-relay-bridge -->|"publishToAgent egress"| handler-stringify-signed-bus
+    gate-secure-auth-user-default -.->|"same guard"| gate-secure-auth
+  end
+
+  subgraph open_gaps["Still fail-open / soft"]
+    direction TB
+    gate-message-auth-warn{"TNF_MESSAGE_AUTH_MODE=warn"}
+    gate-authority-consumer-off{"TNF_AUTHORITY_CONSUMER default-off"}
+    gate-sign-bus-message-fail-open{"sign-bus catch → unsigned JSON"}
+    gate-gateway-auth-opt-in{"GatewayAuthGuard opt-in only"}
+    pub-broker-heartbeat-unsigned(("BrokerAgent heartbeat unsigned"))
+    pub-director-heartbeat-unsigned(("DirectorAgent heartbeat unsigned"))
+    bus-tnf-agents(("tnf:agents"))
+    handler-stringify-signed-bus -.->|"on sign throw"| gate-sign-bus-message-fail-open
+    entry-broker-agent -.->|"publishes"| pub-broker-heartbeat-unsigned
+    pub-director-heartbeat-unsigned -.->|"HEARTBEAT_CHANNEL"| bus-tnf-agents
+    gate-gateway-auth{"gateway-auth.guard"}
+    gate-gateway-auth -.->|"characterized_as"| gate-gateway-auth-opt-in
+  end
+
+  subgraph inbound["A2A inbound chokepoint"]
+    direction TB
+    handler-handle-incoming["handleIncomingMessage"]
+    gate-message-auth{"authenticateEnvelope"}
+    gate-authority-consumer{"TNF_AUTHORITY_CONSUMER"}
+    handler-gate-and-dispatch["gateAndDispatch"]
+    entry-redis-agent-client --> handler-handle-incoming
+    handler-handle-incoming --> gate-message-auth
+    gate-message-auth --> gate-authority-consumer
+    gate-authority-consumer -->|"when enabled"| handler-gate-and-dispatch
+  end
+
+  class node-redis-agent-client-shim closed
+  class gate-secure-auth-user-default closed
+  class gate-secure-auth closed
+  class handler-stringify-signed-bus core
+  class entry-redis-agent-client core
+  class entry-broker-agent core
+  class handler-redis-relay-bridge core
+  class gate-message-auth-warn open
+  class gate-authority-consumer-off open
+  class gate-sign-bus-message-fail-open open
+  class gate-gateway-auth-opt-in open
+  class pub-broker-heartbeat-unsigned open
+  class pub-director-heartbeat-unsigned open
+  class gate-message-auth gate
+  class gate-authority-consumer gate
+  class gate-gateway-auth gate
+  class handler-handle-incoming core
+  class handler-gate-and-dispatch closed
+  class bus-tnf-agents bus

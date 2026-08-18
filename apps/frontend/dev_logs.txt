@@ -1,1 +1,0 @@
-npm warn config ignoring workspace config at /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/.npmrc

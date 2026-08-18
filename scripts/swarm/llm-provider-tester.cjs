@@ -38,7 +38,19 @@ function loadEnv() {
   }
 }
 
-const PROVIDERS = [
+/**
+ * Built-in provider list — the FALLBACK, not the source.
+ *
+ * The source is data/providers/catalog.json, shared with the TypeScript CLI
+ * (provider-config.ts) and the Python sub-director resolver. Before that
+ * existed, this file, provider-config.ts and model_resolver.py each carried
+ * their own list and drifted: this one was the only place that knew about
+ * local Ollama, while provider-config.ts was the only place that knew about
+ * NVIDIA NIM. See docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md.
+ *
+ * Add providers to the catalog, not here.
+ */
+const FALLBACK_PROVIDERS = [
   { id: 'ollama', name: 'Local Ollama', tier: 'free', type: 'local', testUrl: 'http://localhost:11434/api/tags' },
   { id: 'gemini', name: 'Google Gemini', tier: 'free', type: 'cloud', envKey: 'GEMINI_API_KEY', testUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', defaultModel: 'gemini-pro' },
   { id: 'groq', name: 'Groq', tier: 'free', type: 'cloud', envKey: 'GROQ_API_KEY', testUrl: 'https://api.groq.com/openai/v1/chat/completions', defaultModel: 'llama3-8b-8192' },
@@ -49,6 +61,37 @@ const PROVIDERS = [
   { id: 'openai', name: 'OpenAI', tier: 'premium', type: 'cloud', envKey: 'OPENAI_API_KEY', testUrl: 'https://api.openai.com/v1/models', defaultModel: 'gpt-4o-mini' },
   { id: 'anthropic', name: 'Anthropic Claude', tier: 'premium', type: 'cloud', envKey: 'ANTHROPIC_API_KEY', testUrl: 'https://api.anthropic.com/v1/messages', defaultModel: 'claude-3-haiku-20240307' }
 ];
+
+/** Load the shared catalog, mapped to this tester's provider shape. */
+function loadCatalogProviders() {
+  const catalogPath =
+    process.env.TNF_PROVIDER_CATALOG_PATH ||
+    require('path').resolve(__dirname, '../..', 'data', 'providers', 'catalog.json');
+  try {
+    const raw = require('fs').readFileSync(catalogPath, 'utf8');
+    const rows = JSON.parse(raw).providers;
+    if (!Array.isArray(rows) || rows.length === 0) return null;
+    return rows
+      .filter((r) => r && r.id && r.enabled !== false)
+      .map((r) => ({
+        id: r.id,
+        name: r.name || r.id,
+        tier: r.tier <= 2 ? 'free' : r.tier <= 50 ? 'free' : r.tier <= 58 ? 'cheap' : 'premium',
+        type: r.type || 'cloud',
+        envKey: r.envKey || undefined,
+        // Probe the health endpoint for locals, the chat endpoint for clouds.
+        testUrl: r.healthUrl || (r.baseUrl ? r.baseUrl.replace(/\/$/, '') + '/chat/completions' : undefined),
+        defaultModel: r.defaultModel,
+      }))
+      .filter((r) => r.testUrl);
+  } catch {
+    // A missing or malformed catalog must not stop provider testing.
+    return null;
+  }
+}
+
+const PROVIDERS = loadCatalogProviders() || FALLBACK_PROVIDERS;
+
 
 async function testProvider(provider) {
   if (provider.type === 'local') {

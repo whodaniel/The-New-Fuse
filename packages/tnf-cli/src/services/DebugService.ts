@@ -48,13 +48,67 @@ export interface DebugConfig {
   custom?: Record<string, unknown>;
 }
 
+const SECRET_KEY_PATTERN =
+  /(^|[_-])(token|secret|password|credential|credentials|api[_-]?key|private[_-]?key|access[_-]?token|refresh[_-]?token|auth)([_-]|$)|(^|[_-])key$/i;
+const SECRET_VALUE_PATTERN =
+  /^(sk-[A-Za-z0-9_-]{20,}|xox[a-z]-[A-Za-z0-9-]{20,}|\d{6,}:[A-Za-z0-9_-]{20,}|[A-Za-z0-9_-]{48,})$/;
+
+export function redactSensitiveConfig<T>(value: T): T {
+  return redactValue(value, '') as T;
+}
+
+function redactValue(value: unknown, key: string): unknown {
+  if (Array.isArray(value)) return value.map((entry) => redactValue(entry, key));
+  if (value && typeof value === 'object') {
+    const next: Record<string, unknown> = {};
+    for (const [childKey, childValue] of Object.entries(value as Record<string, unknown>)) {
+      next[childKey] = redactValue(childValue, childKey);
+    }
+    return next;
+  }
+  if (typeof value !== 'string') return value;
+  if (!value) return value;
+  if (isEnvReferenceKey(key)) return value;
+  if (SECRET_KEY_PATTERN.test(key) || SECRET_VALUE_PATTERN.test(value)) return '[REDACTED]';
+  return value;
+}
+
+function isEnvReferenceKey(key: string): boolean {
+  return /(^|[_-])env$|Env$|environmentVariable$/i.test(key);
+}
+
+function mergeConfig(base: DebugConfig, override: DebugConfig): DebugConfig {
+  const merged: DebugConfig = { ...base, ...override };
+  if (base.permission || override.permission) {
+    merged.permission = {
+      bash: { ...(base.permission?.bash || {}), ...(override.permission?.bash || {}) },
+      read: { ...(base.permission?.read || {}), ...(override.permission?.read || {}) },
+      external_directory: {
+        ...(base.permission?.external_directory || {}),
+        ...(override.permission?.external_directory || {}),
+      },
+    };
+  }
+  if (base.mcp || override.mcp) merged.mcp = { ...(base.mcp || {}), ...(override.mcp || {}) };
+  if (base.mcpServers || override.mcpServers) {
+    merged.mcpServers = { ...(base.mcpServers || {}), ...(override.mcpServers || {}) };
+  }
+  if (base.agents || override.agents) {
+    merged.agents = { ...(base.agents || {}), ...(override.agents || {}) };
+  }
+  if (base.custom || override.custom) {
+    merged.custom = { ...(base.custom || {}), ...(override.custom || {}) };
+  }
+  return merged;
+}
+
 export class DebugService {
   private configDir: string;
   private dataDir: string;
 
-  constructor() {
-    this.configDir = path.join(os.homedir(), '.config', 'tnf');
-    this.dataDir = path.join(os.homedir(), '.local', 'share', 'tnf');
+  constructor(configDir?: string, dataDir?: string) {
+    this.configDir = configDir || path.join(os.homedir(), '.config', 'tnf');
+    this.dataDir = dataDir || path.join(os.homedir(), '.local', 'share', 'tnf');
   }
 
   getPaths(): DebugPaths {
@@ -106,8 +160,8 @@ export class DebugService {
     return config;
   }
 
-  getConfigPath(key: string): unknown {
-    const config = this.getConfig();
+  getConfigPath(key: string, projectRoot?: string): unknown {
+    const config = this.getEffectiveConfig(projectRoot);
     const parts = key.split('.');
     let value: unknown = config;
     for (const part of parts) {
@@ -118,6 +172,21 @@ export class DebugService {
       }
     }
     return value;
+  }
+
+  getEffectiveConfig(projectRoot?: string): DebugConfig {
+    const merged = mergeConfig(this.getConfig(), this.getProjectConfig(projectRoot));
+    const envConfig: Record<string, string | undefined> = {
+      provider: process.env.TNF_LLM_PROVIDER,
+      model: process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL,
+      apiBaseUrl: process.env.TNF_LLM_BASE_URL || process.env.OPENAI_API_BASE,
+    };
+
+    if (envConfig.provider) merged.provider = envConfig.provider;
+    if (envConfig.model) merged.model = envConfig.model;
+    if (envConfig.apiBaseUrl) merged.apiBaseUrl = envConfig.apiBaseUrl;
+
+    return merged;
   }
 
   getProjectConfig(projectRoot?: string): DebugConfig {

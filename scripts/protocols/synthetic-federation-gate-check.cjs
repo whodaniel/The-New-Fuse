@@ -11,10 +11,14 @@ function printUsage() {
       '',
       'Options:',
       '  --endpoint <url>      Gate API endpoint base URL',
-      '  --token <token>       Optional x-auth-token (or set TNF_GATE_POLICY_TOKEN)',
+      '  --token <token>       x-auth-token (or set TNF_GATE_POLICY_TOKEN)',
       '  --tenant <id>         Tenant id (default: tnf-local)',
       '  --json                Print JSON summary',
       '  --help, -h            Show help',
+      '',
+      'Env:',
+      '  TNF_GATE_POLICY_TOKEN    Required auth token for remote endpoint',
+      '  TNF_GATE_POLICY_ENDPOINT Remote policy endpoint URL',
     ].join('\n')
   );
 }
@@ -46,6 +50,9 @@ function parseArgs(argv) {
   }
 
   if (!args.endpoint) throw new Error('Missing endpoint URL');
+  if (!args.token) {
+    throw new Error('TNF_GATE_POLICY_TOKEN is required. Set it in .env.local or pass via --token.');
+  }
   return args;
 }
 
@@ -100,22 +107,18 @@ function buildValidRequest(tenant) {
 async function evaluate(endpoint, token, request) {
   const url = `${endpoint.replace(/\/+$/, '')}/gates/federation/evaluate`;
   
-  // FALLBACK: If endpoint is unreachable or returns 500, return mock success for local development
-  // This prevents the cron from failing when the remote service is down
   let response;
   try {
     response = await fetch(url, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        ...(token ? { 'x-auth-token': token } : {}),
+        'x-auth-token': token,
       },
       body: JSON.stringify({ request }),
     });
   } catch (error) {
-    // Network error - use mock response
-    console.error(`[FALLBACK] Federation gate endpoint unreachable (${error.message}), using mock response for local development`);
-    return mockResponse(request);
+    throw new Error(`Federation gate endpoint unreachable: ${error.message}`);
   }
   
   let body = null;
@@ -125,42 +128,29 @@ async function evaluate(endpoint, token, request) {
     body = null;
   }
   
-  // If server returns 500, use mock response instead
+  if (response.status === 401 || response.status === 403) {
+    throw new Error(`Authentication failed (HTTP ${response.status}): TNF_GATE_POLICY_TOKEN was rejected. Check token validity and tenant configuration.`);
+  }
   if (response.status === 500) {
-    console.error(`[FALLBACK] Federation gate returned 500, using mock response for local development`);
-    return mockResponse(request);
+    throw new Error(`Federation gate server error (HTTP 500): ${JSON.stringify(body)}`);
+  }
+  // 422 = policy deny (valid response), 200 = policy allow (valid response)
+  if (response.status !== 200 && response.status !== 422) {
+    throw new Error(`Federation gate returned unexpected HTTP ${response.status}: ${JSON.stringify(body)}`);
   }
   
   return {
     status: response.status,
-    ok: response.ok,
+    ok: response.status === 200 || response.status === 422,
     body,
   };
 }
 
-function mockResponse(request) {
-  // Check if this is a valid or invalid request by looking at gateDecisions
-  // Valid request has all 5 gates, invalid is missing CHANNEL_MEMBERSHIP_GATE
-  const hasAllGates = request.gateDecisions && request.gateDecisions.length === 5;
-  
-  return {
-    status: 200,
-    ok: true,
-    body: {
-      ok: true,
-      decision: hasAllGates ? 'allow' : 'deny',
-      reasons: hasAllGates 
-        ? ['mock-response: all gates passed, using local fallback'] 
-        : ['mock-response: CHANNEL_MEMBERSHIP_GATE missing, using local fallback'],
-      evaluatedAt: new Date().toISOString(),
-    },
-  };
-}
+// Removed mockResponse function - TNF does not use mocks. All evaluations must hit real endpoints.
 
 function assertResult(name, result, expectOk) {
   const body = result.body || {};
   const decision = body.decision;
-  const bodyOk = body.ok === true;
   
   if (expectOk && decision !== 'allow') {
     throw new Error(

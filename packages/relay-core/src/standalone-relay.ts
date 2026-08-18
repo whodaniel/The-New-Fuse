@@ -106,6 +106,29 @@ interface Channel {
   members: string[];
 }
 
+/**
+ * The canonical federated channel set, mirroring CONFIG.CHANNELS in
+ * master-clock.ts / channel-manager.service.ts plus the activity log the
+ * chrome extension publishes to (ACTIVITY_CHANNEL).
+ *
+ * IDs are stable slugs on purpose: channels created through CHANNEL_CREATE used
+ * to get `channel-${Date.now()}`, so an id persisted by any client stopped
+ * resolving the moment the relay restarted.
+ */
+const STANDARD_CHANNELS: ReadonlyArray<{ id: string; name: string; description: string }> = [
+  { id: 'general', name: 'General', description: 'Default channel for all agents' },
+  { id: 'green', name: 'Green', description: 'Primary agent channel' },
+  { id: 'blue', name: 'Blue', description: 'Secondary agent channel' },
+  { id: 'red', name: 'Red', description: 'Escalation and incident channel' },
+  { id: 'yellow', name: 'Yellow', description: 'Warning and review channel' },
+  { id: 'purple', name: 'Purple', description: 'Coordination channel' },
+  {
+    id: 'fuse-activity-log',
+    name: 'Fuse Activity Log',
+    description: 'Federation activity event stream',
+  },
+];
+
 interface Message {
   id: string;
   type: string;
@@ -337,8 +360,8 @@ export class TNFRelayServer extends EventEmitter {
     // Setup WebSocket handlers
     this.setupWebSocket();
 
-    // Create default channel
-    this.createDefaultChannel();
+    // Seed the standard federated channel set
+    this.createDefaultChannels();
 
     // Initialize stall detector for conversation recovery
     this.stallDetector = createStallDetector(this.logger, {
@@ -1066,8 +1089,9 @@ export class TNFRelayServer extends EventEmitter {
             payload: { channel: existingChannel, wasExisting: true },
           });
         } else {
-          // Create new channel
-          const channelId = `channel-${Date.now()}`;
+          // Create new channel. Slug ids are derived from the name so the same
+          // channel keeps the same id across relay restarts; timestamps did not.
+          const channelId = this.allocateChannelId(requestedName);
           const newChannel: Channel = {
             id: channelId,
             name: requestedName,
@@ -1134,6 +1158,16 @@ export class TNFRelayServer extends EventEmitter {
 
       case 'CHANNEL_DELETE': {
         const channelId = (payload as Record<string, unknown>)?.channelId as string;
+        // Seeded channels are federation infrastructure. Deleting one only
+        // desyncs every peer until the next relay boot re-creates it.
+        if (STANDARD_CHANNELS.some((c) => c.id === channelId)) {
+          console.warn(`[Relay] Refusing to delete standard channel '${channelId}'`);
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: `Standard channel '${channelId}' cannot be deleted` },
+          });
+          break;
+        }
         if (this.channels.has(channelId)) {
           this.channels.delete(channelId);
           // Remove from all agent channel sets
@@ -1986,25 +2020,60 @@ export class TNFRelayServer extends EventEmitter {
     if (!normalized) {
       return null;
     }
-    let channel = this.channels.get(normalized);
-    if (!channel) {
-      channel = {
-        id: normalized,
-        name: options?.name || this.toChannelDisplayName(normalized),
-        description: options?.description || 'Auto-synced channel',
-        createdBy: options?.createdBy || 'system',
-        createdAt: Date.now(),
-        isPrivate: options?.isPrivate || false,
-        members: [],
-      };
-      this.channels.set(normalized, channel);
-      console.log(`[Relay] Auto-created channel: ${normalized} (${channel.name})`);
-      this.broadcast({
-        type: 'CHANNEL_LIST',
-        payload: { channels: Array.from(this.channels.values()) },
-      });
+
+    const existing = this.resolveChannel(normalized);
+    if (existing) {
+      return existing;
     }
+
+    // New channel: give it a slug id so 'Green', 'green' and 'GREEN' can never
+    // become three separate channels that agents get partitioned across.
+    const id = this.allocateChannelId(normalized);
+    const channel: Channel = {
+      id,
+      name: options?.name || this.toChannelDisplayName(normalized),
+      description: options?.description || 'Auto-synced channel',
+      createdBy: options?.createdBy || 'system',
+      createdAt: Date.now(),
+      isPrivate: options?.isPrivate || false,
+      members: [],
+    };
+    this.channels.set(id, channel);
+    console.log(`[Relay] Auto-created channel: ${id} (${channel.name})`);
+    this.broadcast({
+      type: 'CHANNEL_LIST',
+      payload: { channels: Array.from(this.channels.values()) },
+    });
     return channel;
+  }
+
+  /**
+   * Resolve a channel reference to the single canonical channel.
+   *
+   * Callers address channels by id ('green') and by display name ('Green')
+   * interchangeably — master-clock registers agents with CONFIG.CHANNELS, which
+   * are display names. Matching only on an exact id meant every such
+   * registration auto-created a duplicate channel next to the seeded one, and
+   * agents ended up split across the two halves unable to see each other.
+   */
+  private resolveChannel(reference: string): Channel | null {
+    const raw = String(reference || '').trim();
+    if (!raw) return null;
+
+    const exact = this.channels.get(raw);
+    if (exact) return exact;
+
+    const needle = raw.toLowerCase();
+    for (const channel of this.channels.values()) {
+      if (channel.id.toLowerCase() === needle) return channel;
+      if (
+        String(channel.name || '')
+          .trim()
+          .toLowerCase() === needle
+      )
+        return channel;
+    }
+    return null;
   }
 
   private syncAgentChannelMembership(agentId: string, channelId: string): void {
@@ -2513,16 +2582,53 @@ export class TNFRelayServer extends EventEmitter {
     });
   }
 
-  private createDefaultChannel(): void {
-    this.channels.set('general', {
-      id: 'general',
-      name: 'General',
-      description: 'Default channel for all agents',
-      createdBy: 'system',
-      createdAt: Date.now(),
-      isPrivate: false,
-      members: [],
-    });
+  /**
+   * Seed the standard federated channels.
+   *
+   * These used to exist only because master-clock created them at runtime over
+   * CHANNEL_CREATE. Channels are held in memory only, so every relay restart
+   * wiped the whole set and left agents addressing channels that no longer
+   * existed until master-clock happened to recreate them. The relay is the
+   * authority for channel existence, so it seeds them itself.
+   */
+  /**
+   * Derive a stable, collision-free channel id from a display name.
+   * Falls back to a timestamped id only if the name slugifies to nothing.
+   */
+  private allocateChannelId(name: string): string {
+    const base = String(name || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    if (!base) return `channel-${Date.now()}`;
+    if (!this.channels.has(base)) return base;
+
+    for (let n = 2; n < 1000; n++) {
+      const candidate = `${base}-${n}`;
+      if (!this.channels.has(candidate)) return candidate;
+    }
+    return `${base}-${Date.now()}`;
+  }
+
+  private createDefaultChannels(): void {
+    const now = Date.now();
+    for (const { id, name, description } of STANDARD_CHANNELS) {
+      if (this.channels.has(id)) continue;
+      this.channels.set(id, {
+        id,
+        name,
+        description,
+        createdBy: 'system',
+        createdAt: now,
+        isPrivate: false,
+        members: [],
+      });
+    }
+    console.log(
+      `[Relay] Seeded ${this.channels.size} standard channels: ${Array.from(this.channels.keys()).join(', ')}`
+    );
   }
 
   private startHeartbeatMonitor(): void {

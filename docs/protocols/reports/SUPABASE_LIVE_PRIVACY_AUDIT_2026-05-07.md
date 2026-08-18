@@ -1,8 +1,12 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # Supabase Live Privacy Audit — 2026-05-07
 
 ## Scope
 
-- Live database connectivity and policy posture verification using local authenticated environment.
+- Live database connectivity and policy posture verification using local
+  authenticated environment.
 - Cross-check against repo-side static SQL RLS audit.
 
 ## Live Checks Performed
@@ -28,8 +32,10 @@
 ## Interpretation
 
 - All current `public` tables have RLS enabled.
-- A large subset of `public` tables has RLS enabled without explicit policies; this is deny-by-default behavior for non-privileged roles.
-- No live evidence was found of the specific high-risk policy anti-patterns checked above.
+- A large subset of `public` tables has RLS enabled without explicit policies;
+  this is deny-by-default behavior for non-privileged roles.
+- No live evidence was found of the specific high-risk policy anti-patterns
+  checked above.
 
 ## Repo Gate Alignment
 
@@ -39,4 +45,5 @@
 - Added CI gate:
   - `.github/workflows/privacy-security-gate.yml`
 
-This ensures new schema additions do not silently expand public access without review.
+This ensures new schema additions do not silently expand public access without
+review.

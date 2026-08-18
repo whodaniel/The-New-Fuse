@@ -1,0 +1,25 @@
+{
+  "$comment": "Stale boot expectations: patterns for legacy/past-edge-case artifacts that TNF should KNOW about but not EXPECT at boot. Matching output lines are demoted to knowledge-only by scripts/lib/tnf-boot-triage.cjs — never surfaced as warnings. Operator extensions go in ~/.tnf/boot-triage/stale-expectations.json (same shape).",
+  "expectations": [
+    {
+      "pattern": "legacy LATEST\\.md (missing|pointer broken|inspection failed)",
+      "reason": "OpenClaw workspace handoff pointer — legacy mirror superseded by docs/protocols/reports/SESSION_HANDOFF_LATEST.json (canonical since 2026-05)"
+    },
+    {
+      "pattern": "tools/relay-mcp-server/index\\.js: missing",
+      "reason": "relay MCP server moved into apps/mcp-servers; old tools/ path retired"
+    },
+    {
+      "pattern": "gemini.*DEPRECATED|DEPRECATED.*gemini",
+      "reason": "gemini CLI passthrough superseded by tnf agy (Antigravity)"
+    },
+    {
+      "pattern": "Live Fleet Probe.*skipped|policy file has no models\\.cloud list",
+      "reason": "cloud fleet probe only applies to deployments with a models.cloud list; absence is a configuration state, not an error"
+    },
+    {
+      "pattern": "\\.openclaw/workspace/(handoff|memory)",
+      "reason": "OpenClaw workspace artifacts are an optional integration surface, not a boot requirement"
+    }
+  ]
+}

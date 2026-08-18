@@ -208,7 +208,7 @@ is optional but recommended:
 If you use GitHub Actions, add secrets at:
 
 ```
-https://github.com/whodaniel/fuse/settings/secrets/actions
+https://github.com/whodaniel/The-New-Fuse/settings/secrets/actions
 ```
 
 **Required Secrets for CI/CD:**
@@ -300,7 +300,7 @@ rm -rf .git
 git init
 git add .
 git commit -m "Initial commit (cleaned)"
-git remote add origin https://github.com/whodaniel/fuse.git
+git remote add origin https://github.com/whodaniel/The-New-Fuse.git
 git push -f origin main
 ```
 

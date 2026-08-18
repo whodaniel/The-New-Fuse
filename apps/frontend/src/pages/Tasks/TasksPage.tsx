@@ -1,7 +1,14 @@
 // @ts-nocheck
-import { Badge } from '@/components/ui';
+import { ZoneBadge } from '@/components/control-surface';
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { GlassCard, IconButton, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
+import {
+  Badge,
+  GlassCard,
+  IconButton,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+} from '@/components/ui';
 import { listTasks } from '@/services/unifiedLedgerApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -168,6 +175,7 @@ export default function TasksPage() {
         subtitle="Track delivery, unblock bottlenecks, and keep execution moving."
         meta={
           <div className="flex flex-wrap gap-2 text-xs">
+            <ZoneBadge zone="personal" detail="your workspace" />
             <Badge className="bg-blue-500/10 text-blue-300 border-blue-500/20">
               {tasks.length} total
             </Badge>

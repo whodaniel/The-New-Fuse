@@ -151,6 +151,8 @@ export class TaskSchedulerService {
       'quality',
       'context',
       'self_improvement',
+      'analytics',
+      'maintenance',
     ].includes(lane);
   }
 

@@ -1,19 +1,24 @@
 name: TNF Repo Separation Sync
 
+# Manual only. Auto-running this on every monorepo main push force-pushed an
+# orphan commit onto public The-New-Fuse main (2026-08-13) and closed every
+# open PR. Publication now goes through a sync/open-runtime PR, not a
+# force-push to main. Do not add `on.push` back until that path is proven.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       force:
-        description: "Force push even if no changes detected"
+        description: "Create an empty sync commit even if the public tree has no file changes. Does not force-push main."
         required: false
         type: boolean
         default: false
 
 jobs:
   sync-repos:
+    # Sync must only run from the private monorepo. The workflow file is
+    # published into The-New-Fuse by Phase 2; without this guard a push to
+    # public main would re-run sync against itself.
+    if: github.repository == 'whodaniel/tnf-monorepo'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Monorepo
@@ -32,6 +37,7 @@ jobs:
       - name: Run Repo Sync Script
         env:
           GITHUB_PAT: ${{ secrets.TNF_SYNC_PAT }}
+          GH_TOKEN: ${{ secrets.TNF_SYNC_PAT }}
         run: |
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
             ./scripts/sync-repos.sh --force

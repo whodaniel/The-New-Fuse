@@ -34,15 +34,27 @@ const textFileExtensions = new Set([
   '.d',
 ]);
 
-const contentScanScopePatterns = [
-  /^apps\//i,
-  /^packages\//i,
-  /^scripts\//i,
-  /^docs\//i,
-  /^supabase\//i,
-  /^data\//i,
-  /^archive\//i,
-  /^\.env/i,
+// Content scanning is DENYLIST-based on purpose.
+//
+// This was previously an allowlist of seven prefixes (apps/ packages/ scripts/
+// docs/ supabase/ data/ archive/ .env*). Every other path — .verifier/,
+// .agent/, .claude/, .tnf/, .github/, config/, and every root-level file — was
+// silently never scanned, so a live `rediss://default:<token>@…` sitting in
+// .verifier/process-atlas.payload.json passed every pre-commit for weeks.
+//
+// A secret guard must fail closed: new top-level directories are covered by
+// default, and anything skipped has to be named here explicitly.
+const contentScanExcludePatterns = [
+  /(^|\/)node_modules\//i,
+  /(^|\/)dist\//i,
+  /(^|\/)build\//i,
+  /(^|\/)coverage\//i,
+  /(^|\/)\.turbo\//i,
+  /(^|\/)\.vite\//i,
+  /(^|\/)\.next\//i,
+  /(^|\/)__pycache__\//i,
+  /(^|\/)target\/(debug|release)\//i,
+  /(^|\/)(pnpm-lock\.yaml|package-lock\.json|yarn\.lock|cargo\.lock|poetry\.lock)$/i,
 ];
 
 const placeholderWords = [
@@ -117,7 +129,7 @@ function getFilesForMode(activeMode) {
 
 function shouldScanFileContent(filePath) {
   const lower = filePath.toLowerCase();
-  if (!contentScanScopePatterns.some((pattern) => pattern.test(lower))) return false;
+  if (contentScanExcludePatterns.some((pattern) => pattern.test(lower))) return false;
   const ext = path.extname(lower);
   if (textFileExtensions.has(ext) || path.basename(lower).startsWith('.env')) return true;
   if (!ext) return true;

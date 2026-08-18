@@ -1,0 +1,22 @@
+# Build artifacts
+dist/
+dist-v5/
+dist-v6/
+dist-v7/
+icons/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Accidental zip dumps next to the app (use releases/ via package script)
+dist-v7*.zip
+*.zip
+
+# Deps / caches
+node_modules/
+node_modules/.cache/
+
+# Local env
+.env
+.env.*
+!.env.example

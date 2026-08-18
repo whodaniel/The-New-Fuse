@@ -218,48 +218,48 @@ function buildConnectionEdges(repoSet) {
 
   maybePush(
     'whodaniel/The-New-Fuse',
-    'whodaniel/fuse',
+    'whodaniel/The-New-Fuse',
     'architectural_refinement',
     'Chronology and naming indicate early TNF shell converged into Fuse core.',
-    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/fuse']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/The-New-Fuse']
   );
   maybePush(
-    'whodaniel/fuse',
-    'whodaniel/fuse-open-runtime',
+    'whodaniel/The-New-Fuse',
+    'whodaniel/The-New-Fuse',
     'monorepo_to_split',
     'Runtime extraction from core platform into dedicated repository boundary.',
-    ['https://github.com/whodaniel/fuse', 'https://github.com/whodaniel/fuse-open-runtime']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/The-New-Fuse']
   );
   maybePush(
-    'whodaniel/fuse',
-    'whodaniel/fuse-control-plane',
+    'whodaniel/The-New-Fuse',
+    'whodaniel/The-New-Fuse-control-plane',
     'monorepo_to_split',
     'Control-plane concerns separated into dedicated repository for orchestration and governance.',
-    ['https://github.com/whodaniel/fuse', 'https://github.com/whodaniel/fuse-control-plane']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/The-New-Fuse-control-plane']
   );
   maybePush(
-    'whodaniel/fuse',
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
+    'whodaniel/The-New-Fuse',
     'next_generation_convergence',
     'Next-gen repository carries platform lineage and integration forward.',
-    ['https://github.com/whodaniel/fuse', 'https://github.com/whodaniel/the-new-fuse-next-gen']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/The-New-Fuse']
   );
   maybePush(
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
     'whodaniel/virtual-library-blueprints',
     'knowledge_surface_integration',
     'Knowledge library system aligns with TNF workspace and publishing surface architecture.',
     [
-      'https://github.com/whodaniel/the-new-fuse-next-gen',
+      'https://github.com/whodaniel/The-New-Fuse',
       'https://github.com/whodaniel/virtual-library-blueprints',
     ]
   );
   maybePush(
-    'whodaniel/the-new-fuse-next-gen',
+    'whodaniel/The-New-Fuse',
     'whodaniel/EXTREAMIX',
     'media_pipeline_integration',
     'Interactive media stack aligns with TNF production pipelines.',
-    ['https://github.com/whodaniel/the-new-fuse-next-gen', 'https://github.com/whodaniel/EXTREAMIX']
+    ['https://github.com/whodaniel/The-New-Fuse', 'https://github.com/whodaniel/EXTREAMIX']
   );
 
   return edges;

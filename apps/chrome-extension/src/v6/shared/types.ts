@@ -27,6 +27,14 @@ export interface Agent {
   status: AgentStatus;
   capabilities: string[];
   lastSeen: number;
+  operationalHandle?: string | null;
+  runtimeSessionId?: string | null;
+  canonicalEntityId?: string | null;
+  idNumber?: string | null;
+  aliases?: string[];
+  daccRole?: string;
+  correlationId?: string;
+  mcid?: unknown;
   metadata?: Record<string, unknown>;
   channels?: string[];
 }
@@ -380,6 +388,9 @@ export type MessageType =
   | 'CHANNEL_LEAVE'
   | 'CHANNEL_LIST'
   | 'CHANNEL_MESSAGE'
+  // Relay -> client confirmations for CHANNEL_CREATE, carrying the real channel.
+  | 'CHANNEL_CREATED'
+  | 'CHANNEL_JOINED'
 
   // Chat injection
   | 'INJECT_MESSAGE'
@@ -482,18 +493,24 @@ export interface NativeHostResponse {
 export type TranscriptRole = 'user' | 'assistant' | 'system' | 'tool';
 
 export interface TranscriptEntry {
+  id?: string;
   role: TranscriptRole;
   content: string;
-  timestamp: number;
+  timestamp?: number;
+  ts?: number;
   metadata?: Record<string, unknown>;
+  meta?: Record<string, unknown>;
 }
 
 export interface AIVideoQueueItem {
-  videoId: string;
+  videoId?: string;
+  id?: string;
   title: string;
+  url?: string;
+  addedAt?: number;
   channelTitle?: string;
-  tier: ProcessingTier;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  tier?: ProcessingTier;
+  status?: 'pending' | 'processing' | 'completed' | 'failed';
   progress?: number;
   report?: string;
   cost?: number;
@@ -505,12 +522,15 @@ export interface AIVideoQueueItem {
 export interface AIVideoProcessingState {
   isProcessing: boolean;
   isPaused: boolean;
-  queue: AIVideoQueueItem[];
+  queue?: AIVideoQueueItem[];
   currentIndex: number;
-  totalProcessed: number;
-  totalFailed: number;
-  sessionCost: number;
-  totalCost: number;
+  totalCount?: number;
+  currentVideo?: AIVideoQueueItem | string | null;
+  totalProcessed?: number;
+  totalFailed?: number;
+  sessionCost?: number;
+  totalCost?: number;
+  lastUpdated?: number;
 }
 
 // ============================================
@@ -520,9 +540,14 @@ export interface AIVideoProcessingState {
 export type ExtensionLogLevel = 'debug' | 'info' | 'warn' | 'error' | 'trace';
 
 export interface ExtensionLogEntry {
+  id?: string;
+  ts?: number;
+  category?: string;
+  event?: string;
+  details?: Record<string, unknown>;
   level: ExtensionLogLevel;
-  message: string;
-  timestamp: number;
+  message?: string;
+  timestamp?: number;
   context?: string;
   data?: Record<string, unknown>;
 }

@@ -1,15 +1,26 @@
 ---
+category: Engineering
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: backend-specialist
-description:
-  Expert backend architect for Node.js, Python, and modern serverless/edge
-  systems. Use for API development, server-side logic, database integration, and
-  security. Triggers on backend, server, api, endpoint, database, auth.
-tools: Read, Grep, Glob, Bash, Edit, Write
+description: Expert backend architect for Node.js, Python, and modern serverless/edge
+  systems. Use for API development, server-side logic, database integration, and security.
+  Triggers on backend, server, api, endpoint, database, auth.
+skills: clean-code, nodejs-best-practices, python-patterns, api-patterns, database-design,
+  mcp-builder, lint-and-validate, powershell-windows, bash-linux
 model: inherit
-skills:
-  clean-code, nodejs-best-practices, python-patterns, api-patterns,
-  database-design, mcp-builder, lint-and-validate, powershell-windows,
-  bash-linux
 ---
 
 # Backend Development Architect

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
+  "name": "tnf-orchestration",
+  "displayName": "The New Fuse — Orchestration",
+  "description": "Multi-agent orchestration for Cursor. Ships the TNF Orchestrator plus a focused roster of specialist subagents (planner, implementer, researcher) that coordinate complex work using TNF's plan → implement → verify pattern.",
+  "version": "1.0.0",
+  "author": {
+    "name": "The New Fuse",
+    "email": "hello@thenewfuse.com"
+  },
+  "publisher": "TheNewFuse",
+  "homepage": "https://thenewfuse.com",
+  "repository": "https://github.com/The-New-Fuse/cursor-marketplace",
+  "license": "MIT",
+  "logo": "../tnf-harness/assets/logo.svg",
+  "category": "Productivity",
+  "keywords": [
+    "orchestration",
+    "multi-agent",
+    "subagents",
+    "planner",
+    "delegation",
+    "tnf",
+    "the-new-fuse"
+  ],
+  "tags": ["workflow", "agents", "coordination"],
+  "agents": "agents"
+}

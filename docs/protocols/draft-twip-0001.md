@@ -1,3 +1,6 @@
+`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
+restored for Gate 3 compliance; reclassify on next vetting pass.
+
 # RFC DRAFT-TWIP-0001: Terminal Window Identity Protocol (TWIP) v0.1
 
 - Status: Draft, Experimental

@@ -1,13 +1,26 @@
 ---
+category: Library
+domain: '[to be determined from content]'
+visibility: collective
+dacc_role: worker
+worker_action: '[to be determined from capabilities]'
+fulfillment:
+  vendor: '[to be determined from tools/platform]'
+  model: '[to be determined from configuration]'
+  tools: '[to be extracted from capabilities/tools fields]'
+traits:
+  observability: '[to be determined]'
+  subAgent_capable: '[to be determined]'
+  orchestrates_agents: '[to be determined]'
+  persona_source: '[to be determined]'
+  autonomy_level: '[to be determined]'
 name: database-architect
-description:
-  Expert database architect for schema design, query optimization, migrations,
-  and modern serverless databases. Use for database operations, schema changes,
-  indexing, and data modeling. Triggers on database, sql, schema, migration,
-  query, postgres, index, table.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
+description: Expert database architect for schema design, query optimization, migrations,
+  and modern serverless databases. Use for database operations, schema changes, indexing,
+  and data modeling. Triggers on database, sql, schema, migration, query, postgres,
+  index, table.
 skills: clean-code, database-design
+model: inherit
 ---
 
 # Database Architect

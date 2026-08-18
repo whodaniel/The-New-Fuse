@@ -1,5 +1,6 @@
 import { GlassCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import { authFetch } from '@/utils/authToken';
 import {
   AlertTriangle,
   ArrowRightLeft,
@@ -386,13 +387,6 @@ export function RcloneMobilityControl() {
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const authHeaders = useCallback(() => {
-    const token = localStorage.getItem('token');
-    const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
-    return headers;
-  }, []);
-
   const loadDoctor = useCallback(async () => {
     setDoctorLoading(true);
     setError(null);
@@ -400,9 +394,7 @@ export function RcloneMobilityControl() {
       const params = new URLSearchParams();
       if (remote.trim()) params.set('remote', remote.trim());
       if (probe) params.set('probe', 'true');
-      const res = await fetch(`/api/admin/rclone/runtime/doctor?${params.toString()}`, {
-        headers: authHeaders(),
-      });
+      const res = await authFetch(`/api/admin/rclone/runtime/doctor?${params.toString()}`);
       const payload = await res.json();
       if (!res.ok)
         throw new Error(payload?.message || payload?.error || 'Failed to load rclone doctor');
@@ -412,15 +404,13 @@ export function RcloneMobilityControl() {
     } finally {
       setDoctorLoading(false);
     }
-  }, [authHeaders, probe, remote]);
+  }, [probe, remote]);
 
   const loadProviders = useCallback(async () => {
     setProvidersLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/rclone/runtime/providers', {
-        headers: authHeaders(),
-      });
+      const res = await authFetch('/api/admin/rclone/runtime/providers');
       const payload = (await res.json()) as ProvidersResponse;
       if (!res.ok)
         throw new Error((payload as { message?: string }).message || 'Failed to load providers');
@@ -430,7 +420,7 @@ export function RcloneMobilityControl() {
     } finally {
       setProvidersLoading(false);
     }
-  }, [authHeaders]);
+  }, []);
 
   const loadGuiDescriptor = useCallback(async () => {
     setGuiLoading(true);
@@ -440,9 +430,7 @@ export function RcloneMobilityControl() {
       if (addr.trim()) params.set('addr', addr.trim());
       if (baseurl.trim()) params.set('baseurl', baseurl.trim());
       if (tls) params.set('tls', 'true');
-      const res = await fetch(`/api/admin/rclone/runtime/gui?${params.toString()}`, {
-        headers: authHeaders(),
-      });
+      const res = await authFetch(`/api/admin/rclone/runtime/gui?${params.toString()}`);
       const payload = await res.json();
       if (!res.ok)
         throw new Error(payload?.message || payload?.error || 'Failed to load rclone GUI');
@@ -452,37 +440,32 @@ export function RcloneMobilityControl() {
     } finally {
       setGuiLoading(false);
     }
-  }, [addr, authHeaders, baseurl, tls]);
+  }, [addr, baseurl, tls]);
 
-  const loadProviderBlueprint = useCallback(
-    async (providerId: ProviderProfile['id']) => {
-      setProviderBlueprintLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/admin/rclone/runtime/providers/${providerId}/blueprint`, {
-          headers: authHeaders(),
-        });
-        const payload = (await res.json()) as ProviderBlueprintResponse | { message?: string };
-        if (!res.ok)
-          throw new Error(
-            (payload as { message?: string }).message || 'Failed to load provider blueprint'
-          );
-        setProviderBlueprint((payload as ProviderBlueprintResponse).blueprint);
-      } catch (e) {
-        setError((e as Error).message || 'Failed to load provider blueprint');
-      } finally {
-        setProviderBlueprintLoading(false);
-      }
-    },
-    [authHeaders]
-  );
+  const loadProviderBlueprint = useCallback(async (providerId: ProviderProfile['id']) => {
+    setProviderBlueprintLoading(true);
+    setError(null);
+    try {
+      const res = await authFetch(`/api/admin/rclone/runtime/providers/${providerId}/blueprint`);
+      const payload = (await res.json()) as ProviderBlueprintResponse | { message?: string };
+      if (!res.ok)
+        throw new Error(
+          (payload as { message?: string }).message || 'Failed to load provider blueprint'
+        );
+      setProviderBlueprint((payload as ProviderBlueprintResponse).blueprint);
+    } catch (e) {
+      setError((e as Error).message || 'Failed to load provider blueprint');
+    } finally {
+      setProviderBlueprintLoading(false);
+    }
+  }, []);
 
   const loadArdriveQueue = useCallback(async () => {
     setArdriveQueueLoading(true);
     try {
-      const res = await fetch('/api/admin/rclone/runtime/providers/ardrive/turbo/queue?limit=12', {
-        headers: authHeaders(),
-      });
+      const res = await authFetch(
+        '/api/admin/rclone/runtime/providers/ardrive/turbo/queue?limit=12'
+      );
       const payload = (await res.json()) as ArdriveQueueResponse | { message?: string };
       if (!res.ok)
         throw new Error(
@@ -494,14 +477,12 @@ export function RcloneMobilityControl() {
     } finally {
       setArdriveQueueLoading(false);
     }
-  }, [authHeaders]);
+  }, []);
 
   const loadArdriveWorkerStatus = useCallback(async () => {
     setArdriveWorkerLoading(true);
     try {
-      const res = await fetch('/api/admin/rclone/runtime/providers/ardrive/turbo/worker', {
-        headers: authHeaders(),
-      });
+      const res = await authFetch('/api/admin/rclone/runtime/providers/ardrive/turbo/worker');
       const payload = (await res.json()) as ArdriveWorkerStatusResponse | { message?: string };
       if (!res.ok)
         throw new Error(
@@ -513,18 +494,14 @@ export function RcloneMobilityControl() {
     } finally {
       setArdriveWorkerLoading(false);
     }
-  }, [authHeaders]);
+  }, []);
 
   const runArdriveWorkerTick = useCallback(async () => {
     setArdriveWorkerTicking(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/rclone/runtime/providers/ardrive/turbo/worker/tick', {
+      const res = await authFetch('/api/admin/rclone/runtime/providers/ardrive/turbo/worker/tick', {
         method: 'POST',
-        headers: {
-          ...authHeaders(),
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ maxItems: 5 }),
       });
       const payload = (await res.json()) as
@@ -545,7 +522,7 @@ export function RcloneMobilityControl() {
     } finally {
       setArdriveWorkerTicking(false);
     }
-  }, [authHeaders, loadArdriveQueue, loadArdriveWorkerStatus]);
+  }, [loadArdriveQueue, loadArdriveWorkerStatus]);
 
   const runArdriveWorkerProcessOne = useCallback(
     async (queueId?: string) => {
@@ -553,14 +530,10 @@ export function RcloneMobilityControl() {
       setArdriveWorkerProcessOneLoading(key);
       setError(null);
       try {
-        const res = await fetch(
+        const res = await authFetch(
           '/api/admin/rclone/runtime/providers/ardrive/turbo/worker/process-one',
           {
             method: 'POST',
-            headers: {
-              ...authHeaders(),
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
               queueId: queueId || undefined,
             }),
@@ -578,7 +551,7 @@ export function RcloneMobilityControl() {
         setArdriveWorkerProcessOneLoading(null);
       }
     },
-    [authHeaders, loadArdriveQueue, loadArdriveWorkerStatus]
+    [loadArdriveQueue, loadArdriveWorkerStatus]
   );
 
   const runArdrivePreflight = useCallback(async () => {
@@ -586,12 +559,8 @@ export function RcloneMobilityControl() {
     setError(null);
     try {
       const fileSizeBytes = Math.max(1, Math.floor(Number(ardriveFileSizeKiB || '0') * 1024));
-      const res = await fetch('/api/admin/rclone/runtime/providers/ardrive/turbo/preflight', {
+      const res = await authFetch('/api/admin/rclone/runtime/providers/ardrive/turbo/preflight', {
         method: 'POST',
-        headers: {
-          ...authHeaders(),
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           fileName: ardriveFileName,
           fileSizeBytes,
@@ -619,7 +588,6 @@ export function RcloneMobilityControl() {
     ardriveLocalPath,
     ardriveTargetDriveId,
     ardriveTargetFolderId,
-    authHeaders,
   ]);
 
   const enqueueArdriveUpload = useCallback(async () => {
@@ -627,12 +595,8 @@ export function RcloneMobilityControl() {
     setArdriveEnqueueLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/rclone/runtime/providers/ardrive/turbo/queue', {
+      const res = await authFetch('/api/admin/rclone/runtime/providers/ardrive/turbo/queue', {
         method: 'POST',
-        headers: {
-          ...authHeaders(),
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           preflightId: ardrivePreflight.preflightId,
           localPath: ardriveLocalPath || undefined,
@@ -660,7 +624,6 @@ export function RcloneMobilityControl() {
     ardrivePreflight?.preflightId,
     ardriveTargetDriveId,
     ardriveTargetFolderId,
-    authHeaders,
     loadArdriveQueue,
     loadArdriveWorkerStatus,
   ]);
@@ -674,14 +637,10 @@ export function RcloneMobilityControl() {
       setArdriveTransitionLoading(`${queueId}:${status}`);
       setError(null);
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `/api/admin/rclone/runtime/providers/ardrive/turbo/queue/${queueId}/transition`,
           {
             method: 'POST',
-            headers: {
-              ...authHeaders(),
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
               status,
               note: note || undefined,
@@ -704,17 +663,14 @@ export function RcloneMobilityControl() {
         setArdriveTransitionLoading(null);
       }
     },
-    [authHeaders, loadArdriveQueue, loadArdriveWorkerStatus]
+    [loadArdriveQueue, loadArdriveWorkerStatus]
   );
 
   const loadWorkflowLogs = useCallback(async () => {
     setLogsLoading(true);
     try {
-      const res = await fetch(
-        '/api/admin/rclone/runtime/workflows/logs?limit=20&includePersistent=true',
-        {
-          headers: authHeaders(),
-        }
+      const res = await authFetch(
+        '/api/admin/rclone/runtime/workflows/logs?limit=20&includePersistent=true'
       );
       const payload = (await res.json()) as WorkflowLogsResponse;
       if (!res.ok)
@@ -727,7 +683,7 @@ export function RcloneMobilityControl() {
     } finally {
       setLogsLoading(false);
     }
-  }, [authHeaders]);
+  }, []);
 
   useEffect(() => {
     void loadDoctor();
@@ -834,12 +790,8 @@ export function RcloneMobilityControl() {
           ? Math.floor(numericTransfers)
           : undefined;
 
-      const res = await fetch('/api/admin/rclone/runtime/workflows/run', {
+      const res = await authFetch('/api/admin/rclone/runtime/workflows/run', {
         method: 'POST',
-        headers: {
-          ...authHeaders(),
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           presetId: selectedPreset.id,
           source: sourcePath,
@@ -874,7 +826,6 @@ export function RcloneMobilityControl() {
       setWorkflowRunning(false);
     }
   }, [
-    authHeaders,
     bwlimit,
     checksum,
     destinationPath,
@@ -891,9 +842,8 @@ export function RcloneMobilityControl() {
       setRunControlLoading(`${runId}:${action}`);
       setError(null);
       try {
-        const res = await fetch(`/api/admin/rclone/runtime/workflows/${runId}/${action}`, {
+        const res = await authFetch(`/api/admin/rclone/runtime/workflows/${runId}/${action}`, {
           method: 'POST',
-          headers: authHeaders(),
         });
         const payload = (await res.json()) as
           | WorkflowRunResult
@@ -916,7 +866,7 @@ export function RcloneMobilityControl() {
         setRunControlLoading(null);
       }
     },
-    [authHeaders, loadWorkflowLogs]
+    [loadWorkflowLogs]
   );
 
   const doctorPass = doctorData?.ok === true;

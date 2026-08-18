@@ -20,4 +20,4 @@ capabilities.
 
 ## Configuration
 
-The server defaults to `whodaniel/fuse` repo. To change, edit `src/index.ts`.
+The server defaults to `whodaniel/The-New-Fuse` repo. To change, edit `src/index.ts`.

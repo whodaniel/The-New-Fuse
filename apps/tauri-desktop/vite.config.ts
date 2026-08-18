@@ -4,50 +4,85 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { safariMontereyCompatPlugin } from './vite-plugins/safariMontereyCompat';
+import { tnfBrowserBridgePlugin } from './vite-plugins/tnfBrowserBridge';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
 
-  // Smart host detection for HMR
-  const getHMRConfig = () => {
-    // In development, try to detect the actual host
-    if (isDev) {
-      const host = env.VITE_HOST || env.HOST || 'localhost';
-      const port = parseInt(env.VITE_PORT || env.PORT || '3000');
+  // Ship-time extras that belong to web deploys, not to the desktop bundle.
+  //
+  // Tauri loads assets off the local filesystem, so precompressed .gz/.br are never
+  // content-negotiated — they added 74 files / ~1.1MB of dead weight to the .app.
+  // Worse, vite-plugin-compression@0.5.1 intermittently aborted the whole build with
+  // `ENOENT ... .js.gz` on its own output, which failed DMG packaging outright.
+  // The visualizer likewise emitted a ~1.5MB bundle-analysis.html into the shipped app.
+  //
+  // Opt in for web builds that actually serve precompressed assets:
+  //   TNF_PRECOMPRESS=1 pnpm build      TNF_BUNDLE_ANALYZE=1 pnpm build
+  const precompressAssets = process.env.TNF_PRECOMPRESS === '1';
+  const emitBundleAnalysis = process.env.TNF_BUNDLE_ANALYZE === '1';
 
-      return {
-        host,
-        port,
-        protocol: 'ws' as const,
-      };
-    }
-    return false; // Disable HMR in production
+  // Vite injects `crossorigin` on module/preload tags. Under Tauri's asset /
+  // tauri.localhost protocol that triggers a CORS failure so the main module
+  // never runs and index.html's splash spinner stays mounted forever.
+  const stripModuleCrossOrigin = {
+    name: 'tnf-strip-module-crossorigin',
+    enforce: 'post' as const,
+    transformIndexHtml(html: string) {
+      return html
+        .replace(/<script([^>]*?)\s+crossorigin(?:="[^"]*")?/g, '<script$1')
+        .replace(/<link([^>]*?)\s+crossorigin(?:="[^"]*")?/g, '<link$1');
+    },
+  };
+
+  // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420`).
+  // Do NOT default HMR to localhost:3000 — that opens a second WS listener on
+  // [::1]:3000 and collides with relay-core (supervisor then sees HTTP 426).
+  const defaultDevHost = '127.0.0.1';
+  const defaultDevPort = 1420;
+  const serverHost = env.VITE_HOST || env.HOST || defaultDevHost;
+  const serverPort = parseInt(env.VITE_PORT || env.PORT || String(defaultDevPort), 10);
+
+  // Omit hmr.port so Vite shares the HTTP server socket (CLI --port still wins).
+  const getHMRConfig = () => {
+    if (!isDev) return false;
+    return {
+      host: serverHost,
+      protocol: 'ws' as const,
+    };
   };
 
   return {
     plugins: [
       react(),
+      tnfBrowserBridgePlugin(),
+      safariMontereyCompatPlugin(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
       }),
-      // Generate bundle analysis report in production
+      isProduction && stripModuleCrossOrigin,
+      // Generate bundle analysis report (opt-in; see TNF_BUNDLE_ANALYZE above)
       isProduction &&
+        emitBundleAnalysis &&
         visualizer({
           filename: 'dist/bundle-analysis.html',
           open: false,
           gzipSize: true,
           brotliSize: true,
         }),
-      // Compression plugins for better performance
+      // Precompression (opt-in; see TNF_PRECOMPRESS above)
       isProduction &&
+        precompressAssets &&
         compression({
           algorithm: 'gzip',
           ext: '.gz',
         }),
       isProduction &&
+        precompressAssets &&
         compression({
           algorithm: 'brotliCompress',
           ext: '.br',
@@ -69,9 +104,11 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
+        // Pin to source barrels/files — package exports point at CJS dist/, which breaks
+        // named ESM imports in the Vite browser graph (splash forever).
         '@the-new-fuse/shared/federation': path.resolve(
           __dirname,
-          '../../packages/shared/src/federation'
+          '../../packages/shared/src/federation/index.ts'
         ),
         '@the-new-fuse/shared/federation/FederationNodeClient': path.resolve(
           __dirname,
@@ -107,7 +144,9 @@ export default defineConfig(({ mode }) => {
         apiUrl: env.VITE_API_URL || '/api',
         wsUrl: env.VITE_WS_URL || '/ws',
         cdnUrl: env.VITE_CDN_URL || '',
-        basePath: env.VITE_BASE_PATH || '/',
+        // Relative base is required for packaged Tauri (asset:// / custom protocol).
+        // Absolute "/" asset URLs leave the HTML splash mounted forever in the .app/.dmg.
+        basePath: env.VITE_BASE_PATH || './',
       }),
       // Fix "process is not defined" error in browser
       'process.env': JSON.stringify({
@@ -115,23 +154,31 @@ export default defineConfig(({ mode }) => {
         ...env,
       }),
     },
-    base: env.VITE_BASE_PATH || '/',
+    base: env.VITE_BASE_PATH || './',
     publicDir: 'public',
     optimizeDeps: {
+      // firebase/* is optional (peer); do not force-include when not installed —
+      // Vite otherwise fails local UI boot with "Failed to resolve dependency".
       include: [
-        'firebase/app',
-        'firebase/auth',
-        'firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',
         'react-router-dom',
       ],
       exclude: [
+        'firebase',
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
         '@firebase/app-types',
         '@firebase/app-compat',
         '@types/d3',
         '@types/file-saver',
+        // Keep shared/federation on source aliases — prebundling hits CJS dist.
+        '@the-new-fuse/shared',
+        '@the-new-fuse/shared/federation',
+        '@the-new-fuse/shared/federation/protocol',
+        '@the-new-fuse/shared/federation/FederationNodeClient',
         // Exclude Node.js-only modules that break browser
         'winston',
         'winston-daily-rotate-file',
@@ -335,8 +382,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      host: '0.0.0.0',
-      port: parseInt(env.VITE_PORT || env.PORT || '3000'),
+      host: serverHost,
+      port: serverPort,
       strictPort: false,
       hmr: getHMRConfig(),
       // Allow production domain for CloudRuntime deployment
@@ -344,16 +391,16 @@ export default defineConfig(({ mode }) => {
       proxy: isDev
         ? {
             '/api': {
-              target: env.VITE_API_URL || 'http://localhost:3001',
+              target: env.VITE_API_URL || 'http://127.0.0.1:3001',
               changeOrigin: true,
               secure: false,
             },
             '/ws': {
-              target: env.VITE_WS_URL || 'ws://localhost:3001',
+              target: env.VITE_WS_URL || 'ws://127.0.0.1:3001',
               ws: true,
               changeOrigin: true,
             },
-            // Allow Electron file:// webview origins by not relying on Origin header
+            // Tauri Vite proxy: do not require Origin (webview / local asset loads)
             // Vite will proxy requests regardless of missing/unknown Origin
           }
         : undefined,
@@ -380,6 +427,7 @@ export default defineConfig(({ mode }) => {
             req.url &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
+            !req.url.startsWith('/__tnf-browser') &&
             !req.url.includes('.') &&
             req.method === 'GET'
           ) {

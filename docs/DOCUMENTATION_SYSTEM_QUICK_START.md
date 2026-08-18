@@ -432,7 +432,7 @@ Once discovery is complete, the next stage will:
 
 - [Living Documentation System](./LIVING_DOCUMENTATION_SYSTEM.md) - Complete
   technical spec
-- [Master Plan](./.agent/COMPREHENSIVE_DOCUMENTATION_ALIGNMENT_MASTER_PLAN.md) -
+- [Master Plan](../.agent/COMPREHENSIVE_DOCUMENTATION_ALIGNMENT_MASTER_PLAN.md) -
   Strategy and execution
 - [Protocol Alignment Framework](./PROTOCOL_ALIGNMENT_FRAMEWORK.md) - Overall
   framework

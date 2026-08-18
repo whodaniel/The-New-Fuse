@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 ('use client');
 
 import { useEffect, useMemo, useState } from 'react';
@@ -28,7 +29,7 @@ export function UserDashboard() {
       setLoadError(null);
 
       try {
-        const response = await fetch('/api/apps/my');
+        const response = await authFetch('/api/apps/my');
         if (!response.ok) throw new Error(`Dashboard data unavailable (${response.status})`);
 
         const payload = await response.json();

@@ -1,580 +1,566 @@
-// Agent relationship graph import for Neo4j (no APOC required)
-// Generated: 2026-04-07
+// Agent relationship graph export — regenerated 2026-07-25T19:27:36.317Z
+// Axes: daccRole ⊥ platform ⊥ workerAction ⊥ batonHolder
 
-CREATE CONSTRAINT agent_id IF NOT EXISTS
-FOR (a:Agent)
-REQUIRE a.id IS UNIQUE;
+MERGE (a:Agent {id: "agent-registry-manager"}) SET a += {"id":"agent-registry-manager","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "agent-relationship-grapher"}) SET a += {"id":"agent-relationship-grapher","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "agent-search-engine"}) SET a += {"id":"agent-search-engine","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "agent-tagger"}) SET a += {"id":"agent-tagger","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "content-calendar-orchestrator-agent"}) SET a += {"id":"content-calendar-orchestrator-agent","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "gemini"}) SET a += {"id":"gemini","kind":"sub","cluster":"orchestration","daccRole":"worker","platform":"gemini","workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "inter-agentic-workflow-definer"}) SET a += {"id":"inter-agentic-workflow-definer","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "interoperability-protocol-agent"}) SET a += {"id":"interoperability-protocol-agent","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "orchestrator-agent"}) SET a += {"id":"orchestrator-agent","kind":"primary","cluster":"orchestration","daccRole":"worker","platform":null,"workerAction":"orchestrator","batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "orchestrator-agent-copy"}) SET a += {"id":"orchestrator-agent-copy","kind":"sub","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "master-clock-baton"}) SET a += {"id":"master-clock-baton","kind":"infra","cluster":"runtime-infra","daccRole":"orchestrator","platform":"master-clock","workerAction":null,"batonHolder":true,"batonIdentity":"ORCHESTRATOR-{timestamp}"};
+MERGE (a:Agent {id: "antigravity-platform"}) SET a += {"id":"antigravity-platform","kind":"platform","cluster":"fulfillment","daccRole":"worker","platform":"antigravity","workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-archaeology-integrity-team-orchestrator"}) SET a += {"id":"personal-archaeology-integrity-team-orchestrator","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-archaeology-master-orchestrator"}) SET a += {"id":"personal-archaeology-master-orchestrator","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-archaeology-narrative-team-orchestrator"}) SET a += {"id":"personal-archaeology-narrative-team-orchestrator","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-archaeology-source-team-orchestrator"}) SET a += {"id":"personal-archaeology-source-team-orchestrator","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-historical-archaeologist"}) SET a += {"id":"personal-historical-archaeologist","kind":"sub","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "print-on-demand-manager-agent"}) SET a += {"id":"print-on-demand-manager-agent","kind":"sub","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "task-agent-router"}) SET a += {"id":"task-agent-router","kind":"primary","cluster":"orchestration","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "ad-network-manager-agent"}) SET a += {"id":"ad-network-manager-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "analytics-and-reporting-agent"}) SET a += {"id":"analytics-and-reporting-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "content-writer-agent"}) SET a += {"id":"content-writer-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "digital-product-creator-agent"}) SET a += {"id":"digital-product-creator-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "digital-product-factory-agent"}) SET a += {"id":"digital-product-factory-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "fan-funding-agent"}) SET a += {"id":"fan-funding-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "live-stream-manager-agent"}) SET a += {"id":"live-stream-manager-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "media-evidence-investigator"}) SET a += {"id":"media-evidence-investigator","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "storyboard-artist-agent"}) SET a += {"id":"storyboard-artist-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "technical-setup-agent"}) SET a += {"id":"technical-setup-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "twip-orchestration-bridge"}) SET a += {"id":"twip-orchestration-bridge","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "user-feedback-analysis-agent"}) SET a += {"id":"user-feedback-analysis-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "video-editor-agent"}) SET a += {"id":"video-editor-agent","kind":"sub","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "yt-niche-strategy-agent"}) SET a += {"id":"yt-niche-strategy-agent","kind":"primary","cluster":"content","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "content-calendar-agent"}) SET a += {"id":"content-calendar-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "content-refresh-agent"}) SET a += {"id":"content-refresh-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "keyword-research-agent"}) SET a += {"id":"keyword-research-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "link-building-agent"}) SET a += {"id":"link-building-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "seo-optimizer-agent"}) SET a += {"id":"seo-optimizer-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "technical-seo-auditor-agent"}) SET a += {"id":"technical-seo-auditor-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "yt-seo-optimizer-agent"}) SET a += {"id":"yt-seo-optimizer-agent","kind":"primary","cluster":"seo","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "algorithm-adaptation-agent"}) SET a += {"id":"algorithm-adaptation-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "audience-growth-agent"}) SET a += {"id":"audience-growth-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "audience-persona-architect-agent"}) SET a += {"id":"audience-persona-architect-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "audience-segmentation-agent"}) SET a += {"id":"audience-segmentation-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "community-engagement-agent"}) SET a += {"id":"community-engagement-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "community-manager-agent"}) SET a += {"id":"community-manager-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "content-repurposing-agent"}) SET a += {"id":"content-repurposing-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "facebook-strategy-agent"}) SET a += {"id":"facebook-strategy-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "instagram-strategy-agent"}) SET a += {"id":"instagram-strategy-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "scout-llm-opportunities"}) SET a += {"id":"scout-llm-opportunities","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "scriptwriter-agent"}) SET a += {"id":"scriptwriter-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "social-selling-agent"}) SET a += {"id":"social-selling-agent","kind":"sub","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "tiktok-strategy-agent"}) SET a += {"id":"tiktok-strategy-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "traffic-generation-agent"}) SET a += {"id":"traffic-generation-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "x-strategy-agent"}) SET a += {"id":"x-strategy-agent","kind":"primary","cluster":"social","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "ab-testing-optimizer-agent"}) SET a += {"id":"ab-testing-optimizer-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "affiliate-link-manager-agent"}) SET a += {"id":"affiliate-link-manager-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "audio-recording-agent"}) SET a += {"id":"audio-recording-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "code-fossil-investigator"}) SET a += {"id":"code-fossil-investigator","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "cognitive-bias-optimizer-agent"}) SET a += {"id":"cognitive-bias-optimizer-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "cro-process-agent"}) SET a += {"id":"cro-process-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "customer-journey-map-agent"}) SET a += {"id":"customer-journey-map-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "ecom-platform-manager-agent"}) SET a += {"id":"ecom-platform-manager-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "equipment-recommendation-agent"}) SET a += {"id":"equipment-recommendation-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "ethical-bias-auditor-agent"}) SET a += {"id":"ethical-bias-auditor-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "funnel-economics-analyst-agent"}) SET a += {"id":"funnel-economics-analyst-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "information-retrieval-agent"}) SET a += {"id":"information-retrieval-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "lead-capture-agent"}) SET a += {"id":"lead-capture-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "lead-magnet-funnel-agent"}) SET a += {"id":"lead-magnet-funnel-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "master-of-taxonomies"}) SET a += {"id":"master-of-taxonomies","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "monetization-strategy-agent"}) SET a += {"id":"monetization-strategy-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "niche-analyst-agent"}) SET a += {"id":"niche-analyst-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "oto-sequence-architect-agent"}) SET a += {"id":"oto-sequence-architect-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personalized-content-recommendation-agent"}) SET a += {"id":"personalized-content-recommendation-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "sales-funnel-architect-agent"}) SET a += {"id":"sales-funnel-architect-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "value-ladder-architect-agent"}) SET a += {"id":"value-ladder-architect-agent","kind":"primary","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "visual-asset-creator-agent"}) SET a += {"id":"visual-asset-creator-agent","kind":"sub","cluster":"funnel","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "episode-planner-agent"}) SET a += {"id":"episode-planner-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "guest-booking-agent"}) SET a += {"id":"guest-booking-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "guest-relationship-manager-agent"}) SET a += {"id":"guest-relationship-manager-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-ad-network-agent"}) SET a += {"id":"podcast-ad-network-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-affiliate-agent"}) SET a += {"id":"podcast-affiliate-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-analytics-agent"}) SET a += {"id":"podcast-analytics-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-audio-editor-agent"}) SET a += {"id":"podcast-audio-editor-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-distribution-agent"}) SET a += {"id":"podcast-distribution-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-equipment-agent"}) SET a += {"id":"podcast-equipment-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-format-designer-agent"}) SET a += {"id":"podcast-format-designer-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-hosting-setup-agent"}) SET a += {"id":"podcast-hosting-setup-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-monetization-strategy-agent"}) SET a += {"id":"podcast-monetization-strategy-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-niche-analyst-agent"}) SET a += {"id":"podcast-niche-analyst-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-promotion-agent"}) SET a += {"id":"podcast-promotion-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-seo-agent"}) SET a += {"id":"podcast-seo-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "podcast-video-editor-agent"}) SET a += {"id":"podcast-video-editor-agent","kind":"sub","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "sponsorship-outreach-agent"}) SET a += {"id":"sponsorship-outreach-agent","kind":"primary","cluster":"podcast","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "brand-identity-agent"}) SET a += {"id":"brand-identity-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "brand-outreach-agent"}) SET a += {"id":"brand-outreach-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "brand-prospecting-agent"}) SET a += {"id":"brand-prospecting-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "campaign-execution-agent"}) SET a += {"id":"campaign-execution-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "campaign-reporting-agent"}) SET a += {"id":"campaign-reporting-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "competitive-intelligence-agent"}) SET a += {"id":"competitive-intelligence-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "contract-manager-agent"}) SET a += {"id":"contract-manager-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "deal-negotiator-agent"}) SET a += {"id":"deal-negotiator-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "email-marketing-automation-agent"}) SET a += {"id":"email-marketing-automation-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "financial-manager-agent"}) SET a += {"id":"financial-manager-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "influencer-media-kit-agent"}) SET a += {"id":"influencer-media-kit-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "influencer-niche-agent"}) SET a += {"id":"influencer-niche-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "personal-brand-architect-agent"}) SET a += {"id":"personal-brand-architect-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "platform-selection-agent"}) SET a += {"id":"platform-selection-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "reputation-management-agent"}) SET a += {"id":"reputation-management-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "talent-manager-agent"}) SET a += {"id":"talent-manager-agent","kind":"sub","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "yt-content-strategy-agent"}) SET a += {"id":"yt-content-strategy-agent","kind":"primary","cluster":"brand","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "asset-sourcer-agent"}) SET a += {"id":"asset-sourcer-agent","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "auth-blocker-sentinel"}) SET a += {"id":"auth-blocker-sentinel","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "digital-asset-manager-agent"}) SET a += {"id":"digital-asset-manager-agent","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "legal-compliance-agent"}) SET a += {"id":"legal-compliance-agent","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "local-ai-claude-code-cli"}) SET a += {"id":"local-ai-claude-code-cli","kind":"sub","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "local-ai-gemini-cli"}) SET a += {"id":"local-ai-gemini-cli","kind":"sub","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "notes-ledger-investigator"}) SET a += {"id":"notes-ledger-investigator","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "productivity-and-burnout-prevention-agent"}) SET a += {"id":"productivity-and-burnout-prevention-agent","kind":"sub","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "repo-lineage-investigator"}) SET a += {"id":"repo-lineage-investigator","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "tax-compliance-agent"}) SET a += {"id":"tax-compliance-agent","kind":"primary","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
+MERGE (a:Agent {id: "timeline-synthesis-investigator"}) SET a += {"id":"timeline-synthesis-investigator","kind":"sub","cluster":"ops","daccRole":null,"platform":null,"workerAction":null,"batonHolder":false,"batonIdentity":null};
 
-UNWIND [
-  {id:'agent-registry-manager',kind:'primary',cluster:'orchestration'},
-  {id:'agent-relationship-grapher',kind:'primary',cluster:'orchestration'},
-  {id:'agent-search-engine',kind:'primary',cluster:'orchestration'},
-  {id:'agent-tagger',kind:'primary',cluster:'orchestration'},
-  {id:'content-calendar-orchestrator-agent',kind:'primary',cluster:'orchestration'},
-  {id:'gemini',kind:'sub',cluster:'orchestration'},
-  {id:'inter-agentic-workflow-definer',kind:'primary',cluster:'orchestration'},
-  {id:'interoperability-protocol-agent',kind:'primary',cluster:'orchestration'},
-  {id:'orchestrator-agent',kind:'primary',cluster:'orchestration'},
-  {id:'orchestrator-agent-copy',kind:'sub',cluster:'orchestration'},
-  {id:'personal-archaeology-integrity-team-orchestrator',kind:'primary',cluster:'orchestration'},
-  {id:'personal-archaeology-master-orchestrator',kind:'primary',cluster:'orchestration'},
-  {id:'personal-archaeology-narrative-team-orchestrator',kind:'primary',cluster:'orchestration'},
-  {id:'personal-archaeology-source-team-orchestrator',kind:'primary',cluster:'orchestration'},
-  {id:'personal-historical-archaeologist',kind:'sub',cluster:'orchestration'},
-  {id:'print-on-demand-manager-agent',kind:'sub',cluster:'orchestration'},
-  {id:'task-agent-router',kind:'primary',cluster:'orchestration'},
-  {id:'ad-network-manager-agent',kind:'primary',cluster:'content'},
-  {id:'analytics-and-reporting-agent',kind:'primary',cluster:'content'},
-  {id:'content-writer-agent',kind:'primary',cluster:'content'},
-  {id:'digital-product-creator-agent',kind:'primary',cluster:'content'},
-  {id:'digital-product-factory-agent',kind:'primary',cluster:'content'},
-  {id:'fan-funding-agent',kind:'sub',cluster:'content'},
-  {id:'live-stream-manager-agent',kind:'sub',cluster:'content'},
-  {id:'media-evidence-investigator',kind:'primary',cluster:'content'},
-  {id:'storyboard-artist-agent',kind:'sub',cluster:'content'},
-  {id:'technical-setup-agent',kind:'sub',cluster:'content'},
-  {id:'twip-orchestration-bridge',kind:'sub',cluster:'content'},
-  {id:'user-feedback-analysis-agent',kind:'sub',cluster:'content'},
-  {id:'video-editor-agent',kind:'sub',cluster:'content'},
-  {id:'yt-niche-strategy-agent',kind:'primary',cluster:'content'},
-  {id:'content-calendar-agent',kind:'primary',cluster:'seo'},
-  {id:'content-refresh-agent',kind:'primary',cluster:'seo'},
-  {id:'keyword-research-agent',kind:'primary',cluster:'seo'},
-  {id:'link-building-agent',kind:'primary',cluster:'seo'},
-  {id:'seo-optimizer-agent',kind:'primary',cluster:'seo'},
-  {id:'technical-seo-auditor-agent',kind:'primary',cluster:'seo'},
-  {id:'yt-seo-optimizer-agent',kind:'primary',cluster:'seo'},
-  {id:'algorithm-adaptation-agent',kind:'sub',cluster:'social'},
-  {id:'audience-growth-agent',kind:'primary',cluster:'social'},
-  {id:'audience-persona-architect-agent',kind:'sub',cluster:'social'},
-  {id:'audience-segmentation-agent',kind:'sub',cluster:'social'},
-  {id:'community-engagement-agent',kind:'sub',cluster:'social'},
-  {id:'community-manager-agent',kind:'primary',cluster:'social'},
-  {id:'content-repurposing-agent',kind:'primary',cluster:'social'},
-  {id:'facebook-strategy-agent',kind:'sub',cluster:'social'},
-  {id:'instagram-strategy-agent',kind:'sub',cluster:'social'},
-  {id:'scout-llm-opportunities',kind:'sub',cluster:'social'},
-  {id:'scriptwriter-agent',kind:'primary',cluster:'social'},
-  {id:'social-selling-agent',kind:'sub',cluster:'social'},
-  {id:'tiktok-strategy-agent',kind:'primary',cluster:'social'},
-  {id:'traffic-generation-agent',kind:'primary',cluster:'social'},
-  {id:'x-strategy-agent',kind:'primary',cluster:'social'},
-  {id:'ab-testing-optimizer-agent',kind:'primary',cluster:'funnel'},
-  {id:'affiliate-link-manager-agent',kind:'primary',cluster:'funnel'},
-  {id:'audio-recording-agent',kind:'sub',cluster:'funnel'},
-  {id:'code-fossil-investigator',kind:'sub',cluster:'funnel'},
-  {id:'cognitive-bias-optimizer-agent',kind:'sub',cluster:'funnel'},
-  {id:'cro-process-agent',kind:'primary',cluster:'funnel'},
-  {id:'customer-journey-map-agent',kind:'sub',cluster:'funnel'},
-  {id:'ecom-platform-manager-agent',kind:'sub',cluster:'funnel'},
-  {id:'equipment-recommendation-agent',kind:'sub',cluster:'funnel'},
-  {id:'ethical-bias-auditor-agent',kind:'sub',cluster:'funnel'},
-  {id:'funnel-economics-analyst-agent',kind:'sub',cluster:'funnel'},
-  {id:'information-retrieval-agent',kind:'sub',cluster:'funnel'},
-  {id:'lead-capture-agent',kind:'primary',cluster:'funnel'},
-  {id:'lead-magnet-funnel-agent',kind:'primary',cluster:'funnel'},
-  {id:'master-of-taxonomies',kind:'sub',cluster:'funnel'},
-  {id:'monetization-strategy-agent',kind:'primary',cluster:'funnel'},
-  {id:'niche-analyst-agent',kind:'sub',cluster:'funnel'},
-  {id:'oto-sequence-architect-agent',kind:'sub',cluster:'funnel'},
-  {id:'personalized-content-recommendation-agent',kind:'primary',cluster:'funnel'},
-  {id:'sales-funnel-architect-agent',kind:'sub',cluster:'funnel'},
-  {id:'value-ladder-architect-agent',kind:'primary',cluster:'funnel'},
-  {id:'visual-asset-creator-agent',kind:'sub',cluster:'funnel'},
-  {id:'episode-planner-agent',kind:'sub',cluster:'podcast'},
-  {id:'guest-booking-agent',kind:'sub',cluster:'podcast'},
-  {id:'guest-relationship-manager-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-ad-network-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-affiliate-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-analytics-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-audio-editor-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-distribution-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-equipment-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-format-designer-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-hosting-setup-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-monetization-strategy-agent',kind:'sub',cluster:'podcast'},
-  {id:'podcast-niche-analyst-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-promotion-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-seo-agent',kind:'primary',cluster:'podcast'},
-  {id:'podcast-video-editor-agent',kind:'sub',cluster:'podcast'},
-  {id:'sponsorship-outreach-agent',kind:'primary',cluster:'podcast'},
-  {id:'brand-identity-agent',kind:'primary',cluster:'brand'},
-  {id:'brand-outreach-agent',kind:'sub',cluster:'brand'},
-  {id:'brand-prospecting-agent',kind:'sub',cluster:'brand'},
-  {id:'campaign-execution-agent',kind:'primary',cluster:'brand'},
-  {id:'campaign-reporting-agent',kind:'primary',cluster:'brand'},
-  {id:'competitive-intelligence-agent',kind:'primary',cluster:'brand'},
-  {id:'contract-manager-agent',kind:'sub',cluster:'brand'},
-  {id:'deal-negotiator-agent',kind:'sub',cluster:'brand'},
-  {id:'email-marketing-automation-agent',kind:'sub',cluster:'brand'},
-  {id:'financial-manager-agent',kind:'primary',cluster:'brand'},
-  {id:'influencer-media-kit-agent',kind:'sub',cluster:'brand'},
-  {id:'influencer-niche-agent',kind:'sub',cluster:'brand'},
-  {id:'personal-brand-architect-agent',kind:'sub',cluster:'brand'},
-  {id:'platform-selection-agent',kind:'sub',cluster:'brand'},
-  {id:'reputation-management-agent',kind:'primary',cluster:'brand'},
-  {id:'talent-manager-agent',kind:'sub',cluster:'brand'},
-  {id:'yt-content-strategy-agent',kind:'primary',cluster:'brand'},
-  {id:'asset-sourcer-agent',kind:'primary',cluster:'ops'},
-  {id:'auth-blocker-sentinel',kind:'primary',cluster:'ops'},
-  {id:'digital-asset-manager-agent',kind:'primary',cluster:'ops'},
-  {id:'legal-compliance-agent',kind:'primary',cluster:'ops'},
-  {id:'local-ai-claude-code-cli',kind:'sub',cluster:'ops'},
-  {id:'local-ai-gemini-cli',kind:'sub',cluster:'ops'},
-  {id:'notes-ledger-investigator',kind:'primary',cluster:'ops'},
-  {id:'productivity-and-burnout-prevention-agent',kind:'sub',cluster:'ops'},
-  {id:'repo-lineage-investigator',kind:'primary',cluster:'ops'},
-  {id:'tax-compliance-agent',kind:'primary',cluster:'ops'},
-  {id:'timeline-synthesis-investigator',kind:'sub',cluster:'ops'}
-] AS row
-MERGE (a:Agent {id: row.id})
-SET a.kind = row.kind,
-    a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-04-07T13:44:06Z');
-
-UNWIND [
-  {s:'ab-testing-optimizer-agent',t:'analytics-and-reporting-agent',rel:'DEPENDS_ON',strength:0.89,risk:'',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'analytics-and-reporting-agent',rel:'MEASURED_BY',strength:0.89,risk:'',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'audience-growth-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'cognitive-bias-optimizer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'email-marketing-automation-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'lead-magnet-funnel-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'ab-testing-optimizer-agent',t:'traffic-generation-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'ad-network-manager-agent',t:'analytics-and-reporting-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'ad-network-manager-agent',t:'ethical-bias-auditor-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'ad-network-manager-agent',t:'user-feedback-analysis-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'ad-network-manager-agent',t:'yt-niche-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'affiliate-link-manager-agent',t:'ab-testing-optimizer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'affiliate-link-manager-agent',t:'algorithm-adaptation-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'affiliate-link-manager-agent',t:'audience-persona-architect-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'affiliate-link-manager-agent',t:'brand-identity-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'agent-registry-manager',t:'agent-search-engine',rel:'INDEXES_FOR',strength:0.8,risk:'',direction:'unidirectional'},
-  {s:'agent-registry-manager',t:'agent-tagger',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'agent-relationship-grapher',t:'inter-agentic-workflow-definer',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'agent-relationship-grapher',t:'orchestrator-agent',rel:'ANALYZES',strength:0.74,risk:'',direction:'bidirectional'},
-  {s:'agent-search-engine',t:'orchestrator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'agent-tagger',t:'agent-search-engine',rel:'ENRICHES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'agent-tagger',t:'agent-search-engine',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'agent-tagger',t:'interoperability-protocol-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'algorithm-adaptation-agent',t:'digital-product-creator-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'algorithm-adaptation-agent',t:'information-retrieval-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'algorithm-adaptation-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.84,risk:'',direction:'unidirectional'},
-  {s:'analytics-and-reporting-agent',t:'content-refresh-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'analytics-and-reporting-agent',t:'content-writer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'analytics-and-reporting-agent',t:'ethical-bias-auditor-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'analytics-and-reporting-agent',t:'user-feedback-analysis-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'auth-blocker-sentinel',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'legal-compliance-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'link-building-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'productivity-and-burnout-prevention-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'tax-compliance-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'visual-asset-creator-agent',rel:'FEEDS',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'asset-sourcer-agent',t:'visual-asset-creator-agent',rel:'SUPPLIES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'audience-growth-agent',t:'campaign-reporting-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'audience-growth-agent',t:'community-engagement-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'audience-growth-agent',t:'community-manager-agent',rel:'FALLBACK',strength:0.73,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'audience-growth-agent',t:'competitive-intelligence-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'audience-growth-agent',t:'facebook-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'audience-persona-architect-agent',t:'brand-identity-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'audience-persona-architect-agent',t:'brand-outreach-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'audience-persona-architect-agent',t:'monetization-strategy-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'audience-segmentation-agent',t:'customer-journey-map-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'audience-segmentation-agent',t:'funnel-economics-analyst-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'audience-segmentation-agent',t:'value-ladder-architect-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'audio-recording-agent',t:'digital-asset-manager-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'audio-recording-agent',t:'fan-funding-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'audio-recording-agent',t:'podcast-ad-network-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'auth-blocker-sentinel',t:'code-fossil-investigator',rel:'DEPENDS_ON',strength:0.63,risk:'',direction:'unidirectional'},
-  {s:'auth-blocker-sentinel',t:'media-evidence-investigator',rel:'DEPENDS_ON',strength:0.63,risk:'',direction:'unidirectional'},
-  {s:'auth-blocker-sentinel',t:'notes-ledger-investigator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'auth-blocker-sentinel',t:'personal-archaeology-master-orchestrator',rel:'DEPENDS_ON',strength:0.66,risk:'',direction:'unidirectional'},
-  {s:'brand-identity-agent',t:'campaign-reporting-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'brand-identity-agent',t:'competitive-intelligence-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-identity-agent',t:'digital-product-creator-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'brand-identity-agent',t:'keyword-research-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'brand-outreach-agent',t:'brand-prospecting-agent',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-outreach-agent',t:'deal-negotiator-agent',rel:'FEEDS',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'brand-outreach-agent',t:'deal-negotiator-agent',rel:'HANDOFF',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'brand-outreach-agent',t:'influencer-niche-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-outreach-agent',t:'personal-brand-architect-agent',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-prospecting-agent',t:'brand-outreach-agent',rel:'FEEDS',strength:0.9,risk:'',direction:'unidirectional'},
-  {s:'brand-prospecting-agent',t:'deal-negotiator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'brand-prospecting-agent',t:'influencer-niche-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-prospecting-agent',t:'personal-brand-architect-agent',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'brand-prospecting-agent',t:'platform-selection-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'campaign-reporting-agent',rel:'FEEDS',strength:0.88,risk:'',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'campaign-reporting-agent',rel:'HANDOFF',strength:0.88,risk:'',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'content-calendar-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'deal-negotiator-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'financial-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'legal-compliance-agent',rel:'DEPENDS_ON',strength:0.8,risk:'',direction:'unidirectional'},
-  {s:'campaign-execution-agent',t:'yt-content-strategy-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'campaign-reporting-agent',t:'community-manager-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'campaign-reporting-agent',t:'competitive-intelligence-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'campaign-reporting-agent',t:'influencer-media-kit-agent',rel:'FALLBACK',strength:0.73,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'campaign-reporting-agent',t:'reputation-management-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'code-fossil-investigator',t:'media-evidence-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'code-fossil-investigator',t:'notes-ledger-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'code-fossil-investigator',t:'repo-lineage-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'analytics-and-reporting-agent',rel:'DEPENDS_ON',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'analytics-and-reporting-agent',rel:'MEASURED_BY',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'email-marketing-automation-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'financial-manager-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'influencer-media-kit-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'cognitive-bias-optimizer-agent',t:'visual-asset-creator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'community-engagement-agent',t:'algorithm-adaptation-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'community-engagement-agent',t:'community-manager-agent',rel:'FALLBACK',strength:0.73,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'community-engagement-agent',t:'competitive-intelligence-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'community-engagement-agent',t:'instagram-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'community-manager-agent',t:'podcast-promotion-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'community-manager-agent',t:'social-selling-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'community-manager-agent',t:'traffic-generation-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'competitive-intelligence-agent',t:'brand-identity-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'competitive-intelligence-agent',t:'monetization-strategy-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'competitive-intelligence-agent',t:'talent-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'competitive-intelligence-agent',t:'traffic-generation-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'competitive-intelligence-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.79,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-agent',t:'content-writer-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-agent',t:'episode-planner-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-agent',t:'keyword-research-agent',rel:'DEPENDS_ON',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-agent',t:'seo-optimizer-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'content-calendar-agent',t:'technical-seo-auditor-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'content-calendar-orchestrator-agent',t:'agent-relationship-grapher',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'content-calendar-orchestrator-agent',t:'content-calendar-agent',rel:'OVERLAPS_WITH',strength:0.63,risk:'coordination_conflict',direction:'unidirectional'},
-  {s:'content-calendar-orchestrator-agent',t:'ethical-bias-auditor-agent',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-orchestrator-agent',t:'guest-relationship-manager-agent',rel:'DELEGATES',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'content-calendar-orchestrator-agent',t:'orchestrator-agent-copy',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'content-refresh-agent',t:'keyword-research-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'content-refresh-agent',t:'niche-analyst-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'content-refresh-agent',t:'podcast-seo-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'content-refresh-agent',t:'yt-seo-optimizer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'content-repurposing-agent',t:'live-stream-manager-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'content-repurposing-agent',t:'scriptwriter-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'content-repurposing-agent',t:'tiktok-strategy-agent',rel:'FALLBACK',strength:0.71,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'content-repurposing-agent',t:'yt-seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'ad-network-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'episode-planner-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'link-building-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'seo-optimizer-agent',rel:'FEEDS',strength:0.91,risk:'',direction:'unidirectional'},
-  {s:'content-writer-agent',t:'seo-optimizer-agent',rel:'HANDOFF',strength:0.91,risk:'',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'brand-outreach-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'campaign-execution-agent',rel:'DEPENDS_ON',strength:0.91,risk:'',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'campaign-execution-agent',rel:'GATES',strength:0.91,risk:'',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'customer-journey-map-agent',rel:'DEPENDS_ON',strength:0.56,risk:'',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'email-marketing-automation-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'legal-compliance-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'contract-manager-agent',t:'tax-compliance-agent',rel:'DEPENDS_ON',strength:0.56,risk:'',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'ab-testing-optimizer-agent',rel:'DELEGATES',strength:0.92,risk:'',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'ab-testing-optimizer-agent',rel:'ORCHESTRATES',strength:0.92,risk:'',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'affiliate-link-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'cognitive-bias-optimizer-agent',rel:'DELEGATES',strength:0.83,risk:'',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'cognitive-bias-optimizer-agent',rel:'ORCHESTRATES',strength:0.83,risk:'',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'customer-journey-map-agent',rel:'FALLBACK',strength:0.56,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'cro-process-agent',t:'funnel-economics-analyst-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'customer-journey-map-agent',t:'funnel-economics-analyst-agent',rel:'FALLBACK',strength:0.56,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'customer-journey-map-agent',t:'tax-compliance-agent',rel:'DEPENDS_ON',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'customer-journey-map-agent',t:'value-ladder-architect-agent',rel:'FALLBACK',strength:0.54,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'contract-manager-agent',rel:'DEPENDS_ON',strength:0.92,risk:'',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'contract-manager-agent',rel:'REQUIRES',strength:0.92,risk:'',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'email-marketing-automation-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'financial-manager-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'personal-brand-architect-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'deal-negotiator-agent',t:'sales-funnel-architect-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-asset-manager-agent',t:'auth-blocker-sentinel',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'digital-asset-manager-agent',t:'fan-funding-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-asset-manager-agent',t:'podcast-ad-network-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-asset-manager-agent',t:'podcast-audio-editor-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-asset-manager-agent',t:'tax-compliance-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'digital-product-creator-agent',t:'keyword-research-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'digital-product-creator-agent',t:'link-building-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-product-creator-agent',t:'niche-analyst-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'digital-product-creator-agent',t:'video-editor-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'digital-product-factory-agent',t:'media-evidence-investigator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'digital-product-factory-agent',t:'niche-analyst-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'digital-product-factory-agent',t:'seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'digital-product-factory-agent',t:'sponsorship-outreach-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'ecom-platform-manager-agent',t:'local-ai-claude-code-cli',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'ecom-platform-manager-agent',t:'local-ai-gemini-cli',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'ecom-platform-manager-agent',t:'print-on-demand-manager-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'email-marketing-automation-agent',t:'financial-manager-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'email-marketing-automation-agent',t:'influencer-media-kit-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'email-marketing-automation-agent',t:'lead-capture-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'episode-planner-agent',t:'equipment-recommendation-agent',rel:'DEPENDS_ON',strength:0.95,risk:'',direction:'unidirectional'},
-  {s:'episode-planner-agent',t:'podcast-equipment-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'episode-planner-agent',t:'seo-optimizer-agent',rel:'FEEDS',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'equipment-recommendation-agent',t:'podcast-equipment-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'equipment-recommendation-agent',t:'scriptwriter-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'equipment-recommendation-agent',t:'seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'ethical-bias-auditor-agent',t:'lead-magnet-funnel-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'ethical-bias-auditor-agent',t:'user-feedback-analysis-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'ethical-bias-auditor-agent',t:'visual-asset-creator-agent',rel:'FALLBACK',strength:0.62,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'facebook-strategy-agent',t:'instagram-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'facebook-strategy-agent',t:'social-selling-agent',rel:'FALLBACK',strength:0.81,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'facebook-strategy-agent',t:'tiktok-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'facebook-strategy-agent',t:'yt-seo-optimizer-agent',rel:'FEEDS',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'fan-funding-agent',t:'podcast-ad-network-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'fan-funding-agent',t:'podcast-audio-editor-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'fan-funding-agent',t:'podcast-hosting-setup-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'financial-manager-agent',t:'brand-identity-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'financial-manager-agent',t:'competitive-intelligence-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'financial-manager-agent',t:'funnel-economics-analyst-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'financial-manager-agent',t:'influencer-media-kit-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'financial-manager-agent',t:'oto-sequence-architect-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'funnel-economics-analyst-agent',t:'influencer-media-kit-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'funnel-economics-analyst-agent',t:'lead-capture-agent',rel:'FALLBACK',strength:0.56,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'funnel-economics-analyst-agent',t:'oto-sequence-architect-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'guest-booking-agent',t:'guest-relationship-manager-agent',rel:'FEEDS',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'guest-booking-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'guest-booking-agent',t:'talent-manager-agent',rel:'FEEDS',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'guest-relationship-manager-agent',t:'link-building-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'guest-relationship-manager-agent',t:'personalized-content-recommendation-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'guest-relationship-manager-agent',t:'podcast-analytics-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'guest-relationship-manager-agent',t:'podcast-distribution-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'influencer-media-kit-agent',t:'lead-capture-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'influencer-media-kit-agent',t:'oto-sequence-architect-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'influencer-media-kit-agent',t:'sponsorship-outreach-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'influencer-niche-agent',t:'personal-brand-architect-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'influencer-niche-agent',t:'platform-selection-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'influencer-niche-agent',t:'podcast-monetization-strategy-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'information-retrieval-agent',t:'platform-selection-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'information-retrieval-agent',t:'social-selling-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'information-retrieval-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'instagram-strategy-agent',t:'community-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'instagram-strategy-agent',t:'tiktok-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'instagram-strategy-agent',t:'x-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'instagram-strategy-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'interoperability-protocol-agent',t:'agent-search-engine',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'interoperability-protocol-agent',t:'local-ai-claude-code-cli',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'interoperability-protocol-agent',t:'local-ai-gemini-cli',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'interoperability-protocol-agent',t:'personal-archaeology-master-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'interoperability-protocol-agent',t:'productivity-and-burnout-prevention-agent',rel:'DELEGATES',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'keyword-research-agent',t:'content-writer-agent',rel:'FEEDS',strength:0.88,risk:'',direction:'unidirectional'},
-  {s:'keyword-research-agent',t:'link-building-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'keyword-research-agent',t:'niche-analyst-agent',rel:'DEPENDS_ON',strength:0.84,risk:'',direction:'unidirectional'},
-  {s:'keyword-research-agent',t:'podcast-seo-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'keyword-research-agent',t:'seo-optimizer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'lead-capture-agent',t:'lead-magnet-funnel-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'lead-capture-agent',t:'niche-analyst-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'lead-capture-agent',t:'oto-sequence-architect-agent',rel:'FALLBACK',strength:0.56,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'lead-capture-agent',t:'sponsorship-outreach-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'lead-magnet-funnel-agent',t:'personalized-content-recommendation-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'lead-magnet-funnel-agent',t:'podcast-analytics-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'lead-magnet-funnel-agent',t:'x-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'affiliate-link-manager-agent',rel:'DELEGATES',strength:0.9,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'affiliate-link-manager-agent',rel:'GOVERNS',strength:0.9,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'asset-sourcer-agent',rel:'DELEGATES',strength:0.89,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'asset-sourcer-agent',rel:'GOVERNS',strength:0.89,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'digital-asset-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'link-building-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'tax-compliance-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'legal-compliance-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.75,risk:'',direction:'unidirectional'},
-  {s:'link-building-agent',t:'content-refresh-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'link-building-agent',t:'niche-analyst-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'link-building-agent',t:'talent-manager-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'live-stream-manager-agent',t:'personalized-content-recommendation-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'live-stream-manager-agent',t:'video-editor-agent',rel:'FALLBACK',strength:0.54,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'live-stream-manager-agent',t:'yt-seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'local-ai-claude-code-cli',t:'local-ai-gemini-cli',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'local-ai-claude-code-cli',t:'productivity-and-burnout-prevention-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'local-ai-gemini-cli',t:'podcast-ad-network-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'local-ai-gemini-cli',t:'podcast-audio-editor-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'local-ai-gemini-cli',t:'productivity-and-burnout-prevention-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'master-of-taxonomies',t:'personal-archaeology-source-team-orchestrator',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'master-of-taxonomies',t:'personal-historical-archaeologist',rel:'DEPENDS_ON',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'media-evidence-investigator',t:'digital-product-creator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'media-evidence-investigator',t:'notes-ledger-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'media-evidence-investigator',t:'repo-lineage-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'media-evidence-investigator',t:'timeline-synthesis-investigator',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'monetization-strategy-agent',t:'lead-capture-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'monetization-strategy-agent',t:'platform-selection-agent',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'monetization-strategy-agent',t:'scriptwriter-agent',rel:'FEEDS',strength:0.84,risk:'',direction:'unidirectional'},
-  {s:'monetization-strategy-agent',t:'yt-content-strategy-agent',rel:'DEPENDS_ON',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'niche-analyst-agent',t:'code-fossil-investigator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'niche-analyst-agent',t:'podcast-seo-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'niche-analyst-agent',t:'seo-optimizer-agent',rel:'FEEDS',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'niche-analyst-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'notes-ledger-investigator',t:'personal-archaeology-master-orchestrator',rel:'DEPENDS_ON',strength:0.65,risk:'',direction:'unidirectional'},
-  {s:'notes-ledger-investigator',t:'repo-lineage-investigator',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'notes-ledger-investigator',t:'timeline-synthesis-investigator',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'agent-registry-manager',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'agent-relationship-grapher',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'agent-search-engine',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'agent-tagger',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'content-calendar-orchestrator-agent',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'content-calendar-orchestrator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'gemini',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'inter-agentic-workflow-definer',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'interoperability-protocol-agent',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'orchestrator-agent-copy',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-archaeology-integrity-team-orchestrator',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-archaeology-master-orchestrator',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-archaeology-narrative-team-orchestrator',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-archaeology-source-team-orchestrator',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-archaeology-source-team-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'print-on-demand-manager-agent',rel:'DELEGATES',strength:0.86,risk:'',direction:'unidirectional'},
-  {s:'orchestrator-agent',t:'task-agent-router',rel:'DELEGATES',strength:0.98,risk:'',direction:'unidirectional'},
-  {s:'oto-sequence-architect-agent',t:'reputation-management-agent',rel:'DEPENDS_ON',strength:0.56,risk:'',direction:'unidirectional'},
-  {s:'oto-sequence-architect-agent',t:'value-ladder-architect-agent',rel:'FALLBACK',strength:0.84,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'personal-archaeology-integrity-team-orchestrator',t:'personal-archaeology-master-orchestrator',rel:'DELEGATES',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-integrity-team-orchestrator',t:'personal-archaeology-narrative-team-orchestrator',rel:'DELEGATES',strength:0.75,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-integrity-team-orchestrator',t:'personal-archaeology-source-team-orchestrator',rel:'DELEGATES',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-master-orchestrator',t:'personal-archaeology-integrity-team-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'personal-archaeology-master-orchestrator',t:'personal-archaeology-narrative-team-orchestrator',rel:'DELEGATES',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-master-orchestrator',t:'personal-archaeology-source-team-orchestrator',rel:'DELEGATES',strength:0.72,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-master-orchestrator',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.72,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-narrative-team-orchestrator',t:'personal-archaeology-source-team-orchestrator',rel:'DELEGATES',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-narrative-team-orchestrator',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.66,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-narrative-team-orchestrator',t:'repo-lineage-investigator',rel:'DELEGATES',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-source-team-orchestrator',t:'interoperability-protocol-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'personal-archaeology-source-team-orchestrator',t:'personal-archaeology-master-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'personal-archaeology-source-team-orchestrator',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-source-team-orchestrator',t:'repo-lineage-investigator',rel:'DELEGATES',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'personal-archaeology-source-team-orchestrator',t:'timeline-synthesis-investigator',rel:'DELEGATES',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'personal-brand-architect-agent',t:'platform-selection-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'personal-brand-architect-agent',t:'podcast-affiliate-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'personal-brand-architect-agent',t:'podcast-monetization-strategy-agent',rel:'DEPENDS_ON',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'personal-historical-archaeologist',t:'repo-lineage-investigator',rel:'DELEGATES',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'personal-historical-archaeologist',t:'timeline-synthesis-investigator',rel:'DELEGATES',strength:0.61,risk:'',direction:'unidirectional'},
-  {s:'personalized-content-recommendation-agent',t:'monetization-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'personalized-content-recommendation-agent',t:'podcast-analytics-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'personalized-content-recommendation-agent',t:'podcast-seo-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'personalized-content-recommendation-agent',t:'tiktok-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'platform-selection-agent',t:'scriptwriter-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'platform-selection-agent',t:'yt-content-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-ad-network-agent',t:'podcast-audio-editor-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-ad-network-agent',t:'podcast-hosting-setup-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-ad-network-agent',t:'storyboard-artist-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'podcast-affiliate-agent',t:'podcast-monetization-strategy-agent',rel:'FALLBACK',strength:0.81,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-affiliate-agent',t:'podcast-niche-analyst-agent',rel:'FALLBACK',strength:0.84,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-affiliate-agent',t:'podcast-video-editor-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-affiliate-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-analytics-agent',t:'podcast-hosting-setup-agent',rel:'FALLBACK',strength:0.73,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-analytics-agent',t:'podcast-niche-analyst-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-analytics-agent',t:'podcast-video-editor-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-analytics-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-audio-editor-agent',t:'podcast-hosting-setup-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-audio-editor-agent',t:'storyboard-artist-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'podcast-audio-editor-agent',t:'video-editor-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'podcast-distribution-agent',t:'podcast-promotion-agent',rel:'ENABLES',strength:0.87,risk:'',direction:'unidirectional'},
-  {s:'podcast-distribution-agent',t:'podcast-promotion-agent',rel:'FEEDS',strength:0.87,risk:'',direction:'unidirectional'},
-  {s:'podcast-distribution-agent',t:'scout-llm-opportunities',rel:'DEPENDS_ON',strength:0.52,risk:'',direction:'unidirectional'},
-  {s:'podcast-distribution-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-equipment-agent',t:'podcast-format-designer-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-equipment-agent',t:'podcast-monetization-strategy-agent',rel:'FALLBACK',strength:0.77,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-equipment-agent',t:'twip-orchestration-bridge',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'podcast-format-designer-agent',t:'guest-relationship-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-format-designer-agent',t:'podcast-hosting-setup-agent',rel:'FEEDS',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'podcast-format-designer-agent',t:'podcast-hosting-setup-agent',rel:'HANDOFF',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'podcast-format-designer-agent',t:'storyboard-artist-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'podcast-format-designer-agent',t:'twip-orchestration-bridge',rel:'DEPENDS_ON',strength:0.95,risk:'',direction:'unidirectional'},
-  {s:'podcast-hosting-setup-agent',t:'podcast-distribution-agent',rel:'FEEDS',strength:0.93,risk:'',direction:'unidirectional'},
-  {s:'podcast-hosting-setup-agent',t:'podcast-distribution-agent',rel:'HANDOFF',strength:0.93,risk:'',direction:'unidirectional'},
-  {s:'podcast-hosting-setup-agent',t:'podcast-format-designer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-hosting-setup-agent',t:'storyboard-artist-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'podcast-hosting-setup-agent',t:'video-editor-agent',rel:'FEEDS',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'podcast-monetization-strategy-agent',t:'podcast-niche-analyst-agent',rel:'FALLBACK',strength:0.73,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-monetization-strategy-agent',t:'scriptwriter-agent',rel:'FEEDS',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'podcast-format-designer-agent',rel:'FEEDS',strength:0.85,risk:'',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'podcast-hosting-setup-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'podcast-seo-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'podcast-video-editor-agent',rel:'FEEDS',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'scriptwriter-agent',rel:'FEEDS',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'podcast-niche-analyst-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.71,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'guest-relationship-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'podcast-analytics-agent',rel:'DEPENDS_ON',strength:0.84,risk:'',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'podcast-analytics-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'podcast-analytics-agent',rel:'MEASURED_BY',strength:0.84,risk:'',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'reputation-management-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-promotion-agent',t:'traffic-generation-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'podcast-seo-agent',t:'podcast-affiliate-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-seo-agent',t:'tiktok-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'podcast-seo-agent',t:'yt-seo-optimizer-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'podcast-video-editor-agent',t:'episode-planner-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'podcast-video-editor-agent',t:'sponsorship-outreach-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'podcast-video-editor-agent',t:'video-editor-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'productivity-and-burnout-prevention-agent',t:'digital-asset-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'productivity-and-burnout-prevention-agent',t:'talent-manager-agent',rel:'DEPENDS_ON',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'repo-lineage-investigator',t:'timeline-synthesis-investigator',rel:'FALLBACK',strength:0.95,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'reputation-management-agent',t:'contract-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'reputation-management-agent',t:'social-selling-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'reputation-management-agent',t:'x-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'reputation-management-agent',t:'yt-content-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'sales-funnel-architect-agent',t:'lead-magnet-funnel-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'sales-funnel-architect-agent',t:'value-ladder-architect-agent',rel:'FALLBACK',strength:0.62,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'scout-llm-opportunities',t:'social-selling-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'scout-llm-opportunities',t:'tax-compliance-agent',rel:'DEPENDS_ON',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'scriptwriter-agent',t:'tiktok-strategy-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'scriptwriter-agent',t:'yt-content-strategy-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'seo-optimizer-agent',t:'content-calendar-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'seo-optimizer-agent',t:'technical-seo-auditor-agent',rel:'DEPENDS_ON',strength:0.79,risk:'',direction:'unidirectional'},
-  {s:'seo-optimizer-agent',t:'technical-seo-auditor-agent',rel:'VALIDATED_BY',strength:0.79,risk:'',direction:'unidirectional'},
-  {s:'social-selling-agent',t:'tax-compliance-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
-  {s:'sponsorship-outreach-agent',t:'podcast-niche-analyst-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'sponsorship-outreach-agent',t:'podcast-seo-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'sponsorship-outreach-agent',t:'talent-manager-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'storyboard-artist-agent',t:'video-editor-agent',rel:'FALLBACK',strength:0.62,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'storyboard-artist-agent',t:'visual-asset-creator-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'talent-manager-agent',t:'brand-identity-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'task-agent-router',t:'agent-registry-manager',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'task-agent-router',t:'analytics-and-reporting-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'audience-segmentation-agent',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'audio-recording-agent',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'campaign-execution-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'campaign-execution-agent',rel:'ROUTES_TO',strength:0.75,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'community-engagement-agent',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'community-manager-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'content-calendar-agent',rel:'ROUTES_TO',strength:0.74,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'content-calendar-orchestrator-agent',rel:'ROUTES_TO',strength:0.8,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'content-repurposing-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'content-writer-agent',rel:'ROUTES_TO',strength:0.72,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'cro-process-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'cro-process-agent',rel:'ROUTES_TO',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'ecom-platform-manager-agent',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'guest-booking-agent',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'keyword-research-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'keyword-research-agent',rel:'ROUTES_TO',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'legal-compliance-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'legal-compliance-agent',rel:'ROUTES_TO',strength:0.81,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'master-of-taxonomies',rel:'DELEGATES',strength:0.57,risk:'routing_backstop',direction:'unidirectional'},
-  {s:'task-agent-router',t:'podcast-promotion-agent',rel:'DELEGATES',strength:0.82,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'podcast-promotion-agent',rel:'ROUTES_TO',strength:0.66,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'seo-optimizer-agent',rel:'ROUTES_TO',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'task-agent-router',t:'technical-seo-auditor-agent',rel:'ROUTES_TO',strength:0.68,risk:'',direction:'unidirectional'},
-  {s:'tax-compliance-agent',t:'asset-sourcer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'tax-compliance-agent',t:'value-ladder-architect-agent',rel:'DEPENDS_ON',strength:0.54,risk:'',direction:'unidirectional'},
-  {s:'technical-seo-auditor-agent',t:'content-calendar-agent',rel:'FEEDBACK',strength:0.71,risk:'',direction:'unidirectional'},
-  {s:'technical-seo-auditor-agent',t:'link-building-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'technical-seo-auditor-agent',t:'technical-setup-agent',rel:'DEPENDS_ON',strength:0.52,risk:'',direction:'unidirectional'},
-  {s:'technical-seo-auditor-agent',t:'yt-seo-optimizer-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'technical-setup-agent',t:'user-feedback-analysis-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'technical-setup-agent',t:'visual-asset-creator-agent',rel:'FEEDS',strength:0.56,risk:'',direction:'unidirectional'},
-  {s:'tiktok-strategy-agent',t:'x-strategy-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'tiktok-strategy-agent',t:'yt-seo-optimizer-agent',rel:'FEEDS',strength:0.77,risk:'',direction:'unidirectional'},
-  {s:'timeline-synthesis-investigator',t:'local-ai-gemini-cli',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'traffic-generation-agent',t:'content-repurposing-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'traffic-generation-agent',t:'scriptwriter-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'traffic-generation-agent',t:'x-strategy-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
-  {s:'traffic-generation-agent',t:'yt-content-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'user-feedback-analysis-agent',t:'visual-asset-creator-agent',rel:'DEPENDS_ON',strength:0.62,risk:'',direction:'unidirectional'},
-  {s:'value-ladder-architect-agent',t:'sales-funnel-architect-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'video-editor-agent',t:'fan-funding-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'visual-asset-creator-agent',t:'value-ladder-architect-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'x-strategy-agent',t:'audience-growth-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'x-strategy-agent',t:'yt-content-strategy-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
-  {s:'x-strategy-agent',t:'yt-niche-strategy-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'x-strategy-agent',t:'yt-seo-optimizer-agent',rel:'FEEDS',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'yt-content-strategy-agent',t:'contract-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'yt-niche-strategy-agent',t:'digital-product-factory-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
-  {s:'yt-niche-strategy-agent',t:'yt-seo-optimizer-agent',rel:'FEEDS',strength:0.64,risk:'',direction:'unidirectional'},
-  {s:'yt-seo-optimizer-agent',t:'link-building-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'}
-] AS r
-MATCH (a:Agent {id: r.s})
-MATCH (b:Agent {id: r.t})
-MERGE (a)-[rel:RELATED {relationType: r.rel}]->(b)
-SET rel.strength = r.strength,
-    rel.risk = r.risk,
-    rel.direction = r.direction,
-    rel.updatedAt = datetime('2026-04-07T13:44:06Z');
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "MEASURED_BY"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "audience-growth-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "cognitive-bias-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "email-marketing-automation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "lead-magnet-funnel-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "ab-testing-optimizer-agent"}), (t:Agent {id: "traffic-generation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ad-network-manager-agent"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "ad-network-manager-agent"}), (t:Agent {id: "ethical-bias-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ad-network-manager-agent"}), (t:Agent {id: "user-feedback-analysis-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "ad-network-manager-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "affiliate-link-manager-agent"}), (t:Agent {id: "ab-testing-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "affiliate-link-manager-agent"}), (t:Agent {id: "algorithm-adaptation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "affiliate-link-manager-agent"}), (t:Agent {id: "audience-persona-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "affiliate-link-manager-agent"}), (t:Agent {id: "brand-identity-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "agent-registry-manager"}), (t:Agent {id: "agent-search-engine"}) MERGE (s)-[:RELATED {relationType: "INDEXES_FOR"}]->(t);
+MATCH (s:Agent {id: "agent-registry-manager"}), (t:Agent {id: "agent-tagger"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "agent-relationship-grapher"}), (t:Agent {id: "inter-agentic-workflow-definer"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "agent-relationship-grapher"}), (t:Agent {id: "orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "ANALYZES"}]->(t);
+MATCH (s:Agent {id: "agent-search-engine"}), (t:Agent {id: "orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "agent-tagger"}), (t:Agent {id: "agent-search-engine"}) MERGE (s)-[:RELATED {relationType: "ENRICHES"}]->(t);
+MATCH (s:Agent {id: "agent-tagger"}), (t:Agent {id: "agent-search-engine"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "agent-tagger"}), (t:Agent {id: "interoperability-protocol-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "algorithm-adaptation-agent"}), (t:Agent {id: "digital-product-creator-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "algorithm-adaptation-agent"}), (t:Agent {id: "information-retrieval-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "algorithm-adaptation-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "analytics-and-reporting-agent"}), (t:Agent {id: "content-refresh-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "analytics-and-reporting-agent"}), (t:Agent {id: "content-writer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "analytics-and-reporting-agent"}), (t:Agent {id: "ethical-bias-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "analytics-and-reporting-agent"}), (t:Agent {id: "user-feedback-analysis-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "auth-blocker-sentinel"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "legal-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "productivity-and-burnout-prevention-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "asset-sourcer-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "SUPPLIES"}]->(t);
+MATCH (s:Agent {id: "audience-growth-agent"}), (t:Agent {id: "campaign-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-growth-agent"}), (t:Agent {id: "community-engagement-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "audience-growth-agent"}), (t:Agent {id: "community-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "audience-growth-agent"}), (t:Agent {id: "competitive-intelligence-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-growth-agent"}), (t:Agent {id: "facebook-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "audience-persona-architect-agent"}), (t:Agent {id: "brand-identity-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-persona-architect-agent"}), (t:Agent {id: "brand-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-persona-architect-agent"}), (t:Agent {id: "monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-segmentation-agent"}), (t:Agent {id: "customer-journey-map-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-segmentation-agent"}), (t:Agent {id: "funnel-economics-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audience-segmentation-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audio-recording-agent"}), (t:Agent {id: "digital-asset-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audio-recording-agent"}), (t:Agent {id: "fan-funding-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "audio-recording-agent"}), (t:Agent {id: "podcast-ad-network-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "auth-blocker-sentinel"}), (t:Agent {id: "code-fossil-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "auth-blocker-sentinel"}), (t:Agent {id: "media-evidence-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "auth-blocker-sentinel"}), (t:Agent {id: "notes-ledger-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "auth-blocker-sentinel"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "brand-identity-agent"}), (t:Agent {id: "campaign-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-identity-agent"}), (t:Agent {id: "competitive-intelligence-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-identity-agent"}), (t:Agent {id: "digital-product-creator-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "brand-identity-agent"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "brand-outreach-agent"}), (t:Agent {id: "brand-prospecting-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-outreach-agent"}), (t:Agent {id: "deal-negotiator-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "brand-outreach-agent"}), (t:Agent {id: "deal-negotiator-agent"}) MERGE (s)-[:RELATED {relationType: "HANDOFF"}]->(t);
+MATCH (s:Agent {id: "brand-outreach-agent"}), (t:Agent {id: "influencer-niche-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-outreach-agent"}), (t:Agent {id: "personal-brand-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-prospecting-agent"}), (t:Agent {id: "brand-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "brand-prospecting-agent"}), (t:Agent {id: "deal-negotiator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-prospecting-agent"}), (t:Agent {id: "influencer-niche-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-prospecting-agent"}), (t:Agent {id: "personal-brand-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "brand-prospecting-agent"}), (t:Agent {id: "platform-selection-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "campaign-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "campaign-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "HANDOFF"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "content-calendar-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "deal-negotiator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "financial-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "legal-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "campaign-execution-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-reporting-agent"}), (t:Agent {id: "community-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "campaign-reporting-agent"}), (t:Agent {id: "competitive-intelligence-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-reporting-agent"}), (t:Agent {id: "influencer-media-kit-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "campaign-reporting-agent"}), (t:Agent {id: "reputation-management-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "code-fossil-investigator"}), (t:Agent {id: "media-evidence-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "code-fossil-investigator"}), (t:Agent {id: "notes-ledger-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "code-fossil-investigator"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "MEASURED_BY"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "email-marketing-automation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "financial-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "influencer-media-kit-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cognitive-bias-optimizer-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "community-engagement-agent"}), (t:Agent {id: "algorithm-adaptation-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "community-engagement-agent"}), (t:Agent {id: "community-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "community-engagement-agent"}), (t:Agent {id: "competitive-intelligence-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "community-engagement-agent"}), (t:Agent {id: "instagram-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "community-manager-agent"}), (t:Agent {id: "podcast-promotion-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "community-manager-agent"}), (t:Agent {id: "social-selling-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "community-manager-agent"}), (t:Agent {id: "traffic-generation-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "competitive-intelligence-agent"}), (t:Agent {id: "brand-identity-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "competitive-intelligence-agent"}), (t:Agent {id: "monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "competitive-intelligence-agent"}), (t:Agent {id: "talent-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "competitive-intelligence-agent"}), (t:Agent {id: "traffic-generation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "competitive-intelligence-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-calendar-agent"}), (t:Agent {id: "content-writer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-calendar-agent"}), (t:Agent {id: "episode-planner-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-calendar-agent"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-calendar-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-calendar-agent"}), (t:Agent {id: "technical-seo-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-calendar-orchestrator-agent"}), (t:Agent {id: "agent-relationship-grapher"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-calendar-orchestrator-agent"}), (t:Agent {id: "content-calendar-agent"}) MERGE (s)-[:RELATED {relationType: "OVERLAPS_WITH"}]->(t);
+MATCH (s:Agent {id: "content-calendar-orchestrator-agent"}), (t:Agent {id: "ethical-bias-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "content-calendar-orchestrator-agent"}), (t:Agent {id: "guest-relationship-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "content-calendar-orchestrator-agent"}), (t:Agent {id: "orchestrator-agent-copy"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "content-refresh-agent"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-refresh-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-refresh-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-refresh-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-repurposing-agent"}), (t:Agent {id: "live-stream-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-repurposing-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-repurposing-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-repurposing-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "ad-network-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "episode-planner-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "content-writer-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "HANDOFF"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "brand-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "campaign-execution-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "campaign-execution-agent"}) MERGE (s)-[:RELATED {relationType: "GATES"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "customer-journey-map-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "email-marketing-automation-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "legal-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "contract-manager-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "ab-testing-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "ab-testing-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "ORCHESTRATES"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "affiliate-link-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "cognitive-bias-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "cognitive-bias-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "ORCHESTRATES"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "customer-journey-map-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "cro-process-agent"}), (t:Agent {id: "funnel-economics-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "customer-journey-map-agent"}), (t:Agent {id: "funnel-economics-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "customer-journey-map-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "customer-journey-map-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "contract-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "contract-manager-agent"}) MERGE (s)-[:RELATED {relationType: "REQUIRES"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "email-marketing-automation-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "financial-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "personal-brand-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "deal-negotiator-agent"}), (t:Agent {id: "sales-funnel-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-asset-manager-agent"}), (t:Agent {id: "auth-blocker-sentinel"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "digital-asset-manager-agent"}), (t:Agent {id: "fan-funding-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-asset-manager-agent"}), (t:Agent {id: "podcast-ad-network-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-asset-manager-agent"}), (t:Agent {id: "podcast-audio-editor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-asset-manager-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "digital-product-creator-agent"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-product-creator-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-product-creator-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-product-creator-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "digital-product-factory-agent"}), (t:Agent {id: "media-evidence-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "digital-product-factory-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-product-factory-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "digital-product-factory-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ecom-platform-manager-agent"}), (t:Agent {id: "local-ai-claude-code-cli"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ecom-platform-manager-agent"}), (t:Agent {id: "local-ai-gemini-cli"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ecom-platform-manager-agent"}), (t:Agent {id: "print-on-demand-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "email-marketing-automation-agent"}), (t:Agent {id: "financial-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "email-marketing-automation-agent"}), (t:Agent {id: "influencer-media-kit-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "email-marketing-automation-agent"}), (t:Agent {id: "lead-capture-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "episode-planner-agent"}), (t:Agent {id: "equipment-recommendation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "episode-planner-agent"}), (t:Agent {id: "podcast-equipment-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "episode-planner-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "equipment-recommendation-agent"}), (t:Agent {id: "podcast-equipment-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "equipment-recommendation-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "equipment-recommendation-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ethical-bias-auditor-agent"}), (t:Agent {id: "lead-magnet-funnel-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "ethical-bias-auditor-agent"}), (t:Agent {id: "user-feedback-analysis-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "ethical-bias-auditor-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "facebook-strategy-agent"}), (t:Agent {id: "instagram-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "facebook-strategy-agent"}), (t:Agent {id: "social-selling-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "facebook-strategy-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "facebook-strategy-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "fan-funding-agent"}), (t:Agent {id: "podcast-ad-network-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "fan-funding-agent"}), (t:Agent {id: "podcast-audio-editor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "fan-funding-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "financial-manager-agent"}), (t:Agent {id: "brand-identity-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "financial-manager-agent"}), (t:Agent {id: "competitive-intelligence-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "financial-manager-agent"}), (t:Agent {id: "funnel-economics-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "financial-manager-agent"}), (t:Agent {id: "influencer-media-kit-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "financial-manager-agent"}), (t:Agent {id: "oto-sequence-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "funnel-economics-analyst-agent"}), (t:Agent {id: "influencer-media-kit-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "funnel-economics-analyst-agent"}), (t:Agent {id: "lead-capture-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "funnel-economics-analyst-agent"}), (t:Agent {id: "oto-sequence-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "guest-booking-agent"}), (t:Agent {id: "guest-relationship-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "guest-booking-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "guest-booking-agent"}), (t:Agent {id: "talent-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "guest-relationship-manager-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "guest-relationship-manager-agent"}), (t:Agent {id: "personalized-content-recommendation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "guest-relationship-manager-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "guest-relationship-manager-agent"}), (t:Agent {id: "podcast-distribution-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "influencer-media-kit-agent"}), (t:Agent {id: "lead-capture-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "influencer-media-kit-agent"}), (t:Agent {id: "oto-sequence-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "influencer-media-kit-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "influencer-niche-agent"}), (t:Agent {id: "personal-brand-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "influencer-niche-agent"}), (t:Agent {id: "platform-selection-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "influencer-niche-agent"}), (t:Agent {id: "podcast-monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "information-retrieval-agent"}), (t:Agent {id: "platform-selection-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "information-retrieval-agent"}), (t:Agent {id: "social-selling-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "information-retrieval-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "instagram-strategy-agent"}), (t:Agent {id: "community-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "instagram-strategy-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "instagram-strategy-agent"}), (t:Agent {id: "x-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "instagram-strategy-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "interoperability-protocol-agent"}), (t:Agent {id: "agent-search-engine"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "interoperability-protocol-agent"}), (t:Agent {id: "local-ai-claude-code-cli"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "interoperability-protocol-agent"}), (t:Agent {id: "local-ai-gemini-cli"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "interoperability-protocol-agent"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "interoperability-protocol-agent"}), (t:Agent {id: "productivity-and-burnout-prevention-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "keyword-research-agent"}), (t:Agent {id: "content-writer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "keyword-research-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "keyword-research-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "keyword-research-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "keyword-research-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "lead-capture-agent"}), (t:Agent {id: "lead-magnet-funnel-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "lead-capture-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "lead-capture-agent"}), (t:Agent {id: "oto-sequence-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "lead-capture-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "lead-magnet-funnel-agent"}), (t:Agent {id: "personalized-content-recommendation-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "lead-magnet-funnel-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "lead-magnet-funnel-agent"}), (t:Agent {id: "x-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "affiliate-link-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "affiliate-link-manager-agent"}) MERGE (s)-[:RELATED {relationType: "GOVERNS"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "asset-sourcer-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "asset-sourcer-agent"}) MERGE (s)-[:RELATED {relationType: "GOVERNS"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "digital-asset-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "legal-compliance-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "link-building-agent"}), (t:Agent {id: "content-refresh-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "link-building-agent"}), (t:Agent {id: "niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "link-building-agent"}), (t:Agent {id: "talent-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "live-stream-manager-agent"}), (t:Agent {id: "personalized-content-recommendation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "live-stream-manager-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "live-stream-manager-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "local-ai-claude-code-cli"}), (t:Agent {id: "local-ai-gemini-cli"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "local-ai-claude-code-cli"}), (t:Agent {id: "productivity-and-burnout-prevention-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "local-ai-gemini-cli"}), (t:Agent {id: "podcast-ad-network-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "local-ai-gemini-cli"}), (t:Agent {id: "podcast-audio-editor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "local-ai-gemini-cli"}), (t:Agent {id: "productivity-and-burnout-prevention-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "master-of-taxonomies"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "master-of-taxonomies"}), (t:Agent {id: "personal-historical-archaeologist"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "media-evidence-investigator"}), (t:Agent {id: "digital-product-creator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "media-evidence-investigator"}), (t:Agent {id: "notes-ledger-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "media-evidence-investigator"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "media-evidence-investigator"}), (t:Agent {id: "timeline-synthesis-investigator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "monetization-strategy-agent"}), (t:Agent {id: "lead-capture-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "monetization-strategy-agent"}), (t:Agent {id: "platform-selection-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "monetization-strategy-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "monetization-strategy-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "niche-analyst-agent"}), (t:Agent {id: "code-fossil-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "niche-analyst-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "niche-analyst-agent"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "niche-analyst-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "notes-ledger-investigator"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "notes-ledger-investigator"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "notes-ledger-investigator"}), (t:Agent {id: "timeline-synthesis-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "agent-registry-manager"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "agent-relationship-grapher"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "agent-search-engine"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "agent-tagger"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "content-calendar-orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "content-calendar-orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "gemini"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "inter-agentic-workflow-definer"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "interoperability-protocol-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "orchestrator-agent-copy"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-archaeology-integrity-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-archaeology-narrative-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "personal-historical-archaeologist"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "print-on-demand-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "orchestrator-agent"}), (t:Agent {id: "task-agent-router"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "oto-sequence-architect-agent"}), (t:Agent {id: "reputation-management-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "oto-sequence-architect-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-integrity-team-orchestrator"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-integrity-team-orchestrator"}), (t:Agent {id: "personal-archaeology-narrative-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-integrity-team-orchestrator"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-master-orchestrator"}), (t:Agent {id: "personal-archaeology-integrity-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-master-orchestrator"}), (t:Agent {id: "personal-archaeology-narrative-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-master-orchestrator"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-master-orchestrator"}), (t:Agent {id: "personal-historical-archaeologist"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-narrative-team-orchestrator"}), (t:Agent {id: "personal-archaeology-source-team-orchestrator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-narrative-team-orchestrator"}), (t:Agent {id: "personal-historical-archaeologist"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-narrative-team-orchestrator"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-source-team-orchestrator"}), (t:Agent {id: "interoperability-protocol-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-source-team-orchestrator"}), (t:Agent {id: "personal-archaeology-master-orchestrator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-source-team-orchestrator"}), (t:Agent {id: "personal-historical-archaeologist"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-source-team-orchestrator"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-archaeology-source-team-orchestrator"}), (t:Agent {id: "timeline-synthesis-investigator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-brand-architect-agent"}), (t:Agent {id: "platform-selection-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personal-brand-architect-agent"}), (t:Agent {id: "podcast-affiliate-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "personal-brand-architect-agent"}), (t:Agent {id: "podcast-monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "personal-historical-archaeologist"}), (t:Agent {id: "repo-lineage-investigator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personal-historical-archaeologist"}), (t:Agent {id: "timeline-synthesis-investigator"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "personalized-content-recommendation-agent"}), (t:Agent {id: "monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "personalized-content-recommendation-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "personalized-content-recommendation-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "personalized-content-recommendation-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "platform-selection-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "platform-selection-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-ad-network-agent"}), (t:Agent {id: "podcast-audio-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-ad-network-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-ad-network-agent"}), (t:Agent {id: "storyboard-artist-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-affiliate-agent"}), (t:Agent {id: "podcast-monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-affiliate-agent"}), (t:Agent {id: "podcast-niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-affiliate-agent"}), (t:Agent {id: "podcast-video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-affiliate-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-analytics-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-analytics-agent"}), (t:Agent {id: "podcast-niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-analytics-agent"}), (t:Agent {id: "podcast-video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-analytics-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-audio-editor-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-audio-editor-agent"}), (t:Agent {id: "storyboard-artist-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-audio-editor-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-distribution-agent"}), (t:Agent {id: "podcast-promotion-agent"}) MERGE (s)-[:RELATED {relationType: "ENABLES"}]->(t);
+MATCH (s:Agent {id: "podcast-distribution-agent"}), (t:Agent {id: "podcast-promotion-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-distribution-agent"}), (t:Agent {id: "scout-llm-opportunities"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-distribution-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-equipment-agent"}), (t:Agent {id: "podcast-format-designer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-equipment-agent"}), (t:Agent {id: "podcast-monetization-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-equipment-agent"}), (t:Agent {id: "twip-orchestration-bridge"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-format-designer-agent"}), (t:Agent {id: "guest-relationship-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-format-designer-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-format-designer-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "HANDOFF"}]->(t);
+MATCH (s:Agent {id: "podcast-format-designer-agent"}), (t:Agent {id: "storyboard-artist-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-format-designer-agent"}), (t:Agent {id: "twip-orchestration-bridge"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-hosting-setup-agent"}), (t:Agent {id: "podcast-distribution-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-hosting-setup-agent"}), (t:Agent {id: "podcast-distribution-agent"}) MERGE (s)-[:RELATED {relationType: "HANDOFF"}]->(t);
+MATCH (s:Agent {id: "podcast-hosting-setup-agent"}), (t:Agent {id: "podcast-format-designer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-hosting-setup-agent"}), (t:Agent {id: "storyboard-artist-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-hosting-setup-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-monetization-strategy-agent"}), (t:Agent {id: "podcast-niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-monetization-strategy-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "podcast-format-designer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "podcast-hosting-setup-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "podcast-video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "podcast-niche-analyst-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "guest-relationship-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "podcast-analytics-agent"}) MERGE (s)-[:RELATED {relationType: "MEASURED_BY"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "reputation-management-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-promotion-agent"}), (t:Agent {id: "traffic-generation-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-seo-agent"}), (t:Agent {id: "podcast-affiliate-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-seo-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-seo-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "podcast-video-editor-agent"}), (t:Agent {id: "episode-planner-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-video-editor-agent"}), (t:Agent {id: "sponsorship-outreach-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "podcast-video-editor-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "productivity-and-burnout-prevention-agent"}), (t:Agent {id: "digital-asset-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "productivity-and-burnout-prevention-agent"}), (t:Agent {id: "talent-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "repo-lineage-investigator"}), (t:Agent {id: "timeline-synthesis-investigator"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "reputation-management-agent"}), (t:Agent {id: "contract-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "reputation-management-agent"}), (t:Agent {id: "social-selling-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "reputation-management-agent"}), (t:Agent {id: "x-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "reputation-management-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "sales-funnel-architect-agent"}), (t:Agent {id: "lead-magnet-funnel-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "sales-funnel-architect-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "scout-llm-opportunities"}), (t:Agent {id: "social-selling-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "scout-llm-opportunities"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "scriptwriter-agent"}), (t:Agent {id: "tiktok-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "scriptwriter-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "seo-optimizer-agent"}), (t:Agent {id: "content-calendar-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "seo-optimizer-agent"}), (t:Agent {id: "technical-seo-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "seo-optimizer-agent"}), (t:Agent {id: "technical-seo-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "VALIDATED_BY"}]->(t);
+MATCH (s:Agent {id: "social-selling-agent"}), (t:Agent {id: "tax-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "sponsorship-outreach-agent"}), (t:Agent {id: "podcast-niche-analyst-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "sponsorship-outreach-agent"}), (t:Agent {id: "podcast-seo-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "sponsorship-outreach-agent"}), (t:Agent {id: "talent-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "storyboard-artist-agent"}), (t:Agent {id: "video-editor-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "storyboard-artist-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "talent-manager-agent"}), (t:Agent {id: "brand-identity-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "agent-registry-manager"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "analytics-and-reporting-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "audience-segmentation-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "audio-recording-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "campaign-execution-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "campaign-execution-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "community-engagement-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "community-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "content-calendar-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "content-calendar-orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "content-repurposing-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "content-writer-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "cro-process-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "cro-process-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "ecom-platform-manager-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "guest-booking-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "keyword-research-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "legal-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "legal-compliance-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "master-of-taxonomies"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "podcast-promotion-agent"}) MERGE (s)-[:RELATED {relationType: "DELEGATES"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "podcast-promotion-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "task-agent-router"}), (t:Agent {id: "technical-seo-auditor-agent"}) MERGE (s)-[:RELATED {relationType: "ROUTES_TO"}]->(t);
+MATCH (s:Agent {id: "tax-compliance-agent"}), (t:Agent {id: "asset-sourcer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "tax-compliance-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "technical-seo-auditor-agent"}), (t:Agent {id: "content-calendar-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDBACK"}]->(t);
+MATCH (s:Agent {id: "technical-seo-auditor-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "technical-seo-auditor-agent"}), (t:Agent {id: "technical-setup-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "technical-seo-auditor-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "technical-setup-agent"}), (t:Agent {id: "user-feedback-analysis-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "technical-setup-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "tiktok-strategy-agent"}), (t:Agent {id: "x-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "tiktok-strategy-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "timeline-synthesis-investigator"}), (t:Agent {id: "local-ai-gemini-cli"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "traffic-generation-agent"}), (t:Agent {id: "content-repurposing-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "traffic-generation-agent"}), (t:Agent {id: "scriptwriter-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "traffic-generation-agent"}), (t:Agent {id: "x-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "traffic-generation-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "user-feedback-analysis-agent"}), (t:Agent {id: "visual-asset-creator-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "value-ladder-architect-agent"}), (t:Agent {id: "sales-funnel-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "video-editor-agent"}), (t:Agent {id: "fan-funding-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "visual-asset-creator-agent"}), (t:Agent {id: "value-ladder-architect-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "x-strategy-agent"}), (t:Agent {id: "audience-growth-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "x-strategy-agent"}), (t:Agent {id: "yt-content-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "x-strategy-agent"}), (t:Agent {id: "yt-niche-strategy-agent"}) MERGE (s)-[:RELATED {relationType: "DEPENDS_ON"}]->(t);
+MATCH (s:Agent {id: "x-strategy-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "yt-content-strategy-agent"}), (t:Agent {id: "contract-manager-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "yt-niche-strategy-agent"}), (t:Agent {id: "digital-product-factory-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "yt-niche-strategy-agent"}), (t:Agent {id: "yt-seo-optimizer-agent"}) MERGE (s)-[:RELATED {relationType: "FEEDS"}]->(t);
+MATCH (s:Agent {id: "yt-seo-optimizer-agent"}), (t:Agent {id: "link-building-agent"}) MERGE (s)-[:RELATED {relationType: "FALLBACK"}]->(t);
+MATCH (s:Agent {id: "master-clock-baton"}), (t:Agent {id: "orchestrator-agent"}) MERGE (s)-[:RELATED {relationType: "GOVERNS"}]->(t);
+MATCH (s:Agent {id: "master-clock-baton"}), (t:Agent {id: "agent-registry-manager"}) MERGE (s)-[:RELATED {relationType: "GOVERNS"}]->(t);
+MATCH (s:Agent {id: "master-clock-baton"}), (t:Agent {id: "task-agent-router"}) MERGE (s)-[:RELATED {relationType: "GOVERNS"}]->(t);

@@ -72,49 +72,8 @@ try_env_sources() {
 }
 
 try_cloud_runtime_sources() {
-  if ! command -v cloud_runtime >/dev/null 2>&1; then
-    return 1
-  fi
-
-  local kv
-  kv="$(cloud_runtime variable list --service Redis -e "${CLOUD_RUNTIME_ENVIRONMENT_NAME}" -k 2>/dev/null || true)"
-  if [[ -z "${kv}" ]]; then
-    return 1
-  fi
-
-  local val
-  if running_inside_cloud_runtime; then
-    val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_URL"; then
-      return 0
-    fi
-    val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_PUBLIC_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_PUBLIC_URL"; then
-      return 0
-    fi
-  else
-    val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_PUBLIC_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_PUBLIC_URL"; then
-      return 0
-    fi
-    val="$(printf "%s\n" "${kv}" | sed -n 's/^REDIS_URL=//p' | head -n1)"
-    if emit_if_valid "${val}" "cloud_runtime:Redis:REDIS_URL"; then
-      return 0
-    fi
-  fi
-
-  local host port user pass
-  host="$(printf "%s\n" "${kv}" | sed -n 's/^REDISHOST=//p' | head -n1)"
-  port="$(printf "%s\n" "${kv}" | sed -n 's/^REDISPORT=//p' | head -n1)"
-  user="$(printf "%s\n" "${kv}" | sed -n 's/^REDISUSER=//p' | head -n1)"
-  pass="$(printf "%s\n" "${kv}" | sed -n 's/^REDISPASSWORD=//p' | head -n1)"
-  if [[ -n "${host}" && -n "${port}" && -n "${user}" && -n "${pass}" ]]; then
-    val="redis://${user}:${pass}@${host}:${port}"
-    if emit_if_valid "${val}" "cloud_runtime:Redis:host-port"; then
-      return 0
-    fi
-  fi
-
+  # Legacy Railway/cloud_runtime Redis discovery retired.
+  # Prefer REDIS_URL / Upstash env vars (see try_env_sources).
   return 1
 }
 

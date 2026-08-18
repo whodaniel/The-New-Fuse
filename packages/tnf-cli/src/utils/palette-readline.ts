@@ -31,9 +31,11 @@ import type * as readline from 'readline';
 import {
   PaletteController,
   PaletteRenderer,
+  isNavKey,
   type PaletteEntry,
   type PaletteKey,
   type PaletteTheme,
+  type RecentsLike,
 } from './command-palette.js';
 
 /** Live palette session bound to one readline interface. */
@@ -83,6 +85,33 @@ export function setReadlineLine(rl: readline.Interface, line: string): void {
   (rl as any)._refreshLine?.();
 }
 
+/**
+ * Ctrl chords the palette owns while it is open.
+ *
+ * Terminals that swallow PageUp/Home (tmux without extended keys, some SSH
+ * clients, most mobile terminal apps) leave the operator with no way to move
+ * more than one row at a time. The readline/emacs chords work everywhere and
+ * are what anyone who lives in a terminal reaches for anyway.
+ *
+ * The set is kept deliberately small. ^A/^E/^F/^B/^K/^W stay with readline's
+ * line editing — the operator is still editing a query while the palette is
+ * open, and silently repurposing those would be worse than the problem being
+ * solved. ^C and ^Z stay with the shell.
+ */
+const CTRL_NAV: Record<string, PaletteKey> = {
+  n: 'down',
+  p: 'up',
+  d: 'halfdown',
+  u: 'halfup',
+  g: 'escape',
+};
+
+/** Ctrl chord → palette key, or null when the palette should not claim it. */
+export function ctrlToPaletteKey(keyName: string | undefined): PaletteKey | null {
+  if (!keyName) return null;
+  return CTRL_NAV[keyName.toLowerCase()] ?? null;
+}
+
 export function toPaletteKey(keyName: string | undefined, shift: boolean): PaletteKey {
   switch (keyName) {
     case 'up':
@@ -93,6 +122,10 @@ export function toPaletteKey(keyName: string | undefined, shift: boolean): Palet
       return 'pageup';
     case 'pagedown':
       return 'pagedown';
+    case 'home':
+      return 'home';
+    case 'end':
+      return 'end';
     case 'return':
     case 'enter':
       return 'enter';
@@ -125,6 +158,8 @@ export interface AttachDeps {
    * a human never perceives the delay.
    */
   escapeDelayMs?: number;
+  /** Frecency store consulted while ranking. Omit to rank purely fuzzily. */
+  recents?: RecentsLike | null;
 }
 
 const DEFAULT_ESCAPE_DELAY_MS = 60;
@@ -168,7 +203,7 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
     columns: () => stdout.columns ?? 80,
     rows: () => stdout.rows ?? 24,
   });
-  const controller = new PaletteController(renderer, theme);
+  const controller = new PaletteController(renderer, theme, deps.recents ?? null);
   controller.setIndex(getIndex(projectRoot));
   state.controller = controller;
 
@@ -205,30 +240,30 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
   };
 
   const onKeypress = (_value: string, key: any) => {
-    // Any resolved key means the ESC was a sequence prefix, not a lone Escape.
     cancelEscapeTimer();
 
     let paletteKey = toPaletteKey(key?.name, Boolean(key?.shift));
 
-    // Escape does not arrive as `{name:'escape'}` in a real terminal.
-    //
-    // Node's keypress parser emits NOTHING for a lone ESC — it holds the byte
-    // in case an escape sequence follows — and once any key does follow, both
-    // bytes surface as a single `{meta:true}` chord. So the only observable
-    // form of "the operator pressed Escape" is a meta chord, and a palette
-    // that waits for `name === 'escape'` can never be dismissed. (Verified
-    // against readline.emitKeypressEvents; the fake-TTY test that synthesised
-    // `{name:'escape'}` directly hid this for exactly that reason.)
-    //
-    // Alt-chords are the collateral: Alt-B/Alt-F inside a `/query` also
-    // dismiss. That is the better trade — dismissal is one keystroke to undo,
-    // an undismissable palette is not.
     if (key?.meta && !key?.ctrl) {
       paletteKey = 'escape';
     } else if (key?.ctrl) {
-      // Ctrl chords belong to readline (Ctrl-C, Ctrl-U, word motion).
-      lastLine = String((rl as any).line || '');
-      if (controller.isOpen) controller.close();
+      const chord = controller.isOpen ? ctrlToPaletteKey(key?.name) : null;
+      if (!chord) {
+        lastLine = String((rl as any).line || '');
+        if (controller.isOpen) controller.close();
+        return;
+      }
+      // readline has already applied its own meaning for this chord to the
+      // buffer (^D deletes a character, for one), so the query is restored
+      // from the mirror after the palette consumes the keystroke.
+      if (chord === 'escape') {
+        controller.handle(lastLine, 'escape');
+        setReadlineLine(rl, lastLine);
+        return;
+      }
+      state.navigated = true;
+      controller.handle(lastLine, chord);
+      setReadlineLine(rl, lastLine);
       return;
     }
 
@@ -237,28 +272,33 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
       return;
     }
 
-    const isNav =
-      paletteKey === 'up' ||
-      paletteKey === 'down' ||
-      paletteKey === 'pageup' ||
-      paletteKey === 'pagedown';
+    const isNav = isNavKey(paletteKey);
 
     if (paletteKey === 'enter') {
       const outcome = controller.handle(lastLine, 'enter');
-      if (outcome.type === 'run') state.pending = outcome.entry;
+      if (outcome.type === 'run') {
+        state.pending = outcome.entry;
+        // Choosing from the palette is the only unambiguous "I meant this
+        // one" signal there is, so it is what feeds frecency. Typing a line
+        // by hand does not, because the operator never consulted the list.
+        try {
+          deps.recents?.record?.(outcome.entry.id);
+        } catch {
+          /* history is a nicety; never let it break submission */
+        }
+      }
       lastLine = '';
       return;
     }
 
+    if (isNav && !controller.isOpen) {
+      lastLine = String((rl as any).line || '');
+      return;
+    }
+
     if (isNav) {
-      if (!controller.isOpen) {
-        // Palette closed: leave the arrow keys to readline's history.
-        lastLine = String((rl as any).line || '');
-        return;
-      }
       state.navigated = true;
       controller.handle(lastLine, paletteKey);
-      // Undo readline's history recall so the typed query stays on screen.
       setReadlineLine(rl, lastLine);
       return;
     }
@@ -273,8 +313,15 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
     }
   };
 
+  const onResize = () => {
+    if (controller.isOpen) {
+      controller.render();
+    }
+  };
+
   stdin.on('keypress', onKeypress);
   stdin.on('data', onData);
+  stdout.on('resize', onResize);
 
   let disposed = false;
   state.dispose = () => {
@@ -284,6 +331,7 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
     controller.close();
     stdin.off?.('keypress', onKeypress);
     stdin.off?.('data', onData);
+    stdout.off?.('resize', onResize);
     if (typeof stdin.setRawMode === 'function') {
       try {
         stdin.setRawMode(false);

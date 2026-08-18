@@ -55,7 +55,7 @@ export default function LandingPage() {
             </div>
             {/* Hero Image - Responsive */}
             <div className="flex-1 w-full max-w-lg lg:max-w-none animate-slide-in-right">
-              <div className="relative aspect-square md:aspect-video rounded-md bg-linear-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-4 flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-video rounded-md bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-4 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg
@@ -95,7 +95,7 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-12">
             <div className="flex-1 animate-slide-in-left">
-              <div className="aspect-video rounded-md bg-linear-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+              <div className="aspect-video rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
                 <p className="text-muted-foreground">About Illustration</p>
               </div>
             </div>

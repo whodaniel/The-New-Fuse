@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { N8NWorkflow } from '@/types/resources';
@@ -68,7 +68,7 @@ export default function WorkflowBrowser() {
       case 'complex':
         return 'bg-red-500/10 text-red-400 border-red-500/20';
       default:
-        return 'bg-transparent0/10 text-gray-400 border-gray-500/20';
+        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
   };
 
@@ -264,7 +264,7 @@ export default function WorkflowBrowser() {
                       <span>
                         by <span className="text-white">{selectedWorkflow.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
+                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
                       <span>v{selectedWorkflow.version}</span>
                     </div>
                   </div>

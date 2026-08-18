@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import type {
-  PlayerState,
+  Annotation,
   AppView,
   Book,
-  Annotation,
-  PersonalBook,
   Notebook,
-  TimelineEvent,
+  PersonalBook,
+  PlayerState,
   SearchResult,
+  TimelineEvent,
 } from '../types';
 
 interface LibraryStore {
@@ -54,6 +54,9 @@ interface LibraryStore {
 
   thoughtStream: { id: string; text: string; timestamp: number }[];
   addThought: (text: string) => void;
+
+  relayStatus: 'connecting' | 'connected' | 'error' | 'disconnected';
+  setRelayStatus: (status: 'connecting' | 'connected' | 'error' | 'disconnected') => void;
 }
 
 export const useLibraryStore = create<LibraryStore>((set) => ({
@@ -66,21 +69,16 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
     speed: 2.5,
     isSprinting: false,
   },
-  updatePlayer: (update) =>
-    set((state) => ({ player: { ...state.player, ...update } })),
+  updatePlayer: (update) => set((state) => ({ player: { ...state.player, ...update } })),
 
   books: [],
-  addBooks: (books) =>
-    set((state) => ({ books: [...state.books, ...books] })),
+  addBooks: (books) => set((state) => ({ books: [...state.books, ...books] })),
 
   personalBooks: [],
-  addPersonalBook: (book) =>
-    set((state) => ({ personalBooks: [...state.personalBooks, book] })),
+  addPersonalBook: (book) => set((state) => ({ personalBooks: [...state.personalBooks, book] })),
   updatePersonalBook: (id, update) =>
     set((state) => ({
-      personalBooks: state.personalBooks.map((pb) =>
-        pb.id === id ? { ...pb, ...update } : pb,
-      ),
+      personalBooks: state.personalBooks.map((pb) => (pb.id === id ? { ...pb, ...update } : pb)),
     })),
   removePersonalBook: (id) =>
     set((state) => ({
@@ -102,7 +100,7 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
   updateAnnotation: (id, update) =>
     set((state) => ({
       annotations: state.annotations.map((a) =>
-        a.id === id ? { ...a, ...update, updatedAt: new Date() } : a,
+        a.id === id ? { ...a, ...update, updatedAt: new Date() } : a
       ),
     })),
   removeAnnotation: (id) =>
@@ -111,14 +109,11 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
     })),
 
   notebooks: [],
-  addNotebook: (notebook) =>
-    set((state) => ({ notebooks: [...state.notebooks, notebook] })),
+  addNotebook: (notebook) => set((state) => ({ notebooks: [...state.notebooks, notebook] })),
   updateNotebook: (id, update) =>
     set((state) => ({
       notebooks: state.notebooks.map((n) =>
-        n.id === id
-          ? { ...n, ...update, updatedAt: new Date() }
-          : n,
+        n.id === id ? { ...n, ...update, updatedAt: new Date() } : n
       ),
     })),
   removeNotebook: (id) =>
@@ -133,12 +128,10 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
     })),
 
   activeClassification: 'ddc',
-  setActiveClassification: (system) =>
-    set({ activeClassification: system }),
+  setActiveClassification: (system) => set({ activeClassification: system }),
 
   currentEnvironmentId: 'rundell-public-library',
-  setCurrentEnvironment: (id) =>
-    set({ currentEnvironmentId: id }),
+  setCurrentEnvironment: (id) => set({ currentEnvironmentId: id }),
 
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
@@ -153,4 +146,7 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
         { id: Math.random().toString(36).substr(2, 9), text, timestamp: Date.now() },
       ],
     })),
+
+  relayStatus: 'disconnected',
+  setRelayStatus: (status) => set({ relayStatus: status }),
 }));

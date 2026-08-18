@@ -5,6 +5,8 @@
 apps/*
 !apps/api/
 !apps/api/**
+!apps/api-gateway/
+!apps/api-gateway/**
 !packages/
 packages/*
 !packages/a2a-core/
@@ -39,6 +41,11 @@ packages/*
 !packages/infrastructure/**
 !packages/jules-skill/
 !packages/jules-skill/**
+# Depended on as workspace:* by api-gateway/frontend/extensions. Without this
+# re-include the tarball ships a packages/ tree missing it, and the workspace
+# link resolves to nothing inside the image.
+!packages/llm-catalog/
+!packages/llm-catalog/**
 !packages/mcp-core/
 !packages/mcp-core/**
 !packages/n8n-workflows/
@@ -53,6 +60,10 @@ packages/*
 !packages/relay-core/**
 !packages/security/
 !packages/security/**
+!packages/shared/
+!packages/shared/**
+!packages/tnf-browser/
+!packages/tnf-browser/**
 !packages/tnf-cli/
 !packages/tnf-cli/**
 !packages/tnf-core/
@@ -73,8 +84,33 @@ packages/*
 !pnpm-workspace.yaml
 !tsconfig.base.json
 !.npmrc
+# Required by any --frozen-lockfile install: the lockfile pins pnpmfileChecksum.
+!.pnpmfile.cjs
+# COPYed by scripts/deployment/Dockerfile.api-gateway; a missing source makes
+# the COPY itself fail, before any install runs.
+!tsconfig.json
+!tsconfig.standard.json
+!turbo.json
 !Dockerfile.api
+!Dockerfile.api-gateway
 !cloudbuild-api.yaml
+!scripts/
+!scripts/**
+!scripts/deployment/cloudbuild.gateway.yaml
+# Packaged stock banks for Library (Cloud Run fallback when FS banks slim)
+!data/
+!data/agent-bank/
+!data/agent-bank/**
+# Runtime bank sources scanned by AgentBankService / Dockerfile.api
+!.agent/
+!.agent/agents/
+!.agent/agents/**
+# skill-bank snapshots balloon the upload (~50MB+) and are not needed to run api-server
+.agent/skill-bank/
+.agent/skill-bank/**
+!.claude/
+!.claude/agents/
+!.claude/agents/**
 # Exclude node_modules and dist from all (these get rebuilt in Docker)
 **/node_modules/
 **/*.test.ts

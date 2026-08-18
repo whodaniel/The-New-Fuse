@@ -111,6 +111,16 @@ export const DEFAULT_PROVIDERS: ProviderDef[] = [
     enabled: true,
   },
   {
+    // SpaceXAI (formerly xAI). Flagship long-running agent model as of 2026-08-12:
+    // grok-4.6 (also via OpenRouter as x-ai/grok-4.6). Distinct from Grok Bot ETR.
+    id: 'xai',
+    name: 'SpaceXAI (xAI)',
+    envKey: 'XAI_API_KEY',
+    baseUrl: 'https://api.x.ai/v1',
+    tier: 55,
+    enabled: true,
+  },
+  {
     id: 'anthropic',
     name: 'Anthropic',
     envKey: 'ANTHROPIC_API_KEY',

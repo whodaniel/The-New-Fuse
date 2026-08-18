@@ -63,6 +63,8 @@ export class RedisClientManager {
       return;
     }
 
+    await this.releaseStaleClients();
+
     try {
       // Use unified standalone utilities via dynamic import for ESM/CJS compatibility
       // This dependency @the-new-fuse/infrastructure will need to be properly managed.
@@ -125,18 +127,65 @@ export class RedisClientManager {
     }
   }
 
+  /**
+   * Release any clients left over from a previous connect attempt.
+   *
+   * Reconnecting must release the previous pair first. MasterClock.start()
+   * re-enters through scheduleReconnect() every 5s after any startup failure,
+   * and each pass used to overwrite this.redis / this.redisSub with a fresh
+   * pair while the old sockets stayed open. On 2026-08-16 that leaked 810
+   * established connections and wedged Redis past its file-descriptor ceiling,
+   * taking the whole local fleet's coordination bus down with it.
+   */
+  async releaseStaleClients() {
+    if (!this.redis && !this.redisSub) return;
+
+    this.logger('warn', 'REDIS', 'Existing clients found; releasing them before reconnecting.');
+    await this.quit();
+  }
+
   async quit() {
     this.logger('info', 'REDIS', 'Shutting down Redis connections...');
-    if (this.redis) {
-      await this.redis.quit();
-      this.redis = null;
-    }
-    if (this.redisSub) {
-      await this.redisSub.quit();
-      this.redisSub = null;
-    }
+    await this.closeClient('primary');
+    await this.closeClient('subscriber');
     this.upstash = null; // Upstash client doesn't need explicit quit
     this.logger('info', 'REDIS', 'Redis connections closed.');
+  }
+
+  /**
+   * Release one client and always drop the reference.
+   *
+   * `quit()` sends QUIT and waits for the reply, so it rejects when the socket
+   * is already dead. Awaiting it bare meant a single broken client aborted the
+   * whole teardown and left the remaining client attached, so the caller
+   * reconnected on top of a socket it could no longer reach. Fall back to
+   * `disconnect()` (immediate, no round trip) and null the reference either
+   * way — a client we can't address is a client we must not keep.
+   */
+  private async closeClient(which: 'primary' | 'subscriber') {
+    const client = which === 'primary' ? this.redis : this.redisSub;
+    if (!client) return;
+
+    try {
+      await client.quit();
+    } catch (error: any) {
+      this.logger(
+        'warn',
+        'REDIS',
+        `Graceful quit failed for ${which} client, forcing disconnect: ${error?.message || error}`
+      );
+      try {
+        client.disconnect();
+      } catch {
+        // Socket already gone; the reference drop below is what matters.
+      }
+    } finally {
+      if (which === 'primary') {
+        this.redis = null;
+      } else {
+        this.redisSub = null;
+      }
+    }
   }
 
   // Generic methods for other services to use

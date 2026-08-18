@@ -85,7 +85,7 @@ skideancer-ide/
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌─────────────────────┐          ┌─────────────────────┐       │
-│  │  whodaniel/fuse     │          │  whodaniel/         │       │
+│  │  whodaniel/The-New-Fuse     │          │  whodaniel/         │       │
 │  │  (Main Monorepo)    │          │  skideancer-ide     │       │
 │  │                     │          │                     │       │
 │  │  📦 pnpm            │          │  📦 yarn            │       │
@@ -150,7 +150,7 @@ REDIS_URL=redis://...thenewfuse.com:6379
 
 ### Service 1: Cloud Sandbox (Existing)
 
-- Repo: `whodaniel/fuse`
+- Repo: `whodaniel/The-New-Fuse`
 - Root: `/apps/cloud-sandbox`
 - Port: Auto
 

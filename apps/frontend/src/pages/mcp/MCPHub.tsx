@@ -163,7 +163,36 @@ export const MCPHub: React.FC = () => {
               ) : filteredServers.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-12 text-center text-gray-400">
-                    No active MCP servers found matching your criteria.
+                    {fetchError ? (
+                      <div className="max-w-md mx-auto space-y-4 text-left">
+                        <p className="text-center font-medium text-amber-300/90">{fetchError}</p>
+                        <ul className="text-sm space-y-2 list-disc pl-5">
+                          <li>
+                            Ensure the API server is running (
+                            <code className="font-mono text-xs">
+                              pnpm --filter @the-new-fuse/api start
+                            </code>
+                            )
+                          </li>
+                          <li>
+                            Generate client MCP configs:{' '}
+                            <code className="font-mono text-xs">pnpm tnf:mcp:generate</code>
+                          </li>
+                          <li>Desktop marketplace: open Tauri → MCP Marketplace</li>
+                          <li>
+                            CLI: <code className="font-mono text-xs">tnf doctor</code> → MCP panel
+                          </li>
+                        </ul>
+                        <div className="flex justify-center pt-2">
+                          <PremiumButton variant="outline" size="sm" onClick={fetchServers}>
+                            <RotateCcw className="w-4 h-4 mr-2" />
+                            Retry
+                          </PremiumButton>
+                        </div>
+                      </div>
+                    ) : (
+                      'No active MCP servers found matching your criteria.'
+                    )}
                   </td>
                 </tr>
               ) : (
@@ -194,7 +223,7 @@ export const MCPHub: React.FC = () => {
                               ? 'bg-green-500 animate-pulse'
                               : server.status === 'error'
                                 ? 'bg-red-500'
-                                : 'bg-transparent0'
+                                : 'bg-gray-500'
                           }`}
                         />
                         <span className="text-sm text-gray-300 capitalize">{server.status}</span>

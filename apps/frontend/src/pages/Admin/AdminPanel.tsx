@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { Badge, GlassCard, PremiumButton } from '@/components/ui';
+import { authFetch } from '@/utils/authToken';
 import {
   Activity,
   AlertCircle,
@@ -46,14 +47,7 @@ export default function AdminPanel() {
     setLoading(true);
     setLoadError(null);
     try {
-      const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
-      const response = await fetch('/api/admin/metrics/dashboard', {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: 'include',
-      });
+      const response = await authFetch('/api/admin/metrics/dashboard');
 
       if (!response.ok) {
         throw new Error(`Admin metrics unavailable (${response.status})`);

@@ -100,11 +100,12 @@ deploy_canary_version() {
   log STEP "Deploying canary instance..."
 
   # Deploy to CloudRuntime with canary tag
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     # Create or update canary service
     export CLOUD_RUNTIME_SERVICE_NAME="${service}-canary"
 
-    if ! cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
+    if ! scripts/deployment/gcp-deploy.sh --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log ERROR "Failed to deploy canary version"
       return 1
     fi
@@ -242,14 +243,15 @@ promote_canary_to_production() {
   log INFO "Canary version has passed all checks"
   log STEP "Promoting to production..."
 
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     # Swap canary and production
     log INFO "Updating production service..."
 
     # Deploy canary version to production service
     export CLOUD_RUNTIME_SERVICE_NAME="$service"
 
-    if cloud_runtime up --detach --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
+    if scripts/deployment/gcp-deploy.sh --service "$CLOUD_RUNTIME_SERVICE_NAME"; then
       log SUCCESS "Production service updated"
     else
       log ERROR "Failed to update production service"
@@ -287,7 +289,8 @@ rollback_canary() {
 
   log STEP "Removing canary version..."
 
-  if command -v cloud_runtime &>/dev/null; then
+  if false; then  # cloud_runtime CLI retired — see scripts/lib/tnf-cloud-run.sh
+    : # was: command -v cloud_runtime
     # Stop canary service
     export CLOUD_RUNTIME_SERVICE_NAME="${service}-canary"
 
