@@ -178,7 +178,71 @@ const getStatusIcon = (status: string) => {
   }
 };
 
+
+// ⚡ Bolt: Wrapped MemberItem in React.memo to prevent O(n) re-renders
+const MemberItem = React.memo<{ member: Member }>(({ member }) => (
+  <motion.div
+    whileHover={{ x: 4 }}
+    className="flex items-center gap-3 p-2 rounded-md hover:bg-transparent/5 transition-colors cursor-pointer"
+  >
+    <div className="relative">
+      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+        <User className="w-4 h-4 text-white" />
+      </div>
+      <div
+        className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
+          member.status === 'online'
+            ? 'bg-emerald-500'
+            : member.status === 'away'
+              ? 'bg-amber-500'
+              : 'bg-gray-500'
+        }`}
+      />
+    </div>
+    <div className="flex-1">
+      <p className="text-sm font-medium text-white">{member.name}</p>
+      <p className="text-xs text-gray-400 capitalize">{member.role}</p>
+    </div>
+  </motion.div>
+));
+MemberItem.displayName = 'MemberItem';
+
+// ⚡ Bolt: Wrapped AgentItem in React.memo to prevent O(n) re-renders
+const AgentItem = React.memo<{ agent: Agent; isSelected: boolean; onToggle: (id: string) => void }>(({ agent, isSelected, onToggle }) => (
+  <motion.div
+    whileHover={{ x: 4 }}
+    onClick={() => onToggle(agent.id)}
+    className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all ${
+      isSelected
+        ? 'bg-purple-500/20 border border-purple-500/30'
+        : 'hover:bg-transparent/5'
+    }`}
+  >
+    <div className="relative">
+      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+        <Bot className="w-4 h-4 text-white" />
+      </div>
+      <div
+        className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
+          agent.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
+        }`}
+      />
+    </div>
+    <div className="flex-1">
+      <p className="text-sm font-medium text-white">{agent.name}</p>
+      <p className="text-xs text-gray-400">{agent.type}</p>
+    </div>
+    {isSelected && (
+      <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
+        Active
+      </Badge>
+    )}
+  </motion.div>
+));
+AgentItem.displayName = 'AgentItem';
+
 const WorkspaceChat: React.FC = () => {
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
@@ -190,6 +254,10 @@ const WorkspaceChat: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAgentToggle = React.useCallback((agentId: string) => {
+    setSelectedAgent((prev) => (prev === agentId ? null : agentId));
+  }, []);
 
   const getCurrentUserId = () => {
     try {
@@ -460,30 +528,7 @@ const WorkspaceChat: React.FC = () => {
             </h3>
             <div className="space-y-2">
               {workspace?.members.map((member: Member) => (
-                <motion.div
-                  key={member.id}
-                  whileHover={{ x: 4 }}
-                  className="flex items-center gap-3 p-2 rounded-md hover:bg-transparent/5 transition-colors cursor-pointer"
-                >
-                  <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                    <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                        member.status === 'online'
-                          ? 'bg-emerald-500'
-                          : member.status === 'away'
-                            ? 'bg-amber-500'
-                            : 'bg-gray-500'
-                      }`}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-white">{member.name}</p>
-                    <p className="text-xs text-gray-400 capitalize">{member.role}</p>
-                  </div>
-                </motion.div>
+                <MemberItem key={member.id} member={member} />
               ))}
             </div>
           </div>
@@ -496,36 +541,12 @@ const WorkspaceChat: React.FC = () => {
             </h3>
             <div className="space-y-2">
               {workspace?.agents.map((agent: Agent) => (
-                <motion.div
+                <AgentItem
                   key={agent.id}
-                  whileHover={{ x: 4 }}
-                  onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
-                  className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all ${
-                    selectedAgent === agent.id
-                      ? 'bg-purple-500/20 border border-purple-500/30'
-                      : 'hover:bg-transparent/5'
-                  }`}
-                >
-                  <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                      <Bot className="w-4 h-4 text-white" />
-                    </div>
-                    <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
-                      }`}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-white">{agent.name}</p>
-                    <p className="text-xs text-gray-400">{agent.type}</p>
-                  </div>
-                  {selectedAgent === agent.id && (
-                    <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
-                      Active
-                    </Badge>
-                  )}
-                </motion.div>
+                  agent={agent}
+                  isSelected={selectedAgent === agent.id}
+                  onToggle={handleAgentToggle}
+                />
               ))}
             </div>
           </div>
