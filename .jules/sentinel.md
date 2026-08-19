@@ -1,7 +1,7 @@
 ## 2024-05-18 - EIP-4361 Missing Verification in Web3 Login
 **Vulnerability:** The `findOrCreateUnstoppableDomainsUser` in `auth.service.ts` was only using generic `verifyMessage` from `viem` to check Ethereum signatures, lacking complete EIP-4361 (Siwe) validation for nonces, timestamps, and domains. This creates a replay attack vulnerability.
 **Learning:** Generic signature validation guarantees *who* signed the payload, but not *when* or *why*. Reusing the same valid signature payload across different contexts or timeframes is a classic web3 vulnerability.
-**Prevention:** Always use a specialized EIP-4361 parsing library like `siwe` that handles time limits (expiration/issuedAt), domains, and nonces instead of raw signature recovery when building Sign-In with Ethereum workflows.## $(date +%Y-%m-%d) - Hardcoded Fallback Secret in Cloud Sandbox
+**Prevention:** Always use a specialized EIP-4361 parsing library like `siwe` that handles time limits (expiration/issuedAt), domains, and nonces instead of raw signature recovery when building Sign-In with Ethereum workflows.## 2025-05-25 - Hardcoded Fallback Secret in Cloud Sandbox
 
 **Vulnerability:** The `CloudSandboxAuthGuard` used a hardcoded fallback string (`'dev-secret'`) for the `JWT_SECRET` when validating incoming agent and user connections.
 **Learning:** Hardcoded fallback secrets are a dangerous antipattern that can easily slip into production environments if configuration variables are missed, completely bypassing authentication security.
@@ -18,3 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
+## 2025-05-25 - SQL Injection via manual string escaping in Raw Queries
+**Vulnerability:** Raw SQL queries were manually escaping single quotes using `.replace(/'/g, "''")`, leaving them vulnerable to SQL injection.
+**Learning:** Manual string replacement is never sufficient for SQL query sanitization and Drizzle's `sql.raw()` does not support parameter bindings.
+**Prevention:** Always use parameterized queries. When using raw SQL with Drizzle ORM, use the underlying postgres.js client (`queryClient.unsafe(query, params)`) to properly bind parameters.
