@@ -18,3 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
+## 2025-05-24 - Fix SQL Injection vulnerabilities in executeRaw
+**Vulnerability:** The codebase had widespread usage of `db.executeRaw` performing direct string interpolation and manual string escaping (using `.replace(/'/g, "''")`), which leaves the system open to SQL injection vulnerabilities and logic errors.
+**Learning:** `drizzle.execute(sql.raw())` does not support parameterized query execution, which makes it inherently unsafe for any dynamic user inputs.
+**Prevention:** Modified `DatabaseService.executeRaw` to optionally take a `params` array and utilize the underlying `queryClient.unsafe(query, params)` via postgres.js. All consumer codes have been updated to use parameterized variable bindings (`$1`, `$2`, etc.) rather than string literals.
