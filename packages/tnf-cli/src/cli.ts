@@ -120,6 +120,7 @@ import { getPaletteRecents } from './utils/palette-recents.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
 import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
+import { persistSuperAdminTokenRotation } from './utils/super-admin-env.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
 import { renderStatusLine, type StatusSnapshot, type StatusTheme } from './utils/tui-statusline.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
@@ -423,20 +424,27 @@ async function requireSuperAdmin(
 
       const crypto = await import('crypto');
       const newToken = crypto.randomBytes(32).toString('base64');
-      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
-
-      const fs = await import('fs');
       const path = await import('path');
       const envPath = path.join(process.cwd(), '.env');
-      if (fs.existsSync(envPath)) {
-        let envContent = fs.readFileSync(envPath, 'utf8');
-        envContent = envContent.replace(
-          new RegExp(expected.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'g'),
-          newToken
+      try {
+        persistSuperAdminTokenRotation({
+          envPath,
+          keys: [SUPER_ADMIN_ENV_KEY, SUPER_ADMIN_INPUT_ENV_KEY],
+          newToken,
+        });
+      } catch (err) {
+        rl.close();
+        const detail = err instanceof Error ? err.message : String(err);
+        throw new Error(
+          `Super Admin token rotation aborted: failed to persist .env (${detail}). Previous token remains authoritative.`
         );
-        fs.writeFileSync(envPath, envContent);
-        console.log(chalk.green(`Updated .env with the new token.`));
       }
+      console.log(
+        chalk.green(
+          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
+        )
+      );
+      console.log(chalk.green(`Updated .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
         chalk.cyan(
           `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
@@ -445,6 +453,7 @@ async function requireSuperAdmin(
 
       expected = newToken;
       process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      process.env[SUPER_ADMIN_INPUT_ENV_KEY] = newToken;
       provided = { token: newToken, source: 'interactive' };
     } else if (action.trim() === '1') {
       const token = await rl.question(`Enter ${SUPER_ADMIN_ENV_KEY}: `);
@@ -464,18 +473,27 @@ async function requireSuperAdmin(
     if (action.trim() === '1') {
       const crypto = await import('crypto');
       const newToken = crypto.randomBytes(32).toString('base64');
-      console.log(chalk.green(`\n✅ Generated new token: ${newToken}`));
-
-      const fs = await import('fs');
       const path = await import('path');
       const envPath = path.join(process.cwd(), '.env');
-      if (fs.existsSync(envPath)) {
-        fs.appendFileSync(
+      try {
+        persistSuperAdminTokenRotation({
           envPath,
-          `\n${SUPER_ADMIN_ENV_KEY}=${newToken}\n${SUPER_ADMIN_INPUT_ENV_KEY}=${newToken}\n`
+          keys: [SUPER_ADMIN_ENV_KEY, SUPER_ADMIN_INPUT_ENV_KEY],
+          newToken,
+        });
+      } catch (err) {
+        rl.close();
+        const detail = err instanceof Error ? err.message : String(err);
+        throw new Error(
+          `Super Admin token rotation aborted: failed to persist .env (${detail}). No token was activated.`
         );
-        console.log(chalk.green(`Appended new token to .env.`));
       }
+      console.log(
+        chalk.green(
+          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
+        )
+      );
+      console.log(chalk.green(`Wrote .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
         chalk.cyan(
           `Please make sure to also update your shell environment (e.g. ~/.zshrc or current session).`
@@ -484,6 +502,7 @@ async function requireSuperAdmin(
 
       expected = newToken;
       process.env[SUPER_ADMIN_ENV_KEY] = newToken;
+      process.env[SUPER_ADMIN_INPUT_ENV_KEY] = newToken;
       provided = { token: newToken, source: 'interactive' };
     } else {
       rl.close();

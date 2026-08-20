@@ -4,10 +4,26 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Defer BackupService path fix, rclone wiring, dist-v7,
-concordance JSON.
+**Current Directive:** Investigate/fix workspace-mutation-guard false-positive
+on `git gc` / `pack-refs` (allow legitimate maintenance; keep stash/worktree
+policy blocks). Then characterize `preflight-skip.test.ts` standalone vs loaded
+`tnf doctor` timings before changing the 30s budget.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-20 Super Admin token-rotation RegExp crash (Cursor /
+  tnf-monorepo)**:
+  - **Incident:** `tnf boot` interactive rotate (option 2) aborted with
+    `Invalid regular expression ... Nothing to repeat` because
+    `requireSuperAdmin` built a `RegExp` from the old base64 token (`+` / `/`).
+  - **Fix (canonical `tnf-monorepo` `main` only):** structural
+    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert via
+    `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
+    printing; `process.env` mutates only after persist succeeds.
+  - **Verify:** focused tests 8/8; silent fresh rotation; leaked chat token not
+    authoritative; controlled boot cleared Super Admin auth (exit 0).
+  - **Repo policy:** implemented in `/Users/danielgoldberg/repos/tnf-monorepo`;
+    The-New-Fuse overlay treated as downstream/publication only.
 
 - [✅] **2026-08-17 CLI Agent Autopilot Continuity Verification & Onboarder
   Stabilization (Antigravity/Gemini)**:
