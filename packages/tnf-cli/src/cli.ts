@@ -8569,7 +8569,7 @@ harness
   .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
     try {
       const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
-      const known = new Set(HARNESS_CLIENTS.map((entry) => entry.id));
+      const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
       let chosen = requested;
       if (chosen && !known.has(chosen)) {
         throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
