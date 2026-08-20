@@ -10,7 +10,7 @@ Handoff ID: `a91e6c20-4f3b-4c8d-9e11-2d7b5f0a6c84`
 - Canonical source: `whodaniel/tnf-monorepo`
 - Actual path: `/Users/danielgoldberg/repos/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `62cfb83bf6` (pre-maintenance-commit baseline)
+- Head SHA: `0d8b095c3c84aac0f986ff95a2b48be69c79d6a5`
 - Sensitive Scope: `internal`
 - Spec: `tnf/session-handoff/0.2`
 

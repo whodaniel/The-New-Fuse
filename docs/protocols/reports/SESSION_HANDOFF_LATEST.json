@@ -9,10 +9,13 @@
     "origin": "https://github.com/whodaniel/tnf-monorepo.git",
     "dirty": true,
     "operation_in_progress": null,
-    "publication_targets": ["whodaniel/The-New-Fuse", "whodaniel/fuse-control-plane"]
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
   },
   "branch": "main",
-  "head_sha": "62cfb83bf6",
+  "head_sha": "0d8b095c3c84aac0f986ff95a2b48be69c79d6a5",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "classification": {
@@ -22,8 +25,15 @@
     "sensitivity": "internal"
   },
   "capabilities": {
-    "required": ["tnf-cli-auth", "workspace-mutation-guard", "session-handoff"],
-    "staffed_by": ["cursor", "orchestrator"]
+    "required": [
+      "tnf-cli-auth",
+      "workspace-mutation-guard",
+      "session-handoff"
+    ],
+    "staffed_by": [
+      "cursor",
+      "orchestrator"
+    ]
   },
   "publication": {
     "public_runtime_affected": true,
@@ -68,7 +78,10 @@
   },
   "continuation": {
     "owner": "orchestrator",
-    "targets": ["orchestrator", "tnf-cli"],
+    "targets": [
+      "orchestrator",
+      "tnf-cli"
+    ],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -85,7 +98,8 @@
   "artifacts": {
     "commits": [
       "fa1839fb689d49535bafc3435d8d751d48b6c70c",
-      "62cfb83bf6"
+      "62cfb83bf6",
+      "0d8b095c3c84aac0f986ff95a2b48be69c79d6a5"
     ],
     "deployment_urls": [],
     "database_migrations": []
