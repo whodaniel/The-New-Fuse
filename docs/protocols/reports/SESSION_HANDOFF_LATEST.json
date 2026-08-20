@@ -1,7 +1,7 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "a91e6c20-4f3b-4c8d-9e11-2d7b5f0a6c84",
-  "created_at": "2026-08-20T17:03:00.000Z",
+  "handoff_id": "c7e4b1a9-2d6f-4a8e-b0c3-9f5e1d8a7b62",
+  "created_at": "2026-08-20T18:40:00.000Z",
   "repository": "tnf-monorepo",
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -15,7 +15,7 @@
     ]
   },
   "branch": "main",
-  "head_sha": "0d8b095c3c84aac0f986ff95a2b48be69c79d6a5",
+  "head_sha": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "classification": {
@@ -26,9 +26,9 @@
   },
   "capabilities": {
     "required": [
-      "tnf-cli-auth",
-      "workspace-mutation-guard",
-      "session-handoff"
+      "jules",
+      "session-handoff",
+      "gh"
     ],
     "staffed_by": [
       "cursor",
@@ -42,29 +42,34 @@
   },
   "freshness_receipts": [
     {
-      "id": "git-gc-after-mutation-guard-fix",
-      "state": "verified",
-      "observed_at": "2026-08-20T16:55:26.000Z",
-      "value": "gc-exit-0-loose-objects-0"
+      "id": "jules-scheduler-cleanup-docs",
+      "state": "committed",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
     },
     {
-      "id": "preflight-skip-latency",
-      "state": "characterized",
-      "observed_at": "2026-08-20T17:01:15.000Z",
-      "value": "keep-30s-budget-harden-env-isolation"
+      "id": "public-close-jules-pr",
+      "state": "opened",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "https://github.com/whodaniel/The-New-Fuse/pull/155"
+    },
+    {
+      "id": "jules-ui-schedule-deletion",
+      "state": "still-required",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "operator-must-delete-The-New-Fuse-schedules-in-jules-ui"
     }
   ],
   "project_ids": [],
   "work_summary": [
-    "Super Admin token rotation fixed and committed (structural .env upsert; no secret printing).",
-    "workspace-mutation-guard no longer treats pack-refs/gc multi-ref rewrites as stash; git gc succeeded on dirty tree.",
-    "preflight-skip latency characterized; 30s budget unchanged; test hardened for inherited TNF_SKIP_* and repo-root cwd."
+    "Jules scheduler cleanup docs committed on tnf-monorepo main: retargeted PR/loop playbooks to whodaniel/tnf-monorepo, added ops receipt, Living State directive.",
+    "Public overlay PR opened (not merged): https://github.com/whodaniel/The-New-Fuse/pull/155",
+    "Still required: operator must delete Jules cloud Scheduled jobs targeting The-New-Fuse (Bolt/Palette/Sentinel) in the Jules UI."
   ],
   "changed_paths": [
-    "scripts/security/workspace-mutation-guard.cjs",
-    "scripts/security/workspace-mutation-guard.test.cjs",
-    "packages/tnf-cli/src/utils/preflight-skip.test.ts",
-    "docs/operations/preflight-skip-latency-2026-08-20.md",
+    "docs/JULES_AUTONOMOUS_LOOP.md",
+    "docs/JULES_PR_FOLLOWUP_PLAYBOOK.md",
+    "docs/operations/jules-scheduler-cleanup-2026-08-20.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
@@ -74,34 +79,36 @@
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "mutation-guard tests 7/7; git gc --prune=now exit 0; preflight-skip clean-env standalone 4/4 in ~33s; loaded clean-env 4/4 in ~63s. No secrets printed."
+    "notes": "Docs retarget verified; public PR #155 created not merged; Jules UI schedule deletion still required."
   },
   "continuation": {
     "owner": "orchestrator",
     "targets": [
       "orchestrator",
-      "tnf-cli"
+      "operator"
     ],
-    "priority": "medium",
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Push or PR tnf-monorepo main commits when operator requests",
-      "Re-source deployer shell env after Super Admin rotation",
-      "Watch full pnpm test suite for genuine per-spawn >30s doctor timeouts under clean env"
+      "Operator: delete Jules UI schedules targeting The-New-Fuse",
+      "Optionally merge public PR #155 after schedules are deleted",
+      "Confirm no new persona sessions appear on The-New-Fuse for one cadence"
     ]
   },
   "next_actions": [
-    "Operator: push tnf-monorepo commits / open PR if desired.",
-    "Operator: re-source shell env from rotated .env (do not paste tokens into chat).",
-    "Only revisit preflight 30s budget if a clean-env per-spawn timeout reproduces with stage timings."
+    "Operator: delete Jules cloud schedules for Bolt/Palette/Sentinel on whodaniel/The-New-Fuse via Jules UI",
+    "Operator: merge chore/close-jules-persona-prs-on-public-overlay when ready",
+    "Keep new Jules persona work on whodaniel/tnf-monorepo only"
   ],
   "artifacts": {
     "commits": [
-      "fa1839fb689d49535bafc3435d8d751d48b6c70c",
-      "62cfb83bf6",
-      "0d8b095c3c84aac0f986ff95a2b48be69c79d6a5"
+      "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
     ],
-    "deployment_urls": [],
-    "database_migrations": []
+    "prs": [
+      "https://github.com/whodaniel/The-New-Fuse/pull/155"
+    ],
+    "docs": [
+      "docs/operations/jules-scheduler-cleanup-2026-08-20.md"
+    ]
   }
 }
