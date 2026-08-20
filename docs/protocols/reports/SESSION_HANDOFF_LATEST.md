@@ -10,7 +10,7 @@ Handoff ID: `7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27`
 - Canonical source: `whodaniel/tnf-monorepo`
 - Actual path: `/Users/danielgoldberg/repos/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `02062da899e638de6e7f8853311208533f12a679` (pre-commit baseline)
+- Head SHA: `fa1839fb689d49535bafc3435d8d751d48b6c70c`
 - Sensitive Scope: `internal`
 - Spec: `tnf/session-handoff/0.2`
 
@@ -65,7 +65,10 @@ Handoff ID: `7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27`
 
 ## Artifacts
 
+**Commits:**
+- `fa1839fb689d49535bafc3435d8d751d48b6c70c` — fix(cli): rotate Super Admin tokens without RegExp-from-secret
+
 **Verification notes:** Focused `super-admin-env` tests 8/8 pass. Controlled
-doctor reported `Doctor result: PASS` (schema-gate exit non-zero unrelated).
-Controlled boot exit 0 after Super Admin auth; secret values not printed in
-outputs or handoff.
+doctor reported `Doctor result: PASS` (schema-gate exit non-zero was stale 0.1
+handoff). Controlled boot exit 0 after Super Admin auth; secret values not
+printed in outputs or handoff.

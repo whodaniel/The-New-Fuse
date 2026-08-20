@@ -12,7 +12,7 @@
     "publication_targets": ["whodaniel/The-New-Fuse", "whodaniel/fuse-control-plane"]
   },
   "branch": "main",
-  "head_sha": "02062da899e638de6e7f8853311208533f12a679",
+  "head_sha": "fa1839fb689d49535bafc3435d8d751d48b6c70c",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "classification": {
@@ -79,7 +79,7 @@
     "Keep development on whodaniel/tnf-monorepo main; treat The-New-Fuse checkout as downstream/publication only."
   ],
   "artifacts": {
-    "commits": [],
+    "commits": ["fa1839fb689d49535bafc3435d8d751d48b6c70c"],
     "deployment_urls": [],
     "database_migrations": []
   }
