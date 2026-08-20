@@ -4,12 +4,23 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Investigate/fix workspace-mutation-guard false-positive
-on `git gc` / `pack-refs` (allow legitimate maintenance; keep stash/worktree
-policy blocks). Then characterize `preflight-skip.test.ts` standalone vs loaded
-`tnf doctor` timings before changing the 30s budget.
+**Current Directive:** Publish/sync Super Admin rotation + mutation-guard fixes
+from `tnf-monorepo` as needed; monitor `preflight-skip` under full suite load.
+No 30s budget change pending a clean-env per-spawn timeout reproduction.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-20 Repo maintenance: mutation-guard pack-refs false positive +
+  preflight latency characterization (Cursor / tnf-monorepo)**:
+  - **mutation-guard:** `pack-refs` / `gc` were treated as stash when
+    `refs/stash` appeared in multi-ref transactions. Classification now allows
+    safe maintenance while still blocking real stash / reset / merge / rebase /
+    pull. `git gc --prune=now` succeeded on a dirty tree after clearing
+    worktree `gc.log`; loose objects packed to 0.
+  - **preflight-skip:** Timings documented in
+    `docs/operations/preflight-skip-latency-2026-08-20.md`. Doctor ~8–15s
+    standalone; do not raise 30s budget. Hardened test env isolation + repo-root
+    cwd.
 
 - [✅] **2026-08-20 Super Admin token-rotation RegExp crash (Cursor /
   tnf-monorepo)**:

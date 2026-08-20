@@ -43,10 +43,16 @@ function check(name: string, cond: boolean, detail = ''): void {
 /** Set when the last runCli call was killed by the timeout rather than finishing. */
 let lastRunTimedOut = false;
 
-function runCli(args: string[], envOverlay: Record<string, string>): string {
+function runCli(args: string[], envOverlay: Record<string, string | undefined>): string {
+  const env: NodeJS.ProcessEnv = { ...process.env, ...envOverlay };
+  // Drop undefined overlays so callers can clear inherited skip flags
+  // (suite/parent shells often export TNF_SKIP_* and would poison the default case).
+  for (const [key, value] of Object.entries(envOverlay)) {
+    if (value === undefined) delete env[key];
+  }
   const result = spawnSync('node', [CLI, ...args], {
-    cwd: path.resolve(here, '..', '..', '..'),
-    env: { ...process.env, ...envOverlay },
+    cwd: path.resolve(here, '..', '..', '..', '..'),
+    env,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     timeout: 30_000,
@@ -115,7 +121,12 @@ function main(): void {
   // 3. The default (no env var) behaviour is preserved — preflight still
   //    runs when the operator has not opted out. Without this assertion it
   //    would be trivial to "fix" the bug by deleting the preflight entirely.
-  const defaultOut = runCli(['doctor'], {});
+  //    Explicitly clear skip flags so an inherited suite/shell export cannot
+  //    masquerade as a behavioural regression (measured 2026-08-20).
+  const defaultOut = runCli(['doctor'], {
+    TNF_SKIP_TURN_ZERO_ONBOARD: undefined,
+    TNF_SKIP_PREFLIGHT: undefined,
+  });
   const defaultTimedOut = lastRunTimedOut;
   const defaultHits = preflightOutputCount(defaultOut);
   check(

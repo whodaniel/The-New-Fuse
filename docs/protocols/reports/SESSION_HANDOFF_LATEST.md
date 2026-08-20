@@ -1,8 +1,8 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-20T16:52:00.000Z`  
-Handoff ID: `7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27`
+Created At: `2026-08-20T17:03:00.000Z`  
+Handoff ID: `a91e6c20-4f3b-4c8d-9e11-2d7b5f0a6c84`
 
 ## Scope
 
@@ -10,27 +10,25 @@ Handoff ID: `7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27`
 - Canonical source: `whodaniel/tnf-monorepo`
 - Actual path: `/Users/danielgoldberg/repos/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `fa1839fb689d49535bafc3435d8d751d48b6c70c`
+- Head SHA: `62cfb83bf6` (pre-maintenance-commit baseline)
 - Sensitive Scope: `internal`
 - Spec: `tnf/session-handoff/0.2`
 
 ## Work Summary
 
-- Fixed Super Admin token rotation crash: structural `.env` key upsert replaces
-  RegExp-from-secret replacement.
-- Rotation no longer prints the new secret; `process.env` updates only after
-  atomic `.env` persist succeeds.
-- Regression tests cover special-character tokens and write-failure auth-state
-  preservation.
-- Fresh silent rotation performed; leaked chat token is not authoritative;
-  controlled `tnf boot` cleared Super Admin auth (exit 0).
+- Super Admin token rotation fixed and committed (structural `.env` upsert; no
+  secret printing).
+- `workspace-mutation-guard` no longer treats `pack-refs`/`gc` multi-ref
+  rewrites as stash; `git gc` succeeded on a dirty tree.
+- `preflight-skip` latency characterized; 30s budget unchanged; test hardened
+  for inherited `TNF_SKIP_*` and repo-root cwd.
 
 ## Changed Paths
 
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/utils/super-admin-env.ts
-- packages/tnf-cli/src/utils/super-admin-env.test.ts
-- packages/tnf-cli/package.json
+- scripts/security/workspace-mutation-guard.cjs
+- scripts/security/workspace-mutation-guard.test.cjs
+- packages/tnf-cli/src/utils/preflight-skip.test.ts
+- docs/operations/preflight-skip-latency-2026-08-20.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
@@ -38,37 +36,30 @@ Handoff ID: `7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27`
 ## Continuation
 
 - **Owner:** orchestrator
-- **Priority:** high
-
-**Targets:**
-- orchestrator
-- tnf-cli
+- **Priority:** medium
 
 **Resume Checklist:**
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Investigate workspace-mutation-guard false-positive on git pack-refs / gc
-  (fix classification, do not merely bypass)
-- Characterize preflight-skip.test.ts standalone vs loaded timings before
-  changing the 30s budget
-- Re-source deployer shell env from rotated `.env` (do not paste tokens into chat)
+- Push or PR `tnf-monorepo` `main` commits when operator requests
+- Re-source deployer shell env after Super Admin rotation
+- Watch full `pnpm test` suite for genuine per-spawn >30s doctor timeouts under
+  clean env
 
 ## Next Actions
 
-- Investigate/fix workspace-mutation-guard interaction with git gc / pack-refs
-  so legitimate maintenance is allowed while stash/worktree policy mutations stay
-  blocked.
-- Capture standalone versus loaded timings for preflight-skip.test.ts /
-  `tnf doctor` stages; only then decide timeout vs doctor vs isolation changes.
-- Keep development on `whodaniel/tnf-monorepo` `main`; treat The-New-Fuse
-  checkout as downstream/publication only.
+- Operator: push `tnf-monorepo` commits / open PR if desired.
+- Operator: re-source shell env from rotated `.env` (do not paste tokens into
+  chat).
+- Only revisit preflight 30s budget if a clean-env per-spawn timeout reproduces
+  with stage timings.
 
 ## Artifacts
 
 **Commits:**
-- `fa1839fb689d49535bafc3435d8d751d48b6c70c` — fix(cli): rotate Super Admin tokens without RegExp-from-secret
+- `fa1839fb689d49535bafc3435d8d751d48b6c70c` — Super Admin rotation fix
+- `62cfb83bf6` — handoff SHA follow-up
 
-**Verification notes:** Focused `super-admin-env` tests 8/8 pass. Controlled
-doctor reported `Doctor result: PASS` (schema-gate exit non-zero was stale 0.1
-handoff). Controlled boot exit 0 after Super Admin auth; secret values not
-printed in outputs or handoff.
+**Verification notes:** mutation-guard tests 7/7; `git gc --prune=now` exit 0;
+preflight-skip clean-env standalone 4/4 in ~33s; loaded clean-env 4/4 in ~63s.
+No secrets printed. Detail:
+`docs/operations/preflight-skip-latency-2026-08-20.md`.

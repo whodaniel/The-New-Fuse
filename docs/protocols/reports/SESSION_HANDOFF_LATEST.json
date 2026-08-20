@@ -1,7 +1,7 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "7f2c9a14-b8e1-4d55-9c3a-0e6d4a1f8b27",
-  "created_at": "2026-08-20T16:52:00.000Z",
+  "handoff_id": "a91e6c20-4f3b-4c8d-9e11-2d7b5f0a6c84",
+  "created_at": "2026-08-20T17:03:00.000Z",
   "repository": "tnf-monorepo",
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -12,7 +12,7 @@
     "publication_targets": ["whodaniel/The-New-Fuse", "whodaniel/fuse-control-plane"]
   },
   "branch": "main",
-  "head_sha": "fa1839fb689d49535bafc3435d8d751d48b6c70c",
+  "head_sha": "62cfb83bf6",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "classification": {
@@ -22,7 +22,7 @@
     "sensitivity": "internal"
   },
   "capabilities": {
-    "required": ["tnf-cli-auth", "session-handoff"],
+    "required": ["tnf-cli-auth", "workspace-mutation-guard", "session-handoff"],
     "staffed_by": ["cursor", "orchestrator"]
   },
   "publication": {
@@ -32,24 +32,29 @@
   },
   "freshness_receipts": [
     {
-      "id": "super-admin-rotation-fix",
+      "id": "git-gc-after-mutation-guard-fix",
       "state": "verified",
-      "observed_at": "2026-08-20T16:51:00.000Z",
-      "value": "controlled-boot-exit-0-auth-cleared"
+      "observed_at": "2026-08-20T16:55:26.000Z",
+      "value": "gc-exit-0-loose-objects-0"
+    },
+    {
+      "id": "preflight-skip-latency",
+      "state": "characterized",
+      "observed_at": "2026-08-20T17:01:15.000Z",
+      "value": "keep-30s-budget-harden-env-isolation"
     }
   ],
   "project_ids": [],
   "work_summary": [
-    "Fixed Super Admin token rotation crash: structural .env key upsert replaces RegExp-from-secret replacement.",
-    "Rotation no longer prints the new secret; process.env updates only after atomic .env persist succeeds.",
-    "Regression tests cover special-character tokens and write-failure auth-state preservation.",
-    "Fresh silent rotation performed; leaked chat token is not authoritative; controlled tnf boot cleared Super Admin auth (exit 0)."
+    "Super Admin token rotation fixed and committed (structural .env upsert; no secret printing).",
+    "workspace-mutation-guard no longer treats pack-refs/gc multi-ref rewrites as stash; git gc succeeded on dirty tree.",
+    "preflight-skip latency characterized; 30s budget unchanged; test hardened for inherited TNF_SKIP_* and repo-root cwd."
   ],
   "changed_paths": [
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/utils/super-admin-env.ts",
-    "packages/tnf-cli/src/utils/super-admin-env.test.ts",
-    "packages/tnf-cli/package.json",
+    "scripts/security/workspace-mutation-guard.cjs",
+    "scripts/security/workspace-mutation-guard.test.cjs",
+    "packages/tnf-cli/src/utils/preflight-skip.test.ts",
+    "docs/operations/preflight-skip-latency-2026-08-20.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
@@ -59,27 +64,29 @@
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Focused super-admin-env tests 8/8 pass. Controlled doctor reported Doctor result PASS (schema-gate exit non-zero was stale 0.1 handoff). Controlled boot exit 0 after Super Admin auth; secret values not printed in outputs or handoff."
+    "notes": "mutation-guard tests 7/7; git gc --prune=now exit 0; preflight-skip clean-env standalone 4/4 in ~33s; loaded clean-env 4/4 in ~63s. No secrets printed."
   },
   "continuation": {
     "owner": "orchestrator",
     "targets": ["orchestrator", "tnf-cli"],
-    "priority": "high",
+    "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Investigate workspace-mutation-guard false-positive on git pack-refs / gc (fix classification, do not merely bypass)",
-      "Characterize preflight-skip.test.ts standalone vs loaded timings before changing the 30s budget",
-      "Re-source deployer shell env from rotated .env (do not paste tokens into chat)"
+      "Push or PR tnf-monorepo main commits when operator requests",
+      "Re-source deployer shell env after Super Admin rotation",
+      "Watch full pnpm test suite for genuine per-spawn >30s doctor timeouts under clean env"
     ]
   },
   "next_actions": [
-    "Investigate/fix workspace-mutation-guard interaction with git gc / pack-refs so legitimate maintenance is allowed while stash/worktree policy mutations stay blocked.",
-    "Capture standalone versus loaded timings for preflight-skip.test.ts / tnf doctor stages; only then decide timeout vs doctor vs isolation changes.",
-    "Keep development on whodaniel/tnf-monorepo main; treat The-New-Fuse checkout as downstream/publication only."
+    "Operator: push tnf-monorepo commits / open PR if desired.",
+    "Operator: re-source shell env from rotated .env (do not paste tokens into chat).",
+    "Only revisit preflight 30s budget if a clean-env per-spawn timeout reproduces with stage timings."
   ],
   "artifacts": {
-    "commits": ["fa1839fb689d49535bafc3435d8d751d48b6c70c"],
+    "commits": [
+      "fa1839fb689d49535bafc3435d8d751d48b6c70c",
+      "62cfb83bf6"
+    ],
     "deployment_urls": [],
     "database_migrations": []
   }
