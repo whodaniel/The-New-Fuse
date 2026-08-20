@@ -1,0 +1,47 @@
+# Public The-New-Fuse is a publish overlay from tnf-monorepo.
+# Jules Bolt/Palette/Sentinel scheduled tasks still fire against that overlay
+# and open duplicate stale PRs. Close them on sight. This job is a no-op on
+# tnf-monorepo so real development PRs are not touched.
+name: Close Jules persona PRs
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  close-public-overlay-personas:
+    if: >
+      github.repository == 'whodaniel/The-New-Fuse' &&
+      (
+        startsWith(github.event.pull_request.title, '⚡ Bolt:') ||
+        startsWith(github.event.pull_request.title, '🎨 Palette:') ||
+        startsWith(github.event.pull_request.title, '🛡️ Sentinel:')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close persona PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const number = context.payload.pull_request.number;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: number,
+              body: [
+                'Closing: Bolt/Palette/Sentinel Jules tasks must not target public `The-New-Fuse`.',
+                'That repo is a publish overlay from `whodaniel/tnf-monorepo`.',
+                'Point Jules at `tnf-monorepo`, or delete the scheduled task in the Jules dashboard.',
+              ].join(' '),
+            });
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: number,
+              state: 'closed',
+            });
