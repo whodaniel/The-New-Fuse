@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
+    "@the-new-fuse/control-plane-contracts": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/fairtable-adapters": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
