@@ -29,7 +29,6 @@
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
-    "@radix-ui/react-content": "^1.0.0",
     "@radix-ui/react-tabs": "^1.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
