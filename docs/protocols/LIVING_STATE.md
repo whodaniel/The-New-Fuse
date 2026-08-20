@@ -1501,7 +1501,7 @@ and generated refactoring_consensus_report.md.
   may not self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is
   referenced but never existed, so command-surface.test.ts has never run (20
   missing / 1 changed vs snapshot)|Disk hit 100% full mid-session (79MiB free);
-  /Users/Shared holds 174G|Hermes cron output tree holds only 1 fi
+  shared volume holds 174G|Hermes cron output tree holds only 1 fi
 
 - 2026-08-12T05:24:11.194Z handoff `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` head
   `6cff2cc8e860` project `TNF-SESSION` — Optional: wire provider-failover into
