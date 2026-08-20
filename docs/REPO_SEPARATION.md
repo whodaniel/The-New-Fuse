@@ -146,8 +146,6 @@ fuse-control-plane/
 ├── source-originals/           # Latest source from monorepo
 │   ├── relay-core/             # master-clock.ts, broker-agent.ts
 │   ├── backend-orchestrator/   # Full orchestrator module
-│   ├── nexus-orchestrator/     # 3D visualization sources
-│   ├── picoclaw-overseer/      # Go-based overseer
 │   └── agent-coordination/     # Multi-agent patterns
 ├── orchestration-scripts/      # Top-level orchestration scripts
 ├── docs/                       # Control-plane documentation
