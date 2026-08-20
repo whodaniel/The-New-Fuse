@@ -69,10 +69,11 @@ export class HealthController {
       const errors = await this.db.executeRaw<any>(
         `SELECT id, action, "userId", "resourceType", status, "errorMessage", "createdAt"
          FROM "auditLogs"
-         WHERE "createdAt" >= '${since}'
+         WHERE "createdAt" >= $1
            AND (status = 'error' OR status = 'failed' OR action LIKE '%error%')
          ORDER BY "createdAt" DESC
-         LIMIT 20`
+         LIMIT 20`,
+        [since]
       );
       return {
         count: errors.length,
