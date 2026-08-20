@@ -101,6 +101,29 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
     return Array.from({ length: days }).map((_, i) => addDays(minDate, i));
   }, [minDate, days]);
 
+  // ⚡ Bolt: Memoize the grid background arrays to prevent O(days) elements
+  // from being re-created for EVERY plan and EVERY record on EVERY render.
+  // This drastically improves performance during frequent state updates like dragging.
+  const planGridBackground = useMemo(() => {
+    return dateHeaders.map((_, i) => (
+      <div
+        key={i}
+        className="flex-shrink-0 border-r border-slate-600/40 h-10"
+        style={{ width: COLUMN_WIDTH }}
+      />
+    ));
+  }, [dateHeaders]);
+
+  const recordGridBackground = useMemo(() => {
+    return dateHeaders.map((_, i) => (
+      <div
+        key={i}
+        className="flex-shrink-0 border-r border-slate-600/30 h-full"
+        style={{ width: COLUMN_WIDTH }}
+      />
+    ));
+  }, [dateHeaders]);
+
   return (
     <div
       className="flex flex-col h-full bg-[#0f111a] text-slate-100 font-sans select-none overflow-hidden border border-slate-600 rounded-lg relative"
@@ -160,13 +183,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                 <div className="text-[10px] text-slate-300 truncate">{plan.objective}</div>
               </div>
               <div className="flex relative">
-                {dateHeaders.map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-shrink-0 border-r border-slate-600/40 h-10"
-                    style={{ width: COLUMN_WIDTH }}
-                  />
-                ))}
+                {planGridBackground}
               </div>
             </div>
 
@@ -205,13 +222,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                     </span>
                   </button>
                   <div className="flex relative items-center h-12">
-                    {dateHeaders.map((_, i) => (
-                      <div
-                        key={i}
-                        className="flex-shrink-0 border-r border-slate-600/30 h-full"
-                        style={{ width: COLUMN_WIDTH }}
-                      />
-                    ))}
+                    {recordGridBackground}
 
                     <div
                       className={`absolute h-8 rounded-lg border border-white/10 shadow-lg flex items-center px-3 cursor-grab active:cursor-grabbing group/bar overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f111a] ${isDragging ? 'z-50 opacity-80 scale-105' : 'z-10'}`}

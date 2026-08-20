@@ -23,3 +23,6 @@
 ## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
 **Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
 **Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+## 2025-02-23 - Timeline/Gantt grid map() O(n*m) rendering bottleneck
+**Learning:** In timeline and Gantt chart components (like `TimelineView.tsx`), mapping over date headers (e.g., `dateHeaders.map(...)`) inline during rendering inside double-nested arrays (for every plan, and for every task record) produces O(days * (plans + records)) new React elements every time the component renders. During continuous interaction updates like dragging items across the timeline, this causes extreme main-thread blocking and frame drops.
+**Action:** Extract static UI structures (like timeline grid background columns) into `React.useMemo` arrays that depend solely on the date headers. Render these memoized element arrays within the loops to completely bypass element re-creation and diffing overhead during interactions.
