@@ -13,13 +13,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          # Full history: the diffs below need a real merge base between the PR
+          # head and its base branch. A shallow clone gives "no merge base".
+          fetch-depth: 0
 
       - name: Build changed file list
         run: |
           set -euo pipefail
           zero_sha='0000000000000000000000000000000000000000'
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch --no-tags --prune --depth=1 origin "${{ github.base_ref }}"
+            git fetch --no-tags --prune origin "${{ github.base_ref }}"
             git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" > .tnf_changed_files
           else
             if [ "${{ github.event.before }}" = "$zero_sha" ]; then
