@@ -4,11 +4,22 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Publish/sync Super Admin rotation + mutation-guard fixes
-from `tnf-monorepo` as needed; monitor `preflight-skip` under full suite load.
-No 30s budget change pending a clean-env per-spawn timeout reproduction.
+**Current Directive:** Operator: delete Jules cloud Scheduled jobs that still
+target public `The-New-Fuse` (Bolt/Palette/Sentinel) in the Jules UI; merge the
+public auto-close workflow branch
+`chore/close-jules-persona-prs-on-public-overlay`. See
+`docs/operations/jules-scheduler-cleanup-2026-08-20.md`.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
+  - **Verified:** local crontab/launchd clean; local scripts already on
+    `tnf-monorepo`; 18 recent persona sessions still targeting public
+    `The-New-Fuse` (~2h freshness) — cloud schedules remain.
+  - **Done:** retargeted stale Jules docs; pushed public branch with
+    `close-jules-persona-prs.yml`; wrote ops receipt.
+  - **Blocked on operator:** Jules UI schedule deletion (CLI has no schedule
+    API); merge auto-close workflow to public `main`.
 
 - [✅] **2026-08-20 Repo maintenance: mutation-guard pack-refs false positive +
   preflight latency characterization (Cursor / tnf-monorepo)**:
