@@ -33,7 +33,7 @@ No 30s budget change pending a clean-env per-spawn timeout reproduction.
     printing; `process.env` mutates only after persist succeeds.
   - **Verify:** focused tests 8/8; silent fresh rotation; leaked chat token not
     authoritative; controlled boot cleared Super Admin auth (exit 0).
-  - **Repo policy:** implemented in `/Users/danielgoldberg/repos/tnf-monorepo`;
+  - **Repo policy:** implemented in canonical `whodaniel/tnf-monorepo`;
     The-New-Fuse overlay treated as downstream/publication only.
 
 - [✅] **2026-08-17 CLI Agent Autopilot Continuity Verification & Onboarder

@@ -5,7 +5,7 @@
   "repository": "tnf-monorepo",
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "/Users/danielgoldberg/repos/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
     "origin": "https://github.com/whodaniel/tnf-monorepo.git",
     "dirty": true,
     "operation_in_progress": null,
