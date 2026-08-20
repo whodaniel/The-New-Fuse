@@ -62,9 +62,52 @@ At https://jules.google.com → Scheduled / Automations (exact label may vary):
 
 ## Merge checklist
 
-- [ ] Merge auto-close workflow PR on `The-New-Fuse`
-- [ ] Confirm workflow enabled under Actions (billing may block runs)
+- [x] Merge auto-close workflow PR on `The-New-Fuse` — PR #155 squash-merged
+      2026-08-20 19:54Z as `f561df8ea2`; branch deleted. Merged with admin
+      ruleset bypass: the sole required check (`Build Summary`) fails on `main`
+      independently of this PR (see CI note below).
+- [x] Confirm workflow enabled under Actions — `close-jules-persona-prs.yml`
+      present on `main` (1742 bytes). Two runs recorded, both `skipped`, which
+      is the correct no-op result: zero open persona PRs to close.
 - [ ] Operator Jules UI schedule deletion receipt (screenshot or note in handoff)
+
+## CI note — pre-existing `main` breakage (not caused by #155)
+
+`Build Verification / Setup and Cache` fails at `pnpm install`:
+
+```
+ERR_PNPM_FETCH_404  GET https://registry.npmjs.org/@radix-ui%2Freact-content: Not Found - 404
+This error happened while installing a direct dependency of
+  apps/browser-control-surfaces
+```
+
+`@radix-ui/react-content` does not exist on the registry. The failure skips
+`Build Packages` / `Build Apps` / `Production Smoke Test`, which makes
+`Build Summary` exit 1 — and `Build Summary` is the only context in the
+`main protection` ruleset's `required_status_checks`. Every PR to public
+`The-New-Fuse` is therefore blocked until that dependency is removed or
+corrected. Latest `main` run of Build Verification (2026-08-18) also failed.
+
+Secondary, independent CI defect: `Gitlink Integrity` fails with
+`fatal: origin/main...HEAD: no merge base` because the workflow fetches with
+`--depth=1` before running `git diff origin/main...HEAD`. Needs
+`fetch-depth: 0` (or an explicit deepen) to work on any PR.
+
+## Post-merge verification (2026-08-20 ~19:55Z)
+
+- Open persona PRs on public `The-New-Fuse`: **0**
+- Persona sessions still spawning against `whodaniel/The-New-Fuse`: **yes** —
+  Bolt / Palette / Sentinel last active ~3.5h before check. Cloud schedules
+  remain live; the auto-close workflow is a containment net, not a fix.
+- `whodaniel/fuse` is **private**, so persona sessions there are not a public
+  exposure risk (deprioritized relative to the public overlay).
+- `whodaniel/EXTREAMIX` is **public** and receives "Activate Sentinel"
+  sessions from a separate schedule — out of scope here, flagged for triage.
+- Jules CLI re-confirmed to have no schedule surface: commands are
+  `login / logout / new / remote {list,new,pull} / teleport / version` only.
+  The CLI backend is the undocumented `aida.googleapis.com/v1/swebot` RPC;
+  deletion was **not** attempted against it. UI remains the only supported
+  path.
 
 ## Related
 
