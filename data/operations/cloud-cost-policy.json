@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-08-20",
+  "policy": "local-first-paid-cloud-opt-in",
+  "principles": [
+    "TNF runtime work executes locally or on operator-owned/self-hosted capacity by default.",
+    "No recurring paid cloud compute is enabled merely because code exists or a user account exists.",
+    "A metered SaaS capability may execute only after entitlement, budget, and provider-route checks succeed.",
+    "Prefer shared multi-tenant infrastructure and scale-to-zero/request-priced services before dedicated per-tenant infrastructure.",
+    "Route each workload to the least expensive provider that satisfies its durability, latency, isolation, and capability requirements.",
+    "Provider-specific AI platforms are optional adapters, never the canonical orchestration abstraction.",
+    "Every metered route must have a denial-of-wallet limit and attributable tenant/workspace usage receipt."
+  ],
+  "activationTiers": {
+    "local": {
+      "payer": "operator-or-user-device",
+      "cloudSpendAllowed": false,
+      "description": "Default OSS/self-hosted mode. Local relay, CLI, schedulers, tests, browser and agent execution whenever feasible."
+    },
+    "sharedFree": {
+      "payer": "tnf-free-allowance",
+      "cloudSpendAllowed": true,
+      "hardRequirement": "must remain inside configured free/included quotas; fail closed or degrade to local when quota is exhausted"
+    },
+    "meteredUserFunded": {
+      "payer": "entitled-user-or-workspace",
+      "cloudSpendAllowed": true,
+      "hardRequirement": "active paid entitlement plus remaining tenant budget before enqueue and again before execution"
+    },
+    "reservedEnterprise": {
+      "payer": "contracted-workspace",
+      "cloudSpendAllowed": true,
+      "hardRequirement": "explicit contract/SLA and budget envelope; reserved/fixed capacity only after measured break-even"
+    }
+  },
+  "executionGate": {
+    "requiredFields": [
+      "tenantId",
+      "workspaceId",
+      "capability",
+      "entitlementTier",
+      "providerRoute",
+      "estimatedCostUsd",
+      "budgetRemainingUsd",
+      "idempotencyKey"
+    ],
+    "decisionOrder": [
+      "local-capability-available",
+      "entitlement-authorized",
+      "free-or-included-quota-available",
+      "cheapest-compatible-route",
+      "tenant-budget-available",
+      "provider-hard-limit-present",
+      "enqueue",
+      "recheck-before-execute",
+      "record-usage-receipt"
+    ],
+    "failMode": "closed-for-paid-route-with-local-or-deferred-fallback"
+  },
+  "providerRoles": {
+    "cloudflare": {
+      "preferredFor": [
+        "edge-ingress",
+        "rate-limiting-and-cache",
+        "websocket-or-session-coordination",
+        "durable-object-per-room-or-session-state",
+        "low-latency-edge-functions",
+        "ai-gateway-observability-routing-and-cache",
+        "small-serverless-ai-inference-when-cost-effective"
+      ],
+      "avoidAsDefaultFor": [
+        "long-running-heavy-compute",
+        "provider-unified-billing-when-its-surcharge-exceeds-operational-value"
+      ]
+    },
+    "supabase": {
+      "preferredFor": [
+        "shared-multi-tenant-postgres",
+        "auth-and-rls",
+        "durable-business-state",
+        "billing-entitlements-and-usage-ledger",
+        "object-storage-metadata",
+        "postgres-native-queues-and-cron",
+        "pgvector-semantic-and-hybrid-search",
+        "short-db-adjacent-edge-functions"
+      ],
+      "avoidAsDefaultFor": [
+        "project-per-tenant",
+        "long-running-background-compute",
+        "duplicating-vector-or-search-services-before-pgvector-is-measured-insufficient"
+      ]
+    },
+    "upstash": {
+      "preferredFor": [
+        "bursty-serverless-redis",
+        "ephemeral-coordination-and-caches",
+        "durable-http-message-delivery",
+        "sleeping-workflows-and-retries",
+        "metered-schedules",
+        "burst-compute-boxes-when-cheaper-than-always-on-capacity"
+      ],
+      "avoidAsDefaultFor": [
+        "steady-high-command-rate-redis-without-break-even-analysis",
+        "duplicate-vector-or-search-indexes-without-measured-benefit",
+        "paid-production-packs-before-sla-or-compliance-revenue-justifies-them"
+      ]
+    },
+    "gcp": {
+      "preferredFor": [
+        "cloud-run-scale-to-zero-containers",
+        "heavier-or-native-dependency-workloads",
+        "jobs-needing-container-isolation",
+        "gpu-or-specialized-compute-only-for-paid-workloads",
+        "tenant-attributed-container-workloads"
+      ],
+      "avoidAsDefaultFor": [
+        "minimum-instances-for-idle-services",
+        "always-on-vms-for-bursty-work",
+        "vertex-agent-engine-when-direct-tnf-runtime-is-cheaper-and-sufficient"
+      ]
+    },
+    "github": {
+      "preferredFor": [
+        "source-control",
+        "pull-requests",
+        "issues",
+        "small-path-scoped-pr-gates",
+        "manual-release-or-publication-convenience"
+      ],
+      "avoidAsDefaultFor": [
+        "scheduled-runtime-work",
+        "nightly-agent-intelligence",
+        "browser-crawls",
+        "full-build-or-test-matrices-on-every-push",
+        "automatic-provider-billed-ai-review"
+      ]
+    }
+  },
+  "breakEvenRule": "Do not move from usage-based/scale-to-zero to fixed or reserved capacity until trailing measured usage plus reliability requirements show the fixed option is cheaper or contractually required.",
+  "costControls": {
+    "perTenantSoftLimitRequired": true,
+    "perTenantHardLimitRequired": true,
+    "providerAccountHardLimitRequiredWhereSupported": true,
+    "maximumConcurrencyRequired": true,
+    "maximumInstanceOrWorkerCpuRequiredWhereSupported": true,
+    "usageReceiptRequired": true,
+    "estimatedVsActualCostReconciliationRequired": true,
+    "automaticUpgradeWithoutEntitlement": false
+  }
+}

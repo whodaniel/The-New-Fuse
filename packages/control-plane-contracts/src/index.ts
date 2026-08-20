@@ -15,6 +15,9 @@
  */
 export * from './authority.js';
 
+/** Local-first / user-funded SaaS metering and route authorization contract. */
+export * from './cost-policy.js';
+
 /** Master Clock timing / connection configuration (public shape). */
 export interface MasterClockConfig {
   heartbeatIntervalMs: number;
