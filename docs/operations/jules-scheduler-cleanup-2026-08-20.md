@@ -71,7 +71,39 @@ At https://jules.google.com → Scheduled / Automations (exact label may vary):
       is the correct no-op result: zero open persona PRs to close.
 - [ ] Operator Jules UI schedule deletion receipt (screenshot or note in handoff)
 
-## CI note — pre-existing `main` breakage (not caused by #155)
+## CI breakage — diagnosed and partly fixed (PR #156, issue #157)
+
+**Resolved after the notes below were written.** PR #156 landed four fixes,
+each confirmed by a CI run rather than assumed:
+
+| Stage | Before | After #156 |
+| --- | --- | --- |
+| `pnpm install` | 404 | pass |
+| Build Packages (76) | skipped | all pass |
+| Build Apps | skipped | `api-gateway` passes; `api`/`backend`/`frontend` fail |
+| gitlink merge base | fatal | resolved |
+
+1. Removed the nonexistent `@radix-ui/react-content` devDependency.
+2. `fetch-depth: 0` on the Gitlink Integrity checkout, and dropped `--depth=1`.
+3. `tnf-cli`: `new Set<string>(...)` so the membership test against a
+   `HARNESS_CLIENTS` literal union compiles.
+4. `relay-core`: declared `@the-new-fuse/control-plane-contracts`. This was a
+   real repo-boundary bug — `sync-repos.sh` strips `master-clock.ts` and
+   `broker-agent.ts` as proprietary and substitutes stubs that re-export from
+   that package, which nothing declared as a dependency, so the overlay could
+   never resolve or order it.
+
+All four are in `tnf-monorepo` (`b9d585dbf4`) so the next sync will not
+reintroduce them. Merged with admin bypass, as `Build Summary` is still red.
+
+Remaining work tracked in
+https://github.com/whodaniel/The-New-Fuse/issues/157: one type error in
+`apps/api`, a missing `OrchestratorService` export in `apps/backend` that may
+be another proprietary-strip casualty, a non-`tsc` failure in
+`apps/frontend`, and a stale gitlink allowlist (three paths that are real
+submodules upstream but not in the overlay — not a required check).
+
+## Original CI note — pre-existing `main` breakage (not caused by #155)
 
 `Build Verification / Setup and Cache` fails at `pnpm install`:
 
