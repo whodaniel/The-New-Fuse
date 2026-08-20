@@ -90,7 +90,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Disconnect from the database
+   * Disconnect database connection
    */
   async $disconnect(): Promise<void> {
     try {
@@ -230,9 +230,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // ==========================================================================
 
   /**
-   * Execute a raw SQL query
+   * Execute a raw SQL query. Dynamic values must be supplied via params.
    */
-  async executeRaw<T = unknown>(query: string): Promise<T[]> {
+  async executeRaw<T = unknown>(query: string, params?: unknown[]): Promise<T[]> {
+    if (params && params.length > 0) {
+      const result = await queryClient.unsafe(query, params as any[]);
+      return result as T[];
+    }
     const result = await db.execute(sql.raw(query));
     return result as T[];
   }

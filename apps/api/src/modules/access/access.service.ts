@@ -215,20 +215,21 @@ export class AccessService {
   }
 
   private async findUserByEmail(email: string) {
-    const lowered = email.toLowerCase().replace(/'/g, "''");
+    const lowered = email.toLowerCase();
     const rows = await this.db.executeRaw<{ id: string }>(
-      `SELECT id FROM users WHERE lower(email) = '${lowered}' LIMIT 1`
+      `SELECT id FROM users WHERE lower(email) = $1 LIMIT 1`,
+      [lowered]
     );
     return rows[0]?.id ? this.db.users.findById(rows[0].id) : null;
   }
 
   private async getAgent(agentId: string) {
-    const safeAgentId = agentId.replace(/'/g, "''");
     const rows = await this.db.executeRaw<{ id: string; user_id: string }>(
       `SELECT id, user_id
        FROM agents
-       WHERE id = '${safeAgentId}'
-       LIMIT 1`
+       WHERE id = $1
+       LIMIT 1`,
+      [agentId]
     );
     const agent = rows[0];
     return agent ? { id: agent.id, userId: agent.user_id } : null;
@@ -247,7 +248,6 @@ export class AccessService {
   }
 
   private async getActiveMembershipOverride(userId: string) {
-    const safeUserId = userId.replace(/'/g, "''");
     const rows = await this.db.executeRaw<{
       id: string;
       tier: SubscriptionTier;
@@ -255,10 +255,11 @@ export class AccessService {
     }>(
       `SELECT id, tier, expires_at
        FROM membership_overrides
-       WHERE user_id = '${safeUserId}'
+       WHERE user_id = $1
          AND status = 'ACTIVE'
        ORDER BY created_at DESC
-       LIMIT 1`
+       LIMIT 1`,
+      [userId]
     );
     const override = rows[0];
 
@@ -274,8 +275,6 @@ export class AccessService {
   }
 
   private async getActiveEntitlement(userId: string, gameId: string) {
-    const safeUserId = userId.replace(/'/g, "''");
-    const safeGameId = gameId.replace(/'/g, "''");
     const rows = await this.db.executeRaw<{
       source: string;
       tier_granted: SubscriptionTier;
@@ -283,10 +282,11 @@ export class AccessService {
     }>(
       `SELECT source, tier_granted, expires_at
        FROM game_entitlements
-       WHERE user_id = '${safeUserId}'
-         AND game_id = '${safeGameId}'
+       WHERE user_id = $1
+         AND game_id = $2
        ORDER BY created_at DESC
-       LIMIT 1`
+       LIMIT 1`,
+      [userId, gameId]
     );
     const entitlement = rows[0];
 
@@ -302,14 +302,14 @@ export class AccessService {
   }
 
   private async getGameRule(gameId: string) {
-    const safeGameId = gameId.replace(/'/g, "''");
     const rows = await this.db.executeRaw<GameRuleRecord>(
       `SELECT id, game_id, label, description, required_tier, requires_membership,
               required_nft_contract, required_nft_chain_id, required_nft_token_id, required_nft_traits
        FROM game_access_rules
-       WHERE game_id = '${safeGameId}'
+       WHERE game_id = $1
          AND is_active = true
-       LIMIT 1`
+       LIMIT 1`,
+      [gameId]
     );
     const persistedRule = rows[0];
     const rule = persistedRule
