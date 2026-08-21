@@ -324,7 +324,8 @@ function cycleCommands(cycle) {
   });
   commands.push({
     name: 'swarm-context-bridge',
-    command: `cd ${repo} && node scripts/runtime/tnf-swarm-context-bridge.cjs`,
+    // 'exec' replaces the shell process with node so timeout signals reach the node process directly.
+    command: `cd ${repo} && exec node scripts/runtime/tnf-swarm-context-bridge.cjs`,
   });
   commands.push({
     name: 'director-cycle',
@@ -493,7 +494,7 @@ async function main() {
   }
 }
 
-main().catch(async (error) => {
+if (require.main === module) main().catch(async (error) => {
   try {
     await ensureDirs();
     const payload = {
@@ -519,3 +520,5 @@ main().catch(async (error) => {
   console.error(`[master-heartbeat] fatal: ${String(error.message || error)}`);
   process.exit(1);
 });
+
+module.exports = { cycleCommands };
