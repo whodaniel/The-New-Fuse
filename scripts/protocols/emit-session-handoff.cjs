@@ -449,9 +449,9 @@ function main() {
 
   const markdown = `# SESSION_HANDOFF_LATEST
 
-Protocol ACK: \`TNF_PROTOCOL_ACK\`  
+Protocol ACK: \`TNF_PROTOCOL_ACK\`
 Spec: \`${handoffPayload.spec}\`
-Created At: \`${createdAt}\`  
+Created At: \`${createdAt}\`
 Handoff ID: \`${handoffId}\`
 
 ## Scope
