@@ -129,10 +129,9 @@ function readBootRouteFromUrl(): string | null {
 export function resolveBootRoute(initialRoute?: string): string {
   const fromUrl = readBootRouteFromUrl();
   if (fromUrl) {
-    const redirected = resolveLegacyRedirect(fromUrl);
-    if (KNOWN_ROUTE_PATHS.has(redirected)) {
-      return redirected;
-    }
+    // An explicit deep link is authoritative even when it is unknown so the
+    // router can render its recovery screen instead of silently opening home.
+    return resolveLegacyRedirect(fromUrl);
   }
 
   const persisted = safeStorage.getItem(ROUTE_STORAGE_KEY);

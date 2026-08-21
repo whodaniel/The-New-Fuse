@@ -1,65 +1,53 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "7e57e754-c800-4d07-ae64-d3daf2991a6c",
-  "created_at": "2026-08-21T08:27:25.460Z",
+  "handoff_id": "a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14",
+  "created_at": "2026-08-21T11:18:41.233Z",
   "repository": "whodaniel/tnf-monorepo",
-  "branch": "fix/public-overlay-ci-context",
-  "head_sha": "e3635bccda9e98836ddfb686d0f98bda5ba2a04f",
+  "branch": "fix/tauri-route-e2e-alignment",
+  "head_sha": "fc444c7c6d122bf30fa6b95cfb3d133a90327499",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
-    "TNF-PUBLICATION",
-    "TNF-CI"
+    "TNF-DESKTOP-E2E"
   ],
   "work_summary": [
-    "Scoped canonical-only boundary checks away from the generated public overlay and allowed the publication branch in train policy.",
-    "Made publication commit and PR titles conventional, including existing PR updates.",
-    "Restored root OpenAPI authority, installed TWIP dependencies, and fixed Tauri Redis cache typing and runtime behavior."
+    "Test fixes: stale page titles, the chat composer placeholder, collapsed secondary-nav expansion, exact-name selectors for the first-run cue collision, and bounded timeouts in the computer-use sweep."
   ],
   "changed_paths": [
-    ".github/workflows/honest-failure-gate.yml",
-    ".github/workflows/integration-train-gate.yml",
-    ".github/workflows/openapi-drift-gate.yml",
-    ".github/workflows/protocol-schema-gate.yml",
-    ".github/workflows/repo-boundary-gate.yml",
-    "README.md",
-    "apps/tauri-desktop/src/services/cache/RedisCacheService.ts",
-    "docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md",
+    "apps/tauri-desktop/e2e/full-interaction.spec.ts",
+    "apps/tauri-desktop/e2e/routes.spec.ts",
+    "apps/tauri-desktop/src/components/route-context.test.tsx",
+    "apps/tauri-desktop/src/components/route-context.tsx",
+    "apps/tauri-desktop/src/config/routes.test.ts",
+    "apps/tauri-desktop/src/config/routes.ts",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
-    "openapi.yaml",
-    "scripts/sync-repos-auth.test.cjs",
-    "scripts/sync-repos.sh"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-08-21T08:27:26.738Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected) | Executed public-overlay CI failures were reproduced, classified, and repaired upstream; hosted infrastructure state remains separately tracked."
+    "notes": ""
   },
   "continuation": {
-    "owner": "orchestrator",
+    "owner": "claude-code",
     "targets": [
-      "orchestrator",
-      "operator"
+      "orchestrator"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Read the canonical reconciliation report and latest handoff.",
-      "Treat executed CI output as code evidence and zero-step jobs as infrastructure evidence.",
-      "Keep the divergent checkout mutation-prohibited.",
-      "Publish only through scripts/sync-repos.sh from canonical main."
+      "Read the desktop E2E job on public PR #161 before further selector edits."
     ]
   },
   "next_actions": [
-    "Merge the canonical public-overlay CI remediation PR.",
-    "Regenerate public PR #161 from canonical main, require executed relevant checks to pass, then merge.",
-    "Resolve issue #113 canonical control-plane service authority before implementation.",
-    "After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence."
+    "Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence."
   ],
   "artifacts": {
     "commits": [
-      "e3635bccda9e98836ddfb686d0f98bda5ba2a04f"
+      "fc444c7c6d122bf30fa6b95cfb3d133a90327499"
     ]
   },
   "repository_context": {
@@ -81,13 +69,11 @@
   },
   "capabilities": {
     "required": [
-      "release-engineering",
-      "ci-governance",
-      "runtime-reliability"
+      "desktop-ux",
+      "test-engineering"
     ],
     "staffed_by": [
-      "codex",
-      "operator"
+      "claude-code"
     ]
   },
   "publication": {

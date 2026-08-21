@@ -3,7 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Merge the canonical public-overlay CI remediation PR.
+**Current Directive:** Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-21 Canonical reconciliation and publication (Codex)**:
@@ -1094,6 +1094,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-21T11:18:46.180Z handoff `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14` head `fc444c7c6d12` project `TNF-DESKTOP-E2E` — Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.
 
 - 2026-08-21T08:27:27.798Z handoff `7e57e754-c800-4d07-ae64-d3daf2991a6c` head `e3635bccda9e` project `TNF-PUBLICATION` — Merge the canonical public-overlay CI remediation PR.
 

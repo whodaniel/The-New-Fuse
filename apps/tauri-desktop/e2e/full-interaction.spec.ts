@@ -36,11 +36,17 @@ test.describe('UX audit — global shell', () => {
     await gotoRoute(page, '/dashboard');
     const sidebarRoutes = DESKTOP_ROUTES.filter((route) => route.id !== 'computer-use');
     for (const route of sidebarRoutes) {
-      await page
+      const navItem = page
         .locator('.sidebar-nav button.nav-item')
         .filter({ hasText: route.label })
-        .first()
-        .click();
+        .first();
+      if (!(await navItem.isVisible().catch(() => false))) {
+        const more = page.locator('.sidebar-nav button.nav-more-toggle');
+        if ((await more.getAttribute('aria-expanded')) !== 'true') {
+          await more.click();
+        }
+      }
+      await navItem.click();
       await expect(page).toHaveURL(new RegExp(`#${route.path.replace('/', '\\/')}`));
       await screenshotUx(page, `sidebar-${route.id}`);
     }
@@ -151,7 +157,7 @@ test.describe('UX audit — Multi-Agent Chat', () => {
     await fillVisibleFormFields(page);
 
     const sendBtn = page.getByRole('button', { name: /send/i });
-    const input = page.getByPlaceholder(/type your message|select agents/i);
+    const input = page.getByPlaceholder(/send command to|select one or more agents/i);
 
     if (await input.isEnabled()) {
       await input.fill('UX audit ping — please ignore.');
@@ -207,7 +213,7 @@ test.describe('UX audit — Workflow Builder', () => {
       .toBeGreaterThan(before);
 
     await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('button', { name: 'Run' }).click();
+    await page.getByRole('button', { name: 'Run', exact: true }).click();
 
     await fillVisibleFormFields(page);
     await screenshotUx(page, 'workflow-builder');
@@ -354,13 +360,15 @@ test.describe('UX audit — exhaustive button sweep per route', () => {
       await gotoRoute(page, route.path);
       await page.waitForTimeout(500);
       if (route.path === '/computer-use') {
+        // Every best-effort step needs its own bound: without a timeout a missing
+        // control waits out the whole test budget instead of falling through.
         await page
           .getByRole('tab', { name: 'Browser runtime' })
-          .click()
+          .click({ timeout: 5000 })
           .catch(() => undefined);
         await page
-          .getByPlaceholder(/search or enter website/i)
-          .fill('https://example.com')
+          .getByPlaceholder(/enter address or search|connect to tnf browser/i)
+          .fill('https://example.com', { timeout: 5000 })
           .catch(() => undefined);
         await page
           .getByRole('button', { name: 'Refresh' })

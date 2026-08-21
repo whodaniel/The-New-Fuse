@@ -64,9 +64,15 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (window.history?.replaceState && !window.location.hash && isKnownRoute(bootRoute)) {
-      window.history.replaceState(null, '', `#${bootRoute}`);
-    }
+    if (!window.history?.replaceState) return;
+    const rawHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
+    if (rawHash === bootRoute) return;
+    // Boot can rewrite the requested path (legacy redirect) or restore a persisted
+    // route when no hash was given. Sync the address bar in both cases so a deep
+    // link never disagrees with the rendered view. replaceState does not emit
+    // hashchange, so this cannot loop with the listener below.
+    if (!rawHash && !isKnownRoute(bootRoute)) return;
+    window.history.replaceState(null, '', `#${bootRoute}`);
   }, [bootRoute]);
 
   useEffect(() => {

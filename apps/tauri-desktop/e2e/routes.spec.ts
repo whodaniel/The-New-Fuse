@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 
 /** Representative native routes → expected PageShell h1 */
 const ROUTE_TITLES: Record<string, string> = {
-  '/dashboard': 'System Console',
+  '/dashboard': 'The New Fuse',
   '/platform': 'The New Fuse Platform',
   '/agents': 'Agent Hub',
-  '/chat': 'Multi-Agent Chat',
+  '/chat': 'Multi-Agent Swarm Chat',
   '/workflows': 'Workflow Builder',
   '/analytics': 'Analytics',
   '/mcp': 'MCP Store',
@@ -51,7 +51,7 @@ test.describe('desktop route navigation', () => {
 
   test('command palette navigates to Agent Hub', async ({ page }) => {
     await page.goto('/#/dashboard');
-    await expectPageTitle(page, 'System Console');
+    await expectPageTitle(page, 'The New Fuse');
 
     const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
     await page.keyboard.press(`${modKey}+KeyK`);
@@ -67,7 +67,7 @@ test.describe('desktop route navigation', () => {
   test('sidebar navigates to Settings', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/#/dashboard');
-    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expectPageTitle(page, 'Settings');
     expect(page.url()).toContain('#/settings');
   });

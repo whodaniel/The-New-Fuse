@@ -2,14 +2,14 @@
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
 Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-21T08:27:25.460Z`
-Handoff ID: `7e57e754-c800-4d07-ae64-d3daf2991a6c`
+Created At: `2026-08-21T11:18:41.233Z`
+Handoff ID: `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14`
 
 ## Scope
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `fix/public-overlay-ci-context`
-- Head SHA: `e3635bccda9e98836ddfb686d0f98bda5ba2a04f`
+- Branch: `fix/tauri-route-e2e-alignment`
+- Head SHA: `fc444c7c6d122bf30fa6b95cfb3d133a90327499`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -19,43 +19,33 @@ Handoff ID: `7e57e754-c800-4d07-ae64-d3daf2991a6c`
 - Sensitivity: `internal`
 
 ## Work Summary
-- Scoped canonical-only boundary checks away from the generated public overlay and allowed the publication branch in train policy.
-- Made publication commit and PR titles conventional, including existing PR updates.
-- Restored root OpenAPI authority, installed TWIP dependencies, and fixed Tauri Redis cache typing and runtime behavior.
+- Test fixes: stale page titles, the chat composer placeholder, collapsed secondary-nav expansion, exact-name selectors for the first-run cue collision, and bounded timeouts in the computer-use sweep.
 
 ## Changed Paths
-- .github/workflows/honest-failure-gate.yml
-- .github/workflows/integration-train-gate.yml
-- .github/workflows/openapi-drift-gate.yml
-- .github/workflows/protocol-schema-gate.yml
-- .github/workflows/repo-boundary-gate.yml
-- README.md
-- apps/tauri-desktop/src/services/cache/RedisCacheService.ts
-- docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
+- apps/tauri-desktop/e2e/full-interaction.spec.ts
+- apps/tauri-desktop/e2e/routes.spec.ts
+- apps/tauri-desktop/src/components/route-context.test.tsx
+- apps/tauri-desktop/src/components/route-context.tsx
+- apps/tauri-desktop/src/config/routes.test.ts
+- apps/tauri-desktop/src/config/routes.ts
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- openapi.yaml
-- scripts/sync-repos-auth.test.cjs
-- scripts/sync-repos.sh
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Verification
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `orchestrator`
-- Targets: `orchestrator`, `operator`
+- Owner: `claude-code`
+- Targets: `orchestrator`
 - Priority: `high`
 
 ### Resume Checklist
-- Read the canonical reconciliation report and latest handoff.
-- Treat executed CI output as code evidence and zero-step jobs as infrastructure evidence.
-- Keep the divergent checkout mutation-prohibited.
-- Publish only through scripts/sync-repos.sh from canonical main.
+- Read the desktop E2E job on public PR #161 before further selector edits.
 
 ## Next Actions
-- Merge the canonical public-overlay CI remediation PR.
-- Regenerate public PR #161 from canonical main, require executed relevant checks to pass, then merge.
-- Resolve issue #113 canonical control-plane service authority before implementation.
-- After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence.
+- Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.

@@ -103,6 +103,24 @@ describe('RouteProvider', () => {
     expect(safeStorage.getItem(ROUTE_STORAGE_KEY)).toBeNull();
   });
 
+  it('rewrites the address bar when boot redirects a legacy deep link', () => {
+    (window as unknown as { location: { hash: string } }).location.hash = '#/browser';
+
+    const { result } = renderHook(() => useRoute(), { wrapper: wrapper() });
+
+    expect(result.current.currentRoute).toBe('/computer-use');
+    expect(window.history.replaceState).toHaveBeenCalledWith(null, '', '#/computer-use');
+  });
+
+  it('leaves an unknown deep link in the address bar so the 404 shell matches the URL', () => {
+    (window as unknown as { location: { hash: string } }).location.hash = '#/not-a-real-route';
+
+    const { result } = renderHook(() => useRoute(), { wrapper: wrapper() });
+
+    expect(result.current.currentRoute).toBe('/not-a-real-route');
+    expect(window.history.replaceState).not.toHaveBeenCalled();
+  });
+
   it('ignores a hashchange that matches the current route (no duplicate history)', () => {
     const { result } = renderHook(() => useRoute(), { wrapper: wrapper('/dashboard') });
 
