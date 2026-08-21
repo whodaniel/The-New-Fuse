@@ -2,96 +2,119 @@
 
 `[CLASS:PRIME] [STATUS:LOCKED] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE]`
 
-**Status:** ACTIVE **Scope:** Departmental Ingestion & Handoffs **Location:**
-/The-New-Fuse/docs/protocols/
+**Status:** ACTIVE  
+**Scope:** Departmental ingestion, governance mutations, and handoffs  
+**Location:** `docs/protocols/`
 
-This procedure defines the mandatory gates every unit of information must pass
-through before it is accepted into the TNF codebase or long-term archives. It
-enforces the "Challenging Prior Assumptions" protocol.
+This procedure defines the gates information and authority-bearing documents pass before they are accepted into TNF. It enforces the **Challenging Prior Assumptions** protocol without turning the audit trail into an ever-growing file that must be rewritten for every change.
 
 ---
 
-## 1. The Gating Sequence (The Five Gates)
+## 1. Gating Sequence
 
-Every file/doc unit must be vetted by an agent or human operator before
-progressing.
+### Gate 1 — Definition & Class Validation
 
-### GATE 1: Definition & Class Validation
+- The unit must match a defined class in the TNF system lexicon.
+- Ask why the unit exists and whether its structure remains useful.
+- Reject or refactor units that have no clear purpose.
 
-- **Requirement:** The file must match its defined `Class` in the
-  `TNF_SYSTEM_LEXICON`.
-- **Assumption Check:** Why does this file exist? Is its current structure the
-  most effective, or are we just following an old habit?
-- **Failure Condition:** If the unit does not match a blueprint or lacks a clear
-  purpose, it is rejected for refactoring.
+### Gate 2 — Library & Namespace Assignment
 
-### GATE 2: Library & Namespace Assignment
+- Assign the unit to the correct architecture, protocol, intelligence, product, or other namespace.
+- Check whether an existing unit already owns the concern.
+- Prefer explicit linkage over duplicate authority.
 
-- **Requirement:** The unit must be assigned to a specific `Library` (e.g.,
-  Architecture, Intelligence).
-- **Assumption Check:** Does this information truly belong in this namespace? Is
-  there an existing unit that already covers this, or does it require a `HYBRID`
-  flag?
+### Gate 3 — Flag Integrity
 
-### GATE 3: Flag Integrity (The Coding System)
+Authority and long-lived protocol documents must carry the required header metadata, including `[CLASS:X] [STATUS:Y]` where applicable.
 
-- **Requirement:** The unit must bear the mandatory header:
-  `[CLASS:X] [STATUS:Y]`.
-- **Action:** Assign `PRIME`, `INTEL`, `RAW`, or `SRC` class. Assign `PENDING`,
-  `VETTED`, `LOCKED`, or `PURGE` status.
+### Gate 4 — Linkage & Attribution
 
-### GATE 4: Linkage & Attribution
+- Preserve verifiable source pointers, timestamps, parent project IDs, or requirement documents.
+- Code/procedure changes must link to the requirement or protocol they implement when the relationship is not obvious.
 
-- **Requirement:** Every unit must have a verifiable source pointer (URL,
-  timestamp, or parent project ID).
-- **Requirement:** Procedural disclosure must be complete (e.g., if it's a
-  script, it must link to its requirement doc).
+### Gate 5 — Challenge & Verify
 
-### GATE 5: The Challenge & Verify Step
+Any body mutation or proposed replacement of a protected/locked governance document requires a **fresh, verified `challenge_rationale`**.
 
-- **Requirement:** Any mutation or proposed replacement of a `[STATUS:LOCKED]`
-  document requires a verified and logged `challenge_rationale`.
-- **Cutting-Edge Assumption Check:** If the proposed replacement relies on
-  experimental or cutting-edge AI architecture, it MUST log a verifiable
-  baseline performance comparison against the legacy protocol it seeks to
-  replace before the status can be superseded.
-- **Action:** Agents must explicitly verify the provided rationale against
-  established facts before allowing the document drift to be superseded.
+A rationale must state:
+
+1. the protected file being changed;
+2. the specific assumption or failure being challenged;
+3. the replacement behavior;
+4. safety invariants retained;
+5. who/what authorized the change;
+6. where relevant, the target document hash or other immutable receipt.
+
+If the replacement relies on experimental architecture, record a verifiable baseline comparison or explain why the comparison is structural rather than performance-based.
+
+### Challenge-event storage
+
+Historical rationale remains in:
+
+- `docs/protocols/CHALLENGE_RATIONALE_LOG.md`
+
+New rationale should normally be recorded as one **immutable event file** under:
+
+- `docs/protocols/challenge-rationales/YYYY-MM-DD-<slug>.md`
+
+This avoids rewriting a large monolithic ledger for every governance mutation while preserving an append-only audit trail. A challenge-event file is never silently edited or deleted after it has landed. Corrections are made by a new event that supersedes or clarifies the earlier event.
+
+Mechanical enforcement lives in:
+
+- `scripts/protocols/validate-locked-doc-ledger.cjs`
+
+The validator accepts a fresh legacy-ledger entry for compatibility, but V2 governance changes should prefer immutable event files.
 
 ---
 
 ## 2. Regular Effectiveness Vetting
 
-The vetting procedure itself must be vetted monthly.
+The vetting procedure itself must be reviewed periodically.
 
-1. **The Efficiency Audit:** Are these gates slowing down the "Perpetual Motion
-   Machine" without a verifiable increase in integrity?
-2. **The Relevance Check:** Have our `Class` definitions become obsolete due to
-   new industry shifts (e.g., moving from individual files to a vector-palace)?
-3. **The Assumption Challenge:** Every session, agents are encouraged to suggest
-   a "Baby Step" optimization to these gates.
+1. **Efficiency audit:** Are gates adding measurable integrity or merely latency?
+2. **Relevance check:** Have classes/namespaces become obsolete?
+3. **Assumption challenge:** Identify a small simplification that preserves or improves integrity.
+4. **Privacy check:** Are private facts being propagated when only a generalized pattern is needed?
 
 ---
 
-## 3. The "Assumption Challenge" Protocol
+## 3. Assumption Challenge Protocol
 
-"Steady practice" means never accepting a protocol as perfect.
+When a pending or challenged unit is processed, ask:
 
-- **Trigger:** Any time a `[STATUS:PENDING]` unit is processed.
-- **Action:** The processing agent must ask: _"Is there a simpler, zero-cost way
-  to store this information?"_ and _"Does this unit align with the Axiom of
-  Optimal Utility?"_
-- **Outcome:** Log findings to the `Staff Review Agent` for future optimization.
+- Is there a simpler, zero- or low-cost way to represent this?
+- Does it align with the current TNF product/repository boundary?
+- Is it authority, implementation, evidence, or merely a receipt?
+- Can the reusable lesson be generalized without carrying private context?
+
+Record material findings in the appropriate challenge event, directive, status ledger, issue, or implementation report.
 
 ---
 
-## 4. Deprecated Fact Archiving Protocol
+## 4. Deprecated-Fact Archiving
 
-- **Trigger:** Any time a fact or rule in a `[STATUS:LOCKED]` document (or
-  `MEMORY.md`) is successfully challenged and replaced.
-- **Action:** The agent must physically move the deprecated fact from the active
-  knowledge base into the designated `## History Archive` section of the
-  relevant memory file.
-- **Requirement:** Archiving is **mandatory** for maintaining a verifiable audit
-  trail of system growth. Silent deletions or overwrites without archiving are
-  strictly prohibited and violate the Integrity Protocol.
+When a locked rule is successfully challenged and replaced:
+
+- preserve the old state in git history;
+- record the reason for replacement in the challenge event;
+- move only genuinely useful historical context into an explicit History/Archive section when that improves comprehension;
+- never silently rewrite history to make the old rule appear never to have existed.
+
+Git history plus immutable challenge events are the primary audit trail. Duplicating every superseded paragraph into active authority is not required when doing so would increase frontload without improving recoverability.
+
+---
+
+## 5. Turn Zero / Turn End Special Rule
+
+`TURN_ZERO_MANDATE.md` and `TURN_END_MANDATE.md` are a paired lifecycle contract. A material change to either must be evaluated for implications to:
+
+- onboarding/frontload;
+- session handoff schema/generation;
+- state freshness;
+- repository/product classification;
+- capability staffing;
+- privacy/data residency;
+- downstream publication.
+
+The validator protects both documents so one side cannot drift independently.

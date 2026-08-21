@@ -1073,7 +1073,8 @@ pnpm run start
 
 ### Key Repositories
 
-- **Main Monorepo**: `whodaniel/The-New-Fuse`
+- **Main Monorepo**: `whodaniel/tnf-monorepo` (private development authority)
+- **Public Runtime**: `whodaniel/The-New-Fuse` (generated publication target)
 - **SkIDEancer IDE**: `whodaniel/skideancer-ide` (isolated)
 
 ---

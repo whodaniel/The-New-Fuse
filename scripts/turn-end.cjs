@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execSync } = require('node:child_process');
+const { upgrade: upgradeSessionHandoff } = require('./turn-end-v2.cjs');
 
 const TNF_ROOT_DIR = process.env.TNF_ROOT_DIR || process.cwd();
 const LIVING_STATE_PATH = path.join(TNF_ROOT_DIR, 'docs/protocols/LIVING_STATE.md');
@@ -447,15 +448,24 @@ function writeSessionHandoffMd(handoffData) {
     '# SESSION_HANDOFF_LATEST',
     '',
     `Protocol ACK: \`${handoffData.protocol_ack}\``,
+    `Spec: \`${handoffData.spec}\``,
     `Created At: \`${handoffData.created_at}\``,
     `Handoff ID: \`${handoffData.handoff_id}\``,
     '',
     '## Scope',
     '',
     `- Repository: \`${handoffData.repository}\``,
+    `- Canonical Source: \`${handoffData.repository_context.canonical_source}\``,
     `- Branch: \`${handoffData.branch}\``,
     `- Head SHA: \`${handoffData.head_sha}\``,
     `- Sensitive Scope: \`${handoffData.sensitive_scope}\``,
+    '',
+    '## Classification',
+    '',
+    `- Work Domain: \`${handoffData.classification.work_domain}\``,
+    `- Artifact Destination: \`${handoffData.classification.artifact_destination}\``,
+    `- Data Residency: \`${handoffData.classification.data_residency}\``,
+    `- Sensitivity: \`${handoffData.classification.sensitivity}\``,
     '',
     '## Work Summary',
     '',
@@ -615,8 +625,8 @@ async function main() {
   const owner = process.env.TNF_SYSTEM_STATUS || 'operator';
   const priority = process.env.TNF_SESSION_PRIORITY || 'medium';
 
-  const handoffData = {
-    spec: 'tnf/session-handoff/0.1',
+  const handoffData = upgradeSessionHandoff({
+    spec: 'tnf/session-handoff/0.2',
     handoff_id: generateUuid(),
     created_at: new Date().toISOString(),
     repository: 'The-New-Fuse',
@@ -650,7 +660,7 @@ async function main() {
       deployment_urls: [],
       database_migrations: [],
     },
-  };
+  });
 
   console.log('');
   console.log('=== Writing Handoff Files ===');

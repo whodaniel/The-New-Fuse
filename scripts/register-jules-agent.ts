@@ -194,7 +194,7 @@ async function registerJulesAgent() {
 
     console.log('🎯 Next Steps:');
     console.log('1. Use /delegate-to-jules slash command to invoke Jules');
-    console.log('2. Launch Jules sessions with: jules new --repo whodaniel/The-New-Fuse "task"');
+    console.log('2. Launch Jules sessions with: jules new --repo whodaniel/tnf-monorepo "task"');
     console.log('3. Monitor sessions: jules remote list --session');
     console.log('4. Pull results: jules remote pull --session [ID]');
     console.log('\n');

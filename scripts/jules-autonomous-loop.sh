@@ -69,7 +69,7 @@ if [[ -s "$PUBLISH_TMP" ]]; then
     --sessions-file "$PUBLISH_TMP" \
     --mode publish \
     --limit "$publish_count" \
-    --repo whodaniel/The-New-Fuse \
+    --repo whodaniel/tnf-monorepo \
     --base main | tee -a "$LOG_FILE" || true
 else
   log "No completed/review sessions need publishing."

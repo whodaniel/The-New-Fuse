@@ -4,7 +4,7 @@
 # This will create parallel Jules sessions for each task
 
 TASKS_DIR=".jules/tasks"
-REPO="whodaniel/The-New-Fuse"
+REPO="whodaniel/tnf-monorepo"
 
 echo "🚀 Submitting Jules tasks from ${TASKS_DIR}..."
 echo ""

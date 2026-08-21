@@ -27,7 +27,7 @@ const CONFIG = {
   alertFile: '.agent/jules-logs/alerts.json',
   dashboardFile: '.agent/jules-logs/dashboard.json',
   maxHistoryEntries: 1000,
-  repo: 'whodaniel/The-New-Fuse',
+  repo: 'whodaniel/tnf-monorepo',
 };
 
 // ═══════════════════════════════════════════════════════════════════════════

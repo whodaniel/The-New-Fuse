@@ -59,16 +59,13 @@ export class AgentPfpOverridesService {
   async listOverrides(userId: string, namespace = 'global'): Promise<AgentPfpOverrideMap> {
     await this.ensureSchema();
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
-
     const rows = await this.db.executeRaw<AgentPfpOverrideRow>(`
       SELECT agent_id, image_url, prompt, provider, model, style, source, updated_at
       FROM agent_pfp_overrides
-      WHERE user_id = '${safeUserId}'
-        AND namespace = '${safeNamespace}'
+      WHERE user_id = $1
+        AND namespace = $2
       ORDER BY updated_at DESC
-    `);
+    `, [userId, this.normalizeNamespace(namespace)]);
 
     const overrides: AgentPfpOverrideMap = {};
 
@@ -101,9 +98,6 @@ export class AgentPfpOverridesService {
       await this.assertCloudWriteAccess(userId);
     }
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
-    const safeAgentId = this.escapeSqlLiteral(agentId.trim());
     const now = new Date().toISOString();
     const storedImageUrl = await this.prepareImageForStorage(
       userId,
@@ -113,12 +107,11 @@ export class AgentPfpOverridesService {
     );
 
     const id = randomUUID();
-    const imageUrlSql = this.toSqlString(storedImageUrl);
-    const promptSql = this.toSqlNullableString(override.prompt);
-    const providerSql = this.toSqlNullableString(override.provider);
-    const modelSql = this.toSqlNullableString(override.model);
-    const styleSql = this.toSqlNullableString(override.style);
-    const sourceSql = this.toSqlString(this.normalizeSource(override.source));
+    const prompt = override.prompt?.trim() || null;
+    const provider = override.provider?.trim() || null;
+    const model = override.model?.trim() || null;
+    const style = override.style?.trim() || null;
+    const source = this.normalizeSource(override.source);
 
     await this.db.executeRaw(`
       INSERT INTO agent_pfp_overrides (
@@ -135,18 +128,18 @@ export class AgentPfpOverridesService {
         updated_at,
         created_at
       ) VALUES (
-        '${id}',
-        '${safeNamespace}',
-        '${safeUserId}',
-        '${safeAgentId}',
-        ${imageUrlSql},
-        ${promptSql},
-        ${providerSql},
-        ${modelSql},
-        ${styleSql},
-        ${sourceSql},
-        '${now}',
-        '${now}'
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+        $11,
+        $12
       )
       ON CONFLICT (namespace, user_id, agent_id)
       DO UPDATE SET
@@ -157,7 +150,20 @@ export class AgentPfpOverridesService {
         style = EXCLUDED.style,
         source = EXCLUDED.source,
         updated_at = EXCLUDED.updated_at
-    `);
+    `, [
+      id,
+      this.normalizeNamespace(namespace),
+      userId,
+      agentId.trim(),
+      storedImageUrl,
+      prompt,
+      provider,
+      model,
+      style,
+      source,
+      now,
+      now
+    ]);
   }
 
   async removeOverride(
@@ -172,16 +178,12 @@ export class AgentPfpOverridesService {
       await this.assertCloudWriteAccess(userId);
     }
 
-    const safeUserId = this.escapeSqlLiteral(userId);
-    const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
-    const safeAgentId = this.escapeSqlLiteral(agentId.trim());
-
     await this.db.executeRaw(`
       DELETE FROM agent_pfp_overrides
-      WHERE user_id = '${safeUserId}'
-        AND namespace = '${safeNamespace}'
-        AND agent_id = '${safeAgentId}'
-    `);
+      WHERE user_id = $1
+        AND namespace = $2
+        AND agent_id = $3
+    `, [userId, this.normalizeNamespace(namespace), agentId.trim()]);
   }
 
   private async assertCloudWriteAccess(userId: string): Promise<void> {
@@ -425,18 +427,4 @@ export class AgentPfpOverridesService {
     return parsed.toISOString();
   }
 
-  private toSqlString(value: string): string {
-    return `'${this.escapeSqlLiteral(value)}'`;
-  }
-
-  private toSqlNullableString(value: string | null | undefined): string {
-    if (value == null) return 'NULL';
-    const normalized = String(value).trim();
-    if (!normalized) return 'NULL';
-    return `'${this.escapeSqlLiteral(normalized)}'`;
-  }
-
-  private escapeSqlLiteral(value: string): string {
-    return String(value).replace(/'/g, "''");
-  }
 }

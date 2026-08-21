@@ -173,7 +173,11 @@ export class BrowserService {
 
     if (url) {
       const nav = await this.interact({ operation: 'open', target: url, headed: true });
-      steps.push({ step: 'navigate', ok: nav.code === 0, detail: { url, ...nav.parsed } });
+      const navDetail =
+        nav.parsed !== null && typeof nav.parsed === 'object'
+          ? nav.parsed
+          : { result: nav.parsed };
+      steps.push({ step: 'navigate', ok: nav.code === 0, detail: { url, ...navDetail } });
       this.session.url = url;
     }
 

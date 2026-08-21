@@ -1,5 +1,7 @@
-name: GitHub History Timeline Sync
+name: GitHub History Timeline Sync (Manual)
 
+# Cost policy: this is a data-sync operation, not CI. Run it from TNF/local
+# scheduling or dispatch explicitly when a refresh is wanted.
 on:
   workflow_dispatch:
     inputs:
@@ -7,12 +9,11 @@ on:
         description: "Replace previously imported github-history events before import"
         required: false
         default: "false"
-  schedule:
-    - cron: "25 5 * * *"
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,17 +24,15 @@ jobs:
           TNF_API_URL: ${{ secrets.TNF_API_URL }}
           TNF_AUTH_TOKEN: ${{ secrets.TNF_AUTH_TOKEN }}
         run: |
-          if [ -z "$TNF_API_URL" ] || [ -z "$TNF_AUTH_TOKEN" ]; then
-            echo "Missing required secrets TNF_API_URL or TNF_AUTH_TOKEN."
-            exit 1
-          fi
+          test -n "$TNF_API_URL" || { echo "Missing TNF_API_URL"; exit 1; }
+          test -n "$TNF_AUTH_TOKEN" || { echo "Missing TNF_AUTH_TOKEN"; exit 1; }
       - name: Run timeline import
         env:
           TNF_TIMELINE_IMPORT_URL: ${{ secrets.TNF_API_URL }}/api/timeline/github/import
           TNF_AUTH_TOKEN: ${{ secrets.TNF_AUTH_TOKEN }}
           GITHUB_HISTORY_NARRATIVE_PATH: ${{ secrets.GITHUB_HISTORY_NARRATIVE_PATH }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.replace_existing }}" = "true" ]; then
+          if [ "${{ inputs.replace_existing }}" = "true" ]; then
             node scripts/timeline/import-github-history-to-timeline.mjs --replace-existing
           else
             node scripts/timeline/import-github-history-to-timeline.mjs

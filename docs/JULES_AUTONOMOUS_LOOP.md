@@ -71,7 +71,7 @@ INTERVAL_MINUTES=30 TASK_FILE=.agent/jules-logs/tasks-batch2-2026-02-18.txt pnpm
 ## Environment assumptions
 
 - `jules` CLI is installed and authenticated.
-- `gh` CLI is installed and authenticated to `whodaniel/The-New-Fuse`.
+- `gh` CLI is installed and authenticated to `whodaniel/tnf-monorepo`.
 - `jq` is installed.
 - Repo remote `origin` is reachable.
 

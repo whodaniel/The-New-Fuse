@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/agent-instance-snapshot.schema.json",
+  "title": "TNF Agent Instance Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["snapshotId", "platform", "instanceRef", "capturedAt", "capabilities", "provenance"],
+  "properties": {
+    "snapshotId": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string", "minLength": 1 },
+    "product": { "type": "string" },
+    "instanceRef": { "type": "string", "minLength": 1 },
+    "subjectRef": { "type": "string" },
+    "workspaceRef": { "type": "string" },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "status", "source", "observedAt"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "category": { "type": "string" },
+          "status": { "enum": ["available", "enabled", "disabled", "unknown", "degraded"] },
+          "source": { "enum": ["platform-doc", "adapter-observation", "user-assertion", "runtime-proof"] },
+          "sourceRef": { "type": "string" },
+          "observedAt": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "constraints": { "type": "object" }
+        }
+      }
+    },
+    "connectors": { "type": "array", "items": { "type": "object" } },
+    "schedules": { "type": "array", "items": { "type": "object" } },
+    "activeTaskRefs": { "type": "array", "items": { "type": "string" } },
+    "metadata": { "type": "object" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapterId"],
+      "properties": {
+        "adapterId": { "type": "string", "minLength": 1 },
+        "adapterVersion": { "type": "string" },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "signatureRef": { "type": "string" }
+      }
+    }
+  }
+}

@@ -58,13 +58,9 @@ while true; do
     log "❌ System Health: DEGRADED. QA Swarm is already addressing issues."
   fi
 
-  log "📡 Dispatching Strategic Batch to Swarm..."
-  # Every cycle, we find something new to improve
-  # Bolt: Performance
-  jules new --repo whodaniel/The-New-Fuse "You are 'Bolt' ⚡. Find the slowest part of the API or Frontend and optimize it by 10%." || true
-  
-  # Palette: UI/UX
-  jules new --repo whodaniel/The-New-Fuse "You are 'Palette' 🎨. Identify one component that lacks interactive feedback and add a subtle animation or loading state." || true
+  log "📡 Skipping Bolt/Palette Jules dispatch."
+  log "    Those personas targeted the public overlay (The-New-Fuse) and produced stale duplicate PRs."
+  log "    Development Jules sessions belong on whodaniel/tnf-monorepo, not a 10-minute persona loop."
 
   log "💤 Cycle complete. Resting for 10 minutes..."
   sleep 600

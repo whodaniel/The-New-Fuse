@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-20T20:04:00Z",
+  "policy": {
+    "vendorNeutral": true,
+    "userChoiceFirst": true,
+    "noRecommendationSolelyForCommission": true,
+    "discloseMaterialReferralRelationship": true,
+    "requireFreshVerificationBeforeApplicationOrPromotion": true,
+    "defaultStaleAfterDays": 45
+  },
+  "channels": [
+    {
+      "provider": "Google Cloud",
+      "program": "Google Cloud Affiliate Program",
+      "type": "affiliate",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Cash reward for each new eligible referred user; no annual earnings cap stated. Affiliate-specific $350 trial offer ($50 above standard $300).",
+      "fitForTNF": ["GCP/Cloud Run educational content", "deployment recommendations when GCP is independently the best route", "operator onboarding"],
+      "source": "https://cloud.google.com/affiliate-program",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Apply through CJ Affiliate after TNF business/payee identity is ready; capture commission terms privately before publishing any projections."
+    },
+    {
+      "provider": "Cloudflare",
+      "program": "PowerUP Partner Program",
+      "type": "channel-partner/referral/consult",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Consult route explicitly supports providing services and referring customers; broader program includes resell, manage, distribute, and consult routes-to-revenue.",
+      "fitForTNF": ["Cloudflare integration", "managed TNF edge/session deployments", "consulting/referral motions"],
+      "source": "https://www.cloudflare.com/partners/power-up-program/",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Evaluate Consult and Technology Alliance entry criteria; do not bias TNF routing toward Cloudflare for partner economics."
+    },
+    {
+      "provider": "Cloudflare",
+      "program": "Technology Partnerships Program",
+      "type": "technology-alliance",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Joint integrations plus sales/marketing opportunities for mutual customers; public page does not promise a fixed affiliate commission.",
+      "fitForTNF": ["TNF edge adapter", "AI Gateway integration", "Workers/Durable Objects interoperability"],
+      "source": "https://www.cloudflare.com/partners/technology-partners/",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Prepare integration value proposition and partner application once a stable public TNF integration exists."
+    },
+    {
+      "provider": "Supabase",
+      "program": "Supabase Partner Catalog / Partners Program",
+      "type": "technology-partner/marketplace",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Partner listing and dashboard/integration distribution opportunity; no fixed referral commission is stated in the public material reviewed.",
+      "fitForTNF": ["TNF Supabase integration", "OAuth management integration", "RLS/agent-state templates"],
+      "source": "https://supabase.com/docs/guides/integrations/partner-catalog",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Build/document a production-ready Supabase integration and revisit application prerequisites: business viability, legal policies, SLA capability, maintainability."
+    },
+    {
+      "provider": "Upstash",
+      "program": "Integration with Third Parties & Partnerships",
+      "type": "technology-partner",
+      "status": "confirmed-public",
+      "priority": "medium",
+      "economicSignal": "Upstash invites platforms using Redis, Vector, or QStash to partner and integrate provisioning through OAuth2; no public fixed affiliate commission found in the reviewed official page.",
+      "fitForTNF": ["serverless Redis adapter", "QStash/Workflow adapter", "embedded resource provisioning"],
+      "source": "https://upstash.com/docs/redis/help/integration",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Contact partnership channel after TNF provider adapter and user-provisioning flow are concrete; ask explicitly about referral/revenue-share economics."
+    },
+    {
+      "provider": "OpenAI",
+      "program": "OpenAI Partner Network",
+      "type": "partner/co-sell/services",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Formal build, co-sell, and delivery partner network with Select/Advanced/Elite progression; public material reviewed does not state a simple affiliate commission.",
+      "fitForTNF": ["Codex/agent integrations", "enterprise agent orchestration delivery", "consulting and implementation"],
+      "source": "https://openai.com/business/partners/",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Track eligibility and Codex/agents specialization opportunities; prepare TNF deployment evidence and customer outcomes."
+    },
+    {
+      "provider": "Anthropic",
+      "program": "Claude Partner Network",
+      "type": "partner/services/go-to-market",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Anthropic announced a $100M partner-network investment with training, technical support, certifications, joint market development, and potential investment; not a simple public affiliate program.",
+      "fitForTNF": ["Claude Code/Cowork integration", "enterprise implementation", "agent workflow consulting"],
+      "source": "https://www.anthropic.com/news/claude-partner-network",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Assess partner eligibility and certification path; preserve provider neutrality in TNF capability routing."
+    },
+    {
+      "provider": "GitHub",
+      "program": "GitHub Partner Program",
+      "type": "technology/services/channel/co-sell",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Technology and Services/Channel tracks include marketplace visibility, enablement, co-selling opportunities, and revenue/customer-growth positioning; no simple universal affiliate commission stated.",
+      "fitForTNF": ["GitHub App/MCP integration", "agent integration", "Marketplace distribution", "services/channel motion"],
+      "source": "https://github.com/partners",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Prepare TNF GitHub integration/Marketplace artifact and assess Technology Partner versus Services & Channel application."
+    },
+    {
+      "provider": "Netlify",
+      "program": "Netlify Partners",
+      "type": "revenue-share/partner",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Ecosystem Partners advertise 20% revenue share for up to 12 months on eligible self-serve new business; Certified Partners advertise 20% for up to 24 months on qualifying business including renewals/expansion.",
+      "fitForTNF": ["optional web deployment adapter", "education/content", "implementation services"],
+      "source": "https://www.netlify.com/partners/",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Benchmark Netlify against existing deployment routes first; apply only if TNF can recommend it on technical/economic merit."
+    },
+    {
+      "provider": "Railway",
+      "program": "Railway Affiliate Program",
+      "type": "affiliate",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "New referred users receive $20 in Railway credits; affiliate receives 15% commission on the first 12 months of invoices after the referral becomes a customer.",
+      "fitForTNF": ["optional deployment alternative", "deployment tutorials and comparisons", "migration paths"],
+      "source": "https://docs.railway.com/community/affiliate-program",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Benchmark Railway against Cloud Run/other TNF routes and register the existing-workspace affiliate link only if Railway remains a technically sound option for specific users."
+    },
+    {
+      "provider": "DigitalOcean",
+      "program": "DigitalOcean Affiliate Program",
+      "type": "affiliate",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Public program advertises 10% commission each month for one year on referred new paying-user spend.",
+      "fitForTNF": ["simple cloud deployment alternative", "GPU/inference evaluation", "developer education"],
+      "source": "https://www.digitalocean.com/affiliates",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Add DigitalOcean to the infrastructure scout comparison and apply via CJ only if TNF can identify real workloads where it is economically/technically competitive."
+    },
+    {
+      "provider": "DigitalOcean",
+      "program": "DigitalOcean Partner Services Program",
+      "type": "services/referral/reseller",
+      "status": "confirmed-public",
+      "priority": "high",
+      "economicSignal": "Public page advertises up to 15% referral fee for qualified referrals, up to 25% reseller discounts on eligible services, and partner service/market-development benefits; tier requirements apply.",
+      "fitForTNF": ["managed deployments", "cloud migration/cost optimization", "implementation services"],
+      "source": "https://www.digitalocean.com/partners/services",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Assess Registered tier requirements and whether TNF services volume can satisfy minimum new-customer MRR requirements before applying."
+    },
+    {
+      "provider": "Vercel",
+      "program": "Vercel Affiliate Marketing Program",
+      "type": "affiliate",
+      "status": "confirmed-terms",
+      "priority": "medium",
+      "economicSignal": "Current legal terms confirm compensation-eligible self-service transactions through provider-issued affiliate links; exact fee schedule is governed by program guidelines and is not inferred here.",
+      "fitForTNF": ["optional frontend/web deployment", "framework deployment education"],
+      "source": "https://vercel.com/legal/affiliate-marketing-terms",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Locate current public/application program guidelines and benchmark Vercel before modeling any revenue."
+    },
+    {
+      "provider": "Cursor",
+      "program": "Cursor Referral Program",
+      "type": "referral",
+      "status": "reported-closed",
+      "priority": "watch",
+      "economicSignal": "Cursor community staff reported the referral discount program closed July 23, 2026; previous limited rollout rewards are not a current dependable revenue channel.",
+      "fitForTNF": ["developer-tool ecosystem awareness"],
+      "source": "https://forum.cursor.com/t/is-the-cursor-referral-discount-program-over-will-there-be-future-referral-campaigns/166990/9",
+      "verifiedAt": "2026-08-20",
+      "nextAction": "Watch for a formal affiliate/partner relaunch; do not model Cursor referral revenue today."
+    }
+  ]
+}

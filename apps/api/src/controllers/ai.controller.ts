@@ -8,6 +8,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
+import { randomUUID } from 'crypto';
 import { assertDevLoopBudget } from '../utils/dev-loop-guard';
 
 @Controller('ai')
@@ -231,6 +232,19 @@ export class AiController {
   }
 
   private resolveTextEndpoint(provider: string, model: string, apiEndpoint?: string): string {
+    if (provider === 'google-adk') {
+      const configuredBase =
+        apiEndpoint?.trim() ||
+        (model.startsWith('http://') || model.startsWith('https://') ? model : '') ||
+        process.env.GOOGLE_ADK_BASE_URL?.trim() ||
+        process.env.ADK_GATEWAY_URL?.trim() ||
+        (process.env.TNF_RUNTIME === 'docker-compose'
+          ? 'http://adk-gateway:8080'
+          : 'http://localhost:8089');
+      const base = configuredBase.replace(/\/+$/, '');
+      return base.endsWith('/v1/execute') ? base : `${base}/v1/execute`;
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       const encodedModel = encodeURIComponent(model);
       if (apiEndpoint && apiEndpoint.trim()) {
@@ -275,6 +289,13 @@ export class AiController {
   }
 
   private buildProviderHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'google-adk') {
+      return {
+        'content-type': 'application/json',
+        'x-adk-gateway-key': apiKey,
+      };
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       return {
         'content-type': 'application/json',
@@ -302,6 +323,28 @@ export class AiController {
     prompt: string,
     systemPrompt?: string
   ): Record<string, unknown> {
+    if (provider === 'google-adk') {
+      return {
+        requestId: randomUUID(),
+        traceId: randomUUID(),
+        workspaceId: 'tnf-default-workspace',
+        agentId: 'tnf-ai-controller',
+        model,
+        input: {
+          messages: [
+            ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+            { role: 'user', content: prompt },
+          ],
+        },
+        tools: [],
+        metadata: {
+          source: 'tnf-ai-controller',
+          policyProfile: 'default',
+        },
+        timeoutMs: 120000,
+      };
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       const parts = [systemPrompt, prompt]
         .filter((part): part is string => Boolean(part && part.trim()))
@@ -341,6 +384,11 @@ export class AiController {
   private extractTextContent(provider: string, payload: any): string | null {
     if (!payload || typeof payload !== 'object') {
       return null;
+    }
+
+    if (provider === 'google-adk') {
+      const text = payload?.output?.content;
+      return typeof text === 'string' ? text : null;
     }
 
     if (provider === 'anthropic') {

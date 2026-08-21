@@ -82,6 +82,64 @@ const isAuthored = (file) => !NON_AUTHORED.some((re) => re.test(file));
 const DANGEROUS_ACTIONS = [/^reset/i, /^merge/i, /^rebase/i, /^pull/i];
 
 /**
+ * Reflog / maintenance actions that rewrite refs without discarding the working
+ * tree. `git pack-refs` may include `refs/stash` in a multi-ref transaction when
+ * a stash exists; that must not be classified as `git stash` (false positive
+ * that blocks `git gc` on dirty trees — observed 2026-08-20).
+ */
+const SAFE_MAINTENANCE_ACTIONS = [
+  /^gc\b/i,
+  /^pack-refs\b/i,
+  /^prune\b/i,
+  /^repack\b/i,
+  /^maintenance\b/i,
+  /^commit-graph\b/i,
+  /^multi-pack-index\b/i,
+];
+
+/**
+ * Parse reference-transaction stdin lines (`<old> <new> <refname>`).
+ */
+function parseRefTransactionLines(stdin) {
+  const refNames = [];
+  for (const raw of String(stdin || '').split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parts = line.split(/\s+/);
+    if (parts.length >= 3) {
+      refNames.push(parts[parts.length - 1]);
+      continue;
+    }
+    // Fail open on unexpected shapes: only count explicit stash mentions.
+    if (/\brefs\/stash\b/.test(line)) refNames.push('refs/stash');
+  }
+  return refNames;
+}
+
+function isStashRefName(refName) {
+  return refName === 'refs/stash' || refName.startsWith('refs/stash/');
+}
+
+/**
+ * True when this transaction is a stash mutation — not merely a multi-ref
+ * rewrite that happens to mention an existing stash (pack-refs / gc).
+ */
+function isStashMutation(stdin, action) {
+  if (/stash/i.test(action || '')) return true;
+  const refNames = parseRefTransactionLines(stdin);
+  const stashRefs = refNames.filter(isStashRefName);
+  if (stashRefs.length === 0) return false;
+  // Solely stash ref updates ⇒ stash operation.
+  if (refNames.length > 0 && stashRefs.length === refNames.length) return true;
+  return false;
+}
+
+function isSafeMaintenance(action) {
+  if (!action) return false;
+  return SAFE_MAINTENANCE_ACTIONS.some((re) => re.test(action));
+}
+
+/**
  * Strips trailing newlines only — NOT a full `.trim()`.
  *
  * `git status --porcelain` encodes staged-vs-worktree state in the first two
@@ -222,6 +280,25 @@ function isDangerous(action) {
   return DANGEROUS_ACTIONS.some((re) => re.test(action));
 }
 
+/**
+ * Hook decision helper exported for unit tests.
+ * Returns { block, reason } without inspecting the working tree.
+ */
+function classifyRefTransaction({ action = '', stdin = '' } = {}) {
+  // Maintenance first: pack-refs/gc may rewrite refs/stash among other refs
+  // (or even alone) without discarding the working tree.
+  if (isSafeMaintenance(action) && !/stash/i.test(action)) {
+    return { block: false, reason: 'safe-maintenance' };
+  }
+  if (isStashMutation(stdin, action)) {
+    return { block: true, reason: 'stash-mutation' };
+  }
+  if (isDangerous(action)) {
+    return { block: true, reason: 'dangerous-action' };
+  }
+  return { block: false, reason: 'benign' };
+}
+
 function main(argv) {
   // Explicit operator bypass, checked before anything else.
   if (process.env[BYPASS_ENV] === '1') return 0;
@@ -251,14 +328,18 @@ function main(argv) {
     } catch {
       stdin = '';
     }
-    const touchesStash = /\brefs\/stash\b/.test(stdin);
 
-    // No signal at all → fail open rather than guess.
-    if (!action && !touchesStash) return 0;
-    if (!touchesStash && !isDangerous(action)) return 0;
+    const decision = classifyRefTransaction({ action, stdin });
+    // No actionable signal → fail open rather than guess.
+    if (decision.reason === 'benign' && !action && !stdin.trim()) return 0;
+    if (!decision.block) return 0;
     if (state.dirty === 0) return 0;
 
-    return refuse(touchesStash ? `git stash (${action || 'stash'})` : action, state, true);
+    const label =
+      decision.reason === 'stash-mutation'
+        ? `git stash (${action || 'stash'})`
+        : action || decision.reason;
+    return refuse(label, state, true);
   }
 
   // Standalone --check: for maintenance jobs to call before mutating.
@@ -287,10 +368,21 @@ function main(argv) {
   return refuse('requested tree mutation', state);
 }
 
-try {
-  process.exit(main(process.argv.slice(2)));
-} catch (error) {
-  // Never brick git.
-  console.error(`[workspace-mutation-guard] internal error, allowing: ${error.message}`);
-  process.exit(0);
+module.exports = {
+  classifyRefTransaction,
+  isStashMutation,
+  isSafeMaintenance,
+  isDangerous,
+  parseRefTransactionLines,
+  main,
+};
+
+if (require.main === module) {
+  try {
+    process.exit(main(process.argv.slice(2)));
+  } catch (error) {
+    // Never brick git.
+    console.error(`[workspace-mutation-guard] internal error, allowing: ${error.message}`);
+    process.exit(0);
+  }
 }

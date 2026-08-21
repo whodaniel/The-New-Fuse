@@ -4,10 +4,48 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Defer BackupService path fix, rclone wiring, dist-v7,
-concordance JSON.
+**Current Directive:** Operator: delete Jules cloud Scheduled jobs that still
+target public `The-New-Fuse` (Bolt/Palette/Sentinel) in the Jules UI; merge the
+public auto-close workflow branch
+`chore/close-jules-persona-prs-on-public-overlay`. See
+`docs/operations/jules-scheduler-cleanup-2026-08-20.md`.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
+  - **Verified:** local crontab/launchd clean; local scripts already on
+    `tnf-monorepo`; 18 recent persona sessions still targeting public
+    `The-New-Fuse` (~2h freshness) — cloud schedules remain.
+  - **Done:** retargeted stale Jules docs; pushed public branch with
+    `close-jules-persona-prs.yml`; wrote ops receipt.
+  - **Blocked on operator:** Jules UI schedule deletion (CLI has no schedule
+    API); merge auto-close workflow to public `main`.
+
+- [✅] **2026-08-20 Repo maintenance: mutation-guard pack-refs false positive +
+  preflight latency characterization (Cursor / tnf-monorepo)**:
+  - **mutation-guard:** `pack-refs` / `gc` were treated as stash when
+    `refs/stash` appeared in multi-ref transactions. Classification now allows
+    safe maintenance while still blocking real stash / reset / merge / rebase /
+    pull. `git gc --prune=now` succeeded on a dirty tree after clearing
+    worktree `gc.log`; loose objects packed to 0.
+  - **preflight-skip:** Timings documented in
+    `docs/operations/preflight-skip-latency-2026-08-20.md`. Doctor ~8–15s
+    standalone; do not raise 30s budget. Hardened test env isolation + repo-root
+    cwd.
+
+- [✅] **2026-08-20 Super Admin token-rotation RegExp crash (Cursor /
+  tnf-monorepo)**:
+  - **Incident:** `tnf boot` interactive rotate (option 2) aborted with
+    `Invalid regular expression ... Nothing to repeat` because
+    `requireSuperAdmin` built a `RegExp` from the old base64 token (`+` / `/`).
+  - **Fix (canonical `tnf-monorepo` `main` only):** structural
+    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert via
+    `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
+    printing; `process.env` mutates only after persist succeeds.
+  - **Verify:** focused tests 8/8; silent fresh rotation; leaked chat token not
+    authoritative; controlled boot cleared Super Admin auth (exit 0).
+  - **Repo policy:** implemented in canonical `whodaniel/tnf-monorepo`;
+    The-New-Fuse overlay treated as downstream/publication only.
 
 - [✅] **2026-08-17 CLI Agent Autopilot Continuity Verification & Onboarder
   Stabilization (Antigravity/Gemini)**:
@@ -1474,7 +1512,7 @@ and generated refactoring_consensus_report.md.
   may not self-approve)|Decide on tnf-cli test suite: whatsapp.test.ts is
   referenced but never existed, so command-surface.test.ts has never run (20
   missing / 1 changed vs snapshot)|Disk hit 100% full mid-session (79MiB free);
-  /Users/Shared holds 174G|Hermes cron output tree holds only 1 fi
+  shared volume holds 174G|Hermes cron output tree holds only 1 fi
 
 - 2026-08-12T05:24:11.194Z handoff `d80e7714-7a4c-4b2f-aa87-7c5cef8ee083` head
   `6cff2cc8e860` project `TNF-SESSION` — Optional: wire provider-failover into

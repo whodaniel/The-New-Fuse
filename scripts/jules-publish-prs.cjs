@@ -38,7 +38,7 @@ function parseArgs() {
     mode: getArg('--mode', 'plan'), // plan | publish
     limit: Number(getArg('--limit', '15')),
     base: getArg('--base', 'main'),
-    repo: getArg('--repo', 'whodaniel/The-New-Fuse'),
+    repo: getArg('--repo', 'whodaniel/tnf-monorepo'),
     branchPrefix: getArg('--branch-prefix', 'jules-auto'),
   };
 }

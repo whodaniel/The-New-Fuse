@@ -22,7 +22,7 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "dev": "tsc -b --watch",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests for this package\" && exit 0"
+    "test": "pnpm run build && node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "typescript": "^6.0.2"

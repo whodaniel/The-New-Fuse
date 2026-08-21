@@ -193,10 +193,6 @@ export class PayPalService {
     return null;
   }
 
-  private escapeSqlLiteral(value: string): string {
-    return String(value).replace(/'/g, "''");
-  }
-
   private async getActiveMembershipOverride(
     userId: string
   ): Promise<{ tier: 'STARTER' | 'PRO' | 'ENTERPRISE' } | null> {
@@ -209,10 +205,11 @@ export class PayPalService {
       }>(
         `SELECT id, tier, status, expires_at
          FROM membership_overrides
-         WHERE user_id = '${this.escapeSqlLiteral(userId)}'
+         WHERE user_id = $1
            AND status = 'ACTIVE'
          ORDER BY created_at DESC
-         LIMIT 1`
+         LIMIT 1`,
+        [userId]
       );
       const override = rows?.[0];
       if (!override) return null;
@@ -222,7 +219,8 @@ export class PayPalService {
         await this.db.executeRaw(
           `UPDATE membership_overrides
            SET status = 'EXPIRED', updated_at = now()
-           WHERE id = '${this.escapeSqlLiteral(override.id)}'`
+           WHERE id = $1`,
+          [override.id]
         );
         return null;
       }
@@ -262,9 +260,10 @@ export class PayPalService {
       }>(
         `SELECT tier, status
          FROM stripe_subscriptions
-         WHERE user_id = '${this.escapeSqlLiteral(userId)}'
+         WHERE user_id = $1
          ORDER BY updated_at DESC
-         LIMIT 1`
+         LIMIT 1`,
+        [userId]
       );
       const sub = rows[0];
       if (!sub || sub.status !== 'ACTIVE') {
@@ -306,8 +305,6 @@ export class PayPalService {
 
     const lowered = normalized.toLowerCase();
     const matchByEmail = lowered.includes('@');
-    const emailLiteral = this.escapeSqlLiteral(lowered);
-    const usernameLiteral = this.escapeSqlLiteral(normalized);
     const rows = await this.db.executeRaw<{
       id: string;
       email: string;
@@ -318,14 +315,15 @@ export class PayPalService {
       matchByEmail
         ? `SELECT id, email, username, role, roles
            FROM users
-           WHERE lower(email) = '${emailLiteral}'
+           WHERE lower(email) = $1
              AND deleted_at IS NULL
            LIMIT 1`
         : `SELECT id, email, username, role, roles
            FROM users
-           WHERE username = '${usernameLiteral}'
+           WHERE username = $1
              AND deleted_at IS NULL
-           LIMIT 1`
+           LIMIT 1`,
+      [matchByEmail ? lowered : normalized]
     );
     const user = rows[0];
     if (!user) return empty;
@@ -392,9 +390,10 @@ export class PayPalService {
       }>(
         `SELECT email, role, roles
          FROM users
-         WHERE id = '${this.escapeSqlLiteral(userId)}'
+         WHERE id = $1
            AND deleted_at IS NULL
-         LIMIT 1`
+         LIMIT 1`,
+        [userId]
       );
       const user = userRows[0];
       if (user) {

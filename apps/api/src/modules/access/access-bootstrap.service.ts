@@ -89,16 +89,16 @@ export class AccessBootstrapService implements OnModuleInit {
              required_nft_contract, required_nft_chain_id, required_nft_token_id,
              required_nft_traits, config, is_active, created_at, updated_at
            ) VALUES (
-             '${this.escape(rule.gameId)}',
-             '${this.escape(rule.label)}',
-             '${this.escape(rule.description)}',
-             '${rule.requiredTier}',
-             ${rule.requiresMembership ? 'true' : 'false'},
-             ${nftContract ? `'${this.escape(nftContract)}'` : 'NULL'},
-             ${typeof nftChainId === 'number' ? String(nftChainId) : 'NULL'},
-             ${nftTokenId ? `'${this.escape(nftTokenId)}'` : 'NULL'},
+             $1,
+             $2,
+             $3,
+             $4,
+             $5,
+             $6,
+             $7,
+             $8,
              NULL,
-             '${this.escape(JSON.stringify(rule.config))}'::jsonb,
+             $9::jsonb,
              true,
              now(),
              now()
@@ -114,7 +114,18 @@ export class AccessBootstrapService implements OnModuleInit {
              required_nft_token_id = EXCLUDED.required_nft_token_id,
              config = EXCLUDED.config,
              is_active = true,
-             updated_at = now()`
+             updated_at = now()`,
+          [
+            rule.gameId,
+            rule.label,
+            rule.description,
+            rule.requiredTier,
+            rule.requiresMembership,
+            nftContract || null,
+            typeof nftChainId === 'number' ? String(nftChainId) : null,
+            nftTokenId || null,
+            JSON.stringify(rule.config),
+          ]
         );
       } catch (error) {
         this.logger.warn(`Unable to seed access rule ${rule.gameId}: ${String(error)}`);
@@ -125,9 +136,5 @@ export class AccessBootstrapService implements OnModuleInit {
   private clean(value?: string | null) {
     const normalized = String(value || '').trim();
     return normalized || null;
-  }
-
-  private escape(value: string) {
-    return value.replace(/'/g, "''");
   }
 }
