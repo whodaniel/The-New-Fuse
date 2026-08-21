@@ -45,24 +45,28 @@ const VideoChat: React.FC = () => {
         <div className="flex space-x-2">
           <button
             onClick={() => setIsAudioOn(!isAudioOn)}
-            className={`p-2 rounded-full transition-colors ${
+            className={`p-2 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
               isAudioOn
                 ? 'bg-gray-200 dark:bg-gray-700 text-foreground dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
             title={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
+            aria-label={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
+            aria-pressed={isAudioOn}
           >
             {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </button>
 
           <button
             onClick={() => setIsCameraOn(!isCameraOn)}
-            className={`p-2 rounded-full transition-colors ${
+            className={`p-2 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
               isCameraOn
                 ? 'bg-gray-200 dark:bg-gray-700 text-foreground dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
             title={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+            aria-label={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+            aria-pressed={isCameraOn}
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </button>
