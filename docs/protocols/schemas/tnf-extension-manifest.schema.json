@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-extension-manifest-v1.json",
+  "title": "TNF Extension Manifest V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "name",
+    "version",
+    "description",
+    "compatibility",
+    "capabilities",
+    "entrypoints",
+    "permissions"
+  ],
+  "properties": {
+    "apiVersion": { "const": "tnf.extension/v1" },
+    "kind": {
+      "enum": [
+        "loadable-extension",
+        "external-service",
+        "form-factor",
+        "standalone-product"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "author": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tnf"],
+      "properties": {
+        "tnf": { "type": "string", "minLength": 1 },
+        "node": { "type": "string", "minLength": 1 },
+        "platforms": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "entrypoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "main": { "type": "string", "minLength": 1 },
+        "activate": { "type": "string", "minLength": 1 },
+        "deactivate": { "type": "string", "minLength": 1 },
+        "health": { "type": "string", "minLength": 1 },
+        "service": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^(https?|wss?)://"
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "type": "object" },
+        "defaults": { "type": "object" }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activation": { "const": "manual" },
+        "timeoutMs": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "repository": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "loadable-extension" } } },
+      "then": { "properties": { "entrypoints": { "required": ["main"] } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "external-service" } } },
+      "then": { "properties": { "entrypoints": { "required": ["service"] } } }
+    }
+  ]
+}

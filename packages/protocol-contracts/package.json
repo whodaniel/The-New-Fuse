@@ -24,13 +24,15 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,py}\"",
     "clean": "rm -rf dist tsconfig.tsbuildinfo .tsbuildinfo .turbo generated/jsonschema generated/python/tnf_contracts/__pycache__",
-    "test": "echo \"No tests for this package\" && exit 0"
+    "test": "node --import tsx src/extension-manifest.test.ts"
   },
   "dependencies": {
+    "semver": "^7.7.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",
+    "@types/semver": "^7.7.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   },

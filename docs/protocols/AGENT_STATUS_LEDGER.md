@@ -71,7 +71,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-21T07:07:08.717Z** — handoff `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9` (`9561fa7c1eb6`).
+Updated: **2026-08-21T08:00:20.992Z** — handoff `a07c020a-dd40-45dc-8388-ecc88009ce1c` (`890128cba69d`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
 `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` (`a7d9551b63bb`).
 `b16b8568-acd2-4a1b-9eba-60658ece28cb` (`8f8c5ccbca8b`).
@@ -263,10 +263,10 @@ commit/push this session (operator-gated). Handoff
 
 | Priority | Action                                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence. |
-| **P0**   | Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow. |
-| **P0**   | Review protected checkout candidate lanes individually against current main; do not bulk merge. |
-| **P0**   | Continue issues #113 and #114 only after their canonical ownership decisions. |
+| **P0**   | Merge the canonical extension-contract PR and close issue #114 with verification receipts. |
+| **P0**   | After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence. |
+| **P0**   | Operator: resolve the GitHub Actions restriction or register a runner through an approved credential flow. |
+| **P0**   | Resolve issue #113 canonical control-plane service authority before implementation. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1412,3 +1412,9 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 (61f04423-b881-43fc-bfe3-a4ca73ec6099) | ✅ HANDOFF_READY |
 
 | 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9) | ✅ HANDOFF_READY |
+
+| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (2248bfb3-48b7-451d-9f22-90359b824173) | ✅ HANDOFF_READY |
+
+| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (680e7c30-6a25-41cb-8bfc-6f9115ec989b) | ✅ HANDOFF_READY |
+
+| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (a07c020a-dd40-45dc-8388-ecc88009ce1c) | ✅ HANDOFF_READY |

@@ -40,6 +40,11 @@
       "import": "./dist/validator/ExtensionValidator.js",
       "require": "./dist/validator/ExtensionValidator.js",
       "types": "./dist/validator/ExtensionValidator.d.ts"
+    },
+    "./satellite": {
+      "import": "./dist/satellite/SatelliteManifest.js",
+      "require": "./dist/satellite/SatelliteManifest.js",
+      "types": "./dist/satellite/SatelliteManifest.d.ts"
     }
   },
   "scripts": {
@@ -68,6 +73,7 @@
   "license": "MIT",
   "dependencies": {
     "@nestjs/common": "^11.1.16",
+    "@the-new-fuse/protocol-contracts": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0",
     "fs-extra": "^11.3.2",

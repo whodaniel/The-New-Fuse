@@ -16,6 +16,9 @@
   "include": ["src/**/*"],
   "references": [
     {
+      "path": "../protocol-contracts"
+    },
+    {
       "path": "../tnf-core"
     },
     {

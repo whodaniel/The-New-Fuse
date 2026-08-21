@@ -7,8 +7,8 @@ Status: canonical engineering reconciliation complete; external gates remain.
 - Development authority: `whodaniel/tnf-monorepo`
 - Public publication target: `whodaniel/The-New-Fuse`
 - Private publication target: `whodaniel/fuse-control-plane`
-- Canonical source at final publication: `9561fa7c1eb605f86d20f87405753d7bc46e43eb`
-- Public publication: `The-New-Fuse` PR #154, merged as `f3f62adb85d8109fbcc2e13a6d4040ddecaa22a2`
+- Canonical source at final publication: `890128cba69dfc1ea97077bb75d07785fc0ebf14`
+- Public publication: `The-New-Fuse` PR #160, merged as `2c5fa089cf10058745e3720b2ae4d09c7fb4294a`
 
 ## Completed Work
 
@@ -29,6 +29,14 @@ Status: canonical engineering reconciliation complete; external gates remain.
 9. Migrated Bolt, Palette, and Sentinel schedules from public
    `The-New-Fuse` to canonical `tnf-monorepo`; public scheduled-task inventory
    was zero after reload. The first canonical run is due at 21:30 EDT.
+10. Added publication status, validation-gate, and portable recovery-path
+    continuity through monorepo PRs #131 and #132, then republished through
+    public PR #160.
+11. Implemented issue #114's extension contract: the versioned
+    `tnf.extension/v1` manifest, four satellite classifications, compatibility
+    and contained-entrypoint validation, real local/Git installation, atomic
+    registry writes, worker-isolated activation/deactivation hooks, update
+    rollback, CLI commands, and failure-isolation tests.
 
 ## Protected Checkout Classification
 
@@ -79,8 +87,8 @@ performed in the protected checkout during this reconciliation.
 - **Control plane:** issue #113 remains the authority decision for locating the
   canonical proprietary service before replacing `EchoPromptExecutor` and
   file/in-memory persistence. Direct downstream edits remain prohibited.
-- **Extension contract:** issue #114 remains open for a versioned manifest,
-  activation lifecycle, real install source, compatibility, and isolation.
+- **Extension contract:** implementation and local verification are complete in
+  `feat/extension-manifest-v1`; close issue #114 when the canonical PR merges.
 - **SSI/PASS/legal:** entity, equity, IP, compensation, trust, and benefits
   decisions remain frozen pending qualified benefits, tax, and legal review.
 
@@ -93,5 +101,11 @@ performed in the protected checkout during this reconciliation.
 - PR #128: publication authentication tests 2/2.
 - PR #129: V2 handoff tests 2/2; protocol-contract schema check passed.
 - PR #130: publication tests 3/3; full open-runtime dry run passed.
-- Final publication: proprietary path and content sweeps passed; public PR #154
+- PR #131: Turn Zero and handoff-source validation passed; handoff tests 3/3.
+- PR #132: privacy, secret, docs PII, and portable-path publication gates passed.
+- Extension contract: protocol package build and typecheck passed; manifest
+  tests 7/7; plugin lifecycle tests 13/13; CLI build and typecheck passed;
+  command surface 474/474; all remaining CLI tests passed. The full chained CLI
+  suite retains the documented unrelated `tnf doctor` 30-second latency failure.
+- Final publication: proprietary path and content sweeps passed; public PR #160
   merged without force-pushing public `main`.

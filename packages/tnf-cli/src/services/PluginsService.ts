@@ -1,6 +1,16 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import { execFileSync } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { Worker } from 'node:worker_threads';
+import {
+  assertLoadableExtension,
+  readTnfExtensionManifest,
+  TNF_EXTENSION_MANIFEST_FILENAME,
+  type ExtensionDistributionKind,
+  type TnfExtensionManifestV1,
+} from '@the-new-fuse/protocol-contracts/extension-manifest.js';
 
 export interface Plugin {
   name: string;
@@ -12,126 +22,130 @@ export interface Plugin {
   status: 'active' | 'installed' | 'disabled' | 'error';
   category: string;
   dependencies: string[];
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
+  kind?: ExtensionDistributionKind | 'skill';
+  source?: string;
+  sourceRef?: string;
+  manifestPath?: string;
+  lastError?: string;
   installedAt: string;
   updatedAt: string;
+}
+
+export interface PluginsServiceOptions {
+  homeDir?: string;
+  projectRoot?: string;
+  runtimeVersion?: string;
 }
 
 export class PluginsService {
   private readonly pluginsDir: string;
   private readonly registryPath: string;
+  private readonly projectRoot: string;
+  private readonly runtimeVersion: string;
 
-  constructor() {
-    this.pluginsDir = path.join(os.homedir(), '.tnf', 'plugins');
+  constructor(options: PluginsServiceOptions = {}) {
+    this.pluginsDir = path.join(options.homeDir || os.homedir(), '.tnf', 'plugins');
     this.registryPath = path.join(this.pluginsDir, 'registry.json');
-    this.ensureDir();
-  }
-
-  private ensureDir(): void {
+    this.projectRoot = options.projectRoot || this.findProjectRoot();
+    this.runtimeVersion = options.runtimeVersion || '1.0.0';
     fs.mkdirSync(this.pluginsDir, { recursive: true });
   }
 
   async list(): Promise<Plugin[]> {
-    if (!fs.existsSync(this.registryPath)) {
-      return this.getDefaultPlugins();
-    }
-
+    if (!fs.existsSync(this.registryPath)) return this.getDefaultPlugins();
     try {
-      const data = fs.readFileSync(this.registryPath, 'utf8');
-      return JSON.parse(data);
+      const parsed: unknown = JSON.parse(fs.readFileSync(this.registryPath, 'utf8'));
+      return Array.isArray(parsed) ? (parsed as Plugin[]) : this.getDefaultPlugins();
     } catch {
       return this.getDefaultPlugins();
     }
   }
 
-  async install(name: string, version?: string): Promise<Plugin> {
-    const plugins = await this.list();
-    const existing = plugins.find((p) => p.name === name);
-
-    if (existing) {
-      if (existing.status === 'active') {
-        throw new Error(`Plugin ${name} is already installed and active`);
+  async install(source: string, version?: string): Promise<Plugin> {
+    const materialized = this.materializeSource(source, version);
+    let destination = '';
+    try {
+      const manifest = this.readManifest(materialized.path);
+      assertLoadableExtension(manifest);
+      const plugins = await this.list();
+      if (plugins.some((plugin) => plugin.name === manifest.id)) {
+        throw new Error(`Plugin ${manifest.id} is already installed`);
       }
-      existing.status = 'active';
-      existing.version = version || existing.version;
-      existing.updatedAt = new Date().toISOString();
+
+      destination = path.join(this.pluginsDir, manifest.id);
+      if (fs.existsSync(destination))
+        throw new Error(`Plugin directory already exists: ${destination}`);
+      fs.renameSync(materialized.path, destination);
+
+      const now = new Date().toISOString();
+      const plugin = this.pluginFromManifest(
+        manifest,
+        materialized.source,
+        version,
+        'installed',
+        now
+      );
+      plugins.push(plugin);
       await this.save(plugins);
-      return existing;
+      return plugin;
+    } catch (error) {
+      if (destination && fs.existsSync(destination)) {
+        fs.rmSync(destination, { recursive: true, force: true });
+      }
+      throw error;
+    } finally {
+      if (fs.existsSync(materialized.path)) {
+        fs.rmSync(materialized.path, { recursive: true, force: true });
+      }
     }
-
-    // In production, this would fetch from a registry
-    const pluginDir = path.join(this.pluginsDir, name);
-    fs.mkdirSync(pluginDir, { recursive: true });
-
-    const plugin: Plugin = {
-      name,
-      version: version || 'latest',
-      description: `Plugin ${name}`,
-      author: 'TNF Plugin Registry',
-      status: 'active',
-      category: 'general',
-      dependencies: [],
-      installedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    plugins.push(plugin);
-    await this.save(plugins);
-    return plugin;
   }
 
   async remove(name: string): Promise<void> {
     const plugins = await this.list();
-    const index = plugins.findIndex((p) => p.name === name);
+    const index = plugins.findIndex((plugin) => plugin.name === name);
+    if (index === -1) throw new Error(`Plugin not found: ${name}`);
 
-    if (index === -1) {
-      throw new Error(`Plugin not found: ${name}`);
-    }
-
+    if (plugins[index].status === 'active') await this.runLifecycle(plugins[index], 'deactivate');
     plugins.splice(index, 1);
     await this.save(plugins);
-
-    // Remove plugin directory
     const pluginDir = path.join(this.pluginsDir, name);
-    if (fs.existsSync(pluginDir)) {
-      fs.rmSync(pluginDir, { recursive: true, force: true });
-    }
+    if (fs.existsSync(pluginDir)) fs.rmSync(pluginDir, { recursive: true, force: true });
   }
 
   async update(name?: string): Promise<Plugin[]> {
     const plugins = await this.list();
+    const selected = name
+      ? plugins.filter((plugin) => plugin.name === name)
+      : plugins.filter((plugin) => plugin.kind === 'loadable-extension');
+    if (name && selected.length === 0) throw new Error(`Plugin not found: ${name}`);
 
-    if (name) {
-      const plugin = plugins.find((p) => p.name === name);
-      if (!plugin) {
-        throw new Error(`Plugin not found: ${name}`);
-      }
-      plugin.updatedAt = new Date().toISOString();
-      // In production, this would fetch new version from registry
+    try {
+      for (const plugin of selected) await this.updateOne(plugin);
+    } catch (error) {
       await this.save(plugins);
-      return [plugin];
+      throw error;
     }
-
-    // Update all plugins
-    for (const plugin of plugins) {
-      if (plugin.status === 'active') {
-        plugin.updatedAt = new Date().toISOString();
-      }
-    }
-
     await this.save(plugins);
-    return plugins.filter((p) => p.status === 'active');
+    return selected;
   }
 
   async enable(name: string): Promise<Plugin> {
     const plugins = await this.list();
-    const plugin = plugins.find((p) => p.name === name);
+    const plugin = plugins.find((entry) => entry.name === name);
+    if (!plugin) throw new Error(`Plugin not found: ${name}`);
+    if (plugin.kind !== 'loadable-extension') throw new Error(`Plugin ${name} is not loadable`);
 
-    if (!plugin) {
-      throw new Error(`Plugin not found: ${name}`);
+    try {
+      await this.runLifecycle(plugin, 'activate');
+      plugin.status = 'active';
+      plugin.lastError = undefined;
+    } catch (error) {
+      plugin.status = 'error';
+      plugin.lastError = error instanceof Error ? error.message : String(error);
+      await this.save(plugins);
+      throw error;
     }
-
-    plugin.status = 'active';
     plugin.updatedAt = new Date().toISOString();
     await this.save(plugins);
     return plugin;
@@ -139,105 +153,298 @@ export class PluginsService {
 
   async disable(name: string): Promise<Plugin> {
     const plugins = await this.list();
-    const plugin = plugins.find((p) => p.name === name);
+    const plugin = plugins.find((entry) => entry.name === name);
+    if (!plugin) throw new Error(`Plugin not found: ${name}`);
 
-    if (!plugin) {
-      throw new Error(`Plugin not found: ${name}`);
+    try {
+      if (plugin.status === 'active') await this.runLifecycle(plugin, 'deactivate');
+      plugin.status = 'disabled';
+      plugin.lastError = undefined;
+    } catch (error) {
+      plugin.status = 'error';
+      plugin.lastError = error instanceof Error ? error.message : String(error);
+      await this.save(plugins);
+      throw error;
     }
-
-    plugin.status = 'disabled';
     plugin.updatedAt = new Date().toISOString();
     await this.save(plugins);
     return plugin;
   }
 
   async getStatus(name: string): Promise<Plugin | undefined> {
-    const plugins = await this.list();
-    return plugins.find((p) => p.name === name);
+    return (await this.list()).find((plugin) => plugin.name === name);
+  }
+
+  private readManifest(extensionPath: string): TnfExtensionManifestV1 {
+    return readTnfExtensionManifest(extensionPath, {
+      tnfVersion: this.runtimeVersion,
+      nodeVersion: process.versions.node,
+    });
+  }
+
+  private materializeSource(source: string, version?: string): { path: string; source: string } {
+    const stagingPath = fs.mkdtempSync(path.join(this.pluginsDir, '.install-'));
+    const localPath = source.startsWith('file://')
+      ? fileURLToPath(source)
+      : path.resolve(this.projectRoot, source);
+
+    if (fs.existsSync(localPath)) {
+      if (!fs.statSync(localPath).isDirectory()) {
+        fs.rmSync(stagingPath, { recursive: true, force: true });
+        throw new Error(`Extension source must be a directory: ${source}`);
+      }
+      fs.rmSync(stagingPath, { recursive: true, force: true });
+      fs.cpSync(localPath, stagingPath, { recursive: true, errorOnExist: true });
+      return { path: stagingPath, source: path.resolve(localPath) };
+    }
+
+    if (/^(?:https?:\/\/|ssh:\/\/|git@)/.test(source)) {
+      if (/^https?:\/\//.test(source)) {
+        let sourceUrl: URL;
+        try {
+          sourceUrl = new URL(source);
+        } catch {
+          fs.rmSync(stagingPath, { recursive: true, force: true });
+          throw new Error(`Invalid Git URL: ${source}`);
+        }
+        if (sourceUrl.username || sourceUrl.password) {
+          fs.rmSync(stagingPath, { recursive: true, force: true });
+          throw new Error(
+            'Credential-bearing Git URLs are not accepted. Use the Git credential helper or SSH agent.'
+          );
+        }
+      }
+      const args = ['clone', '--depth', '1'];
+      if (version) args.push('--branch', version);
+      args.push('--', source, stagingPath);
+      try {
+        execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+      } catch (error) {
+        fs.rmSync(stagingPath, { recursive: true, force: true });
+        throw new Error(
+          `Failed to clone extension source: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+      return { path: stagingPath, source };
+    }
+
+    fs.rmSync(stagingPath, { recursive: true, force: true });
+    throw new Error(
+      `Unsupported extension source "${source}". Use a local directory, file:// URL, or Git URL containing ${TNF_EXTENSION_MANIFEST_FILENAME}`
+    );
+  }
+
+  private pluginFromManifest(
+    manifest: TnfExtensionManifestV1,
+    source: string,
+    sourceRef: string | undefined,
+    status: Plugin['status'],
+    installedAt: string
+  ): Plugin {
+    return {
+      name: manifest.id,
+      version: manifest.version,
+      description: manifest.description,
+      author: manifest.author || 'TNF Extension',
+      repository: manifest.repository,
+      status,
+      category: 'tnf-extension',
+      dependencies: [],
+      config: manifest.configuration?.defaults,
+      kind: manifest.kind,
+      source,
+      sourceRef,
+      manifestPath: path.join(this.pluginsDir, manifest.id, TNF_EXTENSION_MANIFEST_FILENAME),
+      installedAt,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  private async updateOne(plugin: Plugin): Promise<void> {
+    if (!plugin.source || plugin.kind !== 'loadable-extension') {
+      throw new Error(`Plugin ${plugin.name} has no updateable extension source`);
+    }
+    const materialized = this.materializeSource(plugin.source, plugin.sourceRef);
+    const destination = path.join(this.pluginsDir, plugin.name);
+    const backup = `${destination}.backup-${process.pid}-${Date.now()}`;
+    const previous = { ...plugin };
+    const wasActive = plugin.status === 'active';
+    try {
+      const manifest = this.readManifest(materialized.path);
+      assertLoadableExtension(manifest);
+      if (manifest.id !== plugin.name)
+        throw new Error(`Update manifest id changed to ${manifest.id}`);
+      if (wasActive) await this.runLifecycle(plugin, 'deactivate');
+      fs.renameSync(destination, backup);
+      fs.renameSync(materialized.path, destination);
+      Object.assign(
+        plugin,
+        this.pluginFromManifest(
+          manifest,
+          plugin.source,
+          plugin.sourceRef,
+          wasActive ? 'installed' : plugin.status,
+          plugin.installedAt
+        )
+      );
+      if (wasActive) {
+        await this.runLifecycle(plugin, 'activate');
+        plugin.status = 'active';
+      }
+      plugin.lastError = undefined;
+      fs.rmSync(backup, { recursive: true, force: true });
+    } catch (error) {
+      if (fs.existsSync(destination)) fs.rmSync(destination, { recursive: true, force: true });
+      if (fs.existsSync(backup)) fs.renameSync(backup, destination);
+      Object.assign(plugin, previous);
+      if (wasActive) {
+        try {
+          await this.runLifecycle(plugin, 'activate');
+        } catch (rollbackError) {
+          plugin.status = 'error';
+          plugin.lastError = `Update failed and rollback activation failed: ${
+            rollbackError instanceof Error ? rollbackError.message : String(rollbackError)
+          }`;
+        }
+      }
+      throw error;
+    } finally {
+      if (fs.existsSync(materialized.path))
+        fs.rmSync(materialized.path, { recursive: true, force: true });
+      if (fs.existsSync(backup)) fs.rmSync(backup, { recursive: true, force: true });
+    }
+  }
+
+  private async runLifecycle(plugin: Plugin, action: 'activate' | 'deactivate'): Promise<void> {
+    const pluginDir = path.join(this.pluginsDir, plugin.name);
+    const manifest = this.readManifest(pluginDir);
+    assertLoadableExtension(manifest);
+    const entrypoint = manifest.entrypoints[action] || manifest.entrypoints.main;
+    if (!entrypoint) return;
+
+    const timeoutMs = manifest.lifecycle?.timeoutMs || 10_000;
+    const moduleUrl = `${pathToFileURL(path.join(pluginDir, entrypoint)).href}?tnf=${Date.now()}`;
+    const workerSource = `
+const { parentPort, workerData } = require('node:worker_threads');
+(async () => {
+  const loaded = await import(workerData.moduleUrl);
+  const owner = loaded.default && typeof loaded.default === 'object' ? loaded.default : loaded;
+  const hook = loaded[workerData.action] || loaded[workerData.hookName] ||
+    owner[workerData.action] || owner[workerData.hookName];
+  if (typeof hook === 'function') await hook.call(owner, workerData.context);
+  parentPort.postMessage({ ok: true });
+})().catch((error) => {
+  parentPort.postMessage({ ok: false, error: error instanceof Error ? error.message : String(error) });
+});
+`;
+    const worker = new Worker(workerSource, {
+      eval: true,
+      name: `tnf-extension-${manifest.id}-${action}`,
+      workerData: {
+        moduleUrl,
+        action,
+        hookName: action === 'activate' ? 'onActivate' : 'onDeactivate',
+        context: {
+          extensionId: manifest.id,
+          extensionPath: pluginDir,
+          configuration: plugin.config || {},
+        },
+      },
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const finish = (error?: Error): void => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        void worker.terminate();
+        if (error) reject(error);
+        else resolve();
+      };
+      const timeout = setTimeout(
+        () => finish(new Error(`${action} timed out after ${timeoutMs}ms`)),
+        timeoutMs
+      );
+      worker.once('message', (message: { ok?: boolean; error?: string }) => {
+        finish(message.ok ? undefined : new Error(message.error || `${action} failed`));
+      });
+      worker.once('error', (error) => finish(error));
+      worker.once('exit', (code) => {
+        if (!settled) {
+          finish(
+            new Error(
+              code === 0
+                ? `${action} worker exited before reporting completion`
+                : `${action} worker exited with code ${code}`
+            )
+          );
+        }
+      });
+    });
   }
 
   private async save(plugins: Plugin[]): Promise<void> {
-    fs.writeFileSync(this.registryPath, JSON.stringify(plugins, null, 2));
+    const temporaryPath = `${this.registryPath}.tmp-${process.pid}`;
+    try {
+      fs.writeFileSync(temporaryPath, `${JSON.stringify(plugins, null, 2)}\n`, { mode: 0o600 });
+      fs.renameSync(temporaryPath, this.registryPath);
+    } finally {
+      if (fs.existsSync(temporaryPath)) fs.rmSync(temporaryPath, { force: true });
+    }
   }
 
-  /**
-   * Discover real installed plugins/skills from the filesystem.
-   * Scans .agent/skills/, .claude/skills/, and .gemini/config/plugins/.
-   */
   private getDefaultPlugins(): Plugin[] {
     const discovered: Plugin[] = [];
-    const projectRoot = this.findProjectRoot();
-
     const skillDirs = [
-      { base: path.join(projectRoot, '.agent', 'skills'), category: 'tnf-skill' },
-      { base: path.join(projectRoot, '.claude', 'skills'), category: 'claude-skill' },
+      { base: path.join(this.projectRoot, '.agent', 'skills'), category: 'tnf-skill' },
+      { base: path.join(this.projectRoot, '.claude', 'skills'), category: 'claude-skill' },
       { base: path.join(os.homedir(), '.gemini', 'config', 'plugins'), category: 'gemini-plugin' },
     ];
 
     for (const { base, category } of skillDirs) {
       if (!fs.existsSync(base)) continue;
       try {
-        const entries = fs.readdirSync(base, { withFileTypes: true });
-        for (const entry of entries) {
+        for (const entry of fs.readdirSync(base, { withFileTypes: true })) {
           if (!entry.isDirectory()) continue;
           const skillMd = path.join(base, entry.name, 'SKILL.md');
           const pluginJson = path.join(base, entry.name, 'plugin.json');
-          const hasSkill = fs.existsSync(skillMd);
-          const hasPlugin = fs.existsSync(pluginJson);
-
-          if (hasSkill || hasPlugin) {
-            // Read description from first few lines of SKILL.md if available
-            let description = `${category}: ${entry.name}`;
-            if (hasSkill) {
-              try {
-                const content = fs.readFileSync(skillMd, 'utf8').slice(0, 500);
-                const descMatch = content.match(/description:\s*(.+)/i);
-                if (descMatch) description = descMatch[1].trim();
-              } catch {
-                /* skip */
-              }
+          if (!fs.existsSync(skillMd) && !fs.existsSync(pluginJson)) continue;
+          let description = `${category}: ${entry.name}`;
+          if (fs.existsSync(skillMd)) {
+            try {
+              const match = fs
+                .readFileSync(skillMd, 'utf8')
+                .slice(0, 500)
+                .match(/description:\s*(.+)/i);
+              if (match) description = match[1].trim();
+            } catch {
+              // Discovery is best-effort; unreadable skills are still listed.
             }
-
-            discovered.push({
-              name: entry.name,
-              version: '1.0.0',
-              description,
-              author:
-                category === 'tnf-skill'
-                  ? 'TNF'
-                  : category === 'claude-skill'
-                    ? 'Anthropic'
-                    : 'Google',
-              status: 'active',
-              category,
-              dependencies: [],
-              installedAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            });
           }
+          const now = new Date().toISOString();
+          discovered.push({
+            name: entry.name,
+            version: '1.0.0',
+            description,
+            author:
+              category === 'tnf-skill'
+                ? 'TNF'
+                : category === 'claude-skill'
+                  ? 'Anthropic'
+                  : 'Google',
+            status: 'active',
+            category,
+            dependencies: [],
+            kind: 'skill',
+            installedAt: now,
+            updatedAt: now,
+          });
         }
       } catch {
-        /* skip unreadable dirs */
+        // A missing optional runtime directory must not break the CLI.
       }
     }
-
-    // If no plugins discovered, return a minimal set
-    if (discovered.length === 0) {
-      return [
-        {
-          name: 'rate-limit-failover',
-          version: '1.2.0',
-          description: 'Rate limit & failover routing for LLM providers',
-          author: 'TNF',
-          status: 'active',
-          category: 'infrastructure',
-          dependencies: [],
-          installedAt: '2026-04-01',
-          updatedAt: '2026-04-15',
-        },
-      ];
-    }
-
     return discovered;
   }
 
@@ -245,16 +452,14 @@ export class PluginsService {
     const candidates = [
       process.cwd(),
       path.join(process.cwd(), '..', '..'),
-      path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse'),
+      path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'TNF', 'The-New-Fuse'),
     ];
-    for (const candidate of candidates) {
-      if (
-        fs.existsSync(path.join(candidate, 'tnf')) ||
-        fs.existsSync(path.join(candidate, 'packages', 'tnf-cli'))
-      ) {
-        return candidate;
-      }
-    }
-    return process.cwd();
+    return (
+      candidates.find(
+        (candidate) =>
+          fs.existsSync(path.join(candidate, 'tnf')) ||
+          fs.existsSync(path.join(candidate, 'packages', 'tnf-cli'))
+      ) || process.cwd()
+    );
   }
 }

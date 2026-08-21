@@ -2,14 +2,14 @@
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
 Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-21T07:07:08.717Z`
-Handoff ID: `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9`
+Created At: `2026-08-21T08:00:20.992Z`
+Handoff ID: `a07c020a-dd40-45dc-8388-ecc88009ce1c`
 
 ## Scope
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `docs/reconciliation-2026-08-21`
-- Head SHA: `9561fa7c1eb605f86d20f87405753d7bc46e43eb`
+- Branch: `feat/extension-manifest-v1`
+- Head SHA: `890128cba69dfc1ea97077bb75d07785fc0ebf14`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -19,22 +19,36 @@ Handoff ID: `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9`
 - Sensitivity: `internal`
 
 ## Work Summary
-- Canonical PRs #125-#130 merged with local verification.
-- Open runtime published through The-New-Fuse PR #154; public issue #157 closed.
-- Divergent checkout preserved and classified without mutation; external Actions, Jules cadence, control-plane, extension-contract, and professional-review gates recorded.
+- Implemented tnf.extension/v1 with explicit satellite classifications and compatibility validation.
+- Replaced placeholder plugin installs with real local or Git sources, worker-isolated lifecycle hooks, atomic registry state, and rollback.
+- Verified manifest 7/7, lifecycle 13/13, CLI build/typecheck, and 474 command paths; unrelated tnf doctor latency remains documented.
 
 ## Changed Paths
 - README.md
+- docs/extensions/TNF_EXTENSION_MANIFEST_V1.md
+- docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/protocols/emit-session-handoff.cjs
-- scripts/protocols/validate-turn-zero-authority.cjs
-- scripts/tests/session-handoff-v2.test.cjs
-- scripts/sync-repos-auth.test.cjs
-- scripts/sync-repos.sh
-- docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
+- docs/protocols/schemas/tnf-extension-manifest.schema.json
+- packages/extension-system/package.json
+- packages/extension-system/src/index.ts
+- packages/extension-system/src/satellite/SatelliteManifest.ts
+- packages/extension-system/tsconfig.json
+- packages/protocol-contracts/package.json
+- packages/protocol-contracts/src/extension-manifest.test.ts
+- packages/protocol-contracts/src/extension-manifest.ts
+- packages/protocol-contracts/src/index.ts
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/services/PluginsService.test.ts
+- packages/tnf-cli/src/services/PluginsService.ts
+- packages/tnf-cli/src/utils/browser-routing.test.ts
+- packages/tnf-cli/tsconfig.json
+- pnpm-lock.yaml
+- scripts/validate-protocol-schemas.cjs
 
 ## Verification
 - privacy_guard: `pass`
@@ -48,13 +62,13 @@ Handoff ID: `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9`
 - Priority: `high`
 
 ### Resume Checklist
-- Read docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
-- Verify live canonical main and public publication receipts
-- Keep the protected checkout mutation-prohibited
-- Separate infrastructure failures from executed test failures
+- Read the canonical reconciliation report and extension manifest V1 documentation.
+- Keep the divergent checkout mutation-prohibited.
+- Separate hosted Actions startup failures from executed test output.
+- Do not implement issue #113 downstream before canonical source authority is settled.
 
 ## Next Actions
-- After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
-- Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow.
-- Review protected checkout candidate lanes individually against current main; do not bulk merge.
-- Continue issues #113 and #114 only after their canonical ownership decisions.
+- Merge the canonical extension-contract PR and close issue #114 with verification receipts.
+- After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence.
+- Operator: resolve the GitHub Actions restriction or register a runner through an approved credential flow.
+- Resolve issue #113 canonical control-plane service authority before implementation.

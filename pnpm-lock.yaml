@@ -3424,6 +3424,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.1.16
         version: 11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@the-new-fuse/protocol-contracts':
+        specifier: workspace:*
+        version: link:../protocol-contracts
       '@the-new-fuse/relay-core':
         specifier: workspace:*
         version: link:../relay-core
@@ -4401,6 +4404,9 @@ importers:
 
   packages/protocol-contracts:
     dependencies:
+      semver:
+        specifier: ^7.7.3
+        version: 7.7.4
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -4408,6 +4414,9 @@ importers:
       '@types/node':
         specifier: ^24.8.1
         version: 24.12.3
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -4924,6 +4933,9 @@ importers:
       '@the-new-fuse/infrastructure':
         specifier: workspace:*
         version: link:../infrastructure
+      '@the-new-fuse/protocol-contracts':
+        specifier: workspace:*
+        version: link:../protocol-contracts
       '@the-new-fuse/shared':
         specifier: workspace:*
         version: link:../shared

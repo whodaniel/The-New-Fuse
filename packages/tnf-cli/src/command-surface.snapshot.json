@@ -4342,10 +4342,90 @@
       "options": [],
       "commands": [
         {
+          "name": "disable",
+          "aliases": [],
+          "description": "Disable an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "enable",
+          "aliases": [],
+          "description": "Enable an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "install",
+          "aliases": [],
+          "description": "Install a validated loadable extension from a local directory or Git URL",
+          "options": [
+            {
+              "flags": "--activate",
+              "description": "Activate after installation"
+            },
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            },
+            {
+              "flags": "--version <version>",
+              "description": "Git tag or branch to clone"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "list",
           "aliases": [],
           "description": "List all installed plugins/skills",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "remove",
+          "aliases": [],
+          "description": "Remove an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Status an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "update",
+          "aliases": [],
+          "description": "Update one or all installed loadable extensions from their recorded source",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
           "commands": []
         }
       ]

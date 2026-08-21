@@ -2,6 +2,7 @@ export * from './adk-gateway.js';
 export * from './crypto.js';
 export * from './context-reference.js';
 export * from './envelope.js';
+export * from './extension-manifest.js';
 export * from './handoff.js';
 export * from './identity.js';
 export * from './navigation.js';

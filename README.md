@@ -101,6 +101,11 @@ personal/client business material before it lands.
 Current engineering reconciliation and external-gate status is recorded in
 `docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
 
+Satellite repositories declare their runtime boundary with the versioned
+`tnf-extension.json` contract documented in
+`docs/extensions/TNF_EXTENSION_MANIFEST_V1.md`. Only manifests classified as
+`loadable-extension` are accepted by `tnf plugins install`.
+
 Member storage doctrine lives in
 `docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md` and
 `docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`: TNF stores bounded

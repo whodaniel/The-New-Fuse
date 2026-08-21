@@ -19460,6 +19460,68 @@ pluginsCommand
     }
   });
 
+pluginsCommand
+  .command('install <source>')
+  .description('Install a validated loadable extension from a local directory or Git URL')
+  .option('--version <version>', 'Git tag or branch to clone')
+  .option('--activate', 'Activate after installation')
+  .option('--json', 'Print machine-readable output')
+  .action(
+    async (
+      source: string,
+      options: { version?: string; activate?: boolean; json?: boolean }
+    ) => {
+      const service = new PluginsService();
+      let plugin = await service.install(source, options.version);
+      if (options.activate) plugin = await service.enable(plugin.name);
+      console.log(
+        options.json
+          ? JSON.stringify(plugin, null, 2)
+          : chalk.green(`Installed ${plugin.name}@${plugin.version} (${plugin.status})`)
+      );
+    }
+  );
+
+pluginsCommand
+  .command('update [name]')
+  .description('Update one or all installed loadable extensions from their recorded source')
+  .option('--json', 'Print machine-readable output')
+  .action(async (name: string | undefined, options: { json?: boolean }) => {
+    const updated = await new PluginsService().update(name);
+    console.log(
+      options.json
+        ? JSON.stringify(updated, null, 2)
+        : chalk.green(`Updated ${updated.length} extension(s)`)
+    );
+  });
+
+for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
+  pluginsCommand
+    .command(`${action} <name>`)
+    .description(`${action[0].toUpperCase()}${action.slice(1)} an installed extension`)
+    .option('--json', 'Print machine-readable output')
+    .action(async (name: string, options: { json?: boolean }) => {
+      const service = new PluginsService();
+      if (action === 'remove') {
+        await service.remove(name);
+        console.log(options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`));
+        return;
+      }
+      const plugin =
+        action === 'enable'
+          ? await service.enable(name)
+          : action === 'disable'
+            ? await service.disable(name)
+            : await service.getStatus(name);
+      if (!plugin) throw new Error(`Plugin not found: ${name}`);
+      console.log(
+        options.json
+          ? JSON.stringify(plugin, null, 2)
+          : `${plugin.name}@${plugin.version}: ${plugin.status}`
+      );
+    });
+}
+
 const cronCommand = program.command('cron').description('Cron and scheduled tasks management');
 cronCommand
   .command('list')
