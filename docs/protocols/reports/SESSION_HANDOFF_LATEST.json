@@ -1,8 +1,66 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "c7e4b1a9-2d6f-4a8e-b0c3-9f5e1d8a7b62",
-  "created_at": "2026-08-20T18:40:00.000Z",
-  "repository": "tnf-monorepo",
+  "handoff_id": "e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9",
+  "created_at": "2026-08-21T07:07:08.717Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "docs/reconciliation-2026-08-21",
+  "head_sha": "9561fa7c1eb605f86d20f87405753d7bc46e43eb",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": [
+    "TNF-RECONCILIATION",
+    "TNF-PUBLICATION"
+  ],
+  "work_summary": [
+    "Canonical PRs #125-#130 merged with local verification.",
+    "Open runtime published through The-New-Fuse PR #154; public issue #157 closed.",
+    "Divergent checkout preserved and classified without mutation; external Actions, Jules cadence, control-plane, extension-contract, and professional-review gates recorded."
+  ],
+  "changed_paths": [
+    "README.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "scripts/protocols/emit-session-handoff.cjs",
+    "scripts/protocols/validate-turn-zero-authority.cjs",
+    "scripts/tests/session-handoff-v2.test.cjs",
+    "scripts/sync-repos-auth.test.cjs",
+    "scripts/sync-repos.sh",
+    "docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Boundary gates passed; targeted test receipts are listed in the reconciliation report. Hosted CI did not execute because of the separate account-level restriction."
+  },
+  "continuation": {
+    "owner": "orchestrator",
+    "targets": [
+      "orchestrator",
+      "operator"
+    ],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md",
+      "Verify live canonical main and public publication receipts",
+      "Keep the protected checkout mutation-prohibited",
+      "Separate infrastructure failures from executed test failures"
+    ]
+  },
+  "next_actions": [
+    "After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.",
+    "Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow.",
+    "Review protected checkout candidate lanes individually against current main; do not bulk merge.",
+    "Continue issues #113 and #114 only after their canonical ownership decisions."
+  ],
+  "artifacts": {
+    "commits": [
+      "9561fa7c1eb605f86d20f87405753d7bc46e43eb"
+    ]
+  },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
     "actual": "whodaniel/tnf-monorepo",
@@ -14,10 +72,6 @@
       "whodaniel/fuse-control-plane"
     ]
   },
-  "branch": "main",
-  "head_sha": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5",
-  "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
   "classification": {
     "work_domain": "corporate",
     "artifact_destination": "oss_runtime",
@@ -26,13 +80,13 @@
   },
   "capabilities": {
     "required": [
-      "jules",
-      "session-handoff",
-      "gh"
+      "release-engineering",
+      "protocol-governance",
+      "repository-reconciliation"
     ],
     "staffed_by": [
-      "cursor",
-      "orchestrator"
+      "codex",
+      "operator"
     ]
   },
   "publication": {
@@ -40,75 +94,5 @@
     "control_plane_affected": false,
     "satellites": []
   },
-  "freshness_receipts": [
-    {
-      "id": "jules-scheduler-cleanup-docs",
-      "state": "committed",
-      "observed_at": "2026-08-20T18:40:00.000Z",
-      "value": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
-    },
-    {
-      "id": "public-close-jules-pr",
-      "state": "opened",
-      "observed_at": "2026-08-20T18:40:00.000Z",
-      "value": "https://github.com/whodaniel/The-New-Fuse/pull/155"
-    },
-    {
-      "id": "jules-ui-schedule-deletion",
-      "state": "still-required",
-      "observed_at": "2026-08-20T18:40:00.000Z",
-      "value": "operator-must-delete-The-New-Fuse-schedules-in-jules-ui"
-    }
-  ],
-  "project_ids": [],
-  "work_summary": [
-    "Jules scheduler cleanup docs committed on tnf-monorepo main: retargeted PR/loop playbooks to whodaniel/tnf-monorepo, added ops receipt, Living State directive.",
-    "Public overlay PR opened (not merged): https://github.com/whodaniel/The-New-Fuse/pull/155",
-    "Still required: operator must delete Jules cloud Scheduled jobs targeting The-New-Fuse (Bolt/Palette/Sentinel) in the Jules UI."
-  ],
-  "changed_paths": [
-    "docs/JULES_AUTONOMOUS_LOOP.md",
-    "docs/JULES_PR_FOLLOWUP_PLAYBOOK.md",
-    "docs/operations/jules-scheduler-cleanup-2026-08-20.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
-  ],
-  "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
-    "supabase_rls_audit": "na",
-    "notes": "Docs retarget verified; public PR #155 created not merged; Jules UI schedule deletion still required."
-  },
-  "continuation": {
-    "owner": "orchestrator",
-    "targets": [
-      "orchestrator",
-      "operator"
-    ],
-    "priority": "high",
-    "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Operator: delete Jules UI schedules targeting The-New-Fuse",
-      "Optionally merge public PR #155 after schedules are deleted",
-      "Confirm no new persona sessions appear on The-New-Fuse for one cadence"
-    ]
-  },
-  "next_actions": [
-    "Operator: delete Jules cloud schedules for Bolt/Palette/Sentinel on whodaniel/The-New-Fuse via Jules UI",
-    "Operator: merge chore/close-jules-persona-prs-on-public-overlay when ready",
-    "Keep new Jules persona work on whodaniel/tnf-monorepo only"
-  ],
-  "artifacts": {
-    "commits": [
-      "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
-    ],
-    "prs": [
-      "https://github.com/whodaniel/The-New-Fuse/pull/155"
-    ],
-    "docs": [
-      "docs/operations/jules-scheduler-cleanup-2026-08-20.md"
-    ]
-  }
+  "freshness_receipts": []
 }

@@ -98,6 +98,9 @@ Product doctrine for future work lives in
 runtime, public contract, private SaaS control plane, separate satellite, or
 personal/client business material before it lands.
 
+Current engineering reconciliation and external-gate status is recorded in
+`docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
+
 Member storage doctrine lives in
 `docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md` and
 `docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`: TNF stores bounded

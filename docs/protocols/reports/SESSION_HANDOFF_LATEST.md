@@ -1,65 +1,60 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-08-20T18:40:00.000Z`  
-Handoff ID: `c7e4b1a9-2d6f-4a8e-b0c3-9f5e1d8a7b62`
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Spec: `tnf/session-handoff/0.2`
+Created At: `2026-08-21T07:07:08.717Z`
+Handoff ID: `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9`
 
 ## Scope
-
-- Repository: `tnf-monorepo`
-- Canonical source: `whodaniel/tnf-monorepo`
-- Actual path: `whodaniel/tnf-monorepo` (local checkout; no machine path)
-- Branch: `main`
-- Head SHA: `ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5`
+- Repository: `whodaniel/tnf-monorepo`
+- Canonical Source: `whodaniel/tnf-monorepo`
+- Branch: `docs/reconciliation-2026-08-21`
+- Head SHA: `9561fa7c1eb605f86d20f87405753d7bc46e43eb`
 - Sensitive Scope: `internal`
-- Spec: `tnf/session-handoff/0.2`
+
+## Classification
+- Work Domain: `corporate`
+- Artifact Destination: `oss_runtime`
+- Data Residency: `product_state`
+- Sensitivity: `internal`
 
 ## Work Summary
-
-- Jules scheduler cleanup docs committed on `tnf-monorepo` `main`: retargeted
-  PR/loop playbooks to `whodaniel/tnf-monorepo`, added ops receipt, Living State
-  directive for remaining Jules UI schedule deletion.
-- Public overlay PR opened (do not merge from this session):
-  https://github.com/whodaniel/The-New-Fuse/pull/155
-- **Still required:** operator must delete Jules cloud Scheduled jobs that
-  target `The-New-Fuse` (Bolt/Palette/Sentinel) in the Jules UI — CLI has no
-  schedule API.
+- Canonical PRs #125-#130 merged with local verification.
+- Open runtime published through The-New-Fuse PR #154; public issue #157 closed.
+- Divergent checkout preserved and classified without mutation; external Actions, Jules cadence, control-plane, extension-contract, and professional-review gates recorded.
 
 ## Changed Paths
-
-- docs/JULES_AUTONOMOUS_LOOP.md
-- docs/JULES_PR_FOLLOWUP_PLAYBOOK.md
-- docs/operations/jules-scheduler-cleanup-2026-08-20.md
+- README.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/protocols/emit-session-handoff.cjs
+- scripts/protocols/validate-turn-zero-authority.cjs
+- scripts/tests/session-handoff-v2.test.cjs
+- scripts/sync-repos-auth.test.cjs
+- scripts/sync-repos.sh
+- docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
+
+## Verification
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
+- supabase_rls_audit: `na`
 
 ## Continuation
+- Owner: `orchestrator`
+- Targets: `orchestrator`, `operator`
+- Priority: `high`
 
-- **Owner:** orchestrator
-- **Priority:** high
-
-**Resume Checklist:**
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Operator: delete Jules UI schedules targeting `The-New-Fuse`
-- Optionally merge public PR #155 after schedules are deleted
-- Confirm no new persona sessions appear on `The-New-Fuse` for one cadence
+### Resume Checklist
+- Read docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
+- Verify live canonical main and public publication receipts
+- Keep the protected checkout mutation-prohibited
+- Separate infrastructure failures from executed test failures
 
 ## Next Actions
-
-- Operator: delete Jules cloud schedules for Bolt/Palette/Sentinel on
-  `whodaniel/The-New-Fuse` via https://jules.google.com
-- Operator: merge `chore/close-jules-persona-prs-on-public-overlay` when ready
-- Keep new Jules persona work on `whodaniel/tnf-monorepo` only
-
-## Artifacts
-
-**Commits:**
-- `ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5` — Jules scheduler cleanup docs
-
-**Public PR:**
-- https://github.com/whodaniel/The-New-Fuse/pull/155
-
-**Verification notes:** Docs retarget verified (no Jules PR target of
-`The-New-Fuse` as development repo). Public PR created, not merged. Jules UI
-schedule deletion still required.
+- After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
+- Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow.
+- Review protected checkout candidate lanes individually against current main; do not bulk merge.
+- Continue issues #113 and #114 only after their canonical ownership decisions.

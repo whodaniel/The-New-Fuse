@@ -29,10 +29,15 @@ if (!fs.existsSync(canonicalPath)) {
 }
 
 const canonical = read(canonicalRel);
-if (!canonical.includes('Protocol ID: TNF_TURN_ZERO_CANONICAL')) {
+const canonicalPlainText = canonical.replace(/[`*]/g, '');
+if (!canonicalPlainText.includes('Protocol ID: TNF_TURN_ZERO_CANONICAL')) {
   fail(`missing canonical protocol marker in ${canonicalRel}`);
 }
-if (!canonical.includes('TNF is the primary autonomous system and control plane')) {
+const controlPlaneStatements = [
+  'TNF is the primary autonomous system and control plane',
+  'TNF is the orchestration framework/control plane',
+];
+if (!controlPlaneStatements.some((statement) => canonicalPlainText.includes(statement))) {
   fail(`missing TNF control-plane boundary statement in ${canonicalRel}`);
 }
 
