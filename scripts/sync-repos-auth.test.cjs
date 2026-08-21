@@ -27,9 +27,22 @@ test('public overlay preserves the tip without downloading discarded blobs', () 
   assert.match(source, /git commit-tree \"\$NEW_TREE\" -p \"\$PUBLIC_HEAD\"/);
 });
 
+test('public overlay force-includes only required ignored runtime authority files', () => {
+  assert.match(source, /PUBLIC_FORCE_INCLUDE=\(/);
+  assert.match(source, /\.agent\/SYSTEM_PROMPT\.md/);
+  assert.match(source, /\.agent\/context\/agent-onboarding\.md/);
+  assert.match(source, /\.agent\/workflows\/frontload\.md/);
+  assert.match(source, /git add -f -- \"\$f\"/);
+  assert.doesNotMatch(source, /git add -f -A/);
+});
+
 test('generated publication commits and pull requests use conventional titles', () => {
   assert.match(source, /COMMIT_MESSAGE="chore\(sync\): publish open runtime/);
   assert.match(source, /PUBLIC_PR_TITLE="chore\(sync\): publish open runtime/);
   assert.doesNotMatch(source, /(?:COMMIT_MESSAGE=|--title )"sync:/);
-  assert.match(source, /gh_authenticated pr edit "\$SYNC_BRANCH"/);
+  assert.match(source, /gh_authenticated pr list --repo whodaniel\/The-New-Fuse/);
+  assert.match(source, /--head "\$SYNC_BRANCH" --base main --state open/);
+  assert.match(source, /gh_authenticated api --method PATCH/);
+  assert.match(source, /pulls\/\$EXISTING_PUBLIC_PR/);
+  assert.doesNotMatch(source, /gh_authenticated pr edit/);
 });

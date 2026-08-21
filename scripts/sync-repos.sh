@@ -327,6 +327,16 @@ ALWAYS_EXCLUDE=(
   ".venv_crawler"
 )
 
+# These runtime authority files are intentionally tracked in the monorepo but
+# match its broad .agent/* ignore rules. A normal `git add -A` in the generated
+# public worktree silently omits them, so publish only this reviewed subset with
+# force-add rather than exposing every tracked local agent artifact.
+PUBLIC_FORCE_INCLUDE=(
+  ".agent/SYSTEM_PROMPT.md"
+  ".agent/context/agent-onboarding.md"
+  ".agent/workflows/frontload.md"
+)
+
 # ─────────────────────────────────────────────────────────────────────
 # PHASE 1: Sync fuse-control-plane
 # ─────────────────────────────────────────────────────────────────────
@@ -669,6 +679,13 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
 
     cd "$OPEN_DIR"
     git add -A
+    for f in "${PUBLIC_FORCE_INCLUDE[@]}"; do
+      if [ ! -f "$f" ]; then
+        echo "ABORT: required public runtime authority file is missing: $f"
+        exit 1
+      fi
+      git add -f -- "$f"
+    done
     PUBLIC_HEAD=$(git rev-parse HEAD)
     NEW_TREE=$(git write-tree)
     PUBLIC_TREE=$(gh_authenticated api "repos/whodaniel/The-New-Fuse/git/commits/$PUBLIC_HEAD" --jq .tree.sha)
@@ -694,10 +711,14 @@ Proprietary content stripped. Stubs reference fuse-control-plane."
 Does **not** force-push \`main\`. Merge this PR to publish.
 
 Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs."
-          if gh_authenticated pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
-            gh_authenticated pr edit "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse \
-              --title "$PUBLIC_PR_TITLE" --body "$PUBLIC_PR_BODY"
-            echo "  Existing PR for $SYNC_BRANCH updated by branch push"
+          EXISTING_PUBLIC_PR=$(gh_authenticated pr list --repo whodaniel/The-New-Fuse \
+            --head "$SYNC_BRANCH" --base main --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING_PUBLIC_PR" ]; then
+            gh_authenticated api --method PATCH \
+              "repos/whodaniel/The-New-Fuse/pulls/$EXISTING_PUBLIC_PR" \
+              -f title="$PUBLIC_PR_TITLE" -f body="$PUBLIC_PR_BODY" >/dev/null
+            echo "  Existing PR #$EXISTING_PUBLIC_PR for $SYNC_BRANCH updated by branch push"
           else
             gh_authenticated pr create --repo whodaniel/The-New-Fuse \
               --base main --head "$SYNC_BRANCH" \
