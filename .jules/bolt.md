@@ -23,3 +23,7 @@
 ## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
 **Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
 **Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+
+## 2026-05-28 - O(N*M) Maps in React Gantt Charts
+**Learning:** In complex grid components like `TimelineView.tsx` (a Gantt chart), mapping over static date headers repeatedly inside nested loops (e.g. for every project row and task row) causes severe O(N*M) DOM element re-creation during interactive events like dragging.
+**Action:** Always extract and memoize static grid column elements into an array (`useMemo(() => dateHeaders.map(...))`) and render that single reference inside nested loops instead of mapping inline.

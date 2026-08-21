@@ -101,6 +101,27 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
     return Array.from({ length: days }).map((_, i) => addDays(minDate, i));
   }, [minDate, days]);
 
+  // Performance Optimization: Memoize static grid background to avoid O(N*M) DOM element re-creation during drag state updates
+  const projectGridBackground = useMemo(() => {
+    return dateHeaders.map((_, i) => (
+      <div
+        key={i}
+        className="flex-shrink-0 border-r border-slate-600/40 h-10"
+        style={{ width: COLUMN_WIDTH }}
+      />
+    ));
+  }, [dateHeaders]);
+
+  const taskGridBackground = useMemo(() => {
+    return dateHeaders.map((_, i) => (
+      <div
+        key={i}
+        className="flex-shrink-0 border-r border-slate-600/30 h-full"
+        style={{ width: COLUMN_WIDTH }}
+      />
+    ));
+  }, [dateHeaders]);
+
   return (
     <div
       className="flex flex-col h-full bg-[#0f111a] text-slate-100 font-sans select-none overflow-hidden border border-slate-600 rounded-lg relative"
@@ -160,13 +181,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                 <div className="text-[10px] text-slate-300 truncate">{plan.objective}</div>
               </div>
               <div className="flex relative">
-                {dateHeaders.map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-shrink-0 border-r border-slate-600/40 h-10"
-                    style={{ width: COLUMN_WIDTH }}
-                  />
-                ))}
+                {projectGridBackground}
               </div>
             </div>
 
@@ -205,13 +220,7 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
                     </span>
                   </button>
                   <div className="flex relative items-center h-12">
-                    {dateHeaders.map((_, i) => (
-                      <div
-                        key={i}
-                        className="flex-shrink-0 border-r border-slate-600/30 h-full"
-                        style={{ width: COLUMN_WIDTH }}
-                      />
-                    ))}
+                    {taskGridBackground}
 
                     <div
                       className={`absolute h-8 rounded-lg border border-white/10 shadow-lg flex items-center px-3 cursor-grab active:cursor-grabbing group/bar overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f111a] ${isDragging ? 'z-50 opacity-80 scale-105' : 'z-10'}`}
