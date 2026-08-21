@@ -59,6 +59,7 @@ import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
+import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
 import { ServiceHealthService } from './services/ServiceHealthService.js';
@@ -3411,6 +3412,7 @@ export const PLATFORM_TAXONOMY: string[] = [
   'codex',
   'command-code',
   'cursor',
+  'droid',
   'hermes',
   'kilo',
   'opencode',
@@ -4344,7 +4346,64 @@ function isPiPassthroughArgv(argv: string[]): boolean {
   return subcommand === 'pi';
 }
 
+function isKiloPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'kilo';
+}
+
+function isDroidPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'droid';
+}
+
 let cachedTopLevelCommands: Record<string, Set<string>> = {};
+
+// Disk-backed cache for passthrough CLI enumeration. Probing `<cli> --help`
+// costs seconds per target and TUI-heavy CLIs routinely approach the timeout,
+// so re-enumerating on every process start made any unknown `tnf <word>` pay
+// the full toll again. Persist verdicts for a day; staleness only risks
+// routing a since-removed subcommand implicitly, never explicit dispatch.
+const topLevelCommandsCacheFile = path.join(
+  os.homedir(),
+  '.tnf',
+  'cache',
+  'top-level-commands.json'
+);
+const TOP_LEVEL_COMMANDS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+let topLevelCommandsDiskCache: Record<
+  string,
+  { commands: string[]; probedAt: number }
+> | null = null;
+
+function loadTopLevelCommandsDiskCache(): Record<
+  string,
+  { commands: string[]; probedAt: number }
+> {
+  if (topLevelCommandsDiskCache === null) {
+    let loaded: Record<string, { commands: string[]; probedAt: number }> = {};
+    try {
+      loaded = JSON.parse(fs.readFileSync(topLevelCommandsCacheFile, 'utf8'));
+    } catch {
+      loaded = {};
+    }
+    topLevelCommandsDiskCache = loaded;
+  }
+  return topLevelCommandsDiskCache;
+}
+
+function saveTopLevelCommandsDiskCache(
+  cliName: string,
+  commands: Set<string>
+): void {
+  const cache = loadTopLevelCommandsDiskCache();
+  cache[cliName] = { commands: [...commands], probedAt: Date.now() };
+  try {
+    fs.mkdirSync(path.dirname(topLevelCommandsCacheFile), { recursive: true });
+    fs.writeFileSync(topLevelCommandsCacheFile, JSON.stringify(cache));
+  } catch {
+    // Best effort: an unwritable cache must never break dispatch.
+  }
+}
 
 function getTnfTopLevelCommands(): Set<string> {
   return new Set(
@@ -4378,10 +4437,24 @@ function getTopLevelCommands(cliName: string): Set<string> {
     return cachedTopLevelCommands[cliName];
   }
 
+  const cached = loadTopLevelCommandsDiskCache()[cliName];
+  if (
+    cached &&
+    Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS
+  ) {
+    const fromDisk = new Set(cached.commands);
+    cachedTopLevelCommands[cliName] = fromDisk;
+    return fromDisk;
+  }
+
   try {
     const result = spawnSync(cliName, ['--no-color', '--help'], {
       encoding: 'utf8',
       env: process.env,
+      // TUI-only CLIs (kilo, droid) never exit on a piped --help; without a
+      // timeout every unknown `tnf <word>` blocked forever on their probe.
+      timeout: 10_000,
+      killSignal: 'SIGKILL',
     });
     const output = `${result.stdout || ''}\n${result.stderr || ''}`;
     cachedTopLevelCommands[cliName] = parseTopLevelCommands(output);
@@ -4389,6 +4462,7 @@ function getTopLevelCommands(cliName: string): Set<string> {
     cachedTopLevelCommands[cliName] = new Set();
   }
 
+  saveTopLevelCommandsDiskCache(cliName, cachedTopLevelCommands[cliName]);
   return cachedTopLevelCommands[cliName];
 }
 
@@ -4405,6 +4479,8 @@ function resolveImplicitPassthroughArgs(
     'claude',
     'pi',
     'command-code',
+    'kilo',
+    'droid',
   ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
@@ -19627,7 +19703,7 @@ kanbanCommand
     }
   });
 
-const memoryCommand = program.command('memory').description('Memory provider management');
+const memoryCommand = program.command('memory').description('Memory provider and compaction management');
 memoryCommand
   .command('list')
   .description('List all configured memory providers')
@@ -19639,6 +19715,56 @@ memoryCommand
       console.log(
         `- ${provider.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(provider.name)} [${provider.type}]`
       );
+    }
+  });
+
+memoryCommand
+  .command('compact')
+  .description('Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)')
+  .option('--dry-run', 'Simulate compaction without writing or deleting files')
+  .option('--prune-raw', 'Remove raw uncompacted logs older than threshold')
+  .option('--max-age-days <n>', 'Age threshold in days for pruning raw logs', '14')
+  .action(async (options: { dryRun?: boolean; pruneRaw?: boolean; maxAgeDays?: string }) => {
+    try {
+      const compactor = new MemoryCompactorEngine();
+      const maxAgeDays = options.maxAgeDays ? parseInt(options.maxAgeDays, 10) : 14;
+      console.log(chalk.bold.cyan('\n🧠 Starting Multi-Agent Memory Compaction Sweep...\n'));
+      
+      const report = await compactor.compactAllTranscripts({
+        dryRun: options.dryRun,
+        pruneRaw: options.pruneRaw,
+        maxAgeDays
+      });
+
+      console.log(chalk.bold.green('✅ Memory Compaction Complete:'));
+      console.log(`  - Sessions Scanned:   ${chalk.yellow(report.scannedCount)}`);
+      console.log(`  - Sessions Compacted: ${chalk.green(report.compactedCount)}`);
+      console.log(`  - Raw Logs Pruned:    ${chalk.magenta(report.prunedCount)}`);
+      console.log(`  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`);
+      console.log(`  - Vault Storage:      ${chalk.dim(report.artifactsPath)}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error during compaction: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+memoryCommand
+  .command('audit-drift')
+  .description('Audit cross-agent memory congruence and verify claim attributions')
+  .action(async () => {
+    try {
+      const compactor = new MemoryCompactorEngine();
+      console.log(chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n'));
+      
+      const audit = await compactor.auditDrift();
+      console.log(chalk.bold.green('✅ Memory Congruence Audit Report:'));
+      console.log(`  - Fidelity Score:       ${chalk.bold(audit.overallFidelityScore + '%')}`);
+      console.log(`  - Conflicting Claims:   ${chalk.yellow(audit.agentDiscrepancies.length)}`);
+      console.log(`  - Unattributed Claims:  ${chalk.yellow(audit.unattributedClaims)}`);
+      console.log(`  - Timestamp:            ${chalk.dim(audit.timestamp)}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error during drift audit: ${err.message}`));
+      process.exit(1);
     }
   });
 
@@ -21639,6 +21765,14 @@ async function main(): Promise<void> {
   }
   if (isPiPassthroughArgv(argv)) {
     await runPassthrough('pi', argv.slice(3));
+    return;
+  }
+  if (isKiloPassthroughArgv(argv)) {
+    await runPassthrough('kilo', argv.slice(3));
+    return;
+  }
+  if (isDroidPassthroughArgv(argv)) {
+    await runPassthrough('droid', argv.slice(3));
     return;
   }
   const implicitArgs = resolveImplicitPassthroughArgs(argv);
