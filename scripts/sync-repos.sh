@@ -649,11 +649,13 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
       echo "✅ The-New-Fuse (public) force-pushed (replace-history)"
     fi
   else
-    # Default: clone existing public history, overlay the export, commit on top,
-    # push a sync branch. Never force-push main.
+    # Default: fetch only the public tip commit, without its large tree/blobs,
+    # build the replacement tree from the verified export, and create a child
+    # commit. GitHub already owns the parent object, so ancestry is preserved
+    # without downloading content that the overlay immediately replaces.
     OPEN_DIR="$WORK_DIR/The-New-Fuse"
     echo "  Cloning existing The-New-Fuse (preserving history)..."
-    git_authenticated clone --depth 1 "$OPEN_REMOTE" "$OPEN_DIR"
+    git_authenticated clone --filter=tree:0 --no-checkout --depth 1 "$OPEN_REMOTE" "$OPEN_DIR"
 
     find "$OPEN_DIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
     cp -a "$EXPORT_DIR"/. "$OPEN_DIR"/
@@ -666,18 +668,22 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
 
     cd "$OPEN_DIR"
     git add -A
-    if git diff --cached --quiet && [ "$FORCE" != true ]; then
+    PUBLIC_HEAD=$(git rev-parse HEAD)
+    NEW_TREE=$(git write-tree)
+    PUBLIC_TREE=$(gh_authenticated api "repos/whodaniel/The-New-Fuse/git/commits/$PUBLIC_HEAD" --jq .tree.sha)
+    if [ "$NEW_TREE" = "$PUBLIC_TREE" ] && [ "$FORCE" != true ]; then
       echo "ℹ️  The-New-Fuse (public): no changes to sync"
     else
-      git commit --allow-empty -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+      COMMIT_MESSAGE="sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
 
 Source commit: $MONO_MSG
 Proprietary content stripped. Stubs reference fuse-control-plane."
+      NEW_COMMIT=$(printf '%s\n' "$COMMIT_MESSAGE" | git commit-tree "$NEW_TREE" -p "$PUBLIC_HEAD")
       SYNC_BRANCH="sync/open-runtime"
       if [ "$DRY_RUN" = true ]; then
-        echo "🔍 DRY RUN: Would push $SYNC_BRANCH and open/update a PR into main"
+        echo "🔍 DRY RUN: Would push $NEW_COMMIT to $SYNC_BRANCH and open/update a PR into main"
       else
-        git_authenticated push origin "HEAD:refs/heads/${SYNC_BRANCH}" --force
+        git_authenticated push origin "${NEW_COMMIT}:refs/heads/${SYNC_BRANCH}" --force
         echo "✅ Pushed $SYNC_BRANCH (main was not force-pushed)"
         if command -v gh >/dev/null 2>&1; then
           if gh_authenticated pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then

@@ -17,3 +17,12 @@ test('git authentication uses an environment-expanded credential helper', () => 
   assert.match(source, /git_authenticated clone/);
   assert.match(source, /git_authenticated push/);
 });
+
+test('public overlay preserves the tip without downloading discarded blobs', () => {
+  assert.match(
+    source,
+    /git_authenticated clone --filter=tree:0 --no-checkout --depth 1 \"\$OPEN_REMOTE\" \"\$OPEN_DIR\"/,
+  );
+  assert.match(source, /NEW_TREE=\$\(git write-tree\)/);
+  assert.match(source, /git commit-tree \"\$NEW_TREE\" -p \"\$PUBLIC_HEAD\"/);
+});
