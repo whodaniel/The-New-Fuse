@@ -415,6 +415,7 @@
     "contracts:generate": "pnpm --filter @the-new-fuse/protocol-contracts run generate:all",
     "contracts:check": "pnpm --filter @the-new-fuse/protocol-contracts run check",
     "contracts:check:drift": "pnpm --filter @the-new-fuse/protocol-contracts run check:drift",
+    "test:green-context": "node --test scripts/lib/context-reference.redis.test.cjs scripts/runtime/federation-channel-broker.context.test.cjs",
     "merge:guard": "node scripts/security/merge-guard.cjs",
     "build:gate:staged": "node scripts/protocols/build-gate.cjs",
     "verify:honest-failure": "node scripts/protocols/verify-honest-failure.cjs",
