@@ -26,3 +26,10 @@ test('public overlay preserves the tip without downloading discarded blobs', () 
   assert.match(source, /NEW_TREE=\$\(git write-tree\)/);
   assert.match(source, /git commit-tree \"\$NEW_TREE\" -p \"\$PUBLIC_HEAD\"/);
 });
+
+test('generated publication commits and pull requests use conventional titles', () => {
+  assert.match(source, /COMMIT_MESSAGE="chore\(sync\): publish open runtime/);
+  assert.match(source, /PUBLIC_PR_TITLE="chore\(sync\): publish open runtime/);
+  assert.doesNotMatch(source, /(?:COMMIT_MESSAGE=|--title )"sync:/);
+  assert.match(source, /gh_authenticated pr edit "\$SYNC_BRANCH"/);
+});

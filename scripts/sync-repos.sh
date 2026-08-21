@@ -638,9 +638,10 @@ STUB
     git init -b main -q
     git remote add origin "$OPEN_REMOTE"
     git add -A
-    git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+    git commit -m "chore(sync): publish open runtime from monorepo @ $MONO_HEAD
 
 Source commit: $MONO_MSG
+Published at: $TIMESTAMP
 Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null || echo "Nothing to commit"
     if [ "$DRY_RUN" = true ]; then
       echo "🔍 DRY RUN: Would force-push ORPHAN history to The-New-Fuse main"
@@ -674,9 +675,10 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
     if [ "$NEW_TREE" = "$PUBLIC_TREE" ] && [ "$FORCE" != true ]; then
       echo "ℹ️  The-New-Fuse (public): no changes to sync"
     else
-      COMMIT_MESSAGE="sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+      COMMIT_MESSAGE="chore(sync): publish open runtime from monorepo @ $MONO_HEAD
 
 Source commit: $MONO_MSG
+Published at: $TIMESTAMP
 Proprietary content stripped. Stubs reference fuse-control-plane."
       NEW_COMMIT=$(printf '%s\n' "$COMMIT_MESSAGE" | git commit-tree "$NEW_TREE" -p "$PUBLIC_HEAD")
       SYNC_BRANCH="sync/open-runtime"
@@ -686,17 +688,20 @@ Proprietary content stripped. Stubs reference fuse-control-plane."
         git_authenticated push origin "${NEW_COMMIT}:refs/heads/${SYNC_BRANCH}" --force
         echo "✅ Pushed $SYNC_BRANCH (main was not force-pushed)"
         if command -v gh >/dev/null 2>&1; then
+          PUBLIC_PR_TITLE="chore(sync): publish open runtime from tnf-monorepo @ $MONO_HEAD"
+          PUBLIC_PR_BODY="Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.
+
+Does **not** force-push \`main\`. Merge this PR to publish.
+
+Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs."
           if gh_authenticated pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
+            gh_authenticated pr edit "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse \
+              --title "$PUBLIC_PR_TITLE" --body "$PUBLIC_PR_BODY"
             echo "  Existing PR for $SYNC_BRANCH updated by branch push"
           else
             gh_authenticated pr create --repo whodaniel/The-New-Fuse \
               --base main --head "$SYNC_BRANCH" \
-              --title "sync: open-runtime ← tnf-monorepo @ $MONO_HEAD" \
-              --body "Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.
-
-Does **not** force-push \`main\`. Merge this PR to publish.
-
-Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs." \
+              --title "$PUBLIC_PR_TITLE" --body "$PUBLIC_PR_BODY" \
               || echo "  gh pr create failed — branch is still on origin/$SYNC_BRANCH"
           fi
         fi

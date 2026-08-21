@@ -2,14 +2,14 @@
 
 Protocol ACK: `TNF_PROTOCOL_ACK`
 Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-21T08:00:20.992Z`
-Handoff ID: `a07c020a-dd40-45dc-8388-ecc88009ce1c`
+Created At: `2026-08-21T08:27:25.460Z`
+Handoff ID: `7e57e754-c800-4d07-ae64-d3daf2991a6c`
 
 ## Scope
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `feat/extension-manifest-v1`
-- Head SHA: `890128cba69dfc1ea97077bb75d07785fc0ebf14`
+- Branch: `fix/public-overlay-ci-context`
+- Head SHA: `e3635bccda9e98836ddfb686d0f98bda5ba2a04f`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -19,36 +19,23 @@ Handoff ID: `a07c020a-dd40-45dc-8388-ecc88009ce1c`
 - Sensitivity: `internal`
 
 ## Work Summary
-- Implemented tnf.extension/v1 with explicit satellite classifications and compatibility validation.
-- Replaced placeholder plugin installs with real local or Git sources, worker-isolated lifecycle hooks, atomic registry state, and rollback.
-- Verified manifest 7/7, lifecycle 13/13, CLI build/typecheck, and 474 command paths; unrelated tnf doctor latency remains documented.
+- Scoped canonical-only boundary checks away from the generated public overlay and allowed the publication branch in train policy.
+- Made publication commit and PR titles conventional, including existing PR updates.
+- Restored root OpenAPI authority, installed TWIP dependencies, and fixed Tauri Redis cache typing and runtime behavior.
 
 ## Changed Paths
+- .github/workflows/honest-failure-gate.yml
+- .github/workflows/integration-train-gate.yml
+- .github/workflows/openapi-drift-gate.yml
+- .github/workflows/protocol-schema-gate.yml
+- .github/workflows/repo-boundary-gate.yml
 - README.md
-- docs/extensions/TNF_EXTENSION_MANIFEST_V1.md
+- apps/tauri-desktop/src/services/cache/RedisCacheService.ts
 - docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/schemas/tnf-extension-manifest.schema.json
-- packages/extension-system/package.json
-- packages/extension-system/src/index.ts
-- packages/extension-system/src/satellite/SatelliteManifest.ts
-- packages/extension-system/tsconfig.json
-- packages/protocol-contracts/package.json
-- packages/protocol-contracts/src/extension-manifest.test.ts
-- packages/protocol-contracts/src/extension-manifest.ts
-- packages/protocol-contracts/src/index.ts
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/services/PluginsService.test.ts
-- packages/tnf-cli/src/services/PluginsService.ts
-- packages/tnf-cli/src/utils/browser-routing.test.ts
-- packages/tnf-cli/tsconfig.json
-- pnpm-lock.yaml
-- scripts/validate-protocol-schemas.cjs
+- openapi.yaml
+- scripts/sync-repos-auth.test.cjs
+- scripts/sync-repos.sh
 
 ## Verification
 - privacy_guard: `pass`
@@ -62,13 +49,13 @@ Handoff ID: `a07c020a-dd40-45dc-8388-ecc88009ce1c`
 - Priority: `high`
 
 ### Resume Checklist
-- Read the canonical reconciliation report and extension manifest V1 documentation.
+- Read the canonical reconciliation report and latest handoff.
+- Treat executed CI output as code evidence and zero-step jobs as infrastructure evidence.
 - Keep the divergent checkout mutation-prohibited.
-- Separate hosted Actions startup failures from executed test output.
-- Do not implement issue #113 downstream before canonical source authority is settled.
+- Publish only through scripts/sync-repos.sh from canonical main.
 
 ## Next Actions
-- Merge the canonical extension-contract PR and close issue #114 with verification receipts.
-- After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence.
-- Operator: resolve the GitHub Actions restriction or register a runner through an approved credential flow.
+- Merge the canonical public-overlay CI remediation PR.
+- Regenerate public PR #161 from canonical main, require executed relevant checks to pass, then merge.
 - Resolve issue #113 canonical control-plane service authority before implementation.
+- After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence.

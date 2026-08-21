@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
     paths:
       - "openapi.yaml"
+      - "scripts/deployment/openapi.yaml"
       - "scripts/openapi/**"
       - "apps/api/src/**/*.controller.ts"
       - "apps/api/src/**/dto/**/*.ts"
@@ -15,6 +16,7 @@ on:
     branches: [main, develop]
     paths:
       - "openapi.yaml"
+      - "scripts/deployment/openapi.yaml"
       - "scripts/openapi/**"
       - "apps/api/src/**/*.controller.ts"
       - "apps/api/src/**/dto/**/*.ts"

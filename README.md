@@ -100,6 +100,9 @@ personal/client business material before it lands.
 
 Current engineering reconciliation and external-gate status is recorded in
 `docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
+Canonical-only boundary and declaration checks are repository-scoped in CI;
+the generated public overlay validates its own runtime surface and must never
+be treated as a second monorepo source.
 
 Satellite repositories declare their runtime boundary with the versioned
 `tnf-extension.json` contract documented in

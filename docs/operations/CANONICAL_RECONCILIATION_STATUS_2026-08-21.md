@@ -7,8 +7,9 @@ Status: canonical engineering reconciliation complete; external gates remain.
 - Development authority: `whodaniel/tnf-monorepo`
 - Public publication target: `whodaniel/The-New-Fuse`
 - Private publication target: `whodaniel/fuse-control-plane`
-- Canonical source at final publication: `890128cba69dfc1ea97077bb75d07785fc0ebf14`
+- Canonical source: `e3635bccda9e98836ddfb686d0f98bda5ba2a04f`
 - Public publication: `The-New-Fuse` PR #160, merged as `2c5fa089cf10058745e3720b2ae4d09c7fb4294a`
+- Pending public publication: PR #161 from canonical `e3635bcc`
 
 ## Completed Work
 
@@ -37,6 +38,13 @@ Status: canonical engineering reconciliation complete; external gates remain.
     and contained-entrypoint validation, real local/Git installation, atomic
     registry writes, worker-isolated activation/deactivation hooks, update
     rollback, CLI commands, and failure-isolation tests.
+12. Merged the extension contract through monorepo PR #133 and closed issue
+    #114. Public PR #161 then exposed executed CI failures that had previously
+    been masked by the hosted-runner restriction.
+13. Repaired those executed CI paths upstream: conventional publication
+    commits/PRs, `sync/` train policy, canonical-only boundary jobs, declared
+    TWIP dependencies, the missing root OpenAPI source, and Tauri Redis cache
+    types/pipeline behavior.
 
 ## Protected Checkout Classification
 
@@ -87,8 +95,6 @@ performed in the protected checkout during this reconciliation.
 - **Control plane:** issue #113 remains the authority decision for locating the
   canonical proprietary service before replacing `EchoPromptExecutor` and
   file/in-memory persistence. Direct downstream edits remain prohibited.
-- **Extension contract:** implementation and local verification are complete in
-  `feat/extension-manifest-v1`; close issue #114 when the canonical PR merges.
 - **SSI/PASS/legal:** entity, equity, IP, compensation, trust, and benefits
   decisions remain frozen pending qualified benefits, tax, and legal review.
 
@@ -107,5 +113,9 @@ performed in the protected checkout during this reconciliation.
   tests 7/7; plugin lifecycle tests 13/13; CLI build and typecheck passed;
   command surface 474/474; all remaining CLI tests passed. The full chained CLI
   suite retains the documented unrelated `tnf doctor` 30-second latency failure.
+- Public CI remediation: OpenAPI drift check passed; TWIP conformance passed;
+  Tauri typecheck passed; Tauri tests 49/49; Tauri production build passed;
+  publication authentication/title tests 4/4; `sync/open-runtime` train policy
+  passed.
 - Final publication: proprietary path and content sweeps passed; public PR #160
   merged without force-pushing public `main`.

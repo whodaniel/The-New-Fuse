@@ -71,7 +71,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-21T08:00:20.992Z** — handoff `a07c020a-dd40-45dc-8388-ecc88009ce1c` (`890128cba69d`).
+Updated: **2026-08-21T08:27:25.460Z** — handoff `7e57e754-c800-4d07-ae64-d3daf2991a6c` (`e3635bccda9e`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
 `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` (`a7d9551b63bb`).
 `b16b8568-acd2-4a1b-9eba-60658ece28cb` (`8f8c5ccbca8b`).
@@ -263,10 +263,10 @@ commit/push this session (operator-gated). Handoff
 
 | Priority | Action                                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Merge the canonical extension-contract PR and close issue #114 with verification receipts. |
-| **P0**   | After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence. |
-| **P0**   | Operator: resolve the GitHub Actions restriction or register a runner through an approved credential flow. |
+| **P0**   | Merge the canonical public-overlay CI remediation PR. |
+| **P0**   | Regenerate public PR #161 from canonical main, require executed relevant checks to pass, then merge. |
 | **P0**   | Resolve issue #113 canonical control-plane service authority before implementation. |
+| **P0**   | After 21:30 EDT, verify canonical Jules runs and absence of public-overlay recurrence. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1418,3 +1418,5 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (680e7c30-6a25-41cb-8bfc-6f9115ec989b) | ✅ HANDOFF_READY |
 
 | 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (a07c020a-dd40-45dc-8388-ecc88009ce1c) | ✅ HANDOFF_READY |
+
+| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (7e57e754-c800-4d07-ae64-d3daf2991a6c) | ✅ HANDOFF_READY |

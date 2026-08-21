@@ -3,7 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Merge the canonical extension-contract PR and close issue #114 with verification receipts.
+**Current Directive:** Merge the canonical public-overlay CI remediation PR.
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-21 Canonical reconciliation and publication (Codex)**:
@@ -27,7 +27,16 @@
     worker-isolated lifecycle execution, compatibility checks, atomic state,
     rollback, and six CLI management commands.
   - Verified manifest tests 7/7, lifecycle tests 13/13, CLI build/typecheck, and
-    the 474-path command-surface gate. Canonical merge closes issue #114.
+    the 474-path command-surface gate. PR #133 merged; issue #114 is closed.
+
+- [✅] **2026-08-21 Executed public-overlay CI remediation (Codex)**:
+  - Public PR #161 demonstrated which jobs now execute. Canonical-only
+    proprietary/declaration checks are repository-scoped; generated publication
+    commits and PR titles are conventional; `sync/` is train-approved.
+  - Restored the root OpenAPI source, installed declared TWIP dependencies, and
+    corrected Tauri Redis sentinel/pipeline types plus zero-TTL behavior.
+  - Verified OpenAPI and TWIP gates, Tauri typecheck, 49/49 tests, production
+    build, publication tests 4/4, and train policy locally.
 
 - [⚠️] **2026-08-21 External gates**:
   - GitHub-hosted jobs still terminate before steps because of the account-level
@@ -1085,6 +1094,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-21T08:27:27.798Z handoff `7e57e754-c800-4d07-ae64-d3daf2991a6c` head `e3635bccda9e` project `TNF-PUBLICATION` — Merge the canonical public-overlay CI remediation PR.
 
 - 2026-08-21T08:00:24.616Z handoff `a07c020a-dd40-45dc-8388-ecc88009ce1c` head `890128cba69d` project `TNF-EXTENSIONS` — Merge the canonical extension-contract PR and close issue #114 with verification receipts.
 
