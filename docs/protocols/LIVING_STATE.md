@@ -13,7 +13,7 @@
   - **Published:** `The-New-Fuse` PR #154 from canonical `9561fa7c`, merged as
     `f3f62adb`; both proprietary boundary gates passed; public issue #157 closed.
   - **Preserved:** divergent checkout capsule at
-    `/Users/danielgoldberg/TNF-Recovery-Capsules/2026-08-21-49902d36`; protected
+    `$HOME/TNF-Recovery-Capsules/2026-08-21-49902d36`; protected
     checkout was not mutated.
   - **Details:**
     `docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.

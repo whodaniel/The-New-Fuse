@@ -13,7 +13,7 @@ Status: canonical engineering reconciliation complete; external gates remain.
 ## Completed Work
 
 1. Preserved the divergent checkout in a verified recovery capsule at
-   `/Users/danielgoldberg/TNF-Recovery-Capsules/2026-08-21-49902d36`.
+   `$HOME/TNF-Recovery-Capsules/2026-08-21-49902d36`.
 2. Merged process single-instance locking through monorepo PR #125.
 3. Repaired public-overlay application builds, contract stubs, gitlink handling,
    and topology documentation through PR #126.
