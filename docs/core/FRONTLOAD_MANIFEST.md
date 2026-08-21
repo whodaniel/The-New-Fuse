@@ -16,6 +16,28 @@ Use in every TNF coding/operations session as needed:
 
 Prefer summaries for large state files.
 
+### Stage A rail authority and hydration receipts
+
+This table is the canonical Stage A rail inventory. Harnesses, system prompts, onboarding scripts, verification scripts, and provider-specific adapters MUST NOT maintain an independently authoritative competing Stage A list.
+
+A consumer may add local compatibility or diagnostic files, but those additions are not fundamental rails unless this manifest is deliberately updated through the normal protocol-governance path.
+
+For write-capable or autonomous TNF work, **presence is insufficient**. The harness should derive Stage A from this manifest, actually read the current file contents, and emit a hydration receipt containing at minimum:
+
+- manifest path and content hash;
+- repository origin, branch, and HEAD used for hydration;
+- each Stage A path;
+- a content hash for each loaded rail;
+- load/observation timestamp;
+- load result (`loaded`, `missing`, `unreadable`, or `stale` where applicable);
+- the consumer/runtime that performed hydration.
+
+Mutation readiness should fail closed when a required Stage A rail is missing or unreadable. A changed rail hash invalidates an older hydration receipt for decisions governed by that rail and requires re-hydration before the next consequential action.
+
+Context compaction, session handoff, provider substitution, or repository movement also invalidates any unprovable claim that the current actor still holds the required rail context. Re-hydrate the minimum Stage A set rather than trusting conversation memory.
+
+`FRONTLOAD_MANIFEST.md` defines **what must be hydrated**. `TURN_ZERO_MANDATE.md` defines **when and why it is required**. `STATE_FRESHNESS_MANDATE.md` governs mutable external/runtime observations. These are complementary authorities, not duplicate protocol stacks.
+
 ## Stage B — Classification / Governance
 
 Load before placement, publication, cross-boundary, or nontrivial implementation decisions:
