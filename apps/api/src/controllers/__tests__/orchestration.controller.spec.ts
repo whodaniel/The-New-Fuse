@@ -2,7 +2,10 @@ import { describe, expect, it } from '@jest/globals';
 import { OrchestrationController } from '../orchestration.controller';
 
 describe('OrchestrationController (google-adk)', () => {
-  const controller = new OrchestrationController({} as any);
+  const controller = new OrchestrationController({} as any, {
+    defaultModelForProvider: (provider: string) =>
+      provider === 'google-adk' ? 'gemini-2.5-pro' : 'gpt-4o-mini',
+  } as any);
 
   it('uses gemini model default for google-adk provider', () => {
     const model = (controller as any).defaultModelForProvider('google-adk');

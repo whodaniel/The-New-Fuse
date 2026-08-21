@@ -13,8 +13,8 @@ set -euo pipefail
 #
 #   NAMING (swapped 2026-07-25): the flagship name The-New-Fuse now belongs to the
 #   PUBLIC publication repo. The private development monorepo — this one — is
-#   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as monorepo,
-#   The-New-Fuse, the-new-fuse-next-gen) refer to the pre-swap layout.
+#   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as the former monorepo,
+#   fuse-open-runtime, the-new-fuse-next-gen) refer to the pre-swap layout.
 #   Anything still pointing a monorepo remote at whodaniel/The-New-Fuse is now
 #   aimed at the PUBLIC repo — repoint it at tnf-monorepo.
 #
@@ -521,11 +521,35 @@ STUB
  * @see https://github.com/whodaniel/fuse-control-plane
  */
 
-import { Module } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
+
+type AgentStatus = {
+  agentId: string;
+  status: string;
+  lastHeartbeat: Date;
+  lastActivity: Date;
+  currentTask?: string;
+  consecutiveFailures?: number;
+};
+
+type HeartbeatService = {
+  getAllAgentStatuses(): Map<string, AgentStatus>;
+};
+
+@Injectable()
+export class OrchestratorService {
+  getSystemHealth() {
+    return { totalAgents: 0, activeAgents: 0, stalledAgents: 0, failedAgents: 0 };
+  }
+
+  getHeartbeatService(): HeartbeatService | null {
+    return null;
+  }
+}
 
 @Module({
-  // Orchestrator functionality requires the control-plane.
-  // This is a placeholder module for the open-source runtime.
+  providers: [OrchestratorService],
+  exports: [OrchestratorService],
 })
 export class OrchestratorModule {}
 

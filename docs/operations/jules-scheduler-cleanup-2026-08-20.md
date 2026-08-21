@@ -2,11 +2,37 @@
 
 ## Status
 
-**Partial — local/repo controls done; external Jules cloud schedules still fire
-against public `The-New-Fuse` and require operator deletion in the Jules UI.**
+**Completed for the TNF repository-authority scope on 2026-08-21.** The three
+Bolt, Sentinel, and Palette schedules were recreated against private
+`whodaniel/tnf-monorepo`, then removed from public `whodaniel/The-New-Fuse`.
+The remaining verification is passive: confirm the canonical schedules execute
+at their first recorded run and no public-overlay sessions recur for one cadence
+cycle.
 
 Jules CLI (`jules` v as of Dec 2025 binary) has **no** schedule list/delete
 commands. Schedules live only on https://jules.google.com.
+
+An initial 2026-08-21 structured browser inspection found no authenticated
+profile. After the operator authenticated and explicitly approved destructive
+schedule deletion, the supported Jules UI was used for the migration below.
+
+## Migration receipt (2026-08-21 ~01:01 EDT)
+
+- Authenticated account: operator-authorized Jules account
+- Source before migration: three active daily schedules on
+  `whodaniel/The-New-Fuse` (Bolt, Sentinel, Palette)
+- Canonical target after migration: three daily schedules on
+  `whodaniel/tnf-monorepo`, branch `main`
+- Cadence: `30 21 * * *` in `America/New_York` (09:30 PM EDT)
+- First canonical next-run timestamp returned by Jules: 2026-08-21 09:30 PM EDT
+- Canonical UI state before first execution: `Inactive` with no executions yet
+- Source after migration: zero scheduled tasks on `whodaniel/The-New-Fuse`,
+  confirmed after a full page reload
+
+Jules does not expose an in-place repository retarget control. The migration
+therefore recreated the schedules on the canonical repository before deleting
+the public-overlay schedules. The canonical prompts were preserved from the
+source schedules rather than rewritten during migration.
 
 ## Verified inventory (2026-08-20 ~18:25Z)
 
@@ -48,17 +74,18 @@ commands. Schedules live only on https://jules.google.com.
    if not already opened).
 3. Documented that cloud schedules cannot be deleted via CLI.
 
-## Operator required (Jules UI)
+## Operator action completed (Jules UI)
 
 At https://jules.google.com → Scheduled / Automations (exact label may vary):
 
-1. **Delete** Bolt, Palette, and Sentinel scheduled jobs that target
+1. [x] Recreate Bolt, Palette, and Sentinel against
+   `whodaniel/tnf-monorepo` only.
+2. [x] Delete the corresponding scheduled jobs from
    `whodaniel/The-New-Fuse`.
-2. Optionally delete persona schedules on legacy `whodaniel/fuse` if unused.
-3. If persona automation is still desired, **recreate** schedules targeting
-   **`whodaniel/tnf-monorepo` only**.
-4. After deletion, confirm no new `⚡ Bolt:` / `🎨 Palette:` / `🛡️ Sentinel:`
-   sessions appear against `The-New-Fuse` for one cadence cycle (~24h).
+3. [ ] Confirm no new Bolt / Palette / Sentinel sessions appear against
+   `The-New-Fuse` for one cadence cycle (approximately 24 hours).
+4. [ ] Optionally triage persona schedules on legacy `whodaniel/fuse`; this is
+   outside the public-overlay authority incident.
 
 ## Merge checklist
 
@@ -69,7 +96,8 @@ At https://jules.google.com → Scheduled / Automations (exact label may vary):
 - [x] Confirm workflow enabled under Actions — `close-jules-persona-prs.yml`
       present on `main` (1742 bytes). Two runs recorded, both `skipped`, which
       is the correct no-op result: zero open persona PRs to close.
-- [ ] Operator Jules UI schedule deletion receipt (screenshot or note in handoff)
+- [x] Operator Jules UI schedule migration receipt (structured browser state
+      recorded above; no screenshot required)
 
 ## CI breakage — diagnosed and partly fixed (PR #156, issue #157)
 

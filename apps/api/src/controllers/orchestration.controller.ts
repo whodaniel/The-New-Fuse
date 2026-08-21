@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
+import { randomUUID } from 'crypto';
 import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
@@ -436,6 +437,19 @@ export class OrchestrationController {
     modelName: string,
     apiEndpoint?: string | null
   ): string {
+    if (provider === 'google-adk') {
+      const configuredBase =
+        apiEndpoint?.trim() ||
+        (modelName.startsWith('http://') || modelName.startsWith('https://') ? modelName : '') ||
+        process.env.GOOGLE_ADK_BASE_URL?.trim() ||
+        process.env.ADK_GATEWAY_URL?.trim() ||
+        (process.env.TNF_RUNTIME === 'docker-compose'
+          ? 'http://adk-gateway:8080'
+          : 'http://localhost:8089');
+      const base = configuredBase.replace(/\/+$/, '');
+      return base.endsWith('/v1/execute') ? base : `${base}/v1/execute`;
+    }
+
     if (apiEndpoint && apiEndpoint.trim()) return apiEndpoint.trim();
     if (provider === 'gemini' || provider === 'google') {
       const encodedModel = encodeURIComponent(modelName || 'gemini-2.5-flash');
@@ -449,6 +463,13 @@ export class OrchestrationController {
   }
 
   private buildHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'google-adk') {
+      return {
+        'content-type': 'application/json',
+        'x-adk-gateway-key': apiKey,
+      };
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       return {
         'content-type': 'application/json',
@@ -477,6 +498,30 @@ export class OrchestrationController {
     temperature?: number,
     maxTokens?: number
   ): Record<string, unknown> {
+    if (provider === 'google-adk') {
+      return {
+        requestId: randomUUID(),
+        traceId: randomUUID(),
+        workspaceId: 'tnf-default-workspace',
+        agentId: 'tnf-orchestration-controller',
+        model: modelName,
+        input: {
+          messages: [
+            ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+            { role: 'user', content: message },
+          ],
+        },
+        tools: [],
+        metadata: {
+          source: 'tnf-orchestration-controller',
+          policyProfile: 'default',
+        },
+        temperature: typeof temperature === 'number' ? temperature : 0.7,
+        maxTokens: maxTokens ?? 800,
+        timeoutMs: 120000,
+      };
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       const parts = [systemPrompt, message]
         .filter((part): part is string => Boolean(part && part.trim()))
@@ -515,6 +560,11 @@ export class OrchestrationController {
   }
 
   private extractTextContent(provider: string, payload: any): string | null {
+    if (provider === 'google-adk') {
+      const text = payload?.output?.content;
+      return typeof text === 'string' ? text : null;
+    }
+
     if (provider === 'gemini' || provider === 'google') {
       const parts = payload?.candidates?.[0]?.content?.parts;
       if (!Array.isArray(parts)) return null;

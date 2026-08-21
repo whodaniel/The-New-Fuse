@@ -105,6 +105,8 @@ function normalizeNode(node: unknown, index: number) {
   };
 }
 
+export const fetchBrowserStatus = fetchBrowserPreview;
+
 export function formatBrowserTaskForChat(result: BrowserTaskResult): string {
   const lines: string[] = [];
   if (result.url) lines.push(`Opened: ${result.url}`);

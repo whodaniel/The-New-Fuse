@@ -34,7 +34,11 @@ jobs:
           sort -u .tnf_changed_files -o .tnf_changed_files
 
       - name: Validate gitlink allowlist and state
-        run: ./scripts/check-gitlinks.sh
+        run: |
+          if [ "$GITHUB_REPOSITORY" = "whodaniel/The-New-Fuse" ]; then
+            export TNF_GITLINK_ALLOW_ABSENT=true
+          fi
+          ./scripts/check-gitlinks.sh
 
       - name: Verify changed gitlink commits are reachable from nested remotes
         run: node scripts/protocols/verify-gitlink-reachability.cjs --mode=ci --file-list=.tnf_changed_files

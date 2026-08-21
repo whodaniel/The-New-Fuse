@@ -21,8 +21,6 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import rawSeedData from '../data/google_ai_session_concordance.json';
-
 interface SessionItem {
   sessionId: string;
   conversationId: string;
@@ -41,7 +39,7 @@ interface ConcordancePayload {
   sessions: SessionItem[];
 }
 
-const SEED_CONCORDANCE: ConcordancePayload = (rawSeedData as unknown as ConcordancePayload) || {
+const EMPTY_CONCORDANCE: ConcordancePayload = {
   generatedAt: '',
   totalSessions: 0,
   syncedToTnf: 0,
@@ -55,7 +53,7 @@ const SEED_CONCORDANCE: ConcordancePayload = (rawSeedData as unknown as Concorda
 const LOCAL_INTEL_URL = '/local-intel/google_ai_session_concordance.json';
 
 export default function PlatformHub() {
-  const [data, setData] = useState<ConcordancePayload>(SEED_CONCORDANCE);
+  const [data, setData] = useState<ConcordancePayload>(EMPTY_CONCORDANCE);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -67,7 +65,7 @@ export default function PlatformHub() {
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [isCloudSyncing, setIsCloudSyncing] = useState<boolean>(false);
-  const [cloudSyncStatus, setCloudSyncStatus] = useState<{
+  const [, setCloudSyncStatus] = useState<{
     status: string;
     target: string;
     time: string;

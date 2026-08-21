@@ -129,7 +129,7 @@ This will:
 **Option B: Direct Jules CLI**
 
 ```bash
-jules new --repo whodaniel/The-New-Fuse "Detailed task description"
+jules new --repo whodaniel/tnf-monorepo "Detailed task description"
 ```
 
 ### Step 3: Monitor Sessions
@@ -427,7 +427,7 @@ pnpm tsx scripts/register-jules-agent.ts
 ### Jules CLI
 
 ```bash
-jules new --repo whodaniel/The-New-Fuse "task"
+jules new --repo whodaniel/tnf-monorepo "task"
 jules remote list --session
 jules remote pull --session [ID]
 jules remote pull --session [ID] --apply
