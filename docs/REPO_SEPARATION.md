@@ -3,8 +3,8 @@
 > **Status**: Active — This is the canonical reference for how TNF code is
 > distributed across repositories.
 >
-> **Last Updated**: 2026-08-13 (satellites are per-repo; sync no longer orphans
-> public main)
+> **Last Updated**: 2026-08-21 (canonical topology reverified; retired slugs
+> documented as redirects/archives)
 
 ---
 
@@ -34,14 +34,16 @@ monorepo is `whodaniel/tnf-monorepo`.
 
 | Name                     | Before 2026-07-25         | After                         |
 | ------------------------ | ------------------------- | ----------------------------- |
-| `whodaniel/The-New-Fuse` | private combined monorepo | **public** open runtime       |
-| `whodaniel/The-New-Fuse` | public open runtime       | _(name retired)_              |
-| `whodaniel/tnf-monorepo` | _(did not exist)_         | **private** combined monorepo |
+| `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime                |
+| `whodaniel/fuse-open-runtime` | public open runtime       | redirects to `The-New-Fuse` (retired) |
+| `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo          |
 
 **Any remote still pointing at `whodaniel/The-New-Fuse` for monorepo work is now
 aimed at the PUBLIC repo.** Pushing the monorepo there publishes proprietary
 code. Check with `git remote -v` and repoint to `tnf-monorepo`. Historical slugs
-`The-New-Fuse` and `the-new-fuse-next-gen` refer to the pre-swap layout.
+`fuse-open-runtime` and `the-new-fuse-next-gen` redirect to `The-New-Fuse` and
+must not be treated as additional publication targets. `whodaniel/fuse` is an
+archived lineage repository, not a development or publication target.
 
 ---
 
@@ -146,8 +148,6 @@ fuse-control-plane/
 ├── source-originals/           # Latest source from monorepo
 │   ├── relay-core/             # master-clock.ts, broker-agent.ts
 │   ├── backend-orchestrator/   # Full orchestrator module
-│   ├── nexus-orchestrator/     # 3D visualization sources
-│   ├── picoclaw-overseer/      # Go-based overseer
 │   └── agent-coordination/     # Multi-agent patterns
 ├── orchestration-scripts/      # Top-level orchestration scripts
 ├── docs/                       # Control-plane documentation
@@ -218,7 +218,7 @@ BRIDGE_GATE_ENABLED=false   # open the gate; register agents without Director au
 
 or run the control-plane `services/master-clock` alongside the relay.
 
-The open publication tree receives a 21-line stub for `master-clock.ts` and
+The open publication tree receives stubs for `master-clock.ts` and
 `broker-agent.ts` (see `verify-open-runtime-export.sh`), so a consumer of the
 public repo gets stub-mode behaviour by default.
 

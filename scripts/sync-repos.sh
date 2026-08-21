@@ -13,8 +13,8 @@ set -euo pipefail
 #
 #   NAMING (swapped 2026-07-25): the flagship name The-New-Fuse now belongs to the
 #   PUBLIC publication repo. The private development monorepo — this one — is
-#   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as monorepo,
-#   The-New-Fuse, the-new-fuse-next-gen) refer to the pre-swap layout.
+#   whodaniel/tnf-monorepo. Older slugs (The-New-Fuse as the former monorepo,
+#   fuse-open-runtime, the-new-fuse-next-gen) refer to the pre-swap layout.
 #   Anything still pointing a monorepo remote at whodaniel/The-New-Fuse is now
 #   aimed at the PUBLIC repo — repoint it at tnf-monorepo.
 #
@@ -88,11 +88,32 @@ echo "Source: whodaniel/tnf-monorepo @ $MONO_HEAD"
 echo "        \"$MONO_MSG\""
 echo ""
 
-if [ -z "${GITHUB_PAT:-}" ]; then
-  echo "ERROR: GITHUB_PAT is empty. Set repository secret TNF_SYNC_PAT on whodaniel/tnf-monorepo"
-  echo "       (classic or fine-grained PAT with repo scope for fuse-control-plane + The-New-Fuse)."
+if [ -z "${GITHUB_PAT:-}" ] && ! gh auth status --hostname github.com >/dev/null 2>&1; then
+  echo "ERROR: GitHub authentication is unavailable."
+  echo "       Set TNF_SYNC_PAT/GITHUB_PAT or authenticate gh with repo access."
   exit 1
 fi
+
+# Never embed credentials in repository URLs. URLs are visible in process tables,
+# error output, and git config. This helper expands GITHUB_PAT only inside the
+# credential subprocess; the command line contains the variable name, not its value.
+GIT_CREDENTIAL_HELPER='!f() { printf "%s\n" "username=x-access-token" "password=$GITHUB_PAT"; }; f'
+
+git_authenticated() {
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    git -c credential.helper= -c "credential.helper=$GIT_CREDENTIAL_HELPER" "$@"
+  else
+    git "$@"
+  fi
+}
+
+gh_authenticated() {
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    GH_TOKEN="$GITHUB_PAT" gh "$@"
+  else
+    gh "$@"
+  fi
+}
 
 # ─────────────────────────────────────────────────────────────────────
 # PROPRIETARY EXCLUSION LIST
@@ -315,11 +336,7 @@ if [ "$SYNC_CONTROL" = true ]; then
   echo ""
 
   CTRL_DIR="$WORK_DIR/fuse-control-plane"
-  if [ -n "${GITHUB_PAT:-}" ]; then
-    git clone "https://${GITHUB_PAT}@github.com/whodaniel/fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
-  else
-    git clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
-  fi
+  git_authenticated clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
 
   cd "$CTRL_DIR"
 
@@ -391,7 +408,7 @@ Source commit: $MONO_MSG" 2>/dev/null
     if [ "$DRY_RUN" = true ]; then
       echo "🔍 DRY RUN: Would push $CHANGES changes to fuse-control-plane"
     else
-      git push origin main 2>&1
+      git_authenticated push origin main 2>&1
       echo "✅ fuse-control-plane pushed ($CHANGES changes)"
     fi
   else
@@ -521,11 +538,35 @@ STUB
  * @see https://github.com/whodaniel/fuse-control-plane
  */
 
-import { Module } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
+
+type AgentStatus = {
+  agentId: string;
+  status: string;
+  lastHeartbeat: Date;
+  lastActivity: Date;
+  currentTask?: string;
+  consecutiveFailures?: number;
+};
+
+type HeartbeatService = {
+  getAllAgentStatuses(): Map<string, AgentStatus>;
+};
+
+@Injectable()
+export class OrchestratorService {
+  getSystemHealth() {
+    return { totalAgents: 0, activeAgents: 0, stalledAgents: 0, failedAgents: 0 };
+  }
+
+  getHeartbeatService(): HeartbeatService | null {
+    return null;
+  }
+}
 
 @Module({
-  // Orchestrator functionality requires the control-plane.
-  // This is a placeholder module for the open-source runtime.
+  providers: [OrchestratorService],
+  exports: [OrchestratorService],
 })
 export class OrchestratorModule {}
 
@@ -586,9 +627,6 @@ STUB
   echo ""
 
   OPEN_REMOTE="https://github.com/whodaniel/The-New-Fuse.git"
-  if [ -n "${GITHUB_PAT:-}" ]; then
-    OPEN_REMOTE="https://x-access-token:${GITHUB_PAT}@github.com/whodaniel/The-New-Fuse.git"
-  fi
 
   if [ "$REPLACE_HISTORY" = true ]; then
     echo "WARNING: --replace-history orphans public main (git init + force-push)."
@@ -607,15 +645,17 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
     if [ "$DRY_RUN" = true ]; then
       echo "🔍 DRY RUN: Would force-push ORPHAN history to The-New-Fuse main"
     else
-      git push origin main --force
+      git_authenticated push origin main --force
       echo "✅ The-New-Fuse (public) force-pushed (replace-history)"
     fi
   else
-    # Default: clone existing public history, overlay the export, commit on top,
-    # push a sync branch. Never force-push main.
+    # Default: fetch only the public tip commit, without its large tree/blobs,
+    # build the replacement tree from the verified export, and create a child
+    # commit. GitHub already owns the parent object, so ancestry is preserved
+    # without downloading content that the overlay immediately replaces.
     OPEN_DIR="$WORK_DIR/The-New-Fuse"
     echo "  Cloning existing The-New-Fuse (preserving history)..."
-    git clone --depth 1 "$OPEN_REMOTE" "$OPEN_DIR"
+    git_authenticated clone --filter=tree:0 --no-checkout --depth 1 "$OPEN_REMOTE" "$OPEN_DIR"
 
     find "$OPEN_DIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
     cp -a "$EXPORT_DIR"/. "$OPEN_DIR"/
@@ -628,25 +668,28 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
 
     cd "$OPEN_DIR"
     git add -A
-    if git diff --cached --quiet && [ "$FORCE" != true ]; then
+    PUBLIC_HEAD=$(git rev-parse HEAD)
+    NEW_TREE=$(git write-tree)
+    PUBLIC_TREE=$(gh_authenticated api "repos/whodaniel/The-New-Fuse/git/commits/$PUBLIC_HEAD" --jq .tree.sha)
+    if [ "$NEW_TREE" = "$PUBLIC_TREE" ] && [ "$FORCE" != true ]; then
       echo "ℹ️  The-New-Fuse (public): no changes to sync"
     else
-      git commit --allow-empty -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+      COMMIT_MESSAGE="sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
 
 Source commit: $MONO_MSG
 Proprietary content stripped. Stubs reference fuse-control-plane."
+      NEW_COMMIT=$(printf '%s\n' "$COMMIT_MESSAGE" | git commit-tree "$NEW_TREE" -p "$PUBLIC_HEAD")
       SYNC_BRANCH="sync/open-runtime"
       if [ "$DRY_RUN" = true ]; then
-        echo "🔍 DRY RUN: Would push $SYNC_BRANCH and open/update a PR into main"
+        echo "🔍 DRY RUN: Would push $NEW_COMMIT to $SYNC_BRANCH and open/update a PR into main"
       else
-        git push origin "HEAD:refs/heads/${SYNC_BRANCH}" --force
+        git_authenticated push origin "${NEW_COMMIT}:refs/heads/${SYNC_BRANCH}" --force
         echo "✅ Pushed $SYNC_BRANCH (main was not force-pushed)"
         if command -v gh >/dev/null 2>&1; then
-          export GH_TOKEN="${GITHUB_PAT:-${GH_TOKEN:-}}"
-          if GH_TOKEN="$GH_TOKEN" gh pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
+          if gh_authenticated pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
             echo "  Existing PR for $SYNC_BRANCH updated by branch push"
           else
-            GH_TOKEN="$GH_TOKEN" gh pr create --repo whodaniel/The-New-Fuse \
+            gh_authenticated pr create --repo whodaniel/The-New-Fuse \
               --base main --head "$SYNC_BRANCH" \
               --title "sync: open-runtime ← tnf-monorepo @ $MONO_HEAD" \
               --body "Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.

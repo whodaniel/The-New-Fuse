@@ -20,6 +20,7 @@ export class ProviderCatalogService {
   }
 
   defaultModelForProvider(provider: string): string {
+    if (provider === 'google-adk') return 'gemini-2.5-pro';
     if (provider === 'anthropic') return 'claude-3-5-sonnet-20240620';
     if (provider === 'openrouter') return 'openai/gpt-4o-mini';
     if (provider === 'perplexity') return 'sonar';

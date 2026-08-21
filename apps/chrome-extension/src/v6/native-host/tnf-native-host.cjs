@@ -7,7 +7,7 @@
  * This host uses relative paths and auto-discovers the project root.
  */
 
-const { spawn, exec } = require('child_process');
+const { spawn, exec, execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -67,6 +67,8 @@ const PROJECT_ROOT = findProjectRoot();
 const LOG_FILE = path.join(os.homedir(), '.tnf-native-host.log');
 const RELAY_PORT_CANDIDATES = [3000, 3001, 3010, 3100];
 const RELAY_HEALTH_TIMEOUT_MS = 1500;
+const SERVICE_START_LOCK_DIR = path.join(os.homedir(), '.tnf', 'native-host', 'start-locks');
+const SERVICE_START_LOCK_STALE_MS = 30000;
 
 // Service definitions (relative to project root)
 const SERVICES = {
@@ -96,6 +98,7 @@ const SERVICES = {
     command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'relay:monitor'],
     cwd: '.',
+    matchPattern: '(scripts/)?relay-channel-monitor[.]cjs',
     stopCommand: 'pkill -f "relay-channel-monitor.cjs" 2>/dev/null || true',
   },
   masterClock: {
@@ -103,6 +106,7 @@ const SERVICES = {
     command: process.env.PNPM_BIN || 'pnpm',
     args: ['run', 'master-clock'],
     cwd: '.',
+    matchPattern: '(packages/relay-core/)?(dist|src)/master-clock[.](js|ts)',
     stopCommand: 'pkill -f "master-clock" 2>/dev/null || true',
   },
 };
@@ -183,6 +187,96 @@ function isPortInUse(port) {
   });
 }
 
+// Native-host reconnections lose in-memory state; direct process-table inspection prevents duplicate detached services.
+function isProcessRunning(pattern, execFileFn = execFile) {
+  return new Promise((resolve) => {
+    execFileFn('pgrep', ['-f', pattern], (error, stdout = '') => {
+      // Exit 0: matching process found
+      if (!error && stdout.trim().length > 0) {
+        return resolve({ running: true, unknown: false });
+      }
+      // Exit 1: no matching process found
+      if (error && error.code === 1) {
+        return resolve({ running: false, unknown: false });
+      }
+      // Any other exit code or invocation failure: unknown process state
+      return resolve({
+        running: false,
+        unknown: true,
+        error: error ? error.message : 'Process table query failed',
+      });
+    });
+  });
+}
+
+function acquireServiceStartLock(serviceName, options = {}) {
+  const fsImpl = options.fsImpl || fs;
+  const lockDir = options.lockDir || SERVICE_START_LOCK_DIR;
+  const staleMs = options.staleMs || SERVICE_START_LOCK_STALE_MS;
+  const now = options.now || Date.now;
+  const lockPath = path.join(lockDir, `${serviceName}.lock`);
+
+  try {
+    fsImpl.mkdirSync(lockDir, { recursive: true, mode: 0o700 });
+  } catch (error) {
+    return { acquired: false, error: `Cannot create service lock directory: ${error.message}` };
+  }
+
+  const createLock = () => {
+    try {
+      const fd = fsImpl.openSync(lockPath, 'wx', 0o600);
+      fsImpl.writeFileSync(
+        fd,
+        `${JSON.stringify({ pid: process.pid, serviceName, acquiredAt: new Date(now()).toISOString() })}\n`
+      );
+      let released = false;
+      return {
+        acquired: true,
+        lockPath,
+        release() {
+          if (released) return;
+          released = true;
+          try {
+            fsImpl.closeSync(fd);
+          } catch (_error) {
+            // The descriptor may already be closed during process shutdown.
+          }
+          try {
+            fsImpl.unlinkSync(lockPath);
+          } catch (error) {
+            if (error.code !== 'ENOENT') {
+              log(`Failed to release ${serviceName} start lock: ${error.message}`);
+            }
+          }
+        },
+      };
+    } catch (error) {
+      if (error.code === 'EEXIST') return { acquired: false, busy: true, lockPath };
+      return {
+        acquired: false,
+        error: `Cannot acquire ${serviceName} start lock: ${error.message}`,
+      };
+    }
+  };
+
+  let result = createLock();
+  if (!result.busy) return result;
+
+  try {
+    const ageMs = now() - fsImpl.statSync(lockPath).mtimeMs;
+    if (ageMs <= staleMs) return result;
+    fsImpl.unlinkSync(lockPath);
+    result = createLock();
+    return result;
+  } catch (error) {
+    if (error.code === 'ENOENT') return createLock();
+    return {
+      acquired: false,
+      error: `Cannot inspect ${serviceName} start lock: ${error.message}`,
+    };
+  }
+}
+
 function killPort(port) {
   return new Promise((resolve) => {
     exec(`lsof -ti :${port} | xargs kill -9 2>/dev/null`, () => resolve());
@@ -250,13 +344,24 @@ async function getServiceStatus(serviceName) {
 
   const portInUse = service.port ? await isPortInUse(service.port) : false;
   const processRunning = runningProcesses.has(serviceName);
+  const procCheck = service.matchPattern
+    ? await isProcessRunning(service.matchPattern)
+    : { running: false, unknown: false };
+  const alreadyOnHost = procCheck.running;
 
-  return {
+  const result = {
     name: service.name,
-    running: portInUse || processRunning,
+    running: portInUse || processRunning || alreadyOnHost,
     port: service.port || null,
     pid: runningProcesses.get(serviceName)?.pid || null,
   };
+
+  if (procCheck.unknown) {
+    result.processCheckUnknown = true;
+    result.processCheckError = procCheck.error;
+  }
+
+  return result;
 }
 
 // Get all services status
@@ -269,12 +374,7 @@ async function getAllServicesStatus() {
 }
 
 // Start a service
-async function startService(serviceName) {
-  const service = SERVICES[serviceName];
-  if (!service) {
-    return { success: false, error: 'Unknown service' };
-  }
-
+async function startServiceWhileLocked(serviceName, service) {
   let relayStartPort = null;
   if (serviceName === 'relay') {
     const relayPortDecision = await chooseRelayStartPort();
@@ -298,6 +398,12 @@ async function startService(serviceName) {
   const status = serviceName === 'relay' ? { running: false } : await getServiceStatus(serviceName);
   if (status.running) {
     return { success: true, message: `${service.name} is already running`, port: service.port };
+  }
+  if (status.processCheckUnknown) {
+    return {
+      success: false,
+      error: `Cannot verify running state for ${service.name}: ${status.processCheckError || 'process inspection failed'}`,
+    };
   }
 
   const cwd = path.join(PROJECT_ROOT, service.cwd);
@@ -367,6 +473,29 @@ async function startService(serviceName) {
   } catch (error) {
     log(`Error starting ${serviceName}: ${error.message}`);
     return { success: false, error: error.message };
+  }
+}
+
+async function startService(serviceName) {
+  const service = SERVICES[serviceName];
+  if (!service) {
+    return { success: false, error: 'Unknown service' };
+  }
+
+  const startLock = acquireServiceStartLock(serviceName);
+  if (!startLock.acquired) {
+    return {
+      success: false,
+      error: startLock.busy
+        ? `${service.name} start is already in progress`
+        : startLock.error || `Cannot acquire ${service.name} start lock`,
+    };
+  }
+
+  try {
+    return await startServiceWhileLocked(serviceName, service);
+  } finally {
+    startLock.release();
   }
 }
 
@@ -607,7 +736,16 @@ async function main() {
   process.exit(0);
 }
 
-main().catch((error) => {
-  log(`Fatal error: ${error.message}`);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    log(`Fatal error: ${error.message}`);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  SERVICES,
+  acquireServiceStartLock,
+  isProcessRunning,
+  startService,
+};

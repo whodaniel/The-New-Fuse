@@ -1,10 +1,11 @@
-name: Privacy And Security Gate
+name: Privacy And Security Gate (Self-hosted)
 
+# Security remains automatic, but it runs once on the PR using operator-owned
+# capacity. The same protections also exist in local pre-push tooling.
 on:
   pull_request:
     branches: ["**"]
-  push:
-    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,71 +13,36 @@ permissions:
 jobs:
   privacy-security-gate:
     name: Privacy, Secrets, and Supabase RLS Gate
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
+      - name: Verify local toolchain
+        run: |
+          node --version
+          pnpm --version
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --prefer-offline
-
       - name: Build changed file list
         run: |
           set -euo pipefail
-          zero_sha='0000000000000000000000000000000000000000'
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch --no-tags --prune --depth=1 origin "${{ github.base_ref }}"
-            git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" > .tnf_changed_files
-          else
-            if [ "${{ github.event.before }}" = "$zero_sha" ]; then
-              git diff --name-only --diff-filter=ACMR HEAD~1...HEAD > .tnf_changed_files
-            else
-              git diff --name-only --diff-filter=ACMR "${{ github.event.before }}...${{ github.sha }}" > .tnf_changed_files
-            fi
-          fi
-          sort -u .tnf_changed_files -o .tnf_changed_files
-          echo "Changed files:"
+          git fetch --no-tags --prune --depth=1 origin "${{ github.base_ref }}"
+          git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" | sort -u > .tnf_changed_files
           cat .tnf_changed_files || true
-
-      - name: Emit change ownership ledger (artifact-local)
-        run: node scripts/protocols/change-ownership-ledger.cjs --mode=ci --file-list=.tnf_changed_files --output=.tnf_artifacts/CHANGE_OWNERSHIP.jsonl
-
-      - name: Upload change ownership ledger artifact
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: change-ownership-ledger
-          path: .tnf_artifacts/CHANGE_OWNERSHIP.jsonl
-          retention-days: 14
-
       - name: Classify conflict tier
-        if: github.event_name == 'pull_request'
         run: node scripts/protocols/classify-change-tier.cjs --mode=ci --file-list=.tnf_changed_files --fail-on=escalate
-
-      - name: Enforce session handoff protocol (changed-file scope)
+      - name: Enforce session handoff protocol
         run: |
           node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci
           node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci
           TNF_HANDOFF_FILE_LIST=.tnf_changed_files node scripts/protocols/enforce-session-handoff.cjs --mode=ci
-
-      - name: Run privacy guard (repo mode)
-        run: node scripts/security/privacy-guard.cjs --mode=repo
-
-      - name: Run high-risk secret sweep (repo mode)
-        run: node scripts/security/secret-sweep.cjs --mode=repo
-
-      - name: Run docs PII guard (repo mode)
-        run: node scripts/security/docs-pii-guard.cjs --mode=repo
-
-      - name: Run Supabase RLS audit (strict with baseline)
+      - name: Run privacy and secret guards
+        run: |
+          node scripts/security/privacy-guard.cjs --mode=repo
+          node scripts/security/secret-sweep.cjs --mode=repo
+          node scripts/security/docs-pii-guard.cjs --mode=repo
+      - name: Run Supabase RLS audit
         run: node scripts/security/supabase-rls-audit.cjs --strict --baseline=scripts/security/supabase-rls-baseline.json

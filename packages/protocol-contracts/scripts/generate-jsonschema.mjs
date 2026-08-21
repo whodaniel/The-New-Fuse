@@ -5,6 +5,11 @@ import { z } from 'zod';
 
 import { ExecuteRequestSchema, ExecuteResponseSchema } from '../src/adk-gateway.ts';
 import {
+  ContextEfficiencyReceiptSchema,
+  ContextReferenceRecordSchema,
+  ContextReferenceSchema,
+} from '../src/context-reference.ts';
+import {
   AkashComputeAgentMetadataSchema,
   AkashDeploymentInputSchema,
   AkashProviderInfoSchema,
@@ -128,6 +133,9 @@ const CryptoOperationsRegistrySchema = z.object({
 });
 
 const MessagingRegistrySchema = z.object({
+  ContextReference: ContextReferenceSchema,
+  ContextReferenceRecord: ContextReferenceRecordSchema,
+  ContextEfficiencyReceipt: ContextEfficiencyReceiptSchema,
   AgentIdentity: AgentIdentitySchema,
   MessageType: MessageTypeSchema,
   MessageContext: MessageContextSchema,

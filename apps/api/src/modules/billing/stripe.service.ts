@@ -33,7 +33,6 @@ export class StripeService {
     const currentPeriodEnd =
       this.toDate(payload.currentPeriodEnd) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-    const esc = (value: string) => value.replace(/'/g, "''");
     await this.db.executeRaw(`
       INSERT INTO stripe_subscriptions (
         user_id,
@@ -46,15 +45,15 @@ export class StripeService {
         current_period_end,
         cancel_at_period_end
       ) VALUES (
-        '${esc(String(userId))}',
-        ${payload.customerId ? `'${esc(String(payload.customerId))}'` : 'NULL'},
-        '${esc(String(payload.subscriptionId))}',
-        ${payload.priceId ? `'${esc(String(payload.priceId))}'` : 'NULL'},
-        '${status}',
-        '${tier}',
-        '${currentPeriodStart.toISOString()}',
-        '${currentPeriodEnd.toISOString()}',
-        ${Boolean(payload.cancelAtPeriodEnd)}
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9
       )
       ON CONFLICT (stripe_subscription_id)
       DO UPDATE SET
@@ -67,17 +66,26 @@ export class StripeService {
         current_period_end = EXCLUDED.current_period_end,
         cancel_at_period_end = EXCLUDED.cancel_at_period_end,
         updated_at = NOW()
-    `);
+    `, [
+      String(userId),
+      payload.customerId ? String(payload.customerId) : null,
+      String(payload.subscriptionId),
+      payload.priceId ? String(payload.priceId) : null,
+      status,
+      tier,
+      currentPeriodStart.toISOString(),
+      currentPeriodEnd.toISOString(),
+      Boolean(payload.cancelAtPeriodEnd),
+    ]);
   }
 
   async updateSubscriptionByStripeId(subscriptionId: string, status: string): Promise<void> {
     const mapped = this.mapStripeStatus(status);
-    const esc = (value: string) => value.replace(/'/g, "''");
     await this.db.executeRaw(`
       UPDATE stripe_subscriptions
-      SET status = '${mapped}', updated_at = NOW()
-      WHERE stripe_subscription_id = '${esc(String(subscriptionId))}'
-    `);
+      SET status = $1, updated_at = NOW()
+      WHERE stripe_subscription_id = $2
+    `, [mapped, String(subscriptionId)]);
   }
 
   async handleWebhookEvent(event: any): Promise<void> {
@@ -148,7 +156,6 @@ export class StripeService {
     params.set('metadata[userId]', input.userId);
     if (input.userEmail) params.set('customer_email', input.userEmail);
     if (mode === 'subscription') {
-      // Ensure subscription object itself carries deterministic user mapping.
       params.set('subscription_data[metadata][userId]', input.userId);
     }
 
@@ -174,12 +181,8 @@ export class StripeService {
   }
 
   private resolveUserId(object: any): string {
-    // Primary source: metadata.userId attached during checkout/session creation.
     const metadataUserId = object?.metadata?.userId;
     if (metadataUserId) return String(metadataUserId);
-
-    // Fallback to customer id keyed lookup can be added here.
-    // For now, enforce explicit metadata path for deterministic linkage.
     throw new Error('Stripe webhook object missing metadata.userId');
   }
 
@@ -198,10 +201,8 @@ export class StripeService {
     if (value === undefined || value === null) return null;
     if (value instanceof Date) return value;
     if (typeof value === 'number') {
-      // Stripe period fields are unix seconds.
       return new Date(value * 1000);
     }
-
     const parsed = new Date(String(value));
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   }

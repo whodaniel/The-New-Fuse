@@ -5,6 +5,7 @@ repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
 allowlist_file=".gitlink-allowlist"
+allow_absent="${TNF_GITLINK_ALLOW_ABSENT:-false}"
 if [[ ! -f "$allowlist_file" ]]; then
   echo "Missing $allowlist_file"
   exit 1
@@ -31,6 +32,9 @@ missing=()
 while IFS= read -r p; do
   [[ -z "$p" ]] && continue
   if ! printf '%s\n' "$gitlinks" | grep -qx "$p"; then
+    if [[ "$allow_absent" == "true" ]] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
+      continue
+    fi
     missing+=("$p")
   fi
 done <<< "$allowed"

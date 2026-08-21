@@ -34,7 +34,39 @@ find "$EXPORT" -type d \( -name '.turbo' -o -name 'node_modules' \) -exec rm -rf
 mkdir -p "$EXPORT/packages/relay-core/src" "$EXPORT/apps/backend/src/modules/orchestrator"
 printf '%s\n' 'export class MasterClockStub { async start() { console.warn("[MasterClock] stub mode"); } }' > "$EXPORT/packages/relay-core/src/master-clock.ts"
 printf '%s\n' 'export class BrokerAgentStub { async start() { console.warn("[BrokerAgent] stub mode"); } }' > "$EXPORT/packages/relay-core/src/broker-agent.ts"
-printf '%s\n' '// no-op implementation for open runtime' > "$EXPORT/apps/backend/src/modules/orchestrator/index.ts"
+cat > "$EXPORT/apps/backend/src/modules/orchestrator/index.ts" << 'STUB'
+// no-op implementation for open runtime
+import { Injectable, Module } from '@nestjs/common';
+
+type AgentStatus = {
+  agentId: string;
+  status: string;
+  lastHeartbeat: Date;
+  lastActivity: Date;
+  currentTask?: string;
+  consecutiveFailures?: number;
+};
+
+type HeartbeatService = {
+  getAllAgentStatuses(): Map<string, AgentStatus>;
+};
+
+@Injectable()
+export class OrchestratorService {
+  getSystemHealth() {
+    return { totalAgents: 0, activeAgents: 0, stalledAgents: 0, failedAgents: 0 };
+  }
+
+  getHeartbeatService(): HeartbeatService | null {
+    return null;
+  }
+}
+
+@Module({ providers: [OrchestratorService], exports: [OrchestratorService] })
+export class OrchestratorModule {}
+
+export default OrchestratorModule;
+STUB
 
 chmod +x "$SCRIPT_DIR/check-proprietary-leakage.sh"
 "$SCRIPT_DIR/check-proprietary-leakage.sh" "$EXPORT"

@@ -5,6 +5,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { upgrade: upgradeSessionHandoff } = require('../turn-end-v2.cjs');
 
 const repoRoot = process.cwd();
 const handoffJsonPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
@@ -415,8 +416,8 @@ function main() {
         'Execute listed next actions in order and preserve privacy/security gates',
       ];
 
-  const handoffPayload = {
-    spec: 'tnf/session-handoff/0.1',
+  const handoffPayload = upgradeSessionHandoff({
+    spec: 'tnf/session-handoff/0.2',
     handoff_id: handoffId,
     created_at: createdAt,
     repository,
@@ -444,19 +445,27 @@ function main() {
     artifacts: {
       commits: [headSha],
     },
-  };
+  });
 
   const markdown = `# SESSION_HANDOFF_LATEST
 
 Protocol ACK: \`TNF_PROTOCOL_ACK\`  
+Spec: \`${handoffPayload.spec}\`
 Created At: \`${createdAt}\`  
 Handoff ID: \`${handoffId}\`
 
 ## Scope
-- Repository: \`${repository}\`
+- Repository: \`${handoffPayload.repository}\`
+- Canonical Source: \`${handoffPayload.repository_context.canonical_source}\`
 - Branch: \`${branch}\`
 - Head SHA: \`${headSha}\`
-- Sensitive Scope: \`${input.scope}\`
+- Sensitive Scope: \`${handoffPayload.sensitive_scope}\`
+
+## Classification
+- Work Domain: \`${handoffPayload.classification.work_domain}\`
+- Artifact Destination: \`${handoffPayload.classification.artifact_destination}\`
+- Data Residency: \`${handoffPayload.classification.data_residency}\`
+- Sensitivity: \`${handoffPayload.classification.sensitivity}\`
 
 ## Work Summary
 ${summary.map((line) => `- ${line}`).join('\n')}

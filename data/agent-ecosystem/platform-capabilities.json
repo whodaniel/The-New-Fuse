@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-20T20:01:00Z",
+  "defaultStaleAfterDays": 30,
+  "principles": [
+    "Platform capability is not the same thing as capability enabled for a particular user or workspace.",
+    "Observed user-instance state must be represented by signed or attributable activity/capability receipts, not guessed from marketing pages.",
+    "Never store raw access tokens, passwords, cookies, or provider secrets in this registry.",
+    "All claims require a source and verification date; unsupported claims must be marked unknown."
+  ],
+  "platforms": [
+    {
+      "id": "openai-codex",
+      "provider": "OpenAI",
+      "product": "Codex",
+      "category": ["coding-agent", "multi-agent", "automation"],
+      "status": "active",
+      "capabilities": [
+        "parallel agent threads",
+        "worktree-isolated coding work",
+        "CLI/web/IDE/app surfaces",
+        "skills for reusable workflows",
+        "scheduled/background work",
+        "cloud environments",
+        "mobile supervision of active work",
+        "plugin/app-backed workflow capabilities"
+      ],
+      "interoperabilityHooks": ["Git repositories", "skills", "plugins/apps", "CLI", "IDE", "cloud environments"],
+      "instanceStateTNFShouldCapture": ["active projects", "available skills/plugins", "connected apps", "scheduled jobs", "recent task receipts", "repository/worktree scope", "approval/sandbox policy"],
+      "source": [
+        "https://openai.com/index/introducing-the-codex-app/",
+        "https://openai.com/codex/",
+        "https://help.openai.com/en/articles/20001256-plugins-in-codex/"
+      ],
+      "verifiedAt": "2026-08-20"
+    },
+    {
+      "id": "openai-chatgpt-work",
+      "provider": "OpenAI",
+      "product": "ChatGPT Work",
+      "category": ["general-agent", "knowledge-work", "app-action-agent"],
+      "status": "active",
+      "capabilities": [
+        "long-horizon work across apps and files",
+        "multi-step autonomous task completion",
+        "document/spreadsheet/slides/web-app artifact production",
+        "Codex-derived execution capabilities"
+      ],
+      "interoperabilityHooks": ["connected apps", "files", "Codex technology"],
+      "instanceStateTNFShouldCapture": ["connected apps", "workspace/project context", "active delegated tasks", "completed task receipts", "artifact references", "permissions granted"],
+      "source": ["https://openai.com/index/chatgpt-for-your-most-ambitious-work/"],
+      "verifiedAt": "2026-08-20"
+    },
+    {
+      "id": "anthropic-claude-cowork",
+      "provider": "Anthropic",
+      "product": "Claude Cowork",
+      "category": ["general-agent", "knowledge-work", "app-action-agent"],
+      "status": "active",
+      "capabilities": [
+        "multi-step work execution beyond chat",
+        "connected-tool context and actions",
+        "MCP-powered connectors",
+        "desktop-file and knowledge access when granted"
+      ],
+      "interoperabilityHooks": ["MCP", "connectors", "desktop files", "connected tools"],
+      "instanceStateTNFShouldCapture": ["enabled connectors", "MCP servers", "granted action scopes", "active work", "completed task receipts", "artifact references"],
+      "source": [
+        "https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork",
+        "https://support.anthropic.com/en/articles/11817150-connect-your-tools-to-unlock-a-smarter-more-capable-ai-companion"
+      ],
+      "verifiedAt": "2026-08-20"
+    },
+    {
+      "id": "google-gemini-spark",
+      "provider": "Google",
+      "product": "Gemini Spark",
+      "category": ["personal-agent", "workflow-agent", "scheduled-agent"],
+      "status": "active",
+      "capabilities": [
+        "tasks as persistent high-level goals",
+        "time-based schedules",
+        "Gmail-filter event monitors",
+        "topic monitors",
+        "reusable skills",
+        "Google Workspace actions",
+        "custom connected apps through MCP server URLs",
+        "up to 15 concurrent tasks as documented"
+      ],
+      "interoperabilityHooks": ["Google Workspace", "skills", "MCP custom connected apps", "Personal Intelligence", "websites/session context"],
+      "instanceStateTNFShouldCapture": ["tasks", "schedules", "skills", "connected apps", "MCP endpoints by identifier only", "recent runs", "run outcomes", "permissions", "usage-limit/deferred state"],
+      "source": [
+        "https://support.google.com/gemini/answer/17094507",
+        "https://support.google.com/gemini/answer/17094710",
+        "https://support.google.com/gemini/answer/17171264"
+      ],
+      "verifiedAt": "2026-08-20"
+    },
+    {
+      "id": "google-gemini-scheduled-actions",
+      "provider": "Google",
+      "product": "Gemini Scheduled Actions",
+      "category": ["scheduled-agent", "recurring-content"],
+      "status": "active",
+      "capabilities": [
+        "daily/weekly/monthly recurring actions in Gemini chats",
+        "background preparation before delivery",
+        "up to 10 active scheduled actions as documented"
+      ],
+      "interoperabilityHooks": ["Gemini chat", "location context where relevant"],
+      "instanceStateTNFShouldCapture": ["scheduled action names", "cadence", "instructions digest", "last run", "next run", "enabled/paused state", "result references"],
+      "source": ["https://support.google.com/gemini/answer/16316416"],
+      "verifiedAt": "2026-08-20"
+    },
+    {
+      "id": "cursor-agent",
+      "provider": "Cursor",
+      "product": "Cursor Agent / Background Agents",
+      "category": ["coding-agent", "background-agent", "api-agent"],
+      "status": "active",
+      "capabilities": [
+        "foreground codebase search/edit/terminal/MCP tools",
+        "asynchronous remote background agents",
+        "GitHub branch-based handoff",
+        "web/mobile supervision",
+        "programmatic Background Agents API",
+        "follow-up prompts",
+        "up to 256 active agents per API key documented for beta API"
+      ],
+      "interoperabilityHooks": ["GitHub", "MCP", "Background Agents API", "Linear", "CLI"],
+      "instanceStateTNFShouldCapture": ["active agent sessions", "repo/branch", "model", "spend-limit state", "MCP servers", "recent run receipts", "PR/result references"],
+      "source": [
+        "https://docs.cursor.com/background-agent",
+        "https://docs.cursor.com/background-agent/api/overview",
+        "https://docs.cursor.com/en/agent/tools"
+      ],
+      "verifiedAt": "2026-08-20"
+    }
+  ]
+}

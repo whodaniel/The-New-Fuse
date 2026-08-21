@@ -1,46 +1,114 @@
 {
-  "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "61f04423-b881-43fc-bfe3-a4ca73ec6099",
-  "created_at": "2026-08-17T04:26:34.347Z",
-  "repository": "The-New-Fuse",
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "c7e4b1a9-2d6f-4a8e-b0c3-9f5e1d8a7b62",
+  "created_at": "2026-08-20T18:40:00.000Z",
+  "repository": "tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
   "branch": "main",
-  "head_sha": "b1eb732489bc4055ce3d7a33ed9be226da541ac8",
+  "head_sha": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "classification": {
+    "work_domain": "corporate",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [
+      "jules",
+      "session-handoff",
+      "gh"
+    ],
+    "staffed_by": [
+      "cursor",
+      "orchestrator"
+    ]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "jules-scheduler-cleanup-docs",
+      "state": "committed",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
+    },
+    {
+      "id": "public-close-jules-pr",
+      "state": "opened",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "https://github.com/whodaniel/The-New-Fuse/pull/155"
+    },
+    {
+      "id": "jules-ui-schedule-deletion",
+      "state": "still-required",
+      "observed_at": "2026-08-20T18:40:00.000Z",
+      "value": "operator-must-delete-The-New-Fuse-schedules-in-jules-ui"
+    }
+  ],
+  "project_ids": [],
   "work_summary": [
-    "Add tnf google-ai view/resume over the Antigravity bridge; drop incomplete cloud-sync stub."
+    "Jules scheduler cleanup docs committed on tnf-monorepo main: retargeted PR/loop playbooks to whodaniel/tnf-monorepo, added ops receipt, Living State directive.",
+    "Public overlay PR opened (not merged): https://github.com/whodaniel/The-New-Fuse/pull/155",
+    "Still required: operator must delete Jules cloud Scheduled jobs targeting The-New-Fuse (Bolt/Palette/Sentinel) in the Jules UI."
   ],
   "changed_paths": [
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/JULES_AUTONOMOUS_LOOP.md",
+    "docs/JULES_PR_FOLLOWUP_PLAYBOOK.md",
+    "docs/operations/jules-scheduler-cleanup-2026-08-20.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/tnf-cli/src/command-surface.snapshot.json",
-    "packages/tnf-cli/src/commands/google-ai.ts",
-    "scripts/google-ai/tnf_gemini_antigravity_bridge.py"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Smoked bridge --view missing id. Removed broken sync_to_cloud call path."
+    "notes": "Docs retarget verified; public PR #155 created not merged; Jules UI schedule deletion still required."
   },
   "continuation": {
-    "owner": "tnf-cli-agent",
-    "targets": ["sub-director", "story-architect", "librarian"],
+    "owner": "orchestrator",
+    "targets": [
+      "orchestrator",
+      "operator"
+    ],
     "priority": "high",
     "resume_checklist": [
-      "google-ai view missing-id errors",
-      "gitignore+untrack on main",
-      "broker up"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Operator: delete Jules UI schedules targeting The-New-Fuse",
+      "Optionally merge public PR #155 after schedules are deleted",
+      "Confirm no new persona sessions appear on The-New-Fuse for one cadence"
     ]
   },
   "next_actions": [
-    "Defer BackupService path fix, rclone wiring, dist-v7, concordance JSON."
+    "Operator: delete Jules cloud schedules for Bolt/Palette/Sentinel on whodaniel/The-New-Fuse via Jules UI",
+    "Operator: merge chore/close-jules-persona-prs-on-public-overlay when ready",
+    "Keep new Jules persona work on whodaniel/tnf-monorepo only"
   ],
   "artifacts": {
-    "commits": ["b1eb732489bc4055ce3d7a33ed9be226da541ac8"]
+    "commits": [
+      "ad94648c9fbf2f8fc4d8e28706013ba5bb47a8c5"
+    ],
+    "prs": [
+      "https://github.com/whodaniel/The-New-Fuse/pull/155"
+    ],
+    "docs": [
+      "docs/operations/jules-scheduler-cleanup-2026-08-20.md"
+    ]
   }
 }

@@ -1,16 +1,33 @@
 # Google ADK Direct Integration Blueprint (TNF Adapter-First)
 
 Date: 2026-03-24
+Last audited: 2026-08-21
 Owner: TNF platform
-Status: In progress (Phase 1 complete, Phase 2 partial)
+Status: In progress (adapter implemented; production persistence and live verification pending)
 
 ## 1) Objective
 
 Adopt Google ADK directly to expand TNF capabilities without replacing TNF orchestration, protocol contracts, or relay architecture.
 
-## Progress Snapshot (2026-03-24)
+## Current Authority and Production Qualification (2026-08-21)
 
-1. Completed: `apps/adk-gateway` scaffold with `/v1/health`, `/v1/capabilities`, `/v1/execute`, `/v1/execute/stream`.
+The gateway now lives in the private Tier-3 satellite
+`whodaniel/tnf-adk-gateway`; `apps/adk-gateway` is a historical pre-extraction
+path. Substantive fixes must still originate through the canonical
+`whodaniel/tnf-monorepo` workflow and publication/extraction process, not as an
+independent downstream patch.
+
+Source inspection verified a real Google ADK `LlmAgent` + `Runner` path in the
+satellite. Production readiness is **not** verified because the gateway defaults
+to `ADK_GATEWAY_STUB_MODE=true`, uses `InMemorySessionService`, and no live
+credentialed gateway test was run in this audit. The monorepo API's
+`google-adk` controller mapping had drifted from its tests; the endpoint,
+headers, request envelope, response mapping, and model default were restored in
+the isolated upstream patch and its focused tests pass.
+
+## Historical Progress Snapshot (2026-03-24)
+
+1. Completed at the former path: `apps/adk-gateway` scaffold with `/v1/health`, `/v1/capabilities`, `/v1/execute`, `/v1/execute/stream`; now extracted as `tnf-adk-gateway`.
 2. Completed: `packages/core/src/llm/providers/GoogleADKProvider.ts` adapter with streaming fallback.
 3. Completed: provider/config wiring for `google-adk` in shared config and provider enums.
 4. Completed: API runtime routing for `google-adk` in:
@@ -18,7 +35,7 @@ Adopt Google ADK directly to expand TNF capabilities without replacing TNF orche
    - `apps/api/src/controllers/orchestration.controller.ts`
    - `apps/api/src/services/agent-api-grants.service.ts`
 5. Completed: focused unit tests covering ADK endpoint resolution, headers, payload mapping, and response parsing.
-6. Completed (baseline): real (non-stub) ADK execution + streaming path in Python gateway with credential preflight and structured stream error events.
+6. Implemented but not production-verified: real ADK execution + streaming path in the Python gateway with credential preflight and structured stream error events.
 7. Pending: production telemetry/audit enhancements and richer ADK tool policy controls.
 
 ## 2) Strategic Decisions
@@ -54,7 +71,7 @@ TNF Apps/Orchestrator (TypeScript)
 
 ### Components
 
-1. New service: `apps/adk-gateway/` (Python).
+1. Gateway service: Tier-3 satellite `whodaniel/tnf-adk-gateway` (Python; historical monorepo path `apps/adk-gateway/`).
 2. New provider adapter: `packages/core/src/llm/providers/GoogleADKProvider.ts`.
 3. Provider registration/config updates:
    - `config/llm-provider.config.ts`
@@ -140,6 +157,28 @@ TNF Apps/Orchestrator (TypeScript)
 2. Emit latency and error metrics by model and route.
 3. Persist execution summary for audit parity with existing TNF execution logs.
 4. Capture gateway version in each response for rollout diagnostics.
+
+## 9.1) Durable Persistence Plan
+
+1. Replace per-request `InMemorySessionService` with a durable ADK session
+   backend. Keep local Postgres as the default; Cloud SQL or Agent Platform
+   Sessions remain explicit paid-cloud options.
+2. Add a canonical TNF execution receipt keyed by `requestId` and
+   `idempotencyKey`, with `traceId`, workspace/agent authority, provider/model,
+   status transitions, timestamps, token usage, latency, and normalized error
+   code. Do not store provider credentials or full prompts in the receipt.
+3. Claim execution with a database uniqueness constraint or atomic lease before
+   invoking ADK. A retry must return or resume the existing receipt rather than
+   run the model twice.
+4. Persist session state and execution receipts before acknowledging success.
+   Redis may cache or queue work, but it is not the sole system of record.
+5. Remove the default stub path. Production must fail closed when ADK runtime or
+   credentials are unavailable; any development-only simulator must require an
+   explicit non-production profile and must never emit a successful production
+   receipt.
+6. Verify restart recovery, duplicate delivery, timeout, partial stream, and
+   database unavailability with real Postgres and a real ADK runtime before
+   marking the path production-ready.
 
 ## 10) Rollout Plan
 

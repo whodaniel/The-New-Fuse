@@ -80,8 +80,8 @@ function validateSessionHandoff() {
     for (const key of required) {
       if (!(key in handoff)) result.errors.push(`missing required field: ${key}`);
     }
-    if (handoff.spec !== 'tnf/session-handoff/0.1') {
-      result.errors.push(`spec must be tnf/session-handoff/0.1 (got ${handoff.spec})`);
+    if (handoff.spec !== 'tnf/session-handoff/0.2') {
+      result.errors.push(`spec must be tnf/session-handoff/0.2 (got ${handoff.spec})`);
     }
     if (handoff.protocol_ack !== 'TNF_PROTOCOL_ACK') {
       result.errors.push('protocol_ack must be TNF_PROTOCOL_ACK');

@@ -13,6 +13,11 @@ const {
   parseDaccSignature,
   signDaccMessage,
 } = require(path.join(__dirname, '..', 'lib', 'federation-protocol.cjs'));
+const {
+  createCerReceipt,
+  hydrateContextReference,
+  storeContextReference,
+} = require(path.join(__dirname, '..', 'lib', 'context-reference.cjs'));
 
 const CONFIG = {
   relayUrl:
@@ -32,11 +37,6 @@ const CONFIG = {
 function trim(text, max = 180) {
   const value = String(text || '');
   return value.length > max ? `${value.slice(0, max)}...` : value;
-}
-
-function buildContextRef(content) {
-  const id = `ctx-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  return { id, uri: `redis://tnf:context:${id}`, content: String(content || '') };
 }
 
 class FederationChannelBroker {
@@ -298,10 +298,27 @@ class FederationChannelBroker {
       }
 
       const parsed = parseDaccSignature(msg.content || '');
+      let routedContent = parsed.body || String(msg.content || '');
+      let contextEfficiency = msg.metadata?.contextEfficiency;
+      if (msg.metadata?.contextRef) {
+        const hydration = await hydrateContextReference(
+          this.redis.publisher,
+          msg.metadata.contextRef,
+          {
+            executionRole: 'executor',
+            timeoutMs: Number(process.env.TNF_CONTEXT_HYDRATION_TIMEOUT_MS || 2000),
+            inlineBytes: Buffer.byteLength(routedContent, 'utf8'),
+          }
+        );
+        if (hydration.hydrated) {
+          routedContent = hydration.content;
+          contextEfficiency = hydration.receipt;
+        }
+      }
       const correlationId = msg.metadata?.correlationId || uuidv4();
       const prompt = signDaccMessage(
         this.identity.operationalHandle,
-        `Route to ${this.computeAgentName} compute | channel=${this.channelId} | from=${msg.from}\n${parsed.body || msg.content}`
+        `Route to ${this.computeAgentName} compute | channel=${this.channelId} | from=${msg.from}\n${routedContent}`
       );
 
       await this.redis.send(prompt, {
@@ -317,6 +334,7 @@ class FederationChannelBroker {
           mcid: msg.metadata?.mcid,
           bridgedBy: this.bridgeTag,
           brokerHandle: this.identity.operationalHandle,
+          contextEfficiency,
         },
       });
 
@@ -338,11 +356,21 @@ class FederationChannelBroker {
     let mirrorMetadata = { ...metadata };
 
     if (content.length > CONFIG.contextRefThreshold) {
-      const ref = buildContextRef(content);
-      await this.redis.publisher.set(`tnf:context:${ref.id}`, ref.content, 'EX', 3600);
-      content = `${content.slice(0, 320)}\n\n[context_ref: ${ref.uri} | ${ref.content.length} bytes]`;
-      mirrorMetadata.contextRef = ref.uri;
-      mirrorMetadata.contextBytes = ref.content.length;
+      const originalContent = content;
+      const ttlSeconds = Number(process.env.TNF_CONTEXT_REF_TTL_SECONDS || 3600);
+      const { reference } = await storeContextReference(this.redis.publisher, originalContent, {
+        ttlSeconds,
+        authorityScope: `channel:${this.channelId}`,
+        producerAgentId: this.identity.canonicalEntityId,
+      });
+      content = `${content.slice(0, 320)}\n\n[context_ref: ${reference.uri} | ${reference.byteCount} bytes]`;
+      mirrorMetadata.contextRef = reference;
+      mirrorMetadata.contextRefUri = reference.uri;
+      mirrorMetadata.contextBytes = reference.byteCount;
+      mirrorMetadata.contextEfficiency = createCerReceipt(reference, {
+        inlineBytes: Buffer.byteLength(content, 'utf8'),
+        outcome: 'referenced',
+      });
     }
 
     const relayBody = metadata.originalFrom

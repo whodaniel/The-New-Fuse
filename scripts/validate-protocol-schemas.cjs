@@ -174,9 +174,14 @@ function validateSessionHandoff(schema) {
     'handoff_id',
     'created_at',
     'repository',
+    'repository_context',
     'branch',
     'head_sha',
     'protocol_ack',
+    'classification',
+    'capabilities',
+    'publication',
+    'freshness_receipts',
     'work_summary',
     'changed_paths',
     'verification',
@@ -187,8 +192,8 @@ function validateSessionHandoff(schema) {
   });
 
   assert(
-    schema?.properties?.spec?.const === 'tnf/session-handoff/0.1',
-    'tnf-session-handoff.schema.json: spec const must be tnf/session-handoff/0.1',
+    schema?.properties?.spec?.const === 'tnf/session-handoff/0.2',
+    'tnf-session-handoff.schema.json: spec const must be tnf/session-handoff/0.2',
   );
 
   assert(

@@ -7,7 +7,7 @@
 
 | Layer                     | What it is                                     | Where it lives                                                                              |
 | ------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Open runtime (OSS)**    | Code you clone, build, and run on your machine | `The-New-Fuse` or combined monorepo `The-New-Fuse`                                     |
+| **Open runtime (OSS)**    | Code you clone, build, and run on your machine | `The-New-Fuse`, or the combined private monorepo `tnf-monorepo`                        |
 | **Hosted account (SaaS)** | Login, agents, cloud relay, production API     | [thenewfuse.com](https://thenewfuse.com) · [app.thenewfuse.com](https://app.thenewfuse.com) |
 
 These are **complementary**, not either/or. Most contributors run **local
@@ -35,7 +35,7 @@ tooling + a hosted account**.
 | Audience                     | Clone                                                                                    | Notes                                                                         |
 | ---------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | **OSS users / contributors** | [github.com/whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse) | Public ~90%; no proprietary control-plane code                                |
-| **Core TNF development**     | [github.com/whodaniel/The-New-Fuse](https://github.com/whodaniel/The-New-Fuse)           | Full combined monorepo (public workspace; proprietary paths filtered on sync) |
+| **Core TNF development**     | `whodaniel/tnf-monorepo` (private)                                                        | Full combined monorepo; all substantive development starts here               |
 
 Do **not** commit to `The-New-Fuse` directly — changes flow from the
 monorepo via `pnpm run sync:repos` (see

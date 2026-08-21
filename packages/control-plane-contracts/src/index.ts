@@ -15,6 +15,15 @@
  */
 export * from './authority.js';
 
+/** Local-first / user-funded SaaS metering and route authorization contract. */
+export * from './cost-policy.js';
+
+/** Deterministic least-cost compatibility and hard-limit policy helpers. */
+export * from './cost-policy-utils.js';
+
+/** Cross-agent capability snapshots and activity receipts. */
+export * from './agent-interop.js';
+
 /** Master Clock timing / connection configuration (public shape). */
 export interface MasterClockConfig {
   heartbeatIntervalMs: number;

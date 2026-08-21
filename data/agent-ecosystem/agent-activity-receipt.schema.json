@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/agent-activity-receipt.schema.json",
+  "title": "TNF Agent Activity Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receiptId", "platform", "instanceRef", "taskRef", "startedAt", "outcome", "summary", "provenance"],
+  "properties": {
+    "receiptId": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string", "minLength": 1 },
+    "product": { "type": "string" },
+    "instanceRef": { "type": "string", "minLength": 1 },
+    "subjectRef": { "type": "string" },
+    "workspaceRef": { "type": "string" },
+    "taskRef": { "type": "string", "minLength": 1 },
+    "parentTaskRef": { "type": "string" },
+    "capabilityIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "outcome": { "enum": ["succeeded", "failed", "cancelled", "deferred", "in-progress"] },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 4000 },
+    "artifactRefs": { "type": "array", "items": { "type": "string" } },
+    "externalOperationRefs": { "type": "array", "items": { "type": "string" } },
+    "costAuthorizationRef": { "type": "string" },
+    "meteredUsageRef": { "type": "string" },
+    "metadata": { "type": "object" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapterId", "observedAt"],
+      "properties": {
+        "adapterId": { "type": "string", "minLength": 1 },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "signatureRef": { "type": "string" }
+      }
+    }
+  }
+}
