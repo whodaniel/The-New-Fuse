@@ -1,0 +1,7 @@
+[
+  {
+    "area": "Agent lifecycle management",
+    "location": "Agent registry / health check system",
+    "risk": "Stale agents persist indefinitely without automatic deregistration - Old Broker, Old Director, Old Project Planner, Old Hermes Infra, Old Sub-Director, Gemini wrapper, News-Scout, and 5 onboarding agents all stale/offline for 20min-3.5hrs but still registered"
+  }
+]

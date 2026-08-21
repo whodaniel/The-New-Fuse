@@ -1,4 +1,3 @@
-./codebase_tracker.json
 ./test_sim.js
 ./.cursor/permissions.json
 ./.verifier/directive-cycles/latest.json
@@ -91,10 +90,11 @@
 ./.verifier/whole-codebase/latest-rerun/surfaces/B02-validate-build.json
 ./.verifier/whole-codebase/latest-rerun/surfaces/B03-check-agent-registration.json
 ./.verifier/whole-codebase/latest-rerun/surfaces/A01-protocol-validate.json
-./.verifier/process-atlas.verify.json
-./.verifier/process-atlas.payload.json
 ./.gemini/settings.json
 ./tools/framework-master-graph/master-framework-graph.json
 ./tools/config-files/mcp_config.json
 ./tools/config-files/enhanced_mcp_config.json
 ./tools/agent-relationship-graph/snapshots/latest-snapshot.json
+./tools/agent-relationship-graph/snapshots/latest-delta.json
+./tools/agent-relationship-graph/snapshots/latest-alert.json
+./tools/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.json

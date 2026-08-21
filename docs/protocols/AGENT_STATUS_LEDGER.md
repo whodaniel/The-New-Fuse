@@ -71,7 +71,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-21T11:18:41.233Z** — handoff `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14` (`fc444c7c6d12`).
+Updated: **2026-08-20T19:21:15.882Z** — handoff `34428501-58cc-4ec1-86fc-5546990301eb` (`aacbeb11eab9`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
 `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` (`a7d9551b63bb`).
 `b16b8568-acd2-4a1b-9eba-60658ece28cb` (`8f8c5ccbca8b`).
@@ -263,7 +263,8 @@ commit/push this session (operator-gated). Handoff
 
 | Priority | Action                                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence. |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1408,14 +1409,4 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (61f04423-b881-43fc-bfe3-a4ca73ec6099) | ✅ HANDOFF_READY |
 
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9) | ✅ HANDOFF_READY |
-
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (2248bfb3-48b7-451d-9f22-90359b824173) | ✅ HANDOFF_READY |
-
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (680e7c30-6a25-41cb-8bfc-6f9115ec989b) | ✅ HANDOFF_READY |
-
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (a07c020a-dd40-45dc-8388-ecc88009ce1c) | ✅ HANDOFF_READY |
-
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (7e57e754-c800-4d07-ae64-d3daf2991a6c) | ✅ HANDOFF_READY |
-
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14) | ✅ HANDOFF_READY |
+| 2026-08-20 | Orchestrator | Published SESSION_HANDOFF_LATEST (34428501-58cc-4ec1-86fc-5546990301eb) | ✅ HANDOFF_READY |

@@ -1,37 +1,33 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-21T11:18:41.233Z`
-Handoff ID: `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14`
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-08-20T19:21:15.882Z`  
+Handoff ID: `34428501-58cc-4ec1-86fc-5546990301eb`
 
 ## Scope
-- Repository: `whodaniel/tnf-monorepo`
-- Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `fix/tauri-route-e2e-alignment`
-- Head SHA: `fc444c7c6d122bf30fa6b95cfb3d133a90327499`
+- Repository: `tnf-monorepo`
+- Branch: `main`
+- Head SHA: `aacbeb11eab9c09f462bc95261dacc57b0c97d77`
 - Sensitive Scope: `internal`
 
-## Classification
-- Work Domain: `corporate`
-- Artifact Destination: `oss_runtime`
-- Data Residency: `product_state`
-- Sensitivity: `internal`
-
 ## Work Summary
-- Test fixes: stale page titles, the chat composer placeholder, collapsed secondary-nav expansion, exact-name selectors for the first-run cue collision, and bounded timeouts in the computer-use sweep.
+- Protocol enforcement layer implemented for mandatory session handoff continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
-- apps/tauri-desktop/e2e/full-interaction.spec.ts
-- apps/tauri-desktop/e2e/routes.spec.ts
-- apps/tauri-desktop/src/components/route-context.test.tsx
-- apps/tauri-desktop/src/components/route-context.tsx
-- apps/tauri-desktop/src/config/routes.test.ts
-- apps/tauri-desktop/src/config/routes.ts
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
+- apps/frontend/src/data/codebase_map.json
+- data/llm-provider-status.json
+- docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md
+- validation-results/post-change-report.json
+- validation-results/pre-change-file-structure.txt
+- validation-results/pre-change-report.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- gaps.json
+- packages/infrastructure/dist
+- packages/shared/dist
+- packages/tnf-core/dist
+- packages/tnf-note-taking/dist
 
 ## Verification
 - privacy_guard: `na`
@@ -40,12 +36,15 @@ Handoff ID: `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `claude-code`
-- Targets: `orchestrator`
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
-- Read the desktop E2E job on public PR #161 before further selector edits.
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.
+- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical work unit.

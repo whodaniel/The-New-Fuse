@@ -3,48 +3,17 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 <!-- CURRENT_DIRECTIVE:END -->
 
-- [✅] **2026-08-21 Canonical reconciliation and publication (Codex)**:
-  - **Merged:** monorepo PRs #125-#132 covering atomic service leases,
-    public-overlay repairs, Green context references/CER, credential-safe sync,
-    handoff V2 alignment, efficient publication, reconciliation continuity, and
-    portable recovery paths.
-  - **Published:** `The-New-Fuse` PR #160 from canonical `890128cb`, merged as
-    `2c5fa089`; both proprietary boundary gates passed; public issue #157 closed.
-  - **Preserved:** divergent checkout capsule at
-    `$HOME/TNF-Recovery-Capsules/2026-08-21-49902d36`; protected
-    checkout was not mutated.
-  - **Details:**
-    `docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
-
-- [✅] **2026-08-21 Satellite extension contract (Codex)**:
-  - Defined `tnf.extension/v1` in `protocol-contracts` with a JSON Schema and
-    explicit loadable, external-service, form-factor, and standalone-product
-    classifications.
-  - Replaced placeholder plugin installation with validated local/Git sources,
-    worker-isolated lifecycle execution, compatibility checks, atomic state,
-    rollback, and six CLI management commands.
-  - Verified manifest tests 7/7, lifecycle tests 13/13, CLI build/typecheck, and
-    the 474-path command-surface gate. PR #133 merged; issue #114 is closed.
-
-- [✅] **2026-08-21 Executed public-overlay CI remediation (Codex)**:
-  - Public PR #161 demonstrated which jobs now execute. Canonical-only
-    proprietary/declaration checks are repository-scoped; generated publication
-    commits and PR titles are conventional; `sync/` is train-approved.
-  - Restored the root OpenAPI source, installed declared TWIP dependencies, and
-    corrected Tauri Redis sentinel/pipeline types plus zero-TTL behavior.
-  - Verified OpenAPI and TWIP gates, Tauri typecheck, 49/49 tests, production
-    build, publication tests 4/4, and train policy locally.
-
-- [⚠️] **2026-08-21 External gates**:
-  - GitHub-hosted jobs still terminate before steps because of the account-level
-    Actions restriction; no self-hosted runner is registered.
-  - Jules public schedules were removed and canonical schedules created. Verify
-    the first 21:30 EDT run and one cadence with no public recurrence.
-  - Control-plane issue #113 and professional SSI/PASS/legal review remain
-    open; neither should be bypassed downstream.
+- [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
+  - **Verified:** local crontab/launchd clean; local scripts already on
+    `tnf-monorepo`; 18 recent persona sessions still targeting public
+    `The-New-Fuse` (~2h freshness) — cloud schedules remain.
+  - **Done:** retargeted stale Jules docs; pushed public branch with
+    `close-jules-persona-prs.yml`; wrote ops receipt.
+  - **Blocked on operator:** Jules UI schedule deletion (CLI has no schedule
+    API); merge auto-close workflow to public `main`.
 
 - [✅] **2026-08-20 Repo maintenance: mutation-guard pack-refs false positive +
   preflight latency characterization (Cursor / tnf-monorepo)**:
@@ -1095,19 +1064,7 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-21T11:18:46.180Z handoff `a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14` head `fc444c7c6d12` project `TNF-DESKTOP-E2E` — Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence.
-
-- 2026-08-21T08:27:27.798Z handoff `7e57e754-c800-4d07-ae64-d3daf2991a6c` head `e3635bccda9e` project `TNF-PUBLICATION` — Merge the canonical public-overlay CI remediation PR.
-
-- 2026-08-21T08:00:24.616Z handoff `a07c020a-dd40-45dc-8388-ecc88009ce1c` head `890128cba69d` project `TNF-EXTENSIONS` — Merge the canonical extension-contract PR and close issue #114 with verification receipts.
-
-- 2026-08-21T07:57:31.362Z handoff `680e7c30-6a25-41cb-8bfc-6f9115ec989b` head `890128cba69d` project `TNF-EXTENSIONS` — Merge the canonical extension-contract PR and close issue #114 with verification receipts.
-
-- 2026-08-21T07:52:36.964Z handoff `2248bfb3-48b7-451d-9f22-90359b824173` head `890128cba69d` project `TNF-EXTENSIONS` — Merge the canonical extension-contract PR and close issue #114 with verification receipts.
-
-- 2026-08-21T07:50:50.295Z handoff `e733b8ac-3c40-4d69-931e-d43f3aeeacf8` head `890128cba69d` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
-
-- 2026-08-21T07:07:09.899Z handoff `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9` head `9561fa7c1eb6` project `TNF-RECONCILIATION` — After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
+- 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
   `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone

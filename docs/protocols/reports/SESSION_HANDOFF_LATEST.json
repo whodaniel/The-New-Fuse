@@ -1,29 +1,33 @@
 {
-  "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "a4c7b0a8-35ca-43a1-b3c0-5c5f1fa9ac14",
-  "created_at": "2026-08-21T11:18:41.233Z",
-  "repository": "whodaniel/tnf-monorepo",
-  "branch": "fix/tauri-route-e2e-alignment",
-  "head_sha": "fc444c7c6d122bf30fa6b95cfb3d133a90327499",
+  "spec": "tnf/session-handoff/0.1",
+  "handoff_id": "34428501-58cc-4ec1-86fc-5546990301eb",
+  "created_at": "2026-08-20T19:21:15.882Z",
+  "repository": "tnf-monorepo",
+  "branch": "main",
+  "head_sha": "aacbeb11eab9c09f462bc95261dacc57b0c97d77",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
-    "TNF-DESKTOP-E2E"
+    "TNF-SESSION"
   ],
   "work_summary": [
-    "Test fixes: stale page titles, the chat composer placeholder, collapsed secondary-nav expansion, exact-name selectors for the first-run cue collision, and bounded timeouts in the computer-use sweep."
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
   "changed_paths": [
-    "apps/tauri-desktop/e2e/full-interaction.spec.ts",
-    "apps/tauri-desktop/e2e/routes.spec.ts",
-    "apps/tauri-desktop/src/components/route-context.test.tsx",
-    "apps/tauri-desktop/src/components/route-context.tsx",
-    "apps/tauri-desktop/src/config/routes.test.ts",
-    "apps/tauri-desktop/src/config/routes.ts",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
+    "apps/frontend/src/data/codebase_map.json",
+    "data/llm-provider-status.json",
+    "docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md",
+    "validation-results/post-change-report.json",
+    "validation-results/pre-change-file-structure.txt",
+    "validation-results/pre-change-report.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "gaps.json",
+    "packages/infrastructure/dist",
+    "packages/shared/dist",
+    "packages/tnf-core/dist",
+    "packages/tnf-note-taking/dist"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -33,53 +37,25 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "claude-code",
+    "owner": "tnf-orchestrator",
     "targets": [
-      "orchestrator"
+      "story-architect",
+      "librarian"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Read the desktop E2E job on public PR #161 before further selector edits."
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "Verify the first canonical Jules schedule run at 21:30 EDT and one cadence with no public-overlay recurrence."
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
     "commits": [
-      "fc444c7c6d122bf30fa6b95cfb3d133a90327499"
+      "aacbeb11eab9c09f462bc95261dacc57b0c97d77"
     ]
-  },
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "classification": {
-    "work_domain": "corporate",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "product_state",
-    "sensitivity": "internal"
-  },
-  "capabilities": {
-    "required": [
-      "desktop-ux",
-      "test-engineering"
-    ],
-    "staffed_by": [
-      "claude-code"
-    ]
-  },
-  "publication": {
-    "public_runtime_affected": true,
-    "control_plane_affected": false,
-    "satellites": []
-  },
-  "freshness_receipts": []
+  }
 }
