@@ -3,23 +3,28 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Operator: delete Jules cloud Scheduled jobs that still
-target public `The-New-Fuse` (Bolt/Palette/Sentinel) in the Jules UI; merge the
-public auto-close workflow branch
-`chore/close-jules-persona-prs-on-public-overlay`. See
-`docs/operations/jules-scheduler-cleanup-2026-08-20.md`.
-
+**Current Directive:** After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
 <!-- CURRENT_DIRECTIVE:END -->
 
-- [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
-  - **Verified:** local crontab/launchd clean; local scripts already on
-    `tnf-monorepo`; 18 recent persona sessions still targeting public
-    `The-New-Fuse` (~2h freshness) — cloud schedules remain.
-  - **Done:** retargeted stale Jules docs; pushed public branch with
-    `close-jules-persona-prs.yml`; wrote ops receipt.
-  - **Blocked on operator:** Jules UI schedule deletion (CLI has no schedule
-    API); merge auto-close workflow to public `main`.
+- [✅] **2026-08-21 Canonical reconciliation and publication (Codex)**:
+  - **Merged:** monorepo PRs #125-#130 covering atomic service leases,
+    public-overlay repairs, Green context references/CER, credential-safe sync,
+    handoff V2 alignment, and efficient history-preserving publication.
+  - **Published:** `The-New-Fuse` PR #154 from canonical `9561fa7c`, merged as
+    `f3f62adb`; both proprietary boundary gates passed; public issue #157 closed.
+  - **Preserved:** divergent checkout capsule at
+    `/Users/danielgoldberg/TNF-Recovery-Capsules/2026-08-21-49902d36`; protected
+    checkout was not mutated.
+  - **Details:**
+    `docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
+
+- [⚠️] **2026-08-21 External gates**:
+  - GitHub-hosted jobs still terminate before steps because of the account-level
+    Actions restriction; no self-hosted runner is registered.
+  - Jules public schedules were removed and canonical schedules created. Verify
+    the first 21:30 EDT run and one cadence with no public recurrence.
+  - Control-plane issue #113, extension-contract issue #114, and professional
+    SSI/PASS/legal review remain open; none should be bypassed downstream.
 
 - [✅] **2026-08-20 Repo maintenance: mutation-guard pack-refs false positive +
   preflight latency characterization (Cursor / tnf-monorepo)**:
@@ -1069,6 +1074,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-21T07:07:09.899Z handoff `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9` head `9561fa7c1eb6` project `TNF-RECONCILIATION` — After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
 
 - 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
   `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone

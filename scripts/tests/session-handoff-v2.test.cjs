@@ -66,3 +66,16 @@ test('all active handoff producers have retired the V1 spec', () => {
     assert.equal(source.includes('tnf/session-handoff/0.1'), false, producer);
   }
 });
+
+test('session handoff emitter does not generate trailing Markdown whitespace', () => {
+  const source = fs.readFileSync(
+    path.join(root, 'scripts/protocols/emit-session-handoff.cjs'),
+    'utf8',
+  );
+  const markdownTemplate = source.slice(
+    source.indexOf('const markdown ='),
+    source.indexOf('ensureDirFor(handoffJsonPath)'),
+  );
+
+  assert.doesNotMatch(markdownTemplate, /  \n/);
+});
