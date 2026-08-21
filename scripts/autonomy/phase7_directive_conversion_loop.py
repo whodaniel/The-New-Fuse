@@ -138,6 +138,41 @@ def git_head_sha() -> str:
         return "0" * 40
 
 
+def git_origin() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "remote", "get-url", "origin"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return "unknown"
+
+
+def repository_name(origin: str) -> str:
+    value = origin.removesuffix(".git")
+    if value.startswith("git@github.com:"):
+        return value.removeprefix("git@github.com:")
+    if "github.com/" in value:
+        return value.split("github.com/", 1)[1]
+    return value or "unknown"
+
+
+def git_dirty() -> bool:
+    try:
+        return bool(
+            subprocess.check_output(
+                ["git", "status", "--porcelain"],
+                cwd=ROOT,
+                text=True,
+                stderr=subprocess.DEVNULL,
+            ).strip()
+        )
+    except Exception:
+        return False
+
+
 def read_json(path: Path, default: Any = None) -> Any:
     if not path.exists():
         return default
@@ -484,15 +519,44 @@ def render_report(report: Dict[str, Any], batch: Dict[str, Any]) -> str:
 
 def write_phase7_handoff(path: Path, report: Dict[str, Any], batch: Dict[str, Any]) -> None:
     summary = report["summary"]
+    origin = git_origin()
+    repository = repository_name(origin)
     payload = {
-        "spec": "tnf/session-handoff/0.1",
+        "spec": "tnf/session-handoff/0.2",
         "handoff_id": str(uuid.uuid4()),
         "created_at": report["generatedAt"],
-        "repository": "The-New-Fuse",
+        "repository": repository,
+        "repository_context": {
+            "canonical_source": "whodaniel/tnf-monorepo",
+            "actual": repository,
+            "origin": origin,
+            "dirty": git_dirty(),
+            "operation_in_progress": None,
+            "publication_targets": [
+                "whodaniel/The-New-Fuse",
+                "whodaniel/fuse-control-plane",
+            ],
+        },
         "branch": "main",
         "head_sha": git_head_sha(),
         "protocol_ack": "TNF_PROTOCOL_ACK",
         "sensitive_scope": "internal",
+        "classification": {
+            "work_domain": "unknown",
+            "artifact_destination": "unknown",
+            "data_residency": "unknown",
+            "sensitivity": "internal",
+        },
+        "capabilities": {
+            "required": ["directive-conversion"],
+            "staffed_by": ["local-subdirector"],
+        },
+        "publication": {
+            "public_runtime_affected": False,
+            "control_plane_affected": False,
+            "satellites": [],
+        },
+        "freshness_receipts": [],
         "project_ids": ["INFRA-002", "FORGE-003"],
         "work_summary": [
             "Phase 6 completed: Rust-backed envelope validation integrated, protocol contracts stress-tested above 9500 envelopes/sec, and AI5 readiness KPIs confirmed 651 dispatch-ready directives.",
