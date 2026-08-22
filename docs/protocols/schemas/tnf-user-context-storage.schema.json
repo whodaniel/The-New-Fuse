@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-user-context-storage.schema.json",
+  "title": "TNF User Context Storage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["strategy", "local", "googleDrive", "inheritance"],
+  "properties": {
+    "strategy": {
+      "type": "string",
+      "enum": ["local-primary", "google-drive-primary", "mirrored", "local-only"]
+    },
+    "local": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root"],
+      "properties": {
+        "root": { "type": "string", "minLength": 1 }
+      }
+    },
+    "googleDrive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "folderId": { "type": ["string", "null"] },
+        "folderUrl": { "type": ["string", "null"] },
+        "folderName": { "type": "string", "default": "TNF User Context" }
+      }
+    },
+    "inheritance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coreFleet", "swarm", "agent"],
+      "properties": {
+        "coreFleet": { "const": "inherit-user-profile" },
+        "swarm": { "enum": ["inherit-parent", "override"] },
+        "agent": { "enum": ["inherit-parent", "override"] }
+      }
+    }
+  }
+}
