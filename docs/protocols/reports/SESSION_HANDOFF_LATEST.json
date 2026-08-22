@@ -1,7 +1,7 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "fd44db85-e95a-4c73-ba77-52b0c7692e1e",
-  "created_at": "2026-08-22T12:39:00.000Z",
+  "handoff_id": "4a465e39-52b6-48b8-b0c6-4bc75e7b99a2",
+  "created_at": "2026-08-22T12:49:00.000Z",
   "repository": "tnf-monorepo",
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -15,7 +15,7 @@
     ]
   },
   "branch": "main",
-  "head_sha": "3b3410277483573d6e22d2bd8505e6ba140a7ea5",
+  "head_sha": "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "classification": {
@@ -29,6 +29,7 @@
       "harness-engineering",
       "protocol-governance",
       "source-governance",
+      "onboarding-route-integrity",
       "verification"
     ],
     "staffed_by": [
@@ -45,32 +46,52 @@
   "freshness_receipts": [
     {
       "id": "canonical-main",
-      "state": "merged",
-      "observed_at": "2026-08-22T12:39:00.000Z",
-      "value": "3b3410277483573d6e22d2bd8505e6ba140a7ea5"
-    },
-    {
-      "id": "turn-zero-focused-tests",
-      "state": "pass",
-      "observed_at": "2026-08-22T12:39:00.000Z",
-      "value": "14/14 focused onboarding-contract tests passed locally before PR #156 merge"
+      "state": "live-verified",
+      "observed_at": "2026-08-22T12:49:00.000Z",
+      "value": "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a"
     },
     {
       "id": "pr-156",
       "state": "merged",
-      "observed_at": "2026-08-22T12:39:00.000Z",
-      "value": "feat(harness): make Turn Zero prove full harness hydration"
+      "observed_at": "2026-08-22T12:34:29.000Z",
+      "value": "Turn Zero manifest-derived full-harness onboarding; focused tests 14/14"
+    },
+    {
+      "id": "pr-157",
+      "state": "merged",
+      "observed_at": "2026-08-22T12:43:07.000Z",
+      "value": "handoff freshness relationships + harness inventory alignment; focused tests 10/10"
+    },
+    {
+      "id": "pr-159",
+      "state": "merged",
+      "observed_at": "2026-08-22T12:46:07.000Z",
+      "value": "required onboarding task-route integrity; focused tests 3/3"
+    },
+    {
+      "id": "user-context-storage",
+      "state": "active-draft",
+      "observed_at": "2026-08-22T12:49:00.000Z",
+      "value": "PR #151 with dependent PR #153; do not fork a parallel provider model"
+    },
+    {
+      "id": "workflow-builder",
+      "state": "operator-reported-active",
+      "observed_at": "2026-08-22T12:49:00.000Z",
+      "value": "packages/workflow-builder ownership remains with local Claude until a newer Git receipt supersedes this boundary"
     }
   ],
   "project_ids": [
     "TNF-HARNESS",
-    "TNF-SESSION"
+    "TNF-SESSION",
+    "TNF-TURN-ZERO"
   ],
   "work_summary": [
-    "Turn Zero V2 now derives Stage A exclusively from FRONTLOAD_MANIFEST.md, reads current rail bytes, records SHA-256 hydration receipts, and fails closed on incomplete fundamental rails.",
-    "Canonical onboarding is pnpm run tnf:onboard; Claude, Cursor, global frontload installers, and repository verification surfaces point to that route instead of maintaining independent startup rail lists.",
-    "Added the tnf-engineering-context meta-skill and task-scoped routes for source concordance and the existing user-context-storage workstream, with do-not-reinvent and concurrent-ownership gates.",
-    "Stale hard-coded provider/port/runtime facts were removed from the Stage-A system prompt in favor of state-freshness/live-probe mechanisms."
+    "Turn Zero V2 is the single manifest-derived, SHA-256 receipt-bearing onboarding entrypoint for fresh TNF agent sessions.",
+    "PR #156 aligned host pointers, added the machine onboarding contract and tnf-engineering-context meta-skill, and removed stale runtime facts from Stage A.",
+    "PR #157 made repository-tracked handoff freshness relation-aware and aligned the harness inventory to manifest-derived onboarding.",
+    "PR #159 makes onboarding fail closed if a required specialist route in the machine onboarding contract no longer resolves, while preserving explicitly optional loadIfPresent routes.",
+    "Harness-critical specialist routing does not depend on the broad generated skill catalog being freshly regenerated because required routes are direct and path-verified."
   ],
   "changed_paths": [
     ".agent/SYSTEM_PROMPT.md",
@@ -81,8 +102,11 @@
     ".skills/tnf-engineering-context/SKILL.md",
     "CLAUDE.md",
     "data/harness/onboarding-contract.json",
+    "data/harness/harness-config.json",
     "docs/core/FRONTLOAD_MANIFEST.md",
     "scripts/harness/provision-injection-surfaces.cjs",
+    "scripts/harness/verify-onboarding-routes.cjs",
+    "scripts/harness/verify-onboarding-routes.test.cjs",
     "scripts/install-agent-frontload.cjs",
     "scripts/install-agent-frontload.test.cjs",
     "scripts/protocols/frontload-manifest.cjs",
@@ -91,40 +115,46 @@
     "scripts/protocols/turn-zero-v2-gate.compat.test.cjs",
     "scripts/protocols/turn-zero-v2-gate.test.cjs",
     "scripts/tnf-onboard-twip.cjs",
-    "scripts/verify-repo-frontload.cjs"
+    "scripts/verify-repo-frontload.cjs",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "Focused onboarding-contract suite passed 14/14 and executable JavaScript syntax checks passed before PR #156 merge. GitHub commit-status checks were not registered; Codex/Cursor automated review attempts were quota-limited. Diff scope was manually reviewed before merge."
+    "notes": "PR #156 focused onboarding-contract tests passed 14/14 locally before merge; PR #157 handoff-relation tests passed 10/10 locally; PR #159 onboarding-route tests passed 3/3 plus syntax checks. Machine-specific host injection still requires execution on the operator machine."
   },
   "continuation": {
     "owner": "tnf-orchestrator",
     "targets": [
       "next-tnf-agent-session",
       "local-claude",
-      "gemini-drive-auditor"
+      "gemini-drive-auditor",
+      "chatgpt"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Run pnpm run tnf:onboard -- --task \"<current task>\" and inspect the manifest-derived Stage A receipt before consequential work.",
-      "On the operator machine, run node scripts/harness/provision-injection-surfaces.cjs --repair and then pnpm run tnf:onboard -- --full-harness --task \"host propagation verification\" to empirically verify installed host injection surfaces.",
-      "Regenerate .agent/SKILL_MANIFEST.md with scripts/skills/build-skill-manifest.cjs from a full canonical checkout so tnf-engineering-context and the newest governance skills are represented without hand-editing generated output.",
-      "Continue the active packages/workflow-builder workstream from its live Claude/Git receipt; do not race that package.",
-      "Keep PR #151/#153 user-context storage work on its existing stack and require executable verification before merging."
+      "Run pnpm run tnf:onboard -- --task \"<current task>\" from canonical tnf-monorepo before consequential work and inspect the Stage A + route-integrity receipts.",
+      "On the operator machine, run node scripts/harness/provision-injection-surfaces.cjs --repair and then pnpm run tnf:onboard -- --full-harness --task \"host propagation verification\"; preserve the resulting receipts.",
+      "Regenerate .agent/SKILL_MANIFEST.md with node scripts/skills/build-skill-manifest.cjs from the full canonical checkout; this is discovery-catalog freshness, not a Turn Zero correctness dependency.",
+      "Continue the active packages/workflow-builder workstream only from its latest verified Git receipt; do not race that package.",
+      "Keep PR #151/#153 user-context storage work on its existing stack and require executable verification before promotion.",
+      "Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers whenever canonical main advances materially."
     ]
   },
   "next_actions": [
-    "Verify/repair installed host injection surfaces on the operator machine and preserve the resulting harness-injection receipt.",
-    "Regenerate the Tier-0 skill manifest from the full canonical skill corpus.",
+    "Verify/repair installed host injection surfaces on the operator machine and retain the harness-injection/full-harness receipt.",
+    "Regenerate the broad Tier-0 skill discovery manifest repository-locally.",
     "Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers to the current canonical main receipt.",
     "Continue workflow-builder and user-context provider work only from their existing ownership/PR boundaries."
   ],
   "artifacts": {
     "commits": [
-      "3b3410277483573d6e22d2bd8505e6ba140a7ea5"
+      "3b3410277483573d6e22d2bd8505e6ba140a7ea5",
+      "66a5055d01fa48a6bdda40eaa19c29dc0084d9c5",
+      "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a"
     ]
   }
 }

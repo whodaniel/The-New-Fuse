@@ -1,8 +1,8 @@
 {
   "$schema": "./harness-config.schema.json",
   "id": "tnf-harness",
-  "version": "1.1.0",
-  "updatedAt": "2026-08-22T12:37:00.000Z",
+  "version": "1.1.1",
+  "updatedAt": "2026-08-22T12:48:00.000Z",
   "authorities": [
     "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
@@ -66,6 +66,7 @@
         "scripts/protocols/frontload-manifest.cjs",
         "scripts/protocols/turn-zero-v2-gate.cjs",
         "scripts/tnf-onboard-twip.cjs",
+        "scripts/harness/verify-onboarding-routes.cjs",
         "docs/protocols/HARNESS_HOST_COMPACTION.md",
         "scripts/harness/compaction-record.cjs",
         "scripts/harness/host-compaction-adapter.cjs",
@@ -136,7 +137,7 @@
   "injectionSurfaces": {
     "canonical_onboarding": {
       "path": "scripts/tnf-onboard-twip.cjs",
-      "mechanism": "pnpm run tnf:onboard derives/hash-receipts Stage A from FRONTLOAD_MANIFEST and emits task-scoped hydration routes",
+      "mechanism": "pnpm run tnf:onboard derives/hash-receipts Stage A from FRONTLOAD_MANIFEST, verifies required onboarding routes, and emits task-scoped hydration routes",
       "required": true
     },
     "repo_cursor_rules": {
@@ -195,6 +196,7 @@
     "manifest_derived_stage_a",
     "proof_bearing_hydration",
     "task_scoped_context",
+    "required_task_route_integrity",
     "do_not_reinvent",
     "concurrent_workstream_collision_boundaries"
   ],
@@ -203,7 +205,9 @@
       "node scripts/protocols/frontload-manifest.cjs --stage A --json",
       "node --test scripts/protocols/frontload-manifest.test.cjs",
       "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
+      "node --test scripts/harness/verify-onboarding-routes.test.cjs",
       "node scripts/verify-repo-frontload.cjs",
+      "node scripts/harness/verify-onboarding-routes.cjs",
       "node scripts/harness/verify-harness-completeness.cjs",
       "node scripts/install-agent-frontload.cjs --verify",
       "node scripts/harness/provision-injection-surfaces.cjs --verify",

@@ -1,44 +1,37 @@
-# SESSION_HANDOFF_LATEST
+# TNF Session Handoff — Turn Zero / Full Harness
 
-Protocol ACK: `TNF_PROTOCOL_ACK`  
-Spec: `tnf/session-handoff/0.2`  
-Created At: `2026-08-22T12:39:00.000Z`  
-Handoff ID: `fd44db85-e95a-4c73-ba77-52b0c7692e1e`
+**Spec:** `tnf/session-handoff/0.2`  
+**Handoff:** `4a465e39-52b6-48b8-b0c6-4bc75e7b99a2`  
+**Canonical basis:** `whodaniel/tnf-monorepo` `main` @ `db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a`  
+**Created:** 2026-08-22T12:49:00Z
 
-## Scope
-- Canonical repository: `whodaniel/tnf-monorepo`
-- Branch: `main`
-- Substantive head receipt: `3b3410277483573d6e22d2bd8505e6ba140a7ea5`
-- Classification: `corporate / oss_runtime / product_state / internal`
-- Sensitive Scope: `internal`
+## Current state
 
-## Work Summary
-- Turn Zero V2 derives Stage A only from `docs/core/FRONTLOAD_MANIFEST.md`, reads the current rail bytes, SHA-256 receipts them, and fails closed when a fundamental rail cannot be hydrated.
-- `pnpm run tnf:onboard` is the canonical session entrypoint; host/project pointers now route to it rather than maintaining independent Stage-A lists.
-- `tnf-engineering-context` is the engineering meta-skill, composing source concordance/source refresh/current storage workstreams rather than duplicating them.
-- Volatile provider/model/port/process facts are no longer stamped into the Stage-A system prompt as evergreen truth.
+Turn Zero V2 is now the canonical manifest-derived onboarding entrypoint for fresh TNF agent sessions. Stage A comes only from `docs/core/FRONTLOAD_MANIFEST.md`, current rail bytes are SHA-256 receipted, repository/handoff freshness is reported rather than assumed, and Stage B/C context stays task-scoped.
+
+PR #156 merged the full-harness onboarding model, machine `data/harness/onboarding-contract.json`, host-pointer alignment, and `tnf-engineering-context` meta-skill. PR #157 made handoff freshness relation-aware and aligned the machine harness inventory. PR #159 added a fail-closed required-route integrity gate: every `taskRoutes[].load` target in the onboarding contract must resolve before onboarding passes; explicitly optional `loadIfPresent` routes remain non-blocking.
+
+Harness-critical routing no longer depends on the broad generated `.agent/SKILL_MANIFEST.md` being freshly regenerated. The machine onboarding contract directly names the specialist routes and the onboarder now verifies them.
 
 ## Verification
-- Focused onboarding-contract tests: **PASS 14/14** before PR #156 merge.
-- Executable JavaScript syntax checks: **PASS**.
-- PR #156 diff scope: reviewed before merge; 19 intended onboarding/harness files only.
-- Automated Codex/Cursor review: unavailable due usage limits; not counted as verification.
 
-## Continuation / Ownership Boundaries
-- `packages/workflow-builder`: active local Claude workstream; refresh its live Git receipt before overlapping edits.
-- PR #151 / PR #153: existing user-context storage/provider stack; do not start a parallel storage model and do not merge until executable verification exists.
-- Gemini Drive audit: discovery/taxonomy worker coordinated through the Master Document Audit Ledger governance/coordination tabs.
+- PR #156 focused onboarding-contract suite: **14/14 passed locally** before merge.
+- PR #157 focused handoff relation suite: **10/10 passed locally** before merge.
+- PR #159 focused onboarding-route suite: **3/3 passed**, plus JavaScript syntax checks.
 
-## Resume Checklist
-1. Run `pnpm run tnf:onboard -- --task "<current task>"`.
-2. On the operator machine, run `node scripts/harness/provision-injection-surfaces.cjs --repair`.
-3. Verify with `pnpm run tnf:onboard -- --full-harness --task "host propagation verification"`.
-4. Regenerate `.agent/SKILL_MANIFEST.md` using `scripts/skills/build-skill-manifest.cjs` from a full canonical checkout.
-5. Refresh shared Drive coordination/source-distribution pointers to current canonical `main`.
-6. Continue Claude workflow-builder and PR #151/#153 only through their existing ownership boundaries.
+These prove repository-side behavior. They do **not** prove that every installed host context file on the operator machine has already been repaired to the latest pointer block.
 
-## Next Actions
-- Empirically verify installed host injection surfaces and preserve the receipt.
-- Regenerate the Tier-0 skill manifest.
-- Refresh Drive Agent Coordination and Engineering Context/source-library pointers.
-- Continue existing workflow-builder and user-context provider workstreams without creating overlap.
+## Active collision boundaries
+
+- `packages/workflow-builder`: local Claude-reported active ownership. Refresh its latest Git receipt before touching overlapping package/canvas/adapter files.
+- user-context storage: PR #151 plus dependent PR #153. Continue that stack and require executable verification before promotion; do not create a parallel local/Google Drive provider architecture.
+
+## Required continuation
+
+1. Run `pnpm run tnf:onboard -- --task "<current task>"` from canonical `tnf-monorepo` before consequential work.
+2. On the operator machine run `node scripts/harness/provision-injection-surfaces.cjs --repair`.
+3. Then run `pnpm run tnf:onboard -- --full-harness --task "host propagation verification"` and preserve the resulting receipts.
+4. Regenerate `.agent/SKILL_MANIFEST.md` repository-locally with `node scripts/skills/build-skill-manifest.cjs`; this is discovery-catalog freshness, not Stage-A authority.
+5. Continue Claude's workflow-builder stream from its newest verified Git state.
+6. Continue PR #151/#153 on their existing storage-provider stack and run their authored tests before promotion.
+7. Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers whenever canonical `main` advances materially.
