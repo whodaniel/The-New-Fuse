@@ -2,6 +2,10 @@
 
 This file contains the agent guidelines and principles for The New Fuse (TNF) project.
 
+## Swarm orientation front door
+
+Before substantial TNF work, read `docs/protocols/SWARM_ORIENTATION_ENTRYPOINT.md`, then hydrate the current Living State / Session Handoff surfaces it references. External chat/model artifacts are evidence until reconciled and promoted into canonical repo source.
+
 ## Engineering Principles
 
 Distilled principles for high-performance agent operations. Apply these when building systems.
