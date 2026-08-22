@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 const assert = require('node:assert');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const test = require('node:test');
-const { buildBlock, applyBlock } = require('./install-agent-frontload.cjs');
+const { buildBlock, applyBlock, classify, TARGETS } = require('./install-agent-frontload.cjs');
 
 test('managed host block routes through canonical tnf:onboard, not legacy onboarder', () => {
   const block = buildBlock('/repo');
@@ -17,4 +20,19 @@ test('fenced update preserves operator text outside managed block', () => {
   assert.match(next, /operator text/);
   assert.match(next, /\/new/);
   assert.doesNotMatch(next, /\/old/);
+});
+test('zcode is a managed global target on the ZCode user instruction file', () => {
+  const zcode = TARGETS.find((t) => t.id === 'zcode');
+  assert.ok(zcode, 'zcode target registered in TARGETS');
+  assert.equal(zcode.scope, 'global');
+  assert.ok(zcode.contextFile.endsWith(path.join('.zcode', 'AGENTS.md')), zcode.contextFile);
+});
+test('zcode surface classifies through the standard managed lifecycle', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-zcode-'));
+  const target = { id: 'zcode', runtime: 'ZCode', scope: 'global', contextFile: path.join(dir, 'AGENTS.md'), dirHint: dir };
+  // Runtime home exists but instruction file does not yet: first materialization
+  // must go through --include-unverified, then verify/repair manage it normally.
+  assert.equal(classify(target).state, 'unverified');
+  fs.writeFileSync(target.contextFile, applyBlock('', buildBlock('/repo')));
+  assert.equal(classify(target).state, 'managed-current');
 });

@@ -51,6 +51,11 @@ const TARGETS = [
     id: 'kilo', runtime: 'Kilo', scope: 'global', contextFile: path.join(HOME, '.kilo', 'AGENTS.md'),
     native: path.join(HOME, '.kilo', 'agents', 'tnf-startup-gate.md'), dirHint: path.join(HOME, '.kilo'),
   },
+  // ZCode desktop runtime (dev.zcode.app): ~/.zcode/AGENTS.md is the user-scope
+  // instruction file, injected first in every session per its bundled
+  // configuration guide; workspace AGENTS.md loads later and may override.
+  // Fresh-session injection verified at the wire level (issue #165 receipts).
+  { id: 'zcode', runtime: 'ZCode', scope: 'global', contextFile: path.join(HOME, '.zcode', 'AGENTS.md'), dirHint: path.join(HOME, '.zcode') },
   { id: 'cursor', runtime: 'Cursor', scope: 'project', contextFile: path.join(HOME, '.cursor', 'AGENTS.md'), dirHint: path.join(HOME, '.cursor') },
 ];
 
@@ -186,4 +191,4 @@ function main() {
 if (require.main === module) {
   try { main(); } catch (error) { console.error(`install-agent-frontload: ${error.message}`); process.exit(1); }
 }
-module.exports = { buildBlock, applyBlock, classify, VERSION };
+module.exports = { buildBlock, applyBlock, classify, TARGETS, VERSION };

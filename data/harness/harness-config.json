@@ -180,6 +180,11 @@
       "path": "~/.hermes/SOUL.md",
       "mechanism": "global Hermes identity (via install-agent-frontload)",
       "required": false
+    },
+    "zcode_agents_md": {
+      "path": "~/.zcode/AGENTS.md",
+      "mechanism": "ZCode (dev.zcode.app) user-scope instruction file, injected first in every session with workspace AGENTS.md loaded later; managed fenced pointer via install-agent-frontload; first materialization requires --include-unverified because a fresh ZCode install never creates the file",
+      "required": false
     }
   },
   "patterns": [
