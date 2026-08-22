@@ -20,6 +20,30 @@ export interface PromptOptions<T = string> {
   defaultIndex?: number;
 }
 
+export type ContextStorageStrategy =
+  | 'local-primary'
+  | 'google-drive-primary'
+  | 'mirrored'
+  | 'local-only';
+
+export interface UserContextStorageConfig {
+  strategy: ContextStorageStrategy;
+  local: {
+    root: string;
+  };
+  googleDrive: {
+    enabled: boolean;
+    folderId: string | null;
+    folderUrl: string | null;
+    folderName: string;
+  };
+  inheritance: {
+    coreFleet: 'inherit-user-profile';
+    swarm: 'inherit-parent';
+    agent: 'inherit-parent';
+  };
+}
+
 export interface UserProfileConfig {
   profileName: string;
   identityMode: 'cloud' | 'local' | 'sandbox' | 'custom';
@@ -28,6 +52,7 @@ export interface UserProfileConfig {
   customModel?: string;
   workspacePath: string;
   ingestionMode: 'clean-slate' | 'current-repo' | 'vault' | 'custom';
+  contextStorage: UserContextStorageConfig;
   initialGoal: string;
   createdAt: string;
   updatedAt: string;
@@ -229,9 +254,62 @@ export async function runInteractiveOnboardingWizard(
     selectedWorkspace = path.resolve(ingestion.value);
   }
 
-  // Step 4: First Goal & Mission
+  // Step 4: User Context Storage
+  const storage = await promptChoiceWithWriteIn<ContextStorageStrategy>({
+    title: 'Step 4: Choose Where TNF Stores Your Personal Context',
+    subtitle: 'All agents inherit one TNF profile mapping. Google Drive binding can be authorized after onboarding.',
+    options: [
+      {
+        key: 'local-primary',
+        label: 'Local Primary + Optional Google Drive Mirror (Recommended)',
+        description: 'Keeps the authoritative copy local and allows an authorized Drive mirror for cross-agent/cross-device access.',
+        value: 'local-primary',
+      },
+      {
+        key: 'google-drive-primary',
+        label: 'Google Drive Primary + Local Cache',
+        description: 'Uses a user-authorized Drive folder as durable authority once the Drive binding is verified.',
+        value: 'google-drive-primary',
+      },
+      {
+        key: 'mirrored',
+        label: 'Mirrored Local + Google Drive',
+        description: 'Treats both as durable replicas and requires explicit conflict receipts when they diverge.',
+        value: 'mirrored',
+      },
+      {
+        key: 'local-only',
+        label: 'Local Only',
+        description: 'Keeps personal context entirely on this machine.',
+        value: 'local-only',
+      },
+    ],
+    defaultIndex: 0,
+    allowWriteIn: false,
+  });
+
+  const storageStrategy = storage.value as ContextStorageStrategy;
+  const contextStorage: UserContextStorageConfig = {
+    strategy: storageStrategy,
+    local: {
+      root: `~/.tnf/user-context/data/${profileName}`,
+    },
+    googleDrive: {
+      enabled: storageStrategy === 'google-drive-primary' || storageStrategy === 'mirrored',
+      folderId: null,
+      folderUrl: null,
+      folderName: 'TNF User Context',
+    },
+    inheritance: {
+      coreFleet: 'inherit-user-profile',
+      swarm: 'inherit-parent',
+      agent: 'inherit-parent',
+    },
+  };
+
+  // Step 5: First Goal & Mission
   const goal = await promptChoiceWithWriteIn<string>({
-    title: 'Step 4: Choose Your Turn Zero Mission / First Goal',
+    title: 'Step 5: Choose Your Turn Zero Mission / First Goal',
     subtitle: 'What objective should the swarm begin orienting on?',
     options: [
       {
@@ -267,6 +345,7 @@ export async function runInteractiveOnboardingWizard(
     customModel: swarm.isCustom ? (swarm.value as string) : undefined,
     workspacePath: selectedWorkspace,
     ingestionMode: ingestion.rawChoice as any,
+    contextStorage,
     initialGoal: finalGoal,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -294,6 +373,10 @@ export async function runInteractiveOnboardingWizard(
   console.log(`  🚀  ${chalk.bold('Personalized Command:')}   ${chalk.green(`tnf boot ${profileName}`)}`);
   console.log(`  📂  ${chalk.bold('Active Workspace:')}       ${chalk.dim(selectedWorkspace)}`);
   console.log(`  🤖  ${chalk.bold('Swarm Layout:')}           ${chalk.dim(profileConfig.agentTopology)}`);
+  console.log(`  💾  ${chalk.bold('Context Storage:')}         ${chalk.dim(profileConfig.contextStorage.strategy)}`);
+  if (profileConfig.contextStorage.googleDrive.enabled) {
+    console.log(chalk.yellow('      Google Drive is selected but not yet bound; configure/verify the authorized folder before use.'));
+  }
   console.log(`  🎯  ${chalk.bold('Starting Objective:')}      ${chalk.italic(profileConfig.initialGoal)}`);
   console.log(chalk.bold.cyan('─────────────────────────────────────────────────────────────────────────\n'));
 
