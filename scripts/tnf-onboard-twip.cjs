@@ -88,6 +88,13 @@ function main() {
     process.exit(1);
   }
 
+  const routes = run('Onboarding Route Integrity', process.execPath, [path.join(ROOT, 'scripts/harness/verify-onboarding-routes.cjs'), ...(jsonMode ? ['--json'] : [])], { capture: jsonMode });
+  results.push({ id: 'onboarding-routes', ...routes });
+  if (!routes.ok) {
+    if (jsonMode) console.log(JSON.stringify({ ok: false, currentTwid, task, results }, null, 2));
+    process.exit(1);
+  }
+
   const injection = run('Harness Injection Surfaces', process.execPath, [path.join(ROOT, 'scripts/harness/provision-injection-surfaces.cjs'), '--verify', ...(jsonMode ? ['--json'] : [])], { advisory: !writeReady, capture: jsonMode });
   results.push({ id: 'injection-surfaces', ...injection });
   if (writeReady && !injection.ok) {
@@ -131,7 +138,7 @@ function main() {
   } else {
     console.log('\nTNF onboarding complete.');
     console.log('- Stage A was derived from FRONTLOAD_MANIFEST.md and hash-receipted.');
-    console.log('- Stage B/C remain task-scoped; use the hydration plan printed by Turn Zero.');
+    console.log('- Stage B/C remain task-scoped; required onboarding routes were verified to resolve.');
     console.log('- active peers are collision/capability signals; verify ownership before overlapping edits.');
     console.log('- after compaction, provider substitution, repo movement, or authority-hash change: rerun pnpm run tnf:onboard.');
     if (!injection.ok && !writeReady) console.log('- WARNING: one or more host injection surfaces are incomplete; run harness provisioning before autonomous/write-ready work.');
