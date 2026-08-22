@@ -137,26 +137,27 @@ PicoClaw Fleet (Edge) <── Lightweight edge agents
 - **[apps/vscode-extension/](apps/vscode-extension/)** — Full VS Code extension
   (v9.1.0): multi-LLM chat, A2A, AG-UI, MCP client, agent registry, collective
   orchestrator
-- **[apps/electron-desktop/](apps/electron-desktop/)** — Electron desktop app
-  with Chakra UI + Socket.io
+- **[apps/tauri-desktop/](apps/tauri-desktop/)** — Tauri desktop app (replaces
+  former `electron-desktop`)
+- **[apps/browser-control-surfaces/](apps/browser-control-surfaces/)** — Browser
+  automation control surfaces
 
 ### AI Infrastructure
 
-- **[apps/picoclaw-overseer/](apps/picoclaw-overseer/)** — Go-based
-  ultra-lightweight AI agent (<10MB RAM), three CloudRuntime instances
-  (tester/subject/perplexity)
 - **[apps/mcp-servers/](apps/mcp-servers/)** — MCP tool servers: network
   management, DevOps bridge, Claude/Gemini integration
-- **[apps/cloud-sandbox/](apps/cloud-sandbox/)** — Playwright browser automation
-  sandbox with Socket.io
 
-### Other
+### Extracted Satellites (not in monorepo tree)
 
-- **[apps/visualization-hub/](apps/visualization-hub/)** — D3.js real-time agent
-  network visualization
-- **[apps/ai-arcade/](apps/ai-arcade/)** — NFT/crypto-powered agent marketplace
-- **[apps/skideancer-ide/](apps/skideancer-ide/)** — Theia-based cloud IDE with
-  AI plugins (port 3007, excluded from pnpm workspace)
+The following apps were extracted from the monorepo and are maintained as
+separate private satellite repositories. They are no longer in `apps/` here.
+
+- **picoclaw-overseer** → `tnf-picoclaw-overseer` (private satellite)
+- **cloud-sandbox** → `tnf-cloud-sandbox` (private satellite)
+- **visualization-hub** → `tnf-visualization-hub` (private satellite)
+- **ai-arcade** → `tnf-ai-arcade` (private satellite)
+- **poker-room** → `tnf-poker-room` (private satellite; see also `apps/poker-room/` if still present locally)
+- **skideancer-ide** → `SkIDEancer` (public repo, own project)
 
 ## Shared Packages
 
@@ -328,22 +329,26 @@ AI agent operating instructions for any AI working in this codebase:
 ## Project Structure
 
 ```
-The-New-Fuse/
-├── apps/
-│   ├── api/                    # Main NestJS API server (port 3001)
-│   ├── api-gateway/            # NestJS gateway (port 3005)
-│   ├── backend/                # Secondary NestJS service (port 3004)
-│   ├── frontend/               # React + Vite SPA (port 3000)
-│   ├── relay-server/           # WebSocket relay hub
-│   ├── chrome-extension/       # Browser AI automation (V7)
-│   ├── vscode-extension/       # VS Code extension (v9.1.0)
-│   ├── electron-desktop/       # Electron desktop app
-│   ├── picoclaw-overseer/      # Go-based lightweight AI agent
-│   ├── mcp-servers/            # MCP tool servers
-│   ├── cloud-sandbox/          # Playwright browser sandbox
-│   ├── visualization-hub/      # D3.js agent network viz
-│   ├── ai-arcade/              # Agent marketplace
-│   └── skideancer-ide/         # Theia cloud IDE (excluded from workspace)
+whodaniel/tnf-monorepo/
+├── apps/                           # In-monorepo applications
+│   ├── api/                        # Main NestJS API server (port 3001)
+│   ├── api-gateway/                # NestJS gateway (port 3005)
+│   ├── backend/                    # Secondary NestJS service (port 3004)
+│   ├── frontend/                   # React + Vite SPA (port 3000)
+│   ├── relay-server/               # WebSocket relay hub
+│   ├── chrome-extension/           # Browser AI automation (V7)
+│   ├── vscode-extension/           # VS Code extension (v9.1.0)
+│   ├── tauri-desktop/              # Tauri desktop app (replaces electron-desktop)
+│   ├── browser-control-surfaces/   # Browser automation control surfaces
+│   ├── mcp-servers/                # MCP tool servers
+│   └── extensions -> ../../TNF-Extensions  # symlink
+│   # Extracted satellites (separate repos, not present here):
+│   #   picoclaw-overseer → tnf-picoclaw-overseer
+│   #   cloud-sandbox     → tnf-cloud-sandbox
+│   #   visualization-hub → tnf-visualization-hub
+│   #   ai-arcade         → tnf-ai-arcade
+│   #   poker-room        → tnf-poker-room
+│   #   skideancer-ide    → SkIDEancer (public)
 ├── packages/
 │   ├── types/                  # Shared TypeScript types
 │   ├── database/               # Drizzle ORM + PostgreSQL schemas
