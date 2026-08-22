@@ -1,0 +1,8 @@
+{
+  "spec": "tnf/user-context-storage/0.1",
+  "protocol": "TNF_USER_CONTEXT_STORAGE",
+  "providers": ["local", "google_drive"],
+  "logicalCollections": ["profile", "sources", "memory", "working", "receipts", "exports"],
+  "defaultStrategy": "local-primary",
+  "updated": "2026-08-22"
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "../../docs/protocols/schemas/tnf-user-context-storage.schema.json",
+  "spec": "tnf/user-context-storage/0.1",
+  "defaultStrategy": "local-primary",
+  "providers": {
+    "local": {
+      "enabled": true,
+      "rootTemplate": "~/.tnf/user-context/data/<profile>"
+    },
+    "googleDrive": {
+      "enabled": false,
+      "requiresUserBinding": true,
+      "folderName": "TNF User Context",
+      "folderId": null,
+      "folderUrl": null
+    }
+  },
+  "collections": [
+    "profile",
+    "sources",
+    "memory",
+    "working",
+    "receipts",
+    "exports"
+  ],
+  "inheritance": {
+    "coreFleet": "inherit-user-profile",
+    "swarm": "inherit-parent",
+    "agent": "inherit-parent"
+  },
+  "safety": {
+    "personalDataDestination": "external",
+    "requireReceiptForConsequentialReads": true,
+    "conflictPolicy": "report-do-not-silently-overwrite",
+    "allowOperatorSpecificBindingsInRepository": false
+  }
+}

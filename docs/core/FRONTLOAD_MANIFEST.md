@@ -64,7 +64,7 @@ This invariant means “fully harnessed” does **not** mean dumping every TNF d
 
 ## Stage B — Classification / Governance
 
-Load before placement, publication, cross-boundary, or nontrivial implementation decisions:
+Load before placement, publication, cross-boundary, user-context storage, or nontrivial implementation decisions:
 
 | Path | Role |
 |---|---|
@@ -74,6 +74,7 @@ Load before placement, publication, cross-boundary, or nontrivial implementation
 | `docs/protocols/STATE_FRESHNESS_MANDATE.md` | Volatile-state evidence rules |
 | `docs/protocols/state-freshness.registry.json` | Current freshness domains |
 | `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md` | Live host/provider discovery |
+| `docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md` | User-owned context storage/provider binding and inheritance |
 | `docs/protocols/TURN_END_MANDATE.md` | Handoff contract |
 | `docs/protocols/HARNESS_CONFIG.md` | Harness inventory/architecture |
 | `data/harness/harness-config.json` | Machine-readable harness config |
@@ -90,7 +91,8 @@ Only after the task is known:
 - relevant satellite repository if the task crosses into one;
 - targeted dynamic memory/trajectory records when useful;
 - domain-specific protocols/runbooks;
-- `AGENT_STATUS_LEDGER.md` when fleet/known-gap state is actually relevant.
+- `AGENT_STATUS_LEDGER.md` when fleet/known-gap state is actually relevant;
+- for user/personal context tasks: `data/user-context/storage-provider-defaults.json` and the active profile mapping returned by `node scripts/user-context/resolve-storage.cjs --json`.
 
 ### Engineering route
 
@@ -139,8 +141,9 @@ Before creating a new package, protocol, schema, service, workflow, storage path
 - every harness/provider log
 - every extension/satellite repository
 - Drive documents merely titled `Canon`, `Master`, `Current`, `Aligned`, or `[CORE-TNF]`
+- a provider-specific Google Drive/MCP config as a substitute for the active TNF user-context profile
 
-Generated maps and historical/source-library artifacts can be useful evidence; they are not substitutes for live product maps, git receipts, protocol rails, or exact current source.
+Generated maps and historical/source-library artifacts can be useful evidence; they are not substitutes for live product maps, git receipts, protocol rails, exact current source, or user-authorized storage bindings.
 
 ## Capability staffing
 
@@ -160,6 +163,8 @@ A provider can be an agent, model, harness, script, service, or human gate. Do n
 **Universalize the pattern, not the private context.**
 
 Personal/client/tenant/legal/health/financial/credential source material belongs in its approved private/external location. Only sanitized generalized mechanisms should be promoted into TNF product artifacts. Sensitivity constrains hydration independently of semantic relevance.
+
+When a task uses a user's private sources, resolve their logical locations through `USER_CONTEXT_STORAGE_MANDATE.md` and `scripts/user-context/resolve-storage.cjs`; do not invent a path or silently switch providers.
 
 ## Interactive use
 
@@ -211,6 +216,8 @@ node scripts/turn-end-v2.cjs
 ```bash
 node --test scripts/protocols/frontload-manifest.test.cjs
 node --test scripts/protocols/turn-zero-v2-gate.test.cjs
+node --test scripts/protocols/state-freshness-gate.test.cjs
+node --test scripts/user-context/resolve-storage.test.cjs
 node scripts/protocols/validate-locked-doc-ledger.cjs --mode=staged
 node scripts/verify-repo-frontload.cjs
 node scripts/harness/provision-injection-surfaces.cjs --verify
