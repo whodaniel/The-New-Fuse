@@ -115,6 +115,13 @@ function hydrationReceipt(task = '') {
   if (/source|drive|ledger|taxonomy|concordance|gemini|multi-agent|multi agent/.test(q)) {
     paths.push('docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md', '.agent/skills/tnf-source-concordance/SKILL.md');
   }
+  if (/agent resource|resource fabric|resource convergence|consolidat|deduplicat|dedupe|host resource|local agent|shared skill|shared prompt|shared rule|zcode/.test(q)) {
+    paths.push(
+      'docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md',
+      '.agent/skills/tnf-agent-resource-convergence/SKILL.md',
+      'data/harness/agent-resource-fabric.json',
+    );
+  }
   if (/user context|storage|profile|google drive|memory|context persistence/.test(q)) {
     paths.push('docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md', '.agent/skills/tnf-user-context-storage/SKILL.md');
   }

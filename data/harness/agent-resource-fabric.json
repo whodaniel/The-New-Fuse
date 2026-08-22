@@ -1,0 +1,230 @@
+{
+  "$schema": "./agent-resource-fabric.schema.json",
+  "spec": "tnf/agent-resource-fabric/0.1",
+  "version": "0.1.0",
+  "updatedAt": "2026-08-22T16:45:00.000Z",
+  "centralRoot": "~/.tnf/agent-resources",
+  "objectStore": "objects/sha256",
+  "indexPath": "index/resources.json",
+  "receiptPath": "receipts",
+  "backupPath": "backups",
+  "authority": {
+    "protocol": "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+    "onboarding": "data/harness/onboarding-contract.json",
+    "skillPublisherRegistry": "data/harness/skill-publisher-registry.json",
+    "memoryCompaction": "scripts/harness/memory-freshness-sweep.cjs",
+    "hostFrontload": "scripts/install-agent-frontload.cjs"
+  },
+  "policies": {
+    "contentAddressing": "sha256",
+    "destructivePruneDefault": false,
+    "redirectRequiresVerifiedAdapter": true,
+    "backupBeforeRedirect": true,
+    "verifyAfterRedirect": true,
+    "secretsNeverImport": true,
+    "statefulStoresNeverBlindDedupe": true,
+    "userContextDelegatedToStorageMandate": true
+  },
+  "hosts": [
+    {
+      "id": "claude",
+      "runtime": "Claude Code",
+      "discoveryState": "known-partial",
+      "surfaces": [
+        {
+          "id": "claude-skills",
+          "path": "~/.claude/skills",
+          "resourceKind": "skill",
+          "publisher": "anthropic-or-third-party",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "observe",
+          "redirectVerified": false,
+          "maxDepth": 8,
+          "includeHidden": false,
+          "consumerTags": ["claude", "skill"]
+        },
+        {
+          "id": "claude-settings",
+          "path": "~/.claude/settings.json",
+          "resourceKind": "config",
+          "publisher": "anthropic",
+          "mutability": "host-owned",
+          "sensitivity": "internal",
+          "centralization": "host-local",
+          "redirectStrategy": "native-config",
+          "redirectVerified": false,
+          "consumerTags": ["claude", "config"]
+        }
+      ]
+    },
+    {
+      "id": "gemini",
+      "runtime": "Gemini CLI",
+      "discoveryState": "known-frontload-only",
+      "surfaces": [
+        {
+          "id": "gemini-home-instructions",
+          "path": "~/GEMINI.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["gemini", "instruction"]
+        },
+        {
+          "id": "gemini-config-instructions",
+          "path": "~/.gemini/GEMINI.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["gemini", "instruction"]
+        }
+      ]
+    },
+    {
+      "id": "codex",
+      "runtime": "Codex",
+      "discoveryState": "known-frontload-only",
+      "surfaces": [
+        {
+          "id": "codex-agents",
+          "path": "~/.codex/AGENTS.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["codex", "instruction"]
+        }
+      ]
+    },
+    {
+      "id": "opencode",
+      "runtime": "OpenCode",
+      "discoveryState": "known-frontload-only",
+      "surfaces": [
+        {
+          "id": "opencode-agents",
+          "path": "~/.opencode/AGENTS.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["opencode", "instruction"]
+        }
+      ]
+    },
+    {
+      "id": "hermes",
+      "runtime": "Hermes",
+      "discoveryState": "known-frontload-only",
+      "surfaces": [
+        {
+          "id": "hermes-soul",
+          "path": "~/.hermes/SOUL.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["hermes", "instruction"]
+        }
+      ]
+    },
+    {
+      "id": "kilo",
+      "runtime": "Kilo",
+      "discoveryState": "known-partial",
+      "surfaces": [
+        {
+          "id": "kilo-agents",
+          "path": "~/.kilo/AGENTS.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["kilo", "instruction"]
+        },
+        {
+          "id": "kilo-agent-definitions",
+          "path": "~/.kilo/agents",
+          "resourceKind": "agent-definition",
+          "publisher": "mixed",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "observe",
+          "redirectVerified": false,
+          "maxDepth": 6,
+          "consumerTags": ["kilo", "agent-definition"]
+        }
+      ]
+    },
+    {
+      "id": "cursor",
+      "runtime": "Cursor",
+      "discoveryState": "known-frontload-only",
+      "surfaces": [
+        {
+          "id": "cursor-agents",
+          "path": "~/.cursor/AGENTS.md",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "consumerTags": ["cursor", "instruction"]
+        }
+      ]
+    },
+    {
+      "id": "openclaw",
+      "runtime": "OpenClaw",
+      "discoveryState": "known-workspace",
+      "surfaces": [
+        {
+          "id": "openclaw-workspace-bootstrap",
+          "path": "~/.openclaw/workspace",
+          "resourceKind": "instruction",
+          "publisher": "local",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "managed-pointer",
+          "redirectVerified": false,
+          "maxDepth": 1,
+          "includeExtensions": [".md"],
+          "consumerTags": ["openclaw", "workspace-bootstrap"]
+        }
+      ]
+    },
+    {
+      "id": "zcode",
+      "runtime": "ZCode Desktop",
+      "discoveryState": "discovery-required",
+      "issue": 165,
+      "surfaces": []
+    }
+  ]
+}

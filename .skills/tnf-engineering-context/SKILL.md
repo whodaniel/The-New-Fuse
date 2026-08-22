@@ -1,14 +1,14 @@
 ---
 name: tnf-engineering-context
 category: tnf-platform
-version: 1.0.0
+version: 1.1.0
 ---
 
 # TNF Engineering Context Orchestrator
 
 Use this meta-skill for nontrivial TNF engineering, architecture, debugging, implementation, technical review, or handoff work.
 
-It does **not** replace Turn Zero, source concordance, source-library refresh, storage governance, or package-specific skills. It composes them so an engineering session starts from current authority and does not fork TNF conceptually.
+It does **not** replace Turn Zero, source concordance, source-library refresh, storage governance, resource convergence, or package-specific skills. It composes them so an engineering session starts from current authority and does not fork TNF conceptually.
 
 ## Core invariant
 
@@ -74,6 +74,16 @@ Stable source identity and descriptive observations are separate. Google Drive F
 
 Use `.agent/skills/tnf-source-library-refresh/SKILL.md`. Do not duplicate its refresh pipeline here.
 
+### Local agent resource consolidation / host internals
+
+Read:
+
+- `docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md`
+- `.agent/skills/tnf-agent-resource-convergence/SKILL.md`
+- `data/harness/agent-resource-fabric.json`
+
+Use the TNF Agent Resource Fabric when the task involves duplicated skills/prompts/rules/templates, mapping locally installed CLI/desktop harness internals, reducing per-host resource copies, or adding a new host adapter. Reusable read-mostly bytes may be content-addressed once; secrets and opaque/stateful vendor stores require their own explicit policy and must not be blindly deduplicated. Unknown hosts remain discovery-required until their actual supported surfaces are verified.
+
 ### User context / persistence / local or Google Drive storage
 
 If present on the active branch, read:
@@ -85,7 +95,7 @@ If absent, locate the active canonical PR/workstream before inventing provider-s
 
 ### Dynamic memory
 
-Use the harness memory layer only when task-relevant. Dynamic recall is a clue source, not a substitute for current code or authority.
+Use the harness memory layer only when task-relevant. Dynamic recall is a clue source, not a substitute for current code or authority. Stateful vendor histories/"brains" discovered during resource-convergence work route through explicit memory/export/compaction adapters rather than static file deduplication.
 
 ## Concurrent ownership
 

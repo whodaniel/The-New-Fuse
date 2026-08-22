@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "id": "tnf-onboarding-contract",
-  "version": "2.0.0",
-  "updatedAt": "2026-08-22T11:45:00.000Z",
+  "version": "2.1.0",
+  "updatedAt": "2026-08-22T16:50:00.000Z",
   "authority": {
     "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
     "frontloadManifest": "docs/core/FRONTLOAD_MANIFEST.md",
@@ -75,6 +75,14 @@
       ]
     },
     {
+      "when": "local agent resource consolidation, host-internal skill/prompt/rule deduplication, agent resource migration, adaptive redirection, or new local CLI/desktop host resource mapping is involved",
+      "load": [
+        "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+        ".agent/skills/tnf-agent-resource-convergence/SKILL.md"
+      ],
+      "rule": "Reusable read-mostly resources may converge into the TNF content-addressed resource fabric. Secrets and opaque/stateful vendor stores must not be blindly deduplicated. Unknown hosts remain discovery-required until their real supported surfaces are verified."
+    },
+    {
       "when": "user context, profile, memory persistence, local storage, or Google Drive storage is involved",
       "loadIfPresent": [
         "docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md",
@@ -88,18 +96,21 @@
     "doNotReinventBeforeSearch": true,
     "stableSourceIdentitySeparateFromFacets": true,
     "sourceLabelsDoNotCreateAuthority": true,
-    "privacyPrecedesHydration": true
+    "privacyPrecedesHydration": true,
+    "centralizeReusableHostResourcesBeforeCreatingProviderCopies": true
   },
   "hostInjection": {
     "installer": "scripts/install-agent-frontload.cjs",
     "provisioner": "scripts/harness/provision-injection-surfaces.cjs",
     "verifyCommand": "node scripts/harness/provision-injection-surfaces.cjs --verify",
     "repairCommand": "node scripts/harness/provision-injection-surfaces.cjs --repair",
-    "policy": "Host surfaces contain pointers to the canonical onboarder/manifest, not copied Stage A rail lists."
+    "policy": "Host surfaces contain pointers to the canonical onboarder/manifest, not copied Stage A rail lists. Reusable host resources should converge through TNF_AGENT_RESOURCE_CONVERGENCE when an adapter is verified."
   },
   "verification": [
     "node --test scripts/protocols/frontload-manifest.test.cjs",
     "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
+    "node --test scripts/harness/agent-resource-converge.test.cjs",
+    "node scripts/harness/agent-resource-converge.cjs scan",
     "node scripts/verify-repo-frontload.cjs",
     "node scripts/harness/provision-injection-surfaces.cjs --verify",
     "pnpm run tnf:onboard -- --task <task>"

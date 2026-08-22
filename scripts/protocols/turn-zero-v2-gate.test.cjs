@@ -65,6 +65,13 @@ test('multi-agent Drive/source work routes through concordance governance', () =
   assert.ok(paths.includes('.agent/skills/tnf-source-concordance/SKILL.md'));
 });
 
+test('agent resource consolidation routes through the resource fabric protocol and skill', () => {
+  const paths = hydrationReceipt('consolidate local agent skills and ZCode resource copies');
+  assert.ok(paths.includes('docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md'));
+  assert.ok(paths.includes('.agent/skills/tnf-agent-resource-convergence/SKILL.md'));
+  assert.ok(paths.includes('data/harness/agent-resource-fabric.json'));
+});
+
 test('user-context storage work routes to the canonical storage contract instead of inventing a provider path', () => {
   const paths = hydrationReceipt('audit Google Drive user context storage profile');
   assert.ok(paths.includes('docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md'));
