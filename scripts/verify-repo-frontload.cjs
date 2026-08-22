@@ -1,87 +1,60 @@
 #!/usr/bin/env node
-/**
- * Verify repo-local TNF frontload artifacts against FRONTLOAD_MANIFEST.md.
- * Shell/home frontload markers remain scripts/verify_frontload_state.sh.
- */
 'use strict';
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { hydrateStage } = require('./protocols/frontload-manifest.cjs');
 
 const ROOT = process.cwd();
-const MANIFEST = path.join(ROOT, 'docs/core/FRONTLOAD_MANIFEST.md');
-
-const REQUIRED = [
-  'docs/protocols/TURN_ZERO_MANDATE.md',
-  'docs/protocols/LIVING_STATE.md',
-  'docs/protocols/reports/SESSION_HANDOFF_LATEST.json',
-  '.agent/SYSTEM_PROMPT.md',
-  'docs/protocols/AGENT_STATUS_LEDGER.md',
-  '.agent/context/agent-onboarding.md',
-  '.agent/workflows/frontload.md',
-  '.agent/context/resource-map.md',
-  'docs/core/SOUL.md',
-  'docs/core/IDENTITY.md',
-  'docs/core/USER.md',
-  'docs/core/TOOLS.md',
-  'docs/core/HEARTBEAT.md',
-  'docs/core/SECURITY.md',
-  'docs/core/MEMORY.md',
-  'docs/core/ENGINEERING_PRINCIPLES.md',
-  'docs/core/BOOTSTRAP.md',
-  'docs/core/FRONTLOAD_MANIFEST.md',
-  'docs/core/AGENTS.md',
-  'docs/protocols/HARNESS_CONFIG.md',
-  'docs/protocols/HARNESS_MEMORY_LAYER.md',
-  'docs/protocols/HARNESS_TRAJECTORY.md',
-  'docs/protocols/HARNESS_PERMISSION_BERM.md',
-  'data/harness/harness-config.json',
-  'data/harness/permission-policy.json',
-  'data/mcp_config.json',
-];
-
 const jsonMode = process.argv.includes('--json');
 const checks = [];
+function record(name, ok, detail, extra = {}) { checks.push({ name, ok, detail, ...extra }); }
+function exists(rel) { return fs.existsSync(path.join(ROOT, rel)); }
 
-function record(name, ok, detail) {
-  checks.push({ name, ok, detail });
-}
+const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: 'verify-repo-frontload' });
+record('stageA.manifest-derived', stageA.ok, stageA.ok ? `${stageA.entries.length} rails loaded and hashed` : 'one or more manifest-derived Stage A rails missing/unreadable', {
+  manifestHash: stageA.manifest.sha256,
+});
+for (const rail of stageA.entries) record(`stageA.${rail.path}`, rail.status === 'loaded', rail.status, { sha256: rail.sha256, bytes: rail.bytes });
 
-if (!fs.existsSync(MANIFEST)) {
-  record('manifest', false, 'docs/core/FRONTLOAD_MANIFEST.md missing');
-} else {
-  record('manifest', true, 'FRONTLOAD_MANIFEST.md present');
-}
+const SUPPORTING = [
+  'data/harness/onboarding-contract.json',
+  '.agent/context/agent-onboarding.md',
+  '.agent/workflows/frontload.md',
+  '.agent/skills/tnf-engineering-context/SKILL.md',
+  '.skills/tnf-engineering-context/SKILL.md',
+  'docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md',
+  '.agent/skills/tnf-source-concordance/SKILL.md',
+  'scripts/protocols/frontload-manifest.cjs',
+  'scripts/protocols/turn-zero-v2-gate.cjs',
+  'scripts/tnf-onboard-twip.cjs',
+  'scripts/harness/provision-injection-surfaces.cjs',
+  'scripts/install-agent-frontload.cjs',
+  'CLAUDE.md',
+  'AGENTS.md',
+  '.cursor/rules/tnf-harness.mdc',
+];
+for (const rel of SUPPORTING) record(`support.${rel}`, exists(rel), exists(rel) ? 'present' : 'missing');
 
-for (const rel of REQUIRED) {
-  const abs = path.join(ROOT, rel);
-  const ok = fs.existsSync(abs);
-  record(rel, ok, ok ? 'present' : 'missing');
-}
-
-const bootstrapPath = path.join(ROOT, 'docs/core/BOOTSTRAP.md');
-if (fs.existsSync(bootstrapPath)) {
-  const body = fs.readFileSync(bootstrapPath, 'utf8');
-  const pending = body.includes('[BOOTSTRAP_STATUS:PENDING]');
-  const complete = body.includes('[BOOTSTRAP_STATUS:COMPLETE]');
-  record(
-    'bootstrap_status',
-    pending || complete,
-    pending ? 'PENDING' : complete ? 'COMPLETE' : 'missing status marker'
-  );
+if (exists('docs/core/BOOTSTRAP.md')) {
+  const body = fs.readFileSync(path.join(ROOT, 'docs/core/BOOTSTRAP.md'), 'utf8');
+  const state = body.includes('[BOOTSTRAP_STATUS:COMPLETE]') ? 'COMPLETE' : body.includes('[BOOTSTRAP_STATUS:PENDING]') ? 'PENDING' : 'UNKNOWN';
+  record('bootstrap.status-marker', state !== 'UNKNOWN', state);
 }
 
 const failed = checks.filter((c) => !c.ok);
-const ok = failed.length === 0;
-
-if (jsonMode) {
-  console.log(JSON.stringify({ ok, failed: failed.length, checks }, null, 2));
-} else {
-  console.log('TNF repo frontload verification');
-  for (const c of checks) {
-    console.log(`${c.ok ? 'OK' : 'FAIL'}: ${c.name} — ${c.detail}`);
-  }
-  console.log(ok ? '\nALL REQUIRED FRONTLOAD ARTIFACTS PRESENT' : `\n${failed.length} missing/failed`);
+const out = {
+  ok: failed.length === 0,
+  authority: 'docs/core/FRONTLOAD_MANIFEST.md',
+  manifestHash: stageA.manifest.sha256,
+  stageARails: stageA.entries.map((x) => ({ path: x.path, status: x.status, sha256: x.sha256 })),
+  failed: failed.length,
+  checks,
+};
+if (jsonMode) console.log(JSON.stringify(out, null, 2));
+else {
+  console.log('TNF repo frontload verification — manifest-derived');
+  for (const c of checks) console.log(`${c.ok ? 'OK' : 'FAIL'}: ${c.name} — ${c.detail}`);
+  console.log(out.ok ? '\nFRONTLOAD CONTRACT PASS' : `\n${failed.length} check(s) failed`);
 }
-
-process.exit(ok ? 0 : 1);
+process.exit(out.ok ? 0 : 1);

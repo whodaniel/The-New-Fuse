@@ -1,78 +1,47 @@
 ---
-description: Execute TNF Turn Zero and refresh canonical session context.
+description: Execute manifest-derived TNF Turn Zero and refresh canonical engineering context.
 ---
 
-# /frontload - TNF Context Frontload
+# /frontload — TNF Context Frontload
 
-Use this workflow at the start of every AI session, after context clears, or
-when switching between agent runtimes.
+Use at session start, after context compaction/reset, after provider substitution, after repository movement, or whenever current authority/workstream ownership is uncertain.
 
 ## Authority
 
-Canonical Turn Zero authority:
+- lifecycle/write readiness: `docs/protocols/TURN_ZERO_MANDATE.md`
+- Stage A inventory: `docs/core/FRONTLOAD_MANIFEST.md`
+- machine contract: `data/harness/onboarding-contract.json`
 
-- `docs/protocols/TURN_ZERO_MANDATE.md`
+This workflow is only a pointer. It must not carry its own competing Stage A list.
 
-This workflow is a convenience wrapper. If it conflicts with the mandate, the
-mandate wins.
+## Execute
 
-## Steps
-
-1. Read the system prompt:
-
-   ```bash
-   cat .agent/SYSTEM_PROMPT.md
-   ```
-
-2. Execute Turn Zero:
-
-   ```bash
-   cat ./docs/protocols/TURN_ZERO_MANDATE.md
-   cat ./docs/protocols/LIVING_STATE.md
-   cat ./docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null || true
-   cat ./docs/protocols/reports/SESSION_HANDOFF_LATEST.json 2>/dev/null || true
-   ```
-
-3. Inspect runtime inventory:
-
-   ```bash
-   node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000
-   ```
-
-4. Load the resource map if the task requires skill or agent selection:
-
-   ```bash
-   cat .agent/context/resource-map.md
-   ```
-
-5. Confirm operator policy:
-
-   - TNF is the primary control plane.
-   - OpenClaw is an optional interoperability surface.
-   - Prefer native `tnf <command>` routes first.
-   - Use `tnf openclaw ...` or `tnf claw ...` only when no native TNF route
-     exists.
-   - Avoid raw `openclaw ...` unless debugging compatibility or explicitly
-     requested.
-
-6. Report orientation:
-
-   - active directive
-   - handoff source and next actions
-   - missing artifacts, if any
-   - endpoint sources: environment variable or local fallback
-   - verification path for the requested task
-
-## Legacy Files
-
-`.agent/handoff_notes.txt`, `task_plan.md`, `findings.md`, and `progress.md`
-are compatibility fallbacks only. Do not create or update them unless the
-operator explicitly requests legacy file-based planning.
-
-## Raw Agent Prompt
-
-For an AI CLI launched without TNF auto-injection, paste:
-
-```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+```bash
+pnpm run tnf:onboard -- --task "<current task if known>"
 ```
+
+Before mutation:
+
+```bash
+TNF_WORK_DOMAIN=corporate \
+TNF_ARTIFACT_DESTINATION=oss_runtime \
+TNF_DATA_RESIDENCY=product_state \
+TNF_DATA_SENSITIVITY=public \
+pnpm run tnf:onboard -- --write-ready --task "<task>"
+```
+
+The onboarder should return a manifest-derived Stage A hash receipt, repository/handoff freshness, task-scoped hydration plan, host-injection verification, and provider discovery.
+
+## Task Routes
+
+For nontrivial TNF engineering, load `.agent/skills/tnf-engineering-context/SKILL.md`.
+
+For multi-agent/Drive/source reconciliation, load `docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md` and `.agent/skills/tnf-source-concordance/SKILL.md`.
+
+For source-library maintenance, load `.agent/skills/tnf-source-library-refresh/SKILL.md`.
+
+For user-context/storage work, use the canonical storage mandate/skill if present; otherwise inspect the active canonical PR/workstream rather than creating a parallel provider path.
+
+## Completion
+
+Report what was inspected, current repo/HEAD, active collision boundaries, exact changes, verification actually executed, unverified assumptions, and continuation state.

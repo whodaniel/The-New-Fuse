@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "tnf-onboarding-contract",
+  "version": "2.0.0",
+  "updatedAt": "2026-08-22T11:45:00.000Z",
+  "authority": {
+    "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
+    "frontloadManifest": "docs/core/FRONTLOAD_MANIFEST.md",
+    "canonicalDevelopmentRepository": "whodaniel/tnf-monorepo"
+  },
+  "standardEntryPoint": "pnpm run tnf:onboard",
+  "writeReadyEntryPoint": "pnpm run tnf:onboard -- --write-ready --task <task>",
+  "stageA": {
+    "deriveFromManifest": true,
+    "allowCompetingHardCodedRailLists": false,
+    "receiptPath": ".agent/runtime-logs/turn-zero-stage-a.latest.json",
+    "receiptRequires": [
+      "manifest_sha256",
+      "repository_origin",
+      "repository_branch",
+      "repository_head",
+      "rail_path",
+      "rail_sha256",
+      "load_status",
+      "observed_at",
+      "consumer"
+    ]
+  },
+  "fullyHarnessed": {
+    "definition": "A session has a current manifest-derived Stage A receipt, a repository/freshness orientation, a task-scoped hydration route, capability/provider discovery, and verified host injection coverage when the host exposes an injection surface. Write-capable work additionally requires resolved classification and no write-readiness blockers.",
+    "requirements": [
+      "stage_a_hydration_pass",
+      "canonical_or_explicit_external_repository_mode",
+      "current_repository_receipt",
+      "handoff_freshness_reported",
+      "task_hydration_plan_emitted",
+      "provider_discovery_attempted",
+      "host_injection_verified_or_not_applicable"
+    ],
+    "writeCapableAdditionalRequirements": [
+      "classification_resolved",
+      "stage_a_hashes_current",
+      "no_downstream_publication_target",
+      "no_in_progress_git_operation",
+      "required_host_injection_surfaces_verified"
+    ]
+  },
+  "rehydrateOn": [
+    "session_start",
+    "context_compaction",
+    "provider_substitution",
+    "repository_movement",
+    "manifest_hash_change",
+    "stage_a_rail_hash_change",
+    "authority_uncertainty"
+  ],
+  "taskRoutes": [
+    {
+      "when": "nontrivial TNF engineering, architecture, debugging, implementation, or review",
+      "load": [
+        ".agent/skills/tnf-engineering-context/SKILL.md"
+      ]
+    },
+    {
+      "when": "multiple agents or overlapping durable sources are involved",
+      "load": [
+        "docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md",
+        ".agent/skills/tnf-source-concordance/SKILL.md"
+      ]
+    },
+    {
+      "when": "source library freshness, packaging, Drive distribution, or supersession is involved",
+      "load": [
+        ".agent/skills/tnf-source-library-refresh/SKILL.md"
+      ]
+    },
+    {
+      "when": "user context, profile, memory persistence, local storage, or Google Drive storage is involved",
+      "loadIfPresent": [
+        "docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md",
+        ".agent/skills/tnf-user-context-storage/SKILL.md"
+      ],
+      "rule": "If these paths are absent on the current branch, locate and reconcile the active canonical PR/workstream before inventing a competing provider model."
+    }
+  ],
+  "crossAgentRules": {
+    "inspectActiveOwnershipBeforeMutation": true,
+    "doNotReinventBeforeSearch": true,
+    "stableSourceIdentitySeparateFromFacets": true,
+    "sourceLabelsDoNotCreateAuthority": true,
+    "privacyPrecedesHydration": true
+  },
+  "hostInjection": {
+    "installer": "scripts/install-agent-frontload.cjs",
+    "provisioner": "scripts/harness/provision-injection-surfaces.cjs",
+    "verifyCommand": "node scripts/harness/provision-injection-surfaces.cjs --verify",
+    "repairCommand": "node scripts/harness/provision-injection-surfaces.cjs --repair",
+    "policy": "Host surfaces contain pointers to the canonical onboarder/manifest, not copied Stage A rail lists."
+  },
+  "verification": [
+    "node --test scripts/protocols/frontload-manifest.test.cjs",
+    "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
+    "node scripts/verify-repo-frontload.cjs",
+    "node scripts/harness/provision-injection-surfaces.cjs --verify",
+    "pnpm run tnf:onboard -- --task <task>"
+  ]
+}

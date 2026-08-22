@@ -1,35 +1,26 @@
 ---
-description: TNF harness control-plane pointers (Turn Zero, berm, memory layer)
+description: TNF manifest-derived harness pointer
 alwaysApply: true
 ---
 
-# TNF Harness (required)
+# TNF Harness — Required
 
-TNF is the control plane. This rule injects **pointers**, not copies.
+TNF is the control plane. This rule injects pointers, not copied authority.
 
-## Eager (Stage A)
-
-1. `docs/protocols/TURN_ZERO_MANDATE.md`
-2. `docs/protocols/LIVING_STATE.md`
-3. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
-4. `docs/protocols/HARNESS_CONFIG.md` + `data/harness/harness-config.json`
-
-## Operating loop
-
-Inspect → Act → Verify. Before high-impact tools run:
+At session start or after context reset/provider switch/repository movement:
 
 ```bash
-node scripts/harness/permission-berm.cjs evaluate --action-class <class> --json
+pnpm run tnf:onboard -- --task "<current task if known>"
 ```
 
-## Dynamic memory (≠ docs/core/MEMORY.md)
+- Stage A inventory authority: `docs/core/FRONTLOAD_MANIFEST.md`
+- lifecycle/write readiness: `docs/protocols/TURN_ZERO_MANDATE.md`
+- machine onboarding contract: `data/harness/onboarding-contract.json`
 
-```bash
-node scripts/harness/memory-layer.cjs recall --query "<task keywords>" --limit 5
-```
+For nontrivial engineering load `.agent/skills/tnf-engineering-context/SKILL.md`.
 
-## Completeness
+Before creating a new abstraction, search current code and active PR/workstream ownership for the same responsibility. Do not race another agent's active package without explicit coordination.
 
-```bash
-node scripts/harness/verify-harness-completeness.cjs
-```
+For source/multi-agent conflicts use `docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md` + `tnf-source-concordance`.
+
+Before high-impact tools, use the permission berm. Verify outcomes empirically.

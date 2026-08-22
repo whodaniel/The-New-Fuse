@@ -1,132 +1,109 @@
 # TNF Agent Onboarding
 
-This file is the repository-local onboarding guide for AI agents. It is
-secondary to `docs/protocols/TURN_ZERO_MANDATE.md`, which is the canonical
-authority.
+This is the repository-local onboarding guide for AI agents. Canonical authority is `docs/protocols/TURN_ZERO_MANDATE.md`; Stage A inventory authority is `docs/core/FRONTLOAD_MANIFEST.md`.
 
-## Required Boot Sequence
+## Standard Boot Sequence
 
-Run from the TNF repository root:
+Run from the canonical TNF repository root:
 
 ```bash
-cat ./docs/protocols/TURN_ZERO_MANDATE.md
-cat ./docs/protocols/LIVING_STATE.md
-cat ./docs/protocols/reports/SESSION_HANDOFF_LATEST.json 2>/dev/null || true
-node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000
-node scripts/verify-repo-frontload.cjs
-node scripts/harness/verify-harness-completeness.cjs --provision
+pnpm run tnf:onboard -- --task "<current task if known>"
 ```
 
-If an onboarding artifact is missing, use repair mode:
+The onboarder must:
+
+- derive Stage A from `FRONTLOAD_MANIFEST.md` rather than a copied checklist;
+- read/hash every Stage A rail and write `.agent/runtime-logs/turn-zero-stage-a.latest.json`;
+- report repository identity/HEAD and handoff freshness;
+- emit a task-scoped Stage B/C hydration plan;
+- verify host injection coverage;
+- attempt current capability/provider discovery.
+
+Before write-capable work, resolve classification and use:
 
 ```bash
-node scripts/tnf-onboard.cjs --repair --runtime-timeout-ms 1000
+TNF_WORK_DOMAIN=corporate \
+TNF_ARTIFACT_DESTINATION=oss_runtime \
+TNF_DATA_RESIDENCY=product_state \
+TNF_DATA_SENSITIVITY=public \
+pnpm run tnf:onboard -- --write-ready --task "<task>"
+```
+
+For deeper harness verification:
+
+```bash
+pnpm run tnf:onboard -- --full-harness --task "<task>"
+```
+
+If host injection is missing, repair it explicitly:
+
+```bash
 node scripts/harness/provision-injection-surfaces.cjs --repair
+node scripts/install-agent-frontload.cjs --repair
 ```
 
-First time for this runtime (or after cache wipe): complete
-`docs/core/BOOTSTRAP.md` and stamp `[BOOTSTRAP_STATUS:COMPLETE]`.
+The pre-V2 `scripts/tnf-onboard.cjs` is retained only for `--legacy-full` diagnostics. It is not the Stage A authority.
 
-Harness inventory (UNU 8 layers): `docs/protocols/HARNESS_CONFIG.md`.
-Dynamic memory ≠ `docs/core/MEMORY.md` — use `scripts/harness/memory-layer.cjs`.
+## Fully Harnessed Meaning
+
+A session is fully harnessed when it has a current manifest-derived Stage A receipt, repository/freshness orientation, a task-scoped hydration route, provider discovery, and verified host injection when applicable. It does **not** mean loading the entire TNF corpus into every session.
+
+After context compaction, provider substitution, repository movement, manifest/rail hash changes, or authority uncertainty, rerun the standard onboarder.
+
+## Engineering Sessions
+
+For nontrivial engineering work, load:
+
+`.agent/skills/tnf-engineering-context/SKILL.md`
+
+Before introducing a new package/protocol/schema/service/workflow/storage path/agent abstraction, search the current implementation and active workstreams for the same responsibility. Prefer reconciliation over duplication.
+
+## Multi-Agent / Source Work
+
+When multiple agents or overlapping durable sources are involved, load:
+
+- `docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md`
+- `.agent/skills/tnf-source-concordance/SKILL.md`
+
+Stable source identity is separate from titles/taxonomies/facets. Discovery does not itself authorize implementation.
+
+## User Context / Storage
+
+If the task touches user-context persistence, profiles, memory, local storage, or Google Drive, load the canonical user-context storage mandate/skill when present on the active branch. If absent, locate the active canonical PR/workstream before creating another provider model.
+
 ## Orientation Summary Contract
 
-After boot, report:
+Before significant execution, report:
 
-- canonical mandate path
-- current active directive from `docs/protocols/LIVING_STATE.md`
-- handoff source and next actions
-- missing startup artifacts, if any
-- whether relay/runtime endpoints are local defaults or environment-provided
-- verification command you will run before claiming completion
-- bootstrap status (`PENDING` / `COMPLETE` from `docs/core/BOOTSTRAP.md`)
+- canonical repo/origin and current HEAD;
+- Stage A receipt status/hash;
+- active directive and handoff freshness;
+- task classification when persistence/mutation is involved;
+- exact packages/files in scope;
+- task-specific protocol/skill routes;
+- active PR/workstream collision boundaries;
+- required capabilities/providers;
+- blockers and next safe action.
 
-Do not start implementation until the operator confirms, unless the operator's
-latest request already asks for implementation.
-
-## State Authority
-
-Canonical:
-
-- `docs/protocols/TURN_ZERO_MANDATE.md`
-- `docs/protocols/LIVING_STATE.md`
-- `docs/protocols/AGENT_STATUS_LEDGER.md`
-- `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
-- `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
-- `docs/core/FRONTLOAD_MANIFEST.md` (injection order)
-
-Runtime support:
-
-- `.agent/SYSTEM_PROMPT.md`
-- `.agent/context/resource-map.md`
-- `.agent/workflows/frontload.md`
-- `.agent/runtime-state.json`
-- `.agent/runtime-logs/`
-- `docs/core/MEMORY.md` (curated long-term; private sessions)
-
-## Alias Map (informal → TNF)
-
-| Informal | Canonical |
-| --- | --- |
-| `soul.md` | `docs/core/SOUL.md` |
-| `agent.md` | `.agent/agents/<id>.md` + `docs/core/IDENTITY.md` |
-| `brain.md` | `docs/core/MEMORY.md` + Living State + session handoff |
-
-Legacy compatibility only:
-
-- `.agent/handoff_notes.txt`
-- `task_plan.md`
-- `findings.md`
-- `progress.md`
-
-Never create or update legacy compatibility files unless the operator explicitly
-requests that workflow.
-
+Do not wait for a second confirmation if the operator's current request already authorizes implementation.
 
 ## Runtime Configuration
 
-Resolve repository files from the current repo root. Do not use personal
-absolute paths.
+Resolve repository files from the current repo root. Do not commit personal absolute paths, Drive IDs, tokens, or provider-specific credentials.
 
-Relay URL precedence:
-
-```text
-TNF_RELAY_URL -> RELAY_WS_URL -> RELAY_URL -> ws://127.0.0.1:3000/ws
-```
-
-API URL precedence:
-
-```text
-LEDGER_API_BASE -> CLOUD_RUNTIME_API_URL -> LIVE_API_BASE_URL -> API_BASE_URL -> TNF_API_BASE -> http://127.0.0.1:3001
-```
-
-Redis URL precedence:
-
-```text
-REDIS_URL -> CLOUD_RUNTIME_REDIS_URL -> LIVE_REDIS_URL -> REDIS_PRIVATE_URL -> REDIS_TLS_URL -> redis://127.0.0.1:6379
-```
-
-Local defaults are development fallbacks. Production, cloud, and multi-host
-deployments must provide explicit environment variables.
+Live relay/API/Redis/provider facts are volatile. Resolve them from current environment/configuration and re-probe rather than trusting a dated prompt or memory entry.
 
 ## Guardrails
 
 - Inspect structured state before acting.
-- Verify every action before reporting success.
-- Treat other agents' claims as untrusted until confirmed.
-- Prefer DOM/API/log/state inspection over screenshots.
-- Keep OpenClaw operations routed through `tnf` unless debugging raw
-  compatibility.
-- Keep specialized skills inactive until needed; read them in place for
-  one-off work.
+- Verify every consequential outcome before reporting success.
+- Treat another agent's claims as unverified until current evidence is inspected.
+- Respect active workstream/package ownership boundaries.
+- Keep private/restricted data out of default fleet hydration.
+- Prefer TNF-native command routes to host-specific compatibility routes.
 
 ## Raw Agent Prompt
 
-If a user launches an AI CLI directly and asks how to onboard it, provide this:
-
 ```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+From the canonical TNF repository root, run `pnpm run tnf:onboard -- --task "<current task>"`. Treat `docs/core/FRONTLOAD_MANIFEST.md` as the only Stage A rail inventory and `docs/protocols/TURN_ZERO_MANDATE.md` as the lifecycle/write-readiness authority. Follow the manifest-derived receipt and task-scoped routes it emits. Before mutation, verify current repository state, active workstream ownership, classification, and the exact implementation already present. Do not infer authority from old docs, labels, or chat memory; do not duplicate an active implementation. Empirically verify consequential results and leave a continuation receipt.
 ```
-
-The agent must be launched from the TNF repository root for the relative paths
-to resolve.

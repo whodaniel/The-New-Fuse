@@ -4,6 +4,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
+const { hydrateStage } = require('./frontload-manifest.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CANONICAL = 'whodaniel/tnf-monorepo';
@@ -12,6 +13,10 @@ const PRODUCT_MAP = 'data/distribution/product-repo-map.json';
 const OSS_BOUNDARY = 'data/distribution/oss-app-boundary.json';
 const PRODUCT_BOUNDARY = 'docs/product/TNF_PRODUCT_BOUNDARY.md';
 const REPO_SEPARATION = 'docs/REPO_SEPARATION.md';
+const ONBOARDING_CONTRACT = 'data/harness/onboarding-contract.json';
+const HANDOFF = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
+const LIVING_STATE = 'docs/protocols/LIVING_STATE.md';
+const RUNTIME_RECEIPT = '.agent/runtime-logs/turn-zero-stage-a.latest.json';
 
 function git(args) {
   try {
@@ -75,7 +80,6 @@ const VALID = {
   residency: new Set(['product_state', 'bounded_working', 'external_durable', 'secret_machine_local', 'unknown']),
   sensitivity: new Set(['public', 'internal', 'private', 'restricted', 'unknown']),
 };
-
 function envOrUnknown(name) { return String(process.env[name] || 'unknown').trim().toLowerCase(); }
 function classificationReceipt() {
   return {
@@ -85,7 +89,6 @@ function classificationReceipt() {
     sensitivity: envOrUnknown('TNF_DATA_SENSITIVITY'),
   };
 }
-
 function validateClassification(c) {
   const errors = [];
   if (!VALID.domain.has(c.workDomain)) errors.push(`invalid work domain: ${c.workDomain}`);
@@ -106,13 +109,59 @@ function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
   const paths = [PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
-  if (/relay|broker|websocket|context|intent/.test(q)) paths.push('packages/relay-core');
+  if (/tnf|engineer|architect|implement|debug|review|refactor|code/.test(q)) {
+    paths.push('.agent/skills/tnf-engineering-context/SKILL.md');
+  }
+  if (/source|drive|ledger|taxonomy|concordance|gemini|multi-agent|multi agent/.test(q)) {
+    paths.push('docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md', '.agent/skills/tnf-source-concordance/SKILL.md');
+  }
+  if (/user context|storage|profile|google drive|memory|context persistence/.test(q)) {
+    paths.push('docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md', '.agent/skills/tnf-user-context-storage/SKILL.md');
+  }
+  if (/relay|broker|websocket|intent/.test(q)) paths.push('packages/relay-core');
   if (/front|ui|react|vite/.test(q)) paths.push('apps/frontend');
   if (/api|nest|gateway/.test(q)) paths.push('apps/api', 'apps/api-gateway');
   if (/chrome|browser extension/.test(q)) paths.push('apps/chrome-extension');
   if (/vscode/.test(q)) paths.push('apps/vscode-extension');
   if (/tauri|desktop/.test(q)) paths.push('apps/tauri-desktop');
   return [...new Set(paths)];
+}
+
+function safeJson(relPath) {
+  try { return JSON.parse(fs.readFileSync(path.join(ROOT, relPath), 'utf8')); } catch { return null; }
+}
+function livingDirective() {
+  try {
+    const text = fs.readFileSync(path.join(ROOT, LIVING_STATE), 'utf8');
+    const m = text.match(/<!-- CURRENT_DIRECTIVE:START -->\s*([\s\S]*?)\s*<!-- CURRENT_DIRECTIVE:END -->/);
+    return m ? m[1].trim() : null;
+  } catch { return null; }
+}
+function orientationSummary(repository) {
+  const handoff = safeJson(HANDOFF);
+  const productMap = safeJson(PRODUCT_MAP);
+  const handoffHead = handoff?.head_sha || null;
+  return {
+    currentDirective: livingDirective(),
+    handoff: handoff ? {
+      id: handoff.handoff_id || null,
+      createdAt: handoff.created_at || null,
+      branch: handoff.branch || null,
+      head: handoffHead,
+      freshAgainstCurrentHead: Boolean(handoffHead && repository.head && handoffHead === repository.head),
+      nextActions: Array.isArray(handoff.next_actions) ? handoff.next_actions : [],
+      resumeChecklist: Array.isArray(handoff.continuation?.resume_checklist) ? handoff.continuation.resume_checklist : [],
+    } : null,
+    canonicalDevelopment: productMap?.policy?.canonicalDevelopment || CANONICAL,
+    onboardingContractPresent: fs.existsSync(path.join(ROOT, ONBOARDING_CONTRACT)),
+  };
+}
+
+function taskHydrationStatus(paths) {
+  return paths.map((relPath) => ({
+    path: relPath,
+    present: fs.existsSync(path.join(ROOT, relPath)),
+  }));
 }
 
 function printFreshness() {
@@ -124,7 +173,21 @@ function printFreshness() {
 
 function parseArgs(argv) {
   const idx = argv.indexOf('--task');
-  return { json: argv.includes('--json'), requireWriteReady: argv.includes('--require-write-ready'), task: idx >= 0 ? argv[idx + 1] || '' : '' };
+  const consumerIdx = argv.indexOf('--consumer');
+  return {
+    json: argv.includes('--json'),
+    requireWriteReady: argv.includes('--require-write-ready'),
+    writeReceipt: argv.includes('--write-receipt'),
+    task: idx >= 0 ? argv[idx + 1] || '' : '',
+    consumer: consumerIdx >= 0 ? argv[consumerIdx + 1] || 'unknown' : (process.env.TNF_HARNESS_CONSUMER || 'turn-zero-v2'),
+  };
+}
+
+function persistReceipt(payload) {
+  const abs = path.join(ROOT, RUNTIME_RECEIPT);
+  fs.mkdirSync(path.dirname(abs), { recursive: true });
+  fs.writeFileSync(abs, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+  return RUNTIME_RECEIPT;
 }
 
 function main() {
@@ -133,17 +196,22 @@ function main() {
   const classification = classificationReceipt();
   const classificationValidation = validateClassification(classification);
   const capabilities = capabilityReceipt();
-  const hydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
+  const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: args.consumer });
+  const taskHydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
+  const taskHydrationState = taskHydrationStatus(taskHydration);
+  const orientation = orientationSummary(repository);
   const blockers = [];
   const warnings = [];
 
-  // Internal TNF development must never accidentally occur in the two owned
-  // downstream publication targets. External forks are legitimate OSS work
-  // surfaces and are not forced to masquerade as the private monorepo.
+  if (!stageA.ok) blockers.push('manifest-derived Stage A hydration is incomplete');
   if (repository.publicationTarget) blockers.push(`origin ${repository.normalizedOrigin} is a downstream publication target; develop internally in ${CANONICAL} or work from an external fork`);
-  if (repository.mode === 'external-or-fork') warnings.push(`external/fork mode: upstream placement must follow public contribution and product-boundary rules; private TNF source is not assumed available`);
+  if (repository.mode === 'external-or-fork') warnings.push('external/fork mode: private monorepo state is not assumed; upstream placement must follow public contribution/product-boundary rules');
   if (repository.mode === 'unknown') warnings.push('repository origin could not be classified');
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
+  if (orientation.handoff && !orientation.handoff.freshAgainstCurrentHead) warnings.push('SESSION_HANDOFF_LATEST does not match current HEAD; treat it as continuation context, not a live repository receipt');
+  for (const item of taskHydrationState) {
+    if (!item.present && /USER_CONTEXT_STORAGE/.test(item.path)) warnings.push(`${item.path} is not on this branch; storage work may live on an active PR and must be reconciled before implementation`);
+  }
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
     if (classificationValidation.unresolved) blockers.push('classification is unresolved');
@@ -153,25 +221,60 @@ function main() {
     protocol: 'TNF_TURN_ZERO_V2',
     canonicalSource: CANONICAL,
     lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
-    repository, classification, classificationValidation, capabilities, hydration,
-    writeReady: blockers.length === 0, blockers, warnings,
+    repository,
+    stageA,
+    orientation,
+    classification,
+    classificationValidation,
+    capabilities,
+    taskHydration,
+    taskHydrationState,
+    harnessed: stageA.ok,
+    writeReady: blockers.length === 0 && classificationValidation.ok,
+    blockers,
+    warnings,
   };
+  if (args.writeReceipt) payload.receiptPath = persistReceipt(payload);
 
   if (args.json) console.log(JSON.stringify(payload, null, 2));
   else {
-    console.log('=== Turn Zero V2 ===');
+    console.log('=== Turn Zero V2 / Harness Receipt ===');
     console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
     console.log(`- repository mode: ${repository.mode}`);
-    console.log(`- canonical TNF source: ${CANONICAL}`);
+    console.log(`- Stage A manifest hydration: ${stageA.ok ? 'PASS' : 'FAIL'} (${stageA.entries.length} rails)`);
+    for (const rail of stageA.entries) console.log(`  ${rail.status === 'loaded' ? 'OK' : 'FAIL'} ${rail.path}${rail.sha256 ? ` @ ${rail.sha256.slice(0,12)}` : ''}`);
+    console.log(`- current directive: ${orientation.currentDirective || 'unknown'}`);
+    if (orientation.handoff) {
+      console.log(`- handoff: ${orientation.handoff.id || 'unknown'} @ ${orientation.handoff.head ? orientation.handoff.head.slice(0,12) : 'unknown'} (${orientation.handoff.freshAgainstCurrentHead ? 'HEAD-aligned' : 'stale-vs-HEAD'})`);
+      for (const action of orientation.handoff.nextActions.slice(0, 4)) console.log(`  next: ${action}`);
+    }
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
+    console.log('- task-scoped hydration plan:');
+    for (const item of taskHydrationState) console.log(`  ${item.present ? 'OK' : 'MISS'} ${item.path}`);
     warnings.forEach((w) => console.log(`▲ ${w}`));
-    console.log('- task-scoped hydration:'); hydration.forEach((p) => console.log(`  - ${p}`));
-    console.log('\n=== State Freshness ==='); console.log(printFreshness());
-    if (blockers.length) { console.log('\n=== Write Readiness ==='); blockers.forEach((b) => console.log(`! ${b}`)); }
-    else console.log('\n- write readiness: PASS');
+    console.log('\n=== State Freshness ===');
+    console.log(printFreshness());
+    if (blockers.length) {
+      console.log('\n=== Readiness Blockers ===');
+      blockers.forEach((b) => console.log(`! ${b}`));
+    } else {
+      console.log(`\n- harness state: ${payload.harnessed ? 'PASS' : 'FAIL'}`);
+      console.log(`- write readiness: ${payload.writeReady ? 'PASS' : 'UNRESOLVED (use --require-write-ready before mutation)'}`);
+    }
+    if (payload.receiptPath) console.log(`- receipt: ${payload.receiptPath}`);
   }
   if (args.requireWriteReady && blockers.length) process.exit(1);
+  if (!stageA.ok) process.exit(1);
 }
 
 if (require.main === module) main();
-module.exports = { normalizeOrigin, repositoryMode, validateClassification, hydrationReceipt, repoReceipt, classificationReceipt };
+module.exports = {
+  normalizeOrigin,
+  repositoryMode,
+  validateClassification,
+  hydrationReceipt,
+  repoReceipt,
+  classificationReceipt,
+  orientationSummary,
+  taskHydrationStatus,
+};
