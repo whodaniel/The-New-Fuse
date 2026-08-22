@@ -137,10 +137,22 @@ function livingDirective() {
     return m ? m[1].trim() : null;
   } catch { return null; }
 }
+function handoffRelation(handoffHead, currentHead) {
+  if (!handoffHead || !currentHead) return { relation: 'unknown', commitsSince: null };
+  if (handoffHead === currentHead) return { relation: 'exact', commitsSince: 0 };
+  const mergeBase = git(['merge-base', handoffHead, currentHead]);
+  if (!mergeBase) return { relation: 'unknown', commitsSince: null };
+  if (mergeBase !== handoffHead) return { relation: 'diverged', commitsSince: null };
+  const rawCount = git(['rev-list', '--count', `${handoffHead}..${currentHead}`]);
+  const commitsSince = Number.parseInt(rawCount, 10);
+  return { relation: 'ancestor', commitsSince: Number.isFinite(commitsSince) ? commitsSince : null };
+}
+
 function orientationSummary(repository) {
   const handoff = safeJson(HANDOFF);
   const productMap = safeJson(PRODUCT_MAP);
   const handoffHead = handoff?.head_sha || null;
+  const relation = handoffRelation(handoffHead, repository.head);
   return {
     currentDirective: livingDirective(),
     handoff: handoff ? {
@@ -148,7 +160,9 @@ function orientationSummary(repository) {
       createdAt: handoff.created_at || null,
       branch: handoff.branch || null,
       head: handoffHead,
-      freshAgainstCurrentHead: Boolean(handoffHead && repository.head && handoffHead === repository.head),
+      relationToCurrentHead: relation.relation,
+      commitsSince: relation.commitsSince,
+      freshAgainstCurrentHead: relation.relation === 'exact' || relation.relation === 'ancestor',
       nextActions: Array.isArray(handoff.next_actions) ? handoff.next_actions : [],
       resumeChecklist: Array.isArray(handoff.continuation?.resume_checklist) ? handoff.continuation.resume_checklist : [],
     } : null,
@@ -208,7 +222,9 @@ function main() {
   if (repository.mode === 'external-or-fork') warnings.push('external/fork mode: private monorepo state is not assumed; upstream placement must follow public contribution/product-boundary rules');
   if (repository.mode === 'unknown') warnings.push('repository origin could not be classified');
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
-  if (orientation.handoff && !orientation.handoff.freshAgainstCurrentHead) warnings.push('SESSION_HANDOFF_LATEST does not match current HEAD; treat it as continuation context, not a live repository receipt');
+  if (orientation.handoff?.relationToCurrentHead === 'diverged') warnings.push('SESSION_HANDOFF_LATEST diverges from current HEAD; treat it as historical continuation context until reconciled');
+  if (orientation.handoff?.relationToCurrentHead === 'unknown') warnings.push('SESSION_HANDOFF_LATEST relation to current HEAD could not be proven; treat freshness as unknown');
+  if (orientation.handoff?.relationToCurrentHead === 'ancestor' && (orientation.handoff.commitsSince || 0) > 0) warnings.push(`SESSION_HANDOFF_LATEST is an ancestor ${orientation.handoff.commitsSince} commit(s) behind current HEAD; inspect intervening commits before relying on continuation details`);
   for (const item of taskHydrationState) {
     if (!item.present && /USER_CONTEXT_STORAGE/.test(item.path)) warnings.push(`${item.path} is not on this branch; storage work may live on an active PR and must be reconciled before implementation`);
   }
@@ -245,7 +261,10 @@ function main() {
     for (const rail of stageA.entries) console.log(`  ${rail.status === 'loaded' ? 'OK' : 'FAIL'} ${rail.path}${rail.sha256 ? ` @ ${rail.sha256.slice(0,12)}` : ''}`);
     console.log(`- current directive: ${orientation.currentDirective || 'unknown'}`);
     if (orientation.handoff) {
-      console.log(`- handoff: ${orientation.handoff.id || 'unknown'} @ ${orientation.handoff.head ? orientation.handoff.head.slice(0,12) : 'unknown'} (${orientation.handoff.freshAgainstCurrentHead ? 'HEAD-aligned' : 'stale-vs-HEAD'})`);
+      const relationLabel = orientation.handoff.relationToCurrentHead === 'ancestor'
+        ? `ancestor +${orientation.handoff.commitsSince ?? '?'} commit(s)`
+        : orientation.handoff.relationToCurrentHead;
+      console.log(`- handoff: ${orientation.handoff.id || 'unknown'} @ ${orientation.handoff.head ? orientation.handoff.head.slice(0,12) : 'unknown'} (${relationLabel || 'unknown'})`);
       for (const action of orientation.handoff.nextActions.slice(0, 4)) console.log(`  next: ${action}`);
     }
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
@@ -276,5 +295,6 @@ module.exports = {
   repoReceipt,
   classificationReceipt,
   orientationSummary,
+  handoffRelation,
   taskHydrationStatus,
 };

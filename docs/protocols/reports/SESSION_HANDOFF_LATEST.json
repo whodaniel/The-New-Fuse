@@ -1,61 +1,130 @@
 {
-  "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "34428501-58cc-4ec1-86fc-5546990301eb",
-  "created_at": "2026-08-20T19:21:15.882Z",
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "fd44db85-e95a-4c73-ba77-52b0c7692e1e",
+  "created_at": "2026-08-22T12:39:00.000Z",
   "repository": "tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": false,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
   "branch": "main",
-  "head_sha": "aacbeb11eab9c09f462bc95261dacc57b0c97d77",
+  "head_sha": "3b3410277483573d6e22d2bd8505e6ba140a7ea5",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
+  "classification": {
+    "work_domain": "corporate",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [
+      "harness-engineering",
+      "protocol-governance",
+      "source-governance",
+      "verification"
+    ],
+    "staffed_by": [
+      "ChatGPT",
+      "TNF GitHub connector",
+      "focused Node test harness"
+    ]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": true,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "canonical-main",
+      "state": "merged",
+      "observed_at": "2026-08-22T12:39:00.000Z",
+      "value": "3b3410277483573d6e22d2bd8505e6ba140a7ea5"
+    },
+    {
+      "id": "turn-zero-focused-tests",
+      "state": "pass",
+      "observed_at": "2026-08-22T12:39:00.000Z",
+      "value": "14/14 focused onboarding-contract tests passed locally before PR #156 merge"
+    },
+    {
+      "id": "pr-156",
+      "state": "merged",
+      "observed_at": "2026-08-22T12:39:00.000Z",
+      "value": "feat(harness): make Turn Zero prove full harness hydration"
+    }
+  ],
   "project_ids": [
+    "TNF-HARNESS",
     "TNF-SESSION"
   ],
   "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+    "Turn Zero V2 now derives Stage A exclusively from FRONTLOAD_MANIFEST.md, reads current rail bytes, records SHA-256 hydration receipts, and fails closed on incomplete fundamental rails.",
+    "Canonical onboarding is pnpm run tnf:onboard; Claude, Cursor, global frontload installers, and repository verification surfaces point to that route instead of maintaining independent startup rail lists.",
+    "Added the tnf-engineering-context meta-skill and task-scoped routes for source concordance and the existing user-context-storage workstream, with do-not-reinvent and concurrent-ownership gates.",
+    "Stale hard-coded provider/port/runtime facts were removed from the Stage-A system prompt in favor of state-freshness/live-probe mechanisms."
   ],
   "changed_paths": [
-    "apps/frontend/src/data/codebase_map.json",
-    "data/llm-provider-status.json",
-    "docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md",
-    "validation-results/post-change-report.json",
-    "validation-results/pre-change-file-structure.txt",
-    "validation-results/pre-change-report.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "gaps.json",
-    "packages/infrastructure/dist",
-    "packages/shared/dist",
-    "packages/tnf-core/dist",
-    "packages/tnf-note-taking/dist"
+    ".agent/SYSTEM_PROMPT.md",
+    ".agent/context/agent-onboarding.md",
+    ".agent/skills/tnf-engineering-context/SKILL.md",
+    ".agent/workflows/frontload.md",
+    ".cursor/rules/tnf-harness.mdc",
+    ".skills/tnf-engineering-context/SKILL.md",
+    "CLAUDE.md",
+    "data/harness/onboarding-contract.json",
+    "docs/core/FRONTLOAD_MANIFEST.md",
+    "scripts/harness/provision-injection-surfaces.cjs",
+    "scripts/install-agent-frontload.cjs",
+    "scripts/install-agent-frontload.test.cjs",
+    "scripts/protocols/frontload-manifest.cjs",
+    "scripts/protocols/frontload-manifest.test.cjs",
+    "scripts/protocols/turn-zero-v2-gate.cjs",
+    "scripts/protocols/turn-zero-v2-gate.compat.test.cjs",
+    "scripts/protocols/turn-zero-v2-gate.test.cjs",
+    "scripts/tnf-onboard-twip.cjs",
+    "scripts/verify-repo-frontload.cjs"
   ],
   "verification": {
     "privacy_guard": "na",
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Focused onboarding-contract suite passed 14/14 and executable JavaScript syntax checks passed before PR #156 merge. GitHub commit-status checks were not registered; Codex/Cursor automated review attempts were quota-limited. Diff scope was manually reviewed before merge."
   },
   "continuation": {
     "owner": "tnf-orchestrator",
     "targets": [
-      "story-architect",
-      "librarian"
+      "next-tnf-agent-session",
+      "local-claude",
+      "gemini-drive-auditor"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Run pnpm run tnf:onboard -- --task \"<current task>\" and inspect the manifest-derived Stage A receipt before consequential work.",
+      "On the operator machine, run node scripts/harness/provision-injection-surfaces.cjs --repair and then pnpm run tnf:onboard -- --full-harness --task \"host propagation verification\" to empirically verify installed host injection surfaces.",
+      "Regenerate .agent/SKILL_MANIFEST.md with scripts/skills/build-skill-manifest.cjs from a full canonical checkout so tnf-engineering-context and the newest governance skills are represented without hand-editing generated output.",
+      "Continue the active packages/workflow-builder workstream from its live Claude/Git receipt; do not race that package.",
+      "Keep PR #151/#153 user-context storage work on its existing stack and require executable verification before merging."
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Verify/repair installed host injection surfaces on the operator machine and preserve the resulting harness-injection receipt.",
+    "Regenerate the Tier-0 skill manifest from the full canonical skill corpus.",
+    "Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers to the current canonical main receipt.",
+    "Continue workflow-builder and user-context provider work only from their existing ownership/PR boundaries."
   ],
   "artifacts": {
     "commits": [
-      "aacbeb11eab9c09f462bc95261dacc57b0c97d77"
+      "3b3410277483573d6e22d2bd8505e6ba140a7ea5"
     ]
   }
 }

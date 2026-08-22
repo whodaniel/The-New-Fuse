@@ -1,11 +1,13 @@
 {
   "$schema": "./harness-config.schema.json",
   "id": "tnf-harness",
-  "version": "1.0.0",
-  "updatedAt": "2026-08-12T04:45:00.000Z",
+  "version": "1.1.0",
+  "updatedAt": "2026-08-22T12:37:00.000Z",
   "authorities": [
     "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
+    "docs/core/FRONTLOAD_MANIFEST.md",
+    "data/harness/onboarding-contract.json",
     "docs/protocols/DIRECTIVES.md",
     "docs/protocols/USER_CONFIRMATION_PROTOCOL.md",
     "docs/protocols/HARNESS_AGENT_MODES.md"
@@ -33,12 +35,14 @@
     }
   ],
   "role": "control-plane",
-  "definition": "Agent = Model + Harness. TNF is the protocol-neutral control plane; Cursor/Claude/Codex/Hermes/OpenClaw are optional host harness surfaces.",
+  "definition": "Agent = Model + Harness. TNF is the protocol-neutral control plane; Cursor/Claude/Codex/Gemini/Hermes/OpenClaw and later hosts are capability-provider surfaces.",
   "layers": {
     "interface_override": {
       "status": "implemented",
       "evidence": [
         "docs/protocols/TURN_ZERO_MANDATE.md",
+        "docs/core/FRONTLOAD_MANIFEST.md",
+        "data/harness/onboarding-contract.json",
         "docs/protocols/HARNESS_AGENT_MODES.md",
         "tnf harness pause|resume"
       ]
@@ -58,14 +62,17 @@
       "status": "implemented",
       "evidence": [
         "docs/core/FRONTLOAD_MANIFEST.md",
+        "data/harness/onboarding-contract.json",
+        "scripts/protocols/frontload-manifest.cjs",
+        "scripts/protocols/turn-zero-v2-gate.cjs",
+        "scripts/tnf-onboard-twip.cjs",
         "docs/protocols/HARNESS_HOST_COMPACTION.md",
-        "scripts/tnf-onboard.cjs",
         "scripts/harness/compaction-record.cjs",
         "scripts/harness/host-compaction-adapter.cjs",
         "data/harness/compaction/",
         "data/harness/host-compaction/"
       ],
-      "gap": "Vendor LLM internal token budgets remain opaque; TNF owns boundary receipts, linked compaction records, and optional transcript import hashes."
+      "gap": "Vendor LLM internal token budgets remain opaque; TNF owns manifest-derived hydration receipts, boundary receipts, linked compaction records, and optional transcript import hashes."
     },
     "sandbox_isolation": {
       "status": "partial",
@@ -127,24 +134,29 @@
     }
   },
   "injectionSurfaces": {
+    "canonical_onboarding": {
+      "path": "scripts/tnf-onboard-twip.cjs",
+      "mechanism": "pnpm run tnf:onboard derives/hash-receipts Stage A from FRONTLOAD_MANIFEST and emits task-scoped hydration routes",
+      "required": true
+    },
     "repo_cursor_rules": {
       "path": ".cursor/rules/tnf-harness.mdc",
-      "mechanism": "alwaysApply Cursor project rule",
+      "mechanism": "alwaysApply Cursor project pointer to canonical tnf:onboard",
       "required": true
     },
     "repo_claude_md": {
       "path": "CLAUDE.md",
-      "mechanism": "Claude Code / compatible project always-on",
+      "mechanism": "Claude Code / compatible project pointer to canonical tnf:onboard",
       "required": true
     },
     "repo_agents_md": {
       "path": "AGENTS.md",
-      "mechanism": "AGENTS.md industry standard",
+      "mechanism": "AGENTS.md industry-standard project surface; canonical Stage A still comes from FRONTLOAD_MANIFEST",
       "required": true
     },
     "global_frontload_installer": {
       "path": "scripts/install-agent-frontload.cjs",
-      "mechanism": "fenced TNF-FRONTLOAD pointers into host context files",
+      "mechanism": "fenced TNF-FRONTLOAD pointers into empirically verified host context files; pointers invoke canonical tnf:onboard rather than duplicating rails",
       "required": true
     },
     "openclaw_workspace": {
@@ -179,14 +191,23 @@
     "scoped_tool_permissions",
     "lifecycle_hooks",
     "provider_abstraction",
-    "progressive_disclosure"
+    "progressive_disclosure",
+    "manifest_derived_stage_a",
+    "proof_bearing_hydration",
+    "task_scoped_context",
+    "do_not_reinvent",
+    "concurrent_workstream_collision_boundaries"
   ],
   "verify": {
     "commands": [
+      "node scripts/protocols/frontload-manifest.cjs --stage A --json",
+      "node --test scripts/protocols/frontload-manifest.test.cjs",
+      "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
       "node scripts/verify-repo-frontload.cjs",
       "node scripts/harness/verify-harness-completeness.cjs",
       "node scripts/install-agent-frontload.cjs --verify",
-      "node scripts/harness/provision-injection-surfaces.cjs --verify"
+      "node scripts/harness/provision-injection-surfaces.cjs --verify",
+      "pnpm run tnf:onboard -- --full-harness --task \"<task>\""
     ]
   }
 }

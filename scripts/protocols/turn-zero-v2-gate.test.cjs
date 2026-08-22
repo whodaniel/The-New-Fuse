@@ -3,11 +3,13 @@
 
 const assert = require('node:assert');
 const test = require('node:test');
+const { execFileSync } = require('node:child_process');
 const {
   normalizeOrigin,
   repositoryMode,
   validateClassification,
   hydrationReceipt,
+  handoffRelation,
 } = require('./turn-zero-v2-gate.cjs');
 
 test('normalizes canonical GitHub HTTPS and SSH origins', () => {
@@ -67,4 +69,14 @@ test('user-context storage work routes to the canonical storage contract instead
   const paths = hydrationReceipt('audit Google Drive user context storage profile');
   assert.ok(paths.includes('docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md'));
   assert.ok(paths.includes('.agent/skills/tnf-user-context-storage/SKILL.md'));
+});
+
+test('handoff relation treats an ancestor receipt as continuous rather than diverged', () => {
+  const root = require('node:path').resolve(__dirname, '..', '..');
+  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+  const parent = execFileSync('git', ['rev-parse', 'HEAD^'], { cwd: root, encoding: 'utf8' }).trim();
+  assert.deepStrictEqual(handoffRelation(head, head), { relation: 'exact', commitsSince: 0 });
+  const ancestor = handoffRelation(parent, head);
+  assert.strictEqual(ancestor.relation, 'ancestor');
+  assert.ok(ancestor.commitsSince >= 1);
 });
