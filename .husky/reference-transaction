@@ -6,7 +6,22 @@
 # "prepared" phase can abort. Ordinary commits pass through untouched.
 #
 # Deliberately NOT `set -e`: this hook must never be the reason git fails.
-# The guard fails open on any internal error.
+# The guard fails open on any internal/bootstrap error. A deliberate guard block
+# still propagates its non-zero exit status.
 #
 # Operator override:  TNF_MUTATION_OK=1 <git command>
-node "$(dirname "$0")/../scripts/security/workspace-mutation-guard.cjs" --hook "$1" || exit $?
+# Optional interpreter override (also used by tests): TNF_NODE_BIN=/path/to/node
+
+NODE_BIN="${TNF_NODE_BIN:-}"
+if [ -z "$NODE_BIN" ]; then
+  NODE_BIN="$(command -v node 2>/dev/null || true)"
+fi
+
+# nvm/asdf/GUI/background shells may not expose Node on PATH. That must not
+# brick git fetch/pull/reference maintenance; the guard contract is fail-open.
+if [ -z "$NODE_BIN" ] || [ ! -x "$NODE_BIN" ]; then
+  echo "[workspace-mutation-guard] node unavailable in hook environment; allowing ref transaction" >&2
+  exit 0
+fi
+
+"$NODE_BIN" "$(dirname "$0")/../scripts/security/workspace-mutation-guard.cjs" --hook "$1"
