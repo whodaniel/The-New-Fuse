@@ -42,9 +42,35 @@ test('canonical raw-agent prompt is defined once and references tnf:onboard auth
   const usages = source.split('CANONICAL_RAW_AGENT_PROMPT').length - 1;
   assert.equal(
     usages,
-    5,
-    'one definition + four consumption sites (issue #176 evidence)'
+    6,
+    'one definition + four operator-facing surfaces (system-prompt, resource-map, onboarding templates, raw-session console output) + the derived operator-prompt.txt artifact (issue #176)'
   );
+});
+
+test('onboard publishes the prompt as a derived artifact for host wrappers (#176)', () => {
+  const source = fs.readFileSync(ONBOARD, 'utf8');
+  assert.match(
+    source,
+    /operator-prompt\.txt/,
+    '~/.tnf/tnf-status and similar host surfaces must derive the prompt from .agent/runtime-state/operator-prompt.txt instead of embedding their own copy'
+  );
+  assert.match(
+    source,
+    /writeFileSync\(promptPath, `\$\{CANONICAL_RAW_AGENT_PROMPT\}\\n`/,
+    'artifact content must come from the single canonical constant'
+  );
+
+  // If an artifact already exists on disk (from a prior onboard run), it must
+  // be current canonical wording — never the retired ritual.
+  const artifact = path.join(ROOT, '.agent', 'runtime-state', 'operator-prompt.txt');
+  if (fs.existsSync(artifact)) {
+    const content = fs.readFileSync(artifact, 'utf8');
+    assert.ok(
+      !content.includes(STALE_RITUAL) && !content.includes(STALE_FULL),
+      'published operator-prompt.txt regressed to stale Turn Zero wording'
+    );
+    assert.match(content, /tnf:onboard -- --task/);
+  }
 });
 
 test('canonical onboarding entry exists in package.json and on disk', () => {

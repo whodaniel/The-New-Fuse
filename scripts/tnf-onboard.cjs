@@ -36,15 +36,11 @@ const ONBOARD_GENERATED_MARKER = 'tnf-onboard --repair';
 const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
 const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
 const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
-// Canonical raw-agent onboarding semantics (issue #176). New sessions enter
-// through the manifest-derived onboard gate (`tnf:onboard` →
-// scripts/tnf-onboard-twip.cjs), which derives Stage A from FRONTLOAD_MANIFEST,
-// verifies task routes + host injection, and classifies write-readiness before
-// mutations. The old hand-maintained "await my confirmation" ritual is retired;
-// this constant is its single replacement so operator-facing surfaces cannot
-// drift back into a competing manual onboarding flow.
-const CANONICAL_RAW_AGENT_PROMPT =
-  'Before planning or acting, run canonical TNF onboarding from the repository root: pnpm run tnf:onboard -- --task "<current task>". It derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation.';
+// Canonical raw-agent onboarding semantics (issue #176): defined once in
+// scripts/lib/tnf-canonical-onboarding.cjs and shared with every
+// operator-facing status surface so none of them can drift back into the
+// retired manual "await my confirmation" ritual.
+const { CANONICAL_RAW_AGENT_PROMPT } = require('./lib/tnf-canonical-onboarding.cjs');
 const DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS = 8000;
 const DEFAULT_FRONTLOAD_BUDGET_WORDS = 3500;
 const FRONTLOAD_BUDGET_FLOOR_WORDS = 800;
@@ -1540,6 +1536,18 @@ async function main() {
     CANONICAL_RAW_AGENT_PROMPT
   );
   console.log('- Launch raw AI CLIs from the TNF repository root so ./docs/... resolves.');
+
+  // Single authority for host-level status surfaces (issue #176): the prompt
+  // is published as a runtime artifact so wrappers like ~/.tnf/tnf-status can
+  // DERIVE it instead of maintaining their own semantic copy that drifts.
+  try {
+    const promptPath = path.join(ROOT, '.agent', 'runtime-state', 'operator-prompt.txt');
+    fs.mkdirSync(path.dirname(promptPath), { recursive: true });
+    fs.writeFileSync(promptPath, `${CANONICAL_RAW_AGENT_PROMPT}\n`, 'utf8');
+    console.log(`- Canonical raw-agent prompt artifact: .agent/runtime-state/operator-prompt.txt`);
+  } catch (err) {
+    console.log(`- operator-prompt.txt not written (non-fatal): ${err.message}`);
+  }
 }
 
 // Boot-output triage (operator directive 2026-07-22): collect everything the

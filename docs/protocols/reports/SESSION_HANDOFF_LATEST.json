@@ -1,160 +1,45 @@
 {
-  "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "4a465e39-52b6-48b8-b0c6-4bc75e7b99a2",
-  "created_at": "2026-08-22T12:49:00.000Z",
-  "repository": "tnf-monorepo",
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": false,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "branch": "main",
-  "head_sha": "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a",
-  "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
-  "classification": {
-    "work_domain": "corporate",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "product_state",
-    "sensitivity": "internal"
-  },
-  "capabilities": {
-    "required": [
-      "harness-engineering",
-      "protocol-governance",
-      "source-governance",
-      "onboarding-route-integrity",
-      "verification"
-    ],
-    "staffed_by": [
-      "ChatGPT",
-      "TNF GitHub connector",
-      "focused Node test harness"
-    ]
-  },
-  "publication": {
-    "public_runtime_affected": true,
-    "control_plane_affected": true,
-    "satellites": []
-  },
+  "spec": "session-handoff/v1",
+  "handoff_id": "#176-preservation-2026-08-23",
+  "created_at": "2026-08-23T15:11:00-04:00",
+  "repository": "whodaniel/tnf-monorepo (worktree issue-176-stabilization; branch fix/issue-176-boot-stabilization)",
+  "repository_context": "temporary #176 worktree; NOT the canonical physical checkout (Desktop/A1-Inter-LLM-Com/TNF per user authority, which is not a .git repo); operative git checkout = this worktree",
+  "branch": "fix/issue-176-boot-stabilization",
+  "head_sha": "4be2a3f9b0",
+  "protocol_ack": "INSPECT_BEFORE_MUTATION; zero-mutation audit completed; preservation commit performed; renderer tracked; host wrapper unchanged; no install; no merge",
+  "sensitive_scope": "machine-local host paths (~/Repos, ~/Desktop) NOT embedded in source; no PII in docs; privacy-guard WARN owner_home_path noted (non-blocking); secret-sweep OK",
+  "classification": "PRESERVATION (not merge); PARTIAL_DEPLOYMENT (renderer missing from canonical, untracked in #176 before commit, now tracked); DEPENDENCY_ENVIRONMENT_INCOMPLETE (node_modules present 2.6G but .bin/tsx missing - no install performed)",
+  "capabilities": [
+    "renderer tracked",
+    "canonical onboarding lib committed",
+    "evidence doc committed",
+    "onboard/test updates",
+    "minimal handoff artifacts"
+  ],
+  "publication": "remote branch not yet pushed (will be pushed in next step); PR not yet opened; NOT MERGED; LOCAL_ONLY_UNPUSHED_WORK -> reducing",
   "freshness_receipts": [
-    {
-      "id": "canonical-main",
-      "state": "live-verified",
-      "observed_at": "2026-08-22T12:49:00.000Z",
-      "value": "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a"
-    },
-    {
-      "id": "pr-156",
-      "state": "merged",
-      "observed_at": "2026-08-22T12:34:29.000Z",
-      "value": "Turn Zero manifest-derived full-harness onboarding; focused tests 14/14"
-    },
-    {
-      "id": "pr-157",
-      "state": "merged",
-      "observed_at": "2026-08-22T12:43:07.000Z",
-      "value": "handoff freshness relationships + harness inventory alignment; focused tests 10/10"
-    },
-    {
-      "id": "pr-159",
-      "state": "merged",
-      "observed_at": "2026-08-22T12:46:07.000Z",
-      "value": "required onboarding task-route integrity; focused tests 3/3"
-    },
-    {
-      "id": "user-context-storage",
-      "state": "active-draft",
-      "observed_at": "2026-08-22T12:49:00.000Z",
-      "value": "PR #151 with dependent PR #153; do not fork a parallel provider model"
-    },
-    {
-      "id": "workflow-builder",
-      "state": "operator-reported-active",
-      "observed_at": "2026-08-22T12:49:00.000Z",
-      "value": "packages/workflow-builder ownership remains with local Claude until a newer Git receipt supersedes this boundary"
-    }
+    "audit-prompt /tmp/audit-prompt.md saved 2026-08-23",
+    "audit-report /tmp/audit-report.md saved 2026-08-23",
+    "renderer tracked confirmed via git ls-files"
   ],
-  "project_ids": [
-    "TNF-HARNESS",
-    "TNF-SESSION",
-    "TNF-TURN-ZERO"
-  ],
-  "work_summary": [
-    "Turn Zero V2 is the single manifest-derived, SHA-256 receipt-bearing onboarding entrypoint for fresh TNF agent sessions.",
-    "PR #156 aligned host pointers, added the machine onboarding contract and tnf-engineering-context meta-skill, and removed stale runtime facts from Stage A.",
-    "PR #157 made repository-tracked handoff freshness relation-aware and aligned the harness inventory to manifest-derived onboarding.",
-    "PR #159 makes onboarding fail closed if a required specialist route in the machine onboarding contract no longer resolves, while preserving explicitly optional loadIfPresent routes.",
-    "Harness-critical specialist routing does not depend on the broad generated skill catalog being freshly regenerated because required routes are direct and path-verified."
-  ],
+  "work_summary": "#176 preservation: renderer (scripts/runtime/tnf-status.cjs) moved from untracked to tracked via commit; canonical onboarding lib; evidence doc; onboard/test fixes. 5 source files + 3 minimal handoff artifacts. No unrelated lanes (#175/#153/#177/ZCode/workflow-builder) absorbed. No absolute-path encoding of temporary checkout topology.",
   "changed_paths": [
-    ".agent/SYSTEM_PROMPT.md",
-    ".agent/context/agent-onboarding.md",
-    ".agent/skills/tnf-engineering-context/SKILL.md",
-    ".agent/workflows/frontload.md",
-    ".cursor/rules/tnf-harness.mdc",
-    ".skills/tnf-engineering-context/SKILL.md",
-    "CLAUDE.md",
-    "data/harness/onboarding-contract.json",
-    "data/harness/harness-config.json",
-    "docs/core/FRONTLOAD_MANIFEST.md",
-    "scripts/harness/provision-injection-surfaces.cjs",
-    "scripts/harness/verify-onboarding-routes.cjs",
-    "scripts/harness/verify-onboarding-routes.test.cjs",
-    "scripts/install-agent-frontload.cjs",
-    "scripts/install-agent-frontload.test.cjs",
-    "scripts/protocols/frontload-manifest.cjs",
-    "scripts/protocols/frontload-manifest.test.cjs",
-    "scripts/protocols/turn-zero-v2-gate.cjs",
-    "scripts/protocols/turn-zero-v2-gate.compat.test.cjs",
-    "scripts/protocols/turn-zero-v2-gate.test.cjs",
-    "scripts/tnf-onboard-twip.cjs",
-    "scripts/verify-repo-frontload.cjs",
+    "docs/operations/ISSUE_176_BOOT_STABILIZATION.md",
+    "scripts/lib/tnf-canonical-onboarding.cjs",
+    "scripts/runtime/tnf-status.cjs",
+    "scripts/tnf-onboard.cjs",
+    "scripts/tests/tnf-onboard-canonical-prompt.test.cjs",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md"
   ],
-  "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": "PR #156 focused onboarding-contract tests passed 14/14 locally before merge; PR #157 handoff-relation tests passed 10/10 locally; PR #159 onboarding-route tests passed 3/3 plus syntax checks. Machine-specific host injection still requires execution on the operator machine."
-  },
-  "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": [
-      "next-tnf-agent-session",
-      "local-claude",
-      "gemini-drive-auditor",
-      "chatgpt"
-    ],
-    "priority": "high",
-    "resume_checklist": [
-      "Run pnpm run tnf:onboard -- --task \"<current task>\" from canonical tnf-monorepo before consequential work and inspect the Stage A + route-integrity receipts.",
-      "On the operator machine, run node scripts/harness/provision-injection-surfaces.cjs --repair and then pnpm run tnf:onboard -- --full-harness --task \"host propagation verification\"; preserve the resulting receipts.",
-      "Regenerate .agent/SKILL_MANIFEST.md with node scripts/skills/build-skill-manifest.cjs from the full canonical checkout; this is discovery-catalog freshness, not a Turn Zero correctness dependency.",
-      "Continue the active packages/workflow-builder workstream only from its latest verified Git receipt; do not race that package.",
-      "Keep PR #151/#153 user-context storage work on its existing stack and require executable verification before promotion.",
-      "Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers whenever canonical main advances materially."
-    ]
-  },
+  "verification": "renderer tracked (post-commit git ls-files confirms); commit SHA 4be2a3f9b0 (will become new after this retry); zero mutation verified (no install, no shim, no wrapper rewrite, no retirement, no .git mutation outside this worktree); dependency-env incomplete verified (.bin/tsx MISSING); no fabricated passing gate output.",
+  "continuation": "Next: retry commit with valid handoff JSON; then push fix/issue-176-boot-stabilization to origin; open/update PR against main; do NOT merge yet; leave dependency-env fix and canonical checkout reconciliation to #178/meta-command pass.",
   "next_actions": [
-    "Verify/repair installed host injection surfaces on the operator machine and retain the harness-injection/full-harness receipt.",
-    "Regenerate the broad Tier-0 skill discovery manifest repository-locally.",
-    "Refresh shared Drive Agent Coordination and TNF Engineering Context/source-library pointers to the current canonical main receipt.",
-    "Continue workflow-builder and user-context provider work only from their existing ownership/PR boundaries."
-  ],
-  "artifacts": {
-    "commits": [
-      "3b3410277483573d6e22d2bd8505e6ba140a7ea5",
-      "66a5055d01fa48a6bdda40eaa19c29dc0084d9c5",
-      "db8d5f52d30692ccb1b9bfbcbd24b55b50291d0a"
-    ]
-  }
+    "retry commit (valid JSON)",
+    "push branch",
+    "open/update PR",
+    "report receipt (commit SHA, pushed branch, files, tests blocked/passed, tsx dependency issue, partial-deployment state, wrapper unchanged, no merge)",
+    "leave canonical checkout relocation and dependency materialization to #178"
+  ]
 }
