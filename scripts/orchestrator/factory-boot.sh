@@ -6,6 +6,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 RUNTIME_STATE_DIR="${ROOT_DIR}/.agent/runtime-state"
 LIVE_API_CACHE_FILE="${RUNTIME_STATE_DIR}/live-api-url.txt"
+# Endpoint authority (#176): read live/public endpoints from the generated
+# adaptive harness context instead of local literals. Explicit env still wins.
+# shellcheck disable=SC1091
+. "${ROOT_DIR}/scripts/runtime/harness-context-env.sh"
 REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
 REDIS_FAIL_OPEN="${FACTORY_BOOT_REDIS_FAIL_OPEN:-true}"
 LOCAL_REDIS_URL="${FACTORY_BOOT_LOCAL_REDIS_URL:-redis://localhost:6379}"
@@ -81,7 +85,7 @@ if [[ -n "${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-}}}" ]]; then
   RELAY_URL_WAS_EXPLICIT="true"
 fi
 RELAY_URL="${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-ws://127.0.0.1:${RELAY_PORT}/ws}}}"
-LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
+LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-$(harness_ctx_get TNF_API_BASE http://localhost:3001)}}}}}"
 AUTO_DETECT_CLOUD_RUNTIME_API="${AUTO_DETECT_CLOUD_RUNTIME_API:-true}"
 
 STALL_THRESHOLD="${STALL_THRESHOLD:-45000}"
@@ -209,9 +213,12 @@ if curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/api/health" >/dev/null 2>&1; the
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/api/health"
 elif curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/health" >/dev/null 2>&1; then
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/health"
-elif [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]] && curl -fsS --max-time 2 "https://api.thenewfuse.com/api/health" >/dev/null 2>&1; then
-  LEDGER_API_BASE="https://api.thenewfuse.com"
-  echo "[factory-boot] local ledger unavailable; using live ledger api at ${LEDGER_API_BASE}"
+elif [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]] && \
+     live_ledger_api="$(harness_ctx_get TNF_API_BASE "")" && [[ -n "${live_ledger_api}" ]] && \
+     [[ "${live_ledger_api}" != "http://localhost:3001" ]] && \
+     curl -fsS --max-time 2 "${live_ledger_api%/}/api/health" >/dev/null 2>&1; then
+  LEDGER_API_BASE="${live_ledger_api}"
+  echo "[factory-boot] local ledger unavailable; using harness-context live api at ${LEDGER_API_BASE}"
   printf "%s\n" "${LEDGER_API_BASE}" > "${LIVE_API_CACHE_FILE}"
 else
   echo "[factory-boot] WARNING: ledger api not reachable at ${LEDGER_API_BASE} (master-clock/director persistence may degrade)"

@@ -36,6 +36,15 @@ const ONBOARD_GENERATED_MARKER = 'tnf-onboard --repair';
 const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
 const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
 const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
+// Canonical raw-agent onboarding semantics (issue #176). New sessions enter
+// through the manifest-derived onboard gate (`tnf:onboard` →
+// scripts/tnf-onboard-twip.cjs), which derives Stage A from FRONTLOAD_MANIFEST,
+// verifies task routes + host injection, and classifies write-readiness before
+// mutations. The old hand-maintained "await my confirmation" ritual is retired;
+// this constant is its single replacement so operator-facing surfaces cannot
+// drift back into a competing manual onboarding flow.
+const CANONICAL_RAW_AGENT_PROMPT =
+  'Before planning or acting, run canonical TNF onboarding from the repository root: pnpm run tnf:onboard -- --task "<current task>". It derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation.';
 const DEFAULT_RUNTIME_SNAPSHOT_TIMEOUT_MS = 8000;
 const DEFAULT_FRONTLOAD_BUDGET_WORDS = 3500;
 const FRONTLOAD_BUDGET_FLOOR_WORDS = 800;
@@ -566,7 +575,7 @@ function frontloadSystemPromptTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    CANONICAL_RAW_AGENT_PROMPT,
     '```',
     '',
     '## Relay URL Precedence',
@@ -605,7 +614,7 @@ function resourceMapTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    CANONICAL_RAW_AGENT_PROMPT,
     '```',
     '',
     '## MCP Configuration',
@@ -646,7 +655,7 @@ function onboardingTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    CANONICAL_RAW_AGENT_PROMPT,
     '```',
     '',
   ].join('\n');
@@ -1528,7 +1537,7 @@ async function main() {
 
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.'
+    CANONICAL_RAW_AGENT_PROMPT
   );
   console.log('- Launch raw AI CLIs from the TNF repository root so ./docs/... resolves.');
 }

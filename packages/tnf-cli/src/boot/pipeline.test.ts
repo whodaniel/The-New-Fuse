@@ -82,3 +82,90 @@ describe('boot pipeline plan', () => {
     );
   });
 });
+
+describe('boot pipeline parallel probes (#176)', () => {
+  it('marks only warning-only independent checks as a contiguous parallel group', () => {
+    const plan = toBootPlan(
+      createBootPipeline(mockDeps(), { profile: 'goldberg', skipOnboard: true })
+    );
+
+    const groupMembers = plan.filter((s) => s.parallelGroup === 'preflight-probes');
+    assert.deepEqual(
+      groupMembers.map((s) => s.id),
+      ['harness-context', 'port-preflight', 'env-validation', 'mcp-health'],
+      'probe group membership is explicit'
+    );
+    for (const member of groupMembers) {
+      assert.equal(
+        member.critical,
+        false,
+        `${member.id} must stay warning-only to be parallel-safe`
+      );
+    }
+
+    // Contiguity: no non-group step between the first and last member.
+    const first = plan.findIndex((s) => s.parallelGroup === 'preflight-probes');
+    let last = first;
+    for (let k = plan.length - 1; k >= 0; k--) {
+      if (plan[k].parallelGroup === 'preflight-probes') {
+        last = k;
+        break;
+      }
+    }
+    for (let k = first; k <= last; k++) {
+      assert.equal(
+        plan[k].parallelGroup,
+        'preflight-probes',
+        `step ${plan[k].id} breaks group contiguity`
+      );
+    }
+
+    // Every group member must complete before service-starting steps.
+    const serviceStarters = ['factory-boot', 'agent-swarm'];
+    for (const starter of serviceStarters) {
+      assert.ok(
+        plan.findIndex((s) => s.id === starter) > last,
+        `${starter} must run after the probe group`
+      );
+    }
+
+    // No other step may declare a group.
+    assert.equal(
+      plan.filter((s) => s.parallelGroup && s.parallelGroup !== 'preflight-probes').length,
+      0,
+      'no second parallel group without an independence proof'
+    );
+  });
+});
+
+describe('boot pipeline data-flow ordering (#176)', () => {
+  it('starts the llm provider tester only after the agent swarm (Redis bus)', () => {
+    const plan = toBootPlan(
+      createBootPipeline(mockDeps(), { profile: 'goldberg', skipOnboard: true })
+    );
+    const swarmIdx = plan.findIndex((s) => s.id === 'agent-swarm');
+    const testerIdx = plan.findIndex((s) => s.id === 'llm-provider-tester');
+    assert.ok(swarmIdx >= 0, 'agent-swarm step present');
+    assert.ok(testerIdx > swarmIdx,
+      'provider tester must launch after agent-swarm: without Redis its registration fails and the continuous loop degenerates to one-shot mode'
+    );
+    const tester = plan[testerIdx];
+    assert.equal(tester.critical, false, 'tester stays warning-only');
+    assert.ok(
+      (tester.notes ?? []).some((n) => n.includes('#176')),
+      'ordering rationale recorded in plan notes'
+    );
+  });
+
+  it('does not claim a Redis dependency for supercycle', () => {
+    const plan = toBootPlan(
+      createBootPipeline(mockDeps(), { profile: 'goldberg', skipOnboard: true })
+    );
+    const supercycleIdx = plan.findIndex((s) => s.id === 'supercycle');
+    const swarmIdx = plan.findIndex((s) => s.id === 'agent-swarm');
+    assert.ok(
+      supercycleIdx < swarmIdx,
+      'supercycle has no Redis dependency (verified: zero Redis references in supercycle-flywheel.cjs) and stays before stack steps'
+    );
+  });
+});

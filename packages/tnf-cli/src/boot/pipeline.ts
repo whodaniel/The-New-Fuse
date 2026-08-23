@@ -23,6 +23,14 @@ export type BootPlanStep = {
   critical: boolean;
   launches: string[];
   notes?: string[];
+  /**
+   * Contiguous steps sharing a non-empty parallelGroup are executed
+   * concurrently (#176). Only warning-only, mutually independent checks may
+   * set this: distinct processes, disjoint file writes, no ordering
+   * dependencies between members, and every member must complete before any
+   * service-starting step (factory-boot / agent-swarm).
+   */
+  parallelGroup?: string;
 };
 
 export type BootExecutableStep = BootPlanStep & {
@@ -185,57 +193,6 @@ export function createBootPipeline(
       },
     },
     {
-      id: 'harness-context',
-      label: 'Adaptive harness context (models/hosts/profile)',
-      critical: false,
-      launches: [
-        'node scripts/runtime/resolve-harness-context.cjs --force',
-        '.agent/runtime-state/harness-context.env',
-      ],
-      notes: [
-        'Resolves live models/providers/hosts per user profile + ~/.tnf/model-providers.json.',
-        'Agent-network Terminals source this env via launch-agent-wrapper.sh (no stale hardcodes).',
-        'Override via profile.harness.* or env; refresh with: tnf harness context --force',
-      ],
-      action: async () => {
-        await runCommand('node', ['scripts/runtime/resolve-harness-context.cjs', '--force']);
-      },
-    },
-    {
-      id: 'port-preflight',
-      label: 'Port preflight',
-      critical: false,
-      launches: [
-        strictGates
-          ? 'node scripts/tnf-ports.cjs preflight --strict'
-          : 'node scripts/tnf-ports.cjs preflight',
-      ],
-      notes: [
-        'Occupied TNF runtimes are allowed only when their health endpoints match the expected service.',
-        'Use --strict-gates or FACTORY_BOOT_PORT_PREFLIGHT_STRICT=true to fail on other occupied required ports.',
-      ],
-      action: async () => {
-        const args = ['scripts/tnf-ports.cjs', 'preflight'];
-        if (strictGates) args.push('--strict');
-        await runCommand('node', args);
-      },
-    },
-    {
-      id: 'env-validation',
-      label: 'Verifying environment variables',
-      critical: false,
-      launches: options.skipEnvValidation
-        ? ['skipped (--skip-env-validation)']
-        : ['bash scripts/validate-env.sh'],
-      action: async () => {
-        if (options.skipEnvValidation) {
-          console.log(chalk.dim('   Skipped (--skip-env-validation)'));
-          return;
-        }
-        await runCommand('bash', ['scripts/validate-env.sh']);
-      },
-    },
-    {
       id: 'mount-volumes',
       label: 'Mounting volumes',
       critical: true,
@@ -253,11 +210,72 @@ export function createBootPipeline(
       },
     },
     {
+      id: 'harness-context',
+      label: 'Adaptive harness context (models/hosts/profile)',
+      critical: false,
+      parallelGroup: 'preflight-probes',
+      launches: [
+        'node scripts/runtime/resolve-harness-context.cjs --force',
+        '.agent/runtime-state/harness-context.env',
+      ],
+      notes: [
+        'Resolves live models/providers/hosts per user profile + ~/.tnf/model-providers.json.',
+        'Agent-network Terminals source this env via launch-agent-wrapper.sh (no stale hardcodes).',
+        'Override via profile.harness.* or env; refresh with: tnf harness context --force',
+        'Runs concurrently with the other preflight probes (#176): distinct process, writes only its own runtime-state files.',
+      ],
+      action: async () => {
+        await runCommand('node', ['scripts/runtime/resolve-harness-context.cjs', '--force']);
+      },
+    },
+    {
+      id: 'port-preflight',
+      label: 'Port preflight',
+      critical: false,
+      parallelGroup: 'preflight-probes',
+      launches: [
+        strictGates
+          ? 'node scripts/tnf-ports.cjs preflight --strict'
+          : 'node scripts/tnf-ports.cjs preflight',
+      ],
+      notes: [
+        'Occupied TNF runtimes are allowed only when their health endpoints match the expected service.',
+        'Use --strict-gates or FACTORY_BOOT_PORT_PREFLIGHT_STRICT=true to fail on other occupied required ports.',
+        'Read-only probe; dominates boot wall time when serial (#176 measured ~8.8s serial vs ~6.0s concurrent).',
+      ],
+      action: async () => {
+        const args = ['scripts/tnf-ports.cjs', 'preflight'];
+        if (strictGates) args.push('--strict');
+        await runCommand('node', args);
+      },
+    },
+    {
+      id: 'env-validation',
+      label: 'Verifying environment variables',
+      critical: false,
+      parallelGroup: 'preflight-probes',
+      launches: options.skipEnvValidation
+        ? ['skipped (--skip-env-validation)']
+        : ['bash scripts/validate-env.sh'],
+      notes: ['Read-only template validation; no shared mutable state with the other probes.'],
+      action: async () => {
+        if (options.skipEnvValidation) {
+          console.log(chalk.dim('   Skipped (--skip-env-validation)'));
+          return;
+        }
+        await runCommand('bash', ['scripts/validate-env.sh']);
+      },
+    },
+    {
       id: 'mcp-health',
       label: 'MCP health check',
       critical: false,
+      parallelGroup: 'preflight-probes',
       launches: ['node scripts/mcp-health-check.cjs'],
-      notes: ['Warning-only local service misses are non-fatal unless TNF_MCP_HEALTH_STRICT=1.'],
+      notes: [
+        'Warning-only local service misses are non-fatal unless TNF_MCP_HEALTH_STRICT=1.',
+        'Read-only probe of local MCP surfaces.',
+      ],
       action: async () => {
         await runCommand('node', ['scripts/mcp-health-check.cjs']);
       },
@@ -267,19 +285,11 @@ export function createBootPipeline(
       label: 'Directive rotation scheduler',
       critical: false,
       launches: ['pnpm run factory:supercycle (detached)'],
+      notes: [
+        'No Redis dependency (verified 2026-08-22: scripts/orchestrator/supercycle-flywheel.cjs has zero Redis references); safe before stack steps.',
+      ],
       action: async () => {
         await runCommand('pnpm', ['run', 'factory:supercycle'], { isBackground: true });
-      },
-    },
-    {
-      id: 'llm-provider-tester',
-      label: 'LLM provider tester',
-      critical: false,
-      launches: ['node scripts/swarm/llm-provider-tester.cjs (detached)'],
-      action: async () => {
-        await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
-          isBackground: true,
-        });
       },
     },
     {
@@ -403,6 +413,23 @@ export function createBootPipeline(
       ],
       action: async () => {
         await runCommand('bash', agentNetworkArgs);
+      },
+    },
+    {
+      id: 'llm-provider-tester',
+      label: 'LLM provider tester',
+      critical: false,
+      launches: ['node scripts/swarm/llm-provider-tester.cjs (detached)'],
+      notes: [
+        'Runs AFTER agent-swarm (#176): its RedisAgentClient registration is required for the',
+        'continuous 15-minute re-check loop and llm_health_updated events consumed by watchdog/data flow.',
+        'Without Redis up, startAgent() catches the connection error, runs exactly one cycle, and exits —',
+        'so launching it before the bus exists silently degrades the daemon to one-shot mode.',
+      ],
+      action: async () => {
+        await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
+          isBackground: true,
+        });
       },
     },
     {
