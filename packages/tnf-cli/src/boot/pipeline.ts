@@ -603,12 +603,13 @@ export function createBootPipeline(
 }
 
 export function toBootPlan(steps: BootExecutableStep[]): BootPlanStep[] {
-  return steps.map(({ id, label, critical, launches, notes }) => ({
+  return steps.map(({ id, label, critical, launches, notes, parallelGroup }) => ({
     id,
     label,
     critical,
     launches,
     notes,
+    parallelGroup,
   }));
 }
 
