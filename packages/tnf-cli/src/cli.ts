@@ -38,6 +38,7 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
+import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
@@ -19733,6 +19734,7 @@ registerParityCommand(program, repoRoot);
 registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
+registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
 registerFleetCommands(program);
 // Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from

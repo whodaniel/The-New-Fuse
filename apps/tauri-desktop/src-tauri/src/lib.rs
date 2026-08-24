@@ -597,6 +597,7 @@ pub fn run() {
             service_lifecycle::start_tnf_api,
             service_lifecycle::start_local_relay,
             service_lifecycle::start_forefront_boot,
+            service_lifecycle::get_ecosystem_snapshot,
             service_lifecycle::start_story_architect_relay,
             service_lifecycle::start_kws_server,
             service_lifecycle::ensure_library_audio_stack,

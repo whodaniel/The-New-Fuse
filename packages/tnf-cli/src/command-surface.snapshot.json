@@ -105,6 +105,58 @@
           "commands": []
         },
         {
+          "name": "quotas",
+          "aliases": [],
+          "description": "Show refreshed per-agent usage quotas for delegation",
+          "options": [
+            {
+              "flags": "--capability <cap>",
+              "description": "Required capability hint (repeatable)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--rank",
+              "description": "Include delegation ranking"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state",
+          "aliases": [],
+          "description": "Show onboarded agent-state observation snapshot (not authoritative)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Rebuild observation snapshot (requires mutation authority)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state-history",
+          "aliases": [],
+          "description": "List recent agent-state history snapshots",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max snapshots"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "status",
           "aliases": [],
           "description": "Report this tnf-agent CLI binary: version, branch, wiring, capabilities",
@@ -161,7 +213,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -565,7 +617,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List providers",
           "options": [
             {
@@ -733,7 +787,9 @@
     },
     {
       "name": "boot",
-      "aliases": ["boor"],
+      "aliases": [
+        "boor"
+      ],
       "description": "Master entry point to boot the entire TNF stack",
       "options": [
         {
@@ -964,7 +1020,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List free models from the canonical catalog",
           "options": [
             {
@@ -1093,7 +1151,9 @@
     },
     {
       "name": "commands",
-      "aliases": ["palette"],
+      "aliases": [
+        "palette"
+      ],
       "description": "Search the flat command index the palette uses: every CLI path at every depth, plus Markdown commands/agents/skills from .tnf/, .claude/, .agent/, .gemini/, .cursor/, .codex/ and .pi/",
       "options": [
         {
@@ -1738,6 +1798,42 @@
       ]
     },
     {
+      "name": "ecosystem",
+      "aliases": [],
+      "description": "Authenticated ecosystem orientation / task-scoped hydration for control surfaces",
+      "options": [],
+      "commands": [
+        {
+          "name": "orient",
+          "aliases": [],
+          "description": "Cheap boot orientation snapshot (providers, health, authority refs, quota summary)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Task-scoped ecosystem hydration (lazy; use orient for boot)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Force re-hydrate"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "export",
       "aliases": [],
       "description": "Export session data as JSON",
@@ -1836,7 +1932,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all feedback",
           "options": [
             {
@@ -2478,7 +2576,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all strategic goals",
           "options": [
             {
@@ -2604,7 +2704,9 @@
       "commands": [
         {
           "name": "generate",
-          "aliases": ["emit"],
+          "aliases": [
+            "emit"
+          ],
           "description": "Emit SESSION_HANDOFF_LATEST.json and markdown mirror",
           "options": [
             {
@@ -2774,7 +2876,9 @@
         },
         {
           "name": "fleet-status",
-          "aliases": ["status"],
+          "aliases": [
+            "status"
+          ],
           "description": "Show current fleet pause state + fleet health snapshot",
           "options": [
             {
@@ -3698,7 +3802,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List MCP servers and their status",
           "options": [
             {
@@ -3788,9 +3894,36 @@
     {
       "name": "memory",
       "aliases": [],
-      "description": "Memory provider management",
+      "description": "Memory provider and compaction management",
       "options": [],
       "commands": [
+        {
+          "name": "audit-drift",
+          "aliases": [],
+          "description": "Audit cross-agent memory congruence and verify claim attributions",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "compact",
+          "aliases": [],
+          "description": "Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)",
+          "options": [
+            {
+              "flags": "--dry-run",
+              "description": "Simulate compaction without writing or deleting files"
+            },
+            {
+              "flags": "--max-age-days <n>",
+              "description": "Age threshold in days for pruning raw logs"
+            },
+            {
+              "flags": "--prune-raw",
+              "description": "Remove raw uncompacted logs older than threshold"
+            }
+          ],
+          "commands": []
+        },
         {
           "name": "list",
           "aliases": [],
@@ -4436,6 +4569,100 @@
       "description": "Inspect and manage TNF development ports",
       "options": [],
       "commands": []
+    },
+    {
+      "name": "profile",
+      "aliases": [],
+      "description": "Manage local TNF user profiles and sessions",
+      "options": [],
+      "commands": [
+        {
+          "name": "list",
+          "aliases": [
+            "ls"
+          ],
+          "description": "List local TNF profiles",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "login",
+          "aliases": [],
+          "description": "Authenticate a local (or optional cloud) TNF profile session",
+          "options": [
+            {
+              "flags": "--cloud",
+              "description": "Attempt cloud link to app.thenewfuse.com"
+            },
+            {
+              "flags": "--cloud-endpoint <url>",
+              "description": "Cloud endpoint override"
+            },
+            {
+              "flags": "--identity-mode <mode>",
+              "description": "local|cloud|sandbox|custom"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--passphrase <secret>",
+              "description": "Optional local passphrase"
+            },
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "logout",
+          "aliases": [],
+          "description": "End the active profile session",
+          "options": [
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "switch",
+          "aliases": [],
+          "description": "Switch active TNF profile",
+          "options": [
+            {
+              "flags": "--allow-logged-out",
+              "description": "Allow switch without an active session"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "whoami",
+          "aliases": [],
+          "description": "Show identity vs authentication vs capability vs authority distinctions",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "project",
@@ -5156,7 +5383,9 @@
     },
     {
       "name": "services",
-      "aliases": ["svc"],
+      "aliases": [
+        "svc"
+      ],
       "description": "Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded",
       "options": [
         {
@@ -5199,7 +5428,9 @@
     },
     {
       "name": "skill",
-      "aliases": ["skills"],
+      "aliases": [
+        "skills"
+      ],
       "description": "Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias; Hermes-parity alias: `tnf skills`).",
       "options": [],
       "commands": [
@@ -5383,7 +5614,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List standard, TNF, and project slash commands",
           "options": [],
           "commands": []
@@ -5664,7 +5897,9 @@
         },
         {
           "name": "draft",
-          "aliases": ["resume"],
+          "aliases": [
+            "resume"
+          ],
           "description": "Start or resume an interactive story drafting session",
           "options": [
             {
@@ -5684,7 +5919,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all story sessions",
           "options": [
             {
@@ -6106,7 +6343,9 @@
     },
     {
       "name": "upgrade",
-      "aliases": ["update"],
+      "aliases": [
+        "update"
+      ],
       "description": "Upgrade tnf to the latest or a specific version",
       "options": [
         {
@@ -6617,7 +6856,9 @@
     },
     {
       "name": "workspace",
-      "aliases": ["packages"],
+      "aliases": [
+        "packages"
+      ],
       "description": "Monorepo package reconnect and availability utilities (alias: `tnf packages`)",
       "options": [],
       "commands": [

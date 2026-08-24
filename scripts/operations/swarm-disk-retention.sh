@@ -66,6 +66,30 @@ prune_dir "${ROOT_DIR}/.agent/runtime-logs" "runtime logs"
 prune_dir "${HOME}/.hermes/cron/output" "hermes cron output"
 prune_dir "${HOME}/.hermes/logs" "hermes logs"
 
+# Agent-state history — bounded onboarded fleet snapshots (never touch latest.json)
+AGENT_STATE_ROOT="${TNF_HOME}/agent-state"
+AGENT_STATE_HISTORY_KEEP="${TNF_AGENT_STATE_HISTORY_KEEP:-300}"
+AGENT_STATE_HISTORY_DAYS="${TNF_AGENT_STATE_HISTORY_DAYS:-14}"
+AGENT_STATE_JSONL_LINES="${TNF_AGENT_STATE_JSONL_LINES:-1000}"
+if [[ -d "${AGENT_STATE_ROOT}" ]]; then
+  for _profile_dir in "${AGENT_STATE_ROOT}"/*; do
+    [[ -d "${_profile_dir}" ]] || continue
+    _hist="${_profile_dir}/history"
+    if [[ -d "${_hist}" ]]; then
+      find "${_hist}" -type f -mtime "+${AGENT_STATE_HISTORY_DAYS}" -delete 2>/dev/null || true
+      _count="$(find "${_hist}" -type f 2>/dev/null | wc -l | tr -d ' ')"
+      if [[ "${_count}" -gt "${AGENT_STATE_HISTORY_KEEP}" ]]; then
+        find "${_hist}" -type f -print0 2>/dev/null \
+          | xargs -0 ls -t 2>/dev/null \
+          | tail -n +"$((AGENT_STATE_HISTORY_KEEP + 1))" \
+          | xargs rm -f 2>/dev/null || true
+        echo "[swarm-disk-retention] agent-state history capped at ${AGENT_STATE_HISTORY_KEEP} files (${_profile_dir}; was ${_count})"
+      fi
+    fi
+    truncate_log "${_profile_dir}/history.jsonl" "${AGENT_STATE_JSONL_LINES}"
+  done
+fi
+
 truncate_log "${TNF_HOME}/federation-watchdog-relay.log" 1000
 truncate_log "${TNF_HOME}/voice-watchdog.log" 1000
 truncate_log "${ROOT_DIR}/docs/operations/tnf-full-auto-daemon.log" 2000
