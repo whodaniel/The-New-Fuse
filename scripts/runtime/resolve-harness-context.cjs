@@ -160,10 +160,6 @@ function resolveHosts() {
     relayUrl,
     relayPort: String(relayPort),
     publicBase: process.env.TNF_PUBLIC_BASE || 'https://thenewfuse.com',
-    // Issue #176: the SPA/router surface is a distinct host from the landing
-    // page; expose it under the same authority so boot/audit scripts stop
-    // hardcoding app.thenewfuse.com locally.
-    appBase: process.env.TNF_APP_BASE_URL || 'https://app.thenewfuse.com',
   };
 }
 
@@ -318,7 +314,6 @@ function buildContext(args) {
     RELAY_URL: hosts.relayUrl,
     RELAY_PORT: hosts.relayPort,
     TNF_PUBLIC_BASE: hosts.publicBase,
-    TNF_APP_BASE_URL: hosts.appBase,
     TNF_WORKING_MODEL: workingModel,
     TNF_LLM_BASE_URL: llmBaseUrl,
     GEMINI_CMD: geminiCmd,
@@ -406,8 +401,6 @@ TTL: ${ctx.ttlSeconds}s
 - Redis: \`${ctx.hosts.redisUrl}\`
 - API: \`${ctx.hosts.apiBase}\`
 - Relay: \`${ctx.hosts.relayUrl}\`
-- Public: \`${ctx.hosts.publicBase}\`
-- App: \`${ctx.hosts.appBase}\`
 
 ## Models / providers
 - Working model: \`${ctx.models.workingModel}\`

@@ -345,7 +345,6 @@
     "validate:protocol-schemas": "node scripts/validate-protocol-schemas.cjs",
     "validate:pi-bridge": "node --test scripts/tests/pi-bridge.integration.test.cjs",
     "validate:model-watchdog-failover": "node --test scripts/tests/model-watchdog-failover-consumer.test.cjs",
-    "validate:boot-stabilization": "node --test scripts/tests/tnf-single-instance-guard-cli.test.cjs scripts/tests/start-agent-network-wrapper-detection.test.cjs scripts/tests/tnf-onboard-canonical-prompt.test.cjs",
     "gate:pi-bridge": "pnpm run validate:pi-bridge && pnpm run validate:model-watchdog-failover && pnpm --filter @the-new-fuse/relay-core run type-check",
     "validate:turn-zero-authority": "node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci",
     "validate:handoff-source-drift": "node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci",
