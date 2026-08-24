@@ -358,6 +358,44 @@ export async function runInteractiveOnboardingWizard(
   const profileFilePath = path.join(profilesDir, `${profileName}.json`);
   fs.writeFileSync(profileFilePath, JSON.stringify(profileConfig, null, 2));
 
+  // Establish authenticated profile session for control-surface boot hydration.
+  try {
+    const { ProfileSessionService } = await import('../services/ProfileSessionService.js');
+    const { EcosystemHydrationService } = await import('../services/EcosystemHydrationService.js');
+    const sessions = new ProfileSessionService({ tnfHome });
+    sessions.login({
+      profile: profileName,
+      identityMode: profileConfig.identityMode,
+      cloud: profileConfig.identityMode === 'cloud',
+      cloudEndpoint: profileConfig.cloudEndpoint,
+    });
+    try {
+      // Boot: cheap orientation only — never full-universe hydrate.
+      new EcosystemHydrationService({
+        tnfHome,
+        profile: profileName,
+        repoRoot,
+        requireAuth: true,
+      }).orient();
+    } catch (orientErr) {
+      console.log(
+        chalk.yellow(
+          `  Note: ecosystem orientation deferred (${
+            orientErr instanceof Error ? orientErr.message : String(orientErr)
+          })`
+        )
+      );
+    }
+  } catch (sessionErr) {
+    console.log(
+      chalk.yellow(
+        `  Note: profile session not established (${
+          sessionErr instanceof Error ? sessionErr.message : String(sessionErr)
+        }). Run: tnf profile login`
+      )
+    );
+  }
+
   // Also write active boot profile pointer
   const bootProfilePointer = path.join(repoRoot, '.agent/runtime-state/cli-boot-profile.txt');
   try {

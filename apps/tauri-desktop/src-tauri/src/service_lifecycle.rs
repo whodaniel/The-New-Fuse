@@ -772,13 +772,44 @@ pub async fn start_forefront_boot(app: AppHandle) -> Result<ServiceLifecycleResu
     }
 
     match child.spawn() {
-        Ok(_) => Ok(ServiceLifecycleResult {
-            ok: true,
-            message: "Started forefront boot stack".into(),
-            command: cmd_display,
-            already_running: false,
-            port: None,
-        }),
+        Ok(_) => {
+            // Best-effort cheap orientation for first paint (not full-universe hydrate).
+            let mut orient_msg = String::new();
+            let orient_script = repo
+                .join("scripts")
+                .join("runtime")
+                .join("tnf-ecosystem-hydrate.cjs");
+            if orient_script.is_file() {
+                match Command::new(&node)
+                    .arg(&orient_script)
+                    .arg("--orient")
+                    .arg("--json")
+                    .current_dir(&repo)
+                    .output()
+                {
+                    Ok(out) if out.status.success() => {
+                        orient_msg = "; ecosystem orientation refreshed".into();
+                    }
+                    Ok(out) => {
+                        let detail = String::from_utf8_lossy(&out.stderr);
+                        orient_msg = format!(
+                            "; ecosystem orient deferred ({})",
+                            detail.trim().chars().take(120).collect::<String>()
+                        );
+                    }
+                    Err(err) => {
+                        orient_msg = format!("; ecosystem orient deferred ({})", err);
+                    }
+                }
+            }
+            Ok(ServiceLifecycleResult {
+                ok: true,
+                message: format!("Started forefront boot stack{}", orient_msg),
+                command: cmd_display,
+                already_running: false,
+                port: None,
+            })
+        }
         Err(err) => Ok(ServiceLifecycleResult {
             ok: false,
             message: format!("Failed to start forefront boot: {}", err),
@@ -787,6 +818,55 @@ pub async fn start_forefront_boot(app: AppHandle) -> Result<ServiceLifecycleResu
             port: None,
         }),
     }
+}
+
+/// Cheap orientation snapshot for first paint (task-scoped hydrate stays CLI `ecosystem show`).
+#[tauri::command]
+pub async fn get_ecosystem_snapshot(app: AppHandle) -> Result<serde_json::Value, String> {
+    let repo = resolve_repo_root(&app)
+        .ok_or_else(|| "Could not locate TNF repo root for ecosystem orientation".to_string())?;
+    let script = repo
+        .join("scripts")
+        .join("runtime")
+        .join("tnf-ecosystem-hydrate.cjs");
+    if !script.is_file() {
+        return Err(format!(
+            "Ecosystem orient script not found at {}",
+            script.display()
+        ));
+    }
+    let node = resolve_node().ok_or_else(|| "node not found on PATH".to_string())?;
+    let output = Command::new(&node)
+        .arg(&script)
+        .arg("--orient")
+        .arg("--json")
+        .current_dir(&repo)
+        .output()
+        .map_err(|err| format!("Failed to run ecosystem orient: {}", err))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let detail = if !stderr.trim().is_empty() {
+            stderr.trim().to_string()
+        } else {
+            stdout.trim().to_string()
+        };
+        return Err(if detail.is_empty() {
+            "ecosystem orientation failed".into()
+        } else {
+            detail
+        });
+    }
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    serde_json::from_str(stdout.trim()).map_err(|err| {
+        format!(
+            "Invalid ecosystem orientation JSON: {} ({})",
+            err,
+            stdout.chars().take(200).collect::<String>()
+        )
+    })
 }
 
 /// Story Architect AI relay used by Virtual Library (`ai-relay` on :43120).
