@@ -37,13 +37,20 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 REDIS_PORT=6379
 WS_BRIDGE_PORT=3005
 
-# PID file for tracking
+# PID file for tracking ("pid wrapper-script-name" per line)
 PID_FILE="$SCRIPT_DIR/.agent-network-pids"
 WS_BRIDGE_LAUNCHD_LABEL="com.thenewfuse.redis-ws-bridge"
 WS_BRIDGE_LAUNCHD_PLIST="$HOME/Library/LaunchAgents/${WS_BRIDGE_LAUNCHD_LABEL}.plist"
 HARNESS_CONTEXT_ENV="${TNF_HARNESS_CONTEXT_ENV:-$PROJECT_ROOT/.agent/runtime-state/harness-context.env}"
 HARNESS_CONTEXT_RESOLVER="$PROJECT_ROOT/scripts/runtime/resolve-harness-context.cjs"
 AGENT_WRAPPER_LAUNCHER="$PROJECT_ROOT/scripts/runtime/launch-agent-wrapper.sh"
+
+# Boot single-instance lock — reuses the shared TNF guard primitive (#176),
+# it does NOT introduce a second lock framework.
+SINGLE_INSTANCE_GUARD="$PROJECT_ROOT/scripts/lib/tnf-single-instance-guard.cjs"
+BOOT_LOCK_NAME="tnf-agent-network-boot"
+BOOT_LOCK_STALE_MS="${TNF_BOOT_LOCK_STALE_MS:-1800000}"
+BOOT_LOCK_ACQUIRED=0
 
 # =============================================================================
 # FUNCTIONS
@@ -132,10 +139,16 @@ check_ws_bridge_health() {
     curl -fsS --max-time 2 "http://127.0.0.1:$WS_BRIDGE_PORT/health" 2>/dev/null | grep -q '"status":"ok"'
 }
 
-is_wrapper_running() {
-    local script_name=$1
-    pgrep -f "$SCRIPT_DIR/$script_name" > /dev/null 2>&1 || pgrep -f "$script_name" > /dev/null 2>&1
-}
+# -----------------------------------------------------------------------------
+# Wrapper process detection (issue #176 regression fix) lives in
+# scripts/runtime/wrapper-process-lib.sh so it can be regression-tested
+# directly. The old loose `pgrep -f "$script_name"` matched ANY process whose
+# command line mentioned the filename (e.g. `tail -f <wrapper>`), which made
+# boot report "already running" and silently skip starting the agent.
+# -----------------------------------------------------------------------------
+# shellcheck disable=SC1091
+. "$SCRIPT_DIR/runtime/wrapper-process-lib.sh"
+TNF_WRAPPER_PID_FILE="$PID_FILE"
 
 command_available() {
     local command_name=$1
@@ -334,7 +347,7 @@ PLIST
             cd "$SCRIPT_DIR"
             PORT=$WS_BRIDGE_PORT node redis-ws-bridge.cjs > /dev/null 2>&1 &
             WS_PID=$!
-            echo $WS_PID >> "$PID_FILE"
+            echo "$WS_PID redis-ws-bridge.cjs" >> "$PID_FILE"
             sleep 2
         fi
 
@@ -373,7 +386,7 @@ start_antigravity() {
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" \
       >"$PROJECT_ROOT/.agent/runtime-logs/antigravity.log" 2>&1 &
     AG_PID=$!
-    echo $AG_PID >> "$PID_FILE"
+    echo "$AG_PID antigravity-redis-wrapper.cjs" >> "$PID_FILE"
     if wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 15; then
         echo -e "  ${CYAN}ℹ${NC}  Logs: .agent/runtime-logs/antigravity.log"
         return 0
@@ -411,7 +424,7 @@ start_agent_wrapper() {
     TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" \
       >"$log_file" 2>&1 &
-    echo $! >> "$PID_FILE"
+    echo "$! $script" >> "$PID_FILE"
     if wait_for_wrapper "$name" "$script" 15; then
         echo -e "  ${CYAN}ℹ${NC}  Logs: $log_file"
         return 0
@@ -422,28 +435,34 @@ start_agent_wrapper() {
 stop_all() {
     echo -e "${YELLOW}Stopping all agent network components...${NC}"
 
-    # Kill tracked PIDs
+    # Kill tracked PIDs (pid + wrapper-name pairs; legacy bare-pid lines are
+    # still killed but only after a signature check).
     if [ -f "$PID_FILE" ]; then
-        while read pid; do
-            if ps -p $pid > /dev/null 2>&1; then
-                kill $pid 2>/dev/null || true
-                echo -e "  ${RED}✗${NC} Killed process $pid"
+        while read -r pid name _rest; do
+            [ -n "$pid" ] || continue
+            if [ -n "${name:-}" ] && ! _process_owns_wrapper "$pid" "$name"; then
+                continue
+            fi
+            if ps -p "$pid" > /dev/null 2>&1; then
+                kill "$pid" 2>/dev/null || true
+                echo -e "  ${RED}✗${NC} Killed process $pid${name:+ ($name)}"
             fi
         done < "$PID_FILE"
         rm "$PID_FILE"
     fi
 
-    # Kill node processes by name
+    # Kill node processes by verified signature (never by bare filename
+    # mention — issue #176: `tail -f <wrapper>` must not be killed).
     if [[ "$OSTYPE" == "darwin"* ]] && command -v launchctl >/dev/null 2>&1; then
         launchctl bootout "gui/$(id -u)" "$WS_BRIDGE_LAUNCHD_PLIST" >/dev/null 2>&1 || true
     fi
-    pkill -f "redis-ws-bridge.cjs" 2>/dev/null || true
-    pkill -f "antigravity-redis-wrapper.cjs" 2>/dev/null || true
-    pkill -f "claude-redis-wrapper.cjs" 2>/dev/null || true
-    pkill -f "gemini-redis-wrapper.cjs" 2>/dev/null || true
-    pkill -f "jules-redis-wrapper.cjs" 2>/dev/null || true
-    pkill -f "pi-redis-wrapper.cjs" 2>/dev/null || true
-    pkill -f "model-watchdog-failover-consumer.cjs" 2>/dev/null || true
+    kill_wrapper_by_signature "redis-ws-bridge.cjs"
+    kill_wrapper_by_signature "antigravity-redis-wrapper.cjs"
+    kill_wrapper_by_signature "claude-redis-wrapper.cjs"
+    kill_wrapper_by_signature "gemini-redis-wrapper.cjs"
+    kill_wrapper_by_signature "jules-redis-wrapper.cjs"
+    kill_wrapper_by_signature "pi-redis-wrapper.cjs"
+    kill_wrapper_by_signature "model-watchdog-failover-consumer.cjs"
 
     echo -e "${GREEN}All components stopped${NC}"
 }
@@ -578,7 +597,46 @@ done
 # Start network
 print_banner
 
-# Clear old PIDs
+# -----------------------------------------------------------------------------
+# Boot single-instance lock (#176): two concurrent boots used to race on
+# .agent-network-pids (rm/touch/append clobbering). The shared TNF
+# single-instance guard now serializes boots; a second invocation is a no-op.
+# -----------------------------------------------------------------------------
+acquire_boot_lock() {
+    if [[ ! -f "$SINGLE_INSTANCE_GUARD" ]]; then
+        echo -e "${YELLOW}!${NC} Single-instance guard missing; continuing WITHOUT boot lock"
+        return 0
+    fi
+    local guard_json holder_pid
+    guard_json="$(node "$SINGLE_INSTANCE_GUARD" acquire \
+        --lock-name "$BOOT_LOCK_NAME" \
+        --stale-ms "$BOOT_LOCK_STALE_MS" \
+        --source start-agent-network.sh 2>/dev/null || true)"
+    if printf '%s' "$guard_json" | grep -q '"acquired":true'; then
+        BOOT_LOCK_ACQUIRED=1
+        return 0
+    fi
+    holder_pid="$(printf '%s' "$guard_json" | sed -n 's/.*"pid":[[:space:]]*"\{0,1\}\([0-9][0-9]*\)"\{0,1\}.*/\1/p' | head -n 1)"
+    echo ""
+    echo -e "${YELLOW}⏭️  Agent network boot already in progress (lock held by pid ${holder_pid:-unknown}).${NC}"
+    echo "   Nothing was started or modified."
+    echo "   Inspect with: $0 --status"
+    echo "   Shut down with: $0 --stop"
+    exit 0
+}
+
+release_boot_lock() {
+    if [ "$BOOT_LOCK_ACQUIRED" = "1" ] && [[ -f "$SINGLE_INSTANCE_GUARD" ]]; then
+        node "$SINGLE_INSTANCE_GUARD" release \
+            --lock-name "$BOOT_LOCK_NAME" --pid $$ >/dev/null 2>&1 || true
+    fi
+}
+trap release_boot_lock EXIT
+trap 'release_boot_lock; exit 130' INT
+trap 'release_boot_lock; exit 143' TERM
+acquire_boot_lock
+
+# Clear old PIDs (safe: this shell holds the exclusive boot lock)
 rm -f "$PID_FILE"
 touch "$PID_FILE"
 
