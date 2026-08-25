@@ -1,0 +1,71 @@
+{
+  "spec": "tnf/open-agent-contract/0.1",
+  "status": "active",
+  "purpose": "Machine-readable minimum logical rail and local-autonomy contract for the TNF open-source agent.",
+  "requiredRails": [
+    ".agent/SYSTEM_PROMPT.md",
+    ".agent/context/agent-onboarding.md",
+    ".agent/workflows/frontload.md",
+    "docs/core/FRONTLOAD_MANIFEST.md",
+    "docs/protocols/TNF_INTEROPERABILITY_KERNEL.md",
+    "docs/protocols/TNF_OPEN_AGENT_CORE.md",
+    "docs/protocols/TURN_ZERO_MANDATE.md"
+  ],
+  "lifecycle": [
+    "RESPOND",
+    "ORIENT",
+    "CLASSIFY",
+    "HYDRATE",
+    "STAFF",
+    "ACT",
+    "VERIFY",
+    "PROPAGATE",
+    "HANDOFF"
+  ],
+  "semanticKernel": [
+    "Intent",
+    "Authority",
+    "Context",
+    "Capability",
+    "Boundary",
+    "Action",
+    "Receipt",
+    "Handoff"
+  ],
+  "invariants": [
+    "capability_not_authority",
+    "delivery_not_shared_meaning",
+    "context_scoped_and_fresh",
+    "shared_mutation_requires_ownership_awareness",
+    "verification_outranks_narrative",
+    "evidence_state_not_silently_promoted",
+    "handoff_is_execution_when_continuation_required",
+    "hosted_optimization_not_required_for_local_protocol_core"
+  ],
+  "localAutonomy": {
+    "mustOperateWithoutPrivateSource": true,
+    "mustOperateWithoutHostedSaasForBaseline": true,
+    "requiredCapabilities": [
+      "orientation",
+      "classification",
+      "task_scoped_hydration",
+      "capability_discovery",
+      "authority_gate",
+      "local_or_operator_policy",
+      "bounded_action",
+      "verification",
+      "receipt",
+      "handoff"
+    ]
+  },
+  "privateImplementationNotRequiredForCompatibility": [
+    "hosted_route_scoring",
+    "private_graph_inference",
+    "private_evidence_weighting",
+    "private_authority_synthesis",
+    "private_context_ranking",
+    "private_provider_optimization",
+    "private_business_value_reasoning",
+    "private_recursive_architecture_evolution"
+  ]
+}
