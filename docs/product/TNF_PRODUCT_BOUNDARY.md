@@ -1,126 +1,121 @@
-# TNF Product Boundary
+# TNF Product Boundary — Public Runtime Projection
 
-> Status: Active product doctrine
+> Status: Active public product doctrine
 >
-> Purpose: Keep TNF development pointed at a long-term professional open-source
-> distribution and a private hosted SaaS control plane.
+> Purpose: Keep the TNF open-source runtime powerful and independently useful while exposing only the implementation detail required for interoperability and local operation.
 
 ## North Star
 
-TNF is built as two durable products that share contracts, vocabulary, and
-release discipline:
+TNF is distributed as an open runtime plus optional compatible hosted services.
 
-| Product              | Visibility | Primary user                                                | Must contain                                                                                                                                                  | Must not contain                                                                                                                                          |
-| -------------------- | ---------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Open-source TNF      | Public     | Local operators, developers, teams running their own agents | Portable runtime, CLI, app form factors, relay primitives, MCP/A2A contracts, extension points, safe stubs for unavailable hosted authority                   | Secrets, operator-machine state, private customer data, proprietary orchestration policy, billing/entitlement enforcement, hosted-only director authority |
-| TNF SaaS server side | Private    | thenewfuse.com hosted customers and operators               | Director authority, tenant isolation, billing and entitlement enforcement, hosted orchestration policy, private control-plane services, production operations | Public-only demo assumptions, local operator shortcuts, client artifacts that belong in private storage, code that should be a reusable OSS contract      |
+The open runtime is not a crippled client. Its quintessential component is the **TNF agent**: a locally operable protocol participant that can orient, classify, hydrate context, staff capabilities, act, verify, and hand off work through the public TNF logical rail.
 
-The public project should feel complete and professional without needing the
-private server implementation. The private server side should extend the public
-runtime through explicit contracts, not by leaking hidden dependencies into the
-open codebase.
+Hosted TNF may add private optimization and server-side authority through public contracts, but the open runtime must remain coherent and useful without that private implementation.
 
-## Default Classification Rule
+## Boundary rule
 
-Every new TNF artifact must be classified before it lands:
+> **Publish what another actor needs to speak and locally operate TNF. Keep private TNF-specific hosted decision procedures that are not required for interoperability.**
 
-| Classification                         | Where it belongs             | Rule                                                                                                                                                                                                       |
-| -------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Regular OSS runtime                    | Public export                | Needed for local install, public CLI, supported app form factors, relay, MCP/A2A, developer extension APIs, or documentation that helps public users run TNF.                                              |
-| Public contract for private capability | Public export                | Types, interfaces, schemas, no-op stubs, and docs that explain how the private SaaS side integrates without exposing proprietary implementation.                                                           |
-| Private SaaS control plane             | Private control-plane export | Tenant authority, hosted orchestration policy, billing, entitlements, customer operations, production-only coordination, or implementation that creates the hosted moat.                                   |
-| Separate satellite                     | Separate distribution lane   | Games, demos, optional integrations, experiments, vendor/research checkouts, and products that are not part of the default TNF runtime.                                                                    |
-| Personal or client business artifact   | Outside TNF source control   | Client briefs, strategy memos, working trackers, private research, personal data, or commercial prospecting files. Store these in a private cloud drive or private repository, not in the public TNF tree. |
+A public/private split is invalid if it removes the public agent's protocol reasoning core merely to hide an optimization implementation.
 
-When classification is unclear, default to the smallest public contract plus a
-private implementation behind it. Do not make public code depend on private
-source paths.
+## Open runtime — MUST contain
 
-## Public Open-Source Standard
+- the TNF CLI agent and local orchestration/control surfaces;
+- the public semantic kernel and lifecycle;
+- Turn Zero / Turn End gateways;
+- classification, authority, boundary, freshness, receipt, and handoff semantics;
+- capability/provider discovery;
+- public relay, message, context-reference, MCP/A2A and extension contracts;
+- local tool execution subject to public permission/authority controls;
+- local multi-agent coordination primitives;
+- inspectable operator-configurable local policy extension points;
+- safe deterministic fallbacks where semantics permit;
+- public compatibility/conformance tests;
+- explicit degraded behavior for capabilities that truly require a hosted service.
 
-The open-source distribution should optimize for:
+The open agent rail is defined by:
 
-- A clean first-run path with documented prerequisites and health checks.
-- Portable source paths with no absolute operator-machine assumptions.
-- MIT-licensed reusable packages and app form factors.
-- Clear degraded behavior when hosted control-plane authority is absent.
-- Verifiable release gates before publication.
-- Human-readable docs plus machine-readable boundary data.
+- `.agent/SYSTEM_PROMPT.md`
+- `docs/protocols/TNF_INTEROPERABILITY_KERNEL.md`
+- `docs/protocols/TNF_OPEN_AGENT_CORE.md`
+- `docs/protocols/TURN_ZERO_MANDATE.md`
+- `docs/core/FRONTLOAD_MANIFEST.md`
+- `data/harness/open-agent-contract.json`
 
-The current regular OSS app list is defined by
-`data/distribution/oss-app-boundary.json` and summarized in
-`docs/packaging/OSS_APP_BOUNDARY.md`. Which GitHub repo is canonical for each
-product lives in `docs/lineage/PRODUCT_REPO_MAP.md` and
-`data/distribution/product-repo-map.json`.
+## Open runtime — MUST NOT contain
 
-Related products that are **not** the TNF runtime download:
+- secrets, operator-machine credentials, or private customer/tenant data;
+- private-control-plane implementation merely because a public contract calls it;
+- TNF-specific hosted optimization weights, learned policy parameters, or private decision heuristics not required for local compatibility;
+- private graph/reachability/evidence/context/business reasoning implementations whose behavior can be exposed through a smaller public request/receipt contract;
+- hosted billing/entitlement enforcement internals;
+- server-only authority that would be unsafe to duplicate in a client;
+- internal invention/disclosure records or other private corporate artifacts.
 
-- `SkIDEancer` — TNF-adjacent Cloud IDE (own public repo)
-- `MyPhone-Remote` — public client; API satellite is `tnf-myphoneremote-api`
-- `EXTREAMIX` — standalone streaming product
-- `LPM-Standalone` — localhost port monitor
+## Public contract vs private implementation
 
-Do not fold those into `apps/` or into a packed TNF-Extensions GitHub repo.
+When a capability crosses the public/private boundary, prefer:
 
-## Private SaaS Standard
-
-The private hosted layer should optimize for:
-
-- Tenant separation, auditability, and server-side enforcement.
-- Hosted control-plane authority that never relies on frontend hiding.
-- Billing and entitlement checks enforced server-side.
-- Operational observability, rollback paths, and production runbooks.
-- Contract compatibility with the public runtime.
-- No duplicated public runtime logic unless the duplication is a deliberate
-  adapter or deployment wrapper.
-
-The authoritative public/private source split is documented in
-`docs/REPO_SEPARATION.md` and enforced by `scripts/sync-repos.sh`.
-
-Member data storage has a separate boundary:
-`docs/product/TNF_MEMBER_DATA_STORAGE_BOUNDARY.md`. Supabase should hold product
-metadata, indexes, references, and bounded working-set artifacts; it is not a
-member cloud drive. The companion location registry is
-`docs/product/TNF_PERSONAL_DATA_LOCATION_REGISTRY.md`; it stores where each
-user's durable docs and media live, not the docs and media themselves.
-
-## Offload Rule for Personal Business Markdown
-
-Markdown files created for personal business development, client strategy,
-prospecting, UHNW service design, or similar non-TNF source work do not belong
-in the TNF public distribution or private SaaS codebase by default.
-
-Use this order of preference:
-
-1. Private Google Drive or another private cloud drive.
-2. Private GitHub repository when version history, issues, or code-adjacent
-   collaboration are needed.
-3. Local staging only as a temporary holding area until cloud sync is available.
-
-Only move one of these artifacts into TNF documentation if it has been rewritten
-as product-neutral TNF documentation and classified under the table above.
-
-## Change Gate
-
-Before merging or publishing a change that touches the boundary:
-
-1. Classify every changed path.
-2. Update `data/distribution/oss-app-boundary.json` when app membership changes.
-3. Update `scripts/sync-repos.sh` when private extraction or public exclusion
-   changes.
-4. Add or update stubs/contracts for private functionality needed by the public
-   runtime.
-5. Run the relevant dry-run and leakage gates:
-
-```bash
-node scripts/packaging/check-oss-app-boundary.cjs
-node scripts/packaging/check-product-repo-map.cjs
-node scripts/product/check-member-storage-policy.cjs
-node scripts/product/check-personal-data-location-policy.cjs
-pnpm run sync:repos:dry-run
-pnpm run lineage:verify-export
-pnpm run lineage:check-leakage
+```text
+public request/schema/identity/context/receipt contract
+                    ↓
+        optional local implementation
+                    OR
+        optional hosted implementation
 ```
 
-Do not use a successful local boot as proof that a change is distributable.
-Distribution readiness requires the boundary checks above.
+The public side must know enough to invoke, inspect, verify, or replace the capability. It does not automatically receive the hosted implementation's optimization logic.
+
+## Local autonomy rule
+
+Missing hosted TNF must not mean "agent disabled."
+
+For an operation that can be performed safely under local authority, the open agent may use:
+
+- explicit operator choice;
+- transparent local policy;
+- user-supplied weights/preferences;
+- deterministic local fallback;
+- an independent compatible third-party policy provider.
+
+For an operation that genuinely requires unavailable hosted authority, the agent should defer/deny that **specific operation**, not abandon the entire TNF lifecycle.
+
+See `docs/protocols/TNF_LOCAL_POLICY_EXTENSION.md`.
+
+## Default classification
+
+| Classification | Public disposition |
+| --- | --- |
+| OSS runtime mechanism | Include when required for local TNF operation |
+| Public interoperability contract | Include when an independent implementation/client needs it |
+| Local transparent policy mechanism | Include when operator-owned/configurable and not a disguised TNF hosted secret |
+| Private hosted decision implementation | Exclude; expose a contract/receipt if public integration needs it |
+| Private/tenant/personal source data | Exclude |
+| Satellite/optional product | Keep in its appropriate separate lane |
+
+When uncertain, choose the **smallest public contract that still leaves the open agent genuinely functional**, plus a private implementation behind it where appropriate.
+
+## Repository roles
+
+`whodaniel/The-New-Fuse` is the official public runtime source/distribution repository and a legitimate source tree for open-source users.
+
+TNF's internal release process may publish into it from a separate private development source. That internal topology does not turn the public runtime into a read-only shell or make private-source access a prerequisite for OSS operation.
+
+## Public change gate
+
+Before adding or removing an orchestration-related public artifact, answer both questions:
+
+1. **IP boundary:** does this reveal a TNF-specific private hosted decision procedure that a contract/local extension could replace?
+2. **Open-agent capability:** would removing it break the public logical rail, local autonomy, multi-agent coordination, or the ability to complete the TNF lifecycle?
+
+A change is acceptable only when both sides pass.
+
+Minimum checks:
+
+```bash
+node scripts/protocols/open-agent-rail-gate.cjs --no-write
+node --test scripts/protocols/open-agent-rail-gate.test.cjs
+node scripts/verify-repo-frontload.cjs
+```
+
+The canonical release process should additionally run its public/private export and leakage gates before publication.
