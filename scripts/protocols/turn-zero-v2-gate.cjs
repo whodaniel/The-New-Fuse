@@ -6,12 +6,15 @@ const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const CANONICAL = 'whodaniel/tnf-monorepo';
-const PUBLICATION_TARGETS = new Set(['whodaniel/the-new-fuse', 'whodaniel/fuse-control-plane']);
+const INTERNAL_CANONICAL = 'whodaniel/tnf-monorepo';
+const PUBLIC_RUNTIME = 'whodaniel/the-new-fuse';
+const PRIVATE_CONTROL_PLANE = 'whodaniel/fuse-control-plane';
 const PRODUCT_MAP = 'data/distribution/product-repo-map.json';
 const OSS_BOUNDARY = 'data/distribution/oss-app-boundary.json';
 const PRODUCT_BOUNDARY = 'docs/product/TNF_PRODUCT_BOUNDARY.md';
 const REPO_SEPARATION = 'docs/REPO_SEPARATION.md';
+const INTEROP_KERNEL = 'docs/protocols/TNF_INTEROPERABILITY_KERNEL.md';
+const OPEN_AGENT_CORE = 'docs/protocols/TNF_OPEN_AGENT_CORE.md';
 
 function git(args) {
   try {
@@ -34,8 +37,9 @@ function normalizeOrigin(input) {
 
 function repositoryMode(normalizedOrigin) {
   const key = String(normalizedOrigin || '').toLowerCase();
-  if (key === CANONICAL.toLowerCase()) return 'canonical-development';
-  if (PUBLICATION_TARGETS.has(key)) return 'downstream-publication-target';
+  if (key === INTERNAL_CANONICAL.toLowerCase()) return 'internal-canonical-development';
+  if (key === PUBLIC_RUNTIME) return 'public-runtime-source';
+  if (key === PRIVATE_CONTROL_PLANE) return 'private-control-plane-source';
   if (key) return 'external-or-fork';
   return 'unknown';
 }
@@ -60,8 +64,9 @@ function repoReceipt() {
     origin,
     normalizedOrigin,
     mode,
-    canonical: mode === 'canonical-development',
-    publicationTarget: mode === 'downstream-publication-target',
+    internalCanonical: mode === 'internal-canonical-development',
+    publicRuntimeSource: mode === 'public-runtime-source',
+    privateControlPlaneSource: mode === 'private-control-plane-source',
     branch: git(['branch', '--show-current']) || 'detached',
     head: git(['rev-parse', 'HEAD']),
     dirty: Boolean(dirtyLines),
@@ -105,7 +110,7 @@ function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES
 
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
-  const paths = [PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
+  const paths = [INTEROP_KERNEL, OPEN_AGENT_CORE, PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
   if (/relay|broker|websocket|context|intent/.test(q)) paths.push('packages/relay-core');
   if (/front|ui|react|vite/.test(q)) paths.push('apps/frontend');
   if (/api|nest|gateway/.test(q)) paths.push('apps/api', 'apps/api-gateway');
@@ -137,21 +142,40 @@ function main() {
   const blockers = [];
   const warnings = [];
 
-  // Internal TNF development must never accidentally occur in the two owned
-  // downstream publication targets. External forks are legitimate OSS work
-  // surfaces and are not forced to masquerade as the private monorepo.
-  if (repository.publicationTarget) blockers.push(`origin ${repository.normalizedOrigin} is a downstream publication target; develop internally in ${CANONICAL} or work from an external fork`);
-  if (repository.mode === 'external-or-fork') warnings.push(`external/fork mode: upstream placement must follow public contribution and product-boundary rules; private TNF source is not assumed available`);
+  // Repository role is relational. The official public runtime is a legitimate
+  // source/work surface for open-source users and contributors. It is only a
+  // downstream publication target from the internal TNF release perspective.
+  if (repository.privateControlPlaneSource) {
+    blockers.push(`origin ${repository.normalizedOrigin} is the private control-plane source; the open-runtime agent must not treat it as an OSS work surface`);
+  }
+  if (repository.publicRuntimeSource) {
+    warnings.push('public-runtime source mode: local OSS/public-contract work is valid; private-control-plane implementation is unavailable by design');
+  }
+  if (repository.mode === 'external-or-fork') {
+    warnings.push('external/fork mode: public TNF work is valid; upstream publication authority is not implied by the fork');
+  }
   if (repository.mode === 'unknown') warnings.push('repository origin could not be classified');
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
+
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
     if (classificationValidation.unresolved) blockers.push('classification is unresolved');
   }
 
+  // Private-control-plane artifacts do not belong in the public runtime or an
+  // ordinary public fork. Keep the open agent useful while preserving boundary.
+  if (
+    args.requireWriteReady &&
+    ['public-runtime-source', 'external-or-fork'].includes(repository.mode) &&
+    classification.artifactDestination === 'private_control_plane'
+  ) {
+    blockers.push('private_control_plane artifacts must be developed/stored in an authorized private source, not the open runtime');
+  }
+
   const payload = {
-    protocol: 'TNF_TURN_ZERO_V2',
-    canonicalSource: CANONICAL,
+    protocol: 'TNF_TURN_ZERO_V2_PUBLIC',
+    internalCanonicalSource: INTERNAL_CANONICAL,
+    officialPublicRuntime: 'whodaniel/The-New-Fuse',
     lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
     repository, classification, classificationValidation, capabilities, hydration,
     writeReady: blockers.length === 0, blockers, warnings,
@@ -159,10 +183,11 @@ function main() {
 
   if (args.json) console.log(JSON.stringify(payload, null, 2));
   else {
-    console.log('=== Turn Zero V2 ===');
+    console.log('=== Turn Zero V2 — Open Runtime ===');
     console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
     console.log(`- repository mode: ${repository.mode}`);
-    console.log(`- canonical TNF source: ${CANONICAL}`);
+    console.log('- public runtime: whodaniel/The-New-Fuse (official OSS source/distribution)');
+    console.log(`- internal TNF upstream (not required for OSS operation): ${INTERNAL_CANONICAL}`);
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
     warnings.forEach((w) => console.log(`▲ ${w}`));
     console.log('- task-scoped hydration:'); hydration.forEach((p) => console.log(`  - ${p}`));
