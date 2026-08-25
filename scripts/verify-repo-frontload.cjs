@@ -1,87 +1,83 @@
 #!/usr/bin/env node
 /**
- * Verify repo-local TNF frontload artifacts against FRONTLOAD_MANIFEST.md.
- * Shell/home frontload markers remain scripts/verify_frontload_state.sh.
+ * Verify the TNF OPEN-RUNTIME frontload rail.
+ *
+ * The public distribution must not depend on private/internal-only prompt or
+ * state surfaces. Required files are declared by data/harness/open-agent-contract.json.
  */
 'use strict';
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 
 const ROOT = process.cwd();
-const MANIFEST = path.join(ROOT, 'docs/core/FRONTLOAD_MANIFEST.md');
-
-const REQUIRED = [
-  'docs/protocols/TURN_ZERO_MANDATE.md',
-  'docs/protocols/LIVING_STATE.md',
-  'docs/protocols/reports/SESSION_HANDOFF_LATEST.json',
-  '.agent/SYSTEM_PROMPT.md',
-  'docs/protocols/AGENT_STATUS_LEDGER.md',
-  '.agent/context/agent-onboarding.md',
-  '.agent/workflows/frontload.md',
-  '.agent/context/resource-map.md',
-  'docs/core/SOUL.md',
-  'docs/core/IDENTITY.md',
-  'docs/core/USER.md',
-  'docs/core/TOOLS.md',
-  'docs/core/HEARTBEAT.md',
-  'docs/core/SECURITY.md',
-  'docs/core/MEMORY.md',
-  'docs/core/ENGINEERING_PRINCIPLES.md',
-  'docs/core/BOOTSTRAP.md',
-  'docs/core/FRONTLOAD_MANIFEST.md',
-  'docs/core/AGENTS.md',
-  'docs/protocols/HARNESS_CONFIG.md',
-  'docs/protocols/HARNESS_MEMORY_LAYER.md',
-  'docs/protocols/HARNESS_TRAJECTORY.md',
-  'docs/protocols/HARNESS_PERMISSION_BERM.md',
-  'data/harness/harness-config.json',
-  'data/harness/permission-policy.json',
-  'data/mcp_config.json',
-];
-
+const CONTRACT = path.join(ROOT, 'data/harness/open-agent-contract.json');
 const jsonMode = process.argv.includes('--json');
 const checks = [];
 
-function record(name, ok, detail) {
-  checks.push({ name, ok, detail });
+function record(name, ok, detail, required = true) {
+  checks.push({ name, ok, detail, required });
 }
 
-if (!fs.existsSync(MANIFEST)) {
-  record('manifest', false, 'docs/core/FRONTLOAD_MANIFEST.md missing');
+let contract = null;
+if (!fs.existsSync(CONTRACT)) {
+  record('open-agent-contract', false, 'data/harness/open-agent-contract.json missing');
 } else {
-  record('manifest', true, 'FRONTLOAD_MANIFEST.md present');
+  try {
+    contract = JSON.parse(fs.readFileSync(CONTRACT, 'utf8'));
+    record('open-agent-contract', true, contract.spec || 'loaded');
+  } catch (error) {
+    record('open-agent-contract', false, `invalid JSON: ${error.message}`);
+  }
 }
 
-for (const rel of REQUIRED) {
+for (const rel of contract?.requiredRails || []) {
   const abs = path.join(ROOT, rel);
-  const ok = fs.existsSync(abs);
+  const ok = fs.existsSync(abs) && fs.statSync(abs).isFile();
   record(rel, ok, ok ? 'present' : 'missing');
 }
 
-const bootstrapPath = path.join(ROOT, 'docs/core/BOOTSTRAP.md');
-if (fs.existsSync(bootstrapPath)) {
-  const body = fs.readFileSync(bootstrapPath, 'utf8');
-  const pending = body.includes('[BOOTSTRAP_STATUS:PENDING]');
-  const complete = body.includes('[BOOTSTRAP_STATUS:COMPLETE]');
+// Continuation projections improve orientation but are not the semantic root.
+for (const rel of [
+  'docs/protocols/LIVING_STATE.md',
+  'docs/protocols/reports/SESSION_HANDOFF_LATEST.json',
+  '.agent/context/resource-map.md',
+  'docs/core/SECURITY.md',
+  'docs/core/ENGINEERING_PRINCIPLES.md',
+]) {
+  const abs = path.join(ROOT, rel);
+  const ok = fs.existsSync(abs);
+  record(rel, ok, ok ? 'present' : 'optional projection missing', false);
+}
+
+const railGate = path.join(ROOT, 'scripts/protocols/open-agent-rail-gate.cjs');
+if (!fs.existsSync(railGate)) {
+  record('open-agent-rail-gate', false, 'gate script missing');
+} else {
+  const result = spawnSync(process.execPath, [railGate, '--no-write', '--quiet'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  });
   record(
-    'bootstrap_status',
-    pending || complete,
-    pending ? 'PENDING' : complete ? 'COMPLETE' : 'missing status marker'
+    'open-agent-rail-gate',
+    result.status === 0,
+    result.status === 0 ? 'PASS' : `exit ${result.status}: ${String(result.stderr || result.stdout || '').trim().slice(0, 300)}`
   );
 }
 
-const failed = checks.filter((c) => !c.ok);
-const ok = failed.length === 0;
+const failedRequired = checks.filter((c) => c.required && !c.ok);
+const ok = failedRequired.length === 0;
 
 if (jsonMode) {
-  console.log(JSON.stringify({ ok, failed: failed.length, checks }, null, 2));
+  console.log(JSON.stringify({ ok, failedRequired: failedRequired.length, checks }, null, 2));
 } else {
-  console.log('TNF repo frontload verification');
+  console.log('TNF open-runtime frontload verification');
   for (const c of checks) {
-    console.log(`${c.ok ? 'OK' : 'FAIL'}: ${c.name} — ${c.detail}`);
+    const mark = c.ok ? 'OK' : c.required ? 'FAIL' : 'WARN';
+    console.log(`${mark}: ${c.name} — ${c.detail}`);
   }
-  console.log(ok ? '\nALL REQUIRED FRONTLOAD ARTIFACTS PRESENT' : `\n${failed.length} missing/failed`);
+  console.log(ok ? '\nOPEN RUNTIME FRONTLOAD: PASS' : `\nOPEN RUNTIME FRONTLOAD: FAIL (${failedRequired.length} required)`);
 }
 
 process.exit(ok ? 0 : 1);
