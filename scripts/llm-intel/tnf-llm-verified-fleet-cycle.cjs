@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * TNF LLM Verified Fleet Cycle — restored catalog entrypoint.
- * Chains existing llm-intel collectors/optimizers without inventing mock winners.
+ * TNF Open Runtime — verified model observation/policy cycle.
+ *
+ * Public behavior:
+ *   collector -> observation/operator-policy rank -> optional explicit operator plan apply.
+ *
+ * No TNF-hosted preference weights or automatic provider authority are embedded.
  */
 'use strict';
 
@@ -13,12 +17,12 @@ const ROOT = path.resolve(__dirname, '../..');
 const OUT_DIR = path.join(ROOT, 'reports/protocols/llm-verified-fleet');
 const OUT_JSON = path.join(OUT_DIR, 'tnf-llm-verified-fleet-cycle-latest.json');
 
-function runStep(label, relScript, extraEnv = {}) {
+function runStep(label, relScript, args = [], extraEnv = {}) {
   const abs = path.join(ROOT, relScript);
   if (!fs.existsSync(abs)) {
     return { label, ok: false, missing: true, script: relScript };
   }
-  const result = spawnSync(process.execPath, [abs], {
+  const result = spawnSync(process.execPath, [abs, ...args], {
     cwd: ROOT,
     encoding: 'utf8',
     env: { ...process.env, ...extraEnv },
@@ -29,47 +33,64 @@ function runStep(label, relScript, extraEnv = {}) {
     ok: result.status === 0,
     status: result.status,
     script: relScript,
-    stdoutPreview: String(result.stdout || '').slice(0, 400),
-    stderrPreview: String(result.stderr || '').slice(0, 400),
+    args,
+    stdoutPreview: String(result.stdout || '').slice(0, 600),
+    stderrPreview: String(result.stderr || '').slice(0, 600),
   };
+}
+
+function truthy(value) {
+  return ['1', 'true', 'yes', 'on'].includes(String(value || '').trim().toLowerCase());
 }
 
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const startedAt = new Date().toISOString();
-  const apply = ['1', 'true', 'yes', 'on'].includes(
-    String(process.env.TNF_LLM_VERIFY_APPLY || '0')
-      .trim()
-      .toLowerCase()
-  );
+  const applyRequested = truthy(process.env.TNF_LLM_VERIFY_APPLY);
+  const plan = process.env.TNF_LOCAL_LLM_POLICY_PLAN
+    ? path.resolve(process.env.TNF_LOCAL_LLM_POLICY_PLAN)
+    : null;
 
   const steps = [
     runStep('arena-intel', 'scripts/llm-intel/llm-arena-intel-collector.cjs'),
-    runStep('ranking-optimizer', 'scripts/llm-intel/llm-ranking-optimizer.cjs'),
+    runStep('observations-and-local-policy', 'scripts/llm-intel/llm-ranking-optimizer.cjs'),
   ];
 
-  if (apply) {
-    steps.push(
-      runStep('apply-rankings', 'scripts/llm-intel/llm-apply-rankings.cjs', {
-        TNF_LLM_VERIFY_APPLY: '1',
-      })
-    );
+  if (applyRequested) {
+    if (!plan) {
+      steps.push({
+        label: 'apply-operator-plan',
+        ok: false,
+        status: null,
+        script: 'scripts/llm-intel/llm-apply-rankings.cjs',
+        reason: 'TNF_LLM_VERIFY_APPLY requested but TNF_LOCAL_LLM_POLICY_PLAN is not set',
+      });
+    } else {
+      steps.push(
+        runStep(
+          'apply-operator-plan',
+          'scripts/llm-intel/llm-apply-rankings.cjs',
+          ['--plan', plan, '--apply']
+        )
+      );
+    }
   }
 
-  const ok = steps.every((s) => (s.missing ? false : s.ok));
-  // Missing optional apply step shouldn't fail the cycle; missing core collectors do.
   const coreOk = steps
-    .filter((s) => s.label !== 'apply-rankings')
-    .every((s) => s.ok);
+    .filter((step) => step.label !== 'apply-operator-plan')
+    .every((step) => step.ok);
+  const applyOk = !applyRequested || steps.find((step) => step.label === 'apply-operator-plan')?.ok === true;
 
   const payload = {
-    ok: coreOk,
-    processId: 'tnf-llm-verified-fleet-cycle',
+    ok: coreOk && applyOk,
+    processId: 'tnf-open-llm-verified-fleet-cycle',
     startedAt,
     finishedAt: new Date().toISOString(),
-    apply,
+    applyRequested,
+    operatorPlan: plan,
     steps,
-    note: 'Verified fleet cycle restored entrypoint — live collectors only; no hardcoded preference authority.',
+    evidenceState: 'reported',
+    note: 'Open runtime collects evidence and may apply an explicit operator-owned plan. TNF hosted ranking/optimization weights are not embedded.',
   };
 
   fs.writeFileSync(OUT_JSON, `${JSON.stringify(payload, null, 2)}\n`);
