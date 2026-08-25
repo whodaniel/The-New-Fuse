@@ -63,11 +63,17 @@ function hasFlag(name) {
 
 function onboard() {
   const currentTwid = getTwid();
-  console.log('TNF Onboard V2');
+  console.log('TNF Open Runtime Onboard V2');
   console.log(`[TWIP] Terminal ID: ${currentTwid}`);
 
-  // Turn Zero V2 is intentionally the first protocol output. It is compact and
-  // non-blocking unless --write-ready is requested.
+  // Verify the public semantic/protocol root before lower-level onboarding.
+  // This is intentionally a small hash-receipted rail, not a full-context dump.
+  if (!run('Open Agent Rail', process.execPath, [path.join(ROOT, 'scripts/protocols/open-agent-rail-gate.cjs')])) {
+    console.error('Open-agent logical rail is incomplete; refusing to claim TNF onboarding.');
+    process.exit(1);
+  }
+
+  // Turn Zero remains compact and non-blocking unless --write-ready is requested.
   const gateArgs = [];
   if (hasFlag('--write-ready')) gateArgs.push('--require-write-ready');
   const taskIndex = process.argv.indexOf('--task');
@@ -93,7 +99,9 @@ function onboard() {
   }
 
   console.log('\nTNF onboard complete.');
+  console.log('- semantic kernel: Intent / Authority / Context / Capability / Boundary / Action / Receipt / Handoff');
   console.log('- lifecycle: RESPOND -> ORIENT -> CLASSIFY -> HYDRATE -> STAFF -> ACT -> VERIFY -> PROPAGATE -> HANDOFF');
+  console.log('- local autonomy: public TNF remains usable without hosted/private orchestration intelligence');
   console.log('- before mutation: rerun with --write-ready and provide classification env when not already known');
 }
 
