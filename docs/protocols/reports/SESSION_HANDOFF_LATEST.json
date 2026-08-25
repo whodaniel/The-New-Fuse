@@ -1,92 +1,107 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9",
-  "created_at": "2026-08-21T07:07:08.717Z",
-  "repository": "whodaniel/tnf-monorepo",
-  "branch": "docs/reconciliation-2026-08-21",
-  "head_sha": "9561fa7c1eb605f86d20f87405753d7bc46e43eb",
+  "handoff_id": "public-open-agent-boundary-2026-08-25",
+  "created_at": "2026-08-25T06:53:00Z",
+  "repository": "whodaniel/The-New-Fuse",
+  "branch": "main",
+  "head_sha": "022b917d880467031d1b1d671c1b9ae7cfb7d917",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
+  "sensitive_scope": "public",
   "project_ids": [
-    "TNF-RECONCILIATION",
-    "TNF-PUBLICATION"
+    "TNF-OPEN-RUNTIME",
+    "TNF-OPEN-AGENT-CORE",
+    "TNF-IP-BOUNDARY"
   ],
   "work_summary": [
-    "Canonical PRs #125-#130 merged with local verification.",
-    "Open runtime published through The-New-Fuse PR #154; public issue #157 closed.",
-    "Divergent checkout preserved and classified without mutation; external Actions, Jules cadence, control-plane, extension-contract, and professional-review gates recorded."
+    "Reduced confirmed public overexposure of hosted orchestration decision procedures.",
+    "Restored and strengthened the public TNF agent logical rail so the open CLI remains locally capable rather than becoming a thin hosted-service client.",
+    "Added a machine-readable open-agent contract and hash-receipted rail gate before Turn Zero onboarding.",
+    "Reframed public Turn Zero so the official open runtime and forks are legitimate OSS work surfaces while private-control-plane implementation remains out of bounds."
   ],
   "changed_paths": [
-    "README.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    ".agent/SYSTEM_PROMPT.md",
+    ".agent/context/agent-onboarding.md",
+    ".agent/workflows/frontload.md",
+    "data/harness/open-agent-contract.json",
+    "docs/core/FRONTLOAD_MANIFEST.md",
+    "docs/protocols/TNF_INTEROPERABILITY_KERNEL.md",
+    "docs/protocols/TNF_OPEN_AGENT_CORE.md",
+    "docs/protocols/TNF_COHERENT_STATE_CONTINUITY.md",
+    "docs/protocols/TURN_ZERO_MANDATE.md",
     "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "scripts/protocols/emit-session-handoff.cjs",
-    "scripts/protocols/validate-turn-zero-authority.cjs",
-    "scripts/tests/session-handoff-v2.test.cjs",
-    "scripts/sync-repos-auth.test.cjs",
-    "scripts/sync-repos.sh",
-    "docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md"
+    "packages/control-plane-contracts/src/cost-policy-utils.ts",
+    "scripts/protocols/open-agent-rail-gate.cjs",
+    "scripts/protocols/open-agent-rail-gate.test.cjs",
+    "scripts/protocols/turn-zero-v2-gate.cjs",
+    "scripts/tnf-onboard-twip.cjs",
+    "scripts/verify-repo-frontload.cjs"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "not_run_in_github_api_session",
+    "secret_sweep": "not_run_in_github_api_session",
+    "docs_pii_guard": "not_run_in_github_api_session",
     "supabase_rls_audit": "na",
-    "notes": "Boundary gates passed; targeted test receipts are listed in the reconciliation report. Hosted CI did not execute because of the separate account-level restriction."
+    "notes": "Repository/API mutations are real; local Node/pnpm/Husky execution remains required. The public rail now has explicit tests and gates but they have not been executed in this GitHub API session."
   },
   "continuation": {
-    "owner": "orchestrator",
+    "owner": "open-runtime-maintainer",
     "targets": [
-      "orchestrator",
-      "operator"
+      "open-runtime-agent",
+      "operator",
+      "canonical-release-process"
     ],
     "priority": "high",
     "resume_checklist": [
-      "Read docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md",
-      "Verify live canonical main and public publication receipts",
-      "Keep the protected checkout mutation-prohibited",
-      "Separate infrastructure failures from executed test failures"
+      "Run open-agent rail/frontload tests on an exact public-runtime head.",
+      "Run tnf:onboard in the public runtime and prove no private-source dependency.",
+      "Continue current-tip audit for provider/model ranking, orchestration policy, graph reasoning, and recursive optimization implementations that exceed the public boundary.",
+      "Backfill the emergency public corrections into the private canonical release branch before any later normal sync."
     ]
   },
   "next_actions": [
-    "After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.",
-    "Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow.",
-    "Review protected checkout candidate lanes individually against current main; do not bulk merge.",
-    "Continue issues #113 and #114 only after their canonical ownership decisions."
+    "Verify the public open-agent rail and onboarding end-to-end locally.",
+    "Preserve useful local/operator-configurable policy while moving TNF-specific optimized decision procedures behind public contracts.",
+    "Prevent a later canonical sync from restoring the removed public implementations."
   ],
   "artifacts": {
     "commits": [
-      "9561fa7c1eb605f86d20f87405753d7bc46e43eb"
+      "ea8d7892e524776a10b73ced8a51d17e9633d7c2",
+      "103146900dffa3ad8e2c154f145d46bae75b97c2",
+      "e79733ec4d08355e424714b038d6087c70ee939e",
+      "ce69b66b9ac4c1a25e95db9e12c209cb85729ab6",
+      "eea8c90a8fb6e6205e29907912df61d46855ebe3",
+      "98b577ec7fad5472c027b4d6a57c8b583229d220",
+      "68fca561073560ef0f0a101a4725ea34eb6f9b00",
+      "ae4d90b5305cc694d2f07470c36fa798f5dfaa6e",
+      "f260aefa5bd4e1ee9b6ee9399332c49e07ab5f19",
+      "1a167985a0dbf4dd1bd67d5a341f63fc27b94de3",
+      "667fae49f6047e71c4e411cb57db6e55dc2853a4",
+      "fada901aefa5848318d74c07ba327cded5edcd26",
+      "022b917d880467031d1b1d671c1b9ae7cfb7d917"
     ]
   },
   "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
+    "official_public_runtime": "whodaniel/The-New-Fuse",
+    "actual": "whodaniel/The-New-Fuse",
+    "role": "public_runtime_source_and_distribution",
+    "internal_upstream_required_for_runtime": false,
+    "operation_in_progress": null
   },
   "classification": {
     "work_domain": "corporate",
     "artifact_destination": "oss_runtime",
     "data_residency": "product_state",
-    "sensitivity": "internal"
+    "sensitivity": "public"
   },
   "capabilities": {
     "required": [
-      "release-engineering",
       "protocol-governance",
-      "repository-reconciliation"
+      "open-runtime-agent-harness",
+      "public-private-boundary"
     ],
     "staffed_by": [
-      "codex",
-      "operator"
+      "operator",
+      "chatgpt"
     ]
   },
   "publication": {
