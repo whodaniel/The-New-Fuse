@@ -297,40 +297,6 @@ function EnhancedMultiAgentChatUI() {
     }
   }, [agents, joinConversation]);
 
-  // Connection status component
-  const ConnectionStatus = () => (
-    <div
-      role="status"
-      aria-live="polite"
-      className={cn(
-        'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
-        connectionState.connected
-          ? connectionState.authenticated
-            ? 'bg-green-100 text-green-800'
-            : 'bg-yellow-100 text-yellow-800'
-          : 'bg-red-100 text-red-800'
-      )}
-    >
-      <div
-        className={cn(
-          'w-2 h-2 rounded-full',
-          connectionState.connected
-            ? connectionState.authenticated
-              ? 'bg-green-500'
-              : 'bg-yellow-500'
-            : 'bg-red-500'
-        )}
-      />
-      {connectionState.connected
-        ? connectionState.authenticated
-          ? 'Connected & Authenticated'
-          : 'Connected (Authenticating...)'
-        : connectionState.connecting
-          ? 'Connecting...'
-          : 'Disconnected'}
-    </div>
-  );
-
   if (connectionError) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
@@ -442,7 +408,11 @@ function EnhancedMultiAgentChatUI() {
               className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
             >
               <option value="">Select Agent</option>
-              {agentOptions}
+              {agents.map((agent) => (
+                <option key={agent.agentId} value={agent.agentId}>
+                  {agent.name}
+                </option>
+              ))}
             </select>
           )}
 
@@ -474,15 +444,23 @@ function EnhancedMultiAgentChatUI() {
         {conversations.length > 0 && (
           <div className="mt-2">
             <div className="text-sm font-medium mb-1">Active Conversations:</div>
-            <div className="flex gap-2 flex-wrap">{conversationButtons}</div>
+            <div className="flex gap-2 flex-wrap">
+              {conversations.map((conversation) => (
+                <button
+                  key={conversation.id}
+                  onClick={() => joinConversation(conversation.id)}
+                  className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-xs hover:bg-gray-300 dark:hover:bg-gray-600"
+                >
+                  {conversation.topic || conversation.id.slice(0, 8)}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </header>
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} agents={agents} />
-        ))}
+        {renderedMessages}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />

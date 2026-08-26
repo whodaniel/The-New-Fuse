@@ -121,6 +121,7 @@
     "ops:seed-control-plane": "node scripts/tnf-seed-control-plane.cjs",
     "ops:sync-supabase": "node scripts/sync_to_supabase.cjs",
     "tnf:frontload:verify": "bash scripts/verify_frontload_state.sh",
+    "tnf:host-wrappers:install": "node scripts/install-tnf-host-wrappers.cjs",
     "improver:scan": "node scripts/improver/scan.cjs",
     "scout:scan": "node scripts/swarm/news-scout.cjs",
     "factory:supercycle": "node scripts/orchestrator/supercycle-flywheel.cjs",

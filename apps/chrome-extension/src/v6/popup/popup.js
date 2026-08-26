@@ -45,6 +45,7 @@ class FuseConnectPopup {
         },
       },
       nativeHostAvailable: false,
+      projectRoot: null,
       autonomy: {
         monitorRunning: false,
         masterClockRunning: false,
@@ -693,9 +694,15 @@ class FuseConnectPopup {
   }
 
   showInstallHelper() {
-    // Create a modal/overlay with installation instructions
-    const extensionId = chrome.runtime.id;
-    const installPath = `${chrome.runtime.getURL('native-host/install-macos.sh')}`;
+    const repoRoot =
+      this.state.projectRoot || '$HOME/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse';
+    // Absolute path from native host when available; otherwise a shell-expandable fallback.
+    const installCmd = this.state.projectRoot
+      ? `cd "${repoRoot}/apps/chrome-extension" && ./install-v7.sh`
+      : `cd ${repoRoot}/apps/chrome-extension && ./install-v7.sh`;
+    const relayCmd = this.state.projectRoot
+      ? `cd "${repoRoot}" && pnpm relay:start`
+      : `cd ${repoRoot} && pnpm relay:start`;
 
     const modal = document.createElement('div');
     modal.id = 'install-helper-modal';
@@ -716,7 +723,7 @@ class FuseConnectPopup {
               <span>Run this command:</span>
             </div>
             <code class="install-command" id="install-command">
-              cd /path/to/The-New-Fuse/apps/chrome-extension && ./install.sh
+              ${installCmd}
             </code>
             <button class="btn-secondary" style="width:100%; margin-top:8px;" id="copy-install-cmd">
               📋 Copy Command
@@ -727,7 +734,7 @@ class FuseConnectPopup {
               Or start relay manually in terminal:
             </p>
             <code class="install-command" id="manual-command">
-              cd /path/to/The-New-Fuse && pnpm relay:start
+              ${relayCmd}
             </code>
             <button class="btn-primary" style="width:100%; margin-top:8px;" id="copy-manual-cmd">
               📋 Copy & Close
@@ -822,14 +829,12 @@ class FuseConnectPopup {
 
     // Event handlers
     document.getElementById('copy-install-cmd')?.addEventListener('click', () => {
-      navigator.clipboard.writeText(
-        'cd /path/to/The-New-Fuse/apps/chrome-extension && ./install.sh'
-      );
+      navigator.clipboard.writeText(installCmd);
       this.showToast('Command copied!');
     });
 
     document.getElementById('copy-manual-cmd')?.addEventListener('click', () => {
-      navigator.clipboard.writeText('cd /path/to/The-New-Fuse && pnpm relay:start');
+      navigator.clipboard.writeText(relayCmd);
       this.showToast('Command copied!');
       modal.remove();
       styleEl.remove();
@@ -894,6 +899,9 @@ class FuseConnectPopup {
     try {
       const response = await this.sendNativeMessage({ action: 'ping' });
       this.state.nativeHostAvailable = response.action === 'pong';
+      if (response.projectRoot) {
+        this.state.projectRoot = response.projectRoot;
+      }
     } catch (e) {
       this.state.nativeHostAvailable = false;
     }

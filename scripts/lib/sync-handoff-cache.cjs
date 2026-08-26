@@ -7,24 +7,10 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { resolveTnfRepo } = require('./resolve-tnf-repo.cjs');
 
 function resolveRepoRoot(explicit) {
-  if (explicit && fs.existsSync(path.join(explicit, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'))) {
-    return explicit;
-  }
-  const env = process.env.TNF_REPO_DIR || process.env.TNF_REPO;
-  if (env && fs.existsSync(path.join(env, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'))) {
-    return env;
-  }
-  const cwd = process.cwd();
-  if (fs.existsSync(path.join(cwd, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'))) {
-    return cwd;
-  }
-  const fallback = path.join(os.homedir(), 'Desktop/A1-Inter-LLM-Com/The-New-Fuse');
-  if (fs.existsSync(path.join(fallback, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'))) {
-    return fallback;
-  }
-  return cwd;
+  return resolveTnfRepo(explicit) || process.cwd();
 }
 
 function readJson(filePath) {

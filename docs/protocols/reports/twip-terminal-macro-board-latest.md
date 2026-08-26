@@ -1,6 +1,6 @@
 # TWIP Terminal Macro Board (Latest)
 
-Generated: 2026-08-13T22:40:36.915Z
+Generated: 2026-08-26T03:00:22.910Z
 Tenant: `tnf-local`
 Source: `ps+tmux+capture+terminal-history`
 Snapshot: `data/protocols/twip-inventory.snapshot.json`
@@ -12,7 +12,7 @@ Context capture: `enabled`
 - Active work terminals: 1
 - Idle terminals: 0
 - Active ratio: 1
-- Top work executables: node(1)
+- Top work executables: opencode(1)
 
 ## Safety Signals
 
@@ -23,12 +23,12 @@ Context capture: `enabled`
 
 ## Active Sessions (Sanitized)
 
-- `/dev/ttys000` -> node | ctx: 3. Cancel | >
+- `/dev/ttys002` -> opencode | ctx: ╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ | ⬝⬝⬝⬝⬝⬝⬝⬝  esc interrupt                       275.1K (28%)  ctrl+p commands
 
 ## Delta vs Previous Run
 
-- Terminal count delta: +0
-- Active terminal delta: +0
+- Terminal count delta: -4
+- Active terminal delta: -4
 - Active gained: 0
-- Active lost: 0
+- Active lost: 4
 

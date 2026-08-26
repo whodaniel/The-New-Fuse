@@ -38,8 +38,28 @@ function enumerateAncestors(startDir) {
 }
 
 function findProjectRoot() {
-  if (process.env.TNF_PROJECT_ROOT && isTNFProjectRoot(process.env.TNF_PROJECT_ROOT)) {
-    return path.resolve(process.env.TNF_PROJECT_ROOT);
+  const envRoots = [
+    process.env.TNF_PROJECT_ROOT,
+    process.env.TNF_REPO_DIR,
+    process.env.TNF_REPO,
+  ].filter((value) => typeof value === 'string' && value.length > 0);
+
+  for (const envRoot of envRoots) {
+    if (isTNFProjectRoot(envRoot)) {
+      return path.resolve(envRoot);
+    }
+  }
+
+  // Persistent pointer written by scripts/install-tnf-host-wrappers.cjs
+  try {
+    const pointer = fs
+      .readFileSync(path.join(os.homedir(), '.tnf', 'repo-root'), 'utf8')
+      .trim();
+    if (pointer && isTNFProjectRoot(pointer)) {
+      return path.resolve(pointer);
+    }
+  } catch (_error) {
+    // ignore missing pointer
   }
 
   const seedDirs = [process.cwd(), process.env.INIT_CWD, process.env.PWD, __dirname].filter(
@@ -51,6 +71,16 @@ function findProjectRoot() {
     for (const candidate of enumerateAncestors(seed)) {
       candidates.add(candidate);
     }
+  }
+
+  // Well-known operator checkouts (avoid /path/to placeholders + broken worktrees)
+  for (const known of [
+    path.join(os.homedir(), 'Repos', 'tnf-monorepo'),
+    path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'TNF', 'The-New-Fuse'),
+    path.join(os.homedir(), 'Desktop', 'A1-Inter-LLM-Com', 'The-New-Fuse'),
+    path.join(os.homedir(), '.tnf-cli', 'fuse'),
+  ]) {
+    candidates.add(known);
   }
 
   for (const candidate of candidates) {

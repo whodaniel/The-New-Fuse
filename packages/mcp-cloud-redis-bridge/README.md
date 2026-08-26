@@ -68,9 +68,29 @@ Inputs: none.
 
 ## Authorization model
 
-- `set_director_identity` — any client may call (no auth required, just sets in-memory identity).
-- `broadcast_super_director_prompt` — REQUIRES prior `set_director_identity` AND `invokerAgentId` ∈ {sub-director, orchestration-agent}.
-- `verify_master_clock_signal` — REQUIRES encryption private key set on the active identity.
+> **⚠️ TNF-P0 CONTAINMENT (2026-08-25).** `set_director_identity` and
+> `broadcast_super_director_prompt` are **disabled fail-closed** — both now
+> return an `UNAVAILABLE` error unconditionally. See the incident note below
+> and the comments at their call sites in `src/index.ts`.
+>
+> The prior model let any MCP client call `set_director_identity` with a
+> self-declared `wallet_address`/`nft_id` (no verification of any kind),
+> then use that self-asserted identity to authorize
+> `broadcast_super_director_prompt` — gated only by a caller-supplied
+> `invokerAgentId` string and a non-cryptographic "signature"
+> (`` `nft-authorized:${nft_id}` ``, a template literal, never verified by
+> anything downstream). Any caller could therefore manufacture a
+> `SUPER_DIRECTOR_INJECTION` envelope on the shared ingress bus. Confirmed at
+> the source level 2026-08-25; not found wired into any deployed MCP client
+> config in this repo or on the auditing machine at the time of discovery —
+> see the incident receipt for the full reachability finding. Re-enabling
+> either tool requires real proof-of-possession or an operator-issued
+> `CapabilityGrant` (`packages/control-plane-contracts/src/authority.ts`),
+> never a request field, env var, or claimed role/NFT id.
+
+- `set_director_identity` — **disabled.** Previously: any client may call (no auth required, just sets in-memory identity).
+- `broadcast_super_director_prompt` — **disabled.** Previously: required prior `set_director_identity` AND `invokerAgentId` ∈ {sub-director, orchestration-agent} — both caller-controlled.
+- `verify_master_clock_signal` — REQUIRES encryption private key set on the active identity (only reachable via the operator's boot-time `LOCAL_SUBDIRECTOR_*` env vars now that `set_director_identity` is disabled).
 - All other tools — read-only / self-bootstrap (no authorization check).
 
 The in-memory `authorizedIdentity` object is the only gate. This is single-process,
@@ -147,7 +167,7 @@ src/
 
 - **Single-process state.** `authorizedIdentity` lives in memory only. Restart = re-authorize.
 - **No narration logging.** Bus publishes go straight to Redis with NO audit trail in this server.
-- **Ed25519 sign/verify is stubbed.** `crypto.ts` produces/verifies PKCS8 PEM keys but the broadcast path only sets `sig = 'nft-authorized:<nft_id>'` rather than a real cryptographic signature.
+- **Ed25519 sign/verify is stubbed.** `crypto.ts` produces/verifies PKCS8 PEM keys but the broadcast path only set `sig = 'nft-authorized:<nft_id>'` rather than a real cryptographic signature — this is *why* `broadcast_super_director_prompt` is now disabled (see Authorization model above).
 - **No retry / no backoff.** If Redis is down at connect time, the server exits.
 - **Stdio blocking on SIGPIPE.** A misbehaving MCP client that closes stdin ends the server.
 

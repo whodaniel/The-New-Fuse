@@ -98,7 +98,11 @@ module.exports = (env, argv) => {
             // Avoid re-minifying the tiny boot shell (keeps load path predictable).
             info: { minimized: true },
           },
-          { from: './icons', to: 'icons', noErrorOnMissing: true },
+          // Committed icon source of truth (do not use noErrorOnMissing — Chrome
+          // refuses Load Unpacked when action icons are absent).
+          { from: './assets/icons', to: 'icons' },
+          // Also include any generated variants under ./icons (connected/error/etc).
+          { from: './icons', to: 'icons', noErrorOnMissing: true, force: true },
           {
             from: './src/v6/native-host',
             to: 'native-host',

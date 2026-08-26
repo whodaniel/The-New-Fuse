@@ -40,27 +40,50 @@ function tail(value, maxChars = 1000) {
   return text.slice(text.length - maxChars);
 }
 
-function resolveRepoRoot() {
-  const candidates = [
-    process.env.TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR,
-    path.resolve(__dirname, '..', '..'),
-    process.cwd(),
-  ].filter(Boolean);
+// Repo-root resolution delegated to the shared, canonical resolver at
+// ../lib/resolve-tnf-repo.cjs (see docs/protocols/DURABLE_LOCAL_RUNTIME_MANDATE.md)
+// — this used to self-locate via `path.resolve(__dirname, '..', '..')`,
+// which silently breaks if this file is ever copied/deployed elsewhere
+// (confirmed: the ~/.tnf/bin/ deployed copy of this exact class of bug).
+// The shared resolver's own ancestor-walk (from its own __dirname inside
+// scripts/lib/) still finds the repo root correctly when running in place,
+// so no self-location fallback is needed here.
+const { resolveTnfRepo } = require('../lib/resolve-tnf-repo.cjs');
 
-  for (const candidate of candidates) {
-    const sentinel = path.join(
-      candidate,
-      '.skills',
-      'tnf-sub-director-autopilot',
-      'scripts',
-      'subdirector-cycle-check.sh'
+let _resolveRepoRootCache;
+function resolveRepoRoot() {
+  if (_resolveRepoRootCache) return _resolveRepoRootCache;
+
+  // This script's own explicit override still takes priority, for backward
+  // compatibility with anyone already setting it.
+  const explicit = process.env.TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR;
+  const root = (explicit && resolveTnfRepo(explicit)) || resolveTnfRepo(null);
+
+  if (!root) {
+    throw new Error(
+      'subdirector-autopilot-loop: could not resolve a valid TNF checkout. ' +
+      'Set TNF_SUBDIRECTOR_AUTOPILOT_ROOT_DIR or TNF_REPO_DIR.'
     );
-    if (fs.existsSync(sentinel)) {
-      return candidate;
-    }
   }
 
-  return path.resolve(__dirname, '..', '..');
+  // The shared resolver validates general TNF-checkout-ness; this script
+  // additionally needs its own specific skill script to exist there.
+  const sentinel = path.join(
+    root,
+    '.skills',
+    'tnf-sub-director-autopilot',
+    'scripts',
+    'subdirector-cycle-check.sh'
+  );
+  if (!fs.existsSync(sentinel)) {
+    throw new Error(
+      `subdirector-autopilot-loop: resolved TNF repo root '${root}' is missing ` +
+      `the expected sentinel '${sentinel}'.`
+    );
+  }
+
+  _resolveRepoRootCache = root;
+  return root;
 }
 
 const repoRoot = resolveRepoRoot();
