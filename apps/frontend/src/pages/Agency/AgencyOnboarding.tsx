@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ethers } from 'ethers';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AGENCY_LICENSE_DURATION_SECONDS, AGENCY_LICENSE_DURATION_LABEL } from '@/constants/agency';
 
 // Placeholder ABI for the functions we need
 const REGISTRY_ABI = [
@@ -35,7 +36,7 @@ const AgencyOnboarding: React.FC = () => {
 
       // Price: 2500 MATIC (Mocked as 0.1 ETH for dev)
       // Duration: 1 year (365 days)
-      const duration = 365 * 24 * 60 * 60;
+      const duration = AGENCY_LICENSE_DURATION_SECONDS;
       const price = ethers.parseEther('0.1'); // Dev price
 
       const tx = await contract.mintAgencyLicense(agencyName, duration, { value: price });
@@ -92,20 +93,7 @@ const AgencyOnboarding: React.FC = () => {
             )}
           </div>
 
-          <div className="bg-slate-800/50 p-4 rounded-md border border-slate-700">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-slate-300">License Fee (Lifetime)</span>
-              <span className="text-2xl font-bold text-white">2,500 MATIC</span>
-            </div>
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-slate-300">Revenue Split</span>
-              <span className="text-green-400 font-bold">100% Yours</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Included Seats</span>
-              <span className="text-white font-bold">Unlimited</span>
-            </div>
-          </div>
+          <div className="bg-slate-800/50 p-4 rounded-md border border-slate-700">\n            <div className="flex justify-between items-center mb-4">\n              <span className="text-slate-300">License Fee (Annual)</span>\n              <span className="text-2xl font-bold text-white">2,500 MATIC</span>\n            </div>\n            <div className="flex justify-between items-center mb-4">\n              <span className="text-slate-300">Revenue Split</span>\n              <span className="text-green-400 font-bold">Your Agency, Your Brand</span>\n              <span className="text-xs text-slate-400 block mt-1">You retain 100% of revenue from your agents</span>\n            </div>\n            <div className="flex justify-between items-center">\n              <span className="text-slate-300">Included Seats</span>\n              <span className="text-white font-bold">Unlimited</span>\n            </div>\n          </div>
 
           {error && <div className="bg-red-900/50 text-red-200 p-4 rounded-md">{error}</div>}
 
