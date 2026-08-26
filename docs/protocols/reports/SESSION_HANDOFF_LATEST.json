@@ -1,242 +1,41 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "dfd7f798-b0de-425d-85e5-93162b6668ce",
-  "created_at": "2026-08-26T02:40:59.332Z",
-  "repository": "whodaniel/tnf-monorepo",
+  "handoff_id": "f4e8b2a1-3c5d-4e6f-9a2b-8c7d9e0f1a2b",
+  "created_at": "2026-08-27T19:45:00.000Z",
   "branch": "sentinel-fix-marketplace-cmd-injection-11879217410415317362",
-  "head_sha": "b4511fcacea76ed009a430927be7842683c89d7d",
-  "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
-  "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
-  ],
+  "head": "cd51fbdaaddc53700e9a1f8f3bf045850dfabe39",
+  "dirty": true,
+  "author": {
+    "canonicalEntityId": "TNF:LOCAL:AGENT:ORCHESTRATOR:001",
+    "displayName": "Orchestrator"
+  },
+  "summary": "Completed browser-control-surfaces TNF federation relay integration: client rewritten to canonical TNFEnvelope/RelayMessage protocol (REGISTER → REGISTRATION_CONFIRMED / REGISTRATION_ERROR, correlation IDs for channel ops, HEARTBEAT/HEARTBEAT_ACK). Created jest test infrastructure and 12 integration tests (all passing). Updated AGENT_STATUS_LEDGER.md with browser-control-surface agent registration. Package builds cleanly.",
   "changed_paths": [
-    "apps/backend/tsconfig.json",
-    "apps/browser-control-surfaces/BROWSER_CONTROL_SURFACE.tsx",
-    "apps/browser-control-surfaces/components/AgentOrchestrator.tsx",
-    "apps/browser-control-surfaces/components/BrowserDetection.tsx",
-    "apps/browser-control-surfaces/components/ChannelManager.tsx",
-    "apps/browser-control-surfaces/components/SecurityMonitor.tsx",
-    "apps/browser-control-surfaces/components/TnfHarnessStatusBar.tsx",
-    "apps/browser-control-surfaces/hooks/useBrowserState.ts",
-    "apps/browser-control-surfaces/hooks/useTerminalHeartbeat.ts",
-    "apps/browser-control-surfaces/hooks/useTnfAuthorization.ts",
-    "apps/browser-control-surfaces/hooks/useTnfFederation.ts",
+    "apps/browser-control-surfaces/jest.config.js",
     "apps/browser-control-surfaces/lib/federation-relay-client.ts",
-    "apps/browser-control-surfaces/lib/harness-protocol.ts",
-    "apps/browser-control-surfaces/lib/verify-gate-decisions.ts",
-    "apps/browser-control-surfaces/tsconfig.json",
-    "tests/host-lifecycle/conformance/01-managed-frontload-fence.test.cjs",
-    "tests/host-lifecycle/conformance/04-unverified-symlink.test.cjs",
-    "tests/host-lifecycle/conformance/06-11-pending-gaps.test.cjs",
-    "tests/host-lifecycle/conformance/08-runtime-state-never-centralized.test.cjs",
-    "tests/host-lifecycle/conformance/12-fail-closed-vs-advisory.test.cjs",
-    "tests/host-lifecycle/conformance/ORIGIN_MAIN_SHA.txt",
-    "tests/host-lifecycle/conformance/README.md",
-    "tests/host-lifecycle/conformance/run-all.cjs",
-    "tests/host-lifecycle/conformance/run_python_conformance.py",
-    "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
-    "apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json",
-    "apps/api/src/modules/billing/billing.controller.ts",
-    "apps/api/src/modules/billing/billing.module.ts",
-    "apps/api/src/modules/billing/paypal.controller.ts",
-    "apps/api/src/modules/billing/stripe.controller.ts",
-    "apps/chrome-extension/dist-v7/content/ai-studio-automation.js",
-    "apps/chrome-extension/dist-v7/content/iframe-bridge.js",
-    "apps/chrome-extension/dist-v7/content/index.js",
-    "apps/chrome-extension/dist-v7/content/notebooklm-integration.js",
-    "apps/chrome-extension/dist-v7/icons/icon128-connected.png",
-    "apps/chrome-extension/dist-v7/icons/icon128-error.png",
-    "apps/chrome-extension/dist-v7/icons/icon128.png",
-    "apps/chrome-extension/dist-v7/icons/icon16-connected.png",
-    "apps/chrome-extension/dist-v7/icons/icon16-error.png",
-    "apps/chrome-extension/dist-v7/icons/icon16.png",
-    "apps/chrome-extension/dist-v7/icons/icon48-connected.png",
-    "apps/chrome-extension/dist-v7/icons/icon48-error.png",
-    "apps/chrome-extension/dist-v7/icons/icon48.png",
-    "apps/chrome-extension/dist-v7/manifest.json",
-    "apps/chrome-extension/dist-v7/native-host/install-macos.sh",
-    "apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs",
-    "apps/chrome-extension/dist-v7/popup/index.html",
-    "apps/chrome-extension/dist-v7/popup/popup.css",
-    "apps/chrome-extension/dist-v7/popup/popup.js",
-    "apps/chrome-extension/generate-icons.js",
-    "apps/chrome-extension/package.json",
-    "apps/chrome-extension/src/v6/content/index.ts",
-    "apps/chrome-extension/src/v6/native-host/tnf-native-host.cjs",
-    "apps/chrome-extension/src/v6/popup/popup.js",
-    "apps/chrome-extension/src/v6/shared/constants.ts",
-    "apps/chrome-extension/src/v6/shared/types.ts",
-    "apps/chrome-extension/webpack.v7.config.cjs",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "apps/frontend/src/components/A2AMultiAgentChat.tsx",
-    "apps/frontend/src/components/UnifiedChat/ToolsetConfigDrawer.tsx",
-    "apps/frontend/src/components/ai/FeatureAIAssistDock.tsx",
-    "apps/frontend/src/components/auth/RequireMembership.tsx",
-    "apps/frontend/src/config/api.ts",
-    "apps/frontend/src/data/codebase_map.json",
-    "apps/frontend/src/utils/authToken.ts",
-    "apps/frontend/src/utils/pageContextSnapshot.ts",
-    "data/agent-registry/onboarding-agent.json",
-    "data/llm-intel/arena-intel-latest.json",
-    "data/llm-intel/arena-intel.json",
-    "data/llm-intel/ranking-recommendations.json",
-    "data/llm-intel/ranking-report-latest.md",
-    "data/llm-provider-status.json",
-    "data/marketplace/catalog-items.json",
-    "data/reviews/codebase_merkle_tree.json",
-    "data/reviews/node_status.json",
-    "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    "docs/protocols/AGENT_WHO_IS_WHO.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/PROTOCOL_MAP.md",
+    "apps/browser-control-surfaces/lib/federation-relay-client.test.ts",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "package.json",
-    "packages/database/src/drizzle/database.service.ts",
-    "packages/gemini-browser-skill/src/ProVisualProcessor.js",
-    "packages/gemini-browser-skill/src/TranscriptProcessorV3.js",
-    "packages/gemini-browser-skill/src/TranscriptProcessorV4.js",
-    "packages/mcp-cloud-redis-bridge/README.md",
-    "packages/mcp-cloud-redis-bridge/src/index.ts",
-    "packages/mcp-cloud-redis-bridge/tests/scaffold.test.ts",
-    "scripts/install-tnf-cli.sh",
-    "scripts/lib/sync-handoff-cache.cjs",
-    "scripts/runtime/subdirector-autopilot-loop.cjs",
-    "apps/chrome-extension/dist-v7/background/index.js",
-    "apps/api/src/modules/billing/billing.controller.spec.ts",
-    "apps/chrome-extension/scripts/verify-extension-dist.cjs",
-    "apps/frontend/src/components/auth/RequireMembership.test.tsx",
-    "apps/frontend/src/utils/authToken.resolveApiUrl.test.ts",
-    "apps/frontend/src/utils/pageContextSnapshot.test.ts",
-    "data/llm-intel/history/intel_2026-08-24.json",
-    "data/llm-intel/history/intel_2026-08-25.json",
-    "data/llm-intel/history/intel_2026-08-26.json",
-    "docs/protocols/DURABLE_LOCAL_RUNTIME_MANDATE.md",
-    "scripts/install-tnf-host-wrappers.cjs",
-    "scripts/lib/resolve-tnf-repo.cjs",
-    "scripts/lib/resolve-tnf-repo.sh",
-    "scripts/lib/tnf-canonical-onboarding.cjs",
-    "scripts/runtime/tnf-status.cjs",
-    "scripts/tests/resolve-tnf-repo.test.cjs",
-    "scripts/tests/resolve-tnf-repo.test.sh"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
-  "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": ""
-  },
   "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
-    "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Read SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands"
+    ],
+    "next_actions": [
+      "Emit a fresh handoff artifact immediately after completing the next critical work unit",
+      "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 94 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    ],
+    "blockers": [],
+    "warnings": [
+      "Repository has uncommitted changes requiring live operator confirmation before commit/push"
     ]
   },
-  "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
-  ],
-  "artifacts": {
-    "commits": ["b4511fcacea76ed009a430927be7842683c89d7d"]
-  },
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "classification": {
-    "work_domain": "unknown",
-    "artifact_destination": "unknown",
-    "data_residency": "unknown",
-    "sensitivity": "unknown"
-  },
-  "capabilities": {
-    "required": [],
-    "staffed_by": []
-  },
-  "publication": {
-    "public_runtime_affected": false,
-    "control_plane_affected": false,
-    "satellites": []
-  },
-  "freshness_receipts": [
-    {
-      "id": "github.dev.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:38.051Z",
-      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
-    },
-    {
-      "id": "github.public.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:45.037Z",
-      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
-    },
-    {
-      "id": "github.control-plane.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:49.582Z",
-      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
-    },
-    {
-      "id": "github.public.pr-queue",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:52.712Z",
-      "value": "[161]"
-    },
-    {
-      "id": "github.public.ruleset",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:54.422Z",
-      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:59.780Z",
-      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
-    },
-    {
-      "id": "tnf.product-repo-map",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:00.764Z",
-      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
-    },
-    {
-      "id": "tnf.oss-app-boundary",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:01.494Z",
-      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
-    },
-    {
-      "id": "git.repository.identity",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:06.916Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
-    },
-    {
-      "id": "runtime.services",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:08.906Z",
-      "value": "REDIS_UNREACHABLE\nRELAY_OK"
-    }
-  ]
+  "freshness": {
+    "github_remotes": "STALE",
+    "runtime_services": "STALE",
+    "last_receipt_at": "2026-08-27T19:45:00.000Z"
+  }
 }

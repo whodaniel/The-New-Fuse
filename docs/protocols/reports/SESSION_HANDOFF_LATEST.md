@@ -1,31 +1,31 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-26T02:40:59.332Z` Handoff ID: `dfd7f798-b0de-425d-85e5-93162b6668ce`
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Spec: `tnf/session-handoff/0.2`
+Created At: `2026-08-26T04:29:54.245Z`
+Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 
 ## Scope
-
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `sentinel-fix-marketplace-cmd-injection-11879217410415317362`
-- Head SHA: `b4511fcacea76ed009a430927be7842683c89d7d`
-- Sensitive Scope: `internal`
+- Head SHA: `cd51fbdaaddc53700e9a1f8f3bf045850dfabe39`
+- Sensitive Scope: `browser-control-surfaces federation relay verification`
 
 ## Classification
-
 - Work Domain: `unknown`
 - Artifact Destination: `unknown`
 - Data Residency: `unknown`
 - Sensitivity: `unknown`
 
 ## Work Summary
-
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- AGENT_STATUS_LEDGER.md updated with verified registration entry
 
 ## Changed Paths
-
+- apps/api/src/modules/billing/billing.controller.ts
+- apps/api/src/modules/billing/billing.module.ts
+- apps/api/src/modules/billing/paypal.controller.ts
+- apps/api/src/modules/billing/stripe.controller.ts
 - apps/backend/tsconfig.json
 - apps/browser-control-surfaces/BROWSER_CONTROL_SURFACE.tsx
 - apps/browser-control-surfaces/components/AgentOrchestrator.tsx
@@ -41,40 +41,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - apps/browser-control-surfaces/lib/harness-protocol.ts
 - apps/browser-control-surfaces/lib/verify-gate-decisions.ts
 - apps/browser-control-surfaces/tsconfig.json
-- tests/host-lifecycle/conformance/01-managed-frontload-fence.test.cjs
-- tests/host-lifecycle/conformance/04-unverified-symlink.test.cjs
-- tests/host-lifecycle/conformance/06-11-pending-gaps.test.cjs
-- tests/host-lifecycle/conformance/08-runtime-state-never-centralized.test.cjs
-- tests/host-lifecycle/conformance/12-fail-closed-vs-advisory.test.cjs
-- tests/host-lifecycle/conformance/ORIGIN_MAIN_SHA.txt
-- tests/host-lifecycle/conformance/README.md
-- tests/host-lifecycle/conformance/run-all.cjs
-- tests/host-lifecycle/conformance/run_python_conformance.py
-- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
-- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
-- apps/api/src/modules/billing/billing.controller.ts
-- apps/api/src/modules/billing/billing.module.ts
-- apps/api/src/modules/billing/paypal.controller.ts
-- apps/api/src/modules/billing/stripe.controller.ts
-- apps/chrome-extension/dist-v7/content/ai-studio-automation.js
-- apps/chrome-extension/dist-v7/content/iframe-bridge.js
-- apps/chrome-extension/dist-v7/content/index.js
-- apps/chrome-extension/dist-v7/content/notebooklm-integration.js
-- apps/chrome-extension/dist-v7/icons/icon128-connected.png
-- apps/chrome-extension/dist-v7/icons/icon128-error.png
-- apps/chrome-extension/dist-v7/icons/icon128.png
-- apps/chrome-extension/dist-v7/icons/icon16-connected.png
-- apps/chrome-extension/dist-v7/icons/icon16-error.png
-- apps/chrome-extension/dist-v7/icons/icon16.png
-- apps/chrome-extension/dist-v7/icons/icon48-connected.png
-- apps/chrome-extension/dist-v7/icons/icon48-error.png
-- apps/chrome-extension/dist-v7/icons/icon48.png
-- apps/chrome-extension/dist-v7/manifest.json
-- apps/chrome-extension/dist-v7/native-host/install-macos.sh
-- apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs
-- apps/chrome-extension/dist-v7/popup/index.html
-- apps/chrome-extension/dist-v7/popup/popup.css
-- apps/chrome-extension/dist-v7/popup/popup.js
 - apps/chrome-extension/generate-icons.js
 - apps/chrome-extension/package.json
 - apps/chrome-extension/src/v6/content/index.ts
@@ -94,17 +60,10 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - apps/frontend/src/utils/authToken.ts
 - apps/frontend/src/utils/pageContextSnapshot.ts
 - data/agent-registry/onboarding-agent.json
-- data/llm-intel/arena-intel-latest.json
-- data/llm-intel/arena-intel.json
-- data/llm-intel/ranking-recommendations.json
-- data/llm-intel/ranking-report-latest.md
-- data/llm-provider-status.json
-- data/marketplace/catalog-items.json
-- data/reviews/codebase_merkle_tree.json
-- data/reviews/node_status.json
 - docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/AGENT_WHO_IS_WHO.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/PROTOCOL_MAP.md
@@ -119,11 +78,57 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - packages/mcp-cloud-redis-bridge/README.md
 - packages/mcp-cloud-redis-bridge/src/index.ts
 - packages/mcp-cloud-redis-bridge/tests/scaffold.test.ts
+- packages/tnf-cli/src/utils/prompt-paste-coalesce.test.ts
+- packages/tnf-cli/src/utils/prompt-paste-coalesce.ts
+- packages/tnf-cli/src/utils/tui-input-collector.test.ts
+- packages/tnf-cli/src/utils/tui-input-collector.ts
 - scripts/install-tnf-cli.sh
 - scripts/lib/sync-handoff-cache.cjs
 - scripts/runtime/subdirector-autopilot-loop.cjs
+- tests/host-lifecycle/conformance/01-managed-frontload-fence.test.cjs
+- tests/host-lifecycle/conformance/04-unverified-symlink.test.cjs
+- tests/host-lifecycle/conformance/06-11-pending-gaps.test.cjs
+- tests/host-lifecycle/conformance/08-runtime-state-never-centralized.test.cjs
+- tests/host-lifecycle/conformance/12-fail-closed-vs-advisory.test.cjs
+- tests/host-lifecycle/conformance/ORIGIN_MAIN_SHA.txt
+- tests/host-lifecycle/conformance/README.md
+- tests/host-lifecycle/conformance/run-all.cjs
+- tests/host-lifecycle/conformance/run_python_conformance.py
+- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
+- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
+- apps/browser-control-surfaces/package.json
+- apps/chrome-extension/dist-v7/content/ai-studio-automation.js
+- apps/chrome-extension/dist-v7/content/iframe-bridge.js
+- apps/chrome-extension/dist-v7/content/index.js
+- apps/chrome-extension/dist-v7/content/notebooklm-integration.js
+- apps/chrome-extension/dist-v7/icons/icon128-connected.png
+- apps/chrome-extension/dist-v7/icons/icon128-error.png
+- apps/chrome-extension/dist-v7/icons/icon128.png
+- apps/chrome-extension/dist-v7/icons/icon16-connected.png
+- apps/chrome-extension/dist-v7/icons/icon16-error.png
+- apps/chrome-extension/dist-v7/icons/icon16.png
+- apps/chrome-extension/dist-v7/icons/icon48-connected.png
+- apps/chrome-extension/dist-v7/icons/icon48-error.png
+- apps/chrome-extension/dist-v7/icons/icon48.png
+- apps/chrome-extension/dist-v7/manifest.json
+- apps/chrome-extension/dist-v7/native-host/install-macos.sh
+- apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs
+- apps/chrome-extension/dist-v7/popup/index.html
+- apps/chrome-extension/dist-v7/popup/popup.css
+- apps/chrome-extension/dist-v7/popup/popup.js
+- data/llm-intel/arena-intel-latest.json
+- data/llm-intel/arena-intel.json
+- data/llm-intel/ranking-recommendations.json
+- data/llm-intel/ranking-report-latest.md
+- data/llm-provider-status.json
+- data/marketplace/catalog-items.json
+- data/reviews/codebase_merkle_tree.json
+- data/reviews/node_status.json
+- packages/tnf-cli/package.json
 - apps/chrome-extension/dist-v7/background/index.js
 - apps/api/src/modules/billing/billing.controller.spec.ts
+- apps/browser-control-surfaces/jest.config.js
+- apps/browser-control-surfaces/lib/federation-relay-client.test.ts
 - apps/chrome-extension/scripts/verify-extension-dist.cjs
 - apps/frontend/src/components/auth/RequireMembership.test.tsx
 - apps/frontend/src/utils/authToken.resolveApiUrl.test.ts
@@ -141,28 +146,18 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - scripts/tests/resolve-tnf-repo.test.sh
 
 ## Verification
-
-- privacy_guard: `na`
-- secret_sweep: `na`
-- docs_pii_guard: `na`
+- privacy_guard: `pass`
+- secret_sweep: `pass`
+- docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
-
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
+- Owner: `ox-alpha`
+- Targets: `tnf-tui-agent`, `orchestrator`
+- Priority: `P0`
 
 ### Resume Checklist
-
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Update BROWSER_README.md with new protocol flow
 
 ## Next Actions
-
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Add reconnect/backoff test coverage and run pnpm type-check across affected packages

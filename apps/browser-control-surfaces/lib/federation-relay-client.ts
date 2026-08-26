@@ -1,31 +1,21 @@
 /**
  * federation-relay-client.ts
  *
- * `useTnfFederation.ts` imports `FederationRelayClient` from this path; the
- * file did not exist anywhere in the monorepo (confirmed by search — only
- * an unrelated `scripts/lib/federation-relay-client.cjs`, a Node-side
- * script, shares the name). This was a genuine missing module.
+ * TNF Federation Relay WebSocket client — canonical TNFEnvelope protocol.
+ * Implements the wire format expected by packages/relay-core (RelayMessage / TNFEnvelope).
  *
- * IMPLEMENTATION CONFIDENCE — read before relying on this in production:
- * this is a REAL WebSocket client (real connect/send/close/reconnect, real
- * event emission) — not a no-op stub — but the exact WIRE MESSAGE FORMAT
- * for registration and channel actions is a best-effort match to the
- * `{ type, payload }` event convention already used by this monorepo's
- * other browser-side relay client
- * (apps/frontend/src/services/websocket.ts: `emit(data.type, data.payload)`
- * on receive), chosen because it lines up with every event name
- * useTnfFederation.ts already expects ('connected', 'registered',
- * 'agents_updated', 'channels_updated', 'channel_message'). It has NOT been
- * verified against packages/relay-core's actual accepted client protocol
- * (RelayServer.ts / standalone-relay.ts use a differently-shaped
- * TNFEnvelope for some paths — id/type/source/channel/payload/timestamp —
- * which may or may not be what a plain client WebSocket connection is
- * expected to speak). If the relay doesn't recognize an outbound message,
- * the visible symptom will be "connects but never emits 'registered'" —
- * not a silent fake success. Confirm the real protocol against
- * packages/relay-core before depending on this for anything real.
+ * Wire protocol (matches relay-core's RelayMessage interface in types/index.ts):
+ * - Outbound: { id, type: 'REGISTER' | 'HEARTBEAT' | 'CHANNEL_MESSAGE' | 'CREATE_CHANNEL' | 'JOIN_CHANNEL', source, target?, payload, timestamp, metadata? }
+ * - Inbound:  { id, type: 'REGISTRATION_CONFIRMED' | 'REGISTRATION_ERROR' | 'AGENTS_UPDATED' | 'CHANNELS_UPDATED' | 'CHANNEL_MESSAGE' | 'AGENT_LEFT' | 'HEARTBEAT_ACK', source, target, payload, timestamp, metadata? }
+ *
+ * Registration flow:
+ *   1. Client sends REGISTER with JWT token in payload.token or metadata.token
+ *   2. Relay verifies JWT via JWTAuthService
+ *   3. Relay responds with REGISTRATION_CONFIRMED (includes relayInfo, authenticated flag)
+ *   4. On auth failure: REGISTRATION_ERROR with code AUTH_FAILED
  */
 import { EventEmitter } from 'events';
+import { createHash } from 'crypto';
 
 export interface FederationRelayClientConfig {
   relayUrl: string;
@@ -34,21 +24,39 @@ export interface FederationRelayClientConfig {
   provider: string;
   capabilities: string[];
   daccRole: string;
+  /** Optional JWT token for authenticated registration */
+  authToken?: string;
 }
 
-interface RelayEnvelope {
+export interface RelayMessage {
+  id: string;
   type: string;
+  source: string;
+  target?: string;
   payload: any;
+  timestamp: string;
+  metadata?: Record<string, any>;
+}
+
+interface PendingRequest {
+  resolve: (value: any) => void;
+  reject: (error: Error) => void;
+  timeout: NodeJS.Timeout;
 }
 
 const DEFAULT_RECONNECT_ATTEMPTS = 5;
 const DEFAULT_RECONNECT_BASE_MS = 1000;
+const REQUEST_TIMEOUT_MS = 10000;
+const HEARTBEAT_INTERVAL_MS = 30000;
 
 export class FederationRelayClient extends EventEmitter {
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
   private explicitlyClosed = false;
   private readonly config: FederationRelayClientConfig;
+  private pendingRequests = new Map<string, PendingRequest>();
+  private heartbeatTimer: NodeJS.Timeout | null = null;
+  private messageIdCounter = 0;
 
   constructor(config: FederationRelayClientConfig) {
     super();
@@ -57,6 +65,16 @@ export class FederationRelayClient extends EventEmitter {
 
   get connected(): boolean {
     return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
+  }
+
+  get authenticated(): boolean {
+    return this._authenticated;
+  }
+
+  private _authenticated = false;
+
+  private generateMessageId(): string {
+    return `${this.config.agentId}-${Date.now()}-${++this.messageIdCounter}`;
   }
 
   async connect(url?: string): Promise<void> {
@@ -75,17 +93,20 @@ export class FederationRelayClient extends EventEmitter {
       this.socket.onopen = () => {
         this.reconnectAttempts = 0;
         this.emit('connected');
-        this.send('register', {
-          agentId: this.config.agentId,
-          platform: this.config.platform,
-          provider: this.config.provider,
-          capabilities: this.config.capabilities,
-          daccRole: this.config.daccRole,
-        });
-        if (!settled) {
-          settled = true;
-          resolve();
-        }
+        // Send REGISTER with auth token if available
+        this.sendRegister()
+          .then(() => {
+            if (!settled) {
+              settled = true;
+              resolve();
+            }
+          })
+          .catch((err) => {
+            if (!settled) {
+              settled = true;
+              reject(err);
+            }
+          });
       };
 
       this.socket.onmessage = (event: MessageEvent) => {
@@ -93,6 +114,7 @@ export class FederationRelayClient extends EventEmitter {
       };
 
       this.socket.onclose = (event: CloseEvent) => {
+        this.stopHeartbeat();
         this.emit('disconnected', event);
         if (!this.explicitlyClosed && !event.wasClean) {
           this.attemptReconnect(target);
@@ -109,27 +131,125 @@ export class FederationRelayClient extends EventEmitter {
     });
   }
 
+  private async sendRegister(): Promise<void> {
+    const payload: any = {
+      id: this.config.agentId,
+      type: 'browser-control-surface',
+      platform: this.config.platform,
+      capabilities: this.config.capabilities,
+      metadata: {
+        provider: this.config.provider,
+        daccRole: this.config.daccRole,
+      },
+      channels: [],
+    };
+
+    // Include JWT token for authenticated registration
+    if (this.config.authToken) {
+      payload.token = this.config.authToken;
+    }
+
+    const message: RelayMessage = {
+      id: this.generateMessageId(),
+      type: 'REGISTER',
+      source: this.config.agentId,
+      payload,
+      timestamp: new Date().toISOString(),
+      metadata: this.config.authToken ? { token: this.config.authToken } : undefined,
+    };
+
+    this.sendRaw(message);
+  }
+
   private handleMessage(event: MessageEvent): void {
-    let envelope: RelayEnvelope;
+    let message: RelayMessage;
     try {
-      envelope = JSON.parse(event.data);
+      message = JSON.parse(event.data);
     } catch (error) {
       console.error('[FederationRelayClient] Failed to parse relay message:', error);
       return;
     }
-    if (!envelope || typeof envelope.type !== 'string') return;
 
-    if (envelope.type === 'welcome' || envelope.type === 'register_ack') {
-      this.emit('registered');
+    if (!message || typeof message.type !== 'string') return;
+
+    // Handle request-response correlation
+    if (message.metadata?.correlationId && this.pendingRequests.has(message.metadata.correlationId)) {
+      const pending = this.pendingRequests.get(message.metadata.correlationId)!;
+      this.pendingRequests.delete(message.metadata.correlationId);
+      clearTimeout(pending.timeout);
+
+      if (message.type === 'REGISTRATION_ERROR' || message.type?.endsWith('_ERROR')) {
+        pending.reject(new Error(message.payload?.error || message.type));
+      } else {
+        pending.resolve(message);
+      }
       return;
     }
 
-    this.emit(envelope.type, envelope.payload);
+    // Handle relay response types
+    switch (message.type) {
+      case 'REGISTRATION_CONFIRMED': {
+        this._authenticated = message.payload?.authenticated ?? false;
+        this.emit('registered', message.payload);
+        this.startHeartbeat();
+        return;
+      }
+      case 'REGISTRATION_ERROR': {
+        this._authenticated = false;
+        this.emit('registration_error', message.payload);
+        return;
+      }
+      case 'HEARTBEAT_ACK': {
+        // Heartbeat acknowledged
+        return;
+      }
+    }
+
+    // Map relay event names to hook expectations
+    const eventMap: Record<string, string> = {
+      'AGENTS_UPDATED': 'agents_updated',
+      'CHANNELS_UPDATED': 'channels_updated',
+      'CHANNEL_MESSAGE': 'channel_message',
+      'AGENT_LEFT': 'agent_left',
+    };
+
+    const mappedType = eventMap[message.type] ?? message.type.toLowerCase();
+    this.emit(mappedType, message.payload, message);
+  }
+
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      if (this.connected) {
+        this.sendHeartbeat().catch((err) => {
+          console.error('[FederationRelayClient] Heartbeat failed:', err);
+        });
+      }
+    }, HEARTBEAT_INTERVAL_MS);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  private async sendHeartbeat(): Promise<void> {
+    const message: RelayMessage = {
+      id: this.generateMessageId(),
+      type: 'HEARTBEAT',
+      source: this.config.agentId,
+      payload: { timestamp: Date.now() },
+      timestamp: new Date().toISOString(),
+    };
+    this.sendRaw(message);
   }
 
   private attemptReconnect(url: string): void {
     if (this.reconnectAttempts >= DEFAULT_RECONNECT_ATTEMPTS) {
       console.error('[FederationRelayClient] Max reconnect attempts reached');
+      this.emit('reconnect_failed');
       return;
     }
     this.reconnectAttempts += 1;
@@ -141,29 +261,65 @@ export class FederationRelayClient extends EventEmitter {
     }, delay);
   }
 
-  private send(type: string, payload: any): void {
+  private sendRaw(message: RelayMessage): void {
     if (!this.connected || !this.socket) {
       throw new Error('Not connected to federation relay');
     }
-    const envelope: RelayEnvelope = { type, payload };
-    this.socket.send(JSON.stringify(envelope));
+    this.socket.send(JSON.stringify(message));
   }
 
+  /**
+   * Send a message and wait for a correlated response.
+   * Used for request-response patterns.
+   */
+  private async sendAndWait(type: string, payload: any, timeoutMs = REQUEST_TIMEOUT_MS): Promise<RelayMessage> {
+    const correlationId = createHash('sha256').update(`${type}-${Date.now()}-${Math.random()}`).digest('hex').slice(0, 16);
+    const message: RelayMessage = {
+      id: this.generateMessageId(),
+      type,
+      source: this.config.agentId,
+      payload,
+      timestamp: new Date().toISOString(),
+      metadata: { correlationId },
+    };
+
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.pendingRequests.delete(correlationId);
+        reject(new Error(`Request ${type} timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      this.pendingRequests.set(correlationId, { resolve, reject, timeout });
+      this.sendRaw(message);
+    });
+  }
+
+  /** Send a message to a channel (fire-and-forget) */
   sendChannelMessage(channelId: string, content: string): void {
-    this.send('channel_message', { channelId, content });
+    const message: RelayMessage = {
+      id: this.generateMessageId(),
+      type: 'CHANNEL_MESSAGE',
+      source: this.config.agentId,
+      payload: { channelId, content },
+      timestamp: new Date().toISOString(),
+    };
+    this.sendRaw(message);
   }
 
-  createChannel(name: string, description: string): void {
-    this.send('create_channel', { name, description });
+  /** Create a new channel */
+  async createChannel(name: string, description: string): Promise<RelayMessage> {
+    return this.sendAndWait('CREATE_CHANNEL', { name, description });
   }
 
-  joinChannel(channelId: string): void {
-    this.send('join_channel', { channelId });
+  /** Join an existing channel */
+  async joinChannel(channelId: string): Promise<RelayMessage> {
+    return this.sendAndWait('JOIN_CHANNEL', { channelId });
   }
 
-  getState(): { connected: boolean; agentId: string; reconnectAttempts: number } {
+  getState(): { connected: boolean; authenticated: boolean; agentId: string; reconnectAttempts: number } {
     return {
       connected: this.connected,
+      authenticated: this._authenticated,
       agentId: this.config.agentId,
       reconnectAttempts: this.reconnectAttempts,
     };
@@ -171,6 +327,13 @@ export class FederationRelayClient extends EventEmitter {
 
   async close(): Promise<void> {
     this.explicitlyClosed = true;
+    this.stopHeartbeat();
+    // Reject all pending requests
+    for (const [, pending] of this.pendingRequests) {
+      clearTimeout(pending.timeout);
+      pending.reject(new Error('Client closed'));
+    }
+    this.pendingRequests.clear();
     if (this.socket) {
       this.socket.close();
       this.socket = null;
