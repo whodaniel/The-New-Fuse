@@ -71,7 +71,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-26T04:29:54.245Z** — handoff `7ed22a03-1f63-4317-b2c4-78ecb00ab31b` (`cd51fbdaaddc`).
+Updated: **2026-08-26T05:02:58.030Z** — handoff
+`883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
 `dfd7f798-b0de-425d-85e5-93162b6668ce` (`b4511fcacea7`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
 `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` (`a7d9551b63bb`).
@@ -262,9 +263,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Add reconnect/backoff test coverage and run pnpm type-check across affected packages |
+| Priority | Action                                                                             |
+| -------- | ---------------------------------------------------------------------------------- |
+| **P0**   | Render messages buffer + channel list in BROWSER_CONTROL_SURFACE.tsx UI components |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1420,10 +1421,47 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 ### Newly Registered (This Session)
 
-| Agent                        | Identity                                           | Status                                           |
-| ---------------------------- | -------------------------------------------------- | ------------------------------------------------ |
-| browser-control-surface      | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001`      | **NEW** — registered at 2026-08-27T19:30:00.000Z; federation-relay-client aligned to relay-core RelayMessage protocol; 12/12 integration tests passing (jest, `apps/browser-control-surfaces/lib/federation-relay-client.test.ts`) |
+| Agent                   | Identity                                      | Status                                                                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| browser-control-surface | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001` | **NEW** — registered at 2026-08-27T19:30:00.000Z; federation-relay-client aligned to relay-core RelayMessage protocol; 12/12 integration tests passing (jest, `apps/browser-control-surfaces/lib/federation-relay-client.test.ts`) |
 
-| 2026-08-26 | ox-alpha | Verified browser-control-surfaces federation relay integration: client rewritten to canonical TNFEnvelope protocol (REGISTER → REGISTRATION_CONFIRMED / REGISTRATION_ERROR, correlation IDs, HEARTBEAT), jest infra created, 12 integration tests green | ✅ VERIFIED |
+| 2026-08-26 | ox-alpha | Verified browser-control-surfaces federation relay
+integration: client rewritten to canonical TNFEnvelope protocol (REGISTER →
+REGISTRATION_CONFIRMED / REGISTRATION_ERROR, correlation IDs, HEARTBEAT), jest
+infra created, 12 integration tests green | ✅ VERIFIED |
 
-| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST (7ed22a03-1f63-4317-b2c4-78ecb00ab31b) | ✅ HANDOFF_READY |
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7ed22a03-1f63-4317-b2c4-78ecb00ab31b) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Live smoke test vs standalone relay
+(ws://127.0.0.1:3007/ws): sent canonical RelayMessage REGISTER → received
+WELCOME / AGENT_LIST / CHANNEL_LIST → REGISTRATION_CONFIRMED
+(authenticated:false, no JWT supplied — expected). Wire protocol compatibility
+CONFIRMED | ✅ SMOKE_PASS |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(20430337-45e3-4381-a3b6-171654b1ab30) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Channel round-trip verified: client corrected to live
+wire contract (CHANNEL_CREATE/CHANNEL_JOIN/MESSAGE_SEND + top-level `channel`;
+type-based response correlation since relay does not echo correlationIds).
+Reverted payload.agent nesting regression (standalone-relay REGISTER mapper
+reads flat fields). Unit 15/15 green; live two-client round-trip 3/3
+(TNF_LIVE_RELAY=1) — bob→alice CHANNEL_MESSAGE delivered with correct
+from/content/channel | ✅ ROUNDTRIP_PASS |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a72a4834-63d3-4652-a7cc-9210f03fda3b) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Work unit batch complete: (1) useTnfFederation hook
+wired — registered/authenticated state, message buffer, heartbeat health,
+AGENT_LIST/CHANNEL_LIST unwrap; default relay URL corrected to :3007. (2) JWT
+path: live authenticated:true NOT exercisable — running relay (:3007) has no
+JWT_SECRET so authService=null (standalone-relay.ts:312-315); token flow covered
+by unit tests + documented. (3) BROWSER_README.md documents verified wire
+protocol + TNF_LIVE_RELAY=1 invocation. (4) Fixed ESM break: jest.config → .cjs
+after "type":"module" added to package.json. Final: unit 17/17, live 3/3, tsc
+clean | ✅ COMPLETE |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(883a32da-4f06-48ed-8efc-9013f70c7bfe) | ✅ HANDOFF_READY |

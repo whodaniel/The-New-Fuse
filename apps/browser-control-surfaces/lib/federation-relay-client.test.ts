@@ -153,50 +153,81 @@ describe('FederationRelayClient', () => {
     await client.close();
   });
 
-  it('resolves createChannel via correlationId when relay responds', async () => {
+  it('resolves createChannel on CHANNEL_CREATED from relay', async () => {
     const { client } = makeClient();
     const ws = await connectAndRegister(client);
 
     const pending = client.createChannel('ops', 'Operations channel');
     await Promise.resolve();
     const request = ws.lastSent();
-    expect(request.type).toBe('CREATE_CHANNEL');
-    expect(request.metadata.correlationId).toBeDefined();
+    expect(request.type).toBe('CHANNEL_CREATE');
+    expect(request.payload).toEqual({ name: 'ops', description: 'Operations channel' });
 
     ws.simulateMessage({
       id: 'relay-ch',
       type: 'CHANNEL_CREATED',
       source: 'relay',
-      payload: { channelId: 'ch-1', name: 'ops' },
+      payload: { channel: { id: 'ch-1', name: 'ops' } },
       timestamp: new Date().toISOString(),
-      metadata: { correlationId: request.metadata.correlationId },
     });
 
     const response = await pending;
     expect(response.type).toBe('CHANNEL_CREATED');
-    expect(response.payload.channelId).toBe('ch-1');
+    expect(response.payload.channel.id).toBe('ch-1');
 
     await client.close();
   });
 
-  it('rejects correlated requests that end in _ERROR', async () => {
+  it('resolves createChannel with CHANNEL_JOINED when channel already exists', async () => {
     const { client } = makeClient();
     const ws = await connectAndRegister(client);
 
-    const pending = client.joinChannel('ch-missing');
+    const pending = client.createChannel('dup', '');
     await Promise.resolve();
-    const request = ws.lastSent();
 
     ws.simulateMessage({
-      id: 'relay-e',
-      type: 'JOIN_CHANNEL_ERROR',
+      id: 'relay-j',
+      type: 'CHANNEL_JOINED',
       source: 'relay',
-      payload: { error: 'channel not found' },
+      payload: { channel: { id: 'ch-dup', name: 'dup' }, wasExisting: true },
       timestamp: new Date().toISOString(),
-      metadata: { correlationId: request.metadata.correlationId },
     });
 
-    await expect(pending).rejects.toThrow('channel not found');
+    const response = await pending;
+    expect(response.type).toBe('CHANNEL_JOINED');
+    expect(response.payload.wasExisting).toBe(true);
+
+    await client.close();
+  });
+
+  it('rejects pending requests when relay sends ERROR', async () => {
+    const { client } = makeClient();
+    await connectAndRegister(client);
+
+    const pending = client.createChannel('bad', '');
+    await Promise.resolve();
+
+    MockWebSocket.instances[0].simulateMessage({
+      id: 'relay-e',
+      type: 'ERROR',
+      source: 'relay',
+      payload: { message: 'channel quota exceeded' },
+      timestamp: new Date().toISOString(),
+    });
+
+    await expect(pending).rejects.toThrow('channel quota exceeded');
+
+    await client.close();
+  });
+
+  it('sends CHANNEL_JOIN fire-and-forget', async () => {
+    const { client } = makeClient();
+    const ws = await connectAndRegister(client);
+
+    client.joinChannel('ch-42');
+    const msg = ws.lastSent();
+    expect(msg.type).toBe('CHANNEL_JOIN');
+    expect(msg.payload).toEqual({ channelId: 'ch-42' });
 
     await client.close();
   });
@@ -212,15 +243,46 @@ describe('FederationRelayClient', () => {
     await client.close();
   });
 
-  it('sends channel messages fire-and-forget', async () => {
+  it('sends channel messages as MESSAGE_SEND with top-level channel', async () => {
     const { client } = makeClient();
     const ws = await connectAndRegister(client);
 
     client.sendChannelMessage('ch-9', 'hello relay');
     const msg = ws.lastSent();
-    expect(msg.type).toBe('CHANNEL_MESSAGE');
+    expect(msg.type).toBe('MESSAGE_SEND');
     expect(msg.source).toBe(baseConfig.agentId);
-    expect(msg.payload).toEqual({ channelId: 'ch-9', content: 'hello relay' });
+    expect(msg.channel).toBe('ch-9');
+    expect(msg.target).toBe('broadcast');
+    expect(msg.payload).toEqual({ to: 'broadcast', content: 'hello relay' });
+
+    await client.close();
+  });
+
+  it('delivers inbound CHANNEL_MESSAGE payloads to listeners', async () => {
+    const { client } = makeClient();
+    const ws = await connectAndRegister(client);
+
+    const received: any[] = [];
+    client.on('channel_message', (payload: any) => received.push(payload));
+
+    ws.simulateMessage({
+      id: 'relay-m',
+      type: 'CHANNEL_MESSAGE',
+      source: 'relay',
+      payload: {
+        id: 'msg-1',
+        type: 'text',
+        from: 'other-agent',
+        content: 'round trip!',
+        channel: 'ch-9',
+        timestamp: Date.now(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
+    expect(received).toHaveLength(1);
+    expect(received[0].from).toBe('other-agent');
+    expect(received[0].content).toBe('round trip!');
 
     await client.close();
   });
@@ -258,6 +320,59 @@ describe('FederationRelayClient', () => {
     await client.close();
   });
 
+  it('maps live relay broadcast types AGENT_LIST/CHANNEL_LIST to hook events', async () => {
+    const { client } = makeClient();
+    const ws = await connectAndRegister(client);
+
+    const agents: any[][] = [];
+    const channels: any[][] = [];
+    client.on('agents_updated', (p: any[]) => agents.push(p));
+    client.on('channels_updated', (p: any[]) => channels.push(p));
+
+    ws.simulateMessage({
+      id: 'r-a',
+      type: 'AGENT_LIST',
+      source: 'relay',
+      payload: { agents: [{ id: 'a1' }] },
+      timestamp: new Date().toISOString(),
+    });
+    ws.simulateMessage({
+      id: 'r-c',
+      type: 'CHANNEL_LIST',
+      source: 'relay',
+      payload: { channels: [{ id: 'c1' }] },
+      timestamp: new Date().toISOString(),
+    });
+
+    expect(agents).toHaveLength(1);
+    expect(agents[0]).toEqual([{ id: 'a1' }]);
+    expect(channels).toHaveLength(1);
+    expect(channels[0]).toEqual([{ id: 'c1' }]);
+
+    await client.close();
+  });
+
+  it('emits heartbeat_ack on HEARTBEAT_ACK', async () => {
+    const { client } = makeClient();
+    const ws = await connectAndRegister(client);
+
+    const acks: any[] = [];
+    client.on('heartbeat_ack', (p: any) => acks.push(p));
+
+    ws.simulateMessage({
+      id: 'r-h',
+      type: 'HEARTBEAT_ACK',
+      source: 'relay',
+      payload: { ok: true },
+      timestamp: new Date().toISOString(),
+    });
+
+    expect(acks).toHaveLength(1);
+    expect(acks[0].ok).toBe(true);
+
+    await client.close();
+  });
+
   it('sends heartbeats after registration', async () => {
     const { client } = makeClient();
     const ws = await connectAndRegister(client);
@@ -274,7 +389,7 @@ describe('FederationRelayClient', () => {
     const { client } = makeClient();
     const ws = await connectAndRegister(client);
 
-    const pending = client.joinChannel('ch-1');
+    const pending = client.createChannel('ch-1', '');
     await Promise.resolve();
 
     await client.close();

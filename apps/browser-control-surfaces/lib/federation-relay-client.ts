@@ -15,7 +15,6 @@
  *   4. On auth failure: REGISTRATION_ERROR with code AUTH_FAILED
  */
 import { EventEmitter } from 'events';
-import { createHash } from 'crypto';
 
 export interface FederationRelayClientConfig {
   relayUrl: string;
@@ -41,7 +40,9 @@ export interface RelayMessage {
 interface PendingRequest {
   resolve: (value: any) => void;
   reject: (error: Error) => void;
-  timeout: NodeJS.Timeout;
+  timeout: ReturnType<typeof setTimeout>;
+  /** Message types that will satisfy this pending request */
+  responseTypes: string[];
 }
 
 const DEFAULT_RECONNECT_ATTEMPTS = 5;
@@ -55,7 +56,7 @@ export class FederationRelayClient extends EventEmitter {
   private explicitlyClosed = false;
   private readonly config: FederationRelayClientConfig;
   private pendingRequests = new Map<string, PendingRequest>();
-  private heartbeatTimer: NodeJS.Timeout | null = null;
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private messageIdCounter = 0;
 
   constructor(config: FederationRelayClientConfig) {
@@ -132,8 +133,12 @@ export class FederationRelayClient extends EventEmitter {
   }
 
   private async sendRegister(): Promise<void> {
+    // Legacy REGISTER mapping (standalone-relay.ts) reads FLAT fields:
+    // regPayload.id / .name / .type / .capabilities / .channels / .metadata.
+    // Nesting under payload.agent loses the id (falls back to 'unknown-agent').
     const payload: any = {
       id: this.config.agentId,
+      name: this.config.agentId,
       type: 'browser-control-surface',
       platform: this.config.platform,
       capabilities: this.config.capabilities,
@@ -170,20 +175,28 @@ export class FederationRelayClient extends EventEmitter {
       return;
     }
 
-    if (!message || typeof message.type !== 'string') return;
-
-    // Handle request-response correlation
-    if (message.metadata?.correlationId && this.pendingRequests.has(message.metadata.correlationId)) {
-      const pending = this.pendingRequests.get(message.metadata.correlationId)!;
-      this.pendingRequests.delete(message.metadata.correlationId);
-      clearTimeout(pending.timeout);
-
-      if (message.type === 'REGISTRATION_ERROR' || message.type?.endsWith('_ERROR')) {
-        pending.reject(new Error(message.payload?.error || message.type));
-      } else {
-        pending.resolve(message);
-      }
+    if (!message || typeof message.type !== 'string') {
       return;
+    }
+
+    // Handle typed request-response correlation (relay does NOT echo
+    // metadata.correlationId, so we correlate on expected response types)
+    for (const [key, pending] of this.pendingRequests) {
+      if (pending.responseTypes.includes(message.type)) {
+        this.pendingRequests.delete(key);
+        clearTimeout(pending.timeout);
+        pending.resolve(message);
+        return;
+      }
+      if (
+        message.type === 'REGISTRATION_ERROR' ||
+        message.type === 'ERROR'
+      ) {
+        this.pendingRequests.delete(key);
+        clearTimeout(pending.timeout);
+        pending.reject(new Error(message.payload?.message || message.payload?.error || message.type));
+        return;
+      }
     }
 
     // Handle relay response types
@@ -200,20 +213,34 @@ export class FederationRelayClient extends EventEmitter {
         return;
       }
       case 'HEARTBEAT_ACK': {
-        // Heartbeat acknowledged
+        this.emit('heartbeat_ack', message.payload);
         return;
       }
     }
 
     // Map relay event names to hook expectations
+    // NOTE: standalone-relay broadcasts AGENT_LIST / CHANNEL_LIST (verified
+    // live) — not AGENTS_UPDATED / CHANNELS_UPDATED.
     const eventMap: Record<string, string> = {
+      'AGENT_LIST': 'agents_updated',
+      'CHANNEL_LIST': 'channels_updated',
       'AGENTS_UPDATED': 'agents_updated',
       'CHANNELS_UPDATED': 'channels_updated',
       'CHANNEL_MESSAGE': 'channel_message',
+      'MESSAGE_RECEIVE': 'direct_message',
       'AGENT_LEFT': 'agent_left',
     };
 
     const mappedType = eventMap[message.type] ?? message.type.toLowerCase();
+    // Unwrap collection broadcasts (payload = { agents | channels })
+    if (message.type === 'AGENT_LIST' || message.type === 'AGENTS_UPDATED') {
+      this.emit(mappedType, message.payload?.agents ?? [], message);
+      return;
+    }
+    if (message.type === 'CHANNEL_LIST' || message.type === 'CHANNELS_UPDATED') {
+      this.emit(mappedType, message.payload?.channels ?? [], message);
+      return;
+    }
     this.emit(mappedType, message.payload, message);
   }
 
@@ -269,51 +296,79 @@ export class FederationRelayClient extends EventEmitter {
   }
 
   /**
-   * Send a message and wait for a correlated response.
-   * Used for request-response patterns.
+   * Send a message and wait for a response of the expected types.
+   * The standalone relay does not echo correlation IDs, so responses are
+   * correlated by message type (e.g. CHANNEL_CREATE → CHANNEL_CREATED).
    */
-  private async sendAndWait(type: string, payload: any, timeoutMs = REQUEST_TIMEOUT_MS): Promise<RelayMessage> {
-    const correlationId = createHash('sha256').update(`${type}-${Date.now()}-${Math.random()}`).digest('hex').slice(0, 16);
+  private async sendAndWait(
+    type: string,
+    payload: any,
+    responseTypes: string[],
+    timeoutMs = REQUEST_TIMEOUT_MS,
+  ): Promise<RelayMessage> {
+    const requestKey = `${type}-${Date.now()}-${Math.random()}`;
     const message: RelayMessage = {
       id: this.generateMessageId(),
       type,
       source: this.config.agentId,
       payload,
       timestamp: new Date().toISOString(),
-      metadata: { correlationId },
     };
 
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        this.pendingRequests.delete(correlationId);
+        this.pendingRequests.delete(requestKey);
         reject(new Error(`Request ${type} timed out after ${timeoutMs}ms`));
       }, timeoutMs);
 
-      this.pendingRequests.set(correlationId, { resolve, reject, timeout });
+      this.pendingRequests.set(requestKey, { resolve, reject, timeout, responseTypes });
       this.sendRaw(message);
     });
   }
 
-  /** Send a message to a channel (fire-and-forget) */
+  /**
+   * Send a channel message. Wire format per relay-core MESSAGE_SEND:
+   * top-level `channel` selects the channel; payload.to = 'broadcast'
+   * fans out to channel members as CHANNEL_MESSAGE.
+   */
   sendChannelMessage(channelId: string, content: string): void {
-    const message: RelayMessage = {
+    const message: RelayMessage & { channel?: string } = {
       id: this.generateMessageId(),
-      type: 'CHANNEL_MESSAGE',
+      type: 'MESSAGE_SEND',
       source: this.config.agentId,
-      payload: { channelId, content },
+      target: 'broadcast',
+      channel: channelId,
+      payload: { to: 'broadcast', content },
       timestamp: new Date().toISOString(),
     };
     this.sendRaw(message);
   }
 
-  /** Create a new channel */
+  /**
+   * Create a new channel (CHANNEL_CREATE). Resolves with CHANNEL_CREATED
+   * or CHANNEL_JOINED (the latter when a same-named channel already exists).
+   */
   async createChannel(name: string, description: string): Promise<RelayMessage> {
-    return this.sendAndWait('CREATE_CHANNEL', { name, description });
+    return this.sendAndWait('CHANNEL_CREATE', { name, description }, [
+      'CHANNEL_CREATED',
+      'CHANNEL_JOINED',
+    ]);
   }
 
-  /** Join an existing channel */
-  async joinChannel(channelId: string): Promise<RelayMessage> {
-    return this.sendAndWait('JOIN_CHANNEL', { channelId });
+  /**
+   * Join an existing channel (CHANNEL_JOIN). Fire-and-forget — the relay
+   * syncs membership silently (membership is reflected in CHANNEL_LIST
+   * broadcasts and CHANNEL_MESSAGE delivery).
+   */
+  joinChannel(channelId: string): void {
+    const message: RelayMessage = {
+      id: this.generateMessageId(),
+      type: 'CHANNEL_JOIN',
+      source: this.config.agentId,
+      payload: { channelId },
+      timestamp: new Date().toISOString(),
+    };
+    this.sendRaw(message);
   }
 
   getState(): { connected: boolean; authenticated: boolean; agentId: string; reconnectAttempts: number } {

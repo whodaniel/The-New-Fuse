@@ -19,13 +19,19 @@ export function BrowserControlSurface({
   debug = false,
 }: BrowserControlSurfaceProps) {
   const [activeTab, setActiveTab] = useState('federation');
+  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   const {
     connected,
+    registered,
+    authenticated,
     agents,
     channels,
+    messages,
     sendMessage,
     connect,
     disconnect,
+    createChannel,
+    joinChannel,
     heartbeatStatus,
     governanceStatus,
   } = useTnfFederation();
@@ -59,6 +65,30 @@ export function BrowserControlSurface({
     [sendMessage]
   );
 
+  const handleCreateChannel = useCallback(
+    async (name: string, description?: string) => {
+      await createChannel(name, description ?? '');
+    },
+    [createChannel]
+  );
+
+  const handleJoinChannel = useCallback(
+    (channelId: string) => {
+      joinChannel(channelId);
+    },
+    [joinChannel]
+  );
+
+  const handleLeaveChannel = useCallback((channelId: string) => {
+    // Leave channel via the client - we need to add this method
+    // For now, just log
+    console.log('[TNF] Leave channel:', channelId);
+  }, []);
+
+  const handleSelectChannel = useCallback((channelId: string | null) => {
+    setSelectedChannelId(channelId);
+  }, []);
+
   const handleExecuteAction = useCallback(
     async (action: any) => {
       await executeAction(action);
@@ -79,6 +109,9 @@ export function BrowserControlSurface({
       </div>
     );
   }
+
+  // Convert Map to Array for ChannelManager
+  const channelsArray = Array.from(channels.values());
 
   return (
     <div className={`tnf-browser-surface ${className}`}>
@@ -131,9 +164,17 @@ export function BrowserControlSurface({
 
         <Tabs.Content className="tnf-tab-content" value="channels">
           <ChannelManager
-            channels={channels}
+            channels={channelsArray}
+            agents={agents}
+            selectedChannelId={selectedChannelId}
+            onSelectChannel={handleSelectChannel}
+            onCreateChannel={handleCreateChannel}
+            onJoinChannel={handleJoinChannel}
             onSendMessage={handleSendMessage}
-            connected={connected}
+            onLeaveChannel={handleLeaveChannel}
+            messages={messages}
+            isConnected={connected}
+            isRegistered={registered}
           />
         </Tabs.Content>
 

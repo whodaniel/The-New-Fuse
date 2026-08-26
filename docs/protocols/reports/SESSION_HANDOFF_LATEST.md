@@ -1,27 +1,31 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-26T04:29:54.245Z`
-Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
+Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
+`2026-08-26T05:02:58.030Z` Handoff ID: `883a32da-4f06-48ed-8efc-9013f70c7bfe`
 
 ## Scope
+
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `sentinel-fix-marketplace-cmd-injection-11879217410415317362`
-- Head SHA: `cd51fbdaaddc53700e9a1f8f3bf045850dfabe39`
+- Head SHA: `e169723bd3281062e11766d9bae576d17a836258`
 - Sensitive Scope: `browser-control-surfaces federation relay verification`
 
 ## Classification
+
 - Work Domain: `unknown`
 - Artifact Destination: `unknown`
 - Data Residency: `unknown`
 - Sensitivity: `unknown`
 
 ## Work Summary
-- AGENT_STATUS_LEDGER.md updated with verified registration entry
+
+- Final gates: unit 17/17 green, live two-client round-trip 3/3 green, tsc
+  --noEmit clean, pnpm --filter test script green
 
 ## Changed Paths
+
+- apps/browser-control-surfaces/jest.config.cjs
 - apps/api/src/modules/billing/billing.controller.ts
 - apps/api/src/modules/billing/billing.module.ts
 - apps/api/src/modules/billing/paypal.controller.ts
@@ -37,6 +41,8 @@ Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 - apps/browser-control-surfaces/hooks/useTerminalHeartbeat.ts
 - apps/browser-control-surfaces/hooks/useTnfAuthorization.ts
 - apps/browser-control-surfaces/hooks/useTnfFederation.ts
+- apps/browser-control-surfaces/jest.config.js
+- apps/browser-control-surfaces/lib/federation-relay-client.test.ts
 - apps/browser-control-surfaces/lib/federation-relay-client.ts
 - apps/browser-control-surfaces/lib/harness-protocol.ts
 - apps/browser-control-surfaces/lib/verify-gate-decisions.ts
@@ -96,6 +102,7 @@ Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 - tests/host-lifecycle/conformance/run_python_conformance.py
 - apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
 - apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
+- apps/browser-control-surfaces/BROWSER_README.md
 - apps/browser-control-surfaces/package.json
 - apps/chrome-extension/dist-v7/content/ai-studio-automation.js
 - apps/chrome-extension/dist-v7/content/iframe-bridge.js
@@ -127,8 +134,13 @@ Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 - packages/tnf-cli/package.json
 - apps/chrome-extension/dist-v7/background/index.js
 - apps/api/src/modules/billing/billing.controller.spec.ts
-- apps/browser-control-surfaces/jest.config.js
-- apps/browser-control-surfaces/lib/federation-relay-client.test.ts
+- apps/browser-control-surfaces/lib/federation-relay-client.live.test.ts
+- apps/browser-control-surfaces/test-auth-debug.mjs
+- apps/browser-control-surfaces/test-auth-debug2.mjs
+- apps/browser-control-surfaces/test-auth-final.mjs
+- apps/browser-control-surfaces/test-auth-integration.mjs
+- apps/browser-control-surfaces/test-live-integration.mjs
+- apps/browser-control-surfaces/test-live-integration2.mjs
 - apps/chrome-extension/scripts/verify-extension-dist.cjs
 - apps/frontend/src/components/auth/RequireMembership.test.tsx
 - apps/frontend/src/utils/authToken.resolveApiUrl.test.ts
@@ -136,6 +148,8 @@ Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 - data/llm-intel/history/intel_2026-08-24.json
 - data/llm-intel/history/intel_2026-08-25.json
 - data/llm-intel/history/intel_2026-08-26.json
+- debug-live-relay.js
+- debug-live-relay.ts
 - docs/protocols/DURABLE_LOCAL_RUNTIME_MANDATE.md
 - scripts/install-tnf-host-wrappers.cjs
 - scripts/lib/resolve-tnf-repo.cjs
@@ -144,20 +158,26 @@ Handoff ID: `7ed22a03-1f63-4317-b2c4-78ecb00ab31b`
 - scripts/runtime/tnf-status.cjs
 - scripts/tests/resolve-tnf-repo.test.cjs
 - scripts/tests/resolve-tnf-repo.test.sh
+- test-live-relay.ts
 
 ## Verification
+
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `ox-alpha`
 - Targets: `tnf-tui-agent`, `orchestrator`
 - Priority: `P0`
 
 ### Resume Checklist
-- Update BROWSER_README.md with new protocol flow
+
+- Re-run TNF_LIVE_RELAY=1 suite after any relay-core protocol change
 
 ## Next Actions
-- Add reconnect/backoff test coverage and run pnpm type-check across affected packages
+
+- Render messages buffer + channel list in BROWSER_CONTROL_SURFACE.tsx UI
+  components

@@ -87,6 +87,23 @@ Set the relay URL in environment variables:
 TNF_RELAY_URL=ws://127.0.0.1:3007/ws
 ```
 
+## Federation Wire Protocol (verified live 2026-08-26)
+
+`lib/federation-relay-client.ts` speaks the standalone relay contract
+(`packages/relay-core/src/standalone-relay.ts`). Confirmed message flow:
+
+| Direction | Type                                    | Notes                                                                                                                                                                                                              |
+| --------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| →         | `REGISTER`                              | **Flat** payload: `{ id, name, type, platform, capabilities, channels, metadata, token? }`. Do NOT nest under `payload.agent` — the legacy mapper reads flat fields; nesting degrades identity to `unknown-agent`. |
+| ←         | `WELCOME`, `AGENT_LIST`, `CHANNEL_LIST` | Sent on connect; list payloads are unwrapped before emission (`agents_updated` / `channels_updated`).                                                                                                              |
+| ←         | `REGISTRATION_CONFIRMED`                | `payload.authenticated` reflects JWT verification (requires relay started with `JWT_SECRET` ≥32 chars; without it `authService` is null and every registration is unauthenticated).                                |
+| ←         | `REGISTRATION_ERROR`                    | `code: AUTH_FAILED` on bad token.                                                                                                                                                                                  |
+| →         | `HEARTBEAT` / ← `HEARTBEAT_ACK`         | Every 30s post-registration.                                                                                                                                                                                       |
+| →         | `CHANNEL_CREATE`                        | `{ name, description }`; resolves on `CHANNEL_CREATED` (or `CHANNEL_JOINED` if a same-named channel exists). Correlated by expected response type — the relay does not echo correlation IDs.                       |
+| →         | `CHANNEL_JOIN`                          | Fire-and-forget; membership syncs silently.                                                                                                                                                                        |
+| →         | `MESSAGE_SEND`                          | Top-level `channel` = channelId, `payload.to='broadcast'`, `payload.content`.                                                                                                                                      |
+| ←         | `CHANNEL_MESSAGE`                       | Fan-out to channel members: `payload = { id, from, channel, content, timestamp }`.                                                                                                                                 |
+
 ## Development
 
 ### Build
@@ -98,7 +115,12 @@ pnpm build
 ### Test
 
 ```bash
-pnpm test
+# unit + mocked integration suite (17 tests)
+node_modules/.bin/jest --config jest.config.cjs
+
+# live two-client round-trip against a running relay (opt-in)
+TNF_LIVE_RELAY=1 node_modules/.bin/jest --config jest.config.cjs \
+  --testPathPatterns "federation-relay-client.live.test"
 ```
 
 ### Lint

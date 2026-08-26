@@ -4,8 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
-continuation.resume_checklist.
+**Current Directive:** Render messages buffer + channel list in
+BROWSER_CONTROL_SURFACE.tsx UI components
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -246,9 +246,15 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T22:49:31.303Z New agent(s) created: command-code
 - [✅] 2026-08-16T22:49:31.303Z New script(s) created:
 - [✅] 2026-08-26T00:36:33.894Z New script(s) created:
+- [✅] 2026-08-26T03:28:18.479Z New script(s) created:
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
   resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
   tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
 - [✅] 2026-08-26T00:38:19.920Z New script(s) created:
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
   resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
@@ -1076,6 +1082,22 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-26T05:03:24.253Z handoff `883a32da-4f06-48ed-8efc-9013f70c7bfe` head
+  `e169723bd328` project `TNF-SESSION` — Render messages buffer + channel list
+  in BROWSER_CONTROL_SURFACE.tsx UI components
+
+- 2026-08-26T04:47:53.332Z handoff `a72a4834-63d3-4652-a7cc-9210f03fda3b` head
+  `e169723bd328` project `TNF-SESSION` — JWT-authenticated registration test
+  (authenticated:true) once token source configured
+
+- 2026-08-26T04:37:37.470Z handoff `20430337-45e3-4381-a3b6-171654b1ab30` head
+  `e169723bd328` project `TNF-SESSION` — Add JWT-authenticated registration path
+  test (authenticated:true) once a valid token source is configured
+
+- 2026-08-26T04:30:13.597Z handoff `7ed22a03-1f63-4317-b2c4-78ecb00ab31b` head
+  `cd51fbdaaddc` project `TNF-SESSION` — Add reconnect/backoff test coverage and
+  run pnpm type-check across affected packages
 
 - 2026-08-26T02:41:01.222Z handoff `dfd7f798-b0de-425d-85e5-93162b6668ce` head
   `b4511fcacea7` project `TNF-SESSION` — Continue priority queue from
