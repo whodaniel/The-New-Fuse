@@ -2,6 +2,6 @@
   {
     "area": "Agent lifecycle management",
     "location": "Agent registry / health check system",
-    "risk": "Stale agents persist indefinitely without automatic deregistration - Old Broker, Old Director, Old Project Planner, Old Hermes Infra, Old Sub-Director, Gemini wrapper, News-Scout, and 5 onboarding agents all stale/offline for 20min-3.5hrs but still registered"
+    "risk": "RESOLVED 2026-08-25: previously-reported stale identities (Old Broker, Old Director, Old Project Planner, Old Hermes Infra, Old Sub-Director, Gemini wrapper, News-Scout, onboarding agents) are no longer registered. Re-verified empirically: node scripts/check-agent-registration.cjs --archive -> 18 definitions / 24 ledger identities / 0 stale; boot triage staleLedgerIdentities=[]. Deregistration path exists and works: --archive moves stale identities to the Historical (knowledge-only) ledger section."
   }
 ]
