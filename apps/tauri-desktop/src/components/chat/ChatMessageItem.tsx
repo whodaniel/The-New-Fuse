@@ -1,10 +1,10 @@
 import { Bot, Check, Copy, RefreshCw, Trash2, User } from 'lucide-react';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../../types';
+
+const ChatCodeBlock = React.lazy(() => import('./ChatCodeBlock'));
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -91,7 +91,15 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
 
                     if (!inline && match) {
                       return (
-                        <CodeBlock language={match[1]} value={codeString} />
+                        <React.Suspense
+                          fallback={
+                            <pre className="my-3 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-left text-xs">
+                              <code>{codeString}</code>
+                            </pre>
+                          }
+                        >
+                          <ChatCodeBlock language={match[1]} value={codeString} />
+                        </React.Suspense>
                       );
                     }
 
@@ -150,52 +158,5 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
 );
 
 ChatMessageItem.displayName = 'ChatMessageItem';
-
-/** Code block component with copy button */
-const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, value }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(value);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div className="my-3 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden text-left">
-      <div className="flex items-center justify-between px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[11px] font-mono text-slate-400">
-        <span className="uppercase">{language}</span>
-        <button
-          onClick={handleCopyCode}
-          className="flex items-center gap-1 hover:text-white transition-colors"
-        >
-          {copied ? (
-            <>
-              <Check className="w-3 h-3 text-emerald-400" />
-              <span className="text-emerald-400">Copied</span>
-            </>
-          ) : (
-            <>
-              <Copy className="w-3 h-3" />
-              <span>Copy</span>
-            </>
-          )}
-        </button>
-      </div>
-      <SyntaxHighlighter
-        language={language}
-        style={vscDarkPlus}
-        customStyle={{
-          margin: 0,
-          padding: '12px 16px',
-          fontSize: '12px',
-          background: 'transparent',
-        }}
-      >
-        {value}
-      </SyntaxHighlighter>
-    </div>
-  );
-};
 
 export default ChatMessageItem;

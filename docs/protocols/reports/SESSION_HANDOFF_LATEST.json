@@ -1,94 +1,174 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "d4e8f2a1-9b3d-4e5f-8a2b-7c6d9e0f1a2c",
-  "created_at": "2026-08-26T05:47:23.000Z",
+  "handoff_id": "6cfeb662-f7e1-45fd-823e-dc44d3411ed1",
+  "created_at": "2026-08-26T08:10:23.180Z",
   "repository": "whodaniel/tnf-monorepo",
+  "branch": "sentinel-fix-marketplace-cmd-injection-11879217410415317362",
+  "head_sha": "74591da4ec83888502bf37d53fe7278bee6994c3",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": [],
+  "work_summary": [
+    "Added 6 new script file(s)",
+    "Modified 19 file(s)"
+  ],
+  "changed_paths": [
+    "apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "data/agent-registry/onboarding-agent.json",
+    "data/llm-intel/arena-intel-latest.json",
+    "data/llm-intel/arena-intel.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
+    "data/llm-provider-status.json",
+    "data/marketplace/catalog-items.json",
+    "data/reviews/codebase_merkle_tree.json",
+    "data/reviews/node_status.json",
+    "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "apps/api/src/modules/billing/billing.controller.spec.ts",
+    "apps/chrome-extension/scripts/verify-extension-dist.cjs",
+    "apps/frontend/src/components/auth/RequireMembership.test.tsx",
+    "apps/frontend/src/utils/authToken.resolveApiUrl.test.ts",
+    "apps/frontend/src/utils/pageContextSnapshot.test.ts",
+    "data/llm-intel/history/intel_2026-08-24.json",
+    "data/llm-intel/history/intel_2026-08-25.json",
+    "data/llm-intel/history/intel_2026-08-26.json",
+    "debug-live-relay.js",
+    "debug-live-relay.ts",
+    "scripts/install-tnf-host-wrappers.cjs",
+    "scripts/lib/resolve-tnf-repo.cjs",
+    "scripts/lib/resolve-tnf-repo.sh",
+    "scripts/lib/tnf-canonical-onboarding.cjs",
+    "scripts/runtime/tnf-status.cjs",
+    "scripts/tests/resolve-tnf-repo.test.cjs",
+    "scripts/tests/resolve-tnf-repo.test.sh",
+    "test-auth-registration.js",
+    "test-live-relay.ts"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": [
+      "orchestrator"
+    ],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+    ]
+  },
+  "next_actions": [
+    "Restart relay with strong JWT_SECRET then run authenticated registration smoke test",
+    "Re-run TNF_LIVE_RELAY=1 suite after any relay-core protocol change",
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 38 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+  ],
+  "artifacts": {
+    "commits": [
+      "74591da4ec83888502bf37d53fe7278bee6994c3"
+    ],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/The-New-Fuse",
+    "actual": "whodaniel/tnf-monorepo",
     "origin": "https://github.com/whodaniel/tnf-monorepo.git",
     "dirty": true,
-    "operation_in_progress": "browser-control-surfaces integration",
+    "operation_in_progress": null,
     "publication_targets": [
       "whodaniel/The-New-Fuse",
       "whodaniel/fuse-control-plane"
     ]
   },
-  "branch": "sentinel-fix-marketplace-cmd-injection-11879217410415317362",
-  "head_sha": "cd51fbdaaddc53700e9a1f8f3bf045850dfabe39",
-  "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "public",
   "classification": {
-    "work_domain": "personal",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "local",
-    "sensitivity": "public"
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
   },
   "capabilities": {
-    "required": [
-      "browser-control",
-      "federation-relay",
-      "jwt-authentication"
-    ],
-    "staffed_by": [
-      "browser-control-surface",
-      "tnf-federation-relay"
-    ]
+    "required": [],
+    "staffed_by": []
   },
   "publication": {
-    "public_runtime_affected": true,
+    "public_runtime_affected": false,
     "control_plane_affected": false,
     "satellites": []
   },
   "freshness_receipts": [
     {
-      "id": "github-remotes",
-      "state": "stale"
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:38.051Z",
+      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
     },
     {
-      "id": "runtime-services",
-      "state": "stale"
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:45.037Z",
+      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:49.582Z",
+      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:52.712Z",
+      "value": "[161]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:54.422Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:59.780Z",
+      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:00.764Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:01.494Z",
+      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:06.916Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:08.906Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ],
-  "work_summary": [
-    "Fixed browser-control-surfaces package TypeScript build errors",
-    "Implemented messages buffer + channel list rendering in BROWSER_CONTROL_SURFACE.tsx and ChannelManager.tsx",
-    "Verified JWT-authenticated registration with TNF federation relay on port 3000",
-    "Updated federation-relay-client to send token in payload.token for relay authentication",
-    "Updated useTnfFederation hook to use correct relay URL (ws://127.0.0.1:3000/ws)",
-    "Package builds cleanly with pnpm build"
-  ],
-  "changed_paths": [
-    "apps/browser-control-surfaces/BROWSER_CONTROL_SURFACE.tsx",
-    "apps/browser-control-surfaces/components/ChannelManager.tsx",
-    "apps/browser-control-surfaces/hooks/useTnfFederation.ts",
-    "apps/browser-control-surfaces/index.ts",
-    "apps/browser-control-surfaces/lib/federation-relay-client.ts",
-    "apps/browser-control-surfaces/package.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
-  ],
-  "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
-    "supabase_rls_audit": "na"
-  },
-  "continuation": {
-    "owner": "browser-control-surface",
-    "targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ],
-    "priority": "critical",
-    "resume_checklist": [
-      "Restart relay with strong JWT_SECRET then run authenticated registration smoke test",
-      "Re-run TNF_LIVE_RELAY=1 suite after any relay-core protocol change"
-    ]
-  },
-  "next_actions": [
-    "Restart relay with strong JWT_SECRET then run authenticated registration smoke test",
-    "Re-run TNF_LIVE_RELAY=1 suite after any relay-core protocol change"
   ]
 }

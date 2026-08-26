@@ -42,6 +42,7 @@ function buildBlock(repoRoot) {
 }
 
 const TARGETS = [
+  { id: 'agy', runtime: 'Antigravity CLI', scope: 'global', contextFile: path.join(HOME, '.agy', 'AGENTS.md'), dirHint: path.join(HOME, '.gemini', 'antigravity-cli') },
   { id: 'gemini-home', runtime: 'Gemini CLI', scope: 'global', contextFile: path.join(HOME, 'GEMINI.md') },
   { id: 'gemini-conf', runtime: 'Gemini CLI', scope: 'global', contextFile: path.join(HOME, '.gemini', 'GEMINI.md') },
   { id: 'codex', runtime: 'Codex', scope: 'global', contextFile: path.join(HOME, '.codex', 'AGENTS.md') },

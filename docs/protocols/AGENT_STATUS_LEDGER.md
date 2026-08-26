@@ -478,6 +478,14 @@ equivalents.
 | `TNF:LOCAL:AGENT:OPENCODE-CLI:001` | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 | `TNF:LOCAL:AGENT:KILO-CLI:001`     | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 
+
+
+### Newly Registered (This Session)
+
+| Agent | Identity | Status |
+| ----- | -------- | ------ |
+| agy | `TNF:LOCAL:AGENT:AGY:001` | **NEW** — registered at 2026-08-26T13:55:00.638Z |
+
 ## Session Logs
 
 - `~/.tnf/green-coordinator/federation-session-log.jsonl`

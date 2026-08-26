@@ -247,6 +247,8 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T22:49:31.303Z New script(s) created:
 - [✅] 2026-08-26T00:36:33.894Z New script(s) created:
 - [✅] 2026-08-26T03:28:18.479Z New script(s) created:
+- [✅] 2026-08-26T08:10:23.175Z New script(s) created: verify-extension-dist.cjs, install-tnf-host-wrappers.cjs, resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs, tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
   resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
   tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh

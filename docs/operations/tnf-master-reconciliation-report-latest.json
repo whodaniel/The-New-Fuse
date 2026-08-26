@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-26T06:13:53.025Z",
+  "timestamp": "2026-08-26T13:43:17.396Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 143,
+      "durationMs": 802,
       "data": {
         "branch": "sentinel-fix-marketplace-cmd-injection-11879217410415317362",
-        "commit": "489cb856b",
+        "commit": "74591da4e",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 95,
+      "durationMs": 1410,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -39,34 +39,31 @@
       }
     },
     "processHealth": {
-      "ok": false,
-      "verdict": "findings",
-      "findings": 1,
-      "durationMs": 157,
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 1479,
       "data": {
-        "findings": 1,
-        "healthy": 16,
-        "detail": [
-          "error: tnf-swarm-stress-test"
-        ]
+        "findings": 0,
+        "healthy": 17,
+        "detail": []
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 7,
+      "durationMs": 3,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 407,
+  "totalDurationMs": 3704,
   "summary": {
-    "clean": 3,
-    "findings": 1,
+    "clean": 4,
+    "findings": 0,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 1
+    "totalFindings": 0
   }
 }

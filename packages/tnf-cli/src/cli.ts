@@ -3400,6 +3400,7 @@ const cliEntryPath = fileURLToPath(import.meta.url);
 // =============================================================================
 export const PLATFORM_TAXONOMY: string[] = [
   // AGENT_PLATFORM_TRAITS (canonical runtime)
+  'agy',
   'antigravity',
   'browser',
   'claude',
@@ -4481,6 +4482,7 @@ function resolveImplicitPassthroughArgs(
     'command-code',
     'kilo',
     'droid',
+    'agy',
   ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
