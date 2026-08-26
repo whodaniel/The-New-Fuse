@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T03:00:22.910Z",
+  "generatedAt": "2026-08-26T06:10:17.102Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,30 +12,70 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-08-26T03:00:22.553Z",
-    "totalTerminals": 1,
-    "returned": 1,
+    "lastScanAt": "2026-08-26T06:10:14.926Z",
+    "totalTerminals": 4,
+    "returned": 4,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 1,
-    "content_excerpts_captured": 1
+    "terminal_history_tabs": 4,
+    "content_excerpts_captured": 4
   },
   "summary": {
-    "totalTerminals": 1,
-    "activeTerminals": 1,
+    "totalTerminals": 4,
+    "activeTerminals": 4,
     "idleTerminals": 0,
     "activeRatio": 1,
     "topWorkExecutables": [
       {
+        "name": "node",
+        "count": 2
+      },
+      {
         "name": "opencode",
+        "count": 1
+      },
+      {
+        "name": "pi",
         "count": 1
       }
     ],
     "activeSessions": [
+      {
+        "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
+        "tty": "/dev/ttys000",
+        "paneId": "tty:ttys000",
+        "shellPid": 6183,
+        "processCount": 17,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "➜  Local:   http://127.0.0.1:1421/ | ➜  press h + enter to show help",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
+        "tty": "/dev/ttys001",
+        "paneId": "tty:ttys001",
+        "shellPid": 29125,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "pi"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "~ | ↑365k ↓20k R296k 6.6%/1.0M (auto)      deepseek-ai/deepseek-v4-flash-0731 • high",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
       {
         "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
         "tty": "/dev/ttys002",
@@ -48,7 +88,23 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ | ⬝⬝⬝⬝⬝⬝⬝⬝  esc interrupt                       275.1K (28%)  ctrl+p commands",
+        "contextPreview": "╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ | 353.4K (35%)  ctrl+p commands",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
+        "tty": "/dev/ttys007",
+        "paneId": "tty:ttys007",
+        "shellPid": 73722,
+        "processCount": 6,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "⟳ Handoff context refresh queued for next autonomous turn | ⠼ Thinking...",
         "contextRedactions": 0,
         "hasContext": true
       }
@@ -56,45 +112,37 @@
     "safetySignals": {
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
-      "contextCapturedTerminals": 1,
+      "contextCapturedTerminals": 4,
       "contextRedactions": 0
     }
   },
   "delta": {
     "hasBaseline": true,
-    "terminalDelta": -4,
-    "activeDelta": -4,
-    "activeGained": [],
-    "activeLost": [
+    "terminalDelta": 3,
+    "activeDelta": 3,
+    "activeGained": [
       {
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "workExecutables": [
-          "caffeinate",
-          "claude"
+          "node"
         ]
       },
       {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
+        "twid": "9c9ba74f-deef-54d2-b15d-0299344b0099",
+        "tty": "/dev/ttys001",
         "workExecutables": [
-          "python3"
+          "pi"
         ]
       },
       {
         "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
         "tty": "/dev/ttys007",
         "workExecutables": [
-          "opencode"
-        ]
-      },
-      {
-        "twid": "263b3289-4dd6-5de4-bc05-69f2e5b10e9a",
-        "tty": "/dev/ttys009",
-        "workExecutables": [
-          "opencode"
+          "node"
         ]
       }
-    ]
+    ],
+    "activeLost": []
   }
 }

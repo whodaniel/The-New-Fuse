@@ -1,6 +1,6 @@
 # LLM Ranking Report
-Generated: 2026-08-13T16:30:02.853Z
-Intel Snapshot: intel_1786636805079
+Generated: 2026-08-26T00:58:23.640Z
+Intel Snapshot: intel_1787705843540
 
 ## Summary
 
@@ -10,43 +10,43 @@ Intel Snapshot: intel_1786636805079
 | Live on NVIDIA | 1 |
 | Recommendations | 125 |
 | Add New | 0 |
-| Reorder | 5 |
+| Reorder | 6 |
 | Remove EOL | 19 |
-| Demote Unranked | 101 |
+| Demote Unranked | 100 |
 
 ## Composite Rankings
 
 | Rank | Model | Arena Score | Health | Latency |
 |------|-------|-------------|--------|---------|
-| 1 | `openai/gpt-oss-20b` | - | live | 325ms |
+| 1 | `openai/gpt-oss-20b` | - | live | 389ms |
 | 2 | `meta/llama-3.3-70b-instruct` | - | timeout | - |
 | 3 | `meta/llama-3.2-90b-vision-instruct` | - | timeout | - |
 | 4 | `meta/llama-guard-4-12b` | - | timeout | - |
 | 5 | `openai/gpt-oss-120b` | - | timeout | - |
-| 6 | `z-ai/glm-5.1` | - | eol | - |
-| 7 | `moonshotai/kimi-k2.6` | - | error | - |
-| 8 | `minimaxai/minimax-m2.7` | - | eol | - |
-| 9 | `minimaxai/minimax-m2.5` | - | eol | - |
-| 10 | `deepseek-ai/deepseek-v4-flash` | - | eol | - |
-| 11 | `deepseek-ai/deepseek-v4-pro` | - | eol | - |
-| 12 | `qwen/qwen3.5-397b-a17b` | - | eol | - |
-| 13 | `qwen/qwen3.5-122b-a10b` | - | eol | - |
-| 14 | `mistralai/mistral-large-3-675b-instruct-2512` | - | eol | - |
-| 15 | `mistralai/mistral-medium-3.5-128b` | - | eol | - |
-| 16 | `mistralai/devstral-2-123b-instruct-2512` | - | error | - |
-| 17 | `mistralai/mistral-small-4-119b-2603` | - | eol | - |
-| 18 | `mistralai/magistral-small-2506` | - | error | - |
-| 19 | `mistralai/ministral-14b-instruct-2512` | - | eol | - |
-| 20 | `google/gemma-3n-e4b-it` | - | eol | - |
-| 21 | `google/gemma-3-27b-it` | - | eol | - |
-| 22 | `meta/llama-4-maverick-17b-128e-instruct` | - | eol | - |
-| 23 | `meta/llama-3.1-405b-instruct` | - | error | - |
-| 24 | `microsoft/phi-4-multimodal-instruct` | - | eol | - |
-| 25 | `microsoft/phi-4-mini-instruct` | - | eol | - |
-| 26 | `bytedance/seed-oss-36b-instruct` | - | eol | - |
-| 27 | `stockmark/stockmark-2-100b-instruct` | - | eol | - |
-| 28 | `abacusai/dracarys-llama-3.1-70b-instruct` | - | eol | - |
-| 29 | `google/gemma-4-31b-it` | - | error | - |
+| 6 | `google/gemma-4-31b-it` | - | timeout | - |
+| 7 | `z-ai/glm-5.1` | - | eol | - |
+| 8 | `moonshotai/kimi-k2.6` | - | error | - |
+| 9 | `minimaxai/minimax-m2.7` | - | eol | - |
+| 10 | `minimaxai/minimax-m2.5` | - | eol | - |
+| 11 | `deepseek-ai/deepseek-v4-flash` | - | eol | - |
+| 12 | `deepseek-ai/deepseek-v4-pro` | - | eol | - |
+| 13 | `qwen/qwen3.5-397b-a17b` | - | eol | - |
+| 14 | `qwen/qwen3.5-122b-a10b` | - | eol | - |
+| 15 | `mistralai/mistral-large-3-675b-instruct-2512` | - | eol | - |
+| 16 | `mistralai/mistral-medium-3.5-128b` | - | eol | - |
+| 17 | `mistralai/devstral-2-123b-instruct-2512` | - | error | - |
+| 18 | `mistralai/mistral-small-4-119b-2603` | - | eol | - |
+| 19 | `mistralai/magistral-small-2506` | - | error | - |
+| 20 | `mistralai/ministral-14b-instruct-2512` | - | eol | - |
+| 21 | `google/gemma-3n-e4b-it` | - | eol | - |
+| 22 | `google/gemma-3-27b-it` | - | eol | - |
+| 23 | `meta/llama-4-maverick-17b-128e-instruct` | - | eol | - |
+| 24 | `meta/llama-3.1-405b-instruct` | - | error | - |
+| 25 | `microsoft/phi-4-multimodal-instruct` | - | eol | - |
+| 26 | `microsoft/phi-4-mini-instruct` | - | eol | - |
+| 27 | `bytedance/seed-oss-36b-instruct` | - | eol | - |
+| 28 | `stockmark/stockmark-2-100b-instruct` | - | eol | - |
+| 29 | `abacusai/dracarys-llama-3.1-70b-instruct` | - | eol | - |
 | 30 | `moonshotai/kimi-k2-instruct-0905` | - | error | - |
 
 ## Recommendations
@@ -77,8 +77,8 @@ Intel Snapshot: intel_1786636805079
 | reorder | `meta/llama-3.2-90b-vision-instruct` | 111 | 2 | Arena score change suggests priority shift of 109 positions |
 | reorder | `meta/llama-guard-4-12b` | 113 | 3 | Arena score change suggests priority shift of 110 positions |
 | reorder | `openai/gpt-oss-120b` | 17 | 4 | Arena score change suggests priority shift of 13 positions |
+| reorder | `google/gemma-4-31b-it` | 1 | 5 | Arena score change suggests priority shift of 4 positions |
 | demote | `nvidia/nemotron-3-ultra-550b-a55b` | 0 | - | Model not found in arena rankings; consider demoting |
-| demote | `google/gemma-4-31b-it` | 1 | - | Model not found in arena rankings; consider demoting |
 | demote | `z-ai/glm-5.2` | 2 | - | Model not found in arena rankings; consider demoting |
 | demote | `minimaxai/minimax-m3` | 3 | - | Model not found in arena rankings; consider demoting |
 | demote | `moonshotai/kimi-k2.6` | 4 | - | Model not found in arena rankings; consider demoting |

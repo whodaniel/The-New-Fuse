@@ -1,15 +1,15 @@
 # TNF Master Reconciliation & Audit Report
-**Generated:** 2026-08-26T02:56:44.594Z  
+**Generated:** 2026-08-26T06:13:53.025Z  
 **Status:** ⚠️ AUDIT GAPS DETECTED  
-**Total Duration:** 1305ms  
+**Total Duration:** 407ms  
 
 ## Step Execution Breakdown
-- **environment**: ✓ OK (322ms)
-- **schemaIntegrity**: ✓ OK (582ms)
-- **selfEvolution**: ✗ FAILED (0ms)
+- **environment**: ✓ OK (143ms)
+- **schemaIntegrity**: ✓ OK (95ms)
+- **selfEvolution**: ✗ FAILED (1ms)
 - **codebaseLineage**: ✗ FAILED (0ms)
-- **processHealth**: ✗ FAILED (386ms)
-- **goalReconciliation**: ✓ OK (1ms)
+- **processHealth**: ✗ FAILED (157ms)
+- **goalReconciliation**: ✓ OK (7ms)
 
 ---
 *Telemetry saved to `docs/operations/tnf-master-reconciliation-report-latest.json`*
