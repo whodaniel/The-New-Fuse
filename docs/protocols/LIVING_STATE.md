@@ -3,7 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+**Current Directive:** Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e)
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
@@ -1063,6 +1063,12 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-26T02:18:31.529Z handoff `bb75b5da-65e9-46de-9306-d5a1fed32bca` head `518fbce3ec0e` project `TNF-SESSION` — Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e)
+
+- 2026-08-26T02:17:24.799Z handoff `f0d30b8e-a9d3-4220-9532-8b9ba5a2acb2` head `518fbce3ec0e` project `TNF-SESSION` — Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e);Reconcile the ~517 pre-existing working-tree changes in tnf-monorepo worktree vs main 95bbaefac before any destructive sync;Consider annotating boot-triage regeneration into onboard flow (boot-triage regenerated manually this session)
+
+- 2026-08-26T02:16:51.194Z handoff `2548387c-3573-4ba9-a2ee-7da2564e97b1` head `518fbce3ec0e` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 

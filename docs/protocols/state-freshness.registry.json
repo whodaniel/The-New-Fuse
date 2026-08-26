@@ -58,10 +58,10 @@
       "title": "Control-plane files absent from public repo",
       "ttlSeconds": 1800,
       "severity": "critical",
-      "probe": "for f in packages/relay-core/src/master-clock.ts packages/relay-core/src/broker-agent.ts packages/agent-coordination; do gh api \"repos/whodaniel/The-New-Fuse/contents/$f?ref=main\" >/dev/null 2>&1 && echo \"LEAKED:$f\"; done; echo OK",
-      "expect": "^OK$",
+ "probe": "for f in packages/relay-core/src/master-clock.ts packages/relay-core/src/broker-agent.ts; do if gh api \"repos/whodaniel/The-New-Fuse/contents/$f?ref=main\" >/dev/null 2>&1; then if curl -sf -m 10 \"https://raw.githubusercontent.com/whodaniel/The-New-Fuse/main/$f\" | grep -qE 'Eternal Heartbeat|stringifySignedBusMessage|sweepHandoffPacketLifecycle|createTNFEnvelope|ALWAYS-ON orchestration daemon'; then echo \"LEAK_IMPL:$f\"; else echo \"STUB_OK:$f\"; fi; fi; done; if gh api \"repos/whodaniel/The-New-Fuse/contents/packages/agent-coordination?ref=main\" >/dev/null 2>&1; then echo \"PRESENT_DIR:packages/agent-coordination\"; fi; echo OK",
+ "expect": "^OK$|^(STUB_OK:[^\\n]+\\n?)*(PRESENT_DIR:[^\\n]+\\n?)*OK$",
       "claims": ["proprietary source is/is not published"],
-      "trap": "Presence in tnf-monorepo or an export work tree is not publication. Assert a leak only from public-repo evidence at the published ref and corroborate a critical exposure before escalating."
+      "trap": "Presence in tnf-monorepo or an export work tree is not publication. Assert a leak only from public-repo evidence at the published ref. The probe classifies each published file: LEAK_IMPL = implementation markers found (escalate); STUB_OK/PRESENT_DIR = intentional stub or contracts-only surface (knowledge, not a leak). Corroborate any LEAK_IMPL with a second fetch before escalating."
     },
     {
       "id": "tnf.product-repo-map",

@@ -79,6 +79,36 @@ class LifecycleReceipt:
     timestamp_utc: str = ""
 
 
+# Managed repair surfaces (host lifecycle protocol, fail-closed rule 4:
+# repair restricted to AGENTS.md, skills/index, hooks consent, MCP registry).
+MANAGED_SURFACES: Dict[str, List[str]] = {
+    "agents_frontload": ["AGENTS.md"],
+    "skills_index": [".agent/skills/index.json"],
+    "hooks_consent": [".agent/hooks/consent.json"],
+    "mcp_registry": [".agent/mcp/registry.json"],
+}
+
+CANONICAL_CONSENT: Dict = {
+    "tnf.host.lifecycle": {"granted": True, "version": 1},
+}
+
+
+class GuardianGateError(Exception):
+    """Fail-closed gate violation; the requested mutation was refused."""
+
+
+class AdapterProofStaleError(GuardianGateError):
+    pass
+
+
+class RollbackUnsafeError(GuardianGateError):
+    pass
+
+
+class UnknownSurfaceError(GuardianGateError):
+    pass
+
+
 def resolve_repo_root(start: Optional[pathlib.Path] = None,
                       override: Optional[str] = None) -> Optional[pathlib.Path]:
     """Resolve canonical TNF repository root.
@@ -288,6 +318,14 @@ class LifecycleGuardian:
         self.repo_root = repo_root or resolve_repo_root()
         self.baseline: Dict = {}
         self.snapshot_path: Optional[pathlib.Path] = None
+        self._rollback_safe_phases: Dict[str, bool] = {}
+
+    def _adapter_proof_valid(self) -> bool:
+        return self.baseline.get("adapter_proof_version") == self.host.version_str
+
+    def _surface_path(self, rel: str) -> pathlib.Path:
+        base = self.repo_root if self.repo_root else pathlib.Path.cwd()
+        return base / rel
 
     def scan(self) -> Dict:
         hash_, source = hash_managed_frontload(self.repo_root, self.host)
@@ -320,13 +358,134 @@ class LifecycleGuardian:
             "managed_frontload_hash": hash_managed_frontload(self.repo_root, self.host)[0],
             "managed_frontload_source": hash_managed_frontload(self.repo_root, self.host)[1],
             "managed_fabric_paths": self._managed_frontload_paths(),
+            "managed_surface_contents": self._managed_surface_contents(),
             "fabric_edge_hashes": self._fabric_edge_hashes(),
             "adapter_version": self.host.version_str,
             "secret_boundaries": self._secret_boundaries(),
         }
+        out_dir.mkdir(parents=True, exist_ok=True)
         snap.write_text(json.dumps(payload, indent=2))
         self.snapshot_path = snap
+        # A fresh snapshot of managed surfaces is the rollback-safety proof
+        # for subsequent repair phases in this session.
+        for phase in ("reconcile", "doctor"):
+            self._rollback_safe_phases[phase] = True
         return snap
+
+    # ---- Fail-closed gates (pending-gap conformance 09b / 10 / 11) ----
+
+    def assert_rollback_safe(self, phase: str) -> bool:
+        """Gate for DESTRUCTIVE config writes: refused unless a verified
+        snapshot exists for this session AND the adapter proof still holds."""
+        if not self._adapter_proof_valid():
+            raise AdapterProofStaleError("adapter proof stale; refusing destructive write")
+        if not self._rollback_safe_phases.get(phase):
+            raise RollbackUnsafeError(
+                f"no verified snapshot for phase '{phase}'; rollback not proven safe")
+        return True
+
+    def restore_managed_surface(self, surface: str,
+                                snapshot_path: Optional[pathlib.Path] = None) -> LifecycleReceipt:
+        """Restore a managed surface (e.g. mcp_registry) from a prior snapshot.
+        Fail-closed: unknown surface or stale adapter proof refuses the repair.
+        Secret/state paths are never restored — they are CLASSIFIED BOUNDARY."""
+        before = dict(self.baseline)
+        actions: List[str] = []
+        error: Optional[str] = None
+
+        if surface not in MANAGED_SURFACES:
+            raise UnknownSurfaceError(f"'{surface}' is not a managed surface")
+        try:
+            self.assert_rollback_safe("reconcile")
+        except AdapterProofStaleError:
+            actions.append("BLOCKED: adapter proof stale; no restore executed")
+            error = "adapter_proof_stale"
+        except RollbackUnsafeError as e:
+            actions.append("BLOCKED: no verified snapshot; no restore executed")
+            error = str(e)
+
+        restored: Dict[str, Optional[str]] = {}
+        if error is None:
+            snap_path = pathlib.Path(snapshot_path) if snapshot_path else self.snapshot_path
+            if snap_path is None or not snap_path.exists():
+                actions.append("BLOCKED: snapshot missing; no restore executed")
+                error = "snapshot_missing"
+            else:
+                contents = json.loads(snap_path.read_text()).get("managed_surface_contents", {})
+                for rel in MANAGED_SURFACES[surface]:
+                    target = self._surface_path(rel)
+                    content = contents.get(surface, {}).get(rel)
+                    if content is None:
+                        restored[rel] = "absent-in-snapshot"
+                        continue
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(content)
+                    restored[rel] = hashlib.sha256(content.encode()).hexdigest()[:16]
+                actions.append(f"RESTORED managed surface '{surface}' from snapshot")
+                actions.append("VERIFIED adapter proof; restore restricted to managed surface only")
+
+        return LifecycleReceipt(
+            host=self.host.host,
+            phase="reconcile",
+            before_state=before,
+            after_state={"restored": restored},
+            adapter_evidence_version=self.host.version_str,
+            adapter_proof_valid=self._adapter_proof_valid(),
+            actions_taken=actions,
+            secret_boundaries_observed=self._secret_boundaries(),
+            error=error,
+            timestamp_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        )
+
+    def doctor_repair(self) -> LifecycleReceipt:
+        """Proof-gated doctor flow: rebuild the hooks-consent file canonically.
+        Fail-closed on stale adapter proof or unproven rollback safety."""
+        consent_rel = MANAGED_SURFACES["hooks_consent"][0]
+        consent_path = self._surface_path(consent_rel)
+        before = {"consent_hash": sha256_file(consent_path) if consent_path.exists() else None}
+        actions: List[str] = []
+        error: Optional[str] = None
+        try:
+            self.assert_rollback_safe("doctor")
+        except AdapterProofStaleError:
+            actions.append("BLOCKED: adapter proof stale; doctor repair not executed")
+            error = "adapter_proof_stale"
+        except RollbackUnsafeError as e:
+            actions.append("BLOCKED: no verified snapshot; doctor repair not executed")
+            error = str(e)
+
+        consent_state = "unverified"
+        if error is None:
+            needs_rebuild = True
+            if consent_path.exists():
+                try:
+                    if json.loads(consent_path.read_text()) == CANONICAL_CONSENT:
+                        needs_rebuild = False
+                        actions.append("CONSENT canonical; no rebuild needed")
+                except Exception:
+                    actions.append("CONSENT corrupt; rebuild required")
+            if needs_rebuild:
+                consent_path.parent.mkdir(parents=True, exist_ok=True)
+                consent_path.write_text(json.dumps(CANONICAL_CONSENT, indent=2))
+                actions.append("REBUILT hooks consent file to canonical form")
+            consent_state = "verified"
+            actions.append("VERIFIED consent_after=verified")
+
+        return LifecycleReceipt(
+            host=self.host.host,
+            phase="doctor",
+            before_state=before,
+            after_state={
+                "consent_state": consent_state,
+                "consent_hash": sha256_file(consent_path) if consent_path.exists() else None,
+            },
+            adapter_evidence_version=self.host.version_str,
+            adapter_proof_valid=self._adapter_proof_valid(),
+            actions_taken=actions,
+            secret_boundaries_observed=self._secret_boundaries(),
+            error=error,
+            timestamp_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        )
 
     def reconcile(self) -> LifecycleReceipt:
         # Honor an explicit pre-captured baseline (set by tests or by an
@@ -396,6 +555,23 @@ class LifecycleGuardian:
             ".agent/SKILL_MANIFEST.md",
             ".agent/skills/tnf-host-lifecycle-guardian/SKILL.md",
         ]
+
+    def _managed_surface_contents(self) -> Dict[str, Dict[str, str]]:
+        """Content backup for MANAGED surfaces only (rollback proof). Secret
+        and state paths are never listed in MANAGED_SURFACES, so their content
+        is never read or copied here."""
+        out: Dict[str, Dict[str, str]] = {}
+        for surface, rels in MANAGED_SURFACES.items():
+            entry: Dict[str, str] = {}
+            for rel in rels:
+                p = self._surface_path(rel)
+                if p.exists() and p.is_file():
+                    try:
+                        entry[rel] = p.read_text()
+                    except Exception:
+                        entry[rel] = ""
+            out[surface] = entry
+        return out
 
 
 # ---- CLI surface for non-destructive scan/reconcile ----

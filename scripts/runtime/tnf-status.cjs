@@ -26,6 +26,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
 const { CANONICAL_RAW_AGENT_PROMPT } = require('../lib/tnf-canonical-onboarding.cjs');
+const { resolveTnfRepo, writePointer } = require('../lib/resolve-tnf-repo.cjs');
 
 function parseArgs(argv) {
   const out = { repo: null, json: false, full: false };
@@ -47,20 +48,12 @@ function parseArgs(argv) {
 }
 
 function resolveRepoRoot(explicit) {
-  const candidates = [
-    explicit,
-    process.env.TNF_REPO_DIR,
-    process.env.TNF_REPO,
-    process.cwd(),
-  ].filter(Boolean);
-  for (const candidate of candidates) {
-    if (
-      fs.existsSync(path.join(candidate, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json'))
-    ) {
-      return candidate;
-    }
+  const resolved = resolveTnfRepo(explicit, { preferStatusAuthority: true, writePointerOnHit: true });
+  if (resolved) {
+    writePointer(resolved);
+    return resolved;
   }
-  return candidates[candidates.length - 1] || process.cwd();
+  return explicit || process.env.TNF_REPO_DIR || process.env.TNF_REPO || process.cwd();
 }
 
 function readJson(filePath) {

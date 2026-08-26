@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "id": "tnf-onboarding-contract",
-  "version": "2.1.0",
-  "updatedAt": "2026-08-22T16:50:00.000Z",
+  "version": "2.2.0",
+  "updatedAt": "2026-08-22T18:25:00.000Z",
   "authority": {
     "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
     "frontloadManifest": "docs/core/FRONTLOAD_MANIFEST.md",
@@ -75,6 +75,16 @@
       ]
     },
     {
+      "when": "assimilation, parodying an external agent, self-evolution capability intake, provider capability comparison, or turning an external agent feature into TNF-native capability is involved",
+      "load": [
+        ".agent/skills/tnf-parody-assimilate-cycle/SKILL.md",
+        ".agent/skills/tnf-self-evolution-protocol/SKILL.md",
+        "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+        ".agent/skills/tnf-agent-resource-convergence/SKILL.md"
+      ],
+      "rule": "Assimilation is the capability/evolution intake plane. Route reusable read-mostly artifacts into the Agent Resource Fabric, provider execution through existing provider/host authorities, stateful history through memory/compaction, user-owned durable context through the storage mandate, and secrets through the private credential boundary. Do not create a parallel assimilation registry."
+    },
+    {
       "when": "local agent resource consolidation, host-internal skill/prompt/rule deduplication, agent resource migration, adaptive redirection, or new local CLI/desktop host resource mapping is involved",
       "load": [
         "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
@@ -97,7 +107,8 @@
     "stableSourceIdentitySeparateFromFacets": true,
     "sourceLabelsDoNotCreateAuthority": true,
     "privacyPrecedesHydration": true,
-    "centralizeReusableHostResourcesBeforeCreatingProviderCopies": true
+    "centralizeReusableHostResourcesBeforeCreatingProviderCopies": true,
+    "assimilationMustReuseExistingTNFAuthorities": true
   },
   "hostInjection": {
     "installer": "scripts/install-agent-frontload.cjs",
@@ -110,7 +121,9 @@
     "node --test scripts/protocols/frontload-manifest.test.cjs",
     "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
     "node --test scripts/harness/agent-resource-converge.test.cjs",
+    "node --test scripts/harness/assimilation-scan.test.cjs",
     "node scripts/harness/agent-resource-converge.cjs scan",
+    "node scripts/harness/assimilation-scan.cjs --json",
     "node scripts/verify-repo-frontload.cjs",
     "node scripts/harness/provision-injection-surfaces.cjs --verify",
     "pnpm run tnf:onboard -- --task <task>"
