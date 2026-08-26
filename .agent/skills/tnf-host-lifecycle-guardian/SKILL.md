@@ -204,3 +204,35 @@ adapter_strategy).
 interception on that exact runtime/version. The current default in
 every profile is therefore `wrapper-delegation` or `unmanaged-observe`;
 `native-hook` and `command-shadow` are reserved for verified cases.
+
+> Note (2026-08-26): the real-host python test suite referenced above
+> (`test_managed_frontload_root.py`, `test_rollback_proof.py`,
+> `inventory_real_hermes.py`, `test_host_profiles.py`) was migrated to a
+> synthetic-fixture suite (`tests/host-lifecycle/fixture_recovery_tests.sh`
+> + `tests/host-lifecycle/evidence/test1..8_*.json`) on
+> `integration/host-lifecycle-conformance` — same invariants, no
+> destructive real-host operations. Update this doc's Files/Status
+> sections to match once that branch merges.
+
+## Session-learned pitfall (2026-08-22 / #178)
+
+Managed frontload hash returned `null` when the adapter resolved against
+the fixture root instead of the repo root (`AGENTS.md` at repo root vs
+fixture). Verify path resolution before interpreting a hash result as
+"missing".
+
+## Operator preference (verified session 2026-08-22)
+
+Brief/directive turns ("all" / "proceed"); suppress repeated legal
+disclaimers; action-first with self-verified reporting (full
+authorization); when asked "most logical?" clarify via `clarify`
+(single-select, recommendation first); never fabricate clean-state
+claims; always name remaining gaps explicitly; select next mutation from
+listed options rather than silent execution.
+
+---
+
+Protected note: this file lives at
+`.agent/skills/tnf-host-lifecycle-guardian/` (user-authored / directory
+skill). It is NOT curator-managed; future autonomous passes must NOT
+replace its content wholesale — extend it instead.
