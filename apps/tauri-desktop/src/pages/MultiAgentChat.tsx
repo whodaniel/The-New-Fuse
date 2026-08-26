@@ -25,7 +25,7 @@ import type { Agent, ChatMessage } from '../types';
 const MultiAgentChat: React.FC = () => {
   const { navigate } = useRoute();
   const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
-  const { agents: apiAgents, fetchAgents, updateAgent } = useAgentStore();
+  const { agents: apiAgents, fetchAgents, updateAgent, apiOffline } = useAgentStore();
 
   const {
     sessions,
@@ -207,10 +207,22 @@ const MultiAgentChat: React.FC = () => {
     addMessage(currentSessionId, userMsg);
     setIsLoading(true);
 
-    if (isConnected && synergy.apiOnline) {
+    const selectedSources = selectedAgents
+      .map((agentId) => {
+        const unified = unifiedAgents.find((agent) => agent.id === agentId);
+        if (unified) return unified.source;
+        return apiAgents.some((agent) => agent.id === agentId) ? 'local-api' : null;
+      })
+      .filter((source): source is 'federation' | 'local-api' => source !== null);
+    const apiTargetsOnly =
+      selectedSources.length === selectedAgents.length &&
+      selectedSources.every((source) => source === 'local-api');
+    const hasFederationTarget = selectedSources.includes('federation');
+
+    if (apiTargetsOnly && isConnected && synergy.apiOnline && !apiOffline) {
       wsService.sendChatMessage(currentSessionId, messageText, selectedAgents, generationOpts);
       armLoadingTimeout(30000, '⚠️ No response from REST API within 30s.');
-    } else if (synergy.relayRegistered) {
+    } else if (hasFederationTarget && synergy.relayRegistered) {
       const joined = FederationNodeService.getState().joinedChannels;
       const channelId = joined[0] || 'general';
       sendFederationMessage(
@@ -292,13 +304,15 @@ const MultiAgentChat: React.FC = () => {
       : `${activeAgents.length} of ${unifiedAgents.length}`;
 
   const runtimeLabel =
-    synergy.apiOnline && isConnected
-      ? 'API Connected'
-      : synergy.relayRegistered
-        ? 'Federation Active'
-        : mappedAgents.length > 0 && useLocalFallback
-          ? 'Local JIT Engine'
-          : 'Runtime Setup Required';
+    mappedAgents.length === 0
+      ? 'No Chat Agents Available'
+      : synergy.apiOnline && isConnected && !apiOffline
+        ? 'API Connected'
+        : synergy.relayRegistered
+          ? 'Federation Active'
+          : mappedAgents.length > 0 && useLocalFallback
+            ? 'Local JIT Engine'
+            : 'Runtime Setup Required';
 
   const toggleAgent = (agentId: string) => {
     if (!activeSession) return;
