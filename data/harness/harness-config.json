@@ -1,8 +1,8 @@
 {
   "$schema": "./harness-config.schema.json",
   "id": "tnf-harness",
-  "version": "1.1.1",
-  "updatedAt": "2026-08-22T12:48:00.000Z",
+  "version": "1.2.0",
+  "updatedAt": "2026-08-22T18:30:00.000Z",
   "authorities": [
     "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
@@ -53,10 +53,25 @@
         "scripts/runtime/resolve-harness-context.cjs",
         "data/harness/provider-failover-policy.json",
         "scripts/harness/provider-failover.cjs",
-        ".agent/assimilation-routes.json",
-        "tnf assimilate"
+        "packages/tnf-cli/src/commands/assimilate.ts",
+        "packages/tnf-cli/src/services/AssimilationService.ts",
+        "tnf assimilate run|link"
       ],
-      "gap": "Host CLIs may still retry internally; TNF owns the shared failover chain via provider-failover policy, wired into harness-context, model-watchdog, and start-agent-network."
+      "gap": "Host CLIs may still retry internally; TNF owns the shared failover chain via provider-failover policy. Assimilation link receipts are machine-local proof and do not create a second canonical provider routing registry."
+    },
+    "assimilation_resource_convergence": {
+      "status": "implemented",
+      "evidence": [
+        ".agent/skills/tnf-parody-assimilate-cycle/SKILL.md",
+        ".agent/skills/tnf-skill-ubiquity-propagation/SKILL.md",
+        "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+        "data/harness/agent-resource-fabric.json",
+        "scripts/harness/agent-resource-converge.cjs",
+        "scripts/harness/assimilation-scan.cjs",
+        ".agent/skills/tnf-agent-resource-convergence/SKILL.md",
+        "tnf assimilate scan"
+      ],
+      "gap": "Resource Fabric protocol remains STATUS:CANDIDATE while host adapters are field-validated. Live redirect/prune remains fail-closed per surface; stateful histories and secrets are excluded from blind deduplication."
     },
     "context_assembly_compaction": {
       "status": "implemented",
@@ -115,7 +130,7 @@
         "data/harness/trajectories/",
         "docs/protocols/reports/SESSION_HANDOFF_LATEST.json"
       ],
-      "notes": "MEMORY.md = static procedural curated facts. memory-layer.cjs = retain/recall dynamic layer. Do not conflate."
+      "notes": "MEMORY.md = static procedural curated facts. memory-layer.cjs = retain/recall dynamic layer. Do not conflate. Assimilation routes stateful histories here instead of static resource dedupe."
     },
     "tools_mcp_supply_chain": {
       "status": "implemented",
@@ -203,7 +218,10 @@
     "task_scoped_context",
     "required_task_route_integrity",
     "do_not_reinvent",
-    "concurrent_workstream_collision_boundaries"
+    "concurrent_workstream_collision_boundaries",
+    "parody_assimilate_gap_matrix",
+    "content_addressed_resource_convergence",
+    "thin_verified_host_adapters"
   ],
   "verify": {
     "commands": [
@@ -211,6 +229,9 @@
       "node --test scripts/protocols/frontload-manifest.test.cjs",
       "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
       "node --test scripts/harness/verify-onboarding-routes.test.cjs",
+      "node --test scripts/harness/agent-resource-converge.test.cjs",
+      "node --test scripts/harness/assimilation-scan.test.cjs",
+      "node scripts/harness/assimilation-scan.cjs --json",
       "node scripts/verify-repo-frontload.cjs",
       "node scripts/harness/verify-onboarding-routes.cjs",
       "node scripts/harness/verify-harness-completeness.cjs",

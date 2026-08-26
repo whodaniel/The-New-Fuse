@@ -8,9 +8,13 @@ LOG_DIR="$ROOT/.agent/runtime-logs"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 OUT="$LOG_DIR/autonomous-pipeline-${STAMP}.json"
 DMG_PATH="$APP/src-tauri/target/release/bundle/dmg/TNF (The New Fuse) Desktop App_4.1.0_x64.dmg"
+WATCHDOG="$ROOT/scripts/runtime/tnf-build-watchdog.sh"
 
 mkdir -p "$LOG_DIR"
 cd "$ROOT"
+
+# --- Pre-flight resource check (RAM, load avg, conflicting processes) ---
+bash "$ROOT/scripts/runtime/tnf-preflight-check.sh" || { echo "[pipeline] preflight ABORT"; exit 2; }
 
 phase() { echo ""; echo "========== [pipeline] $1 =========="; }
 
@@ -19,8 +23,8 @@ pass() { echo "[pipeline] OK: $1"; }
 fail() { echo "[pipeline] FAIL: $1"; FAILURES+=("$1"); }
 
 phase "1/8 — shared + relay-core + chrome extension build"
-if (cd "$ROOT/packages/shared" && pnpm run build); then pass "shared build"; else fail "shared build"; fi
-if [[ -f "$ROOT/packages/relay-core/dist/standalone-relay.js" ]] || (cd "$ROOT/packages/relay-core" && pnpm run build 2>/dev/null); then
+if (cd "$ROOT/packages/shared" && bash "$WATCHDOG" 300 -- pnpm run build); then pass "shared build"; else fail "shared build"; fi
+if [[ -f "$ROOT/packages/relay-core/dist/standalone-relay.js" ]] || (cd "$ROOT/packages/relay-core" && bash "$WATCHDOG" 300 -- pnpm run build 2>/dev/null); then
   pass "relay-core build"
 else
   fail "relay-core build"
@@ -36,7 +40,7 @@ phase "3/8 — tauri-desktop type-check + unit + vite build"
 cd "$APP"
 if pnpm run type-check; then pass "type-check"; else fail "type-check"; fi
 if pnpm run test; then pass "vitest"; else fail "vitest"; fi
-if pnpm run build; then pass "vite build"; else fail "vite build"; fi
+if bash "$WATCHDOG" 300 -- pnpm run build; then pass "vite build"; else fail "vite build"; fi
 
 phase "4/8 — preview smoke"
 if bash "$ROOT/scripts/qa/smoke-tauri-desktop-preview.sh"; then pass "preview smoke"; else fail "preview smoke"; fi

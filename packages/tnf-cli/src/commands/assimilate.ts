@@ -5,12 +5,12 @@ import { AssimilationService } from '../services/AssimilationService.js';
 // open-source installable and hosted server-side orchestration propagation:
 // TNF exists to PARODY + ASSIMILATE the BEST from ANY and ALL cutting-edge
 // AI agents (NOT "Hermes-to-TNF parity"). This applies on an ongoing,
-// self-iterative basis. See skill: assimilation-tenet for full workflow.
+// self-iterative basis. See skill: tnf-parody-assimilate-cycle for the canonical workflow.
 
 export function registerAssimilateCommand(program: Command, repoRoot: string): void {
   const assimilate = program
     .command('assimilate')
-    .description('Manage integration and routing with external AI CLIs and SDKs.');
+    .description('Discover, evaluate, and route external agent capabilities into TNF-native systems.');
 
   const service = new AssimilationService(repoRoot);
 
@@ -31,7 +31,9 @@ export function registerAssimilateCommand(program: Command, repoRoot: string): v
 
   assimilate
     .command('link <provider>')
-    .description('Link a new external agent CLI to the TNF routing table.')
+    .description(
+      'Verify an external CLI against existing TNF provider/host authorities and write a machine-local link receipt.'
+    )
     .action(async (provider: string) => {
       try {
         await service.linkProvider(provider);
@@ -43,30 +45,37 @@ export function registerAssimilateCommand(program: Command, repoRoot: string): v
 
   assimilate
     .command('scan')
-    .description('Run the Self-Evolution Flywheel to discover & weigh network agent patterns.')
-    .action(async () => {
+    .description(
+      'Scan current TNF assimilation, provider, skill, and Agent Resource Fabric surfaces without inventing a parallel registry.'
+    )
+    .option('--json', 'Emit the composed assimilation surface report as JSON')
+    .action(async (options: { json?: boolean }) => {
       try {
+        // CJS module intentionally lives at repo scope because it composes harness + CLI surfaces.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const flywheel: any = await import(
-          // @ts-ignore
-          '../../../../scripts/protocols/tnf-self-evolution-flywheel.cjs'
+        const scanner: any = await import('../../../../scripts/harness/assimilation-scan.cjs');
+        const scan = scanner.scanAssimilationSurfaces || scanner.default?.scanAssimilationSurfaces;
+        if (!scan) throw new Error('assimilation-scan.cjs does not export scanAssimilationSurfaces');
+        const report = scan({ root: repoRoot, writeReceipt: true });
+        if (options.json) {
+          console.log(JSON.stringify(report, null, 2));
+          return;
+        }
+        console.log(
+          `[Assimilation Engine] Resource Fabric hosts: ${report.authorities.resourceFabric.hostProfiles}; provider host pins: ${report.authorities.providerPolicy.hostPins}.`
         );
-        const report = flywheel.scanAgentPatterns
-          ? flywheel.scanAgentPatterns()
-          : flywheel.default
-            ? flywheel.default.scanAgentPatterns()
-            : null;
-        if (report) {
-          console.log(
-            `[Self-Evolution Flywheel] Scanned ${report.discovered_skills} skills across network surfaces.`
-          );
-          console.log(
-            `[Self-Evolution Flywheel] Telemetry written to docs/operations/tnf-self-evolution-telemetry.json`
-          );
+        console.log(
+          `[Assimilation Engine] Resource scan: ${report.resourceFabricScan.ok ? 'PASS' : report.resourceFabricScan.reason}.`
+        );
+        for (const seam of report.staleSeams || []) {
+          console.log(`[Assimilation Engine] Reconciled stale seam: ${seam.path} → ${seam.disposition}.`);
+        }
+        if (report.receipt?.latest) {
+          console.log(`[Assimilation Engine] Receipt: ${report.receipt.latest}`);
         }
       } catch (error: any) {
-        console.error(`[Self-Evolution Flywheel] Error: ${error.message}`);
+        console.error(`[Assimilation Engine] Scan error: ${error.message}`);
         process.exit(1);
       }
     });
