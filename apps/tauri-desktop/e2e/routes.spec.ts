@@ -89,9 +89,8 @@ test.describe('desktop route navigation', () => {
       conversationWidth: [...document.querySelectorAll('main')].at(-1)?.getBoundingClientRect()
         .width,
       headerPadding: getComputedStyle([...document.querySelectorAll('header')].at(-1)!).padding,
-      feedPadding: getComputedStyle(
-        document.querySelector('[aria-label="Conversation messages"]')!
-      ).padding,
+      feedPadding: getComputedStyle(document.querySelector('[aria-label="Conversation messages"]')!)
+        .padding,
     }));
 
     expect(geometry.pageScrollY).toBe(0);
