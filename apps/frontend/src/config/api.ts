@@ -35,6 +35,9 @@ export const API_ENDPOINTS = {
     BASE: `${API_PREFIX}/agents`,
     ACTIVE: `${API_PREFIX}/agents/active`,
   },
+  BILLING: {
+    MEMBERSHIP_ME: `${API_PREFIX}/billing/membership/me`,
+  },
 };
 
 export const API_TIMEOUT = 30000;

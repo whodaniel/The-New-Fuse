@@ -10,10 +10,11 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import * as crypto from 'node:crypto';
 import { CommunityApiKeyGuard } from '../../guards/community-api-key.guard';
 import { PayPalService } from './paypal.service';
+
 
 @Controller('billing/paypal')
 export class PayPalController {
@@ -47,12 +48,12 @@ export class PayPalController {
   }
 
   @Post('subscribe')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async recordSubscription(
     @Body() body: { subscriptionID: string; planID: string },
     @Req() req: any
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.id || req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }
