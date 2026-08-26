@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-interface SecurityMonitorProps {
+export interface SecurityMonitorProps {
   heartbeatStatus: 'healthy' | 'degraded' | 'not-connected';
   governanceStatus: Record<string, boolean>;
   permissions: Record<string, boolean>;

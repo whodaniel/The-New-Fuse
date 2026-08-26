@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FederationRelayClient } from '../../lib/federation-relay-client';
+import { FederationRelayClient } from '../lib/federation-relay-client';
 
-interface TnfFederationState {
+export interface TnfFederationState {
   connected: boolean;
   agents: Map<string, any>;
   channels: Map<string, any>;

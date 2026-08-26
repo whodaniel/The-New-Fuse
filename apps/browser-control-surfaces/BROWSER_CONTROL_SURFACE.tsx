@@ -1,15 +1,15 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import { useCallback, useRef, useState } from 'react';
-import { useBrowserState } from '../../hooks/useBrowserState';
-import { useTnfAuthorization } from '../../hooks/useTnfAuthorization';
-import { useTnfFederation } from '../../hooks/useTnfFederation';
-import { AgentOrchestrator } from './AgentOrchestrator';
-import { BrowserDetection } from './BrowserDetection';
-import { ChannelManager } from './ChannelManager';
-import { SecurityMonitor } from './SecurityMonitor';
-import { TnfHarnessStatusBar } from './TnfHarnessStatusBar';
+import { AgentOrchestrator } from './components/AgentOrchestrator';
+import { BrowserDetection } from './components/BrowserDetection';
+import { ChannelManager } from './components/ChannelManager';
+import { SecurityMonitor } from './components/SecurityMonitor';
+import { TnfHarnessStatusBar } from './components/TnfHarnessStatusBar';
+import { useBrowserState } from './hooks/useBrowserState';
+import { useTnfAuthorization } from './hooks/useTnfAuthorization';
+import { useTnfFederation } from './hooks/useTnfFederation';
 
-interface BrowserControlSurfaceProps {
+export interface BrowserControlSurfaceProps {
   className?: string;
   debug?: boolean;
 }
@@ -71,7 +71,11 @@ export function BrowserControlSurface({
       <div className="tnf-browser-surface unauthorized">
         <h2>Permission Required</h2>
         <p>Browser control requires authorization. Please check tnf-agent-daemon status.</p>
-        <SecurityMonitor />
+        <SecurityMonitor
+          heartbeatStatus={heartbeatStatus}
+          governanceStatus={governanceStatus}
+          permissions={permissions}
+        />
       </div>
     );
   }

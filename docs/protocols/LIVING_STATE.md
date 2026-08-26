@@ -3,7 +3,10 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist.
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
@@ -20,8 +23,8 @@
   - **mutation-guard:** `pack-refs` / `gc` were treated as stash when
     `refs/stash` appeared in multi-ref transactions. Classification now allows
     safe maintenance while still blocking real stash / reset / merge / rebase /
-    pull. `git gc --prune=now` succeeded on a dirty tree after clearing
-    worktree `gc.log`; loose objects packed to 0.
+    pull. `git gc --prune=now` succeeded on a dirty tree after clearing worktree
+    `gc.log`; loose objects packed to 0.
   - **preflight-skip:** Timings documented in
     `docs/operations/preflight-skip-latency-2026-08-20.md`. Doctor ~8–15s
     standalone; do not raise 30s budget. Hardened test env isolation + repo-root
@@ -33,8 +36,8 @@
     `Invalid regular expression ... Nothing to repeat` because
     `requireSuperAdmin` built a `RegExp` from the old base64 token (`+` / `/`).
   - **Fix (canonical `tnf-monorepo` `main` only):** structural
-    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert via
-    `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
+    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert
+    via `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
     printing; `process.env` mutates only after persist succeeds.
   - **Verify:** focused tests 8/8; silent fresh rotation; leaked chat token not
     authoritative; controlled boot cleared Super Admin auth (exit 0).
@@ -242,11 +245,21 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T20:31:26.857Z New script(s) created: tnf-authority-keys.cjs,
 - [✅] 2026-08-16T22:49:31.303Z New agent(s) created: command-code
 - [✅] 2026-08-16T22:49:31.303Z New script(s) created:
+- [✅] 2026-08-26T00:36:33.894Z New script(s) created:
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+- [✅] 2026-08-26T00:38:19.920Z New script(s) created:
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
   memory-freshness-sweep.cjs, tnf-authority-keys.cjs,
   tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
   command-surface-gate.cjs, redis-connection-guard-cron.sh,
   redis-connection-guard.cjs, tnf-agent-daemon-launch.sh,
   tnf-agent-daemon-launchd.sh, universal-skill-disclosure-guard.cjs
+
 - [✅] 2026-08-16T22:49:31.303Z Agent definition change: 1 added, 0 removed
 
   tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
@@ -1064,7 +1077,13 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-26T02:41:01.222Z handoff `dfd7f798-b0de-425d-85e5-93162b6668ce` head
+  `b4511fcacea7` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head
+  `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
   `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone

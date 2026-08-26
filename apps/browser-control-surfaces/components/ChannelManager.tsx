@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { Channel } from '../../types/federation';
+import { Channel } from '../types/federation';
 
-interface ChannelManagerProps {
+export interface ChannelManagerProps {
   channels: Map<string, Channel>;
   onSendMessage: (channelId: string, content: string) => Promise<void>;
   connected: boolean;
@@ -69,7 +69,7 @@ export function ChannelManager({ channels, onSendMessage, connected }: ChannelMa
                 <div className="channel-name">{channel.name}</div>
                 <div className="channel-meta">
                   <span>{channel.memberCount ?? 0} members</span>
-                  {channel.unreadCount > 0 && (
+                  {(channel.unreadCount ?? 0) > 0 && (
                     <span className="unread-count">{channel.unreadCount}</span>
                   )}
                 </div>

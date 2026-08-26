@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createMessageEnvelope, verifyGateDecision } from '../lib/harness-protocol';
 
-interface TerminalHeartbeatState {
+export interface TerminalHeartbeatState {
   connected: boolean;
   lastPing: number;
   missedCount: number;
@@ -45,7 +45,7 @@ export function useTerminalHeartbeat(
 
     if (!decision.allowed) {
       console.warn('[Terminal Heartbeat] Gate decision denied:', decision.reason);
-      return { denied: true, reason: decision.reason };
+      return { denied: true as const, success: false as const, reason: decision.reason };
     }
 
     const envelope = createMessageEnvelope({
@@ -95,6 +95,17 @@ export function useTerminalHeartbeat(
       const result = await triggerPing();
 
       if (!result.success) {
+        // A denied ping (gate refused) is still counted as a missed
+        // heartbeat for circuit-breaker purposes, same as a genuine
+        // connection error — but worth its own, more specific log line.
+        // ('denied' in result) rather than a chained else-if: the denied
+        // shape is itself a !success case, so a separate else branch was
+        // unreachable dead code — TypeScript now correctly flags that once
+        // triggerPing's real return shapes are known (see verify-gate-decisions.ts).
+        if ('denied' in result && result.denied) {
+          console.warn('[Terminal Heartbeat] Ping denied:', result.reason);
+        }
+
         const newFailures = consecutiveFailures + 1;
         setConsecutiveFailures(newFailures);
 
@@ -115,8 +126,6 @@ export function useTerminalHeartbeat(
             missedCount: newFailures,
           }));
         }
-      } else if (result.denied) {
-        console.warn('[Terminal Heartbeat] Ping denied:', result.reason);
       }
     }, interval);
 

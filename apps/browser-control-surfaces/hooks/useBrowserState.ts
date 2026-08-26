@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-interface BrowserState {
+export interface BrowserState {
   currentUrl: string | null;
   targetElement: string | null;
   isControlling: boolean;
