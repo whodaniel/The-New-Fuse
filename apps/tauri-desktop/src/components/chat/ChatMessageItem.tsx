@@ -52,7 +52,9 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
         {/* Message Content Bubble */}
         <div className={`max-w-[85%] space-y-1 ${isUser ? 'text-right' : 'text-left'}`}>
           {/* Header */}
-          <div className={`flex items-center gap-2 text-xs text-slate-400 ${isUser ? 'justify-end' : 'justify-start'}`}>
+          <div
+            className={`flex items-center gap-2 text-xs text-slate-400 ${isUser ? 'justify-end' : 'justify-start'}`}
+          >
             {!isUser && !isSystem && (
               <span
                 className="px-2 py-0.5 rounded-md text-[11px] font-medium text-white shadow-sm"
@@ -63,7 +65,10 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
             )}
             {isUser && <span className="font-semibold text-indigo-300">You</span>}
             <span className="font-mono text-[10px] opacity-75">
-              {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(message.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </span>
           </div>
 
@@ -73,8 +78,8 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
               isUser
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-tr-none shadow-lg shadow-indigo-500/10'
                 : isSystem
-                ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200 rounded-xl text-xs font-mono py-2.5 px-3.5'
-                : 'bg-slate-900/90 border border-slate-800 text-slate-100 rounded-tl-none shadow-md'
+                  ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200 rounded-xl text-xs font-mono py-2.5 px-3.5'
+                  : 'bg-slate-900/90 border border-slate-800 text-slate-100 rounded-tl-none shadow-md'
             }`}
           >
             {isSystem ? (
@@ -130,7 +135,11 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(
               title="Copy message"
               className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
             >
-              {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedText ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
             </button>
             {!isUser && !isSystem && onRegenerate && (
               <button

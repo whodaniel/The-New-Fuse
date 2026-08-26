@@ -163,11 +163,13 @@ for (const rel of runtimeInstructionFiles) {
   }
 }
 
-const requiredPrompt =
+const requiredPromptV1 =
   'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md.';
 for (const rel of ['.agent/SYSTEM_PROMPT.md', '.agent/context/agent-onboarding.md', '.agent/workflows/frontload.md', 'scripts/tnf-onboard.cjs']) {
   const content = read(rel);
-  if (!content.includes(requiredPrompt)) {
+  const hasV1 = content.includes(requiredPromptV1);
+  const hasV2 = content.includes('pnpm run tnf:onboard') && content.includes('TURN_ZERO_MANDATE.md');
+  if (!hasV1 && !hasV2) {
     fail(`${rel} does not expose the repository-relative raw-agent onboarding prompt`);
   }
 }

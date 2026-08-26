@@ -1,4 +1,4 @@
-import { MessageSquare, PanelLeft, Sparkles } from 'lucide-react';
+import { MessageSquare, PanelLeft, Settings, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import AgentDetailModal from '../components/chat/AgentDetailModal';
 import AgentSelectorPanel from '../components/chat/AgentSelectorPanel';
@@ -6,6 +6,7 @@ import ChatInputArea from '../components/chat/ChatInputArea';
 import ChatMessageItem from '../components/chat/ChatMessageItem';
 import ChatSessionSidebar from '../components/chat/ChatSessionSidebar';
 import PageShell from '../components/layout/PageShell';
+import { useRoute } from '../components/route-context';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import FederationNodeService, {
   type FederationChannelMessage,
@@ -22,6 +23,7 @@ import type { Agent, ChatMessage } from '../types';
  * 4 execution modes, agent detail configuration, and offline JIT simulation.
  */
 const MultiAgentChat: React.FC = () => {
+  const { navigate } = useRoute();
   const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
   const { agents: apiAgents, fetchAgents, updateAgent } = useAgentStore();
 
@@ -46,10 +48,12 @@ const MultiAgentChat: React.FC = () => {
 
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= 1680
+  );
   const [inspectedAgent, setInspectedAgent] = useState<Agent | null>(null);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesViewportRef = useRef<HTMLDivElement>(null);
   const loadingTimeoutRef = useRef<number | null>(null);
   // Seed defaults once per session so Clear All is not immediately undone.
   const seededAgentSessionsRef = useRef<Set<string>>(new Set());
@@ -108,7 +112,19 @@ const MultiAgentChat: React.FC = () => {
 
   // Scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const viewport = messagesViewportRef.current;
+    if (!viewport) return;
+
+    // Keep scrolling confined to the feed. scrollIntoView() also scrolls the
+    // page shell and sibling panels, which used to push the chat chrome off-screen.
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth';
+    if (typeof viewport.scrollTo === 'function') {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior });
+    } else {
+      viewport.scrollTop = viewport.scrollHeight;
+    }
   }, [activeSession?.messages, isLoading]);
 
   // Listen for Federation Channel messages
@@ -275,6 +291,15 @@ const MultiAgentChat: React.FC = () => {
       ? `${mappedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline').length} of ${mappedAgents.length}`
       : `${activeAgents.length} of ${unifiedAgents.length}`;
 
+  const runtimeLabel =
+    synergy.apiOnline && isConnected
+      ? 'API Connected'
+      : synergy.relayRegistered
+        ? 'Federation Active'
+        : mappedAgents.length > 0 && useLocalFallback
+          ? 'Local JIT Engine'
+          : 'Runtime Setup Required';
+
   const toggleAgent = (agentId: string) => {
     if (!activeSession) return;
     const current = activeSession.agents;
@@ -325,13 +350,7 @@ const MultiAgentChat: React.FC = () => {
     <PageShell
       className="page-fill"
       title="Multi-Agent Swarm Chat"
-      subtitle={`${fleetCountLabel} agents reachable · Mode: ${mode.toUpperCase()} · ${
-        synergy.apiOnline && isConnected
-          ? 'API Connected'
-          : synergy.relayRegistered
-            ? 'Federation Active'
-            : 'Local JIT Engine'
-      }`}
+      subtitle={`${fleetCountLabel} agents reachable · Mode: ${mode.toUpperCase()} · ${runtimeLabel}`}
       actions={
         <div className="flex items-center gap-2">
           <button
@@ -352,7 +371,7 @@ const MultiAgentChat: React.FC = () => {
       }
     >
       <div
-        className="page-fill-body flex h-full overflow-hidden"
+        className="page-fill-body chat-layout flex h-full overflow-hidden"
         style={{ background: 'var(--tnf-obsidian)', color: 'var(--tnf-text-primary)' }}
       >
         {/* Sessions Sidebar */}
@@ -369,6 +388,7 @@ const MultiAgentChat: React.FC = () => {
           getAgentColor={getAgentColor}
           synergy={synergy}
           isConnected={isConnected}
+          localFallbackReady={mappedAgents.length > 0 && useLocalFallback}
         />
 
         {/* Main Chat Area */}
@@ -412,18 +432,38 @@ const MultiAgentChat: React.FC = () => {
           </header>
 
           {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
+          <div
+            ref={messagesViewportRef}
+            className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin"
+            aria-live="polite"
+            aria-label="Conversation messages"
+          >
             {!activeSession || activeSession.messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center text-slate-400 space-y-4">
                 <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-3xl shadow-lg">
                   <Sparkles className="w-8 h-8 text-indigo-400" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-white text-lg">Multi-Agent Swarm Arena</h3>
+                <div className="w-full max-w-sm">
+                  <h3 className="font-bold text-white text-lg">
+                    {mappedAgents.length > 0
+                      ? 'Multi-Agent Swarm Arena'
+                      : 'Connect your agent runtime'}
+                  </h3>
                   <p className="text-xs text-slate-400 max-w-sm mt-1">
-                    Select agents, choose an execution mode (Broadcast, Direct, Round-Robin,
-                    Consensus), and type a prompt to start collaborating.
+                    {mappedAgents.length > 0
+                      ? 'Select agents, choose an execution mode, and type a prompt to start collaborating.'
+                      : 'No reachable agents were found. Configure the API or relay connection, then return here to start a conversation.'}
                   </p>
+                  {mappedAgents.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/settings')}
+                      className="primary-button mt-4 inline-flex items-center gap-2"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Open Runtime Settings
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
@@ -452,7 +492,6 @@ const MultiAgentChat: React.FC = () => {
                 </span>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Area */}

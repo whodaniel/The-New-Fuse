@@ -16,17 +16,11 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
         heading: ['"Outfit"', 'sans-serif'],
       },
+      // Keep named widths on Tailwind's container scale. Adding xs/sm/md/etc.
+      // to `spacing` also overrides max-w-sm/max-w-md in Tailwind's compatibility
+      // theme, collapsing readable content to 8px/16px. TNF spacing tokens live
+      // under --tnf-space-* in styles.css; only the distinct touch token belongs here.
       spacing: {
-        // Enhanced spacing scale for premium UX
-        xs: '4px',
-        sm: '8px',
-        md: '16px',
-        lg: '24px',
-        xl: '32px',
-        '2xl': '48px',
-        '3xl': '64px',
-        '4xl': '96px',
-        '5xl': '128px',
         touch: '44px', // Minimum touch target
       },
       fontSize: {

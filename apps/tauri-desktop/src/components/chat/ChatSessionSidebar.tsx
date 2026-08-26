@@ -65,7 +65,9 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
           Chat History
         </h3>
         <button
+          type="button"
           onClick={onClose}
+          aria-label="Close chat history"
           className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 md:hidden"
         >
           <X className="w-4 h-4" />
@@ -75,6 +77,7 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
       {/* New Session Button */}
       <div className="p-3">
         <button
+          type="button"
           onClick={() => createSession()}
           className="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/20"
         >
@@ -117,7 +120,9 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
+                  <MessageSquare
+                    className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`}
+                  />
 
                   {isEditing ? (
                     <form onSubmit={(e) => handleSaveRename(session.id, e)} className="flex-1">
@@ -134,7 +139,11 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
                     <div className="min-w-0 flex-1">
                       <div className="truncate font-medium">{session.title}</div>
                       <div className="text-[10px] text-slate-500">
-                        {session.messages.length} msg · {new Date(session.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                        {session.messages.length} msg ·{' '}
+                        {new Date(session.updatedAt).toLocaleDateString([], {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
                       </div>
                     </div>
                   )}
@@ -144,6 +153,7 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
                 {!isEditing && (
                   <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
                     <button
+                      type="button"
                       onClick={(e) => handleStartRename(session.id, session.title, e)}
                       title="Rename chat"
                       className="p-1 hover:text-indigo-400 hover:bg-slate-700/50 rounded"
@@ -151,6 +161,7 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
                       <Edit3 className="w-3 h-3" />
                     </button>
                     <button
+                      type="button"
                       onClick={(e) => handleExport(session.id, 'markdown', e)}
                       title="Export Markdown"
                       className="p-1 hover:text-indigo-400 hover:bg-slate-700/50 rounded"
@@ -158,6 +169,7 @@ export const ChatSessionSidebar: React.FC<ChatSessionSidebarProps> = ({ isOpen, 
                       <Download className="w-3 h-3" />
                     </button>
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteSession(session.id);

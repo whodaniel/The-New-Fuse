@@ -227,3 +227,9 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Chat is a three-pane workspace. Keep its row layout explicit because the
+   generic page-fill body stacks ordinary page sections vertically. */
+.page-container.page-fill > .page-fill-body.chat-layout {
+  flex-direction: row;
+}
