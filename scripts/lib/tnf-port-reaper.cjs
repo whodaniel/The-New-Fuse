@@ -14,6 +14,7 @@
  *     port: 3000,
  *     healthUrl: 'http://127.0.0.1:3000/health',
  *     isHealthy: (body) => body.status === 'ok' && body.relay === 'running',
+ *     probeReady: async () => true, // optional second opinion (e.g. WebSocket handshake)
  *   });
  *   if (result.state === 'already-running') process.exit(0);
  *   // result.state === 'clear' -> safe to bind the port and start the service
@@ -127,6 +128,9 @@ async function reapPid(pid, { graceMs = 3000, pollMs = 300 } = {}) {
  * @param {number} options.port
  * @param {string} [options.healthUrl] - if omitted, any occupant is treated as stale
  * @param {(body: any) => boolean} [options.isHealthy] - custom health predicate
+ * @param {() => boolean|Promise<boolean>} [options.probeReady] - extra readiness
+ *   check after HTTP health (e.g. WebSocket handshake). If it returns false the
+ *   occupant is treated as stale and reaped.
  * @param {number} [options.timeoutMs]
  * @param {number} [options.graceMs] - time to wait after SIGTERM before SIGKILL
  * @param {(message: string) => void} [options.log]
@@ -141,7 +145,25 @@ async function ensurePortReady(options) {
     return { state: 'clear', pids: [] };
   }
 
-  const healthy = await checkHealth({ ...options, timeoutMs });
+  let healthy = await checkHealth({ ...options, timeoutMs });
+  if (typeof options.probeReady === 'function') {
+    let probed = false;
+    try {
+      probed = !!(await options.probeReady({ port, pids: occupants, httpHealthy: healthy }));
+    } catch {
+      probed = false;
+    }
+    if (healthy && !probed) {
+      log(
+        `[port-reaper] Port ${port} answered HTTP health but failed its readiness probe. Treating occupant as stale.`
+      );
+    } else if (!healthy && probed) {
+      log(
+        `[port-reaper] Port ${port} failed HTTP health but passed its readiness probe. Leaving occupant running.`
+      );
+    }
+    healthy = probed;
+  }
   if (healthy) {
     log(
       `[port-reaper] Port ${port} is occupied by a healthy service (pid ${occupants.join(', ')}). Leaving it running.`

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuse Connect Side Panel</title>
+    <link rel="stylesheet" href="../popup/popup.css" />
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <div class="sidepanel">
+      <header class="header">
+        <div class="header-logo">
+          <div class="logo-icon">⚡</div>
+          <div class="logo-text">
+            <span class="logo-title">SIDE PANEL CHAT</span>
+            <span class="logo-version" id="connection-status-text">Connecting...</span>
+          </div>
+        </div>
+        <div class="header-status" id="connection-indicator">
+          <span class="status-dot disconnected"></span>
+        </div>
+      </header>
+
+      <section class="identity-card">
+        <div class="identity-row">
+          <span class="identity-label">Handle</span>
+          <code id="sp-handle">—</code>
+        </div>
+        <div class="identity-row">
+          <span class="identity-label">ID#</span>
+          <code id="sp-id-number">—</code>
+        </div>
+        <div class="identity-row">
+          <span class="identity-label">Canonical</span>
+          <code id="sp-canonical">—</code>
+        </div>
+      </section>
+
+      <section class="pair-card">
+        <label class="pair-toggle">
+          <input type="checkbox" id="sp-a2a-enabled" checked />
+          Pair A2A with page chat
+        </label>
+        <div class="identity-row">
+          <span class="identity-label">Page peer</span>
+          <code id="sp-peer">No page agent yet</code>
+        </div>
+        <p class="pair-hint" id="sp-pair-hint">
+          Messages use the federated protocol (`@ID#:`, `/to HANDLE`) over the relay WebSocket.
+        </p>
+      </section>
+
+      <section class="central-chat-card sidepanel-stream-card">
+        <div class="central-chat-stream" id="sp-chat-stream">
+          <div class="empty-state small">
+            <p>No A2A messages yet</p>
+          </div>
+        </div>
+        <div class="central-chat-compose">
+          <input
+            id="sp-chat-input"
+            class="central-input"
+            type="text"
+            placeholder="@ID#: or /to HANDLE — or send to paired page chat"
+          />
+          <button class="btn-primary central-send-btn" id="sp-send-message">Send</button>
+        </div>
+      </section>
+    </div>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

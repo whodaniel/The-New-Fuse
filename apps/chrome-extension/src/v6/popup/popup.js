@@ -68,6 +68,9 @@ class FuseConnectPopup {
         aiviAutoOpenNotebook: false,
         aiviAutoAudioOverview: false,
       },
+      sidePanelPair: null,
+      pageAgent: null,
+      sidePanelAgent: null,
     };
 
     /** AI Bookmark Organizer tab state — separate from the legacy `settings` blob above;
@@ -209,6 +212,16 @@ class FuseConnectPopup {
 
     document.getElementById('open-panel-btn')?.addEventListener('click', () => {
       this.openPanelOnPage();
+    });
+
+    document.getElementById('open-sidepanel-btn')?.addEventListener('click', () => {
+      this.openSidePanelChat();
+    });
+    document.getElementById('open-sidepanel-chat-btn')?.addEventListener('click', () => {
+      this.openSidePanelChat();
+    });
+    document.getElementById('sidepanel-a2a-toggle')?.addEventListener('change', (event) => {
+      this.setSidePanelPairing(event.target.checked);
     });
   }
 
@@ -900,6 +913,90 @@ class FuseConnectPopup {
     } else {
       this.showToast('No active tab found');
     }
+  }
+
+  async openSidePanelChat() {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = tabs[0];
+    if (!tab?.id) {
+      this.showToast('No active tab found');
+      return;
+    }
+    const pairWithPageChat = document.getElementById('sidepanel-a2a-toggle')?.checked !== false;
+    const sidePanelApi = chrome.sidePanel;
+    if (!sidePanelApi?.open) {
+      this.showToast('Side panel API unavailable in this Chrome build');
+      return;
+    }
+    try {
+      if (sidePanelApi.setOptions) {
+        await sidePanelApi.setOptions({
+          tabId: tab.id,
+          path: 'sidepanel/index.html',
+          enabled: true,
+        });
+      }
+      await sidePanelApi.open({ tabId: tab.id });
+      chrome.runtime.sendMessage(
+        { type: 'SIDE_PANEL_OPENED', tabId: tab.id, pairWithPageChat },
+        () => {
+          void chrome.runtime.lastError;
+        }
+      );
+      this.showToast('Side panel chat opened');
+    } catch (error) {
+      this.showToast(`Cannot open side panel: ${error.message || error}`);
+    }
+  }
+
+  setSidePanelPairing(enabled) {
+    const tabId = this.state.sidePanelPair?.tabId;
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const resolvedTabId = tabId || tabs[0]?.id;
+      if (!resolvedTabId) return;
+      chrome.runtime.sendMessage(
+        {
+          type: 'SET_SIDE_PANEL_PAIRING',
+          tabId: resolvedTabId,
+          a2aEnabled: !!enabled,
+        },
+        (response) => {
+          void chrome.runtime.lastError;
+          if (response?.pair) {
+            this.state.sidePanelPair = response.pair;
+            this.updateSidePanelCard();
+          }
+        }
+      );
+    });
+  }
+
+  updateSidePanelCard() {
+    const ids = document.getElementById('sidepanel-ids');
+    const subtitle = document.getElementById('sidepanel-target-subtitle');
+    const toggle = document.getElementById('sidepanel-a2a-toggle');
+    const pair = this.state.sidePanelPair;
+    const pageAgent = this.state.pageAgent;
+    const sidePanelAgent = this.state.sidePanelAgent;
+    if (toggle && pair) toggle.checked = pair.a2aEnabled !== false;
+    if (subtitle) {
+      subtitle.textContent = pair?.a2aEnabled
+        ? 'A2A pairing on — unaddressed messages route over WS by ID#'
+        : 'Optional overlay with the same ID# role as page chat';
+    }
+    if (!ids) return;
+    if (!sidePanelAgent && !pageAgent) {
+      ids.innerHTML =
+        '<div class="empty-state small"><p>Open the side panel to assign a federated ID#</p></div>';
+      return;
+    }
+    const pageLine = pageAgent
+      ? `${pageAgent.operationalHandle || pageAgent.id} ${pageAgent.idNumber || ''}`
+      : 'page chat not registered yet';
+    const sideLine = sidePanelAgent
+      ? `${sidePanelAgent.operationalHandle || sidePanelAgent.id} ${sidePanelAgent.idNumber || ''}`
+      : 'side panel not open';
+    ids.innerHTML = `<div>Page: <code>${pageLine}</code></div><div>Side: <code>${sideLine}</code></div>`;
   }
 
   async checkContentScript(tabId) {
@@ -2134,6 +2231,10 @@ class FuseConnectPopup {
     if (typeof response.autoWakePing === 'boolean')
       this.state.settings.autoWakePing = response.autoWakePing;
     if (response.relayUrl) this.setRelayUrlState(response.relayUrl);
+    this.state.sidePanelPair = response.sidePanelPair || null;
+    this.state.pageAgent = response.pageAgent || null;
+    this.state.sidePanelAgent = response.sidePanelAgent || null;
+    this.updateSidePanelCard();
   }
 
   requestState(timeoutMs = 250) {
@@ -2355,6 +2456,13 @@ class FuseConnectPopup {
           this.refreshAIVideoStats();
           break;
 
+        case 'SIDE_PANEL_PAIR_UPDATE':
+          this.state.sidePanelPair = message.pair || this.state.sidePanelPair;
+          this.state.pageAgent = message.pageAgent || this.state.pageAgent;
+          this.state.sidePanelAgent = message.sidePanelAgent || this.state.sidePanelAgent;
+          this.updateSidePanelCard();
+          break;
+
         case 'BOOKMARKS_ANALYZE_PROGRESS':
           this.state.bookmarks.progress = message.data || null;
           this.updateBookmarkProgressUI();
@@ -2391,6 +2499,7 @@ class FuseConnectPopup {
     this.updateAutonomyStatusUI();
     this.updateQuickStartHelper();
     this.updateCentralControlPanel();
+    this.updateSidePanelCard();
   }
 
   updateQuickStartHelper() {

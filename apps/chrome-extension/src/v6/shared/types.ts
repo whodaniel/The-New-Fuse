@@ -18,6 +18,7 @@ export type AgentPlatform =
   | 'backend-service'
   | 'saas'
   | 'browser-page'
+  | 'browser-side-panel'
   | 'unknown';
 
 export interface Agent {

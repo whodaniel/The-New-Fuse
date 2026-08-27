@@ -37,6 +37,21 @@ export const DEFAULT_NODES = {
   tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
 };
 
+/**
+ * Relay listen ports. Must stay aligned with scripts/lib/tnf-relay-port-catalog.cjs
+ * and packages/port-management (preferred 3000, fallbacks 3010/3020/3030).
+ * 3001 is api/backend — never a relay candidate. 3007 is discovery-only.
+ */
+export const RELAY_PREFERRED_PORT = 3000;
+export const RELAY_FALLBACK_PORTS = [3010, 3020, 3030] as const;
+export const RELAY_DISCOVERY_PORTS = [3000, 3010, 3020, 3030, 3007] as const;
+
+export function relayWsUrlForPort(port: number): string {
+  return `ws://127.0.0.1:${Number(port)}/ws`;
+}
+
+export const RELAY_WS_CANDIDATES = RELAY_DISCOVERY_PORTS.map(relayWsUrlForPort);
+
 /** Optional secure local endpoints (requires a TLS-terminating proxy). */
 export const SECURE_LOCAL_NODES = {
   relay: 'wss://127.0.0.1:3000/ws',
@@ -356,6 +371,11 @@ export const MESSAGE_TYPES = {
   RESPONSE_DETECTED: 'RESPONSE_DETECTED',
   RESPONSE_COMPLETE: 'RESPONSE_COMPLETE',
   STREAMING_UPDATE: 'STREAMING_UPDATE',
+  OPEN_SIDE_PANEL: 'OPEN_SIDE_PANEL',
+  SIDE_PANEL_OPENED: 'SIDE_PANEL_OPENED',
+  SIDE_PANEL_READY: 'SIDE_PANEL_READY',
+  SET_SIDE_PANEL_PAIRING: 'SET_SIDE_PANEL_PAIRING',
+  SIDE_PANEL_A2A_MESSAGE: 'SIDE_PANEL_A2A_MESSAGE',
 
   // Task orchestration
   TASK_ASSIGN: 'TASK_ASSIGN',

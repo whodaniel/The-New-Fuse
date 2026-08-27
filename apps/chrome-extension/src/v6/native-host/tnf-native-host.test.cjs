@@ -4,7 +4,12 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { acquireServiceStartLock, isProcessRunning } = require('./tnf-native-host.cjs');
+const {
+  acquireServiceStartLock,
+  isProcessRunning,
+  RELAY_START_PORTS,
+  RELAY_DISCOVERY_PORTS,
+} = require('./tnf-native-host.cjs');
 
 test('process inspection distinguishes running, absent, and unknown states', async () => {
   const running = await isProcessRunning('relay', (_file, _args, callback) =>
@@ -54,4 +59,11 @@ test('service start lock recovers an expired owner file', () => {
   const recovered = acquireServiceStartLock('monitor', { lockDir, staleMs: 1 });
   assert.equal(recovered.acquired, true);
   recovered.release();
+});
+
+test('relay start catalog never treats api/backend port 3001 as a relay', () => {
+  assert.ok(RELAY_START_PORTS.includes(3000));
+  assert.ok(RELAY_START_PORTS.includes(3010));
+  assert.equal(RELAY_START_PORTS.includes(3001), false);
+  assert.equal(RELAY_DISCOVERY_PORTS.includes(3001), false);
 });

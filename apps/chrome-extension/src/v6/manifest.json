@@ -22,6 +22,10 @@
     "default_title": "Fuse Connect"
   },
 
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
+
   "background": {
     "service_worker": "service-worker.js"
   },
@@ -101,7 +105,8 @@
     "cookies",
     "alarms",
     "contextMenus",
-    "webRequest"
+    "webRequest",
+    "sidePanel"
   ],
 
   "oauth2": {
@@ -142,7 +147,7 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["icons/*", "popup/*"],
+      "resources": ["icons/*", "popup/*", "sidepanel/*"],
       "matches": ["<all_urls>"]
     }
   ]

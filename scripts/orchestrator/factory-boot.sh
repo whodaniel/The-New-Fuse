@@ -225,16 +225,30 @@ else
 fi
 
 relay_health="$(curl -fsS --max-time 2 "http://localhost:${RELAY_PORT}/health" 2>/dev/null || true)"
+relay_http_ok="false"
+relay_ready="false"
 if echo "${relay_health}" | grep -q '"relay":"running"'; then
-  echo "[factory-boot] relay already healthy on :${RELAY_PORT}"
+  relay_http_ok="true"
+fi
+if node "${ROOT_DIR}/scripts/lib/tnf-relay-port-catalog.cjs" ready "${RELAY_PORT}" >/dev/null 2>&1; then
+  relay_ready="true"
+fi
+if [[ "${relay_ready}" == "true" ]]; then
+  echo "[factory-boot] relay already healthy on :${RELAY_PORT} (http+websocket)"
 else
+  if [[ "${relay_http_ok}" == "true" ]]; then
+    echo "[factory-boot] relay HTTP health is up on :${RELAY_PORT} but WebSocket handshake failed"
+  fi
   can_start_relay="true"
   relay_pid_on_port="$(find_relay_pid_on_port_3000 || true)"
   port_3000_pids="$(get_port_3000_pids | tr '\n' ' ' | sed 's/[[:space:]]*$//')"
 
   if [[ -n "${port_3000_pids}" ]]; then
     if [[ -n "${relay_pid_on_port}" ]]; then
-      if [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
+      if [[ "${relay_http_ok}" == "true" ]]; then
+        echo "[factory-boot] relay on :${RELAY_PORT} is HTTP-up / WebSocket-down; restarting pid=${relay_pid_on_port}"
+        terminate_relay_pid "${relay_pid_on_port}"
+      elif [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
         echo "[factory-boot] relay on :${RELAY_PORT} is unhealthy; force restarting pid=${relay_pid_on_port}"
         terminate_relay_pid "${relay_pid_on_port}"
       else
@@ -264,7 +278,7 @@ else
 
   if [[ "${can_start_relay}" == "true" ]]; then
     echo "[factory-boot] starting relay-core relay (compiled)"
-    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT='${RELAY_PORT}' REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
+    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT='${RELAY_PORT}' RELAY_PORT='${RELAY_PORT}' REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
       > "${LOG_DIR}/relay-dev.log" 2>&1 &
     sleep 3
   fi

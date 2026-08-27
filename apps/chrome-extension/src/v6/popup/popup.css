@@ -458,6 +458,47 @@ body {
   font-size: 20px;
 }
 
+.sidepanel-target-card {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+}
+
+.sidepanel-target-header {
+  margin-bottom: var(--space-sm);
+}
+
+.sidepanel-target-subtitle {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.sidepanel-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 12px;
+  margin-bottom: var(--space-sm);
+}
+
+.sidepanel-target-card .btn-secondary {
+  width: 100%;
+}
+
+.sidepanel-ids {
+  margin-top: var(--space-sm);
+  font-size: 11px;
+}
+
+.sidepanel-ids code {
+  color: var(--neon-cyan);
+  word-break: break-all;
+}
+
 .platform-card.detected .platform-icon {
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 217, 255, 0.2) 100%);
 }

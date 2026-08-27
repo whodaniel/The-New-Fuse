@@ -103,6 +103,13 @@
           >
             🪟
           </button>
+          <button
+            class="btn-icon-only open-sidepanel-btn"
+            id="open-sidepanel-btn"
+            title="Open side panel chat for this tab"
+          >
+            🗂️
+          </button>
           <div class="header-status" id="connection-indicator">
             <span class="status-dot disconnected"></span>
           </div>
@@ -177,6 +184,27 @@
               <div class="platform-info">
                 <span class="platform-name" id="platform-name">Detecting...</span>
                 <span class="platform-status" id="platform-status">Open an AI chat page</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidepanel-target-card" id="sidepanel-target-card">
+            <div class="sidepanel-target-header">
+              <h3 class="section-title">Side Panel Chat</h3>
+              <span class="sidepanel-target-subtitle" id="sidepanel-target-subtitle">
+                Optional overlay with the same ID# role as page chat
+              </span>
+            </div>
+            <label class="sidepanel-toggle">
+              <input type="checkbox" id="sidepanel-a2a-toggle" checked />
+              Pair A2A with this tab's injectable chat
+            </label>
+            <button class="btn-secondary" id="open-sidepanel-chat-btn">
+              Open side panel for this tab
+            </button>
+            <div class="sidepanel-ids" id="sidepanel-ids">
+              <div class="empty-state small">
+                <p>Open the side panel to assign a federated ID#</p>
               </div>
             </div>
           </div>

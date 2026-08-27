@@ -20,6 +20,7 @@ import { randomUUID } from 'crypto';
 
 import { EventEmitter } from 'events';
 import http from 'http';
+import type { Duplex } from 'stream';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
 import type { Cluster, Redis } from 'ioredis';
@@ -347,14 +348,18 @@ export class TNFRelayServer extends EventEmitter {
       process.env.WORKSPACE_DIR || process.cwd()
     );
 
-    // Create HTTP server
+    // Create HTTP server. WebSocket upgrades are handled on the `upgrade`
+    // event below — if the request listener answers GET /ws with 404, Chrome
+    // reports "Unexpected response code: 404" and Fuse Connect never connects.
     this.server = http.createServer(this.handleHttpRequest.bind(this));
 
-    // Create WebSocket server at /ws path
-    this.wss = new WebSocketServer({ server: this.server, path: '/ws' });
+    this.wss = new WebSocketServer({ noServer: true });
     this.wss.on('error', (error) => {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`[Relay] WebSocket server error: ${message}`);
+    });
+    this.server.on('upgrade', (request, socket, head) => {
+      this.handleWebSocketUpgrade(request, socket, head);
     });
 
     // Setup WebSocket handlers
@@ -445,10 +450,43 @@ export class TNFRelayServer extends EventEmitter {
     }
   }
 
+  private isWebSocketPath(pathname: string): boolean {
+    return pathname === '/ws' || pathname === '/ws/';
+  }
+
+  private handleWebSocketUpgrade(
+    request: http.IncomingMessage,
+    socket: Duplex,
+    head: Buffer
+  ): void {
+    const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname;
+    if (!this.isWebSocketPath(pathname)) {
+      socket.write('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+    this.wss.handleUpgrade(request, socket, head, (ws) => {
+      this.wss.emit('connection', ws, request);
+    });
+  }
+
   private handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
     const urlString = req.url || '/';
     const parsedUrl = new URL(urlString, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
+
+    // Never 404 a WebSocket handshake from the HTTP handler.
+    if (String(req.headers.upgrade || '').toLowerCase() === 'websocket') {
+      return;
+    }
+    if (this.isWebSocketPath(pathname)) {
+      res.writeHead(426, {
+        Upgrade: 'websocket',
+        'Content-Type': 'application/json',
+      });
+      res.end(JSON.stringify({ error: 'WebSocket upgrade required', path: '/ws' }));
+      return;
+    }
 
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -476,6 +514,8 @@ export class TNFRelayServer extends EventEmitter {
           JSON.stringify({
             status: 'ok',
             relay: 'running',
+            websocket: true,
+            websocketPath: '/ws',
             version: '1.0.0',
             agents: this.agents.size,
             channels: this.channels.size,
