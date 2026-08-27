@@ -71,7 +71,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-26T05:02:58.030Z** — handoff
+Updated: **2026-08-27T20:45:56.693Z** — handoff
+`e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
 `883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
 `dfd7f798-b0de-425d-85e5-93162b6668ce` (`b4511fcacea7`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
@@ -263,9 +264,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                             |
-| -------- | ---------------------------------------------------------------------------------- |
-| **P0**   | Render messages buffer + channel list in BROWSER_CONTROL_SURFACE.tsx UI components |
+| Priority | Action                                                                                                                                                                                                                             |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Wire resolve-workspace-tier.cjs into the onboarder's automatic Turn Zero flow (currently advisory/manual-invoke only) — deferred because that flow is complex enough that changing it blind risks more than the current gap costs. |
+| **P0**   | Get operator approval for the AGENTS.md cross-link change (blocked by the agent-self-edit authority gate; not committed).                                                                                                          |
+| **P0**   | Decide whether/how to merge wip/resource-governance-\* into main; it currently sits on top of the sentinel-fix-marketplace-cmd-injection branch's tip, not main.                                                                   |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -478,13 +481,11 @@ equivalents.
 | `TNF:LOCAL:AGENT:OPENCODE-CLI:001` | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 | `TNF:LOCAL:AGENT:KILO-CLI:001`     | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 
-
-
 ### Newly Registered (This Session)
 
-| Agent | Identity | Status |
-| ----- | -------- | ------ |
-| agy | `TNF:LOCAL:AGENT:AGY:001` | **NEW** — registered at 2026-08-26T13:55:00.638Z |
+| Agent | Identity                  | Status                                           |
+| ----- | ------------------------- | ------------------------------------------------ |
+| agy   | `TNF:LOCAL:AGENT:AGY:001` | **NEW** — registered at 2026-08-26T13:55:00.638Z |
 
 ## Session Logs
 
@@ -1473,3 +1474,9 @@ clean | ✅ COMPLETE |
 
 | 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (883a32da-4f06-48ed-8efc-9013f70c7bfe) | ✅ HANDOFF_READY |
+
+| 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d93994d2-e5fd-4d51-94c5-b585f20fc2dc) | ✅ HANDOFF_READY |
+
+| 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e85d971f-770d-4cfe-98f6-4cd46280f557) | ✅ HANDOFF_READY |

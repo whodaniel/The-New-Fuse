@@ -4,10 +4,36 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Render messages buffer + channel list in
-BROWSER_CONTROL_SURFACE.tsx UI components
+**Current Directive:** Wire resolve-workspace-tier.cjs into the onboarder's
+automatic Turn Zero flow (currently advisory/manual-invoke only) — deferred
+because that flow is complex enough that changing it blind risks more than the
+current gap costs.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-26 Antigravity CLI (AGY) Onboarding, Protocol Authority
+  Alignment & Full-Auto Seal Hardening (Antigravity/Sub-Director)**:
+  - **Five-Layer Agent Onboarding**: Successfully onboarded `.agy` (Antigravity
+    CLI) as a first-class TNF agent (`.agent/agents/agy.md`, mirrored to
+    `.claude/agents/agy.md`), registered in ledger as `TNF:LOCAL:AGENT:AGY:001`,
+    added `agy` to `PLATFORM_TAXONOMY` and `passthroughTargets` in
+    `packages/tnf-cli/src/cli.ts`.
+  - **Ubiquity & Skill Bank Propagation**: Connected `~/.agy/skills/` to
+    `skill-bank-sync.cjs`, `reconcile-agent-banks.cjs`, and
+    `install-agent-frontload.cjs`. Generated and symlinked 10 slash-command
+    families including `agy-slash-commands`.
+  - **Turn Zero Authority Alignment**: Updated
+    `scripts/protocols/validate-turn-zero-authority.cjs` to validate Turn Zero
+    V2 manifest-derived onboarding patterns alongside legacy V1 strings,
+    bringing the authority oracle to green.
+  - **Substrate Attestation & Trajectory Integrity**: Provisioned
+    `data/harness/trajectories/` and refreshed
+    `docs/operations/tnf-substrate-seal.json` to seal lockfile hashes, achieving
+    100% pass on `verify-harness-completeness.cjs` and
+    `command-surface-gate.cjs`.
+  - **Live Bus Enlistment**: Registered and heartbeat-verified
+    `agent_agy_1787753530928` (`worker` role, `sub` director tier) on the Redis
+    Synaptic Bus (`tnf:agent-registry`).
 
 - [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
   - **Verified:** local crontab/launchd clean; local scripts already on
@@ -247,7 +273,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T22:49:31.303Z New script(s) created:
 - [✅] 2026-08-26T00:36:33.894Z New script(s) created:
 - [✅] 2026-08-26T03:28:18.479Z New script(s) created:
-- [✅] 2026-08-26T08:10:23.175Z New script(s) created: verify-extension-dist.cjs, install-tnf-host-wrappers.cjs, resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs, tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+- [✅] 2026-08-26T08:10:23.175Z New script(s) created:
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
 
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
   resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
@@ -1084,6 +1113,16 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-27T20:45:58.101Z handoff `e85d971f-770d-4cfe-98f6-4cd46280f557` head
+  `f328e16919f8` project `TNF-SESSION` — Wire resolve-workspace-tier.cjs into
+  the onboarder's automatic Turn Zero flow (currently advisory/manual-invoke
+  only) — deferred because that flow is complex enough that changing it blind
+  risks more than the current gap costs.
+
+- 2026-08-27T20:44:53.698Z handoff `d93994d2-e5fd-4d51-94c5-b585f20fc2dc` head
+  `f328e16919f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-26T05:03:24.253Z handoff `883a32da-4f06-48ed-8efc-9013f70c7bfe` head
   `e169723bd328` project `TNF-SESSION` — Render messages buffer + channel list
