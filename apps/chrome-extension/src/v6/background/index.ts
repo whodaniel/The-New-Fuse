@@ -7,6 +7,22 @@
  */
 
 import youtubeService from '../services/ai-studio/youtube-service';
+import { filterBookmarks } from '../services/bookmarks/bookmark-privacy-service';
+import bookmarkRealtimeService from '../services/bookmarks/bookmark-realtime-service';
+import {
+  BookmarkRelayBroker,
+  type BookmarkRequestOptions,
+} from '../services/bookmarks/bookmark-relay-broker';
+import bookmarkSettingsService from '../services/bookmarks/bookmark-settings-service';
+import bookmarkStoreService, {
+  computeDuplicates,
+} from '../services/bookmarks/bookmark-store-service';
+import bookmarkTaggingService from '../services/bookmarks/bookmark-tagging-service';
+import {
+  classifyAll,
+  generateTaxonomy,
+  zeroFolderPlanItems,
+} from '../services/bookmarks/bookmark-taxonomy-service';
 import {
   ACTIVITY_CHANNEL,
   AI_MODELS,
@@ -30,6 +46,8 @@ import type {
   AgentMessage,
   AIVideoProcessingState,
   AIVideoQueueItem,
+  BookmarkOrganizerSettings,
+  BookmarkPlan,
   ConnectionStatus,
   ExtensionLogEntry,
   ExtensionLogLevel,
@@ -145,6 +163,14 @@ class BackgroundService {
   private automationPaused = false;
   private pendingTaskResolve: ((value: any) => void) | null = null;
 
+  // AI Bookmark Organizer
+  private bookmarkBroker: BookmarkRelayBroker = new BookmarkRelayBroker({
+    send: (data) => this.send(data),
+    getAgents: () => Array.from(this.agents.values()),
+    getAgentId: () => this.agentId,
+  });
+  private bookmarkAnalyzeJob: { cancelled: boolean } | null = null;
+
   constructor() {
     this.init().catch((err) => {
       console.error('[FuseConnect v7] Background init failed:', err);
@@ -177,6 +203,12 @@ class BackgroundService {
 
     // Load saved state
     await this.loadSavedState();
+
+    // Bootstrap bookmark real-time auto-file listener (off unless the user opted in).
+    bookmarkSettingsService
+      .getSettings()
+      .then((settings) => this.syncBookmarkRealtimeListener(settings))
+      .catch((err) => console.warn('[FuseConnect v7] Failed to load bookmark settings:', err));
     this.logEvent('extension', 'background_loaded_state', {
       channels: this.channels.size,
       joinedChannels: this.joinedChannels.size,
@@ -1434,6 +1466,13 @@ class BackgroundService {
    * Handle incoming agent message
    */
   private handleAgentMessage(message: AgentMessage): void {
+    // Bookmark-classify replies are request/response, not pub/sub chatter — resolve
+    // any pending BookmarkRelayBroker promise first, before dedup/loop-guard logic
+    // (below) gets a chance to suppress a legitimate reply. We deliberately still
+    // fall through afterwards so broadcastToTabs lets the full-tab manager page
+    // show live progress too.
+    this.bookmarkBroker.resolve(message);
+
     // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
     // Keyed by (from, channel, prefix-of-content). If a source repeats >5 times in 10s, mute 60s.
     // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
@@ -2981,6 +3020,151 @@ class BackgroundService {
     });
   }
 
+  // ============================================
+  // AI Bookmark Organizer
+  // ============================================
+
+  private bookmarkBrokerOpts(settings: BookmarkOrganizerSettings): BookmarkRequestOptions {
+    return {
+      targetAgentId: settings.targetAgentId || undefined,
+      channel: settings.targetChannel || undefined,
+    };
+  }
+
+  /**
+   * Two-phase analyze: generate a unified folder taxonomy, then classify every
+   * non-private bookmark into it in resumable batches, persisting progress after
+   * each batch so a mid-run interruption leaves a usable partial plan rather than
+   * a hung UI. Zero-folder mode skips straight to "leave everything in place".
+   */
+  private async runBookmarkAnalyze(
+    options: { granularity?: BookmarkPlan['granularity'] } = {}
+  ): Promise<BookmarkPlan> {
+    this.bookmarkAnalyzeJob = { cancelled: false };
+    const job = this.bookmarkAnalyzeJob;
+
+    try {
+      const settings = await bookmarkSettingsService.getSettings();
+      const granularity = options.granularity || settings.granularity;
+      const brokerOpts = this.bookmarkBrokerOpts(settings);
+
+      const allBookmarks = await bookmarkStoreService.readAllBookmarks();
+      const { included, excluded } = filterBookmarks(allBookmarks, settings.privateDomains);
+      const duplicates = computeDuplicates(allBookmarks);
+
+      let taxonomy;
+      let items;
+
+      if (settings.zeroFolderMode) {
+        taxonomy = { id: `tax-${Date.now()}`, generatedAt: Date.now(), granularity, folders: [] };
+        items = zeroFolderPlanItems(included);
+      } else {
+        taxonomy = await generateTaxonomy(included, granularity, this.bookmarkBroker, brokerOpts);
+        items = await classifyAll({
+          bookmarks: included,
+          taxonomy,
+          broker: this.bookmarkBroker,
+          brokerOpts,
+          batchDelayMs: TIMINGS.bookmarkBatchDelay,
+          shouldCancel: () => job.cancelled,
+          onProgress: ({ items: partialItems, cursor, totalWithOffset }) => {
+            this.notifyPopup({
+              type: 'BOOKMARKS_ANALYZE_PROGRESS',
+              data: { cursor, total: totalWithOffset },
+            });
+            void bookmarkStoreService.savePlan({
+              id: taxonomy!.id,
+              generatedAt: taxonomy!.generatedAt,
+              granularity,
+              taxonomy: taxonomy!,
+              items: partialItems,
+              duplicates,
+              complete: false,
+              cursor,
+            });
+          },
+        });
+      }
+
+      // Private-domain bookmarks are always left exactly where they are — they're
+      // never sent to the relay in the first place, and never proposed a move.
+      for (const ex of excluded) {
+        items.push({
+          bookmarkId: ex.id,
+          title: ex.title,
+          url: ex.url,
+          currentPath: ex.path,
+          selected: false,
+        });
+      }
+
+      const plan: BookmarkPlan = {
+        id: taxonomy.id,
+        generatedAt: taxonomy.generatedAt,
+        granularity,
+        taxonomy,
+        items,
+        duplicates,
+        complete: !job.cancelled,
+        cursor: items.length,
+      };
+
+      await bookmarkStoreService.savePlan(plan);
+
+      const tagRecords = items
+        .filter((i) => (i.tags && i.tags.length) || i.summary)
+        .map((i) => ({
+          bookmarkId: i.bookmarkId,
+          tags: i.tags ?? [],
+          summary: i.summary,
+          updatedAt: Date.now(),
+        }));
+      if (tagRecords.length) await bookmarkTaggingService.saveRecords(tagRecords);
+
+      return plan;
+    } finally {
+      if (this.bookmarkAnalyzeJob === job) this.bookmarkAnalyzeJob = null;
+    }
+  }
+
+  private async applyBookmarkPlan(
+    planFromRequest?: BookmarkPlan
+  ): Promise<{ moved: number; skipped: number }> {
+    const plan = planFromRequest || (await bookmarkStoreService.getStoredPlan());
+    if (!plan) throw new Error('No bookmark plan to apply — run Analyze first.');
+    await bookmarkStoreService.snapshotBeforeApply(plan);
+    return bookmarkStoreService.applyPlan(plan);
+  }
+
+  private async runBookmarkSearch(query: string) {
+    const settings = await bookmarkSettingsService.getSettings();
+    const allBookmarks = await bookmarkStoreService.readAllBookmarks();
+    const { included } = filterBookmarks(allBookmarks, settings.privateDomains);
+    return bookmarkTaggingService.search(query, included);
+  }
+
+  /**
+   * Always detach-then-reattach so a settings change (new target agent/channel,
+   * updated private-domains list) is picked up immediately rather than only on the
+   * next full toggle — attach() alone is a no-op while a listener is already live.
+   */
+  private syncBookmarkRealtimeListener(settings: BookmarkOrganizerSettings): void {
+    bookmarkRealtimeService.detach();
+    if (!settings.realtimeEnabled) return;
+
+    bookmarkRealtimeService.attach({
+      broker: this.bookmarkBroker,
+      getBrokerOpts: () => this.bookmarkBrokerOpts(settings),
+      getPrivateDomains: () => settings.privateDomains,
+      onFiled: (bookmarkId, path) => {
+        this.notifyPopup({ type: 'BOOKMARKS_REALTIME_FILED', data: { bookmarkId, path } });
+      },
+      onError: (err) => {
+        console.warn('[FuseConnect v7] Bookmark realtime classify failed:', err);
+      },
+    });
+  }
+
   /**
    * Setup message handlers from popup/content
    */
@@ -3448,6 +3632,86 @@ class BackgroundService {
           chrome.storage.local.set(message.data?.items || {}, () => {
             sendResponse({ success: true, data: true });
           });
+          return true;
+
+        // ---- AI Bookmark Organizer ----
+
+        case 'BOOKMARKS_GET_SUMMARY':
+          bookmarkStoreService
+            .getSummary()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_FIND_DUPLICATES':
+          bookmarkStoreService
+            .findDuplicates()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_GET_SETTINGS':
+          bookmarkSettingsService
+            .getSettings()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SET_SETTINGS':
+          bookmarkSettingsService
+            .setSettings(message.data?.settings || {})
+            .then((data) => {
+              sendResponse({ success: true, data });
+              this.syncBookmarkRealtimeListener(data);
+            })
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SET_REALTIME':
+          bookmarkSettingsService
+            .setSettings({ realtimeEnabled: !!message.data?.enabled })
+            .then((data) => {
+              sendResponse({ success: true, data });
+              this.syncBookmarkRealtimeListener(data);
+            })
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_ANALYZE':
+          this.runBookmarkAnalyze(message.data || {})
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_CANCEL_ANALYZE':
+          if (this.bookmarkAnalyzeJob) this.bookmarkAnalyzeJob.cancelled = true;
+          sendResponse({ success: true });
+          break;
+
+        case 'BOOKMARKS_GET_PLAN':
+          bookmarkStoreService
+            .getStoredPlan()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_APPLY_PLAN':
+          this.applyBookmarkPlan(message.data?.plan)
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_UNDO_LAST':
+          bookmarkStoreService
+            .undoLast()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SEARCH':
+          this.runBookmarkSearch(String(message.data?.query || ''))
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
           return true;
 
         case 'AI_STUDIO_READY':

@@ -93,6 +93,7 @@
     "unlimitedStorage",
     "activeTab",
     "tabs",
+    "bookmarks",
     "notifications",
     "nativeMessaging",
     "scripting",

@@ -131,6 +131,10 @@
           <span class="tab-icon">⚙️</span>
           <span class="tab-label">Settings</span>
         </button>
+        <button class="tab" data-tab="bookmarks">
+          <span class="tab-icon">🔖</span>
+          <span class="tab-label">Bookmarks</span>
+        </button>
       </nav>
 
       <!-- Tab Content -->
@@ -700,8 +704,161 @@
             <button class="btn-secondary" id="export-logs">📋 Export Logs</button>
           </div>
 
+          <div class="settings-section">
+            <h3 class="section-title">Bookmark Organizer</h3>
+            <div
+              class="setting-description"
+              style="margin-bottom: 12px; font-size: 11px; color: var(--text-secondary)"
+            >
+              Classification runs through whatever agent is connected on your relay — pick one below,
+              or leave it on Auto to broadcast on a channel instead.
+            </div>
+
+            <div class="setting-item">
+              <label for="bm-target-agent">Target Agent</label>
+              <select id="bm-target-agent" class="central-select">
+                <option value="">Auto (first capable agent)</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label for="bm-target-channel">Fallback Channel</label>
+              <select id="bm-target-channel" class="central-select">
+                <option value="">None</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Send full page content (not just title/URL)</label>
+              <label class="toggle">
+                <input type="checkbox" id="bm-full-page-content" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto-file new bookmarks in real time</label>
+              <label class="toggle">
+                <input type="checkbox" id="bm-realtime-enabled" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div
+              class="setting-description"
+              style="margin: 12px 0 6px; font-size: 11px; color: var(--text-secondary)"
+            >
+              Private domains — bookmarks on these are never sent anywhere.
+            </div>
+            <div class="sites-list" id="bm-private-domains-list">
+              <div class="empty-sites">No private domains added</div>
+            </div>
+            <div class="add-site-row" style="display: flex; gap: 8px; margin-top: 12px">
+              <input
+                type="text"
+                id="bm-new-private-domain"
+                placeholder="example.com"
+                style="
+                  flex: 1;
+                  padding: 8px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border-subtle);
+                  background: var(--bg-input);
+                  color: var(--text-primary);
+                  font-size: 12px;
+                "
+              />
+              <button class="btn-secondary" id="bm-add-private-domain-btn" style="padding: 0 12px">
+                Add
+              </button>
+            </div>
+          </div>
+
           <div class="settings-footer">
             <button class="btn-primary" id="save-settings">💾 Save Settings</button>
+          </div>
+        </section>
+
+        <!-- Bookmarks Tab -->
+        <section class="tab-content" id="tab-bookmarks">
+          <div class="connection-card" id="bm-summary-card">
+            <div class="bm-summary-grid">
+              <div class="bm-summary-stat">
+                <strong id="bm-count-bookmarks">–</strong>
+                <span>Bookmarks</span>
+              </div>
+              <div class="bm-summary-stat">
+                <strong id="bm-count-folders">–</strong>
+                <span>Folders</span>
+              </div>
+              <div class="bm-summary-stat">
+                <strong id="bm-count-duplicates">–</strong>
+                <span>Duplicates</span>
+              </div>
+            </div>
+            <p class="section-subtitle" id="bm-last-analyzed">Never analyzed</p>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Organize</h3>
+            <div class="setting-item">
+              <label for="bm-granularity">Granularity</label>
+              <select id="bm-granularity" class="central-select">
+                <option value="compact">Compact</option>
+                <option value="balanced" selected>Balanced</option>
+                <option value="detailed">Detailed</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Zero-folder mode (tag &amp; search only, don't move anything)</label>
+              <label class="toggle">
+                <input type="checkbox" id="bm-zero-folder-mode" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="bm-progress-wrap" id="bm-progress-wrap" style="display: none">
+              <div class="bm-progress-bar"><div class="bm-progress-fill" id="bm-progress-fill"></div></div>
+              <span class="bm-progress-label" id="bm-progress-label">0 / 0</span>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 12px">
+              <button class="btn-primary" id="bm-analyze-btn" style="flex: 1">✨ Analyze</button>
+              <button class="btn-secondary" id="bm-cancel-btn" style="display: none">Cancel</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px">
+              <button class="btn-secondary" id="bm-apply-btn" style="flex: 1" disabled>
+                Apply Plan
+              </button>
+              <button class="btn-secondary" id="bm-undo-btn" style="flex: 1" disabled>
+                Undo Last
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Search</h3>
+            <div class="add-site-row" style="display: flex; gap: 8px">
+              <input
+                type="text"
+                id="bm-search-input"
+                placeholder="Search your bookmarks…"
+                style="
+                  flex: 1;
+                  padding: 8px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border-subtle);
+                  background: var(--bg-input);
+                  color: var(--text-primary);
+                  font-size: 12px;
+                "
+              />
+              <button class="btn-secondary" id="bm-search-btn" style="padding: 0 12px">🔍</button>
+            </div>
+            <div id="bm-search-results" class="bm-search-results"></div>
+          </div>
+
+          <div class="settings-footer">
+            <button class="btn-secondary" id="bm-open-manager-btn" style="width: 100%">
+              🗂️ Open Full Manager
+            </button>
           </div>
         </section>
       </main>

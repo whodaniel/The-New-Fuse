@@ -70,6 +70,19 @@ class FuseConnectPopup {
       },
     };
 
+    /** AI Bookmark Organizer tab state — separate from the legacy `settings` blob above;
+     * bookmark settings are owned exclusively by the background service worker
+     * (BOOKMARKS_GET_SETTINGS/BOOKMARKS_SET_SETTINGS) so both this popup and the
+     * full-tab manager page stay in sync. */
+    this.state.bookmarks = {
+      summary: null,
+      settings: null,
+      plan: null,
+      analyzing: false,
+      progress: null,
+      searchResults: [],
+    };
+
     /** Serializes chrome.storage.local fuse_settings writes to avoid get/set races. */
     this._settingsWriteChain = Promise.resolve();
     this._handlersBound = false;
@@ -288,6 +301,11 @@ class FuseConnectPopup {
         // Refresh services when switching to services tab
         if (tabId === 'services') {
           this.refreshServiceStatus();
+        }
+
+        // Refresh bookmark summary/settings when switching to the Bookmarks tab
+        if (tabId === 'bookmarks') {
+          this.refreshBookmarksSummary();
         }
       });
     });
@@ -636,6 +654,9 @@ class FuseConnectPopup {
       const docsUrl = chrome.runtime.getURL('popup/docs-index.html');
       chrome.tabs.create({ url: docsUrl });
     });
+
+    // AI Bookmark Organizer
+    this.setupBookmarksTab();
 
     // Quick start relay button
     document.getElementById('quick-start-relay')?.addEventListener('click', () => {
@@ -2333,6 +2354,15 @@ class FuseConnectPopup {
           this.updateServiceUI();
           this.refreshAIVideoStats();
           break;
+
+        case 'BOOKMARKS_ANALYZE_PROGRESS':
+          this.state.bookmarks.progress = message.data || null;
+          this.updateBookmarkProgressUI();
+          break;
+
+        case 'BOOKMARKS_REALTIME_FILED':
+          this.showToast(`Auto-filed into ${message.data?.path || 'a folder'}`);
+          break;
       }
     });
   }
@@ -3034,6 +3064,353 @@ class FuseConnectPopup {
     const safeText = this.toDisplayText(text);
     const maxLength = Number.isFinite(Number(length)) ? Number(length) : 0;
     return safeText.length > maxLength ? safeText.substring(0, maxLength) + '...' : safeText;
+  }
+
+  // ============================================
+  // AI Bookmark Organizer
+  // ============================================
+
+  setupBookmarksTab() {
+    document
+      .getElementById('bm-analyze-btn')
+      ?.addEventListener('click', () => this.runBookmarkAnalyze());
+    document
+      .getElementById('bm-cancel-btn')
+      ?.addEventListener('click', () => this.cancelBookmarkAnalyze());
+    document
+      .getElementById('bm-apply-btn')
+      ?.addEventListener('click', () => this.applyBookmarkPlanFromUI());
+    document
+      .getElementById('bm-undo-btn')
+      ?.addEventListener('click', () => this.undoBookmarkPlan());
+    document.getElementById('bm-open-manager-btn')?.addEventListener('click', () => {
+      chrome.tabs.create({ url: chrome.runtime.getURL('popup/bookmarks/index.html') });
+    });
+
+    document
+      .getElementById('bm-search-btn')
+      ?.addEventListener('click', () => this.runBookmarkSearch());
+    document.getElementById('bm-search-input')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.runBookmarkSearch();
+    });
+
+    document.getElementById('bm-granularity')?.addEventListener('change', (e) => {
+      this.saveBookmarkSetting({ granularity: e.target.value });
+    });
+    document.getElementById('bm-zero-folder-mode')?.addEventListener('change', (e) => {
+      this.saveBookmarkSetting({ zeroFolderMode: e.target.checked });
+    });
+    document.getElementById('bm-full-page-content')?.addEventListener('change', (e) => {
+      this.saveBookmarkSetting({ fullPageContentOptIn: e.target.checked });
+    });
+    // Real-time takes effect immediately — the toggle IS the action, unlike the
+    // batched "Save Settings" button elsewhere on this tab.
+    document.getElementById('bm-realtime-enabled')?.addEventListener('change', (e) => {
+      chrome.runtime.sendMessage(
+        { type: 'BOOKMARKS_SET_REALTIME', data: { enabled: e.target.checked } },
+        (response) => {
+          if (response?.success) {
+            this.state.bookmarks.settings = response.data;
+            this.showToast(
+              e.target.checked ? 'Real-time auto-file enabled' : 'Real-time auto-file disabled'
+            );
+          }
+        }
+      );
+    });
+    document.getElementById('bm-target-agent')?.addEventListener('change', (e) => {
+      this.saveBookmarkSetting({ targetAgentId: e.target.value || null });
+    });
+    document.getElementById('bm-target-channel')?.addEventListener('change', (e) => {
+      this.saveBookmarkSetting({ targetChannel: e.target.value || null });
+    });
+
+    document
+      .getElementById('bm-add-private-domain-btn')
+      ?.addEventListener('click', () => this.addPrivateDomain());
+    document.getElementById('bm-new-private-domain')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.addPrivateDomain();
+    });
+    document.getElementById('bm-private-domains-list')?.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete-site-btn')) {
+        this.removePrivateDomain(e.target.dataset.site);
+      }
+    });
+
+    this.loadBookmarkSettings();
+  }
+
+  loadBookmarkSettings() {
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_GET_SETTINGS' }, (response) => {
+      if (response?.success) {
+        this.state.bookmarks.settings = response.data;
+        this.applyBookmarkSettingsToForm(response.data);
+      }
+    });
+  }
+
+  applyBookmarkSettingsToForm(settings) {
+    if (!settings) return;
+    const granularityEl = document.getElementById('bm-granularity');
+    const zeroFolderEl = document.getElementById('bm-zero-folder-mode');
+    const fullPageEl = document.getElementById('bm-full-page-content');
+    const realtimeEl = document.getElementById('bm-realtime-enabled');
+    if (granularityEl) granularityEl.value = settings.granularity || 'balanced';
+    if (zeroFolderEl) zeroFolderEl.checked = !!settings.zeroFolderMode;
+    if (fullPageEl) fullPageEl.checked = !!settings.fullPageContentOptIn;
+    if (realtimeEl) realtimeEl.checked = !!settings.realtimeEnabled;
+
+    this.populateBookmarkAgentChannelSelects(settings);
+    this.renderPrivateDomainsList(settings.privateDomains || []);
+  }
+
+  populateBookmarkAgentChannelSelects(settings) {
+    const agentSelect = document.getElementById('bm-target-agent');
+    if (agentSelect) {
+      const agents = Array.isArray(this.state.agents) ? this.state.agents : [];
+      agentSelect.innerHTML =
+        '<option value="">Auto (first capable agent)</option>' +
+        agents
+          .map((a) => `<option value="${a.id}">${this.toDisplayText(a.name || a.id)}</option>`)
+          .join('');
+      agentSelect.value = settings.targetAgentId || '';
+    }
+
+    const channelSelect = document.getElementById('bm-target-channel');
+    if (channelSelect) {
+      const channels = Array.isArray(this.state.channels) ? this.state.channels : [];
+      channelSelect.innerHTML =
+        '<option value="">None</option>' +
+        channels
+          .map((c) => `<option value="${c.id}">${this.toDisplayText(c.name || c.id)}</option>`)
+          .join('');
+      channelSelect.value = settings.targetChannel || '';
+    }
+  }
+
+  saveBookmarkSetting(partial) {
+    chrome.runtime.sendMessage(
+      { type: 'BOOKMARKS_SET_SETTINGS', data: { settings: partial } },
+      (response) => {
+        if (response?.success) {
+          this.state.bookmarks.settings = response.data;
+        } else {
+          this.showToast('Failed to save bookmark setting');
+        }
+      }
+    );
+  }
+
+  renderPrivateDomainsList(domains) {
+    const list = document.getElementById('bm-private-domains-list');
+    if (!list) return;
+    if (!domains || domains.length === 0) {
+      list.innerHTML = '<div class="empty-sites">No private domains added</div>';
+      return;
+    }
+    list.innerHTML = domains
+      .map(
+        (domain) => `
+      <div class="site-item">
+        <span class="site-url">${this.toDisplayText(domain)}</span>
+        <button class="delete-site-btn" data-site="${this.toDisplayText(domain)}" title="Remove">✕</button>
+      </div>
+    `
+      )
+      .join('');
+  }
+
+  addPrivateDomain() {
+    const input = document.getElementById('bm-new-private-domain');
+    if (!input) return;
+    const raw = input.value.trim().toLowerCase();
+    if (!raw) return;
+    const domain = raw
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .split('/')[0];
+    if (!domain) return;
+
+    const current = this.state.bookmarks.settings?.privateDomains || [];
+    if (current.includes(domain)) {
+      input.value = '';
+      return;
+    }
+    const next = [...current, domain];
+    this.renderPrivateDomainsList(next);
+    input.value = '';
+    this.saveBookmarkSetting({ privateDomains: next });
+  }
+
+  removePrivateDomain(domain) {
+    const current = this.state.bookmarks.settings?.privateDomains || [];
+    const next = current.filter((d) => d !== domain);
+    this.renderPrivateDomainsList(next);
+    this.saveBookmarkSetting({ privateDomains: next });
+  }
+
+  refreshBookmarksSummary() {
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_GET_SUMMARY' }, (response) => {
+      if (response?.success) {
+        this.state.bookmarks.summary = response.data;
+        this.updateBookmarkSummaryUI();
+      }
+    });
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_GET_SETTINGS' }, (response) => {
+      if (response?.success) {
+        this.state.bookmarks.settings = response.data;
+        this.applyBookmarkSettingsToForm(response.data);
+      }
+    });
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_GET_PLAN' }, (response) => {
+      if (response?.success && response.data) {
+        this.state.bookmarks.plan = response.data;
+        const applyBtn = document.getElementById('bm-apply-btn');
+        if (applyBtn) applyBtn.disabled = !response.data.items?.some((i) => i.proposedPath);
+      }
+    });
+  }
+
+  updateBookmarkSummaryUI() {
+    const summary = this.state.bookmarks.summary;
+    if (!summary) return;
+    const countBookmarksEl = document.getElementById('bm-count-bookmarks');
+    const countFoldersEl = document.getElementById('bm-count-folders');
+    const countDuplicatesEl = document.getElementById('bm-count-duplicates');
+    const lastAnalyzedEl = document.getElementById('bm-last-analyzed');
+    if (countBookmarksEl) countBookmarksEl.textContent = String(summary.totalBookmarks ?? '–');
+    if (countFoldersEl) countFoldersEl.textContent = String(summary.totalFolders ?? '–');
+    if (countDuplicatesEl) countDuplicatesEl.textContent = String(summary.duplicateCount ?? '–');
+    if (lastAnalyzedEl) {
+      lastAnalyzedEl.textContent = summary.lastAnalyzedAt
+        ? `Last analyzed ${this.formatTime(summary.lastAnalyzedAt)}`
+        : 'Never analyzed';
+    }
+  }
+
+  runBookmarkAnalyze() {
+    if (this.state.bookmarks.analyzing) return;
+    this.state.bookmarks.analyzing = true;
+
+    const granularityEl = document.getElementById('bm-granularity');
+    const analyzeBtn = document.getElementById('bm-analyze-btn');
+    const cancelBtn = document.getElementById('bm-cancel-btn');
+    const progressWrap = document.getElementById('bm-progress-wrap');
+    if (analyzeBtn) {
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = 'Analyzing…';
+    }
+    if (cancelBtn) cancelBtn.style.display = '';
+    if (progressWrap) progressWrap.style.display = '';
+
+    chrome.runtime.sendMessage(
+      { type: 'BOOKMARKS_ANALYZE', data: { granularity: granularityEl?.value } },
+      (response) => {
+        this.state.bookmarks.analyzing = false;
+        if (cancelBtn) cancelBtn.style.display = 'none';
+        if (analyzeBtn) {
+          analyzeBtn.disabled = false;
+          analyzeBtn.textContent = '✨ Analyze';
+        }
+
+        if (response?.success) {
+          this.state.bookmarks.plan = response.data;
+          const applyBtn = document.getElementById('bm-apply-btn');
+          if (applyBtn) applyBtn.disabled = !response.data.items?.some((i) => i.proposedPath);
+          this.showToast(
+            response.data.complete
+              ? 'Analysis complete — review and Apply'
+              : 'Analysis stopped early'
+          );
+          this.refreshBookmarksSummary();
+        } else {
+          this.showToast(`Analyze failed: ${response?.error || 'no agent responded'}`);
+        }
+      }
+    );
+  }
+
+  cancelBookmarkAnalyze() {
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_CANCEL_ANALYZE' });
+  }
+
+  updateBookmarkProgressUI() {
+    const progress = this.state.bookmarks.progress;
+    const fill = document.getElementById('bm-progress-fill');
+    const label = document.getElementById('bm-progress-label');
+    if (!progress || !fill || !label) return;
+    const pct =
+      progress.total > 0 ? Math.min(100, Math.round((progress.cursor / progress.total) * 100)) : 0;
+    fill.style.width = `${pct}%`;
+    label.textContent = `${progress.cursor} / ${progress.total}`;
+  }
+
+  applyBookmarkPlanFromUI() {
+    const plan = this.state.bookmarks.plan;
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_APPLY_PLAN', data: { plan } }, (response) => {
+      if (response?.success) {
+        this.showToast(`Applied — ${response.data.moved} moved, ${response.data.skipped} skipped`);
+        const undoBtn = document.getElementById('bm-undo-btn');
+        if (undoBtn) undoBtn.disabled = false;
+        const applyBtn = document.getElementById('bm-apply-btn');
+        if (applyBtn) applyBtn.disabled = true;
+        this.refreshBookmarksSummary();
+      } else {
+        this.showToast(`Apply failed: ${response?.error || 'unknown error'}`);
+      }
+    });
+  }
+
+  undoBookmarkPlan() {
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_UNDO_LAST' }, (response) => {
+      if (response?.success) {
+        this.showToast(`Restored ${response.data.restored} bookmark(s)`);
+        const undoBtn = document.getElementById('bm-undo-btn');
+        if (undoBtn) undoBtn.disabled = true;
+        this.refreshBookmarksSummary();
+      } else {
+        this.showToast('Nothing to undo');
+      }
+    });
+  }
+
+  runBookmarkSearch() {
+    const input = document.getElementById('bm-search-input');
+    const query = input?.value?.trim() || '';
+    if (!query) return;
+    chrome.runtime.sendMessage({ type: 'BOOKMARKS_SEARCH', data: { query } }, (response) => {
+      if (response?.success) {
+        this.state.bookmarks.searchResults = response.data || [];
+        this.renderBookmarkSearchResults();
+      }
+    });
+  }
+
+  renderBookmarkSearchResults() {
+    const container = document.getElementById('bm-search-results');
+    if (!container) return;
+    const results = this.state.bookmarks.searchResults || [];
+    if (results.length === 0) {
+      container.innerHTML = '<div class="bm-empty-note">No matches</div>';
+      return;
+    }
+    container.innerHTML = results
+      .slice(0, 20)
+      .map((r) => {
+        const tags = (r.tags || [])
+          .map((t) => `<span class="bm-tag-chip">${this.toDisplayText(t)}</span>`)
+          .join('');
+        return `
+        <div class="bm-result-item">
+          <a class="bm-result-title" href="${r.bookmark.url}" target="_blank" rel="noopener">
+            ${this.toDisplayText(r.bookmark.title)}
+          </a>
+          ${r.summary ? `<div class="bm-result-summary">${this.toDisplayText(r.summary)}</div>` : ''}
+          ${tags}
+        </div>
+      `;
+      })
+      .join('');
   }
 }
 

@@ -1331,3 +1331,105 @@ body {
   text-transform: uppercase;
   margin-bottom: 8px;
 }
+
+/* ============================================
+   Bookmark Organizer
+   ============================================ */
+.bm-summary-grid {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-sm);
+  text-align: center;
+}
+
+.bm-summary-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-summary-stat strong {
+  font-size: 18px;
+  color: var(--neon-cyan);
+}
+
+.bm-summary-stat span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.bm-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.bm-progress-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.bm-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--neon-cyan);
+  transition: width 0.2s ease;
+}
+
+.bm-progress-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.bm-search-results {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.bm-result-item {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.bm-result-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 2px;
+  text-decoration: none;
+}
+
+.bm-result-summary {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.bm-tag-chip {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--neon-cyan);
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid var(--border-accent);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin: 2px 4px 0 0;
+}
+
+.bm-empty-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 6px 0;
+}

@@ -256,6 +256,10 @@ export const STORAGE_KEYS = {
   notifications: 'fuse_notifications',
   knownNodes: 'fuse_known_nodes',
   recentMessages: 'fuse_recent_messages',
+  bookmarkSettings: 'fuse_bookmark_settings',
+  bookmarkPlan: 'fuse_bookmark_plan',
+  bookmarkSnapshot: 'fuse_bookmark_snapshot',
+  bookmarkTags: 'fuse_bookmark_tags',
 };
 
 // ============================================
@@ -300,6 +304,12 @@ export const TIMINGS = {
   pendingRequestCleanup: 300000,
   injectionQueueDelay: 3500,
   cliAgentTimeout: 60000,
+  // How long the bookmark relay broker waits for a matching agent reply before
+  // rejecting the request (Bookmark Genie-style resilience, see requestWithRetry).
+  bookmarkAgentTimeout: 45000,
+  // Pacing delay between classify batches so we don't hammer a relay agent's own
+  // rate limits (mirrors Bookmark Genie's built-in 1s-between-requests behavior).
+  bookmarkBatchDelay: 500,
 };
 
 // ============================================
@@ -380,4 +390,18 @@ export const MESSAGE_TYPES = {
   DISCOVER_AGENTS: 'DISCOVER_AGENTS',
   NAVIGATE: 'NAVIGATE',
   TAKE_SCREENSHOT: 'TAKE_SCREENSHOT',
+
+  // AI Bookmark Organizer
+  BOOKMARKS_GET_SUMMARY: 'BOOKMARKS_GET_SUMMARY',
+  BOOKMARKS_FIND_DUPLICATES: 'BOOKMARKS_FIND_DUPLICATES',
+  BOOKMARKS_ANALYZE: 'BOOKMARKS_ANALYZE',
+  BOOKMARKS_ANALYZE_PROGRESS: 'BOOKMARKS_ANALYZE_PROGRESS',
+  BOOKMARKS_CANCEL_ANALYZE: 'BOOKMARKS_CANCEL_ANALYZE',
+  BOOKMARKS_GET_PLAN: 'BOOKMARKS_GET_PLAN',
+  BOOKMARKS_APPLY_PLAN: 'BOOKMARKS_APPLY_PLAN',
+  BOOKMARKS_UNDO_LAST: 'BOOKMARKS_UNDO_LAST',
+  BOOKMARKS_SEARCH: 'BOOKMARKS_SEARCH',
+  BOOKMARKS_SET_REALTIME: 'BOOKMARKS_SET_REALTIME',
+  BOOKMARKS_GET_SETTINGS: 'BOOKMARKS_GET_SETTINGS',
+  BOOKMARKS_SET_SETTINGS: 'BOOKMARKS_SET_SETTINGS',
 } as const;

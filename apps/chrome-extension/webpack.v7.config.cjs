@@ -18,6 +18,7 @@ module.exports = (env, argv) => {
       'service-worker': './src/v6/background/index.ts',
       'content/index': './src/v6/content/index.ts',
       'popup/popup': './src/v6/popup/popup.js',
+      'popup/bookmarks/bookmarks': './src/v6/popup/bookmarks/bookmarks.js',
       'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
       'content/iframe-bridge': './src/v6/content/ai-studio/iframe-bridge.js',
       'content/youtube-integration': './src/v6/content/ai-studio/youtube.js',
@@ -91,9 +92,11 @@ module.exports = (env, argv) => {
             to: 'popup',
             noErrorOnMissing: true,
             globOptions: {
-              // Webpack emits the bundled popup.js; copying source would break it.
-              // popup-boot.js is a classic shell script and must be copied as-is.
-              ignore: ['**/popup.js'],
+              // Webpack emits the bundled popup.js (and bookmarks/bookmarks.js);
+              // copying source would overwrite the compiled bundle at the same
+              // output path. popup-boot.js is a classic shell script and must be
+              // copied as-is.
+              ignore: ['**/popup.js', '**/bookmarks/bookmarks.js'],
             },
             // Avoid re-minifying the tiny boot shell (keeps load path predictable).
             info: { minimized: true },
