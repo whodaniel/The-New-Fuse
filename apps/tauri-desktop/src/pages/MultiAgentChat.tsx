@@ -1,3 +1,4 @@
+import { scrollViewportToEnd } from '@the-new-fuse/ui-consolidated/scrollViewportToEnd';
 import { MessageSquare, PanelLeft, Settings, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import AgentDetailModal from '../components/chat/AgentDetailModal';
@@ -115,16 +116,7 @@ const MultiAgentChat: React.FC = () => {
     const viewport = messagesViewportRef.current;
     if (!viewport) return;
 
-    // Keep scrolling confined to the feed. scrollIntoView() also scrolls the
-    // page shell and sibling panels, which used to push the chat chrome off-screen.
-    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ? 'auto'
-      : 'smooth';
-    if (typeof viewport.scrollTo === 'function') {
-      viewport.scrollTo({ top: viewport.scrollHeight, behavior });
-    } else {
-      viewport.scrollTop = viewport.scrollHeight;
-    }
+    scrollViewportToEnd(viewport);
   }, [activeSession?.messages, isLoading]);
 
   // Listen for Federation Channel messages
@@ -132,6 +124,15 @@ const MultiAgentChat: React.FC = () => {
     const handler = (raw?: unknown) => {
       const payload = raw as FederationChannelMessage | undefined;
       if (!payload?.content || payload.from === FederationNodeService.getState().agentId) return;
+
+      // Filter out internal protocol/system text that shouldn't render as chat messages
+      if (
+        payload.content.includes('AGENT ID ASSIGNMENT') ||
+        payload.content.startsWith('[Sender:') ||
+        payload.messageType === 'system'
+      ) {
+        return;
+      }
 
       const agent = unifiedAgents.find((entry) => entry.id === payload.from);
 
@@ -303,16 +304,18 @@ const MultiAgentChat: React.FC = () => {
       ? `${mappedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline').length} of ${mappedAgents.length}`
       : `${activeAgents.length} of ${unifiedAgents.length}`;
 
-  const runtimeLabel =
-    mappedAgents.length === 0
-      ? 'No Chat Agents Available'
-      : synergy.apiOnline && isConnected && !apiOffline
-        ? 'API Connected'
-        : synergy.relayRegistered
-          ? 'Federation Active'
-          : mappedAgents.length > 0 && useLocalFallback
-            ? 'Local JIT Engine'
-            : 'Runtime Setup Required';
+  let runtimeLabel = 'No Chat Agents Available';
+  if (mappedAgents.length > 0) {
+    if (synergy.apiOnline && isConnected && !apiOffline) {
+      runtimeLabel = 'API Connected';
+    } else if (synergy.relayRegistered) {
+      runtimeLabel = 'Federation Active';
+    } else if (useLocalFallback) {
+      runtimeLabel = 'Local JIT Engine';
+    } else {
+      runtimeLabel = 'Runtime Setup Required';
+    }
+  }
 
   const toggleAgent = (agentId: string) => {
     if (!activeSession) return;

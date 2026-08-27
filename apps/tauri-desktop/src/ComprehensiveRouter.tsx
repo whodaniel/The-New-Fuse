@@ -173,7 +173,13 @@ const ComprehensiveRouter: React.FC = () => {
                     key={item.id}
                     type="button"
                     className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
-                    onClick={() => handleNavClick(item.path)}
+                    onClick={() => {
+                      if (item.externalUrl) {
+                        void import('./lib/openExternal').then(m => m.openExternal(item.externalUrl!));
+                      } else {
+                        handleNavClick(item.path);
+                      }
+                    }}
                     title={sidebarCollapsed ? item.label : undefined}
                     aria-current={currentRoute === item.path ? 'page' : undefined}
                   >
@@ -231,7 +237,13 @@ const ComprehensiveRouter: React.FC = () => {
                         key={item.id}
                         type="button"
                         className={`nav-item ${currentRoute === item.path ? 'active' : ''}`}
-                        onClick={() => handleNavClick(item.path)}
+                        onClick={() => {
+                          if (item.externalUrl) {
+                            void import('./lib/openExternal').then(m => m.openExternal(item.externalUrl!));
+                          } else {
+                            handleNavClick(item.path);
+                          }
+                        }}
                         title={sidebarCollapsed ? item.label : undefined}
                         aria-current={currentRoute === item.path ? 'page' : undefined}
                       >
