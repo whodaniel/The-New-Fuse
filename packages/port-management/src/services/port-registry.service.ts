@@ -136,6 +136,9 @@ export interface RuntimePortPreflightResult {
 
 const DEFAULT_RUNTIME_PORTS: RuntimePortCatalogEntry[] = [
   { port: 3000, serviceName: 'relay-core', protected: false },
+  { port: 3010, serviceName: 'relay-core-alt', protected: false },
+  { port: 3020, serviceName: 'relay-core-alt', protected: false },
+  { port: 3030, serviceName: 'relay-core-alt', protected: false },
   { port: 3001, serviceName: 'api/backend', protected: false },
   { port: 3004, serviceName: 'backend', protected: false },
   { port: 3003, serviceName: 'api-gateway/ws-bridge-secondary', protected: false },

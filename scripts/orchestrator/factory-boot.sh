@@ -6,6 +6,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 RUNTIME_STATE_DIR="${ROOT_DIR}/.agent/runtime-state"
 LIVE_API_CACHE_FILE="${RUNTIME_STATE_DIR}/live-api-url.txt"
+# Endpoint authority (#176): read live/public endpoints from the generated
+# adaptive harness context instead of local literals. Explicit env still wins.
+# shellcheck disable=SC1091
+. "${ROOT_DIR}/scripts/runtime/harness-context-env.sh"
 REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
 REDIS_FAIL_OPEN="${FACTORY_BOOT_REDIS_FAIL_OPEN:-true}"
 LOCAL_REDIS_URL="${FACTORY_BOOT_LOCAL_REDIS_URL:-redis://localhost:6379}"
@@ -81,7 +85,7 @@ if [[ -n "${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-}}}" ]]; then
   RELAY_URL_WAS_EXPLICIT="true"
 fi
 RELAY_URL="${RELAY_URL:-${TNF_RELAY_URL:-${RELAY_WS_URL:-ws://127.0.0.1:${RELAY_PORT}/ws}}}"
-LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
+LEDGER_API_BASE="${LEDGER_API_BASE:-${CLOUD_RUNTIME_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-$(harness_ctx_get TNF_API_BASE http://localhost:3001)}}}}}"
 AUTO_DETECT_CLOUD_RUNTIME_API="${AUTO_DETECT_CLOUD_RUNTIME_API:-true}"
 
 STALL_THRESHOLD="${STALL_THRESHOLD:-45000}"
@@ -209,25 +213,42 @@ if curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/api/health" >/dev/null 2>&1; the
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/api/health"
 elif curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/health" >/dev/null 2>&1; then
   echo "[factory-boot] ledger api healthy at ${LEDGER_API_BASE%/}/health"
-elif [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]] && curl -fsS --max-time 2 "https://api.thenewfuse.com/api/health" >/dev/null 2>&1; then
-  LEDGER_API_BASE="https://api.thenewfuse.com"
-  echo "[factory-boot] local ledger unavailable; using live ledger api at ${LEDGER_API_BASE}"
+elif [[ "${LEDGER_API_BASE}" == "http://localhost:3001" ]] && \
+     live_ledger_api="$(harness_ctx_get TNF_API_BASE "")" && [[ -n "${live_ledger_api}" ]] && \
+     [[ "${live_ledger_api}" != "http://localhost:3001" ]] && \
+     curl -fsS --max-time 2 "${live_ledger_api%/}/api/health" >/dev/null 2>&1; then
+  LEDGER_API_BASE="${live_ledger_api}"
+  echo "[factory-boot] local ledger unavailable; using harness-context live api at ${LEDGER_API_BASE}"
   printf "%s\n" "${LEDGER_API_BASE}" > "${LIVE_API_CACHE_FILE}"
 else
   echo "[factory-boot] WARNING: ledger api not reachable at ${LEDGER_API_BASE} (master-clock/director persistence may degrade)"
 fi
 
 relay_health="$(curl -fsS --max-time 2 "http://localhost:${RELAY_PORT}/health" 2>/dev/null || true)"
+relay_http_ok="false"
+relay_ready="false"
 if echo "${relay_health}" | grep -q '"relay":"running"'; then
-  echo "[factory-boot] relay already healthy on :${RELAY_PORT}"
+  relay_http_ok="true"
+fi
+if node "${ROOT_DIR}/scripts/lib/tnf-relay-port-catalog.cjs" ready "${RELAY_PORT}" >/dev/null 2>&1; then
+  relay_ready="true"
+fi
+if [[ "${relay_ready}" == "true" ]]; then
+  echo "[factory-boot] relay already healthy on :${RELAY_PORT} (http+websocket)"
 else
+  if [[ "${relay_http_ok}" == "true" ]]; then
+    echo "[factory-boot] relay HTTP health is up on :${RELAY_PORT} but WebSocket handshake failed"
+  fi
   can_start_relay="true"
   relay_pid_on_port="$(find_relay_pid_on_port_3000 || true)"
   port_3000_pids="$(get_port_3000_pids | tr '\n' ' ' | sed 's/[[:space:]]*$//')"
 
   if [[ -n "${port_3000_pids}" ]]; then
     if [[ -n "${relay_pid_on_port}" ]]; then
-      if [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
+      if [[ "${relay_http_ok}" == "true" ]]; then
+        echo "[factory-boot] relay on :${RELAY_PORT} is HTTP-up / WebSocket-down; restarting pid=${relay_pid_on_port}"
+        terminate_relay_pid "${relay_pid_on_port}"
+      elif [[ "${RELAY_FORCE_RESTART}" == "true" ]]; then
         echo "[factory-boot] relay on :${RELAY_PORT} is unhealthy; force restarting pid=${relay_pid_on_port}"
         terminate_relay_pid "${relay_pid_on_port}"
       else
@@ -257,7 +278,7 @@ else
 
   if [[ "${can_start_relay}" == "true" ]]; then
     echo "[factory-boot] starting relay-core relay (compiled)"
-    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT='${RELAY_PORT}' REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
+    nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT='${RELAY_PORT}' RELAY_PORT='${RELAY_PORT}' REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
       > "${LOG_DIR}/relay-dev.log" 2>&1 &
     sleep 3
   fi

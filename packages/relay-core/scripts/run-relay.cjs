@@ -4,10 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensurePortReady } = require('../../../scripts/lib/tnf-port-reaper.cjs');
+const {
+  isRelayHealthBody,
+  probeRelayWebSocket,
+} = require('../../../scripts/lib/tnf-relay-port-catalog.cjs');
 
 const packageRoot = path.resolve(__dirname, '..');
 const relayEntrypoint = path.join(packageRoot, 'dist', 'standalone-relay.js');
-const RELAY_PORT = Number(process.env.RELAY_PORT || 3000);
+const RELAY_PORT = Number(process.env.RELAY_PORT || process.env.PORT || 3000);
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -23,7 +27,9 @@ async function main() {
   const portState = await ensurePortReady({
     port: RELAY_PORT,
     healthUrl: `http://127.0.0.1:${RELAY_PORT}/health`,
-    isHealthy: (body) => body.status === 'ok' && body.relay === 'running',
+    isHealthy: isRelayHealthBody,
+    probeReady: () => probeRelayWebSocket(RELAY_PORT),
+    graceMs: 2000,
     log: (message) => console.log(message),
   });
 

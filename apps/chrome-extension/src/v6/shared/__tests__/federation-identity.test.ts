@@ -1,5 +1,7 @@
 import {
+  a2aChannelIdForTab,
   buildPageAgentIdentity,
+  buildSidePanelAgentIdentity,
   enrichOutboundMetadata,
   resolveMessageTarget,
 } from '../federation-identity';
@@ -78,5 +80,55 @@ describe('federation identity', () => {
     expect(routed.to).toBe('page-agent-44-blue1');
     expect(routed.addressedHandle).toBe('PAGE-44-BLUE1');
     expect(routed.content).toBe('test Blue channel routing');
+  });
+
+  it('assigns side-panel agents the same ID# / role contract as page chat', () => {
+    const identity = buildSidePanelAgentIdentity(
+      'side-panel-agent-42-glm1',
+      'chat.z.ai',
+      42
+    );
+
+    expect(identity.operationalHandle).toBe('SIDEPANEL-42-GLM1');
+    expect(identity.idNumber).toMatch(/^ID#:/);
+    expect(identity.daccRole).toBe('participant');
+    expect(identity.canonicalEntityId).toBe('TNF:LOCAL:AGENT:FUSE:ZHIPU_GLM_SIDEPANEL:042');
+    expect(identity.aliases).toContain('sidepanel');
+    expect(a2aChannelIdForTab(42)).toBe('a2a-tab-42');
+  });
+
+  it('routes @ID#: and @side-panel-agent mentions to the side-panel agent', () => {
+    const identity = buildSidePanelAgentIdentity(
+      'side-panel-agent-9-cursor1',
+      'www.cursor.com',
+      9
+    );
+    const agent: Agent = {
+      id: identity.id,
+      name: 'Side Panel (Cursor)',
+      platform: 'browser-side-panel',
+      status: 'active',
+      capabilities: [],
+      lastSeen: Date.now(),
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
+      metadata: {
+        node: { platform: 'www.cursor.com' },
+        aliases: identity.aliases,
+      },
+    };
+
+    const byId = resolveMessageTarget(`@${identity.idNumber} hello from page`, [agent]);
+    expect(byId.to).toBe(identity.id);
+    expect(byId.content).toBe('hello from page');
+
+    const byHandle = resolveMessageTarget('@side-panel-agent-9-cursor1 ping', [agent]);
+    expect(byHandle.to).toBe(identity.id);
   });
 });

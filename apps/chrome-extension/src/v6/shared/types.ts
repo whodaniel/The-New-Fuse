@@ -18,6 +18,7 @@ export type AgentPlatform =
   | 'backend-service'
   | 'saas'
   | 'browser-page'
+  | 'browser-side-panel'
   | 'unknown';
 
 export interface Agent {
@@ -596,4 +597,109 @@ export type DeepPartial<T> = {
 
 export interface Disposable {
   dispose(): void;
+}
+
+// ============================================
+// AI BOOKMARK ORGANIZER
+// ============================================
+
+/** How finely the AI should split bookmarks into folders when generating a taxonomy. */
+export type BookmarkGranularity = 'compact' | 'balanced' | 'detailed';
+
+/** A `chrome.bookmarks` tree node flattened into a single record. */
+export interface FlatBookmark {
+  id: string;
+  parentId: string | null;
+  title: string;
+  url?: string;
+  dateAdded?: number;
+  /** Human-readable folder path this bookmark currently lives under, e.g. "Bookmarks Bar/Dev/Tools". */
+  path: string;
+}
+
+export interface TaxonomyFolder {
+  name: string;
+  /** Full proposed path, e.g. "Dev/Tools". */
+  path: string;
+  description?: string;
+}
+
+/** Phase-1 output: a unified folder structure proposed for the whole bookmark library. */
+export interface FolderTaxonomy {
+  id: string;
+  generatedAt: number;
+  granularity: BookmarkGranularity;
+  folders: TaxonomyFolder[];
+}
+
+export interface BookmarkPlanItem {
+  bookmarkId: string;
+  title: string;
+  url?: string;
+  currentPath: string;
+  /** Proposed folder path; undefined/unchanged means "leave where it is". */
+  proposedPath?: string;
+  isNewFolder?: boolean;
+  tags?: string[];
+  summary?: string;
+  /** Whether the user has this item checked for the upcoming Apply (manual override support). */
+  selected?: boolean;
+}
+
+export interface BookmarkDuplicateGroup {
+  url: string;
+  bookmarkIds: string[];
+}
+
+/** Phase-2 output: the concrete, previewable, non-destructive move plan. */
+export interface BookmarkPlan {
+  id: string;
+  generatedAt: number;
+  granularity: BookmarkGranularity;
+  taxonomy: FolderTaxonomy;
+  items: BookmarkPlanItem[];
+  duplicates: BookmarkDuplicateGroup[];
+  /** True once classifyAll() has processed every batch (vs. a partial/interrupted run). */
+  complete: boolean;
+  /** Index of the next unprocessed bookmark, for resuming an interrupted classify job. */
+  cursor: number;
+}
+
+export interface BookmarkTagRecord {
+  bookmarkId: string;
+  tags: string[];
+  summary?: string;
+  updatedAt: number;
+}
+
+/** Snapshot of pre-Apply bookmark locations, used to power Undo. */
+export interface BookmarkSnapshotEntry {
+  bookmarkId: string;
+  parentId: string | null;
+  title: string;
+  index?: number;
+}
+
+export interface BookmarkSnapshot {
+  id: string;
+  createdAt: number;
+  entries: BookmarkSnapshotEntry[];
+  /** Folder ids created purely to apply this plan, removable on undo once emptied. */
+  createdFolderIds: string[];
+}
+
+export interface BookmarkOrganizerSettings {
+  granularity: BookmarkGranularity;
+  /** MyMind-style: skip folder moves entirely, rely on tags + search only. */
+  zeroFolderMode: boolean;
+  /** Bookmark-Genie-style: classify new bookmarks the moment they're created. Off by default. */
+  realtimeEnabled: boolean;
+  /** Off by default: only title+URL are sent to the agent unless the user opts in. */
+  fullPageContentOptIn: boolean;
+  /** Hostnames (and subdomains) excluded from every analyze/search/realtime request. */
+  privateDomains: string[];
+  /** Explicit relay agent id to target; null falls back to capability match then broadcast. */
+  targetAgentId: string | null;
+  /** Relay channel to broadcast on when no explicit/capable agent is available. */
+  targetChannel: string | null;
 }

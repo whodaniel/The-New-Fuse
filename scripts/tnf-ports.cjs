@@ -6,10 +6,21 @@ const path = require('node:path');
 const glob = require('glob');
 const yaml = require('js-yaml'); // Moved js-yaml to top-level require
 
+const { RELAY_RUNTIME_CATALOG } = require('./lib/tnf-relay-port-catalog.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 const LOCAL_ENV_FILES = ['.env', '.env.local', '.tnf.local.env'];
 
-const DEFAULT_PORTS = [
+function mergePortCatalog(base, extra) {
+  const byPort = new Map();
+  for (const entry of [...base, ...extra]) {
+    if (!entry || !Number.isInteger(entry.port)) continue;
+    if (!byPort.has(entry.port)) byPort.set(entry.port, entry);
+  }
+  return Array.from(byPort.values()).sort((a, b) => a.port - b.port);
+}
+
+const DEFAULT_PORTS = mergePortCatalog([
   { port: 3000, service: 'relay-core', protected: false },
   { port: 3001, service: 'api/backend', protected: false },
   { port: 3004, service: 'backend', protected: false },
@@ -23,7 +34,7 @@ const DEFAULT_PORTS = [
   { port: 5555, service: 'drizzle-studio', protected: true },
   { port: 6379, service: 'redis', protected: true },
   { port: 5432, service: 'postgres', protected: true },
-];
+], RELAY_RUNTIME_CATALOG);
 
 function parseArgs(argv) {
   const command = argv[0] || 'help';
