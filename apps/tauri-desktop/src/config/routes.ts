@@ -16,6 +16,8 @@ export interface DesktopRoute {
   keywords?: string[];
   /** Known route but omitted from primary sidebar (summoned / deep-link only). */
   navHidden?: boolean;
+  /** External URL for web-parity links that open in the browser */
+  externalUrl?: string;
 }
 
 export const ROUTE_STORAGE_KEY = 'tnf.desktop.lastRoute';
@@ -45,7 +47,6 @@ export function isSecondaryNavGroup(groupId: NavGroupId): boolean {
 }
 
 export const DESKTOP_ROUTES: DesktopRoute[] = [
-  { id: 'platform', path: '/platform', label: 'Platform', group: 'home', badge: 'TNF' },
   {
     id: 'mission',
     path: '/mission',
@@ -88,7 +89,10 @@ export const DESKTOP_ROUTES: DesktopRoute[] = [
   { id: 'workflows', path: '/workflows', label: 'Workflows', group: 'build' },
   { id: 'mcp', path: '/mcp', label: 'MCP Store', group: 'build' },
   { id: 'analytics', path: '/analytics', label: 'Analytics', group: 'insights' },
-  { id: 'web-hub', path: '/web-hub', label: 'Web Parity', group: 'bridge', badge: 'WEB' },
+  { id: 'ai-command-center', path: '/ai-command-center', label: 'Command Center', group: 'bridge', badge: 'WEB', externalUrl: 'https://thenewfuse.com/ai-command-center' },
+  { id: 'workspace-overview', path: '/workspace-overview', label: 'Workspace', group: 'bridge', badge: 'WEB', externalUrl: 'https://thenewfuse.com/workspace/overview' },
+  { id: 'live-view', path: '/live-view', label: 'Live View', group: 'bridge', badge: 'WEB', externalUrl: 'https://thenewfuse.com/live-view' },
+  { id: 'timeline', path: '/timeline', label: 'Timeline', group: 'bridge', badge: 'WEB', externalUrl: 'https://thenewfuse.com/timeline' },
   { id: 'settings', path: '/settings', label: 'Settings', group: 'system' },
 ];
 

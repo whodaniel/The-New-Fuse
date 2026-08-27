@@ -40,6 +40,14 @@ const A2AControl: React.FC = () => {
         return;
       }
 
+      // Filter out internal protocol/system text that shouldn't render as chat messages
+      if (
+        msg.content.includes('AGENT ID ASSIGNMENT') ||
+        msg.content.startsWith('[Sender:')
+      ) {
+        return;
+      }
+
       setMessages((prev) => [
         ...prev.slice(-99),
         {
@@ -107,7 +115,7 @@ const A2AControl: React.FC = () => {
       subtitle={`Agent-to-agent message bus · ${synergy.relayRegistered ? 'Federation online' : 'Connect relay to enable A2A'}`}
       actions={
         <span className={`env-badge ${synergy.relayRegistered ? 'local' : 'offline'}`}>
-          {synergy.relayRegistered ? `${synergy.federatedAgentCount} agents` : 'offline'}
+          {synergy.relayRegistered ? `${synergy.unifiedAgents.length} agents` : 'offline'}
         </span>
       }
       banner={

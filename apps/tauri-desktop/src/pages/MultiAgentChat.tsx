@@ -1,4 +1,5 @@
-import { MessageSquare, PanelLeft, Sparkles } from 'lucide-react';
+import { scrollViewportToEnd } from '@the-new-fuse/ui-consolidated/scrollViewportToEnd';
+import { MessageSquare, PanelLeft, Settings, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import AgentDetailModal from '../components/chat/AgentDetailModal';
 import AgentSelectorPanel from '../components/chat/AgentSelectorPanel';
@@ -108,7 +109,10 @@ const MultiAgentChat: React.FC = () => {
 
   // Scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const viewport = messagesViewportRef.current;
+    if (!viewport) return;
+
+    scrollViewportToEnd(viewport);
   }, [activeSession?.messages, isLoading]);
 
   // Listen for Federation Channel messages
@@ -116,6 +120,15 @@ const MultiAgentChat: React.FC = () => {
     const handler = (raw?: unknown) => {
       const payload = raw as FederationChannelMessage | undefined;
       if (!payload?.content || payload.from === FederationNodeService.getState().agentId) return;
+
+      // Filter out internal protocol/system text that shouldn't render as chat messages
+      if (
+        payload.content.includes('AGENT ID ASSIGNMENT') ||
+        payload.content.startsWith('[Sender:') ||
+        payload.messageType === 'system'
+      ) {
+        return;
+      }
 
       const agent = unifiedAgents.find((entry) => entry.id === payload.from);
 
@@ -274,6 +287,19 @@ const MultiAgentChat: React.FC = () => {
     mappedAgents.length > 0
       ? `${mappedAgents.filter((a) => a.status !== 'error' && a.status !== 'offline').length} of ${mappedAgents.length}`
       : `${activeAgents.length} of ${unifiedAgents.length}`;
+
+  let runtimeLabel = 'No Chat Agents Available';
+  if (mappedAgents.length > 0) {
+    if (synergy.apiOnline && isConnected && !apiOffline) {
+      runtimeLabel = 'API Connected';
+    } else if (synergy.relayRegistered) {
+      runtimeLabel = 'Federation Active';
+    } else if (useLocalFallback) {
+      runtimeLabel = 'Local JIT Engine';
+    } else {
+      runtimeLabel = 'Runtime Setup Required';
+    }
+  }
 
   const toggleAgent = (agentId: string) => {
     if (!activeSession) return;

@@ -155,7 +155,7 @@ export class EnhancedFloatingPanel {
       activeTab: 'chat',
       isDragging: false,
       isResizing: false,
-      isPinned: false,
+      isPinned: options.isPinned ?? true,
       opacity: 1,
     };
 
@@ -939,6 +939,12 @@ export class EnhancedFloatingPanel {
     const isCollapsed = mode === 'collapsed';
     const isMinimized = mode === 'minimized';
 
+    // Clear docking styles by default
+    document.documentElement.style.marginRight = '';
+    this.container.style.right = '';
+    this.container.style.bottom = '';
+    this.container.style.borderRadius = '';
+
     if (isMinimized) {
       // Minimized size is fixed in CSS
       this.container.style.width = '';
@@ -953,6 +959,18 @@ export class EnhancedFloatingPanel {
 
       this.container.style.left = `${x}px`;
       this.container.style.top = `${y}px`;
+      return;
+    }
+
+    if (this.state.isPinned && !isCollapsed) {
+      // Dock to the right side of the screen and reserve space
+      this.container.style.left = 'auto';
+      this.container.style.right = '0px';
+      this.container.style.top = '0px';
+      this.container.style.height = '100vh';
+      this.container.style.width = `${size.width}px`;
+      this.container.style.borderRadius = '0px';
+      document.documentElement.style.marginRight = `${size.width}px`;
       return;
     }
 
@@ -1603,7 +1621,7 @@ export class EnhancedFloatingPanel {
             </div>
             <div class="fcp6-channel-actions">
               ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
-              ${ch.id !== 'general' ? `<button class="fcp6-btn fcp6-channel-delete" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel">×</button>` : ''}
+              ${!isStandardChannel(ch.id) ? `<button class="fcp6-btn fcp6-channel-delete" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel">×</button>` : ''}
             </div>
           </div>
         `
