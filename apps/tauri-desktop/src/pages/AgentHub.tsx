@@ -164,7 +164,7 @@ const AgentHub: React.FC = () => {
             {f === 'idle' && '🟡 Idle'}
             {f === 'error' && '🔴 Error'}
             <span className="tab-count">
-              {f === 'all' ? agents.length : agents.filter((a) => a.status === f).length}
+              {f === 'all' ? unifiedAgents.length : agents.filter((a) => a.status === f).length}
             </span>
           </button>
         ))}
@@ -181,7 +181,7 @@ const AgentHub: React.FC = () => {
           <span className="stat-label">Total Tasks</span>
         </div>
         <div className="stat-card mini">
-          <span className="stat-value">{agents.length}</span>
+          <span className="stat-value">{unifiedAgents.length}</span>
           <span className="stat-label">Agents</span>
         </div>
       </div>
@@ -512,6 +512,7 @@ const AgentHub: React.FC = () => {
           position: relative;
           overflow: hidden;
           width: 100%;
+          min-width: 0;
           text-align: left;
           font: inherit;
           color: inherit;
@@ -566,15 +567,23 @@ const AgentHub: React.FC = () => {
           color: #f8fafc;
           position: relative;
           z-index: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .agent-description {
           font-size: 14px;
           color: #94a3b8;
-          margin: 0 0 16px;
-          line-height: 1.6;
+          margin: 0;
+          line-height: 1.5;
           position: relative;
           z-index: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .agent-meta {
