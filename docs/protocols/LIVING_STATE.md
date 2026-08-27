@@ -3,8 +3,37 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e)
+
+**Current Directive:** Wire resolve-workspace-tier.cjs into the onboarder's
+automatic Turn Zero flow (currently advisory/manual-invoke only) — deferred
+because that flow is complex enough that changing it blind risks more than the
+current gap costs.
+
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-26 Antigravity CLI (AGY) Onboarding, Protocol Authority
+  Alignment & Full-Auto Seal Hardening (Antigravity/Sub-Director)**:
+  - **Five-Layer Agent Onboarding**: Successfully onboarded `.agy` (Antigravity
+    CLI) as a first-class TNF agent (`.agent/agents/agy.md`, mirrored to
+    `.claude/agents/agy.md`), registered in ledger as `TNF:LOCAL:AGENT:AGY:001`,
+    added `agy` to `PLATFORM_TAXONOMY` and `passthroughTargets` in
+    `packages/tnf-cli/src/cli.ts`.
+  - **Ubiquity & Skill Bank Propagation**: Connected `~/.agy/skills/` to
+    `skill-bank-sync.cjs`, `reconcile-agent-banks.cjs`, and
+    `install-agent-frontload.cjs`. Generated and symlinked 10 slash-command
+    families including `agy-slash-commands`.
+  - **Turn Zero Authority Alignment**: Updated
+    `scripts/protocols/validate-turn-zero-authority.cjs` to validate Turn Zero
+    V2 manifest-derived onboarding patterns alongside legacy V1 strings,
+    bringing the authority oracle to green.
+  - **Substrate Attestation & Trajectory Integrity**: Provisioned
+    `data/harness/trajectories/` and refreshed
+    `docs/operations/tnf-substrate-seal.json` to seal lockfile hashes, achieving
+    100% pass on `verify-harness-completeness.cjs` and
+    `command-surface-gate.cjs`.
+  - **Live Bus Enlistment**: Registered and heartbeat-verified
+    `agent_agy_1787753530928` (`worker` role, `sub` director tier) on the Redis
+    Synaptic Bus (`tnf:agent-registry`).
 
 - [⚠️] **2026-08-20 Jules scheduler cleanup (Cursor / control-plane)**:
   - **Verified:** local crontab/launchd clean; local scripts already on
@@ -20,8 +49,8 @@
   - **mutation-guard:** `pack-refs` / `gc` were treated as stash when
     `refs/stash` appeared in multi-ref transactions. Classification now allows
     safe maintenance while still blocking real stash / reset / merge / rebase /
-    pull. `git gc --prune=now` succeeded on a dirty tree after clearing
-    worktree `gc.log`; loose objects packed to 0.
+    pull. `git gc --prune=now` succeeded on a dirty tree after clearing worktree
+    `gc.log`; loose objects packed to 0.
   - **preflight-skip:** Timings documented in
     `docs/operations/preflight-skip-latency-2026-08-20.md`. Doctor ~8–15s
     standalone; do not raise 30s budget. Hardened test env isolation + repo-root
@@ -33,8 +62,8 @@
     `Invalid regular expression ... Nothing to repeat` because
     `requireSuperAdmin` built a `RegExp` from the old base64 token (`+` / `/`).
   - **Fix (canonical `tnf-monorepo` `main` only):** structural
-    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert via
-    `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
+    `TNF_SUPER_ADMIN_TOKEN` / `TNF_SUPER_ADMIN_INPUT_TOKEN` assignment upsert
+    via `packages/tnf-cli/src/utils/super-admin-env.ts`; atomic write; no secret
     printing; `process.env` mutates only after persist succeeds.
   - **Verify:** focused tests 8/8; silent fresh rotation; leaked chat token not
     authoritative; controlled boot cleared Super Admin auth (exit 0).
@@ -242,11 +271,32 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-16T20:31:26.857Z New script(s) created: tnf-authority-keys.cjs,
 - [✅] 2026-08-16T22:49:31.303Z New agent(s) created: command-code
 - [✅] 2026-08-16T22:49:31.303Z New script(s) created:
+- [✅] 2026-08-26T00:36:33.894Z New script(s) created:
+- [✅] 2026-08-26T03:28:18.479Z New script(s) created:
+- [✅] 2026-08-26T08:10:23.175Z New script(s) created:
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
+- [✅] 2026-08-26T00:38:19.920Z New script(s) created:
+  verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
+  resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
+  tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
+
   memory-freshness-sweep.cjs, tnf-authority-keys.cjs,
   tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
   command-surface-gate.cjs, redis-connection-guard-cron.sh,
   redis-connection-guard.cjs, tnf-agent-daemon-launch.sh,
   tnf-agent-daemon-launchd.sh, universal-skill-disclosure-guard.cjs
+
 - [✅] 2026-08-16T22:49:31.303Z Agent definition change: 1 added, 0 removed
 
   tnf-authority-keys.test.cjs, tnf-capability-grant.concurrency.test.cjs,
@@ -1064,13 +1114,39 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-26T02:18:31.529Z handoff `bb75b5da-65e9-46de-9306-d5a1fed32bca` head `518fbce3ec0e` project `TNF-SESSION` — Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e)
+- 2026-08-27T20:45:58.101Z handoff `e85d971f-770d-4cfe-98f6-4cd46280f557` head
+  `f328e16919f8` project `TNF-SESSION` — Wire resolve-workspace-tier.cjs into
+  the onboarder's automatic Turn Zero flow (currently advisory/manual-invoke
+  only) — deferred because that flow is complex enough that changing it blind
+  risks more than the current gap costs.
 
-- 2026-08-26T02:17:24.799Z handoff `f0d30b8e-a9d3-4220-9532-8b9ba5a2acb2` head `518fbce3ec0e` project `TNF-SESSION` — Push/review branch host-lifecycle-conformance-gaps (commit 518fbce3e);Reconcile the ~517 pre-existing working-tree changes in tnf-monorepo worktree vs main 95bbaefac before any destructive sync;Consider annotating boot-triage regeneration into onboard flow (boot-triage regenerated manually this session)
+- 2026-08-27T20:44:53.698Z handoff `d93994d2-e5fd-4d51-94c5-b585f20fc2dc` head
+  `f328e16919f8` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-08-26T02:16:51.194Z handoff `2548387c-3573-4ba9-a2ee-7da2564e97b1` head `518fbce3ec0e` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-26T05:03:24.253Z handoff `883a32da-4f06-48ed-8efc-9013f70c7bfe` head
+  `e169723bd328` project `TNF-SESSION` — Render messages buffer + channel list
+  in BROWSER_CONTROL_SURFACE.tsx UI components
 
-- 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-08-26T04:47:53.332Z handoff `a72a4834-63d3-4652-a7cc-9210f03fda3b` head
+  `e169723bd328` project `TNF-SESSION` — JWT-authenticated registration test
+  (authenticated:true) once token source configured
+
+- 2026-08-26T04:37:37.470Z handoff `20430337-45e3-4381-a3b6-171654b1ab30` head
+  `e169723bd328` project `TNF-SESSION` — Add JWT-authenticated registration path
+  test (authenticated:true) once a valid token source is configured
+
+- 2026-08-26T04:30:13.597Z handoff `7ed22a03-1f63-4317-b2c4-78ecb00ab31b` head
+  `cd51fbdaaddc` project `TNF-SESSION` — Add reconnect/backoff test coverage and
+  run pnpm type-check across affected packages
+
+- 2026-08-26T02:41:01.222Z handoff `dfd7f798-b0de-425d-85e5-93162b6668ce` head
+  `b4511fcacea7` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-08-20T19:21:15.929Z handoff `34428501-58cc-4ec1-86fc-5546990301eb` head
+  `aacbeb11eab9` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-17T04:26:34.401Z handoff `61f04423-b881-43fc-bfe3-a4ca73ec6099` head
   `b1eb732489bc` project `TNF-SESSION` — Defer BackupService path fix, rclone
