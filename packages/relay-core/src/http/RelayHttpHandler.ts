@@ -107,6 +107,18 @@ export class RelayHttpHandler {
     const parsedUrl = new URL(urlString, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
 
+    if (String(req.headers.upgrade || '').toLowerCase() === 'websocket') {
+      return;
+    }
+    if (pathname === '/ws' || pathname === '/ws/') {
+      res.writeHead(426, {
+        Upgrade: 'websocket',
+        'Content-Type': 'application/json',
+      });
+      res.end(JSON.stringify({ error: 'WebSocket upgrade required', path: '/ws' }));
+      return;
+    }
+
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -178,6 +190,8 @@ export class RelayHttpHandler {
       JSON.stringify({
         status: 'ok',
         relay: 'running',
+        websocket: true,
+        websocketPath: '/ws',
         version: '1.0.0', // This should probably come from package.json
         agents: this.core.agents.size,
         channels: this.core.channels.size,

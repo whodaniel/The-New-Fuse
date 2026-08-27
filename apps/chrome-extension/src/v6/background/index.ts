@@ -7,6 +7,22 @@
  */
 
 import youtubeService from '../services/ai-studio/youtube-service';
+import { filterBookmarks } from '../services/bookmarks/bookmark-privacy-service';
+import bookmarkRealtimeService from '../services/bookmarks/bookmark-realtime-service';
+import {
+  BookmarkRelayBroker,
+  type BookmarkRequestOptions,
+} from '../services/bookmarks/bookmark-relay-broker';
+import bookmarkSettingsService from '../services/bookmarks/bookmark-settings-service';
+import bookmarkStoreService, {
+  computeDuplicates,
+} from '../services/bookmarks/bookmark-store-service';
+import bookmarkTaggingService from '../services/bookmarks/bookmark-tagging-service';
+import {
+  classifyAll,
+  generateTaxonomy,
+  zeroFolderPlanItems,
+} from '../services/bookmarks/bookmark-taxonomy-service';
 import {
   ACTIVITY_CHANNEL,
   AI_MODELS,
@@ -14,12 +30,16 @@ import {
   DEFAULT_NODES as DEFAULT_NODES_CONST,
   isStandardChannel,
   NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
+  RELAY_WS_CANDIDATES,
+  relayWsUrlForPort,
   STORAGE_KEYS as STORAGE_KEYS_CONST,
   TIMINGS,
 } from '../shared/constants';
 import {
+  a2aChannelIdForTab,
   buildBrowserAgentIdentity,
   buildPageAgentIdentity,
+  buildSidePanelAgentIdentity,
   enrichOutboundMetadata,
   mergeRegistrationPayload,
   resolveMessageTarget,
@@ -30,6 +50,8 @@ import type {
   AgentMessage,
   AIVideoProcessingState,
   AIVideoQueueItem,
+  BookmarkOrganizerSettings,
+  BookmarkPlan,
   ConnectionStatus,
   ExtensionLogEntry,
   ExtensionLogLevel,
@@ -68,6 +90,31 @@ const AI_VIDEO_PROCESS_ALARM = 'ai_video_process_tick';
 const KEEPALIVE_ALARM = 'fuse_keepalive_tick';
 const KEEPALIVE_PERIOD_MINUTES = 0.5;
 const KEEPALIVE_DIAG_KEY = 'fuse_keepalive_diag';
+/**
+ * Backup boot alarm. Chrome status 14 (kErrorTimeout) fires when a service
+ * worker's first task — script evaluation plus any I/O started from it — does
+ * not finish in time. Native-host launch and localhost relay probes used to
+ * run in that first task and could hang the registration. This alarm re-runs
+ * boot if the setTimeout(0) path is delayed until after install.
+ */
+const BOOT_CONNECT_ALARM = 'fuse_boot_connect';
+const NATIVE_MESSAGE_TIMEOUT_MS = 8000;
+const RELAY_DISCOVERY_BUDGET_MS = 2500;
+
+// Register lifecycle handlers before constructing BackgroundService so Chrome
+// can finish install/activate even if later init I/O is slow.
+try {
+  console.warn('[FuseConnect v7] service worker script evaluating');
+  self.addEventListener('install', () => {
+    void (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
+  });
+  self.addEventListener('activate', (event) => {
+    const claim = (self as unknown as ServiceWorkerGlobalScope).clients.claim();
+    (event as ExtendableEvent).waitUntil(claim);
+  });
+} catch {
+  // ignore — classic-script workers still expose skipWaiting on self in Chrome
+}
 
 class BackgroundService {
   // Connections
@@ -89,12 +136,21 @@ class BackgroundService {
   private autoMasterClock: boolean = true;
   private autoWakePing: boolean = false;
   private relayUrl: string = DEFAULT_NODES.relay;
-  private readonly relayFallbackUrls: string[] = [
-    'ws://127.0.0.1:3000/ws',
-    'ws://127.0.0.1:3001/ws',
-    'ws://127.0.0.1:3010/ws',
-    'ws://127.0.0.1:3100/ws',
-  ];
+  private readonly relayFallbackUrls: string[] = [...RELAY_WS_CANDIDATES];
+  private sidePanelPairs: Map<
+    number,
+    {
+      tabId: number;
+      pageAgentId: string | null;
+      sidePanelAgentId: string | null;
+      a2aEnabled: boolean;
+      channelId: string;
+    }
+  > = new Map();
+  private pendingSidePanelOpen: Map<
+    number,
+    { tabId: number; pairWithPageChat: boolean; openedAt: number }
+  > = new Map();
   private lastAutonomyStartAt: number = 0;
   private lastWakePingAt: Map<string, number> = new Map();
   private channelLastActivityAt: Map<string, number> = new Map();
@@ -145,6 +201,14 @@ class BackgroundService {
   private automationPaused = false;
   private pendingTaskResolve: ((value: any) => void) | null = null;
 
+  // AI Bookmark Organizer
+  private bookmarkBroker: BookmarkRelayBroker = new BookmarkRelayBroker({
+    send: (data) => this.send(data),
+    getAgents: () => Array.from(this.agents.values()),
+    getAgentId: () => this.agentId,
+  });
+  private bookmarkAnalyzeJob: { cancelled: boolean } | null = null;
+
   constructor() {
     this.init().catch((err) => {
       console.error('[FuseConnect v7] Background init failed:', err);
@@ -154,6 +218,10 @@ class BackgroundService {
         this.setupTabLifecycleHandlers();
         this.setupAlarmHandlers();
         this.ensureKeepAliveAlarm();
+        const sidePanelApi = (chrome as { sidePanel?: { setPanelBehavior: Function } }).sidePanel;
+        if (sidePanelApi?.setPanelBehavior) {
+          void sidePanelApi.setPanelBehavior({ openPanelOnActionClick: false });
+        }
       } catch (setupErr) {
         console.error('[FuseConnect v7] Emergency handler setup failed:', setupErr);
       }
@@ -170,6 +238,10 @@ class BackgroundService {
     this.setupTabLifecycleHandlers();
     this.setupAlarmHandlers();
     this.ensureKeepAliveAlarm();
+    const sidePanelApi = (chrome as { sidePanel?: { setPanelBehavior: Function } }).sidePanel;
+    if (sidePanelApi?.setPanelBehavior) {
+      void sidePanelApi.setPanelBehavior({ openPanelOnActionClick: false });
+    }
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
@@ -177,6 +249,12 @@ class BackgroundService {
 
     // Load saved state
     await this.loadSavedState();
+
+    // Bootstrap bookmark real-time auto-file listener (off unless the user opted in).
+    bookmarkSettingsService
+      .getSettings()
+      .then((settings) => this.syncBookmarkRealtimeListener(settings))
+      .catch((err) => console.warn('[FuseConnect v7] Failed to load bookmark settings:', err));
     this.logEvent('extension', 'background_loaded_state', {
       channels: this.channels.size,
       joinedChannels: this.joinedChannels.size,
@@ -238,7 +316,7 @@ class BackgroundService {
     const discoveredRelayUrl = await this.discoverRelayUrl(this.relayUrl);
 
     if (discoveredRelayUrl) {
-      this.relayUrl = discoveredRelayUrl;
+      this.persistDiscoveredRelayUrl(discoveredRelayUrl);
       this.connectToNode('relay', this.relayUrl);
       return;
     }
@@ -282,7 +360,7 @@ class BackgroundService {
             : this.relayUrl;
         const discoveredAfterStart = await this.discoverRelayUrl(preferredUrl);
         if (discoveredAfterStart) {
-          this.relayUrl = discoveredAfterStart;
+          this.persistDiscoveredRelayUrl(discoveredAfterStart);
         }
         this.connectToNode('relay', this.relayUrl);
         this.ensureAutonomousServices('relay_auto_bootstrap');
@@ -332,7 +410,7 @@ class BackgroundService {
     try {
       const response = await fetch(this.relayHealthUrl(relayUrl), {
         method: 'GET',
-        signal: AbortSignal.timeout(2000),
+        signal: AbortSignal.timeout(800),
       });
       if (!response.ok) {
         return false;
@@ -369,8 +447,46 @@ class BackgroundService {
     return relayUrl.replace(/^ws:/, 'http:').replace(/^wss:/, 'https:').replace(/\/ws$/, '/health');
   }
 
-  private buildRelayCandidates(preferred?: string): string[] {
-    const candidates = [preferred, this.relayUrl, DEFAULT_NODES.relay, ...this.relayFallbackUrls];
+  private persistDiscoveredRelayUrl(url: string): void {
+    const normalized = this.normalizeRelayUrl(url);
+    if (!normalized) return;
+    this.relayUrl = normalized;
+    chrome.storage.local.get([STORAGE_KEYS.settings], (result) => {
+      const settings = { ...(result[STORAGE_KEYS.settings] || {}) };
+      if (settings.relayUrl === normalized) return;
+      settings.relayUrl = normalized;
+      chrome.storage.local.set({ [STORAGE_KEYS.settings]: settings });
+    });
+  }
+
+  private async queryNativeRelayPorts(): Promise<number[]> {
+    if (this.nativeHostUnavailable) return [];
+    try {
+      const response = await this.sendNativeMessage({ action: 'ports' });
+      const running = Array.isArray(response?.running) ? response.running : [];
+      const discovery = Array.isArray(response?.discoveryPorts) ? response.discoveryPorts : [];
+      const inspectedReady = Array.isArray(response?.inspected)
+        ? response.inspected.filter((entry: { ready?: boolean; port?: number }) => entry?.ready).map(
+            (entry: { port?: number }) => entry.port
+          )
+        : [];
+      return [...running, ...inspectedReady, ...discovery]
+        .map((value) => Number(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+    } catch {
+      return [];
+    }
+  }
+
+  private buildRelayCandidates(preferred?: string, extraPorts: number[] = []): string[] {
+    const extraUrls = extraPorts.map((port) => relayWsUrlForPort(port));
+    const candidates = [
+      preferred,
+      this.relayUrl,
+      DEFAULT_NODES.relay,
+      ...extraUrls,
+      ...this.relayFallbackUrls,
+    ];
     const normalized: string[] = [];
     for (const candidate of candidates) {
       const resolved = this.normalizeRelayUrl(candidate);
@@ -381,9 +497,24 @@ class BackgroundService {
   }
 
   private async discoverRelayUrl(preferred?: string): Promise<string | null> {
-    const candidates = this.buildRelayCandidates(preferred);
-    for (const candidate of candidates) {
-      if (await this.checkRelayHealth(candidate)) {
+    const nativePortsPromise = this.queryNativeRelayPorts();
+    const localCandidates = this.buildRelayCandidates(preferred);
+    const deadline = Date.now() + RELAY_DISCOVERY_BUDGET_MS;
+    for (const candidate of localCandidates) {
+      if (Date.now() > deadline) break;
+      if (!(await this.checkRelayHealth(candidate))) continue;
+      const remaining = Math.max(250, deadline - Date.now());
+      if (await this.probeRelaySocket(candidate, remaining)) {
+        return candidate;
+      }
+    }
+    const nativePorts = await nativePortsPromise;
+    const extraCandidates = this.buildRelayCandidates(preferred, nativePorts).filter(
+      (url) => !localCandidates.includes(url)
+    );
+    for (const candidate of extraCandidates) {
+      if (!(await this.checkRelayHealth(candidate))) continue;
+      if (await this.probeRelaySocket(candidate, 1000)) {
         return candidate;
       }
     }
@@ -757,6 +888,356 @@ class BackgroundService {
     };
   }
 
+  private agentEdgeKind(agent: Agent): 'page' | 'side-panel' | 'other' {
+    const metaKind = String(agent.metadata?.edgeKind || '');
+    if (metaKind === 'side-panel' || String(agent.id).startsWith('side-panel-agent-')) {
+      return 'side-panel';
+    }
+    if (metaKind === 'page' || String(agent.id).startsWith('page-agent-')) {
+      return 'page';
+    }
+    return 'other';
+  }
+
+  private findTabAgent(tabId: number, kind: 'page' | 'side-panel'): Agent | null {
+    for (const agent of this.agents.values()) {
+      if (Number(agent.metadata?.tabId) !== tabId) continue;
+      if (this.agentEdgeKind(agent) === kind) return agent;
+    }
+    return null;
+  }
+
+  private findA2APairForAgent(agentId: string) {
+    for (const pair of this.sidePanelPairs.values()) {
+      if (pair.pageAgentId === agentId || pair.sidePanelAgentId === agentId) return pair;
+    }
+    return null;
+  }
+
+  private a2aPeerId(agentId: string): string | null {
+    const pair = this.findA2APairForAgent(agentId);
+    if (!pair?.a2aEnabled) return null;
+    if (pair.pageAgentId === agentId) return pair.sidePanelAgentId;
+    if (pair.sidePanelAgentId === agentId) return pair.pageAgentId;
+    return null;
+  }
+
+  private joinAgentToChannel(agentId: string, channelId: string): void {
+    const id = String(channelId || '').trim();
+    if (!id) return;
+    const agent = this.agents.get(agentId);
+    if (!agent) return;
+    if (!Array.isArray(agent.channels)) agent.channels = [];
+    if (!agent.channels.includes(id)) agent.channels.push(id);
+    if (this.primaryConnection?.readyState !== WebSocket.OPEN) return;
+    const joinMessage: ProtocolMessage = {
+      id: crypto.randomUUID(),
+      type: 'CHANNEL_JOIN',
+      timestamp: Date.now(),
+      source: agentId,
+      payload: { channelId: id },
+    };
+    this.primaryConnection.send(JSON.stringify(joinMessage));
+  }
+
+  private upsertSidePanelPair(
+    tabId: number,
+    patch: Partial<{
+      pageAgentId: string | null;
+      sidePanelAgentId: string | null;
+      a2aEnabled: boolean;
+    }>
+  ) {
+    const existing = this.sidePanelPairs.get(tabId);
+    const next = {
+      tabId,
+      pageAgentId: patch.pageAgentId !== undefined ? patch.pageAgentId : existing?.pageAgentId || null,
+      sidePanelAgentId:
+        patch.sidePanelAgentId !== undefined
+          ? patch.sidePanelAgentId
+          : existing?.sidePanelAgentId || null,
+      a2aEnabled: patch.a2aEnabled !== undefined ? patch.a2aEnabled : existing?.a2aEnabled ?? true,
+      channelId: a2aChannelIdForTab(tabId),
+    };
+    this.sidePanelPairs.set(tabId, next);
+    if (next.a2aEnabled && next.pageAgentId && next.sidePanelAgentId) {
+      if (!this.channels.has(next.channelId)) {
+        this.channels.set(next.channelId, {
+          id: next.channelId,
+          name: `A2A Tab ${tabId}`,
+          description: 'Direct side-panel ↔ page-chat WebSocket route',
+          isPrivate: true,
+          createdAt: Date.now(),
+          createdBy: this.agentId,
+          members: [next.pageAgentId, next.sidePanelAgentId],
+        });
+      }
+      this.joinAgentToChannel(next.pageAgentId, next.channelId);
+      this.joinAgentToChannel(next.sidePanelAgentId, next.channelId);
+    }
+    return next;
+  }
+
+  private unregisterTabEdgeAgents(tabId: number): void {
+    const toRemove: string[] = [];
+    for (const [id, agent] of this.agents) {
+      if (Number(agent.metadata?.tabId) === tabId && this.agentEdgeKind(agent) !== 'other') {
+        toRemove.push(id);
+      }
+    }
+    for (const id of toRemove) {
+      this.agents.delete(id);
+      if (this.primaryConnection?.readyState === WebSocket.OPEN) {
+        this.primaryConnection.send(
+          JSON.stringify({
+            id: crypto.randomUUID(),
+            type: 'AGENT_UNREGISTER',
+            timestamp: Date.now(),
+            source: this.agentId,
+            payload: { agentId: id },
+          })
+        );
+      }
+    }
+    this.sidePanelPairs.delete(tabId);
+    this.pendingSidePanelOpen.delete(tabId);
+    if (toRemove.length > 0) {
+      this.broadcastToTabs({
+        type: 'AGENTS_UPDATE',
+        agents: Array.from(this.agents.values()),
+      });
+    }
+  }
+
+  private registerSidePanelAgent(
+    id: string,
+    name: string,
+    platform: string,
+    tabId: number
+  ): Agent {
+    const identity = buildSidePanelAgentIdentity(id, platform, tabId);
+    const agent: Agent = {
+      id,
+      name,
+      platform: 'browser-side-panel',
+      status: 'active',
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      canonicalEntityId: identity.canonicalEntityId,
+      idNumber: identity.idNumber,
+      aliases: identity.aliases,
+      daccRole: identity.daccRole,
+      correlationId: identity.correlationId,
+      mcid: identity.mcid,
+      capabilities: ['side-panel-chat', 'a2a-ws'],
+      channels: [],
+      metadata: {
+        ...enrichOutboundMetadata(identity, {
+          senderId: id,
+          platform,
+          extra: {
+            eventType: 'side_panel_agent_registered',
+            edgeKind: 'side-panel',
+          },
+        }),
+        node: {
+          type: 'browser-side-panel',
+          platform,
+        },
+        aliases: identity.aliases,
+        tabId,
+        edgeKind: 'side-panel',
+      },
+      lastSeen: Date.now(),
+    };
+
+    this.agents.set(id, agent);
+
+    if (this.primaryConnection?.readyState === WebSocket.OPEN) {
+      const regMessage: ProtocolMessage = {
+        id: crypto.randomUUID(),
+        type: 'AGENT_REGISTER',
+        timestamp: Date.now(),
+        source: this.agentId,
+        payload: { agent },
+      };
+      this.primaryConnection.send(JSON.stringify(regMessage));
+      for (const channelId of this.joinedChannels) {
+        this.joinAgentToChannel(id, channelId);
+      }
+    } else {
+      this.pendingPageAgents.push(agent);
+    }
+
+    this.broadcastToTabs({
+      type: 'AGENTS_UPDATE',
+      agents: Array.from(this.agents.values()),
+    });
+    this.notifyPopup({
+      type: 'AGENTS_UPDATE',
+      agents: Array.from(this.agents.values()),
+    });
+    this.sendActivityEvent('side_panel_agent_registered', {
+      sidePanelAgentId: id,
+      tabId,
+      platform,
+      idNumber: identity.idNumber,
+    });
+    return agent;
+  }
+
+  private platformLabelFromHostname(hostname: string): string {
+    if (hostname.includes('gemini.google')) return 'Gemini';
+    if (hostname.includes('cursor.com') || hostname.includes('cursor.sh')) return 'Cursor';
+    if (hostname.includes('openai.com') || hostname.includes('chatgpt.com')) return 'ChatGPT';
+    if (hostname.includes('claude.ai')) return 'Claude';
+    if (hostname.includes('perplexity.ai')) return 'Perplexity';
+    if (hostname.includes('kimi.com') || hostname.includes('moonshot.cn')) return 'Kimi';
+    if (hostname.includes('qwen.ai')) return 'Qwen';
+    if (hostname.includes('z.ai') || hostname.includes('chatglm')) return 'GLM';
+    return hostname;
+  }
+
+  private async resolveRequestTabId(
+    sender: chrome.runtime.MessageSender,
+    message: { tabId?: unknown }
+  ): Promise<number | null> {
+    if (sender.tab?.id) return sender.tab.id;
+    const requested = Number(message.tabId);
+    if (Number.isInteger(requested) && requested > 0) return requested;
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    return tab?.id ?? null;
+  }
+
+  private async buildGetStatePayload(
+    sender: chrome.runtime.MessageSender,
+    message: { tabId?: unknown; surface?: unknown }
+  ): Promise<Record<string, unknown>> {
+    const tabId = await this.resolveRequestTabId(sender, message);
+    const tabPageAgent = tabId ? this.findTabAgent(tabId, 'page') : null;
+    const tabSidePanelAgent = tabId ? this.findTabAgent(tabId, 'side-panel') : null;
+    const sidePanelPair = tabId ? this.sidePanelPairs.get(tabId) || null : null;
+    const surface = String(message.surface || '');
+    const defaultAgentId =
+      surface === 'side-panel'
+        ? tabSidePanelAgent?.id || this.agentId
+        : tabPageAgent?.id || this.agentId;
+
+    return {
+      connectionStatus:
+        this.primaryConnection?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected',
+      agents: Array.from(this.agents.values()),
+      channels: Array.from(this.channels.values()),
+      joinedChannels: Array.from(this.joinedChannels),
+      selectedChannel: this.getTabActiveChannel(tabId ?? undefined),
+      tabId,
+      nodes: Object.fromEntries(this.nodeStatus),
+      agentId: defaultAgentId,
+      browserAgentId: this.agentId,
+      pageAgentId: tabPageAgent?.id || null,
+      pageAgent: tabPageAgent,
+      sidePanelAgentId: tabSidePanelAgent?.id || null,
+      sidePanelAgent: tabSidePanelAgent,
+      sidePanelPair,
+      browserIdentity: this.browserIdentity,
+      relayUrl: this.relayUrl,
+      autoConnect: this.autoConnect,
+      autoMonitor: this.autoMonitor,
+      autoMasterClock: this.autoMasterClock,
+      autoWakePing: this.autoWakePing,
+      pausedChannels: this.getTabPausedChannels(tabId ?? undefined),
+    };
+  }
+
+  private async handleSidePanelOpened(message: {
+    tabId?: unknown;
+    pairWithPageChat?: unknown;
+  }): Promise<Record<string, unknown>> {
+    let tabId = Number(message.tabId);
+    if (!Number.isInteger(tabId) || tabId <= 0) {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      tabId = tab?.id || 0;
+    }
+    if (!tabId) return { success: false, error: 'No active tab' };
+    this.pendingSidePanelOpen.set(tabId, {
+      tabId,
+      pairWithPageChat: message.pairWithPageChat !== false,
+      openedAt: Date.now(),
+    });
+    return { success: true, tabId };
+  }
+
+  private async handleSidePanelReady(message: {
+    tabId?: unknown;
+    pairWithPageChat?: unknown;
+  }): Promise<Record<string, unknown>> {
+    let tabId = Number(message.tabId);
+    if (!Number.isInteger(tabId) || tabId <= 0) {
+      let latest: { tabId: number; pairWithPageChat: boolean; openedAt: number } | null = null;
+      for (const pending of this.pendingSidePanelOpen.values()) {
+        if (!latest || pending.openedAt > latest.openedAt) latest = pending;
+      }
+      tabId = latest?.tabId || 0;
+    }
+    if (!tabId) {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      tabId = tab?.id || 0;
+    }
+    if (!tabId) return { success: false, error: 'Cannot resolve tab for side panel' };
+
+    const pending = this.pendingSidePanelOpen.get(tabId);
+    const pairWithPageChat =
+      message.pairWithPageChat !== undefined
+        ? !!message.pairWithPageChat
+        : pending?.pairWithPageChat !== false;
+
+    let hostname = 'page';
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      hostname = tab.url ? new URL(tab.url).hostname : 'page';
+    } catch {
+      hostname = 'page';
+    }
+    const platformName = this.platformLabelFromHostname(hostname);
+
+    let sidePanelAgent = this.findTabAgent(tabId, 'side-panel');
+    if (!sidePanelAgent) {
+      const id = `side-panel-agent-${tabId}-${Math.random().toString(36).substr(2, 5)}`;
+      sidePanelAgent = this.registerSidePanelAgent(
+        id,
+        `Side Panel (${platformName})`,
+        hostname,
+        tabId
+      );
+    }
+
+    const pageAgent = this.findTabAgent(tabId, 'page');
+    const pair = this.upsertSidePanelPair(tabId, {
+      pageAgentId: pageAgent?.id || null,
+      sidePanelAgentId: sidePanelAgent.id,
+      a2aEnabled: pairWithPageChat,
+    });
+    this.pendingSidePanelOpen.delete(tabId);
+    this.notifyPopup({ type: 'SIDE_PANEL_PAIR_UPDATE', pair, sidePanelAgent, pageAgent });
+
+    return {
+      success: true,
+      tabId,
+      agent: sidePanelAgent,
+      agentId: sidePanelAgent.id,
+      pageAgent,
+      pair,
+      connectionStatus:
+        this.primaryConnection?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected',
+      agents: Array.from(this.agents.values()),
+      channels: Array.from(this.channels.values()),
+      joinedChannels: Array.from(this.joinedChannels),
+      selectedChannel: this.getTabActiveChannel(tabId),
+      relayUrl: this.relayUrl,
+      browserAgentId: this.agentId,
+    };
+  }
+
   /**
    * Register a new page agent (for AI chat tabs)
    */
@@ -792,6 +1273,7 @@ class BackgroundService {
         },
         aliases: identity.aliases,
         tabId: tabId, // TRACK TAB ID
+        edgeKind: 'page',
       },
       lastSeen: Date.now(),
     };
@@ -850,6 +1332,9 @@ class BackgroundService {
       platform,
       channels: agent.channels,
     });
+    if (tabId) {
+      this.upsertSidePanelPair(tabId, { pageAgentId: id });
+    }
   }
 
   /**
@@ -1434,6 +1919,13 @@ class BackgroundService {
    * Handle incoming agent message
    */
   private handleAgentMessage(message: AgentMessage): void {
+    // Bookmark-classify replies are request/response, not pub/sub chatter — resolve
+    // any pending BookmarkRelayBroker promise first, before dedup/loop-guard logic
+    // (below) gets a chance to suppress a legitimate reply. We deliberately still
+    // fall through afterwards so broadcastToTabs lets the full-tab manager page
+    // show live progress too.
+    this.bookmarkBroker.resolve(message);
+
     // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
     // Keyed by (from, channel, prefix-of-content). If a source repeats >5 times in 10s, mute 60s.
     // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
@@ -1865,6 +2357,10 @@ class BackgroundService {
         void this.processAIVideoTick();
       } else if (alarm.name === KEEPALIVE_ALARM) {
         this.onKeepAliveTick();
+      } else if (alarm.name === BOOT_CONNECT_ALARM) {
+        void this.init().catch((err) => {
+          console.error('[FuseConnect v7] Boot alarm init failed:', err);
+        });
       }
     });
   }
@@ -2755,6 +3251,7 @@ class BackgroundService {
       this.readyContentTabs.delete(tabId);
       this.unreachableTabs.delete(tabId);
       this.broadcastFailLogAt.delete(tabId);
+      this.unregisterTabEdgeAgents(tabId);
       this.logEvent('browser.tabs', 'removed', { tabId });
     });
   }
@@ -2809,6 +3306,19 @@ class BackgroundService {
 
     console.debug('[NativeMessaging] Sending:', message.action, message.service || '');
     return new Promise((resolve) => {
+      let settled = false;
+      const finish = (value: Record<string, unknown>) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(value);
+      };
+      const timer = setTimeout(() => {
+        this.nativeHostBackoffUntil = Date.now() + 60000;
+        console.warn('[NativeMessaging] Timed out waiting for native host');
+        finish({ error: 'Native host timed out', unavailable: true });
+      }, NATIVE_MESSAGE_TIMEOUT_MS);
+
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
           if (chrome.runtime.lastError) {
@@ -2842,16 +3352,16 @@ class BackgroundService {
               console.warn('[NativeMessaging] Error:', errMsg);
             }
 
-            resolve({ error: errMsg, unavailable: hostMissing || hostExited });
+            finish({ error: errMsg, unavailable: hostMissing || hostExited });
           } else {
             // Successful response clears the one-shot warning latch for future sessions.
             this.nativeHostMissingLogged = false;
-            resolve(response || {});
+            finish((response as Record<string, unknown>) || {});
           }
         });
       } catch (e) {
         console.warn('[NativeMessaging] Exception:', e);
-        resolve({ error: 'Native messaging not available' });
+        finish({ error: 'Native messaging not available' });
       }
     });
   }
@@ -2981,6 +3491,151 @@ class BackgroundService {
     });
   }
 
+  // ============================================
+  // AI Bookmark Organizer
+  // ============================================
+
+  private bookmarkBrokerOpts(settings: BookmarkOrganizerSettings): BookmarkRequestOptions {
+    return {
+      targetAgentId: settings.targetAgentId || undefined,
+      channel: settings.targetChannel || undefined,
+    };
+  }
+
+  /**
+   * Two-phase analyze: generate a unified folder taxonomy, then classify every
+   * non-private bookmark into it in resumable batches, persisting progress after
+   * each batch so a mid-run interruption leaves a usable partial plan rather than
+   * a hung UI. Zero-folder mode skips straight to "leave everything in place".
+   */
+  private async runBookmarkAnalyze(
+    options: { granularity?: BookmarkPlan['granularity'] } = {}
+  ): Promise<BookmarkPlan> {
+    this.bookmarkAnalyzeJob = { cancelled: false };
+    const job = this.bookmarkAnalyzeJob;
+
+    try {
+      const settings = await bookmarkSettingsService.getSettings();
+      const granularity = options.granularity || settings.granularity;
+      const brokerOpts = this.bookmarkBrokerOpts(settings);
+
+      const allBookmarks = await bookmarkStoreService.readAllBookmarks();
+      const { included, excluded } = filterBookmarks(allBookmarks, settings.privateDomains);
+      const duplicates = computeDuplicates(allBookmarks);
+
+      let taxonomy;
+      let items;
+
+      if (settings.zeroFolderMode) {
+        taxonomy = { id: `tax-${Date.now()}`, generatedAt: Date.now(), granularity, folders: [] };
+        items = zeroFolderPlanItems(included);
+      } else {
+        taxonomy = await generateTaxonomy(included, granularity, this.bookmarkBroker, brokerOpts);
+        items = await classifyAll({
+          bookmarks: included,
+          taxonomy,
+          broker: this.bookmarkBroker,
+          brokerOpts,
+          batchDelayMs: TIMINGS.bookmarkBatchDelay,
+          shouldCancel: () => job.cancelled,
+          onProgress: ({ items: partialItems, cursor, totalWithOffset }) => {
+            this.notifyPopup({
+              type: 'BOOKMARKS_ANALYZE_PROGRESS',
+              data: { cursor, total: totalWithOffset },
+            });
+            void bookmarkStoreService.savePlan({
+              id: taxonomy!.id,
+              generatedAt: taxonomy!.generatedAt,
+              granularity,
+              taxonomy: taxonomy!,
+              items: partialItems,
+              duplicates,
+              complete: false,
+              cursor,
+            });
+          },
+        });
+      }
+
+      // Private-domain bookmarks are always left exactly where they are — they're
+      // never sent to the relay in the first place, and never proposed a move.
+      for (const ex of excluded) {
+        items.push({
+          bookmarkId: ex.id,
+          title: ex.title,
+          url: ex.url,
+          currentPath: ex.path,
+          selected: false,
+        });
+      }
+
+      const plan: BookmarkPlan = {
+        id: taxonomy.id,
+        generatedAt: taxonomy.generatedAt,
+        granularity,
+        taxonomy,
+        items,
+        duplicates,
+        complete: !job.cancelled,
+        cursor: items.length,
+      };
+
+      await bookmarkStoreService.savePlan(plan);
+
+      const tagRecords = items
+        .filter((i) => (i.tags && i.tags.length) || i.summary)
+        .map((i) => ({
+          bookmarkId: i.bookmarkId,
+          tags: i.tags ?? [],
+          summary: i.summary,
+          updatedAt: Date.now(),
+        }));
+      if (tagRecords.length) await bookmarkTaggingService.saveRecords(tagRecords);
+
+      return plan;
+    } finally {
+      if (this.bookmarkAnalyzeJob === job) this.bookmarkAnalyzeJob = null;
+    }
+  }
+
+  private async applyBookmarkPlan(
+    planFromRequest?: BookmarkPlan
+  ): Promise<{ moved: number; skipped: number }> {
+    const plan = planFromRequest || (await bookmarkStoreService.getStoredPlan());
+    if (!plan) throw new Error('No bookmark plan to apply — run Analyze first.');
+    await bookmarkStoreService.snapshotBeforeApply(plan);
+    return bookmarkStoreService.applyPlan(plan);
+  }
+
+  private async runBookmarkSearch(query: string) {
+    const settings = await bookmarkSettingsService.getSettings();
+    const allBookmarks = await bookmarkStoreService.readAllBookmarks();
+    const { included } = filterBookmarks(allBookmarks, settings.privateDomains);
+    return bookmarkTaggingService.search(query, included);
+  }
+
+  /**
+   * Always detach-then-reattach so a settings change (new target agent/channel,
+   * updated private-domains list) is picked up immediately rather than only on the
+   * next full toggle — attach() alone is a no-op while a listener is already live.
+   */
+  private syncBookmarkRealtimeListener(settings: BookmarkOrganizerSettings): void {
+    bookmarkRealtimeService.detach();
+    if (!settings.realtimeEnabled) return;
+
+    bookmarkRealtimeService.attach({
+      broker: this.bookmarkBroker,
+      getBrokerOpts: () => this.bookmarkBrokerOpts(settings),
+      getPrivateDomains: () => settings.privateDomains,
+      onFiled: (bookmarkId, path) => {
+        this.notifyPopup({ type: 'BOOKMARKS_REALTIME_FILED', data: { bookmarkId, path } });
+      },
+      onError: (err) => {
+        console.warn('[FuseConnect v7] Bookmark realtime classify failed:', err);
+      },
+    });
+  }
+
   /**
    * Setup message handlers from popup/content
    */
@@ -3037,41 +3692,12 @@ class BackgroundService {
           return true; // Async response
 
         case 'GET_STATE': {
-          // Find the page agent for this tab if it exists
-          let tabPageAgentId = null;
-          let tabPageAgent: Agent | null = null;
-          if (sender.tab?.id) {
-            for (const [id, agent] of this.agents) {
-              if (agent.metadata?.tabId === sender.tab.id) {
-                tabPageAgentId = id;
-                tabPageAgent = agent;
-                break;
-              }
-            }
-          }
-
-          sendResponse({
-            connectionStatus:
-              this.primaryConnection?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected',
-            agents: Array.from(this.agents.values()),
-            channels: Array.from(this.channels.values()),
-            joinedChannels: Array.from(this.joinedChannels),
-            selectedChannel: this.getTabActiveChannel(sender.tab?.id),
-            tabId: sender.tab?.id ?? null,
-            nodes: Object.fromEntries(this.nodeStatus),
-            agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
-            browserAgentId: this.agentId,
-            pageAgentId: tabPageAgentId,
-            pageAgent: tabPageAgent,
-            browserIdentity: this.browserIdentity,
-            relayUrl: this.relayUrl,
-            autoConnect: this.autoConnect,
-            autoMonitor: this.autoMonitor,
-            autoMasterClock: this.autoMasterClock,
-            autoWakePing: this.autoWakePing,
-            pausedChannels: this.getTabPausedChannels(sender.tab?.id),
-          });
-          break;
+          void this.buildGetStatePayload(sender, message)
+            .then(sendResponse)
+            .catch((error) => {
+              sendResponse({ success: false, error: String(error?.message || error) });
+            });
+          return true;
         }
 
         case 'GET_EVENT_LOGS': {
@@ -3176,7 +3802,7 @@ class BackgroundService {
                     : this.relayUrl;
                 const discoveredAfterStart = await this.discoverRelayUrl(preferredUrl);
                 if (discoveredAfterStart) {
-                  this.relayUrl = discoveredAfterStart;
+                  this.persistDiscoveredRelayUrl(discoveredAfterStart);
                 }
                 this.connectToNode('relay', this.relayUrl);
                 this.ensureAutonomousServices('relay_started');
@@ -3448,6 +4074,86 @@ class BackgroundService {
           chrome.storage.local.set(message.data?.items || {}, () => {
             sendResponse({ success: true, data: true });
           });
+          return true;
+
+        // ---- AI Bookmark Organizer ----
+
+        case 'BOOKMARKS_GET_SUMMARY':
+          bookmarkStoreService
+            .getSummary()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_FIND_DUPLICATES':
+          bookmarkStoreService
+            .findDuplicates()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_GET_SETTINGS':
+          bookmarkSettingsService
+            .getSettings()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SET_SETTINGS':
+          bookmarkSettingsService
+            .setSettings(message.data?.settings || {})
+            .then((data) => {
+              sendResponse({ success: true, data });
+              this.syncBookmarkRealtimeListener(data);
+            })
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SET_REALTIME':
+          bookmarkSettingsService
+            .setSettings({ realtimeEnabled: !!message.data?.enabled })
+            .then((data) => {
+              sendResponse({ success: true, data });
+              this.syncBookmarkRealtimeListener(data);
+            })
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_ANALYZE':
+          this.runBookmarkAnalyze(message.data || {})
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_CANCEL_ANALYZE':
+          if (this.bookmarkAnalyzeJob) this.bookmarkAnalyzeJob.cancelled = true;
+          sendResponse({ success: true });
+          break;
+
+        case 'BOOKMARKS_GET_PLAN':
+          bookmarkStoreService
+            .getStoredPlan()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_APPLY_PLAN':
+          this.applyBookmarkPlan(message.data?.plan)
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_UNDO_LAST':
+          bookmarkStoreService
+            .undoLast()
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
+          return true;
+
+        case 'BOOKMARKS_SEARCH':
+          this.runBookmarkSearch(String(message.data?.query || ''))
+            .then((data) => sendResponse({ success: true, data }))
+            .catch((error) => sendResponse({ success: false, error: error.message }));
           return true;
 
         case 'AI_STUDIO_READY':
@@ -4027,6 +4733,32 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
+        case 'SIDE_PANEL_OPENED':
+          void this.handleSidePanelOpened(message)
+            .then(sendResponse)
+            .catch((error) => sendResponse({ success: false, error: String(error?.message || error) }));
+          return true;
+
+        case 'SIDE_PANEL_READY':
+          void this.handleSidePanelReady(message)
+            .then(sendResponse)
+            .catch((error) => sendResponse({ success: false, error: String(error?.message || error) }));
+          return true;
+
+        case 'SET_SIDE_PANEL_PAIRING': {
+          const tabId = Number(message.tabId);
+          if (!Number.isInteger(tabId) || tabId <= 0) {
+            sendResponse({ success: false, error: 'tabId required' });
+            break;
+          }
+          const pair = this.upsertSidePanelPair(tabId, {
+            a2aEnabled: message.a2aEnabled !== false,
+          });
+          this.notifyPopup({ type: 'SIDE_PANEL_PAIR_UPDATE', pair });
+          sendResponse({ success: true, pair });
+          break;
+        }
+
         case 'BROADCAST_MESSAGE':
           // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
           // can identify messages that originated from themselves and avoid self-injection loops.
@@ -4044,44 +4776,61 @@ Format as JSON array:
               Array.from(this.agents.values())
             );
 
+            let to = resolved.to;
+            let addressedAgentId = resolved.addressedAgentId;
+            let addressedHandle = resolved.addressedHandle;
+            let channel = message.channel || null;
+            if (to === 'broadcast') {
+              const peerId = this.a2aPeerId(senderId);
+              if (peerId) {
+                to = peerId;
+                addressedAgentId = peerId;
+                const peer = this.agents.get(peerId);
+                addressedHandle = peer?.operationalHandle || peer?.name || null;
+                const pair = this.findA2APairForAgent(senderId);
+                channel = channel || pair?.channelId || null;
+              }
+            }
+
             const metadata = senderIdentity
               ? enrichOutboundMetadata(senderIdentity, {
-                  channel: message.channel || null,
+                  channel,
                   senderId,
                   extra: {
                     ...(message.metadata || {}),
-                    addressedAgentId: resolved.addressedAgentId,
-                    addressedHandle: resolved.addressedHandle,
+                    addressedAgentId,
+                    addressedHandle,
+                    a2a: to !== 'broadcast' && !!this.findA2APairForAgent(senderId),
                   },
                 })
               : {
                   ...(message.metadata || {}),
-                  addressedAgentId: resolved.addressedAgentId,
-                  addressedHandle: resolved.addressedHandle,
+                  addressedAgentId,
+                  addressedHandle,
                 };
 
-            if (resolved.addressedAgentId) {
+            if (addressedAgentId) {
               console.log('[FuseConnect v7] Addressed message ->', {
-                to: resolved.to,
-                handle: resolved.addressedHandle,
-                channel: message.channel || null,
+                to,
+                handle: addressedHandle,
+                channel,
               });
             }
 
             this.send({
               type: 'MESSAGE_SEND',
-              to: resolved.to,
-              channel: message.channel,
+              to,
+              channel,
               content: resolved.content,
               messageType: 'text',
               metadata, // <-- PRESERVE SENDER INFO
             });
             this.sendActivityEvent('broadcast_message', {
-              channel: message.channel || null,
+              channel: channel || null,
               senderId: senderId || null,
               contentPreview: String(message.content || '').substring(0, 120),
             });
-            sendResponse({ success: true });
+            sendResponse({ success: true, to, channel });
           }
           break;
 
@@ -4505,13 +5254,7 @@ Format as JSON array:
           // 1. Register this tab as a distinct Agent
           if (sender.tab?.id) {
             // REUSE existing agent ID for this tab if it exists
-            let pageAgentId = null;
-            for (const [id, agent] of this.agents) {
-              if (agent.metadata?.tabId === sender.tab.id) {
-                pageAgentId = id;
-                break;
-              }
-            }
+            let pageAgentId = this.findTabAgent(sender.tab.id, 'page')?.id || null;
 
             if (!pageAgentId) {
               pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;

@@ -37,6 +37,21 @@ export const DEFAULT_NODES = {
   tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
 };
 
+/**
+ * Relay listen ports. Must stay aligned with scripts/lib/tnf-relay-port-catalog.cjs
+ * and packages/port-management (preferred 3000, fallbacks 3010/3020/3030).
+ * 3001 is api/backend — never a relay candidate. 3007 is discovery-only.
+ */
+export const RELAY_PREFERRED_PORT = 3000;
+export const RELAY_FALLBACK_PORTS = [3010, 3020, 3030] as const;
+export const RELAY_DISCOVERY_PORTS = [3000, 3010, 3020, 3030, 3007] as const;
+
+export function relayWsUrlForPort(port: number): string {
+  return `ws://127.0.0.1:${Number(port)}/ws`;
+}
+
+export const RELAY_WS_CANDIDATES = RELAY_DISCOVERY_PORTS.map(relayWsUrlForPort);
+
 /** Optional secure local endpoints (requires a TLS-terminating proxy). */
 export const SECURE_LOCAL_NODES = {
   relay: 'wss://127.0.0.1:3000/ws',
@@ -256,6 +271,10 @@ export const STORAGE_KEYS = {
   notifications: 'fuse_notifications',
   knownNodes: 'fuse_known_nodes',
   recentMessages: 'fuse_recent_messages',
+  bookmarkSettings: 'fuse_bookmark_settings',
+  bookmarkPlan: 'fuse_bookmark_plan',
+  bookmarkSnapshot: 'fuse_bookmark_snapshot',
+  bookmarkTags: 'fuse_bookmark_tags',
 };
 
 // ============================================
@@ -300,6 +319,12 @@ export const TIMINGS = {
   pendingRequestCleanup: 300000,
   injectionQueueDelay: 3500,
   cliAgentTimeout: 60000,
+  // How long the bookmark relay broker waits for a matching agent reply before
+  // rejecting the request (Bookmark Genie-style resilience, see requestWithRetry).
+  bookmarkAgentTimeout: 45000,
+  // Pacing delay between classify batches so we don't hammer a relay agent's own
+  // rate limits (mirrors Bookmark Genie's built-in 1s-between-requests behavior).
+  bookmarkBatchDelay: 500,
 };
 
 // ============================================
@@ -346,6 +371,11 @@ export const MESSAGE_TYPES = {
   RESPONSE_DETECTED: 'RESPONSE_DETECTED',
   RESPONSE_COMPLETE: 'RESPONSE_COMPLETE',
   STREAMING_UPDATE: 'STREAMING_UPDATE',
+  OPEN_SIDE_PANEL: 'OPEN_SIDE_PANEL',
+  SIDE_PANEL_OPENED: 'SIDE_PANEL_OPENED',
+  SIDE_PANEL_READY: 'SIDE_PANEL_READY',
+  SET_SIDE_PANEL_PAIRING: 'SET_SIDE_PANEL_PAIRING',
+  SIDE_PANEL_A2A_MESSAGE: 'SIDE_PANEL_A2A_MESSAGE',
 
   // Task orchestration
   TASK_ASSIGN: 'TASK_ASSIGN',
@@ -380,4 +410,18 @@ export const MESSAGE_TYPES = {
   DISCOVER_AGENTS: 'DISCOVER_AGENTS',
   NAVIGATE: 'NAVIGATE',
   TAKE_SCREENSHOT: 'TAKE_SCREENSHOT',
+
+  // AI Bookmark Organizer
+  BOOKMARKS_GET_SUMMARY: 'BOOKMARKS_GET_SUMMARY',
+  BOOKMARKS_FIND_DUPLICATES: 'BOOKMARKS_FIND_DUPLICATES',
+  BOOKMARKS_ANALYZE: 'BOOKMARKS_ANALYZE',
+  BOOKMARKS_ANALYZE_PROGRESS: 'BOOKMARKS_ANALYZE_PROGRESS',
+  BOOKMARKS_CANCEL_ANALYZE: 'BOOKMARKS_CANCEL_ANALYZE',
+  BOOKMARKS_GET_PLAN: 'BOOKMARKS_GET_PLAN',
+  BOOKMARKS_APPLY_PLAN: 'BOOKMARKS_APPLY_PLAN',
+  BOOKMARKS_UNDO_LAST: 'BOOKMARKS_UNDO_LAST',
+  BOOKMARKS_SEARCH: 'BOOKMARKS_SEARCH',
+  BOOKMARKS_SET_REALTIME: 'BOOKMARKS_SET_REALTIME',
+  BOOKMARKS_GET_SETTINGS: 'BOOKMARKS_GET_SETTINGS',
+  BOOKMARKS_SET_SETTINGS: 'BOOKMARKS_SET_SETTINGS',
 } as const;

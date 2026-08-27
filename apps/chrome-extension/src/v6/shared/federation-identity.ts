@@ -260,6 +260,74 @@ export function buildPageAgentIdentity(
   };
 }
 
+export function a2aChannelIdForTab(tabId: number): string {
+  return `a2a-tab-${Number(tabId)}`;
+}
+
+export function buildSidePanelAgentIdentity(
+  sidePanelAgentId: string,
+  platform: string,
+  tabId?: number,
+  sessionLineage?: {
+    cumulativeId?: {
+      id?: string;
+      lineage?: {
+        handoff_packet_id?: string | null;
+        correlation_id?: string;
+      };
+    };
+  } | null
+): FederationIdentityRecord {
+  const provider = platformProvider(platform);
+  const correlationId = crypto.randomUUID();
+  const runtimeSessionId = `${sidePanelAgentId}${tabId ? `-tab-${tabId}` : ''}`;
+  const causationId =
+    sessionLineage?.cumulativeId?.id ||
+    sessionLineage?.cumulativeId?.lineage?.correlation_id ||
+    null;
+  const handoffPacketId = sessionLineage?.cumulativeId?.lineage?.handoff_packet_id || null;
+
+  let canonicalEntityId: string | null = null;
+  try {
+    canonicalEntityId = buildCanonicalEntityId({
+      category: 'AGENT',
+      provider: 'FUSE',
+      name: `${provider}_SIDEPANEL`,
+      instance: tabId ? String(tabId) : '001',
+      scope: 'LOCAL',
+    });
+  } catch {
+    canonicalEntityId = null;
+  }
+
+  const operationalHandle = sidePanelAgentId.replace(/^side-panel-agent-/, 'SIDEPANEL-').toUpperCase();
+
+  return {
+    id: sidePanelAgentId,
+    operationalHandle,
+    runtimeSessionId,
+    canonicalEntityId,
+    idNumber: deterministicIdNumber(sidePanelAgentId),
+    aliases: [
+      sidePanelAgentId,
+      sidePanelAgentId.toLowerCase(),
+      operationalHandle.toLowerCase(),
+      'sidepanel',
+      'side-panel',
+      platform.toLowerCase(),
+      ...(canonicalEntityId ? [canonicalEntityId.toLowerCase()] : []),
+    ],
+    daccRole: 'participant',
+    correlationId,
+    mcid: buildMcidEnvelope({
+      sessionKey: runtimeSessionId,
+      correlationId,
+      causationId,
+      handoffPacketId,
+    }),
+  };
+}
+
 export function buildBrowserAgentIdentity(browserAgentId: string): FederationIdentityRecord {
   const correlationId = crypto.randomUUID();
   let canonicalEntityId: string | null = null;
@@ -412,7 +480,9 @@ export function resolveMessageTarget(content: string, agents: Agent[]): Resolved
     }
   }
 
-  const pageAgentMatch = working.match(/@((?:page-agent|browser-agent|agent|AGENT)-[\w-]+)/i);
+  const pageAgentMatch = working.match(
+    /@((?:page-agent|side-panel-agent|browser-agent|agent|AGENT)-[\w-]+)/i
+  );
   if (pageAgentMatch) {
     const agent = findAgentByAlias(agents, pageAgentMatch[1]);
     if (agent) {
