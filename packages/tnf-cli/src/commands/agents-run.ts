@@ -31,6 +31,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 import {
   AGENT_BROWSER_OPERATIONS,
   type AgentBrowserOperation,
@@ -38,7 +39,6 @@ import {
   runAgentBrowser,
 } from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
-import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -651,31 +651,36 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
       try {
-        const { LocalSubdirectorAuthorityService } = require('../services/LocalSubdirectorAuthorityService.js');
-        const auth = new LocalSubdirectorAuthorityService(cwd); // using cwd or repoRoot roughly
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('../services/LocalSubdirectorAuthorityService.js');
+        const auth = new LocalSubdirectorAuthorityService(cwd);
         const authConfig = auth.getConfig();
-        const role = process.env.AGENT_ROLE || 'local-subdirector'; // default per requirement
-        const isSubdirector = role === 'local-subdirector';
-        
+
+        const isSubdirector = auth.verifyLocalSubdirectorIdentity(
+          process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || ''
+        );
         let authorized = true;
         let denyReason = '';
+        let authoritySource = '';
 
         if (isSubdirector) {
-           if (!authConfig.autonomyEnabled) {
-              authorized = false;
-              denyReason = 'Fleet autonomy is paused.';
-           } else if (!auth.isAuthorized(name) && !auth.isAuthorized('all')) {
-              authorized = false;
-              denyReason = `Capability '${name}' is not granted to Local Subdirector.`;
-           }
+          authoritySource = 'LocalSubdirector (Verified Identity)';
+          if (!authConfig.autonomyEnabled) {
+            authorized = false;
+            denyReason = 'Fleet autonomy is paused.';
+          } else if (!auth.isAuthorized(name) && !auth.isAuthorized('all')) {
+            authorized = false;
+            denyReason = `Capability '${name}' is not granted to Local Subdirector.`;
+          }
         } else {
-           // Subordinate agent
-           const delegatedStr = process.env.TNF_DELEGATED_AUTHORITY || '';
-           const delegated = delegatedStr ? delegatedStr.split(',') : [];
-           if (!delegated.includes(name) && !delegated.includes('all')) {
-              authorized = false;
-              denyReason = `Subordinate agent lacks delegated authority for '${name}'.`;
-           }
+          // Subordinate agent uses cryptographically signed delegation
+          authoritySource = 'Delegated Subordinate';
+          const delegationToken = process.env.TNF_DELEGATED_AUTHORITY_TOKEN || '';
+          if (!auth.verifyDelegation(delegationToken, name)) {
+            authorized = false;
+            denyReason = `Subordinate agent lacks valid cryptographically signed delegated authority for '${name}'.`;
+          }
         }
 
         // Plan/ask / --tools none: refuse tool execution even if the model asks.
@@ -699,6 +704,14 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
           typeof response === 'string' ? truncate(response, 240) : summarizeObject(response),
         durationMs,
         ok,
+        receipt: {
+          actor: process.env.AGENT_NAME || 'tnf-subordinate',
+          realm: 'local',
+          requestedCapability: name,
+          authorized: authorized,
+          authoritySource: authoritySource,
+          denyReason: denyReason,
+        },
       });
       return response;
     },
