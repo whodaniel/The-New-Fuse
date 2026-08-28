@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export type ActionReceipt = {
-  schema: 'tnf/action-receipt/0.1';
+  schema: 'tnf/action-receipt/0.2';
   id: string;
   ts: string;
   intent: string;
@@ -21,6 +21,10 @@ export type ActionReceipt = {
   durationMs: number;
   error?: string;
   inputsHash: string;
+  actor?: string;
+  localRealm?: string;
+  authorityGrant?: string[];
+  delegatedAuthority?: string[];
 };
 
 export type EscalationState = {
@@ -140,10 +144,14 @@ export function recordCommandOutcome(
     ok: boolean;
     durationMs: number;
     error?: string;
+    actor?: string;
+    localRealm?: string;
+    authorityGrant?: string[];
+    delegatedAuthority?: string[];
   }
 ): ActionReceipt {
   const receipt: ActionReceipt = {
-    schema: 'tnf/action-receipt/0.1',
+    schema: 'tnf/action-receipt/0.2',
     id: crypto.randomUUID(),
     ts: new Date().toISOString(),
     intent: input.intent,
@@ -154,6 +162,10 @@ export function recordCommandOutcome(
     durationMs: input.durationMs,
     error: input.error,
     inputsHash: hashInputs(input.cmd, input.args),
+    actor: input.actor,
+    localRealm: input.localRealm,
+    authorityGrant: input.authorityGrant,
+    delegatedAuthority: input.delegatedAuthority,
   };
   appendActionReceipt(repoRoot, receipt);
 

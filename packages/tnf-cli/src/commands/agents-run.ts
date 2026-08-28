@@ -651,9 +651,38 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
       try {
+        const { LocalSubdirectorAuthorityService } = require('../services/LocalSubdirectorAuthorityService.js');
+        const auth = new LocalSubdirectorAuthorityService(cwd); // using cwd or repoRoot roughly
+        const authConfig = auth.getConfig();
+        const role = process.env.AGENT_ROLE || 'local-subdirector'; // default per requirement
+        const isSubdirector = role === 'local-subdirector';
+        
+        let authorized = true;
+        let denyReason = '';
+
+        if (isSubdirector) {
+           if (!authConfig.autonomyEnabled) {
+              authorized = false;
+              denyReason = 'Fleet autonomy is paused.';
+           } else if (!auth.isAuthorized(name) && !auth.isAuthorized('all')) {
+              authorized = false;
+              denyReason = `Capability '${name}' is not granted to Local Subdirector.`;
+           }
+        } else {
+           // Subordinate agent
+           const delegatedStr = process.env.TNF_DELEGATED_AUTHORITY || '';
+           const delegated = delegatedStr ? delegatedStr.split(',') : [];
+           if (!delegated.includes(name) && !delegated.includes('all')) {
+              authorized = false;
+              denyReason = `Subordinate agent lacks delegated authority for '${name}'.`;
+           }
+        }
+
         // Plan/ask / --tools none: refuse tool execution even if the model asks.
         if (Array.isArray(enabledTools) && enabledTools.length === 0) {
           response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
+        } else if (!authorized) {
+          response = { ok: false, error: `Authority Denied: ${denyReason}` };
         } else {
           response = await executeBuiltinTool(name, args, { cwd, quiet: !!opts.quiet });
         }

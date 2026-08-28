@@ -104,6 +104,7 @@ import {
   tallyFullAutoRuns,
 } from './utils/full-auto-cycle.js';
 import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
+import { loadHomeCredentials } from './utils/load-home-credentials.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -248,6 +249,10 @@ function loadLocalEnv(rootDir: string): void {
     if (!value || exportedKeys.has(key) || process.env[key]) continue;
     process.env[key] = value;
   }
+
+  // Machine-local keys (OpenRouter, etc.) after repo files so NVIDIA in
+  // .tnf.local.env / the shell is never overwritten.
+  loadHomeCredentials();
 }
 
 loadLocalEnv(repoRoot);
@@ -287,6 +292,19 @@ async function runCommand(
   }
   const started = Date.now();
   const cwd = options.cwd || repoRoot;
+  
+  let authConfig: any = null;
+  try {
+    const { LocalSubdirectorAuthorityService } = await import('./services/LocalSubdirectorAuthorityService.js');
+    authConfig = new LocalSubdirectorAuthorityService(repoRoot).getConfig();
+  } catch {}
+  
+  const receiptProps = {
+    actor: DEFAULT_AGENT_IDENTITY.name,
+    localRealm: repoRoot,
+    authorityGrant: authConfig?.capabilities,
+  };
+
   try {
     await spawnWithTimeout(cmd, args, { ...options, cwd });
     recordCommandOutcome(repoRoot, {
@@ -296,6 +314,7 @@ async function runCommand(
       cwd,
       ok: true,
       durationMs: Date.now() - started,
+      ...receiptProps,
     });
   } catch (err: any) {
     recordCommandOutcome(repoRoot, {
@@ -305,7 +324,8 @@ async function runCommand(
       cwd,
       ok: false,
       durationMs: Date.now() - started,
-      error: err?.message || String(err),
+      error: err.message,
+      ...receiptProps,
     });
     throw err;
   }
@@ -3456,13 +3476,14 @@ export const PLATFORM_TAXONOMY: string[] = [
   'hermes',
   'kilo',
   'opencode',
+  'pi',
   'project',
   'tnf',
 ];
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
+const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant', 'local-subdirector'];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -4391,6 +4412,11 @@ function isKiloPassthroughArgv(argv: string[]): boolean {
   return subcommand === 'kilo';
 }
 
+function isOpencodePassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'opencode';
+}
+
 function isDroidPassthroughArgv(argv: string[]): boolean {
   const subcommand = argv[2];
   return subcommand === 'droid';
@@ -4519,6 +4545,7 @@ function resolveImplicitPassthroughArgs(
     'claude',
     'pi',
     'command-code',
+    'opencode',
     'kilo',
     'droid',
   ];
@@ -5823,9 +5850,18 @@ program
           process.exit(2);
         }
 
+        const { LocalSubdirectorAuthorityService } = require('./services/LocalSubdirectorAuthorityService.js');
+        const authService = new LocalSubdirectorAuthorityService(repoRoot);
+        const authConfig = authService.getConfig();
+
         const yolo = Boolean(options.yolo || options.force);
-        const autonomous =
+        let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
+        
+        if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
+           autonomous = true;
+        }
+        
         const wantsOneshot = Boolean(options.print || options.oneshot);
 
         if (options.model) {
@@ -6901,7 +6937,7 @@ function loadDefaultAgentIdentity(): {
   const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
   const defaults = {
     name: process.env.AGENT_NAME || 'tnf-local-subdirector',
-    role: process.env.AGENT_ROLE || 'director',
+    role: process.env.AGENT_ROLE || 'local-subdirector',
     platform: process.env.AGENT_PLATFORM || 'tnf',
     directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
   };
@@ -9093,7 +9129,7 @@ registry
     }
   });
 
-const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
+const metaskills = program.command('metaskills').description('Meta-skills audit and governance utilities');
 metaskills
   .command('audit')
   .description('Audit meta-skills and scaffolding readiness')
@@ -9102,6 +9138,22 @@ metaskills
     try {
       const args = ['scripts/tnf-metaskills-audit.cjs'];
       if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+metaskills
+  .command('govern')
+  .description('Govern meta-skill completeness and layer authority')
+  .option('--json', 'Print JSON output')
+  .option('--strict', 'Fail if any governed meta-skill is audit-incomplete')
+  .action(async (options: { json?: boolean; strict?: boolean }) => {
+    try {
+      const args = ['scripts/skills/tnf-meta-skill-meta-skill.cjs'];
+      if (options.json) args.push('--json');
+      if (options.strict) args.push('--strict');
       await runCommand('node', args);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -10092,6 +10144,14 @@ program
   .argument('[args...]', 'Arguments forwarded to pi')
   .action(async (args: string[]) => {
     await runPassthrough('pi', args);
+  });
+
+program
+  .command('opencode')
+  .description('Pass through any OpenCode CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to opencode')
+  .action(async (args: string[]) => {
+    await runPassthrough('opencode', args);
   });
 
 program
@@ -21868,6 +21928,10 @@ async function main(): Promise<void> {
   }
   if (isPiPassthroughArgv(argv)) {
     await runPassthrough('pi', argv.slice(3));
+    return;
+  }
+  if (isOpencodePassthroughArgv(argv)) {
+    await runPassthrough('opencode', argv.slice(3));
     return;
   }
   if (isKiloPassthroughArgv(argv)) {
