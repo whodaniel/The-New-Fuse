@@ -1,0 +1,5511 @@
+{
+  "generatedAt": "2026-08-27",
+  "repository": "whodaniel/tnf-monorepo (checked out as The-New-Fuse worktree)",
+  "gitHead": "184e9c23b (local main, 3 commits ahead of origin/main)",
+  "method": {
+    "tools": [
+      "madge 8.0.0 (via npx, no local node_modules install performed)",
+      "custom regex-based import/require/dynamic-import extraction (node script) for bare package-specifier edges, since node_modules is not installed and madge cannot resolve workspace package names to files without it",
+      "ripgrep (rg) for targeted cross-checks and scripts/tests/tools usage sweeps"
+    ],
+    "scope": {
+      "included": "apps/*, apps/mcp-servers/*, packages/* (pnpm workspace members only - i.e. dirs with a package.json), plus 13 scripts/* modules proven to be imported by >=3 other scripts/ files",
+      "excludedRationale": "scripts/ (736 source files total) was NOT fully graphed as individual nodes per-file - only genuinely shared scripts/lib-style modules (in-degree >=3 within scripts/) were added as nodes, consistent with the brief's 'anything imported by multiple other things does [need a node]' rule. tools/agent-relationship-graph, tools/config-files, tools/framework-master-graph, tests/, e2e/, test-suite/ were not graphed as nodes (no package.json, not proven to be widely-imported modules) but were grep-checked as CONSUMERS of the zero-fan-in packages list."
+    },
+    "knownExclusions": [
+      "packages/agent/srcs/ and packages/agent/srcsrc/ (3 files total) were excluded from the graph after being identified as orphaned duplicate trees NOT covered by packages/agent/tsconfig.json's include:['src/**/*'] - see findings.",
+      "*.d.ts, *.test.*, *.spec.*, __tests__/, __mocks__/, node_modules/, dist/, build/, .next/, coverage/ excluded from file walk."
+    ],
+    "caveats": [
+      "No node_modules is installed in this worktree, so neither madge nor TypeScript could perform real module resolution against tsconfig paths or package 'exports' maps. All bare-specifier (package-name) edges below were recovered by regexing import/require/export-from/dynamic-import string literals and matching them against the 91 workspace package names declared in package.json files - this finds real source-level references but cannot detect indirect usage (e.g. a type consumed only via tsconfig 'types' array or triple-slash reference, or a package used only as a CLI 'bin' at runtime).",
+      "'declared but never imported' and 'fan-in = 0' findings are therefore upper-bound estimates of dead coupling, not proof of dead code - they mean 'no source-level import statement referencing this package name was found by regex across apps/*, packages/*, and a scripts/tests/tools sweep', not 'nothing on disk ever touches this package'.",
+      "An initial attempt to run madge directly on scripts/ as its own root produced misleadingly large numbers (e.g. '43 scripts import apps/api/src/guards/secure-auth.guard.ts') because madge followed a handful of relative imports OUT of scripts/ into apps/api and then kept walking apps/api's own internal file graph, attributing apps/api's internal edges to the scripts/ root. Filtering to edges whose SOURCE file is actually under scripts/ reduced this to 15 real scripts/->package|app crossings across 12 distinct scripts (see scriptToPackageCrossings). This is called out explicitly because it is exactly the kind of tool-artifact that looks like a structural finding but isn't."
+    ]
+  },
+  "nodes": [
+    {
+      "id": "@the-new-fuse/a2a-core",
+      "type": "package",
+      "dir": "packages/a2a-core",
+      "private": false,
+      "fileCount": 21,
+      "fanIn": 6,
+      "fanOut": 4
+    },
+    {
+      "id": "@tnf/a2a-protocol",
+      "type": "package",
+      "dir": "packages/a2a-protocol",
+      "private": false,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/a2a-react",
+      "type": "package",
+      "dir": "packages/a2a-react",
+      "private": false,
+      "fileCount": 14,
+      "fanIn": 1,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/ag-ui-core",
+      "type": "package",
+      "dir": "packages/ag-ui-core",
+      "private": false,
+      "fileCount": 7,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/agent",
+      "type": "package",
+      "dir": "packages/agent",
+      "private": true,
+      "fileCount": 77,
+      "fanIn": 2,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/agent-coordination",
+      "type": "package",
+      "dir": "packages/agent-coordination",
+      "private": false,
+      "fileCount": 41,
+      "fanIn": 0,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/agent-evaluation-framework",
+      "type": "package",
+      "dir": "packages/agent-evaluation-framework",
+      "private": false,
+      "fileCount": 6,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/agentic-rag-search",
+      "type": "package",
+      "dir": "packages/agentic-rag-search",
+      "private": false,
+      "fileCount": 3,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/ai-security-bridge",
+      "type": "package",
+      "dir": "packages/ai-security-bridge",
+      "private": false,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/ap2-protocol",
+      "type": "package",
+      "dir": "packages/ap2-protocol",
+      "private": false,
+      "fileCount": 6,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/api",
+      "type": "package",
+      "dir": "packages/api",
+      "private": false,
+      "fileCount": 98,
+      "fanIn": 0,
+      "fanOut": 4
+    },
+    {
+      "id": "@the-new-fuse/api-client",
+      "type": "package",
+      "dir": "packages/api-client",
+      "private": false,
+      "fileCount": 46,
+      "fanIn": 2,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/api-optimization",
+      "type": "package",
+      "dir": "packages/api-optimization",
+      "private": false,
+      "fileCount": 25,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/api-types",
+      "type": "package",
+      "dir": "packages/api-types",
+      "private": false,
+      "fileCount": 13,
+      "fanIn": 2,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/auth",
+      "type": "package",
+      "dir": "packages/auth",
+      "private": false,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/backend",
+      "type": "package",
+      "dir": "packages/backend",
+      "private": true,
+      "fileCount": 4,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@tnf/build-optimization",
+      "type": "package",
+      "dir": "packages/build-optimization",
+      "private": false,
+      "fileCount": 35,
+      "fanIn": 0,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/claude-skills",
+      "type": "package",
+      "dir": "packages/claude-skills",
+      "private": false,
+      "fileCount": 16,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/claw-skills",
+      "type": "package",
+      "dir": "packages/claw-skills",
+      "private": true,
+      "fileCount": 0,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/client",
+      "type": "package",
+      "dir": "packages/client",
+      "private": true,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/common",
+      "type": "package",
+      "dir": "packages/common",
+      "private": true,
+      "fileCount": 3,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/contracts",
+      "type": "package",
+      "dir": "packages/contracts",
+      "private": false,
+      "fileCount": 11,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/control-plane-contracts",
+      "type": "package",
+      "dir": "packages/control-plane-contracts",
+      "private": false,
+      "fileCount": 5,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/core",
+      "type": "package",
+      "dir": "packages/core",
+      "private": false,
+      "fileCount": 502,
+      "fanIn": 5,
+      "fanOut": 6
+    },
+    {
+      "id": "@the-new-fuse/core-error-handling",
+      "type": "package",
+      "dir": "packages/core-error-handling",
+      "private": false,
+      "fileCount": 20,
+      "fanIn": 3,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/core-monitoring",
+      "type": "package",
+      "dir": "packages/core-monitoring",
+      "private": false,
+      "fileCount": 44,
+      "fanIn": 3,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/core-vector-db",
+      "type": "package",
+      "dir": "packages/core-vector-db",
+      "private": false,
+      "fileCount": 17,
+      "fanIn": 4,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/data",
+      "type": "package",
+      "dir": "packages/data",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/database",
+      "type": "package",
+      "dir": "packages/database",
+      "private": true,
+      "fileCount": 89,
+      "fanIn": 14,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/deployment-core",
+      "type": "package",
+      "dir": "packages/deployment-core",
+      "private": false,
+      "fileCount": 33,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "eslint-config-custom",
+      "type": "package",
+      "dir": "packages/eslint-config-custom",
+      "private": true,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/extension-core",
+      "type": "package",
+      "dir": "packages/extension-core",
+      "private": false,
+      "fileCount": 3,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/extension-system",
+      "type": "package",
+      "dir": "packages/extension-system",
+      "private": false,
+      "fileCount": 14,
+      "fanIn": 1,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/fairtable-adapters",
+      "type": "package",
+      "dir": "packages/fairtable-adapters",
+      "private": false,
+      "fileCount": 3,
+      "fanIn": 1,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/fairtable-components",
+      "type": "package",
+      "dir": "packages/fairtable-components",
+      "private": false,
+      "fileCount": 14,
+      "fanIn": 2,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/fairtable-core",
+      "type": "package",
+      "dir": "packages/fairtable-core",
+      "private": false,
+      "fileCount": 5,
+      "fanIn": 4,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/fairtable-utils",
+      "type": "package",
+      "dir": "packages/fairtable-utils",
+      "private": false,
+      "fileCount": 4,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/feature-suggestions",
+      "type": "package",
+      "dir": "packages/feature-suggestions",
+      "private": false,
+      "fileCount": 23,
+      "fanIn": 0,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/feature-tracker",
+      "type": "package",
+      "dir": "packages/feature-tracker",
+      "private": false,
+      "fileCount": 12,
+      "fanIn": 2,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/features",
+      "type": "package",
+      "dir": "packages/features",
+      "private": false,
+      "fileCount": 257,
+      "fanIn": 1,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/gemini-browser-skill",
+      "type": "package",
+      "dir": "packages/gemini-browser-skill",
+      "private": false,
+      "fileCount": 46,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/google-sheets-mcp-server",
+      "type": "package",
+      "dir": "packages/google-sheets-mcp-server",
+      "private": false,
+      "fileCount": 4,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/governance-gate",
+      "type": "package",
+      "dir": "packages/governance-gate",
+      "private": false,
+      "fileCount": 6,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/hooks",
+      "type": "package",
+      "dir": "packages/hooks",
+      "private": false,
+      "fileCount": 26,
+      "fanIn": 1,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/infrastructure",
+      "type": "package",
+      "dir": "packages/infrastructure",
+      "private": false,
+      "fileCount": 39,
+      "fanIn": 18,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/integration-tests",
+      "type": "package",
+      "dir": "packages/integration-tests",
+      "private": true,
+      "fileCount": 22,
+      "fanIn": 0,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/jules-integration",
+      "type": "package",
+      "dir": "packages/jules-integration",
+      "private": true,
+      "fileCount": 9,
+      "fanIn": 0,
+      "fanOut": 5
+    },
+    {
+      "id": "@the-new-fuse/jules-skill",
+      "type": "package",
+      "dir": "packages/jules-skill",
+      "private": true,
+      "fileCount": 7,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/llm-catalog",
+      "type": "package",
+      "dir": "packages/llm-catalog",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 2,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/logger",
+      "type": "package",
+      "dir": "packages/logger",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 6,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/mcp-cloud-redis-bridge",
+      "type": "package",
+      "dir": "packages/mcp-cloud-redis-bridge",
+      "private": false,
+      "fileCount": 5,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/mcp-concordance-server",
+      "type": "package",
+      "dir": "packages/mcp-concordance-server",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/mcp-core",
+      "type": "package",
+      "dir": "packages/mcp-core",
+      "private": false,
+      "fileCount": 168,
+      "fanIn": 4,
+      "fanOut": 6
+    },
+    {
+      "id": "@the-new-fuse/mcp-skills-server",
+      "type": "package",
+      "dir": "packages/mcp-skills-server",
+      "private": false,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/mcp-tar-bridge",
+      "type": "package",
+      "dir": "packages/mcp-tar-bridge",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/messaging-bridge",
+      "type": "package",
+      "dir": "packages/messaging-bridge",
+      "private": false,
+      "fileCount": 2,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/n8n-workflows",
+      "type": "package",
+      "dir": "packages/n8n-workflows",
+      "private": false,
+      "fileCount": 11,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/port-management",
+      "type": "package",
+      "dir": "packages/port-management",
+      "private": true,
+      "fileCount": 3,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/prompt-templating",
+      "type": "package",
+      "dir": "packages/prompt-templating",
+      "private": true,
+      "fileCount": 6,
+      "fanIn": 2,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/proto-definitions",
+      "type": "package",
+      "dir": "packages/proto-definitions",
+      "private": false,
+      "fileCount": 4,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/protocol-contracts",
+      "type": "package",
+      "dir": "packages/protocol-contracts",
+      "private": false,
+      "fileCount": 14,
+      "fanIn": 4,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/relay-core",
+      "type": "package",
+      "dir": "packages/relay-core",
+      "private": false,
+      "fileCount": 120,
+      "fanIn": 8,
+      "fanOut": 5
+    },
+    {
+      "id": "@the-new-fuse/resource-registry",
+      "type": "package",
+      "dir": "packages/resource-registry",
+      "private": false,
+      "fileCount": 19,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/security",
+      "type": "package",
+      "dir": "packages/security",
+      "private": false,
+      "fileCount": 30,
+      "fanIn": 1,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/shared",
+      "type": "package",
+      "dir": "packages/shared",
+      "private": false,
+      "fileCount": 37,
+      "fanIn": 2,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/sync-core",
+      "type": "package",
+      "dir": "packages/sync-core",
+      "private": true,
+      "fileCount": 119,
+      "fanIn": 1,
+      "fanOut": 6
+    },
+    {
+      "id": "@the-new-fuse/telegram-bot-service",
+      "type": "package",
+      "dir": "packages/telegram-bot-service",
+      "private": false,
+      "fileCount": 3,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/test-utils",
+      "type": "package",
+      "dir": "packages/test-utils",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/testing",
+      "type": "package",
+      "dir": "packages/testing",
+      "private": false,
+      "fileCount": 81,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/tnf-browser",
+      "type": "package",
+      "dir": "packages/tnf-browser",
+      "private": false,
+      "fileCount": 16,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/tnf-cli",
+      "type": "package",
+      "dir": "packages/tnf-cli",
+      "private": true,
+      "fileCount": 172,
+      "fanIn": 3,
+      "fanOut": 5
+    },
+    {
+      "id": "@the-new-fuse/tnf-core",
+      "type": "package",
+      "dir": "packages/tnf-core",
+      "private": false,
+      "fileCount": 8,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/tnf-note-taking",
+      "type": "package",
+      "dir": "packages/tnf-note-taking",
+      "private": true,
+      "fileCount": 6,
+      "fanIn": 1,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/types",
+      "type": "package",
+      "dir": "packages/types",
+      "private": false,
+      "fileCount": 88,
+      "fanIn": 13,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/ui-consolidated",
+      "type": "package",
+      "dir": "packages/ui-consolidated",
+      "private": false,
+      "fileCount": 143,
+      "fanIn": 4,
+      "fanOut": 5
+    },
+    {
+      "id": "@the-new-fuse/utils",
+      "type": "package",
+      "dir": "packages/utils",
+      "private": false,
+      "fileCount": 82,
+      "fanIn": 6,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/web-scraping",
+      "type": "package",
+      "dir": "packages/web-scraping",
+      "private": false,
+      "fileCount": 10,
+      "fanIn": 3,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/websocket-infrastructure",
+      "type": "package",
+      "dir": "packages/websocket-infrastructure",
+      "private": false,
+      "fileCount": 24,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/workflow-engine",
+      "type": "package",
+      "dir": "packages/workflow-engine",
+      "private": false,
+      "fileCount": 36,
+      "fanIn": 4,
+      "fanOut": 5
+    },
+    {
+      "id": "@the-new-fuse/api-server",
+      "type": "app",
+      "dir": "apps/api",
+      "private": true,
+      "fileCount": 381,
+      "fanIn": 0,
+      "fanOut": 11
+    },
+    {
+      "id": "@the-new-fuse/api-gateway",
+      "type": "app",
+      "dir": "apps/api-gateway",
+      "private": false,
+      "fileCount": 61,
+      "fanIn": 0,
+      "fanOut": 2
+    },
+    {
+      "id": "@the-new-fuse/backend-app",
+      "type": "app",
+      "dir": "apps/backend",
+      "private": true,
+      "fileCount": 317,
+      "fanIn": 0,
+      "fanOut": 8
+    },
+    {
+      "id": "@tnf/browser-control-surface",
+      "type": "app",
+      "dir": "apps/browser-control-surfaces",
+      "private": false,
+      "fileCount": 15,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "the-new-fuse-chrome-extension",
+      "type": "app",
+      "dir": "apps/chrome-extension",
+      "private": true,
+      "fileCount": 244,
+      "fanIn": 0,
+      "fanOut": 4
+    },
+    {
+      "id": "@the-new-fuse/frontend-app",
+      "type": "app",
+      "dir": "apps/frontend",
+      "private": true,
+      "fileCount": 1275,
+      "fanIn": 0,
+      "fanOut": 10
+    },
+    {
+      "id": "tnf-relay-complete",
+      "type": "app",
+      "dir": "apps/relay-server",
+      "private": false,
+      "fileCount": 11,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/tauri-desktop",
+      "type": "app",
+      "dir": "apps/tauri-desktop",
+      "private": true,
+      "fileCount": 128,
+      "fanIn": 0,
+      "fanOut": 2
+    },
+    {
+      "id": "the-new-fuse",
+      "type": "app",
+      "dir": "apps/vscode-extension",
+      "private": false,
+      "fileCount": 43,
+      "fanIn": 0,
+      "fanOut": 3
+    },
+    {
+      "id": "@the-new-fuse/devops-bridge-mcp",
+      "type": "app",
+      "dir": "apps/mcp-servers/devops-bridge",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "@the-new-fuse/tnf-network-mcp",
+      "type": "app",
+      "dir": "apps/mcp-servers/tnf-network-mcp",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 1
+    },
+    {
+      "id": "@the-new-fuse/vision-bridge-mcp",
+      "type": "app",
+      "dir": "apps/mcp-servers/vision-bridge-mcp",
+      "private": false,
+      "fileCount": 1,
+      "fanIn": 0,
+      "fanOut": 0
+    },
+    {
+      "id": "scripts/lib/tnf-single-instance-guard.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-single-instance-guard.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 28,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/timeline/lib/output-paths.mjs",
+      "type": "script",
+      "dir": "scripts/timeline/lib/output-paths.mjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 10,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/tnf-agent-cli.cjs",
+      "type": "script",
+      "dir": "scripts/tnf-agent-cli.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 9,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/tnf-fleet-mode.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-fleet-mode.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 9,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/tnf-trust-root.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-trust-root.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 6,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/tnf-identity.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-identity.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 5,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/watchdog-signal-utils.cjs",
+      "type": "script",
+      "dir": "scripts/watchdog-signal-utils.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 4,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/resolve-tnf-repo.cjs",
+      "type": "script",
+      "dir": "scripts/lib/resolve-tnf-repo.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/tnf-capability-grant.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-capability-grant.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/tnf-elevation-broker.cjs",
+      "type": "script",
+      "dir": "scripts/lib/tnf-elevation-broker.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/personal-archaeology/db.mjs",
+      "type": "script",
+      "dir": "scripts/personal-archaeology/db.mjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/lib/sync-handoff-cache.cjs",
+      "type": "script",
+      "dir": "scripts/lib/sync-handoff-cache.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    },
+    {
+      "id": "scripts/swarm/report-lifecycle.cjs",
+      "type": "script",
+      "dir": "scripts/swarm/report-lifecycle.cjs",
+      "private": true,
+      "fileCount": 1,
+      "fanIn": 3,
+      "fanOut": null,
+      "note": "shared module inside scripts/, not a pnpm workspace package; fanIn counted only among other scripts/ files (via madge on scripts/ subtree)"
+    }
+  ],
+  "edges": [
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/ap2-protocol",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/a2a-core/src/a2a.module.js",
+        "packages/a2a-core/src/a2a.module.ts",
+        "packages/a2a-core/src/a2a.service.js",
+        "packages/a2a-core/src/a2a.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ap2-protocol"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/core-vector-db",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/a2a-core/src/a2a.module.ts",
+        "packages/a2a-core/src/pointer-resolver.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-vector-db"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 7,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/a2a-core/src/a2a.module.js",
+        "packages/a2a-core/src/a2a.module.ts",
+        "packages/a2a-core/src/a2a.service.js",
+        "packages/a2a-core/src/a2a.service.ts",
+        "packages/a2a-core/src/federated-identity.service.ts",
+        "packages/a2a-core/src/redis-adapter.js",
+        "packages/a2a-core/src/redis-adapter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/security",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/a2a-core/src/signature-wrapper.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/security"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/a2a-react",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 6,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/a2a-react/src/A2AProvider.tsx",
+        "packages/a2a-react/src/hooks/useA2AAgents.ts",
+        "packages/a2a-react/src/hooks/useA2AConversations.ts",
+        "packages/a2a-react/src/hooks/useA2AMessages.ts",
+        "packages/a2a-react/src/index.ts",
+        "packages/a2a-react/src/useA2A.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/api-types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent/src/core/AgentProcessor.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/api-types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 6,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent/src/bridges/adapters/RedisTransportAdapter.ts",
+        "packages/agent/src/context/manager.ts",
+        "packages/agent/src/core/BaseAgent.ts",
+        "packages/agent/src/monitoring/metrics.ts",
+        "packages/agent/src/registry/redis-agent-registry.ts",
+        "packages/agent/src/services/RedisService.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/types",
+      "importCount": 11,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent/src/bridges/cline_bridge.tsx",
+        "packages/agent/src/core/AgentProcessor.ts",
+        "packages/agent/src/implementations/cascade_agent.ts",
+        "packages/agent/src/interfaces/IAgent.tsx",
+        "packages/agent/src/processors/BaseProcessor.ts",
+        "packages/agent/src/processors/CommandProcessor.tsx",
+        "packages/agent/src/processors/NotificationProcessor.tsx",
+        "packages/agent/src/processors/TaskProcessor.tsx",
+        "packages/agent/src/services/GDesignerAdapter.tsx",
+        "packages/agent/src/services/InterAgentChatService.tsx",
+        "packages/agent/src/services/MessageValidator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent-coordination",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 5,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent-coordination/examples/basic-usage.ts",
+        "packages/agent-coordination/src/broadcast/broadcast-manager.ts",
+        "packages/agent-coordination/src/presence/presence-tracker.ts",
+        "packages/agent-coordination/src/redis-coordinator.ts",
+        "packages/agent-coordination/src/types/coordination.types.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent-coordination",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 11,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent-coordination/examples/basic-usage.ts",
+        "packages/agent-coordination/src/broadcast/broadcast-manager.ts",
+        "packages/agent-coordination/src/coordination/RecoveryManager.ts",
+        "packages/agent-coordination/src/coordination/shared-state-manager.ts",
+        "packages/agent-coordination/src/monitoring/PersistentMetricsCollector.ts",
+        "packages/agent-coordination/src/presence/presence-tracker.ts",
+        "packages/agent-coordination/src/queues/task-queue-manager.ts",
+        "packages/agent-coordination/src/redis-coordinator.ts",
+        "packages/agent-coordination/src/state/DistributedLock.ts",
+        "packages/agent-coordination/src/state/SharedCache.ts",
+        "packages/agent-coordination/tests/redis-client.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agent-evaluation-framework",
+      "target": "@the-new-fuse/logger",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agent-evaluation-framework/src/business-rules-evaluator.ts",
+        "packages/agent-evaluation-framework/src/deterministic-code-evaluator.ts",
+        "packages/agent-evaluation-framework/src/lm-judge.ts",
+        "packages/agent-evaluation-framework/src/multi-step-toolcall-evaluator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/agentic-rag-search",
+      "target": "@the-new-fuse/logger",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/agentic-rag-search/src/agent-rag-decider.ts",
+        "packages/agentic-rag-search/src/search-tool.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ai-security-bridge",
+      "target": "@the-new-fuse/logger",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ai-security-bridge/src/versa-labs-adapter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api/src/app.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/database",
+      "importCount": 10,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api/src/app.module.ts",
+        "packages/api/src/controllers/auth.controller.ts",
+        "packages/api/src/repositories/agent.repository.ts",
+        "packages/api/src/repositories/api-logs.repository.ts",
+        "packages/api/src/repositories/audit-logs.repository.ts",
+        "packages/api/src/repositories/configuration.repository.ts",
+        "packages/api/src/repositories/workflow.repository.ts",
+        "packages/api/src/services/database.service.ts",
+        "packages/api/src/services/system-metrics.service.ts",
+        "packages/api/src/types/shims.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api/src/services/agent-discovery-registry.service.ts",
+        "packages/api/src/services/redis.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/types",
+      "importCount": 14,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api/src/dto/agent.dto.ts",
+        "packages/api/src/modules/controllers/base.controller.ts",
+        "packages/api/src/modules/controllers/dto/agent.dto.ts",
+        "packages/api/src/modules/controllers/dto/create-agent.dto.ts",
+        "packages/api/src/modules/controllers/dto/create-workflow.dto.ts",
+        "packages/api/src/modules/controllers/dto/swagger-dto.ts",
+        "packages/api/src/modules/controllers/dto/update-agent.dto.ts",
+        "packages/api/src/modules/controllers/dto/update-workflow.dto.ts",
+        "packages/api/src/schemas/agent.ts",
+        "packages/api/src/services/agent.service.ts",
+        "packages/api/src/services/index.ts",
+        "packages/api/src/types/agent.ts",
+        "packages/api/src/types/index.ts",
+        "packages/api/src/types/shims.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-client",
+      "target": "@the-new-fuse/types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api-client/src/agents.client.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api-gateway/src/gateway/jules-webhook.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api-gateway/src/gateway/jules-webhook.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-optimization",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 3,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/api-optimization/src/caching/response-cache.service.ts",
+        "packages/api-optimization/src/quota/quota-management.service.ts",
+        "packages/api-optimization/src/rate-limiting/redis-rate-limiter.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/app.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/core",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/modules/director/director.module.ts",
+        "apps/api/src/modules/director/director.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/database",
+      "importCount": 101,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/agents/agents.module.ts",
+        "apps/api/src/agents/agents.service.ts",
+        "apps/api/src/agents/analyzer.service.ts",
+        "apps/api/src/agents/architect.service.ts",
+        "apps/api/src/agents/brand-consistency-agent.module.ts",
+        "apps/api/src/agents/brand-consistency-agent.service.ts",
+        "apps/api/src/agents/browser-hub-swarm.module.ts",
+        "apps/api/src/agents/browser-hub-swarm.service.ts",
+        "apps/api/src/agents/coordinator.service.ts",
+        "apps/api/src/agents/implementer.service.ts",
+        "apps/api/src/agents/reviewer.service.ts",
+        "apps/api/src/app.module.ts",
+        "apps/api/src/controllers/admin-config.controller.ts",
+        "apps/api/src/controllers/admin-metrics.controller.ts",
+        "apps/api/src/controllers/admin-users.controller.ts",
+        "apps/api/src/controllers/agent-bank.controller.ts",
+        "apps/api/src/controllers/agent-crafting.controller.ts",
+        "apps/api/src/controllers/agent-handoff.controller.ts",
+        "apps/api/src/controllers/agent-pfp-overrides.controller.ts",
+        "apps/api/src/controllers/agent.controller.ts",
+        "apps/api/src/controllers/ai.controller.ts",
+        "apps/api/src/controllers/health.controller.ts",
+        "apps/api/src/controllers/mcp.controller.ts",
+        "apps/api/src/controllers/orchestration.controller.ts",
+        "apps/api/src/controllers/system.controller.ts",
+        "apps/api/src/controllers/user-management.controller.ts",
+        "apps/api/src/controllers/workflow.controller.ts",
+        "apps/api/src/controllers/workspace.controller.ts",
+        "apps/api/src/graphql/loaders/agent.loader.ts",
+        "apps/api/src/graphql/loaders/user.loader.ts",
+        "apps/api/src/graphql/loaders/workflow.loader.ts",
+        "apps/api/src/graphql/resolvers/agent.resolver.ts",
+        "apps/api/src/graphql/resolvers/user.resolver.ts",
+        "apps/api/src/graphql/resolvers/workflow.resolver.ts",
+        "apps/api/src/guards/auth.guard.ts",
+        "apps/api/src/llm/llm-provider.service.ts",
+        "apps/api/src/mcp/TNFMCPModule.ts",
+        "apps/api/src/modules/access/access-bootstrap.service.ts",
+        "apps/api/src/modules/access/access.module.ts",
+        "apps/api/src/modules/access/access.service.ts",
+        "apps/api/src/modules/agency-hub/agency-hub.module.ts",
+        "apps/api/src/modules/agency-hub/controllers/agency.controller.ts",
+        "apps/api/src/modules/agency-hub/services/agent-swarm-orchestration.service.ts",
+        "apps/api/src/modules/agency-hub/services/email-custodian.service.ts",
+        "apps/api/src/modules/agent-tracking/agent-tracking.service.ts",
+        "apps/api/src/modules/agent.module.ts",
+        "apps/api/src/modules/billing/billing.module.ts",
+        "apps/api/src/modules/billing/paypal.service.ts",
+        "apps/api/src/modules/billing/stripe.service.ts",
+        "apps/api/src/modules/chat/chat.controller.ts",
+        "apps/api/src/modules/chat/chat.module.ts",
+        "apps/api/src/modules/chat/chat.service.ts",
+        "apps/api/src/modules/marketplace/marketplace.service.ts",
+        "apps/api/src/modules/prompt-templates.module.ts",
+        "apps/api/src/modules/resources/personal-skills.service.ts",
+        "apps/api/src/modules/resources/resource-interaction.service.ts",
+        "apps/api/src/modules/task/task.controller.ts",
+        "apps/api/src/modules/task/task.module.ts",
+        "apps/api/src/modules/task/task.service.ts",
+        "apps/api/src/modules/unified-ledger/test-db-connection.ts",
+        "apps/api/src/modules/unified-ledger/unified-ledger.controller.ts",
+        "apps/api/src/modules/unified-ledger/unified-ledger.service.ts",
+        "apps/api/src/modules/webhooks/services/business-event.service.ts",
+        "apps/api/src/modules/webhooks/services/sse.service.ts",
+        "apps/api/src/modules/webhooks/webhooks.module.ts",
+        "apps/api/src/modules/webhooks/webhooks.service.ts",
+        "apps/api/src/modules/workflow-templates.module.ts",
+        "apps/api/src/monitoring/monitoring.module.ts",
+        "apps/api/src/monitoring/wallet-monitoring.service.ts",
+        "apps/api/src/services/agent-api-grants.service.ts",
+        "apps/api/src/services/agent-pfp-overrides.service.ts",
+        "apps/api/src/services/agent.service.ts",
+        "apps/api/src/services/audit.service.ts",
+        "apps/api/src/services/auth.service.ts",
+        "apps/api/src/services/chat.service.ts",
+        "apps/api/src/services/harness-oauth-rotation.service.ts",
+        "apps/api/src/services/metrics.service.ts",
+        "apps/api/src/services/prisma.service.ts",
+        "apps/api/src/services/prompt-templates.service.ts",
+        "apps/api/src/services/provider-catalog.service.ts",
+        "apps/api/src/services/provider-keys.service.ts",
+        "apps/api/src/services/rclone-runtime.service.ts",
+        "apps/api/src/services/userService.ts",
+        "apps/api/src/services/workflow-templates.service.ts",
+        "apps/api/src/services/workflow.service.ts",
+        "apps/api/src/services/workflow/WorkflowExecutionService.ts",
+        "apps/api/src/smart-accounts/smart-account.module.ts",
+        "apps/api/src/smart-accounts/smart-account.service.ts",
+        "apps/api/src/transactions/transactions.module.ts",
+        "apps/api/src/transactions/transactions.service.ts",
+        "apps/api/src/wallets/wallets.module.ts",
+        "apps/api/src/wallets/wallets.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database",
+        "@the-new-fuse/database/drizzle",
+        "@the-new-fuse/database/drizzle/repositories",
+        "@the-new-fuse/database/drizzle/schema"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/app.module.ts",
+        "apps/api/src/services/agent-pfp-overrides.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/jules-skill",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/mcp/TheNewFuseMCPServer.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/jules-skill"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/n8n-workflows",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/controllers/n8n-workflows.controller.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/n8n-workflows"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/protocol-contracts",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/modules/resources/resource-search-protocol.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/protocol-contracts"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/modules/agentic/goose/goose.service.ts",
+        "apps/api/src/services/agent-handoff.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/types",
+      "importCount": 17,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/agents/dto/agent.dto.ts",
+        "apps/api/src/controllers/admin.controller.ts",
+        "apps/api/src/controllers/agent.controller.ts",
+        "apps/api/src/controllers/export.controller.ts",
+        "apps/api/src/dtos/agent.dto.ts",
+        "apps/api/src/modules/resources/dto/resource-search.dto.ts",
+        "apps/api/src/modules/resources/resource-search-policy.service.ts",
+        "apps/api/src/modules/resources/resource-search-protocol.service.ts",
+        "apps/api/src/modules/resources/resources.controller.ts",
+        "apps/api/src/modules/webhooks/services/business-event.service.ts",
+        "apps/api/src/modules/webhooks/services/integration.service.ts",
+        "apps/api/src/modules/webhooks/services/webhook-security.service.ts",
+        "apps/api/src/modules/webhooks/webhooks.controller.ts",
+        "apps/api/src/modules/webhooks/webhooks.service.ts",
+        "apps/api/src/services/agent.service.ts",
+        "apps/api/src/services/role.service.ts",
+        "apps/api/src/services/workflow.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/web-scraping",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/mcp/TheNewFuseMCPServer.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/web-scraping"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/api/src/modules/workflow-deployment/cloudflare-deployment.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/ag-ui-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/app.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ag-ui-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/tasks/task.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/database",
+      "importCount": 61,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/api/agent.controller.ts",
+        "apps/backend/src/api/analytics.controller.ts",
+        "apps/backend/src/api/tnf-registry.service.ts",
+        "apps/backend/src/app.module.ts",
+        "apps/backend/src/auth/agent.auth.guard.ts",
+        "apps/backend/src/auth/auth.module.ts",
+        "apps/backend/src/auth/auth.service.ts",
+        "apps/backend/src/auth/base-oauth.strategy.ts",
+        "apps/backend/src/auth/google.service.ts",
+        "apps/backend/src/auth/guards/roles.guard.ts",
+        "apps/backend/src/chat/chat.module.ts",
+        "apps/backend/src/chat/chat.service.ts",
+        "apps/backend/src/config/passport.ts",
+        "apps/backend/src/core/database.ts",
+        "apps/backend/src/feedback-server.ts",
+        "apps/backend/src/jobs/processors/cleanup.processor.ts",
+        "apps/backend/src/jobs/processors/data-sync.processor.ts",
+        "apps/backend/src/jobs/processors/report-generation.processor.ts",
+        "apps/backend/src/middleware/auth.ts",
+        "apps/backend/src/middleware/request-logger.middleware.ts",
+        "apps/backend/src/modules/admin/controllers/admin-audit-logs.controller.ts",
+        "apps/backend/src/modules/admin/controllers/admin-dashboard.controller.ts",
+        "apps/backend/src/modules/admin/controllers/admin-database.controller.ts",
+        "apps/backend/src/modules/admin/controllers/admin-metrics.controller.ts",
+        "apps/backend/src/modules/agent-registry/agent-registry.module.ts",
+        "apps/backend/src/modules/agent-registry/services/agent-directory.service.ts",
+        "apps/backend/src/modules/agent-registry/services/agent-onboarding.service.ts",
+        "apps/backend/src/modules/agent-registry/services/agent-profile-vector.service.ts",
+        "apps/backend/src/modules/agent-registry/services/agent-registration.service.ts",
+        "apps/backend/src/modules/agent-registry/services/agent-registry-import.service.ts",
+        "apps/backend/src/modules/agent/agent.module.ts",
+        "apps/backend/src/modules/agent/agent.service.ts",
+        "apps/backend/src/modules/audit-logs/audit-logs.service.ts",
+        "apps/backend/src/modules/configuration/configuration.service.ts",
+        "apps/backend/src/modules/feedback/feedback.service.ts",
+        "apps/backend/src/modules/mass/mass-orchestration.service.ts",
+        "apps/backend/src/modules/mass/mass.module.ts",
+        "apps/backend/src/modules/mass/prompt-optimizer.service.ts",
+        "apps/backend/src/modules/mass/topology-optimizer.service.ts",
+        "apps/backend/src/modules/mass/workflow-prompt-optimizer.service.ts",
+        "apps/backend/src/modules/mcp/mcp-api.controller.ts",
+        "apps/backend/src/modules/mcp/mcp.controller.ts",
+        "apps/backend/src/modules/self-improvement/self-improvement-cron.service.ts",
+        "apps/backend/src/modules/system-metrics/system-metrics.module.ts",
+        "apps/backend/src/modules/system-metrics/system-metrics.service.ts",
+        "apps/backend/src/notifications/notification.service.ts",
+        "apps/backend/src/services/agent.service.ts",
+        "apps/backend/src/services/auction-relayer.service.ts",
+        "apps/backend/src/services/production-blockchain.service.ts",
+        "apps/backend/src/services/revenue-tracking.service.ts",
+        "apps/backend/src/smoke-agent-registry.ts",
+        "apps/backend/src/test/setup.ts",
+        "apps/backend/src/users/user.service.ts",
+        "apps/backend/src/users/users.service.ts",
+        "apps/backend/src/utils/auth.utils.ts",
+        "apps/backend/src/workflow/workflow-execution.service.ts",
+        "apps/backend/src/workflow/workflow.controller.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database",
+        "@the-new-fuse/database/drizzle",
+        "@the-new-fuse/database/drizzle/schema"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/feature-tracker",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/services/agent/agent-coordinator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/feature-tracker"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/services/redis.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/mcp-core",
+      "importCount": 9,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/modules/mcp/examples/api-integration-agent.ts",
+        "apps/backend/src/modules/mcp/examples/coordinator-agent.ts",
+        "apps/backend/src/modules/mcp/examples/data-processing-agent.ts",
+        "apps/backend/src/modules/mcp/mcp-a2a-bridge.service.ts",
+        "apps/backend/src/modules/mcp/mcp-api.controller.ts",
+        "apps/backend/src/modules/mcp/mcp-server.service.ts",
+        "apps/backend/src/modules/mcp/mcp-tool-registry.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/mcp-core",
+        "@the-new-fuse/mcp-core/broker",
+        "@the-new-fuse/mcp-core/client"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/modules/relay/relay.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/types",
+      "importCount": 13,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/backend/src/middleware/auth.ts",
+        "apps/backend/src/modules/agent/agent.controller.ts",
+        "apps/backend/src/modules/agent/agent.service.ts",
+        "apps/backend/src/modules/agent/dto/search-agent.dto.ts",
+        "apps/backend/src/modules/mass/mass-orchestration.service.ts",
+        "apps/backend/src/modules/mass/mass.controller.ts",
+        "apps/backend/src/modules/mass/prompt-optimizer.service.ts",
+        "apps/backend/src/modules/mass/topology-optimizer.service.ts",
+        "apps/backend/src/modules/mass/workflow-prompt-optimizer.service.ts",
+        "apps/backend/src/modules/poker-bots/user-bots.service.ts",
+        "apps/backend/src/services/agent-communication.service.ts",
+        "apps/backend/src/services/agent.service.ts",
+        "apps/backend/src/services/agent/agent-coordinator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-vector-db",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/claude-skills/src/registry/SkillRegistry.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-vector-db"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/core-vector-db",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/core/src/memory/VectorMemorySystem.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-vector-db"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/database",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/core/src/modules/llm/llm.module.js",
+        "packages/core/src/modules/llm/llm.module.ts",
+        "packages/core/src/services/agency.service.ts",
+        "packages/core/src/services/enhanced-agency.service.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/features",
+      "importCount": 2,
+      "kind": [
+        "relative-boundary-crossing"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/core/analytics/AnalyticsManager.ts",
+        "packages/core/analytics/types.ts"
+      ],
+      "specifiers": [
+        "../../features/dashboard/analytics/AnalyticsManager.js",
+        "../../features/dashboard/analytics/types.js"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 11,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/core/src/security/metricsCollector.ts",
+        "packages/core/src/security/monitoring.ts",
+        "packages/core/src/services/CommunicationTracker.ts",
+        "packages/core/src/services/cascade_bridge.ts",
+        "packages/core/src/services/websocket/simple_client.ts",
+        "packages/core/src/task/AgentInbox.js",
+        "packages/core/src/task/AgentInbox.ts",
+        "packages/core/src/task/TaskExecutor.ts",
+        "packages/core/src/task/TaskQueue.js",
+        "packages/core/src/task/TaskQueue.ts",
+        "packages/core/src/utils/database.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/types",
+      "importCount": 5,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/core/src/llm/providers/AnthropicProvider.ts",
+        "packages/core/src/llm/providers/GeminiProvider.ts",
+        "packages/core/src/llm/providers/GoogleADKProvider.ts",
+        "packages/core/src/llm/providers/OpenCodeApiProvider.ts",
+        "packages/core/src/llm/providers/OpenCodeCliProvider.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/core/components/agents/AgentCard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/core-vector-db",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/data/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-vector-db"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/data/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/data/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/protocol-contracts",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/extension-system/src/satellite/SatelliteManifest.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/protocol-contracts/extension-manifest.js"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 9,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/extension-system/src/ExtensionLoader.ts",
+        "packages/extension-system/src/ExtensionManager.ts",
+        "packages/extension-system/src/ExtensionRegistry.ts",
+        "packages/extension-system/src/index.ts",
+        "packages/extension-system/src/loader/ExtensionLoader.ts",
+        "packages/extension-system/src/manager/ExtensionManager.ts",
+        "packages/extension-system/src/registry/ExtensionRegistry.ts",
+        "packages/extension-system/src/types/ExtensionTypes.ts",
+        "packages/extension-system/src/validator/ExtensionValidator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/extension-system/src/manager/ExtensionManager.ts",
+        "packages/extension-system/src/types/ExtensionTypes.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-components",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/fairtable-adapters/src/KanbanBoardAdapter.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-components"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-core",
+      "importCount": 3,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/fairtable-adapters/src/KanbanBoardAdapter.tsx",
+        "packages/fairtable-adapters/src/index.ts",
+        "packages/fairtable-adapters/src/migration-utils.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/fairtable-components",
+      "target": "@the-new-fuse/fairtable-core",
+      "importCount": 9,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/fairtable-components/src/ActiveTableView.tsx",
+        "packages/fairtable-components/src/ColumnHeader.tsx",
+        "packages/fairtable-components/src/GridView.tsx",
+        "packages/fairtable-components/src/KanbanView.tsx",
+        "packages/fairtable-components/src/TableCell.tsx",
+        "packages/fairtable-components/src/TableTabs.tsx",
+        "packages/fairtable-components/src/TableView.tsx",
+        "packages/fairtable-components/src/TimelineView.tsx",
+        "packages/fairtable-components/src/Toolbar.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/fairtable-components",
+      "target": "@the-new-fuse/fairtable-utils",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/fairtable-components/src/ColumnHeader.tsx",
+        "packages/fairtable-components/src/TableCell.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/feature-suggestions",
+      "target": "@the-new-fuse/feature-tracker",
+      "importCount": 3,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/feature-suggestions/src/components/EnhancedTimelineView.tsx",
+        "packages/feature-suggestions/src/types/index.tsx",
+        "packages/feature-suggestions/src/types/timeline.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/feature-tracker"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/feature-suggestions",
+      "target": "@the-new-fuse/types",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/feature-suggestions/src/types.ts",
+        "packages/feature-suggestions/src/types/index.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/features/dashboard/templates/TemplateManager.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/features/agents/components/AgentCard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/utils",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/features/dashboard/templates/TemplateManager.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/components/A2AMultiAgentChat.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/a2a-react",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/components/A2AMultiAgentChat.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-react"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/api-client",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/frontend/src/hooks/useApi.ts",
+        "apps/frontend/src/hooks/useBackup.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/api-client"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/fairtable-components",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-components"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/fairtable-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/llm-catalog",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/shared/features/settings/LLMConfigManager.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/llm-catalog"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/prompt-templating",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/frontend/src/components/WorkflowBuilder/nodes.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/prompt-templating"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/types",
+      "importCount": 21,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/components/AdminPanel/FeatureFlagConditions.tsx",
+        "apps/frontend/src/components/AdminPanel/RoleManager.tsx",
+        "apps/frontend/src/components/AdminPanel/ServiceStatus.tsx",
+        "apps/frontend/src/components/forms/AgentToolsForm.tsx",
+        "apps/frontend/src/components/mass/MassBlockExecutor.tsx",
+        "apps/frontend/src/components/mass/MassOptimizationPanel.tsx",
+        "apps/frontend/src/components/webhooks/BusinessMetricsDisplay.tsx",
+        "apps/frontend/src/components/webhooks/IntegrationStatusGrid.tsx",
+        "apps/frontend/src/components/webhooks/RealtimeEventStream.tsx",
+        "apps/frontend/src/components/webhooks/WebhookConfigurationForm.tsx",
+        "apps/frontend/src/components/webhooks/WebhookDeliveryLogs.tsx",
+        "apps/frontend/src/components/webhooks/hooks/useBusinessMetrics.ts",
+        "apps/frontend/src/components/webhooks/hooks/useSSEConnection.ts",
+        "apps/frontend/src/components/webhooks/hooks/useWebhookManagement.ts",
+        "apps/frontend/src/hooks/useMassOptimization.ts",
+        "apps/frontend/src/pages/Admin/FeatureFlags/index.tsx",
+        "apps/frontend/src/services/agent.ts",
+        "apps/frontend/src/store/agentSlice.tsx",
+        "apps/frontend/src/types/agent.ts",
+        "apps/frontend/src/types/api.ts",
+        "apps/frontend/src/types/resources.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types",
+        "@the-new-fuse/types/featureFlags",
+        "@the-new-fuse/types/src/agent"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 6,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/frontend/src/components/webhooks/BusinessMetricsDisplay.tsx",
+        "apps/frontend/src/components/webhooks/IntegrationStatusGrid.tsx",
+        "apps/frontend/src/components/webhooks/RealtimeEventStream.tsx",
+        "apps/frontend/src/components/webhooks/WebhookConfigurationForm.tsx",
+        "apps/frontend/src/components/webhooks/WebhookDashboard.tsx",
+        "apps/frontend/src/components/webhooks/WebhookDeliveryLogs.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/web-scraping",
+      "importCount": 2,
+      "kind": [
+        "relative-boundary-crossing"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/frontend/api/proxy.ts",
+        "apps/frontend/api/scrape.ts"
+      ],
+      "specifiers": [
+        "../../../packages/web-scraping/src/core/WebScrapingService.js",
+        "../../../packages/web-scraping/src/proxy/ProxyService.js"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/gemini-browser-skill",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/google-sheets-mcp-server",
+      "target": "@the-new-fuse/mcp-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/google-sheets-mcp-server/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/mcp-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/governance-gate",
+      "target": "@the-new-fuse/logger",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/governance-gate/src/audit-trail-gate.ts",
+        "packages/governance-gate/src/governance-gate.ts",
+        "packages/governance-gate/src/pii-detection-gate.ts",
+        "packages/governance-gate/src/security-review-gate.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/fairtable-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/hooks/src/hooks/useKanbanBoard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/extension-system",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/integration-tests/src/examples/collaboration-app.ts",
+        "packages/integration-tests/src/examples/data-pipeline-app.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/extension-system"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 5,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/integration-tests/src/examples/collaboration-app.ts",
+        "packages/integration-tests/src/examples/data-pipeline-app.ts",
+        "packages/integration-tests/src/setup/agent-registry-adapter.ts",
+        "packages/integration-tests/src/setup/heartbeat-adapter.ts",
+        "packages/integration-tests/src/setup/test-setup.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/integration-tests/src/examples/collaboration-app.ts",
+        "packages/integration-tests/src/examples/data-pipeline-app.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine",
+        "@the-new-fuse/workflow-engine/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/agent",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/jules-integration/src/JulesAgentAdapter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/agent"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/database",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/jules-integration/src/JulesAgentAdapter.ts",
+        "packages/jules-integration/src/JulesWebhookHandler.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/jules-integration/src/JulesAgentAdapter.ts",
+        "packages/jules-integration/src/JulesWebhookHandler.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/jules-integration/src/JulesWebhookHandler.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/jules-integration/src/JulesAgentAdapter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/logger",
+      "target": "@the-new-fuse/utils",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/logger/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/core-error-handling",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/mcp-core/src/error/MCPUnifiedErrorHandler.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-error-handling"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/core-monitoring",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/mcp-core/src/monitoring/MCPMetricsCollector.ts",
+        "packages/mcp-core/src/monitoring/MCPMonitoringSystem.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-monitoring"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/mcp-core/src/integrations/database.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/mcp-core/src/integrations/relay-core.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/mcp-core/src/integrations/platform-types.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/web-scraping",
+      "importCount": 1,
+      "kind": [
+        "relative-boundary-crossing"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/mcp-core/examples/web-scraping-server.ts"
+      ],
+      "specifiers": [
+        "../../web-scraping/src/mcp/WebScrapingMCPTools.js"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-tar-bridge",
+      "target": "@the-new-fuse/logger",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/mcp-tar-bridge/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/messaging-bridge",
+      "target": "@the-new-fuse/logger",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/messaging-bridge/src/hermes-adapter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/logger"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/prompt-templating",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/prompt-templating/src/PromptTemplateService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/database",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/relay-core/src/services/MasterAgentRegistry.ts",
+        "packages/relay-core/src/services/VCIssuanceService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/fairtable-adapters",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/relay-core/src/services/MasterAgentRegistry.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/fairtable-adapters"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 14,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/relay-core/src/agent-registry-bridge.ts",
+        "packages/relay-core/src/broker-agent.ts",
+        "packages/relay-core/src/director-agent.ts",
+        "packages/relay-core/src/http/RelayHttpHandler.ts",
+        "packages/relay-core/src/redis-relay-bridge.js",
+        "packages/relay-core/src/redis-relay-bridge.ts",
+        "packages/relay-core/src/server/RelayServer.js",
+        "packages/relay-core/src/server/RelayServer.ts",
+        "packages/relay-core/src/services/HandoffStoreService.js",
+        "packages/relay-core/src/services/HandoffStoreService.ts",
+        "packages/relay-core/src/services/redis-client-manager.service.ts",
+        "packages/relay-core/src/standalone-relay.ts",
+        "packages/relay-core/src/super-cycle-client.ts",
+        "packages/relay-core/src/transports/RedisTransport.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/protocol-contracts",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/relay-core/src/contracts/identity.ts",
+        "packages/relay-core/src/protocol/handoff-protocol.ts",
+        "packages/relay-core/src/protocol/resource-protocol.ts",
+        "packages/relay-core/src/protocol/tnf-envelope.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/protocol-contracts"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/tnf-cli",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-cli"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/utils",
+      "importCount": 3,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/security/src/audit/storage.ts",
+        "packages/security/src/middleware/SecurityMiddleware.ts",
+        "packages/security/src/rate-limiting/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/shared",
+      "target": "@the-new-fuse/core",
+      "importCount": 3,
+      "kind": [
+        "relative-boundary-crossing"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/shared/providers/index.tsx"
+      ],
+      "specifiers": [
+        "../../core/components/auth/Login",
+        "../../core/components/auth/Register",
+        "../../core/components/auth/TwoFactorAuth"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/shared",
+      "target": "@the-new-fuse/types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/shared/src/types/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/core-error-handling",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/error/SyncErrorHandler.ts",
+        "packages/sync-core/src/services/ConflictManager.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-error-handling"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/core-monitoring",
+      "importCount": 10,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/deployment/SyncHealthService.ts",
+        "packages/sync-core/src/deployment/SyncMetricsService.ts",
+        "packages/sync-core/src/error/SyncErrorHandler.example.ts",
+        "packages/sync-core/src/error/SyncErrorHandler.ts",
+        "packages/sync-core/src/error/SyncFallbackProcessor.ts",
+        "packages/sync-core/src/performance/FileChangeBatcher.ts",
+        "packages/sync-core/src/performance/HorizontalScalingCoordinator.ts",
+        "packages/sync-core/src/performance/PerformanceOptimizationService.ts",
+        "packages/sync-core/src/performance/SyncLRUCache.ts",
+        "packages/sync-core/src/performance/SyncPerformanceTelemetry.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-monitoring"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/database",
+      "importCount": 14,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/cms/CMSIntegration.example.ts",
+        "packages/sync-core/src/cms/CMSIntegrationService.ts",
+        "packages/sync-core/src/cms/CollaborativeContentService.ts",
+        "packages/sync-core/src/cms/PersonalContentManager.ts",
+        "packages/sync-core/src/cms/PrivateDataIsolationService.ts",
+        "packages/sync-core/src/cms/ProjectConfigurationSync.ts",
+        "packages/sync-core/src/cms/types.ts",
+        "packages/sync-core/src/database/SyncDatabaseService.ts",
+        "packages/sync-core/src/services/ConflictManager.example.ts",
+        "packages/sync-core/src/services/ConflictManager.ts",
+        "packages/sync-core/src/services/SyncOrchestrator.ts",
+        "packages/sync-core/src/tasks/EnhancedTaskManagementService.ts",
+        "packages/sync-core/src/tasks/TaskNotificationService.ts",
+        "packages/sync-core/src/tasks/TaskSynchronizationService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database",
+        "@the-new-fuse/database/generated/drizzle"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 13,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/dashboard/SyncDashboard.example.ts",
+        "packages/sync-core/src/dashboard/SyncDashboardService.ts",
+        "packages/sync-core/src/error/SyncErrorHandler.example.ts",
+        "packages/sync-core/src/error/SyncErrorHandler.ts",
+        "packages/sync-core/src/error/SyncFallbackProcessor.ts",
+        "packages/sync-core/src/error/SyncRetryManager.ts",
+        "packages/sync-core/src/messaging/CommunicationHubFailover.ts",
+        "packages/sync-core/src/messaging/MessageQueueSynchronizer.ts",
+        "packages/sync-core/src/messaging/SyncAwareAgentWebSocketService.ts",
+        "packages/sync-core/src/messaging/SyncAwareMessagingService.ts",
+        "packages/sync-core/src/services/SyncOrchestrator.ts",
+        "packages/sync-core/src/tasks/TaskNotificationService.ts",
+        "packages/sync-core/src/tasks/TaskSynchronizationService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/prompt-templating",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/services/SyncOrchestrator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/prompt-templating"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/sync-core/src/monitoring/SyncAwareHeartbeatMonitoringService.ts",
+        "packages/sync-core/src/monitoring/SyncAwareMonitoring.example.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/shared",
+      "importCount": 2,
+      "kind": [
+        "relative-boundary-crossing"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/tauri-desktop/src/lib/sharedFederation.ts"
+      ],
+      "specifiers": [
+        "../../../../packages/shared/src/federation/FederationNodeClient",
+        "../../../../packages/shared/src/federation/protocol"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/tauri-desktop/src/pages/MultiAgentChat.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated/scrollViewportToEnd"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/telegram-bot-service",
+      "target": "@the-new-fuse/utils",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/telegram-bot-service/src/bot.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/types",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/testing/src/contract/contractEnforcer.tsx",
+        "packages/testing/src/contract/testUtils.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/tnf-cli/src/RedisAgentClient.ts",
+        "packages/tnf-cli/src/refresh-context-runtime/runner.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/protocol-contracts",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/tnf-cli/src/services/PluginsService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/protocol-contracts/extension-manifest.js"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/shared",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/tnf-cli/src/commands/federation-tap.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/shared/federation"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/tnf-cli/src/cli.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-note-taking",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/tnf-cli/src/cli.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-note-taking"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/tnf-network-mcp",
+      "target": "@the-new-fuse/tnf-cli",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/mcp-servers/tnf-network-mcp/src/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-cli"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ui-consolidated/src/hooks/useA2A.ts",
+        "packages/ui-consolidated/src/providers/A2AProvider/A2AProvider.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/api-client",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ui-consolidated/src/providers/ApiProvider.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/api-client"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/api-types",
+      "importCount": 6,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ui-consolidated/src/components/features/memory-inspector/MemoryInspector.tsx",
+        "packages/ui-consolidated/src/components/features/metrics-dashboard/MetricsDashboard.tsx",
+        "packages/ui-consolidated/src/components/features/workflow/WorkflowEditor.tsx",
+        "packages/ui-consolidated/src/components/features/workflow/WorkflowVisualizer.tsx",
+        "packages/ui-consolidated/src/hooks/useMemoryInspector.ts",
+        "packages/ui-consolidated/src/hooks/useMetrics.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/api-types/memory",
+        "@the-new-fuse/api-types/metrics",
+        "@the-new-fuse/api-types/workflow"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/hooks",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ui-consolidated/src/providers/AuthProvider.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/hooks"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/utils",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/ui-consolidated/src/components/Dropdown/Dropdown.tsx",
+        "packages/ui-consolidated/src/components/Icon/Icon.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/utils",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/utils/disabled_modules/logging/ephemeral.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/utils",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/utils/src/redis.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/mcp-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/web-scraping/src/mcp/WebScrapingMCPTools.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/mcp-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/utils",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/web-scraping/src/core/WebScrapingService.ts",
+        "packages/web-scraping/src/proxy/ProxyService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/websocket-infrastructure",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/websocket-infrastructure/src/adapters/redis-adapter.ts",
+        "packages/websocket-infrastructure/src/websocket.module.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/agent",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/workflow-engine/src/orchestrator/tnf-router.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/agent"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "packages/workflow-engine/src/WorkflowTypes.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/workflow-engine/src/orchestrator/start.ts",
+        "packages/workflow-engine/src/orchestrator/tnf-router.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/mcp-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/workflow-engine/src/WorkflowTypes.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/mcp-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 9,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/workflow-engine/src/builder/WorkflowBuilder.ts",
+        "packages/workflow-engine/src/engine/WorkflowEngine.ts",
+        "packages/workflow-engine/src/executor/WorkflowExecutor.ts",
+        "packages/workflow-engine/src/index.ts",
+        "packages/workflow-engine/src/orchestrator/tnf-router.ts",
+        "packages/workflow-engine/src/queue/WorkflowQueue.ts",
+        "packages/workflow-engine/src/queue/WorkflowWorker.ts",
+        "packages/workflow-engine/src/repository/WorkflowRepository.ts",
+        "packages/workflow-engine/src/validator/WorkflowValidator.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@tnf/build-optimization",
+      "target": "@the-new-fuse/core-error-handling",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/build-optimization/src/monitoring/BuildUnifiedErrorHandler.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-error-handling"
+      ]
+    },
+    {
+      "source": "@tnf/build-optimization",
+      "target": "@the-new-fuse/core-monitoring",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "packages/build-optimization/src/monitoring/BuildMetricsCollector.ts",
+        "packages/build-optimization/src/monitoring/BuildMonitoringSystem.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core-monitoring"
+      ]
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/infrastructure",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/infrastructure"
+      ]
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/sync-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/vscode-extension/src/services/WorkspaceSyncService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/sync-core"
+      ]
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/tnf-cli",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-cli"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/llm-catalog",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/chrome-extension/src/v6/shared/catalog.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/llm-catalog"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/types",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": false,
+      "files": [
+        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts",
+        "apps/chrome-extension/src/_legacy/agents/interfaces/IAgent.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "declaredInPackageJson": true,
+      "files": [
+        "apps/chrome-extension/src/shared/progressive-self-prompter.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine/sequencer"
+      ]
+    }
+  ],
+  "declaredWorkspaceDependencyEdges": [
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/ap2-protocol",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/a2a-core",
+      "target": "@the-new-fuse/security",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/a2a-react",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent-coordination",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/agent-coordination",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent-evaluation-framework",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agentic-rag-search",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ai-security-bridge",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ai-security-bridge",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-client",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-client",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-optimization",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-optimization",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-types",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@tnf/build-optimization",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@tnf/build-optimization",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core-vector-db",
+      "target": "@the-new-fuse/proto-definitions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core-vector-db",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/data",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/database",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/database",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/deployment-core",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/deployment-core",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-components",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-components",
+      "target": "@the-new-fuse/fairtable-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-components",
+      "target": "@the-new-fuse/fairtable-utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-suggestions",
+      "target": "@the-new-fuse/feature-tracker",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-suggestions",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/google-sheets-mcp-server",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/governance-gate",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/api-client",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/fairtable-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/extension-system",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/agent",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/jules-integration",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/logger",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/mcp-tar-bridge",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/messaging-bridge",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/port-management",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/port-management",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/prompt-templating",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/proto-definitions",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/control-plane-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/fairtable-adapters",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/tnf-cli",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/shared",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/shared",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/prompt-templating",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/sync-core",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/telegram-bot-service",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/telegram-bot-service",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/shared",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-browser",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-note-taking",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-note-taking",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/types",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/types",
+      "target": "eslint-config-custom",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/api-client",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/hooks",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ui-consolidated",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/utils",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/ap2-protocol",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/websocket-infrastructure",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/agent",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/jules-skill",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/llm-catalog",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/n8n-workflows",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/port-management",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/web-scraping",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/workflow-engine",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/jules-integration",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/ag-ui-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/feature-tracker",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/proto-definitions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/security",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/llm-catalog",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/workflow-engine",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/a2a-react",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/fairtable-components",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/fairtable-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/llm-catalog",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/ui-consolidated",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "tnf-relay-complete",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/a2a-react",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/feature-suggestions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/port-management",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/prompt-templating",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/shared",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/ui-consolidated",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/auth",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/data",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/sync-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-network-mcp",
+      "target": "@the-new-fuse/tnf-cli",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-network-mcp",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    }
+  ],
+  "declaredButNeverImported": [
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/agent",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/ai-security-bridge",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-client",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-optimization",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-types",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/mcp-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/claude-skills",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core-vector-db",
+      "target": "@the-new-fuse/proto-definitions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/core-vector-db",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/database",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/database",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/deployment-core",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/deployment-core",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/fairtable-adapters",
+      "target": "@the-new-fuse/fairtable-utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/feature-tracker",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/api-client",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/hooks",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/n8n-workflows",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/port-management",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/port-management",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/proto-definitions",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/relay-core",
+      "target": "@the-new-fuse/control-plane-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/database",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/shared",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/telegram-bot-service",
+      "target": "@the-new-fuse/logger",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/testing",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/tnf-cli",
+      "target": "@the-new-fuse/tnf-browser",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-note-taking",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/types",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/types",
+      "target": "eslint-config-custom",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/web-scraping",
+      "target": "@the-new-fuse/ap2-protocol",
+      "versionSpec": "workspace:^"
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/llm-catalog",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/port-management",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-server",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/jules-integration",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/api-gateway",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/api-types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-error-handling",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-monitoring",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/core-vector-db",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/proto-definitions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/security",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/backend-app",
+      "target": "@the-new-fuse/utils",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "tnf-relay-complete",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/a2a-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/a2a-react",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/feature-suggestions",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/port-management",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/prompt-templating",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/protocol-contracts",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tauri-desktop",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/auth",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/data",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/relay-core",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/types",
+      "versionSpec": "workspace:*"
+    },
+    {
+      "source": "@the-new-fuse/tnf-network-mcp",
+      "target": "@the-new-fuse/infrastructure",
+      "versionSpec": "workspace:*"
+    }
+  ],
+  "importedButNeverDeclared": [
+    {
+      "source": "@the-new-fuse/core",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/core/components/agents/AgentCard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/extension-system",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/extension-system/src/manager/ExtensionManager.ts",
+        "packages/extension-system/src/types/ExtensionTypes.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/features/dashboard/templates/TemplateManager.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/ui-consolidated",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/features/agents/components/AgentCard.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/ui-consolidated"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/features",
+      "target": "@the-new-fuse/utils",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/features/dashboard/templates/TemplateManager.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/api-client",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "apps/frontend/src/hooks/useApi.ts",
+        "apps/frontend/src/hooks/useBackup.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/api-client"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/frontend-app",
+      "target": "@the-new-fuse/prompt-templating",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "apps/frontend/src/components/WorkflowBuilder/nodes.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/prompt-templating"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/gemini-browser-skill",
+      "target": "@the-new-fuse/a2a-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/a2a-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/integration-tests",
+      "target": "@the-new-fuse/workflow-engine",
+      "importCount": 4,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/integration-tests/src/examples/collaboration-app.ts",
+        "packages/integration-tests/src/examples/data-pipeline-app.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/workflow-engine",
+        "@the-new-fuse/workflow-engine/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/mcp-core/src/integrations/database.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/relay-core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/mcp-core/src/integrations/relay-core.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/relay-core"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/mcp-core",
+      "target": "@the-new-fuse/types",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/mcp-core/src/integrations/platform-types.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/security",
+      "target": "@the-new-fuse/utils",
+      "importCount": 3,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/security/src/audit/storage.ts",
+        "packages/security/src/middleware/SecurityMiddleware.ts",
+        "packages/security/src/rate-limiting/index.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/utils"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/utils",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/utils/disabled_modules/logging/ephemeral.tsx"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "@the-new-fuse/workflow-engine",
+      "target": "@the-new-fuse/database",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "packages/workflow-engine/src/WorkflowTypes.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/database"
+      ]
+    },
+    {
+      "source": "the-new-fuse",
+      "target": "@the-new-fuse/tnf-cli",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/tnf-cli"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/core",
+      "importCount": 1,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/core"
+      ]
+    },
+    {
+      "source": "the-new-fuse-chrome-extension",
+      "target": "@the-new-fuse/types",
+      "importCount": 2,
+      "kind": [
+        "bare-import"
+      ],
+      "files": [
+        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts",
+        "apps/chrome-extension/src/_legacy/agents/interfaces/IAgent.ts"
+      ],
+      "specifiers": [
+        "@the-new-fuse/types"
+      ]
+    }
+  ],
+  "relativePackageBoundaryCrossings": [
+    {
+      "file": "apps/frontend/api/proxy.ts",
+      "specifier": "../../../packages/web-scraping/src/proxy/ProxyService.js",
+      "resolvedInto": "packages/web-scraping",
+      "resolvedTargetPkgName": "@the-new-fuse/web-scraping",
+      "srcPkgName": "@the-new-fuse/frontend-app"
+    },
+    {
+      "file": "apps/frontend/api/scrape.ts",
+      "specifier": "../../../packages/web-scraping/src/core/WebScrapingService.js",
+      "resolvedInto": "packages/web-scraping",
+      "resolvedTargetPkgName": "@the-new-fuse/web-scraping",
+      "srcPkgName": "@the-new-fuse/frontend-app"
+    },
+    {
+      "file": "apps/tauri-desktop/src/lib/sharedFederation.ts",
+      "specifier": "../../../../packages/shared/src/federation/FederationNodeClient",
+      "resolvedInto": "packages/shared",
+      "resolvedTargetPkgName": "@the-new-fuse/shared",
+      "srcPkgName": "@the-new-fuse/tauri-desktop"
+    },
+    {
+      "file": "apps/tauri-desktop/src/lib/sharedFederation.ts",
+      "specifier": "../../../../packages/shared/src/federation/protocol",
+      "resolvedInto": "packages/shared",
+      "resolvedTargetPkgName": "@the-new-fuse/shared",
+      "srcPkgName": "@the-new-fuse/tauri-desktop"
+    },
+    {
+      "file": "packages/core/analytics/AnalyticsManager.ts",
+      "specifier": "../../features/dashboard/analytics/AnalyticsManager.js",
+      "resolvedInto": "packages/features",
+      "resolvedTargetPkgName": "@the-new-fuse/features",
+      "srcPkgName": "@the-new-fuse/core"
+    },
+    {
+      "file": "packages/core/analytics/types.ts",
+      "specifier": "../../features/dashboard/analytics/types.js",
+      "resolvedInto": "packages/features",
+      "resolvedTargetPkgName": "@the-new-fuse/features",
+      "srcPkgName": "@the-new-fuse/core"
+    },
+    {
+      "file": "packages/mcp-core/examples/web-scraping-server.ts",
+      "specifier": "../../web-scraping/src/mcp/WebScrapingMCPTools.js",
+      "resolvedInto": "packages/web-scraping",
+      "resolvedTargetPkgName": "@the-new-fuse/web-scraping",
+      "srcPkgName": "@the-new-fuse/mcp-core"
+    },
+    {
+      "file": "packages/shared/providers/index.tsx",
+      "specifier": "../../core/components/auth/Login",
+      "resolvedInto": "packages/core",
+      "resolvedTargetPkgName": "@the-new-fuse/core",
+      "srcPkgName": "@the-new-fuse/shared"
+    },
+    {
+      "file": "packages/shared/providers/index.tsx",
+      "specifier": "../../core/components/auth/Register",
+      "resolvedInto": "packages/core",
+      "resolvedTargetPkgName": "@the-new-fuse/core",
+      "srcPkgName": "@the-new-fuse/shared"
+    },
+    {
+      "file": "packages/shared/providers/index.tsx",
+      "specifier": "../../core/components/auth/TwoFactorAuth",
+      "resolvedInto": "packages/core",
+      "resolvedTargetPkgName": "@the-new-fuse/core",
+      "srcPkgName": "@the-new-fuse/shared"
+    }
+  ],
+  "scriptToPackageCrossings": [
+    {
+      "source": "scripts/antigravity-join-green.ts",
+      "target": "packages/tnf-cli/src/RedisAgentClient.ts"
+    },
+    {
+      "source": "scripts/borg-handoff-demo.ts",
+      "target": "packages/a2a-core/src/pointer-resolver.service.ts"
+    },
+    {
+      "source": "scripts/borg-handoff-demo.ts",
+      "target": "packages/a2a-core/src/signature-wrapper.ts"
+    },
+    {
+      "source": "scripts/check-seeded-ids.ts",
+      "target": "packages/database/src/drizzle/schema/agents.ts"
+    },
+    {
+      "source": "scripts/pi-session-handoff.cjs",
+      "target": "packages/relay-core/src/services/HandoffStoreService.js"
+    },
+    {
+      "source": "scripts/populate-feature-tracker.ts",
+      "target": "packages/database/dist/index.d.ts (compiled output, not source)"
+    },
+    {
+      "source": "scripts/protocols/run-cron-audit.ts",
+      "target": "apps/api/src/app.module.ts"
+    },
+    {
+      "source": "scripts/protocols/run-cron-audit.ts",
+      "target": "apps/api/src/modules/admin/chronological-processes.service.ts"
+    },
+    {
+      "source": "scripts/search-codebase.ts",
+      "target": "packages/core-vector-db/src/codebase-search.ts"
+    },
+    {
+      "source": "scripts/security/sync-permissions.ts",
+      "target": "packages/core/src/security/permission-manager.ts"
+    },
+    {
+      "source": "scripts/test-optimize.ts",
+      "target": "packages/database/dist/index.d.ts (compiled output, not source)"
+    },
+    {
+      "source": "scripts/vectorize-codebase.ts",
+      "target": "packages/core-vector-db/src/codebase-vectorizer.ts"
+    },
+    {
+      "source": "scripts/verify-llm-connections.ts",
+      "target": "packages/core/src/llm/providers/AnthropicProvider.ts"
+    },
+    {
+      "source": "scripts/verify-llm-connections.ts",
+      "target": "packages/core/src/llm/providers/GeminiProvider.ts"
+    },
+    {
+      "source": "scripts/verify-llm-connections.ts",
+      "target": "packages/core/src/llm/providers/OpenCodeCliProvider.ts"
+    }
+  ],
+  "sharedScriptModules": [
+    {
+      "path": "scripts/lib/tnf-single-instance-guard.cjs",
+      "fanInWithinScripts": 28
+    },
+    {
+      "path": "scripts/timeline/lib/output-paths.mjs",
+      "fanInWithinScripts": 10
+    },
+    {
+      "path": "scripts/tnf-agent-cli.cjs",
+      "fanInWithinScripts": 9
+    },
+    {
+      "path": "scripts/lib/tnf-fleet-mode.cjs",
+      "fanInWithinScripts": 9
+    },
+    {
+      "path": "scripts/lib/tnf-trust-root.cjs",
+      "fanInWithinScripts": 6
+    },
+    {
+      "path": "scripts/lib/tnf-identity.cjs",
+      "fanInWithinScripts": 5
+    },
+    {
+      "path": "scripts/watchdog-signal-utils.cjs",
+      "fanInWithinScripts": 4
+    },
+    {
+      "path": "scripts/lib/resolve-tnf-repo.cjs",
+      "fanInWithinScripts": 3
+    },
+    {
+      "path": "scripts/lib/tnf-capability-grant.cjs",
+      "fanInWithinScripts": 3
+    },
+    {
+      "path": "scripts/lib/tnf-elevation-broker.cjs",
+      "fanInWithinScripts": 3
+    },
+    {
+      "path": "scripts/personal-archaeology/db.mjs",
+      "fanInWithinScripts": 3
+    },
+    {
+      "path": "scripts/lib/sync-handoff-cache.cjs",
+      "fanInWithinScripts": 3
+    },
+    {
+      "path": "scripts/swarm/report-lifecycle.cjs",
+      "fanInWithinScripts": 3
+    }
+  ],
+  "circularDependencies": {
+    "fileLevel_withinSinglePackageOrApp_madgeCircular": "39 cycles found by `madge --circular` across apps/* + packages/* - see docs/recon/dependency-topology.md for the full list and note that every one of them is confined to files inside a single app or package (no cross-package file cycle was found).",
+    "packageLevel": [
+      {
+        "cycle": [
+          "@the-new-fuse/web-scraping",
+          "@the-new-fuse/mcp-core",
+          "@the-new-fuse/web-scraping"
+        ],
+        "note": "SOFT cycle only: web-scraping->mcp-core is a real, declared, bare-import dependency (packages/web-scraping/src/mcp/WebScrapingMCPTools.ts). mcp-core->web-scraping exists ONLY via packages/mcp-core/examples/web-scraping-server.ts, a file OUTSIDE packages/mcp-core/tsconfig.json's include:['src/**/*'] (examples/ is not compiled). There is no true build-time circular dependency between these two packages."
+      }
+    ]
+  },
+  "nonWorkspacePackageDirectories": [
+    {
+      "dir": "packages/cache",
+      "note": "no package.json; 2 .ts files (redis-cache.service.ts, CacheService.ts); not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/cli",
+      "note": "no package.json; 3 .ts files under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/compounding-memory",
+      "note": "no package.json; contains schemas/ and a large wiki/ tree (non-code); not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/contracts-legacy",
+      "note": "no package.json; 10 standalone .sol files + shared/BaseAgentContract.sol; filenames do NOT overlap with packages/contracts/src/*.sol - a distinct, orphaned Solidity corpus, not a fork of the active contracts package"
+    },
+    {
+      "dir": "packages/core-auth",
+      "note": "no package.json; only a README.md, no source"
+    },
+    {
+      "dir": "packages/crypto-agent-framework",
+      "note": "no package.json; Python project (main.py, requirements.txt) dropped inside packages/; not part of the JS/TS workspace or graph"
+    },
+    {
+      "dir": "packages/debugging",
+      "note": "no package.json; 3 .ts files under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/docs",
+      "note": "no package.json; 2 .ts files under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/hardware-bridge",
+      "note": "no package.json; 1 compiled binary (iphone_touch_send) + src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/job-queue",
+      "note": "no package.json; 1 .ts file under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/lpm-native",
+      "note": "Go module (go.mod/go.sum/main.go); outside JS/TS import graph by design"
+    },
+    {
+      "dir": "packages/shared-utils",
+      "note": "no package.json; 1 .ts file under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/websocket",
+      "note": "no package.json; 1 .ts file under src/; not a pnpm workspace member"
+    },
+    {
+      "dir": "packages/tnf-orchestrator-go",
+      "note": "Go project; outside JS/TS import graph by design"
+    }
+  ],
+  "zeroFanInPackages_externalUsageCheck": {
+    "@tnf/a2a-protocol": [],
+    "@the-new-fuse/agent-coordination": [],
+    "@the-new-fuse/agent-evaluation-framework": [],
+    "@the-new-fuse/agentic-rag-search": [],
+    "@the-new-fuse/ai-security-bridge": [],
+    "@the-new-fuse/api": [
+      "scripts/execute-refactor-consensus.ts",
+      "scripts/build-cloud_runtime.cjs",
+      "scripts/cli.tsx",
+      "scripts/release-gate.cjs",
+      "scripts/register-jules-agent.ts",
+      "scripts/smart-dev.cjs",
+      "scripts/update-dependencies.js"
+    ],
+    "@the-new-fuse/api-optimization": [],
+    "@the-new-fuse/auth": [],
+    "@the-new-fuse/backend": [
+      "scripts/workspace-filters.json",
+      "scripts/smart-dev.cjs"
+    ],
+    "@tnf/build-optimization": [],
+    "@the-new-fuse/claude-skills": [],
+    "@the-new-fuse/claw-skills": [],
+    "@the-new-fuse/client": [],
+    "@the-new-fuse/common": [
+      "scripts/build-cloud_runtime.cjs"
+    ],
+    "@the-new-fuse/contracts": [
+      "scripts/reconnect-all-packages.cjs"
+    ],
+    "@the-new-fuse/control-plane-contracts": [
+      "scripts/lib/tnf-elevation-broker.cjs",
+      "scripts/lib/tnf-capability-grant.cjs",
+      "scripts/lib/tnf-trust-root.cjs",
+      "scripts/lib/tnf-cred-broker.cjs"
+    ],
+    "@the-new-fuse/data": [
+      "scripts/launch-new-fuse.tsx",
+      "scripts/send-status.js",
+      "scripts/build-cloud_runtime.cjs",
+      "scripts/populate-feature-tracker.js",
+      "scripts/populate-feature-tracker.ts",
+      "scripts/test-optimize.ts",
+      "scripts/build-config.ts"
+    ],
+    "@the-new-fuse/deployment-core": [],
+    "eslint-config-custom": [
+      "scripts/update-clean-scripts.js",
+      "scripts/native/codebase_training_data.json"
+    ],
+    "@the-new-fuse/extension-core": [],
+    "@the-new-fuse/feature-suggestions": [
+      "scripts/launch-new-fuse.tsx",
+      "scripts/build-config.ts"
+    ],
+    "@the-new-fuse/gemini-browser-skill": [],
+    "@the-new-fuse/google-sheets-mcp-server": [],
+    "@the-new-fuse/governance-gate": [],
+    "@the-new-fuse/integration-tests": [],
+    "@the-new-fuse/jules-integration": [],
+    "@the-new-fuse/mcp-cloud-redis-bridge": [],
+    "@the-new-fuse/mcp-concordance-server": [],
+    "@the-new-fuse/mcp-skills-server": [],
+    "@the-new-fuse/mcp-tar-bridge": [],
+    "@the-new-fuse/messaging-bridge": [],
+    "@the-new-fuse/port-management": [],
+    "@the-new-fuse/proto-definitions": [],
+    "@the-new-fuse/resource-registry": [],
+    "@the-new-fuse/telegram-bot-service": [],
+    "@the-new-fuse/test-utils": [],
+    "@the-new-fuse/testing": [],
+    "@the-new-fuse/tnf-browser": [
+      "scripts/protocols/validate-substrate-attestation.cjs"
+    ],
+    "@the-new-fuse/websocket-infrastructure": []
+  }
+}
