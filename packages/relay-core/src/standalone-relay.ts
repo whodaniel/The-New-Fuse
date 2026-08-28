@@ -922,7 +922,18 @@ export class TNFRelayServer extends EventEmitter {
           ((message as unknown as Record<string, unknown>)?.token as string);
         let verifiedToken = null;
 
-        if (token && this.authService) {
+        if (this.authService) {
+          if (!token) {
+            console.warn(`[Relay] Authentication failed for agent. Token required but missing.`);
+            this.send(ws, {
+              type: 'REGISTRATION_ERROR',
+              payload: {
+                error: 'Authentication token required',
+                code: 'AUTH_REQUIRED',
+              },
+            });
+            return null;
+          }
           console.log(`[Relay] Authenticating agent via JWT...`);
           verifiedToken = this.authService.verifyToken(token);
 
