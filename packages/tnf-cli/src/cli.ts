@@ -59,8 +59,8 @@ import { CronService } from './services/CronService.js';
 import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
-import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
+import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
 import { ServiceHealthService } from './services/ServiceHealthService.js';
@@ -292,13 +292,14 @@ async function runCommand(
   }
   const started = Date.now();
   const cwd = options.cwd || repoRoot;
-  
+
   let authConfig: any = null;
   try {
-    const { LocalSubdirectorAuthorityService } = await import('./services/LocalSubdirectorAuthorityService.js');
+    const { LocalSubdirectorAuthorityService } =
+      await import('./services/LocalSubdirectorAuthorityService.js');
     authConfig = new LocalSubdirectorAuthorityService(repoRoot).getConfig();
   } catch {}
-  
+
   const receiptProps = {
     actor: DEFAULT_AGENT_IDENTITY.name,
     localRealm: repoRoot,
@@ -462,9 +463,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Updated .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -511,9 +510,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Wrote .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -3483,7 +3480,14 @@ export const PLATFORM_TAXONOMY: string[] = [
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant', 'local-subdirector'];
+const AGENT_ROLE_TRAITS = [
+  'director',
+  'orchestrator',
+  'broker',
+  'worker',
+  'participant',
+  'local-subdirector',
+];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -4436,15 +4440,10 @@ const topLevelCommandsCacheFile = path.join(
   'top-level-commands.json'
 );
 const TOP_LEVEL_COMMANDS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-let topLevelCommandsDiskCache: Record<
-  string,
-  { commands: string[]; probedAt: number }
-> | null = null;
+let topLevelCommandsDiskCache: Record<string, { commands: string[]; probedAt: number }> | null =
+  null;
 
-function loadTopLevelCommandsDiskCache(): Record<
-  string,
-  { commands: string[]; probedAt: number }
-> {
+function loadTopLevelCommandsDiskCache(): Record<string, { commands: string[]; probedAt: number }> {
   if (topLevelCommandsDiskCache === null) {
     let loaded: Record<string, { commands: string[]; probedAt: number }> = {};
     try {
@@ -4457,10 +4456,7 @@ function loadTopLevelCommandsDiskCache(): Record<
   return topLevelCommandsDiskCache;
 }
 
-function saveTopLevelCommandsDiskCache(
-  cliName: string,
-  commands: Set<string>
-): void {
+function saveTopLevelCommandsDiskCache(cliName: string, commands: Set<string>): void {
   const cache = loadTopLevelCommandsDiskCache();
   cache[cliName] = { commands: [...commands], probedAt: Date.now() };
   try {
@@ -4504,10 +4500,7 @@ function getTopLevelCommands(cliName: string): Set<string> {
   }
 
   const cached = loadTopLevelCommandsDiskCache()[cliName];
-  if (
-    cached &&
-    Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS
-  ) {
+  if (cached && Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS) {
     const fromDisk = new Set(cached.commands);
     cachedTopLevelCommands[cliName] = fromDisk;
     return fromDisk;
@@ -5850,18 +5843,20 @@ program
           process.exit(2);
         }
 
-        const { LocalSubdirectorAuthorityService } = require('./services/LocalSubdirectorAuthorityService.js');
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('./services/LocalSubdirectorAuthorityService.js');
         const authService = new LocalSubdirectorAuthorityService(repoRoot);
         const authConfig = authService.getConfig();
 
         const yolo = Boolean(options.yolo || options.force);
         let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
-        
+
         if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
-           autonomous = true;
+          autonomous = true;
         }
-        
+
         const wantsOneshot = Boolean(options.print || options.oneshot);
 
         if (options.model) {
@@ -6937,7 +6932,11 @@ function loadDefaultAgentIdentity(): {
   const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
   const defaults = {
     name: process.env.AGENT_NAME || 'tnf-local-subdirector',
-    role: process.env.AGENT_ROLE || 'local-subdirector',
+    role:
+      process.env.AGENT_ROLE ||
+      (process.argv.includes('agent') && !process.argv.includes('run')
+        ? 'local-subdirector'
+        : 'generic-agent'),
     platform: process.env.AGENT_PLATFORM || 'tnf',
     directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
   };
@@ -8780,32 +8779,37 @@ harness
   .argument('[client]', 'claude|cursor|codex|gemini|agy|hermes|pi|openclaw')
   .option('--no-launch', 'Provision MCP config only; do not start the client')
   .option('--require-doctor', 'Fail if doctor checks fail')
-  .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
-    try {
-      const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
-      const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
-      let chosen = requested;
-      if (chosen && !known.has(chosen)) {
-        throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+  .action(
+    async (
+      client: string | undefined,
+      options: { noLaunch?: boolean; requireDoctor?: boolean }
+    ) => {
+      try {
+        const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
+        const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
+        let chosen = requested;
+        if (chosen && !known.has(chosen)) {
+          throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+        }
+        if (!chosen) {
+          const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
+          const found = preferred.find((entry) => {
+            const resolved = findExecutableOnPath(entry.binary);
+            return Boolean(resolved);
+          });
+          chosen = found?.id || 'claude';
+          console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
+        }
+        const args = ['scripts/tnf-start-ai.cjs', chosen];
+        if (options.noLaunch) args.push('--no-launch');
+        if (options.requireDoctor) args.push('--require-doctor');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      if (!chosen) {
-        const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
-        const found = preferred.find((entry) => {
-          const resolved = findExecutableOnPath(entry.binary);
-          return Boolean(resolved);
-        });
-        chosen = found?.id || 'claude';
-        console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
-      }
-      const args = ['scripts/tnf-start-ai.cjs', chosen];
-      if (options.noLaunch) args.push('--no-launch');
-      if (options.requireDoctor) args.push('--require-doctor');
-      await runCommand('node', args);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
 {
@@ -9129,7 +9133,9 @@ registry
     }
   });
 
-const metaskills = program.command('metaskills').description('Meta-skills audit and governance utilities');
+const metaskills = program
+  .command('metaskills')
+  .description('Meta-skills audit and governance utilities');
 metaskills
   .command('audit')
   .description('Audit meta-skills and scaffolding readiness')
@@ -19705,10 +19711,7 @@ pluginsCommand
   .option('--activate', 'Activate after installation')
   .option('--json', 'Print machine-readable output')
   .action(
-    async (
-      source: string,
-      options: { version?: string; activate?: boolean; json?: boolean }
-    ) => {
+    async (source: string, options: { version?: string; activate?: boolean; json?: boolean }) => {
       const service = new PluginsService();
       let plugin = await service.install(source, options.version);
       if (options.activate) plugin = await service.enable(plugin.name);
@@ -19742,7 +19745,9 @@ for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
       const service = new PluginsService();
       if (action === 'remove') {
         await service.remove(name);
-        console.log(options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`));
+        console.log(
+          options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`)
+        );
         return;
       }
       const plugin =
@@ -19866,7 +19871,9 @@ kanbanCommand
     }
   });
 
-const memoryCommand = program.command('memory').description('Memory provider and compaction management');
+const memoryCommand = program
+  .command('memory')
+  .description('Memory provider and compaction management');
 memoryCommand
   .command('list')
   .description('List all configured memory providers')
@@ -19883,7 +19890,9 @@ memoryCommand
 
 memoryCommand
   .command('compact')
-  .description('Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)')
+  .description(
+    'Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)'
+  )
   .option('--dry-run', 'Simulate compaction without writing or deleting files')
   .option('--prune-raw', 'Remove raw uncompacted logs older than threshold')
   .option('--max-age-days <n>', 'Age threshold in days for pruning raw logs', '14')
@@ -19892,18 +19901,20 @@ memoryCommand
       const compactor = new MemoryCompactorEngine();
       const maxAgeDays = options.maxAgeDays ? parseInt(options.maxAgeDays, 10) : 14;
       console.log(chalk.bold.cyan('\n🧠 Starting Multi-Agent Memory Compaction Sweep...\n'));
-      
+
       const report = await compactor.compactAllTranscripts({
         dryRun: options.dryRun,
         pruneRaw: options.pruneRaw,
-        maxAgeDays
+        maxAgeDays,
       });
 
       console.log(chalk.bold.green('✅ Memory Compaction Complete:'));
       console.log(`  - Sessions Scanned:   ${chalk.yellow(report.scannedCount)}`);
       console.log(`  - Sessions Compacted: ${chalk.green(report.compactedCount)}`);
       console.log(`  - Raw Logs Pruned:    ${chalk.magenta(report.prunedCount)}`);
-      console.log(`  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`);
+      console.log(
+        `  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`
+      );
       console.log(`  - Vault Storage:      ${chalk.dim(report.artifactsPath)}\n`);
     } catch (err: any) {
       console.error(chalk.red(`Error during compaction: ${err.message}`));
@@ -19917,8 +19928,10 @@ memoryCommand
   .action(async () => {
     try {
       const compactor = new MemoryCompactorEngine();
-      console.log(chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n'));
-      
+      console.log(
+        chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n')
+      );
+
       const audit = await compactor.auditDrift();
       console.log(chalk.bold.green('✅ Memory Congruence Audit Report:'));
       console.log(`  - Fidelity Score:       ${chalk.bold(audit.overallFidelityScore + '%')}`);
