@@ -239,10 +239,70 @@ function ensureMarkdownAck(mdPath) {
   if (!fs.existsSync(mdPath)) fail(`Missing handoff markdown: ${mdPath}`);
   const content = fs.readFileSync(mdPath, 'utf8');
   if (!content.includes('TNF_PROTOCOL_ACK')) {
-    fail('SESSION_HANDOFF_LATEST.md missing TNF_PROTOCOL_ACK marker.');
+    fail(`Markdown receipt missing TNF_PROTOCOL_ACK marker: ${mdPath}`);
   }
   if (!content.toLowerCase().includes('next actions')) {
-    fail('SESSION_HANDOFF_LATEST.md missing "Next Actions" section.');
+    fail(`Markdown receipt missing "Next Actions" section: ${mdPath}`);
+  }
+}
+
+
+function ensureReceiptBinding(handoff, mode, receiptJsonPath) {
+  // Mode-specific execution semantic definitions
+  // staged: Strict Git evidence. Branch = symbolic-ref, Origin = remote.origin.url, Basis = HEAD
+  // pre-push: Upstream/remote evidence (often detached HEAD if run by specific wrappers). Uses current origin, skip branch if detached.
+  // ci: Authenticated/provider-supplied ref/base/head information where available.
+
+  let activeBranch;
+  try {
+    activeBranch = run('git symbolic-ref --short HEAD');
+  } catch {
+    // detached head
+  }
+  
+  if (activeBranch) {
+    if (handoff.branch && handoff.branch !== activeBranch) {
+      fail(`Receipt branch binding mismatch. Receipt declares '${handoff.branch}', but active branch is '${activeBranch}'.`);
+    }
+  } else if (mode === 'ci') {
+    // CI environments might pass GitHub variables, but we fall back to NOT APPLICABLE if absent.
+    const ciBranch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
+    if (ciBranch && handoff.branch && handoff.branch !== ciBranch) {
+      fail(`Receipt branch binding mismatch in CI. Receipt declares '${handoff.branch}', but CI branch is '${ciBranch}'.`);
+    }
+  }
+
+  // Repository context binding
+  let gitOrigin = '';
+  try {
+    gitOrigin = run('git config --get remote.origin.url');
+  } catch {
+    fail('Could not determine git repository origin. Directory may not be a valid git clone.');
+  }
+
+  const normalizeOrigin = (url) => {
+    if (!url) return '';
+    let norm = url.replace(/^https?:\/\/github\.com\//, '');
+    norm = norm.replace(/^git@github\.com:/, '');
+    return norm.replace(/\.git$/, '').trim();
+  };
+
+  const actualOriginNorm = normalizeOrigin(gitOrigin);
+  const declaredOriginNorm = normalizeOrigin(handoff.repository);
+  const declaredCtxOriginNorm = handoff.repository_context && handoff.repository_context.origin ? normalizeOrigin(handoff.repository_context.origin) : declaredOriginNorm;
+
+  if (actualOriginNorm !== declaredOriginNorm) {
+    fail(`Receipt repository binding mismatch. Receipt declares '${handoff.repository}', but git origin is '${gitOrigin}'.`);
+  }
+
+  // Basis HEAD binding
+  // Contract: receipt.head_sha means "HEAD immediately before this commit". 
+  // For 'staged' mode, git rev-parse HEAD precisely resolves this.
+  if (mode === 'staged' && handoff.head_sha) {
+    const expectedBasisSha = run('git rev-parse HEAD');
+    if (handoff.head_sha !== expectedBasisSha && !expectedBasisSha.startsWith(handoff.head_sha)) {
+      fail(`Receipt basis HEAD binding mismatch. Receipt declares basis '${handoff.head_sha}', but current basis HEAD is '${expectedBasisSha}'.`);
+    }
   }
 }
 
@@ -284,25 +344,46 @@ function main() {
       // ignore parse errors; leave ledgerSatisfied=false to keep gate strict
     }
   }
-  const missingArtifacts = requiredArtifacts.filter((file) => {
-    if (file === STATUS_LEDGER && ledgerSatisfied) return false;
-    return !changedSet.has(file.toLowerCase());
-  });
-  if (missingArtifacts.length) {
-    fail(
-      `Critical-path changes require fresh handoff artifacts. Missing in this change set: ${missingArtifacts.join(
-        ', ',
-      )}`,
-    );
+  // Find all scoped receipts in the change set
+  const scopedJsonCandidates = Array.from(changedSet).filter(f => f.startsWith('docs/protocols/reports/session_handoff_') && f.endsWith('.json'));
+  
+  if (scopedJsonCandidates.length === 0) {
+    fail('Critical-path changes require a valid scoped handoff receipt. No docs/protocols/reports/SESSION_HANDOFF_*.json found in this change set.');
+  }
+  if (scopedJsonCandidates.length > 1) {
+    fail('Multiple handoff JSON receipts found in this change set. Only one receipt per commit is permitted to prevent ambiguity.');
   }
 
-  const handoff = validateSchemaAndPayload(HANDOFF_JSON, HANDOFF_SCHEMA);
+  const receiptJsonPath = scopedJsonCandidates[0];
+  const receiptBase = receiptJsonPath.slice(0, -5);
+  const receiptMdPath = receiptBase + '.md';
+
+  if (!changedSet.has(receiptMdPath)) {
+    fail(`Critical-path changes require fresh handoff artifacts. Missing matching markdown receipt in this change set: ${receiptMdPath}`);
+  }
+
+  const isGlobalLatest = receiptJsonPath === HANDOFF_JSON.toLowerCase();
+
+  if (isGlobalLatest) {
+    const missingGlobal = [];
+    if (!ledgerSatisfied) missingGlobal.push(STATUS_LEDGER);
+    if (missingGlobal.length) {
+      fail(`Global LATEST handoff update requires fresh status ledger. Missing in this change set: ${missingGlobal.join(', ')}`);
+    }
+  }
+
+  // Find original casing for file reads
+  const actualJsonPath = files.find(f => normalizePath(f).toLowerCase() === receiptJsonPath) || receiptJsonPath;
+  const actualMdPath = files.find(f => normalizePath(f).toLowerCase() === receiptMdPath) || receiptMdPath;
+
+  const handoff = validateSchemaAndPayload(actualJsonPath, HANDOFF_SCHEMA);
   ensureFreshHandoff(handoff);
   ensureHandoffCoverage(handoff, criticalFiles);
   ensureSupabaseAuditCoverage(handoff, files);
-  ensureMarkdownAck(HANDOFF_MD);
+  ensureMarkdownAck(actualMdPath);
+  ensureReceiptBinding(handoff, mode, actualJsonPath);
 
-  if (!fs.existsSync(STATUS_LEDGER)) {
+  if (isGlobalLatest && !fs.existsSync(STATUS_LEDGER)) {
     fail(`Missing status ledger file: ${STATUS_LEDGER}`);
   }
 
