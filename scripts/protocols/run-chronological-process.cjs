@@ -8,6 +8,7 @@ const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
 const { singleInstanceGuard } = require('../lib/tnf-single-instance-guard.cjs');
 const { isFleetPaused, readFleetMode } = require('../lib/tnf-fleet-mode.cjs');
+const resourceGuard = require('../lib/tnf-resource-guard.cjs');
 
 const execFileAsync = promisify(execFile);
 
@@ -92,19 +93,27 @@ function envFlag(name, defaultValue = true) {
   return !['0', 'false', 'no', 'off'].includes(String(raw).trim().toLowerCase());
 }
 
+// Delegates to scripts/lib/tnf-resource-guard.cjs — the shared snapshot/
+// threshold module used by every entry point in the fleet (this cron runner
+// AND every launchd job via tnf-launchd-guard.sh). Previously this checked
+// CPU load average only; it now also considers real macOS memory pressure
+// (vm_stat-based, not the unreliable os.freemem()) via the shared module.
+// See tnf-resource-guard.cjs's header comment for why this exists.
 function loadGuardSnapshot() {
   if (!envFlag('TNF_CRON_LOAD_GUARD', true)) {
     return { enabled: false, overloaded: false };
   }
-  const cpus = Math.max(os.cpus().length, 1);
-  const oneMinute = os.loadavg()[0] || 0;
-  const threshold = Number(process.env.TNF_CRON_MAX_LOAD_AVG || Math.max(8, cpus * 4));
+  const snapshot = resourceGuard.systemSnapshot();
+  const overload = resourceGuard.isOverloaded(snapshot);
   return {
     enabled: true,
-    overloaded: oneMinute >= threshold,
-    oneMinute,
-    threshold,
-    cpus,
+    overloaded: overload.overloaded,
+    memOverloaded: overload.memOverloaded,
+    oneMinute: snapshot.load1,
+    threshold: overload.thresholds.loadThreshold,
+    memPressurePercent: snapshot.memPressurePercent,
+    memPressureThreshold: overload.thresholds.memPressureThreshold,
+    cpus: snapshot.cpus,
   };
 }
 
@@ -237,7 +246,12 @@ function acquireLock(lockPath, staleAfterMs, payload) {
 async function main() {
   const options = parseArgs(process.argv.slice(2));
 
-  // Fleet-wide pause gate — gates all 7 live cron entries in one place.
+  // Fleet-wide pause gate — gates every registered cron entry in one place
+  // (count drifts as jobs are added/removed; check
+  // data/protocols/cron-jobs.registry.json for the current figure rather
+  // than trusting a number in this comment — corrected 2026-08-27 after an
+  // independent audit found this comment said "7" while the registry held
+  // 20, a live discrepancy in a comment about this exact system).
   // Checked BEFORE the single-instance guard (and well before any
   // catalog/registry/state I/O) so a paused fleet doesn't even acquire a
   // process lock for work it isn't going to do, and skips cleanly with
@@ -325,8 +339,8 @@ async function main() {
       options,
       statePath,
       state,
-      reason: 'load-guard',
-      detail: `load guard deferred run: load1=${loadGuard.oneMinute.toFixed(2)} threshold=${loadGuard.threshold}`,
+      reason: loadGuard.memOverloaded ? 'memory-guard' : 'load-guard',
+      detail: `resource guard deferred run: load1=${loadGuard.oneMinute.toFixed(2)} threshold=${loadGuard.threshold} memPressure=${loadGuard.memPressurePercent.toFixed(1)}% memThreshold=${loadGuard.memPressureThreshold}%`,
     });
     return;
   }

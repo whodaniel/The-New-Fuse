@@ -78,15 +78,45 @@ create_plist() {
     encryption_pem=""
   fi
 
-  cat > "$PLIST_PATH" <<PLIST
+  # Write-then-rename, not a direct `>` truncate: 2026-08-27, a hang mid-
+  # heredoc (system under extreme load from an unrelated concurrent branch
+  # switch) left this file 0 bytes / unparseable because `>` truncates the
+  # target before any content is written. Renaming into place means a hung
+  # regeneration leaves the previous, still-valid plist intact instead of an
+  # empty one. Matches the atomic-write pattern in tnf-fleet-mode.cjs.
+  local plist_tmp="${PLIST_PATH}.tmp.$$"
+  cat > "$plist_tmp" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
   <string>${LABEL}</string>
+  <!-- 2026-08-27: routed through tnf-launchd-guard.sh — see
+       docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md. This template is
+       regenerated unconditionally on every `start` (see start()), which is
+       exactly why a manual, unwrapped edit to the live plist kept getting
+       silently reverted: fix it here, at the source of truth, not on the
+       live file.
+       Class corrected same day: probe (60s wall-clock cap) was wrong —
+       local-subdirector-runtime.cjs runs an unbounded internal
+       setInterval loop (maxCycles defaults to 0), so the watchdog killed
+       this service every ~60-80s for hours under that classification.
+       class=daemon (no wall-clock cap) matches its actual persistent-
+       process shape. Caught by an independent read-only audit, not by
+       whoever introduced it — verify the actual runtime shape (does it
+       exit on its own, or only on signal?) before picking a class for any
+       future service, not just its launchd cadence. -->
   <key>ProgramArguments</key>
   <array>
+    <string>${ROOT_DIR}/scripts/runtime/tnf-launchd-guard.sh</string>
+    <string>--job</string>
+    <string>${LABEL}</string>
+    <string>--class</string>
+    <string>daemon</string>
+    <string>--repo-root</string>
+    <string>${ROOT_DIR}</string>
+    <string>--</string>
     <string>${NODE_BIN}</string>
     <string>${SCRIPT_PATH}</string>
   </array>
@@ -115,6 +145,10 @@ create_plist() {
   <true/>
   <key>StartInterval</key>
   <integer>300</integer>
+  <key>Nice</key>
+  <integer>10</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -124,6 +158,7 @@ create_plist() {
 </dict>
 </plist>
 PLIST
+  mv -f "$plist_tmp" "$PLIST_PATH"
 }
 
 install() {

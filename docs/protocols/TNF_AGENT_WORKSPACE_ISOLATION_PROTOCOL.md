@@ -170,12 +170,26 @@ asymmetry is precisely the gap: on 2026-08-09 no gate objected to stashing 138
 files belonging to three agents, while several gates correctly blocked a
 well-formed commit.
 
-| Point              | Check                                                             | Status   |
-| ------------------ | ----------------------------------------------------------------- | -------- |
-| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | proposed |
-| pre-mutation guard | block `stash`/`checkout`/`reset`/`clean` when foreign paths dirty | proposed |
-| pre-commit         | existing handoff / secret / build / authority gates               | **live** |
-| lease check        | warn on writes outside a declared lease                           | proposed |
+| Point              | Check                                                             | Status                                                                                                                                                                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | **live via `scripts/harness/resolve-workspace-tier.cjs`** — advisory / called manually, not yet auto-invoked by the onboarder                                                                                                                                             |
+| pre-mutation guard | block `stash`/`checkout`/`reset`/`clean` when foreign paths dirty | **live for stash/reset/merge/rebase** (`workspace-mutation-guard.cjs`); `checkout -f`/`clean -f` are undetectable by any git hook (see that script's own COVERAGE comment) — Turn Zero tier resolution is the complementary control for exactly that gap, not a fix to it |
+| pre-commit         | existing handoff / secret / build / authority gates               | **live**                                                                                                                                                                                                                                                                  |
+| lease check        | warn on writes outside a declared lease                           | proposed                                                                                                                                                                                                                                                                  |
+
+**2026-08-27 incident (second occurrence of the 2026-08-09 failure mode).** A
+concurrent agent process on this machine ran a branch-maintenance-class
+operation (checkout, effectively forced — reflog shows a plain "moving from"
+entry with no refusal, which per `workspace-mutation-guard.cjs`'s own documented
+limits is indistinguishable from `-f`) directly in the shared checkout while
+another agent held ~4 files of uncommitted, uncommitted-for- hours tracked-file
+work. Exactly the R1 failure this table's "Turn Zero" row existed to prevent,
+and exactly why it mattered that the row was still "proposed" rather than real.
+`resolve-workspace-tier.cjs` makes that row real for any caller that invokes it.
+It is advisory, not a hook: it cannot retroactively block a forced checkout, and
+it does not yet run automatically at every session's Turn Zero — wiring it into
+the onboarder is real future work, deliberately left undone here because that
+flow is complex enough that changing it blind risks more than today's gap costs.
 
 ---
 
