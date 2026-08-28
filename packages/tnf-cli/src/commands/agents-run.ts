@@ -78,6 +78,7 @@ interface JsonResult {
     resultSummary: string;
     durationMs: number;
     ok: boolean;
+    receipt?: any;
   }>;
   finishReason: string;
   durationMs: number;
@@ -650,6 +651,9 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
     async (name: string, args: Record<string, unknown>) => {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
+      let authorized = true;
+      let denyReason = '';
+      let authoritySource = '';
       try {
         const {
           LocalSubdirectorAuthorityService,
@@ -660,9 +664,6 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         const isSubdirector = auth.verifyLocalSubdirectorIdentity(
           process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || ''
         );
-        let authorized = true;
-        let denyReason = '';
-        let authoritySource = '';
 
         if (isSubdirector) {
           authoritySource = 'LocalSubdirector (Verified Identity)';
