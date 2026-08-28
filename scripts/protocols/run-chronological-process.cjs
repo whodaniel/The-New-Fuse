@@ -246,7 +246,12 @@ function acquireLock(lockPath, staleAfterMs, payload) {
 async function main() {
   const options = parseArgs(process.argv.slice(2));
 
-  // Fleet-wide pause gate — gates all 7 live cron entries in one place.
+  // Fleet-wide pause gate — gates every registered cron entry in one place
+  // (count drifts as jobs are added/removed; check
+  // data/protocols/cron-jobs.registry.json for the current figure rather
+  // than trusting a number in this comment — corrected 2026-08-27 after an
+  // independent audit found this comment said "7" while the registry held
+  // 20, a live discrepancy in a comment about this exact system).
   // Checked BEFORE the single-instance guard (and well before any
   // catalog/registry/state I/O) so a paused fleet doesn't even acquire a
   // process lock for work it isn't going to do, and skips cleanly with
